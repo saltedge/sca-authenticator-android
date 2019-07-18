@@ -29,9 +29,9 @@ You can install app from
 
 Minimal supported Android SDK is SDK23 (Android Marshmallow)   
 
-You can find source code of Authenticator here: 
+You can find related source code: 
   * [Authenticator Identity Service](https://github.com/saltedge/sca-identity-service-example).
-  * [Authenticator iOS](https://github.com/saltedge/sca-authenticator-ios).  
+  * [Authenticator iOS app](https://github.com/saltedge/sca-authenticator-ios).  
 
 ## Project content
 
