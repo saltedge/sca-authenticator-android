@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2019 Salt Edge Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<vector android:height="24dp" android:viewportHeight="18.0"
+    android:viewportWidth="24.0" android:width="32dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#00000000"
+        android:pathData="M8.938,1.901C9.206,1.65 9.796,1.417 10.164,1.417L22.421,1.417C22.558,1.417 22.674,1.533 22.674,1.667L22.674,16.667C22.674,16.808 22.565,16.917 22.421,16.917L10.164,16.917C9.797,16.917 9.203,16.686 8.934,16.438L1.235,9.342C1.15,9.263 1.15,9.162 1.238,9.079L8.938,1.901Z"
+        android:strokeColor="#000000" android:strokeWidth="1.5"/>
+    <path android:fillColor="#000000"
+        android:pathData="M18.738,5.933l-0.809,-0.809l-3.234,3.234l-3.234,-3.234l-0.809,0.809l3.234,3.234l-3.234,3.234l0.809,0.809l3.234,-3.234l3.234,3.234l0.809,-0.809l-3.234,-3.234z"
+        android:strokeColor="#00000000" android:strokeWidth="1"/>
+</vector>

@@ -1,0 +1,93 @@
+/*
+ * This file is part of the Salt Edge Authenticator distribution
+ * (https://github.com/saltedge/sca-authenticator-android).
+ * Copyright (c) 2019 Salt Edge Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3 or later.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * For the additional permissions granted for Salt Edge Authenticator
+ * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+ */
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = "0.7.9"
+    reportsDir = file("$buildDir/reports")
+}
+
+task jacocoTestReport(type:JacocoReport, dependsOn: "connectedDebugAndroidTest") {
+    println ":${project.name}: Generating Jacoco reports"
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports for Debug build"
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    // what to exclude from coverage report
+    // UI, "noise", generated classes, platform classes, etc.
+    def fileFilter = [
+            '**/R.class',
+            '**/R$*.class',
+            '**/*$ViewBinder*.*',
+            '**/*$InjectAdapter*.*',
+            '**/*Injector*.*',
+            '**/Dagger*Component.*',
+            '**/Dagger*Component$Builder.*',
+            '**/*Module_*Factory.*',
+            '**/*Provider_*Factory.*',
+            '**/*_Factory.*',
+            '**/BuildConfig.*',
+            '**/Manifest*.*',
+            '**/*Test*.*',
+            'com/android/vending/billing/**',
+            'io/realm/**/*.*',
+            '**/*Activity.*',
+            '**/*Service.*',
+            '**/*Fragment.*',
+            '**/*Dialog.*',
+            '**/*Behavior.*',
+            '**/*BottomSheetCallback.*',
+            '**/*Listener.*',
+            '**/*Transformer.*',
+            '**/*Drawer.*',
+            '**/*View.*',
+            '**/*ViewPager.*',
+            '**/*Layout.*',
+            '**/*Adapter.*',
+            '**/*Holder.*',
+            '**/*Animation.*',
+            '**/*Renderer.*',
+            '**/*NavigationHelper*.*',
+            '**/NotificationManager*.*',
+            '**/DialogManager*.*',
+            '**/SnackbarBuilder*.*',
+            '**/AnimationHelper*.*',
+            '**/animation/opengl/*.*',
+            '**/ViewTools*.*',
+            '**/*ViewModel.*',
+            '**/ConnectionAndKey.kt',
+            '**/*Data.*',
+    ]
+    // generated classes
+    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
+    def kotlinDebugTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/debug", excludes: fileFilter)
+    classDirectories = files([debugTree], [kotlinDebugTree])
+
+    sourceDirectories = files([
+            "$project.projectDir/src/main/java",
+            "$project.projectDir/src/main/kotlin"
+    ])
+    executionData = fileTree(dir: project.buildDir, includes: ['**/*.exec', '**/*.ec'])
+}

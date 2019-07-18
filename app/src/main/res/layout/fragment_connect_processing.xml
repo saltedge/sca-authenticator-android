@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <!--
+     This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2019 Salt Edge Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/dp_15"
+    android:paddingRight="@dimen/dp_15"
+    android:gravity="center_horizontal"
+    android:focusableInTouchMode="true"
+    android:background="@android:color/white">
+
+    <include layout="@layout/fragment_connect_processing_header"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_13"
+        android:gravity="center"
+        android:maxLines="1"
+        style="@style/Text16GrayDarkRegular"
+        android:text="@string/connect_status_in_progress"/>
+
+    <ProgressBar
+        android:id="@+id/progressBarView"
+        android:layout_marginTop="@dimen/dp_75"
+        android:layout_width="@dimen/dp_80"
+        android:layout_height="@dimen/dp_80"
+        style="?android:attr/progressBarStyle"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/cyan"
+        android:indeterminateTintMode="src_in" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <include layout="@layout/fragment_connect_processing_footer"/>
+</LinearLayout>

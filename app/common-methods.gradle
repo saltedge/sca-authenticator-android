@@ -1,0 +1,43 @@
+/*
+ * This file is part of the Salt Edge Authenticator distribution
+ * (https://github.com/saltedge/sca-authenticator-android).
+ * Copyright (c) 2019 Salt Edge Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3 or later.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * For the additional permissions granted for Salt Edge Authenticator
+ * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+ */
+def setupSigning(propFileName, signConfigName) {
+    Properties props = new Properties()
+    def propFile = file(propFileName)
+    if (propFile.canRead()) {
+        props.load(new FileInputStream(propFile))
+        if (props != null && props.containsKey('STORE_FILE') && props.containsKey('STORE_PASSWORD') &&
+                props.containsKey('KEY_ALIAS') && props.containsKey('KEY_PASSWORD')) {
+            android.signingConfigs[signConfigName].storeFile = file(props['STORE_FILE'])
+            android.signingConfigs[signConfigName].storePassword = props['STORE_PASSWORD']
+            android.signingConfigs[signConfigName].keyAlias = props['KEY_ALIAS']
+            android.signingConfigs[signConfigName].keyPassword = props['KEY_PASSWORD']
+        } else {
+            println "Can't find keys in ${propFileName} file"
+        }
+    } else {
+        println "Can't find ${propFileName} file"
+    }
+}
+
+// Export methods by turning them into closures
+ext {
+    setupSigning = this.&setupSigning
+}

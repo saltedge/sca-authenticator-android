@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2019 Salt Edge Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="24dp"
+        android:height="24dp"
+        android:viewportWidth="24.0"
+        android:viewportHeight="24.0">
+    <path
+        android:pathData="M13.524,1.327L14.169,3.909C15.612,4.295 16.904,5.048 17.929,6.073L20.476,5.344L22,7.985L20.088,9.834C20.274,10.526 20.381,11.25 20.381,12.001C20.381,12.751 20.273,13.475 20.088,14.167L22,16.016L20.476,18.657L17.929,17.928C16.904,18.954 15.611,19.706 14.169,20.092L13.524,22.673L10.476,22.673L9.831,20.092C8.389,19.705 7.096,18.953 6.071,17.927L3.524,18.656L2,16.016L3.912,14.167C3.726,13.475 3.619,12.75 3.619,12C3.619,11.25 3.727,10.525 3.912,9.833L2.001,7.984L3.524,5.343L6.071,6.072C7.096,5.046 8.388,4.294 9.831,3.908L10.476,1.327L13.524,1.327ZM12,17.003C14.761,17.003 17,14.763 17,12C17,9.237 14.761,6.997 12,6.997C9.239,6.997 7,9.237 7,12C7,14.763 9.239,17.003 12,17.003ZM12.002,14.364C10.697,14.364 9.638,13.306 9.638,12C9.638,10.694 10.697,9.636 12.002,9.636C13.308,9.636 14.367,10.694 14.367,12C14.367,13.306 13.308,14.364 12.002,14.364Z"
+        android:strokeColor="#00000000"
+        android:fillColor="#000000"
+        android:strokeWidth="1"/>
+</vector>

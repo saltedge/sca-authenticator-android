@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2019 Salt Edge Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="70dp"
+        android:height="70dp"
+        android:viewportWidth="70.0"
+        android:viewportHeight="70.0">
+    <path
+        android:pathData="M35,35m-35,0a35,35 0,1 1,70 0a35,35 0,1 1,-70 0"
+        android:strokeColor="#00000000"
+        android:fillType="evenOdd"
+        android:fillColor="#85CDCF"
+        android:strokeWidth="1"/>
+    <path
+        android:pathData="M50.07,27.58L50.07,44.27L52.22,44.27L52.22,47.75L54.25,47.75L54.25,52.15L15.75,52.15L15.75,47.75L17.78,47.75L17.78,44.27L19.97,44.27L19.97,27.58L17.78,27.58L17.78,22.95L35,14.85L52.22,22.95L52.22,27.58L50.07,27.58ZM45.85,27.58L41.95,27.58L41.95,44.27L45.85,44.27L45.85,27.58ZM37.73,27.58L32.25,27.58L32.25,44.27L37.73,44.27L37.73,27.58ZM28.03,27.58L24.18,27.58L24.18,44.27L28.03,44.27L28.03,27.58ZM35,18.9C33.32,18.9 31.96,20.26 31.96,21.94C31.96,23.62 33.32,24.98 35,24.98C36.68,24.98 38.04,23.62 38.04,21.94C38.04,20.26 36.68,18.9 35,18.9Z"
+        android:strokeColor="#00000000"
+        android:fillType="nonZero"
+        android:fillColor="#FFFFFF"
+        android:strokeWidth="1"/>
+</vector>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <!--
+     This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2019 Salt Edge Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minWidth="320dp"
+    android:background="@android:color/white"
+    android:paddingTop="@dimen/dp_16"
+    android:paddingBottom="@dimen/dp_16"
+    android:paddingStart="@dimen/dp_32"
+    android:paddingEnd="@dimen/dp_32">
+
+    <TextView
+        android:id="@+id/titleView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Text20BlackMedium"
+        android:text="@string/settings_fingerprint" />
+
+    <TextView
+        android:id="@+id/subtitleView"
+        android:layout_below="@+id/titleView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_8"
+        style="@style/Text16GrayDarkRegular"
+        android:text="@string/fingerprint_scan_continue" />
+
+    <LinearLayout
+        android:id="@+id/statusLayout"
+        android:layout_below="@+id/subtitleView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_24"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <ImageView
+            android:id="@+id/statusImageView"
+            android:layout_width="@dimen/info_view_small_icon"
+            android:layout_height="@dimen/info_view_small_icon"
+            android:src="@drawable/ic_fingerprint_input"
+            android:scaleType="fitCenter"
+            android:contentDescription="@string/fingerprint_touch_sensor" />
+
+        <TextView
+            android:id="@+id/descriptionView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_12"
+            style="@style/Text14GrayDarkRegular"
+            android:maxLines="2"
+            android:text="@string/fingerprint_touch_sensor" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/cancelActionView"
+        android:layout_below="@+id/statusLayout"
+        android:layout_marginTop="@dimen/dp_16"
+        android:paddingStart="@dimen/dp_4"
+        style="@style/RightAlignedDialogAction"
+        android:text="@string/actions_cancel" />
+</RelativeLayout>
+
+

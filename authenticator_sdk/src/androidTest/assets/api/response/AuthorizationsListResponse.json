@@ -1,0 +1,12 @@
+{
+  "data": [
+    {
+      "id": "444",
+      "connection_id": "333",
+      "iv": "o3TDCc3rKYTx...RVH+aOFpS9NIg==\n",
+      "key": "BtV7EB3Erv8xEQ.../jeBRyFa75A6po5XlwWiEiuzQ==\n",
+      "algorithm": "AES-256-CBC",
+      "data": "YlnrNOHvUIPem/O58rMzdsvkXidLvgGpdMalD9c1mlg=\n"
+    }
+  ]
+}

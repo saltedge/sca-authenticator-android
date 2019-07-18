@@ -1,0 +1,4 @@
+*.iml
+.gradle
+signing*.properties
+google-services.json

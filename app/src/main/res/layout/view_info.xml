@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <!--
+     This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2019 Salt Edge Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <ImageView
+            android:id="@+id/iconView"
+            android:contentDescription="@null"
+            android:layout_width="@dimen/info_view_small_icon"
+            android:layout_height="@dimen/info_view_small_icon"
+            android:layout_marginBottom="@dimen/dp_32"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/titleView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_32"
+            android:layout_marginRight="@dimen/dp_32"
+            android:layout_marginBottom="@dimen/dp_16"
+            android:gravity="center_horizontal"
+            android:maxLines="3"
+            style="@style/Text20BlackMedium" />
+
+        <TextView
+            android:id="@+id/subTitleView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_32"
+            android:layout_marginRight="@dimen/dp_32"
+            android:gravity="center_horizontal"
+            style="@style/Text16GrayDarkRegular" />
+
+        <Button
+            android:id="@+id/mainActionView"
+            style="@style/BlueFullWidthButton"
+            android:layout_marginTop="@dimen/dp_40" />
+
+        <TextView
+            android:id="@+id/altActionView"
+            style="@style/WhiteLinkAction"
+            android:layout_marginTop="@dimen/dp_20" />
+    </LinearLayout>
+</RelativeLayout>

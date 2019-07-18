@@ -1,0 +1,15 @@
+*.iml
+.gradle
+local.properties
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.idea/
+*.jks
+*.rdb
+FlavorSettings.json
+signing.properties
+app/build
+app/fabric.properties
+app/google-services.json

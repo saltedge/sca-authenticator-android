@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <!--
+     This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2019 Salt Edge Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <RelativeLayout
+        android:id="@+id/onboardingLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/onboardingPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/pageIndicatorView"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="@dimen/dp_30" />
+
+        <com.saltedge.authenticator.widget.pageindicator.DotsPageIndicatorView
+            android:id="@+id/pageIndicatorView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/dp_140"
+            app:selectedColor="@color/blue" />
+
+        <TextView
+            android:id="@+id/skipActionView"
+            style="@style/WhiteLinkAction"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/dp_40"
+            android:text="@string/actions_skip" />
+
+        <Button
+            android:id="@+id/proceedActionView"
+            style="@style/BlueFullWidthButton"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/dp_40"
+            android:text="@string/actions_get_started"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/setupLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <com.saltedge.authenticator.widget.StepProgressView
+            android:id="@+id/stepProgressView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_30"
+            android:layout_marginRight="@dimen/dp_16" />
+
+        <com.saltedge.authenticator.widget.InfoView
+            android:id="@+id/completeContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:iconDimension="@dimen/info_view_big_icon"
+            app:iconSrc="@drawable/ic_complete_ok_70"
+            app:mainActionText="@string/actions_proceed"
+            app:subTitleText="@string/onboarding_completed_description"
+            app:titleText="@string/onboarding_find_bank_completed_title" />
+
+        <TextView
+            android:id="@+id/headerTitleView"
+            style="@style/Text20BlackMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_30"
+            android:layout_marginTop="@dimen/dp_40"
+            android:layout_marginRight="@dimen/dp_30"
+            android:gravity="center_horizontal"
+            android:maxLines="2" />
+
+        <TextView
+            android:id="@+id/headerDescriptionView"
+            style="@style/Text16GrayDarkRegular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_32"
+            android:layout_marginTop="@dimen/dp_12"
+            android:layout_marginRight="@dimen/dp_32"
+            android:gravity="center_horizontal"
+            android:maxLines="4" />
+
+        <com.saltedge.authenticator.widget.passcode.PasscodeInputView
+            android:id="@+id/passcodeInputView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <include
+            android:id="@+id/allowTouchIdContainer"
+            layout="@layout/fragment_setup_touch_id_view" />
+
+        <include
+            android:id="@+id/allowNotificationsContainer"
+            layout="@layout/fragment_setup_notifications_view" />
+    </LinearLayout>
+</FrameLayout>
