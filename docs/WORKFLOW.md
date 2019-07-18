@@ -89,3 +89,6 @@
 - `status` - connection status (`ACTIVE` or `INACTIVE`)
 - `created_at` - a model creation datetime
 - `updated_at` - a model update datetime 
+  
+---  
+Copyright © 2019 Salt Edge. https://www.saltedge.com
