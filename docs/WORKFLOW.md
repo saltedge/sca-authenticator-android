@@ -11,11 +11,15 @@
 * Access to application should be blocked by pin input or fingerprint input
 * Action confirmation should be done by fingerprint input or pin input
 
-## Base work flow.  
+## Read before: 
+* [Authenticator Identity Service API](https://github.com/saltedge/sca-identity-service-example/blob/master/docs/IDENTITY_SERVICE_API.md)
+* [Authenticator Identity Service Wiki](https://github.com/saltedge/sca-identity-service-example/wiki)
 
-Read before [Authenticator Identity Service API](https://github.com/saltedge/sca-identity-service-example).
+## Connect Bank (Service Provider)
+[![Authenticator_Enrollment_-_Sequence_Diagram](https://github.com/saltedge/sca-identity-service-example/blob/master/docs/images/enrollment-sequence-diagram.svg)](https://github.com/saltedge/sca-identity-service-example/blob/master/docs/images/enrollment-sequence-diagram.svg)
 
-### Connect Bank (Service Provider)
+**Click on IMAGE to enlarge the Sequence Diagram.**
+  
 1. User scans QR code
 2. Parse QR code and extract deep-link with provider's `configuration url`
 3. Fetch provider configuration from `configuration url`
@@ -48,7 +52,13 @@ Read before [Authenticator Identity Service API](https://github.com/saltedge/sca
 8. Parse `return_url` and add `access_token` to `Connection` if exist or otherwise get error and show it to user
 9. Save `Connection`
 10. Show connections list with new `Connection`  
+  
+## Confirm Authorization  
 
+[![Authenticator_Strong_Authentication_-_Sequence_Diagram](https://github.com/saltedge/sca-identity-service-example/blob/master/docs/images/strong-authentication-sequence-diagram.svg)](https://github.com/saltedge/sca-identity-service-example/blob/master/docs/images/strong-authentication-sequence-diagram.svg)
+
+**Click on IMAGE to enlarge the Sequence Diagram.**
+  
 ### Confirm Authorization from Push notification
 1. Receive push notification 
 2. User click on push notification
