@@ -38,7 +38,9 @@ import com.saltedge.authenticator.tool.setTextColorResId
 import com.saltedge.authenticator.tool.showDialogFragment
 import com.saltedge.authenticator.widget.fragment.BaseRoundedBottomDialogFragment
 
-class BiometricsInputDialog : BaseRoundedBottomDialogFragment(), BiometricPromptAbs, BiometricsInputContract.View {
+class BiometricsInputDialog : BaseRoundedBottomDialogFragment(),
+        BiometricPromptAbs,
+        BiometricsInputContract.View, View.OnClickListener {
 
     private val presenter = BiometricsInputPresenter(contract = this)
     private val titleView: TextView? by lazy {
@@ -57,13 +59,14 @@ class BiometricsInputDialog : BaseRoundedBottomDialogFragment(), BiometricPrompt
     override fun showBiometricPrompt(context: FragmentActivity,
                                      @StringRes titleResId: ResId,
                                      @StringRes descriptionResId: ResId,
-                                     @StringRes negativeActionTextResId: ResId) {
+                                     @StringRes negativeActionTextResId: ResId
+    ) {
         arguments = Bundle().apply {
             putInt(KEY_TITLE, titleResId)
             putInt(KEY_DESCRIPTION, descriptionResId)
             putInt(KEY_ACTION, negativeActionTextResId)
         }
-        context.showDialogFragment(this)
+        if (!isAdded) context.showDialogFragment(this)
     }
 
     override fun getDialogViewLayout(): Int = R.layout.dialog_fingerprint
@@ -79,7 +82,7 @@ class BiometricsInputDialog : BaseRoundedBottomDialogFragment(), BiometricPrompt
         arguments?.getInt(KEY_ACTION, R.string.actions_cancel)?.let {
             cancelActionView?.text = getString(it)
         }
-        cancelActionView?.setOnClickListener { onNegativeActionClick() }
+        cancelActionView?.setOnClickListener(this)
     }
 
     override fun onResume() {
@@ -90,6 +93,10 @@ class BiometricsInputDialog : BaseRoundedBottomDialogFragment(), BiometricPrompt
     override fun onPause() {
         super.onPause()
         presenter.onDialogPause()
+    }
+
+    override fun onClick(v: View?) {
+        onNegativeActionClick()
     }
 
     override fun updateStatusView(imageResId: Int, textColorResId: Int, textResId: Int, animateText: Boolean) {
