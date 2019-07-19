@@ -30,7 +30,8 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.log
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricTools
 
-class BiometricsInputPresenter(val contract: BiometricsInputContract.View?) : FingerprintManagerCompat.AuthenticationCallback() {
+class BiometricsInputPresenter(val contract: BiometricsInputContract.View?) :
+        FingerprintManagerCompat.AuthenticationCallback() {
 
     private var fingerprintManager: FingerprintManagerCompat? = null
     private val cryptoObject: FingerprintManagerCompat.CryptoObject? = initCryptoObject()
@@ -64,12 +65,10 @@ class BiometricsInputPresenter(val contract: BiometricsInputContract.View?) : Fi
     fun onDialogResume(context: Context) {
         isDialogVisible = true
         try {
-            if (BiometricTools.isFingerprintAuthAvailable(context)
-                    && cryptoObject != null) {
+            if (BiometricTools.isFingerprintAuthAvailable(context) && cryptoObject != null) {
                 fingerprintManager = FingerprintManagerCompat.from(context)
                 mCancellationSignal = CancellationSignal()
                 fingerprintManager?.authenticate(cryptoObject, 0/* flags */,  mCancellationSignal, this, null)
-
             }
         } catch (e: SecurityException) {
             e.log()

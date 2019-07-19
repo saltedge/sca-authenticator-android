@@ -32,11 +32,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.repository.PreferenceRepository
-import com.saltedge.authenticator.tool.AppTools
-import com.saltedge.authenticator.tool.restartApp
+import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricTools
-import com.saltedge.authenticator.tool.setVisible
-import com.saltedge.authenticator.tool.showResetUserDialog
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
 import com.saltedge.authenticator.widget.biometric.BiometricPromptManagerV28
@@ -93,10 +90,7 @@ abstract class LockableActivity : AppCompatActivity(), PasscodeInputViewListener
             viewContract = viewContract,
             connectionsRepository = ConnectionsRepository,
             preferenceRepository = PreferenceRepository)
-    private val biometricPrompt: BiometricPromptAbs by lazy {
-        if (AppTools.isBiometricPromptV28Enabled()) BiometricPromptManagerV28()
-        else BiometricsInputDialog()
-    }
+    private var biometricPrompt: BiometricPromptAbs? = null
     private var vibrator: Vibrator? = null
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
@@ -112,13 +106,13 @@ abstract class LockableActivity : AppCompatActivity(), PasscodeInputViewListener
 
     override fun onStart() {
         super.onStart()
-        biometricPrompt.resultCallback = this
+        biometricPrompt?.resultCallback = this
         getUnlockAppInputView()?.listener = this
         presenter.onActivityStart(intent)
     }
 
     override fun onStop() {
-        biometricPrompt.resultCallback = null
+        biometricPrompt?.resultCallback = null
         getUnlockAppInputView()?.listener = null
         super.onStop()
     }
@@ -160,7 +154,9 @@ abstract class LockableActivity : AppCompatActivity(), PasscodeInputViewListener
 
     @TargetApi(Build.VERSION_CODES.P)
     private fun displayBiometricPrompt() {
-        biometricPrompt.showBiometricPrompt(
+        biometricPrompt = if (AppTools.isBiometricPromptV28Enabled()) BiometricPromptManagerV28() else BiometricsInputDialog()
+        biometricPrompt?.resultCallback = this
+        biometricPrompt?.showBiometricPrompt(
                 context = this,
                 titleResId = R.string.app_name,
                 descriptionResId = R.string.fingerprint_scan_unlock,
