@@ -27,8 +27,10 @@ import com.saltedge.authenticator.tool.ResId
 interface BiometricPromptAbs {
 
     var resultCallback: BiometricPromptCallback?
-    fun showBiometricPrompt(context: FragmentActivity,
-                            @StringRes titleResId: ResId,
-                            @StringRes descriptionResId: ResId,
-                            @StringRes negativeActionTextResId: ResId)
+    fun showBiometricPrompt(
+            context: FragmentActivity,
+            @StringRes titleResId: ResId,
+            @StringRes descriptionResId: ResId,
+            @StringRes negativeActionTextResId: ResId
+    )
 }

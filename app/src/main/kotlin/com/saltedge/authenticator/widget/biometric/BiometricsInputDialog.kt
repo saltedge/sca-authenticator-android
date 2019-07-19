@@ -38,7 +38,10 @@ import com.saltedge.authenticator.tool.setTextColorResId
 import com.saltedge.authenticator.tool.showDialogFragment
 import com.saltedge.authenticator.widget.fragment.BaseRoundedBottomDialogFragment
 
-class BiometricsInputDialog : BaseRoundedBottomDialogFragment(), BiometricPromptAbs, BiometricsInputContract.View {
+class BiometricsInputDialog : BaseRoundedBottomDialogFragment(),
+        BiometricPromptAbs,
+        BiometricsInputContract.View
+{
 
     private val presenter = BiometricsInputPresenter(contract = this)
     private val titleView: TextView? by lazy {
@@ -57,14 +60,16 @@ class BiometricsInputDialog : BaseRoundedBottomDialogFragment(), BiometricPrompt
     override fun showBiometricPrompt(context: FragmentActivity,
                                      @StringRes titleResId: ResId,
                                      @StringRes descriptionResId: ResId,
-                                     @StringRes negativeActionTextResId: ResId) {
+                                     @StringRes negativeActionTextResId: ResId
+    ) {
         arguments = Bundle().apply {
             putInt(KEY_TITLE, titleResId)
             putInt(KEY_DESCRIPTION, descriptionResId)
             putInt(KEY_ACTION, negativeActionTextResId)
         }
-        context.showDialogFragment(this)
+        if (!isAdded && !isVisible) context.showDialogFragment(this)
     }
+
 
     override fun getDialogViewLayout(): Int = R.layout.dialog_fingerprint
 
