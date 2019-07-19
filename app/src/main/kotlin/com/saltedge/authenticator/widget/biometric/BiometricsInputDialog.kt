@@ -40,7 +40,7 @@ import com.saltedge.authenticator.widget.fragment.BaseRoundedBottomDialogFragmen
 
 class BiometricsInputDialog : BaseRoundedBottomDialogFragment(),
         BiometricPromptAbs,
-        BiometricsInputContract.View, View.OnClickListener {
+        BiometricsInputContract.View {
 
     private val presenter = BiometricsInputPresenter(contract = this)
     private val titleView: TextView? by lazy {
@@ -82,7 +82,7 @@ class BiometricsInputDialog : BaseRoundedBottomDialogFragment(),
         arguments?.getInt(KEY_ACTION, R.string.actions_cancel)?.let {
             cancelActionView?.text = getString(it)
         }
-        cancelActionView?.setOnClickListener(this)
+        cancelActionView?.setOnClickListener { onNegativeActionClick() }
     }
 
     override fun onResume() {
@@ -93,10 +93,6 @@ class BiometricsInputDialog : BaseRoundedBottomDialogFragment(),
     override fun onPause() {
         super.onPause()
         presenter.onDialogPause()
-    }
-
-    override fun onClick(v: View?) {
-        onNegativeActionClick()
     }
 
     override fun updateStatusView(imageResId: Int, textColorResId: Int, textResId: Int, animateText: Boolean) {
