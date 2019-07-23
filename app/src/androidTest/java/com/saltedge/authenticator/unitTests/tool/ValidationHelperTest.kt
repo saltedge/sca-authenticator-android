@@ -22,6 +22,7 @@ package com.saltedge.authenticator.unitTests.tool
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.testTools.TestTools
 import com.saltedge.authenticator.tool.getPasscodeValidationError
 import com.saltedge.authenticator.tool.isPasscodeValid
 import org.hamcrest.CoreMatchers.equalTo
@@ -36,24 +37,24 @@ class ValidationHelperTest {
     @Test
     @Throws(Exception::class)
     fun getPasscodeValidationErrorTest() {
-        assertThat(getPasscodeValidationError(""),
-                equalTo(R.string.errors_empty_passcode))
-        assertThat(getPasscodeValidationError("123"),
-                equalTo(R.string.errors_passcode_info))
-        Assert.assertNull(getPasscodeValidationError("1234"))
-        Assert.assertNull(getPasscodeValidationError("1234567890123456"))
-        assertThat(getPasscodeValidationError("12345678901234567"),
-                equalTo(R.string.errors_passcode_info))
+        assertThat(getPasscodeValidationError("", TestTools.applicationContext),
+                equalTo(TestTools.applicationContext.getString(R.string.errors_empty_passcode)))
+        assertThat(getPasscodeValidationError("123", TestTools.applicationContext),
+                equalTo(TestTools.applicationContext.getString(R.string.errors_passcode_info, 4, 16)))
+        Assert.assertNull(getPasscodeValidationError("1234", TestTools.applicationContext))
+        Assert.assertNull(getPasscodeValidationError("1234567890123456", TestTools.applicationContext))
+        assertThat(getPasscodeValidationError("12345678901234567", TestTools.applicationContext),
+                equalTo(TestTools.applicationContext.getString(R.string.errors_passcode_info, 4, 16)))
     }
 
     @Test
     @Throws(Exception::class)
     fun isPasscodeValidTest() {
-        Assert.assertFalse(isPasscodeValid(""))
-        Assert.assertFalse(isPasscodeValid("123"))
-        Assert.assertTrue(isPasscodeValid("1234"))
-        Assert.assertTrue(isPasscodeValid("123456"))
-        Assert.assertTrue(isPasscodeValid("1234567890123456"))
-        Assert.assertFalse(isPasscodeValid("12345678901234567"))
+        Assert.assertFalse(isPasscodeValid("", TestTools.applicationContext))
+        Assert.assertFalse(isPasscodeValid("123", TestTools.applicationContext))
+        Assert.assertTrue(isPasscodeValid("1234", TestTools.applicationContext))
+        Assert.assertTrue(isPasscodeValid("123456", TestTools.applicationContext))
+        Assert.assertTrue(isPasscodeValid("1234567890123456", TestTools.applicationContext))
+        Assert.assertFalse(isPasscodeValid("12345678901234567", TestTools.applicationContext))
     }
 }
