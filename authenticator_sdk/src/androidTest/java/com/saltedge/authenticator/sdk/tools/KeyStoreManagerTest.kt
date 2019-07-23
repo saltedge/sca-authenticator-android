@@ -52,8 +52,8 @@ class KeyStoreManagerTest {
         cleanKeystore()
         KeyStoreManager.createOrReplaceRsaKeyPair("test1")
 
-        Assert.assertTrue(KeyStoreManager.keyPairExist("test1"))
-        Assert.assertFalse(KeyStoreManager.keyPairExist("test2"))
+        Assert.assertTrue(KeyStoreManager.keyEntryExist("test1"))
+        Assert.assertFalse(KeyStoreManager.keyEntryExist("test2"))
     }
 
     @Test

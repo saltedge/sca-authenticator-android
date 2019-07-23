@@ -24,17 +24,18 @@ package com.saltedge.authenticator.widget.biometric
 import android.content.Context
 import android.hardware.biometrics.BiometricPrompt.BIOMETRIC_ERROR_CANCELED
 import android.hardware.biometrics.BiometricPrompt.BIOMETRIC_ERROR_USER_CANCELED
-import androidx.core.hardware.fingerprint.FingerprintManagerCompat
-import androidx.core.os.CancellationSignal
+import android.hardware.fingerprint.FingerprintManager
+import android.os.CancellationSignal
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.log
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricTools
+import com.saltedge.authenticator.tool.secure.fingerprint.getFingerprintManager
 
 class BiometricsInputPresenter(val contract: BiometricsInputContract.View?) :
-        FingerprintManagerCompat.AuthenticationCallback() {
+        FingerprintManager.AuthenticationCallback() {
 
-    private var fingerprintManager: FingerprintManagerCompat? = null
-    private val cryptoObject: FingerprintManagerCompat.CryptoObject? = initCryptoObject()
+    private var fingerprintManager: FingerprintManager? = null
+    private val cryptoObject: FingerprintManager.CryptoObject? = initCryptoObject()
     private var mCancellationSignal: CancellationSignal? = null
     private var isDialogVisible = false
 
@@ -43,7 +44,7 @@ class BiometricsInputPresenter(val contract: BiometricsInputContract.View?) :
         if (biometricPromptIsNotCanceled(errMsgId)) onAuthResult(success = false)
     }
 
-    override fun onAuthenticationSucceeded(result: FingerprintManagerCompat.AuthenticationResult?) {
+    override fun onAuthenticationSucceeded(result: FingerprintManager.AuthenticationResult?) {
         super.onAuthenticationSucceeded(result)
         onAuthResult(success = true)
     }
@@ -66,9 +67,9 @@ class BiometricsInputPresenter(val contract: BiometricsInputContract.View?) :
         isDialogVisible = true
         try {
             if (BiometricTools.isFingerprintAuthAvailable(context) && cryptoObject != null) {
-                fingerprintManager = FingerprintManagerCompat.from(context)
+                fingerprintManager = context.getFingerprintManager()
                 mCancellationSignal = CancellationSignal()
-                fingerprintManager?.authenticate(cryptoObject, 0/* flags */,  mCancellationSignal, this, null)
+                fingerprintManager?.authenticate(cryptoObject, mCancellationSignal, 0/* flags */, this, null)
             }
         } catch (e: SecurityException) {
             e.log()
@@ -77,14 +78,23 @@ class BiometricsInputPresenter(val contract: BiometricsInputContract.View?) :
 
     fun onDialogPause() {
         mCancellationSignal?.cancel()
+        mCancellationSignal = null
         isDialogVisible = false
     }
 
     private fun onAuthResult(success: Boolean) {
         if (isDialogVisible) {
-            val image = if (success) R.drawable.ic_fingerprint_confirmed else R.drawable.ic_fingerprint_error
+            val image = if (success) {
+                R.drawable.ic_fingerprint_confirmed
+            } else {
+                R.drawable.ic_fingerprint_error
+            }
             val colorResId = if (success) R.color.colorPrimary else R.color.red
-            val text = if (success) R.string.fingerprint_confirmed else R.string.error_fingerprint_not_recognized
+            val text = if (success) {
+                R.string.fingerprint_confirmed
+            } else {
+                R.string.error_fingerprint_not_recognized
+            }
             contract?.updateStatusView(
                     imageResId = image,
                     textColorResId = colorResId,
@@ -95,8 +105,8 @@ class BiometricsInputPresenter(val contract: BiometricsInputContract.View?) :
         }
     }
 
-    private fun initCryptoObject(): FingerprintManagerCompat.CryptoObject? {
-        return BiometricTools.initFingerprintCipher()?.let { FingerprintManagerCompat.CryptoObject(it) }
+    private fun initCryptoObject(): FingerprintManager.CryptoObject? {
+        return BiometricTools.initFingerprintCipher()?.let { FingerprintManager.CryptoObject(it) }
     }
 
     private fun biometricPromptIsNotCanceled(errorCode: Int): Boolean =

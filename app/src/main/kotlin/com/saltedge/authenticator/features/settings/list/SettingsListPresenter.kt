@@ -30,7 +30,8 @@ import javax.inject.Inject
 class SettingsListPresenter @Inject constructor(
         private val appContext: Context,
         private val preferences: PreferenceRepositoryAbs,
-        private val biometricTools: BiometricToolsAbs) : SettingsListContract.Presenter {
+        private val biometricTools: BiometricToolsAbs
+) : SettingsListContract.Presenter {
 
     override var viewContract: SettingsListContract.View? = null
 
@@ -61,6 +62,7 @@ class SettingsListPresenter @Inject constructor(
         when (itemId) {
             R.string.settings_fingerprint ->
                 if (biometricTools.isBiometricReady(appContext)) {
+                    if (checked) biometricTools.activateFingerprint()
                     preferences.fingerprintEnabled = checked
                 }
             R.string.settings_notifications ->

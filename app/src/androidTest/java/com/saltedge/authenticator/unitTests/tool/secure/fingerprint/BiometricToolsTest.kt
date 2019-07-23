@@ -115,17 +115,17 @@ class BiometricToolsTest {
     @Test
     @Throws(Exception::class)
     fun replaceFingerprintKeyTest() {
-        if (KeyStoreManager.keyPairExist(FINGERPRINT_ALIAS_FOR_PIN)) KeyStoreManager.deleteKeyPair(FINGERPRINT_ALIAS_FOR_PIN)
+        if (KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN)) KeyStoreManager.deleteKeyPair(FINGERPRINT_ALIAS_FOR_PIN)
 
-        assertFalse(KeyStoreManager.keyPairExist(FINGERPRINT_ALIAS_FOR_PIN))
+        assertFalse(KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN))
 
         val initialKey = BiometricTools.replaceFingerprintKey()!!
 
-        assertTrue(KeyStoreManager.keyPairExist(FINGERPRINT_ALIAS_FOR_PIN))
+        assertTrue(KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN))
 
         val secondKey = BiometricTools.replaceFingerprintKey()!!
 
-        assertTrue(KeyStoreManager.keyPairExist(FINGERPRINT_ALIAS_FOR_PIN))
+        assertTrue(KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN))
         assertThat(initialKey.publicKeyToPemEncodedString(),
                 not(equalTo(secondKey.publicKeyToPemEncodedString())))
     }
@@ -133,17 +133,14 @@ class BiometricToolsTest {
     @Test
     @Throws(Exception::class)
     fun activateFingerprintTest() {
-        if (KeyStoreManager.keyPairExist(FINGERPRINT_ALIAS_FOR_PIN)) KeyStoreManager.deleteKeyPair(FINGERPRINT_ALIAS_FOR_PIN)
+        if (KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN)) {
+            KeyStoreManager.deleteKeyPair(FINGERPRINT_ALIAS_FOR_PIN)
+        }
         PreferenceRepository.fingerprintEnabled = false
 
-        assertFalse(KeyStoreManager.keyPairExist(FINGERPRINT_ALIAS_FOR_PIN))
-        assertFalse(BiometricTools.activateFingerprint())
-        assertFalse(PreferenceRepository.fingerprintEnabled)
-
-        BiometricTools.replaceFingerprintKey()!!
-
-        assertTrue(KeyStoreManager.keyPairExist(FINGERPRINT_ALIAS_FOR_PIN))
+        assertFalse(KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN))
         assertTrue(BiometricTools.activateFingerprint())
+        assertTrue(KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN))
         assertTrue(PreferenceRepository.fingerprintEnabled)
     }
 }
