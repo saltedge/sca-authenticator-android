@@ -30,6 +30,8 @@ import com.saltedge.authenticator.app.di.AppComponent
 import com.saltedge.authenticator.app.di.AppModule
 import com.saltedge.authenticator.app.di.DaggerAppComponent
 import com.saltedge.authenticator.features.main.MainActivity
+import com.saltedge.authenticator.model.db.RealmManager
+import com.saltedge.authenticator.tool.AppTools
 import com.saltedge.authenticator.tool.createCrashlyticsKit
 import com.saltedge.authenticator.tool.log
 import io.fabric.sdk.android.Fabric
@@ -50,6 +52,8 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
 
         //Patch Security Provider
         patchSecurityProvider()
+
+        if (AppTools.isTestsSuite(this)) RealmManager.initRealm(this)
 
         appComponent = DaggerAppComponent.builder()
                 .appModule(AppModule(applicationContext))

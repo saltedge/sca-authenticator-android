@@ -55,9 +55,8 @@ class MainActivity : LockableActivity(),
             connectionsRepository = ConnectionsRepository)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
         if (!RealmManager.initialized) RealmManager.initRealm(context = this)
+        super.onCreate(savedInstanceState)
         this.updateScreenshotLocking()
         setContentView(R.layout.activity_main)
         setupViews()
