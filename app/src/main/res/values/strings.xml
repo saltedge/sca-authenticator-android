@@ -136,6 +136,4 @@
   <string name="fingerprint_scan_unlock">Scan your Fingerprint to unlock app</string>
   <string name="fingerprint_touch_sensor">Touch Sensor</string>
   <string name="enter_passcode_or_fingerprint">Enter 4-digit Passcode or use Fingerprint</string>
-
-  <string name="splash_screen_powered_by">Powered by</string>
 </resources>
