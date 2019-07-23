@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.tools
 
+import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import java.security.*
@@ -58,7 +59,7 @@ object KeyStoreManager : KeyStoreManagerAbs {
      * @param alias - the alias name
      * @return boolean, true if key store contains alias
      */
-    override fun keyPairExist(alias: String): Boolean {
+    override fun keyEntryExist(alias: String): Boolean {
         return androidKeyStore?.containsAlias(alias) ?: false
     }
 
@@ -148,16 +149,19 @@ object KeyStoreManager : KeyStoreManagerAbs {
      */
     override fun createOrReplaceAesBiometricKey(alias: String): SecretKey? {
         return try {
-            val mKeyGenerator = KeyGenerator.getInstance(
-                    KeyProperties.KEY_ALGORITHM_AES,
-                    STORE_TYPE
-            )
-            mKeyGenerator.init(KeyGenParameterSpec.Builder(alias,
+            val builder = KeyGenParameterSpec.Builder(alias,
                     KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
                     .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
                     .setUserAuthenticationRequired(true)
                     .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
-                    .build())
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                builder.setInvalidatedByBiometricEnrollment(true)
+            }
+            val mKeyGenerator = KeyGenerator.getInstance(
+                    KeyProperties.KEY_ALGORITHM_AES,
+                    STORE_TYPE
+            )
+            mKeyGenerator.init(builder.build())
             mKeyGenerator.generateKey()
         } catch (e: Exception) {
             e.printStackTrace()
