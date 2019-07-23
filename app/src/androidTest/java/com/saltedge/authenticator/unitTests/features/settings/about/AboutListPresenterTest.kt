@@ -52,7 +52,7 @@ class AboutListPresenterTest {
         assertThat(presenter.getListItems(), equalTo(listOf(
                 CheckedTitleValueViewModel(
                         titleId = R.string.about_app_version,
-                        value = "2.0.0-rc4"
+                        value = "2.0.0-rc5"
                 ),
                 CheckedTitleValueViewModel(
                         titleId = R.string.about_copyright,
