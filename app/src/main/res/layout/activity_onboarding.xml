@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
- <!--
+<?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2019 Salt Edge Inc.
@@ -21,6 +20,7 @@
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white">
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/dp_140"
+            android:layout_marginBottom="@dimen/dp_124"
             app:selectedColor="@color/blue" />
 
         <TextView
@@ -53,7 +53,9 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/dp_40"
-            android:text="@string/actions_skip" />
+            android:text="@string/actions_skip"
+            tools:background="@color/blue"
+            tools:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/proceedActionView"
