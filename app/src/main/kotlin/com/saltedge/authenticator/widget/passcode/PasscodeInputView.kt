@@ -103,12 +103,12 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
                     listener?.onEnteredPasscodeIsValid()
                 } else {
                     passcodeTextInputView?.setText("")
-                    onInputError(R.string.errors_passcode_not_match)
+                    onInputError(context.getString(R.string.errors_passcode_not_match))
                     listener?.onEnteredPasscodeIsInvalid()
                 }
             }
             InputMode.NEW_PASSCODE -> {
-                val errorId = getPasscodeValidationError(enteredPasscode)
+                val errorId = getPasscodeValidationError(enteredPasscode, context)
                 if (errorId != null) {
                     onInputError(errorId)
                 } else {
@@ -121,15 +121,15 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
                     listener?.onNewPasscodeConfirmed(passcode = currentPasscode)
                 } else {
                     initInputMode(inputMode = InputMode.NEW_PASSCODE)
-                    onInputError(R.string.errors_passcode_not_match)
+                    onInputError(context.getString(R.string.errors_passcode_not_match))
                 }
             }
         }
     }
 
-    private fun onInputError(@StringRes errorResId: Int) {
+    private fun onInputError(errorRes: String) {
         passcodeTextInputView?.setText("")
-        passcodeTextInputLayout?.error = context.getString(errorResId)
+        passcodeTextInputLayout?.error = errorRes
     }
 
     private fun updatePositiveActionEnabledState(isEnabled: Boolean) {

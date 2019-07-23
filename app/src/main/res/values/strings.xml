@@ -57,7 +57,7 @@
   <string name="errors_contact_support">Something went wrong. Please contact our Support team.</string>
   <string name="errors_empty_passcode">Passcode is empty</string>
   <string name="errors_no_internet_connection">No Internet connection.\nPlease try again later.</string>
-  <string name="errors_passcode_info">The Passcode should contain between 4 and 16 digits. </string>
+  <string name="errors_passcode_info">The Passcode should contain between %1$d and %2$d digits. </string>
   <string name="errors_passcode_not_match">Passcode doesn\'t match, please try again.</string>
   <string name="errors_passcode_try_again">Please try again in \%s minutes.</string>
   <string name="errors_passcode_try_again_short">Please try again in \%s minute. </string>
@@ -135,5 +135,5 @@
   <string name="fingerprint_scan_continue">Scan your Fingerprint to continue</string>
   <string name="fingerprint_scan_unlock">Scan your Fingerprint to unlock app</string>
   <string name="fingerprint_touch_sensor">Touch Sensor</string>
-  <string name="enter_passcode_or_fingerprint">Enter 4-digit Passcode or use Fingerprint</string>
+  <string name="enter_passcode_or_fingerprint">Enter %d-digit Passcode or use Fingerprint</string>
 </resources>

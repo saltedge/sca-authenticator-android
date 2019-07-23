@@ -70,9 +70,10 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
     }
 
     private fun updateDescription(biometricsActionIsAvailable: Boolean) {
-        descriptionView?.setText(
-                if (biometricsActionIsAvailable) R.string.enter_passcode_or_fingerprint
-                else R.string.actions_enter_passcode)
+        descriptionView?.text = if (biometricsActionIsAvailable) {
+            context.getString(R.string.enter_passcode_or_fingerprint, 4)
+        }
+        else context.getString(R.string.actions_enter_passcode)
     }
 }
 
