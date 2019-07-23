@@ -100,14 +100,14 @@
                 android:layout_gravity="center_horizontal" />
 
             <TextView
-                android:id="@+id/typeTextView"
+                android:id="@+id/providerNameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_12"
                 android:layout_gravity="center_horizontal"
                 android:maxLines="1"
                 style="@style/Text14GrayRegular"
-                tools:text="Payment request"/>
+                tools:text="Demobank"/>
 
             <TextView
                 android:id="@+id/titleTextView"
