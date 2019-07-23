@@ -46,25 +46,14 @@
         android:textColor="@color/primary_text"
         android:textSize="@dimen/text_20" />
 
-    <TextView
-        android:id="@+id/poweredByTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/companyLogoImageView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/dp_8"
-        android:text="@string/splash_screen_powered_by"
-        android:textColor="@color/gray"
-        android:textSize="@dimen/text_12" />
-
     <ImageView
         android:id="@+id/companyLogoImageView"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/splash_power_image_height"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/dp_40"
+        android:layout_marginBottom="@dimen/dp_32"
         android:contentDescription="@string/app_name"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_splash_saltedge" />
+        android:src="@drawable/ic_powered_by_saltedge" />
 </RelativeLayout>
