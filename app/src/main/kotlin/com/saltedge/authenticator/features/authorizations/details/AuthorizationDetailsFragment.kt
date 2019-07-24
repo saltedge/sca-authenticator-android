@@ -103,7 +103,7 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
         timerTextView?.text = presenterContract.remainedTimeDescription
         timeProgressView?.max = presenterContract.maxProgressSeconds
         timeProgressView?.remainedProgress = presenterContract.remainedSecondsTillExpire
-        typeTextView?.text = presenterContract.providerName
+        providerNameTextView?.text = presenterContract.providerName
         titleTextView?.text = presenterContract.title
 
         descriptionTextView?.setVisible(show = presenterContract.shouldShowDescriptionTextView)
@@ -188,7 +188,7 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
     private fun setHeaderVisibility(show: Boolean) {
         timerTextView?.setVisible(show)
         timeProgressView?.setVisible(show)
-        typeTextView?.setVisible(show)
+        providerNameTextView?.setVisible(show)
     }
 
     private fun injectDependencies() {
