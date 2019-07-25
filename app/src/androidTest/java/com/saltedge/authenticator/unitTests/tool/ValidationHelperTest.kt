@@ -25,7 +25,7 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.MAX_LENGTH_FOR_THE_PASSCODE
 import com.saltedge.authenticator.app.MIN_LENGTH_FOR_THE_PASSCODE
 import com.saltedge.authenticator.testTools.TestTools
-import com.saltedge.authenticator.tool.getPasscodeValidationError
+import com.saltedge.authenticator.tool.validPasscode
 import com.saltedge.authenticator.tool.isPasscodeValid
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -39,14 +39,14 @@ class ValidationHelperTest {
     @Test
     @Throws(Exception::class)
     fun getPasscodeValidationErrorTest() {
-        assertThat(getPasscodeValidationError("", TestTools.applicationContext),
+        assertThat(validPasscode("", TestTools.applicationContext),
                 equalTo(TestTools.applicationContext.getString(R.string.errors_empty_passcode)))
-        assertThat(getPasscodeValidationError("123", TestTools.applicationContext),
+        assertThat(validPasscode("123", TestTools.applicationContext),
                 equalTo(TestTools.applicationContext.getString(R.string.errors_passcode_info,
                         MIN_LENGTH_FOR_THE_PASSCODE, MAX_LENGTH_FOR_THE_PASSCODE)))
-        Assert.assertNull(getPasscodeValidationError("1234", TestTools.applicationContext))
-        Assert.assertNull(getPasscodeValidationError("1234567890123456", TestTools.applicationContext))
-        assertThat(getPasscodeValidationError("12345678901234567", TestTools.applicationContext),
+        Assert.assertNull(validPasscode("1234", TestTools.applicationContext))
+        Assert.assertNull(validPasscode("1234567890123456", TestTools.applicationContext))
+        assertThat(validPasscode("12345678901234567", TestTools.applicationContext),
                 equalTo(TestTools.applicationContext.getString(R.string.errors_passcode_info,
                         MIN_LENGTH_FOR_THE_PASSCODE, MAX_LENGTH_FOR_THE_PASSCODE)))
     }

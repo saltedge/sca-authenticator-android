@@ -30,9 +30,9 @@ import com.saltedge.authenticator.app.MIN_LENGTH_FOR_THE_PASSCODE
  *
  * @param passcode - entered passcode
  * @return boolean, true if
- * @see getPasscodeValidationError
+ * @see validPasscode
  */
-fun isPasscodeValid(passcode: String, context: Context): Boolean = getPasscodeValidationError(passcode, context) == null
+fun isPasscodeValid(passcode: String, context: Context): Boolean = validPasscode(passcode, context) == null
 
 /**
  * Get passcode validation error if passcode is empty or length is
@@ -41,7 +41,7 @@ fun isPasscodeValid(passcode: String, context: Context): Boolean = getPasscodeVa
  * @param passcode - entered passcode
  * @return Int object - string resource
  */
-fun getPasscodeValidationError(passcode: String, context: Context): String? {
+fun validPasscode(passcode: String, context: Context): String? {
     return when {
         passcode.isEmpty() -> context.getString(R.string.errors_empty_passcode)
         passcode.length < MIN_LENGTH_FOR_THE_PASSCODE || passcode.length > MAX_LENGTH_FOR_THE_PASSCODE ->

@@ -28,7 +28,7 @@ import androidx.annotation.StringRes
 import androidx.core.content.res.ResourcesCompat
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.getEnabledStateColorResId
-import com.saltedge.authenticator.tool.getPasscodeValidationError
+import com.saltedge.authenticator.tool.validPasscode
 import com.saltedge.authenticator.tool.setTextColorResId
 import com.saltedge.authenticator.tool.setVisible
 import kotlinx.android.synthetic.main.view_passcode_input.view.*
@@ -108,7 +108,7 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
                 }
             }
             InputMode.NEW_PASSCODE -> {
-                val errorName: String? = getPasscodeValidationError(enteredPasscode, context)
+                val errorName: String? = validPasscode(enteredPasscode, context)
                 errorName?.let { onInputError(it) }
                 if (errorName != null) {
                     onInputError(errorName)
