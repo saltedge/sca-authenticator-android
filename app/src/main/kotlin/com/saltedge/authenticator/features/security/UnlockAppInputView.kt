@@ -25,6 +25,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.MIN_LENGTH_FOR_THE_PASSCODE
 import com.saltedge.authenticator.tool.setVisible
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
@@ -71,9 +72,10 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
 
     private fun updateDescription(biometricsActionIsAvailable: Boolean) {
         descriptionView?.text = if (biometricsActionIsAvailable) {
-            context.getString(R.string.enter_passcode_or_fingerprint, 4)
+            context.getString(R.string.enter_passcode_or_fingerprint, MIN_LENGTH_FOR_THE_PASSCODE)
+        } else {
+            context.getString(R.string.actions_enter_passcode)
         }
-        else context.getString(R.string.actions_enter_passcode)
     }
 }
 
