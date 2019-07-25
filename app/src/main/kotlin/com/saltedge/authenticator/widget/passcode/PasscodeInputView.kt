@@ -28,7 +28,7 @@ import androidx.annotation.StringRes
 import androidx.core.content.res.ResourcesCompat
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.getEnabledStateColorResId
-import com.saltedge.authenticator.tool.validPasscode
+import com.saltedge.authenticator.tool.validatePasscode
 import com.saltedge.authenticator.tool.setTextColorResId
 import com.saltedge.authenticator.tool.setVisible
 import kotlinx.android.synthetic.main.view_passcode_input.view.*
@@ -108,7 +108,7 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
                 }
             }
             InputMode.NEW_PASSCODE -> {
-                validPasscode(enteredPasscode, context)?.let {
+                validatePasscode(enteredPasscode, context)?.let {
                     onInputError(it)
                 } ?: run {
                     initInputMode(inputMode = InputMode.REPEAT_NEW_PASSCODE, currentPasscode = enteredPasscode)
@@ -126,9 +126,9 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
         }
     }
 
-    private fun onInputError(errorRes: String) {
+    private fun onInputError(errorName: String) {
         passcodeTextInputView?.setText("")
-        passcodeTextInputLayout?.error = errorRes
+        passcodeTextInputLayout?.error = errorName
     }
 
     private fun updatePositiveActionEnabledState(isEnabled: Boolean) {

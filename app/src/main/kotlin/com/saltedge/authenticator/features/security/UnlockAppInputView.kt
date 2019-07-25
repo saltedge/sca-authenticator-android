@@ -25,7 +25,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.MIN_LENGTH_FOR_THE_PASSCODE
+import com.saltedge.authenticator.tool.MIN_LENGTH_FOR_THE_PASSCODE
 import com.saltedge.authenticator.tool.setVisible
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
