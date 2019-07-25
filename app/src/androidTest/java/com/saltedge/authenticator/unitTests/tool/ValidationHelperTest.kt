@@ -38,17 +38,15 @@ class ValidationHelperTest {
 
     @Test
     @Throws(Exception::class)
-    fun getPasscodeValidationErrorTest() {
+    fun validatePasscodeTests() {
         assertThat(validatePasscode("", TestTools.applicationContext),
                 equalTo(TestTools.applicationContext.getString(R.string.errors_empty_passcode)))
         assertThat(validatePasscode("123", TestTools.applicationContext),
-                equalTo(TestTools.applicationContext.getString(R.string.errors_passcode_info,
-                        MIN_LENGTH_FOR_THE_PASSCODE, MAX_LENGTH_FOR_THE_PASSCODE)))
+                equalTo("The Passcode should contain between 4 and 16 digits."))
         Assert.assertNull(validatePasscode("1234", TestTools.applicationContext))
         Assert.assertNull(validatePasscode("1234567890123456", TestTools.applicationContext))
         assertThat(validatePasscode("12345678901234567", TestTools.applicationContext),
-                equalTo(TestTools.applicationContext.getString(R.string.errors_passcode_info,
-                        MIN_LENGTH_FOR_THE_PASSCODE, MAX_LENGTH_FOR_THE_PASSCODE)))
+                equalTo("The Passcode should contain between 4 and 16 digits."))
     }
 
     @Test
