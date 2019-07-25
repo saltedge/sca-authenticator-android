@@ -108,11 +108,9 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
                 }
             }
             InputMode.NEW_PASSCODE -> {
-                val errorName: String? = validPasscode(enteredPasscode, context)
-                errorName?.let { onInputError(it) }
-                if (errorName != null) {
-                    onInputError(errorName)
-                } else {
+                validPasscode(enteredPasscode, context)?.let {
+                    onInputError(it)
+                } ?: run {
                     initInputMode(inputMode = InputMode.REPEAT_NEW_PASSCODE, currentPasscode = enteredPasscode)
                     listener?.onNewPasscodeEntered(mode = InputMode.REPEAT_NEW_PASSCODE, passcode = currentPasscode)
                 }
