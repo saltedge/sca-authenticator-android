@@ -20,27 +20,37 @@
  */
 package com.saltedge.authenticator.tool
 
+import android.content.Context
 import com.saltedge.authenticator.R
+
+const val MIN_LENGTH_FOR_THE_PASSCODE = 4
+const val MAX_LENGTH_FOR_THE_PASSCODE = 16
+private val passcodeValidationRange = MIN_LENGTH_FOR_THE_PASSCODE..MAX_LENGTH_FOR_THE_PASSCODE
 
 /**
  * Checks if passcode is valid
  *
  * @param passcode - entered passcode
  * @return boolean, true if
- * @see getPasscodeValidationError
+ * @see validatePasscode
  */
-fun isPasscodeValid(passcode: String): Boolean = getPasscodeValidationError(passcode) == null
+fun isPasscodeValid(passcode: String): Boolean = passcode.length in passcodeValidationRange
 
 /**
- * Get passcode validation error if passcode is empty or length is less than 4 or more than 16
+ * Get passcode validation error if passcode is empty or length is
+ * less than MIN_LENGTH_FOR_THE_PASSCODE or more than MAX_LENGTH_FOR_THE_PASSCODE
  *
  * @param passcode - entered passcode
  * @return Int object - string resource
  */
-fun getPasscodeValidationError(passcode: String): Int? {
+fun validatePasscode(passcode: String, context: Context): String? {
     return when {
-        passcode.isEmpty() -> R.string.errors_empty_passcode
-        passcode.length < 4 || passcode.length > 16 -> R.string.errors_passcode_info
+        passcode.isEmpty() -> context.getString(R.string.errors_empty_passcode)
+        !isPasscodeValid(passcode) ->
+            context.getString(
+                    R.string.errors_passcode_info, MIN_LENGTH_FOR_THE_PASSCODE,
+                    MAX_LENGTH_FOR_THE_PASSCODE
+            )
         else -> null
     }
 }

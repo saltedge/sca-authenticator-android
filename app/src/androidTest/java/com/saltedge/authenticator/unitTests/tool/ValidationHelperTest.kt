@@ -22,7 +22,10 @@ package com.saltedge.authenticator.unitTests.tool
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tool.getPasscodeValidationError
+import com.saltedge.authenticator.testTools.TestTools
+import com.saltedge.authenticator.tool.MAX_LENGTH_FOR_THE_PASSCODE
+import com.saltedge.authenticator.tool.MIN_LENGTH_FOR_THE_PASSCODE
+import com.saltedge.authenticator.tool.validatePasscode
 import com.saltedge.authenticator.tool.isPasscodeValid
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -35,15 +38,15 @@ class ValidationHelperTest {
 
     @Test
     @Throws(Exception::class)
-    fun getPasscodeValidationErrorTest() {
-        assertThat(getPasscodeValidationError(""),
-                equalTo(R.string.errors_empty_passcode))
-        assertThat(getPasscodeValidationError("123"),
-                equalTo(R.string.errors_passcode_info))
-        Assert.assertNull(getPasscodeValidationError("1234"))
-        Assert.assertNull(getPasscodeValidationError("1234567890123456"))
-        assertThat(getPasscodeValidationError("12345678901234567"),
-                equalTo(R.string.errors_passcode_info))
+    fun validatePasscodeTests() {
+        assertThat(validatePasscode("", TestTools.applicationContext),
+                equalTo(TestTools.applicationContext.getString(R.string.errors_empty_passcode)))
+        assertThat(validatePasscode("123", TestTools.applicationContext),
+                equalTo("The Passcode should contain between 4 and 16 digits."))
+        Assert.assertNull(validatePasscode("1234", TestTools.applicationContext))
+        Assert.assertNull(validatePasscode("1234567890123456", TestTools.applicationContext))
+        assertThat(validatePasscode("12345678901234567", TestTools.applicationContext),
+                equalTo("The Passcode should contain between 4 and 16 digits."))
     }
 
     @Test

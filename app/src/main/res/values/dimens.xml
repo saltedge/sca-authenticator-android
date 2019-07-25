@@ -47,6 +47,7 @@
     <dimen name="dp_32">32dp</dimen>
     <dimen name="dp_34">34dp</dimen>
     <dimen name="dp_36">36dp</dimen>
+    <dimen name="dp_38">38dp</dimen>
     <dimen name="dp_40">40dp</dimen>
     <dimen name="dp_42">42dp</dimen>
     <dimen name="dp_44">44dp</dimen>
@@ -105,7 +106,8 @@
 
     <!--extra dimens and aliases-->
     <dimen name="splash_logo_image_size">@dimen/dp_70</dimen>
-    <dimen name="splash_power_image_height">@dimen/dp_64</dimen>
+    <dimen name="splash_power_image_height">@dimen/dp_56</dimen>
+    <dimen name="splash_power_image_width">@dimen/dp_110</dimen>
     <dimen name="button_corner_radius">2dp</dimen>
     <dimen name="action_bar_size">@dimen/dp_56</dimen>
     <dimen name="info_view_small_icon">@dimen/dp_64</dimen>
