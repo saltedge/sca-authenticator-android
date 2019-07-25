@@ -69,6 +69,11 @@ class BiometricsInputDialog : BaseRoundedBottomDialogFragment(),
         if (!isAdded) context.showDialogFragment(this)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        retainInstance = true
+    }
+
     override fun getDialogViewLayout(): Int = R.layout.dialog_fingerprint
 
     override fun onStart() {

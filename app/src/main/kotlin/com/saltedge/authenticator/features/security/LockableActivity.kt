@@ -154,7 +154,11 @@ abstract class LockableActivity : AppCompatActivity(), PasscodeInputViewListener
 
     @TargetApi(Build.VERSION_CODES.P)
     private fun displayBiometricPrompt() {
-        biometricPrompt = if (AppTools.isBiometricPromptV28Enabled()) BiometricPromptManagerV28() else BiometricsInputDialog()
+        biometricPrompt = if (AppTools.isBiometricPromptV28Enabled()) {
+            BiometricPromptManagerV28()
+        } else {
+            BiometricsInputDialog()
+        }
         biometricPrompt?.resultCallback = this
         biometricPrompt?.showBiometricPrompt(
                 context = this,

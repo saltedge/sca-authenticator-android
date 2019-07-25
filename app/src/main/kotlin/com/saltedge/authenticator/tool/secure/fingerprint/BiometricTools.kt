@@ -44,7 +44,8 @@ object BiometricTools : BiometricToolsAbs {
     override fun replaceFingerprintKey() = KeyStoreManager.createOrReplaceRsaKeyPair(FINGERPRINT_ALIAS_FOR_PIN)
 
     override fun activateFingerprint(): Boolean {
-        return if (KeyStoreManager.keyPairExist(FINGERPRINT_ALIAS_FOR_PIN)) {
+        KeyStoreManager.createOrReplaceAesBiometricKey(FINGERPRINT_ALIAS_FOR_PIN)
+        return if (KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN)) {
             PreferenceRepository.fingerprintEnabled = true
             true
         } else false
@@ -70,7 +71,7 @@ object BiometricTools : BiometricToolsAbs {
     @SuppressLint("NewApi")
     override fun initFingerprintCipher(): Cipher? {
         try {
-            val key = KeyStoreManager.createOrReplaceAesBiometricKey(FINGERPRINT_ALIAS_FOR_PIN) ?: return null
+            val key = KeyStoreManager.getSecretKey(FINGERPRINT_ALIAS_FOR_PIN) ?: return null
             val mCipher = Cipher.getInstance("AES/CBC/${KeyProperties.ENCRYPTION_PADDING_PKCS7}")
             mCipher?.init(Cipher.ENCRYPT_MODE, key)
             return mCipher
@@ -135,11 +136,11 @@ object BiometricTools : BiometricToolsAbs {
         }
     }
 
-    private fun Context.getFingerprintManager(): FingerprintManager? {
-        return getSystemService(Context.FINGERPRINT_SERVICE) as? FingerprintManager
-    }
-
     private fun Context.getKeyguardManager(): KeyguardManager? {
         return getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
     }
+}
+
+fun Context.getFingerprintManager(): FingerprintManager? {
+    return getSystemService(Context.FINGERPRINT_SERVICE) as? FingerprintManager
 }
