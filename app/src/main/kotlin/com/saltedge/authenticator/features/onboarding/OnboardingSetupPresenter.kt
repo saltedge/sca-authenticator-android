@@ -21,11 +21,14 @@
 package com.saltedge.authenticator.features.onboarding
 
 import android.content.Context
+import android.os.Handler
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
+
+const val COMPLETE_SCREEN_DURATION = 3000L
 
 /**
  * Presenter of OnboardingSetupFragment
@@ -42,6 +45,7 @@ class OnboardingSetupPresenter(
     var setupViewMode: SetupViewMode = SetupViewMode.INPUT_PASSCODE
     val setupStepCount: Int
         get() = setupModesList.count()
+    private var handler: Handler? = null
 
     val onboardingViewModels: List<OnboardingPageViewModel> = listOf(
             OnboardingPageViewModel(
@@ -94,7 +98,7 @@ class OnboardingSetupPresenter(
 
     fun onViewClick(viewId: Int) {
         when (viewId) {
-            R.id.skipActionView, R.id.proceedActionView -> {
+            R.id.skipActionView, R.id.proceedToSetup -> {
                 showPasscodeInput()
             }
             R.id.allowTouchIdActionView -> onAllowTouchIdClick()
@@ -105,12 +109,17 @@ class OnboardingSetupPresenter(
             R.id.allowNotificationsActionView -> {
                 preferenceRepository.notificationsEnabled = true
                 goToNextSetupView()
+                startNextActivityWithDelay()
             }
             R.id.skipNotificationsActionView -> {
                 preferenceRepository.notificationsEnabled = false
                 goToNextSetupView()
+                startNextActivityWithDelay()
             }
-            R.id.mainActionView -> viewContract?.showMainActivity()
+            R.id.proceedToMainActivity -> {
+                viewContract?.showMainActivity()
+                stopDelayHandler()
+            }
         }
     }
 
@@ -118,6 +127,15 @@ class OnboardingSetupPresenter(
         if (passcodeTools.savePasscode(passcode)) {
             goToNextSetupView()
         } else viewContract?.showWarningDialogWithMessage(appContext.getString(R.string.errors_internal_error))
+    }
+
+    fun stopDelayHandler() {
+        handler?.removeCallbacksAndMessages(null)
+    }
+
+    private fun startNextActivityWithDelay() {
+        handler = Handler()
+        handler?.postDelayed({ viewContract?.showMainActivity() }, COMPLETE_SCREEN_DURATION)
     }
 
     private fun showPasscodeInput() {
@@ -131,7 +149,7 @@ class OnboardingSetupPresenter(
         viewContract?.updateSetupViews(
                 setupStepProgress = setupStepProgress,
                 headerTitle = getSetupTitleResId(setupViewMode, inputMode),
-                headerDescription = getSetupSubtitleResId(setupViewMode),
+                headerDescription = getSetupSubtitleResId(setupViewMode, inputMode),
                 showPasscodeCancel = shouldShowPasscodeInputNegativeActionView(inputMode),
                 passcodePositiveActionText = getPositivePasscodeActionViewText(inputMode)
         )
@@ -148,13 +166,16 @@ class OnboardingSetupPresenter(
             }
             SetupViewMode.ALLOW_BIOMETRICS -> R.string.onboarding_secure_app_touch_id_allow_android
             SetupViewMode.ALLOW_NOTIFICATIONS -> R.string.onboarding_allow_notifications_title
-            SetupViewMode.COMPLETE -> R.string.onboarding_find_bank_completed_title
+            SetupViewMode.COMPLETE -> R.string.onboarding_well_done_title
         }
     }
 
-    private fun getSetupSubtitleResId(mode: SetupViewMode): Int {
+    private fun getSetupSubtitleResId(mode: SetupViewMode, passcodeInputMode: PasscodeInputView.InputMode?): Int {
         return when (mode) {
-            SetupViewMode.INPUT_PASSCODE -> R.string.onboarding_secure_app_passcode_description
+            SetupViewMode.INPUT_PASSCODE -> {
+                if (passcodeInputMode == PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE) R.string.onboarding_secure_app_passcode_confirm
+                else R.string.onboarding_secure_app_passcode_description
+            }
             SetupViewMode.ALLOW_BIOMETRICS -> R.string.onboarding_secure_app_touch_id_description_android
             SetupViewMode.ALLOW_NOTIFICATIONS -> R.string.onboarding_allow_notifications_description
             SetupViewMode.COMPLETE -> R.string.onboarding_completed_description
