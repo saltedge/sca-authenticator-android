@@ -33,8 +33,9 @@ import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 import kotlinx.android.synthetic.main.activity_onboarding.*
-import kotlinx.android.synthetic.main.fragment_setup_notifications_view.*
-import kotlinx.android.synthetic.main.fragment_setup_touch_id_view.*
+import kotlinx.android.synthetic.main.view_complete_container.*
+import kotlinx.android.synthetic.main.view_notifications.*
+import kotlinx.android.synthetic.main.view_touch_id.*
 import javax.inject.Inject
 
 class OnboardingSetupActivity : AppCompatActivity(),
@@ -60,6 +61,11 @@ class OnboardingSetupActivity : AppCompatActivity(),
     override fun onStop() {
         presenter.viewContract = null
         super.onStop()
+    }
+
+    override fun onDestroy() {
+        presenter.stopDelayHandler()
+        super.onDestroy()
     }
 
     override fun onPageScrollStateChanged(state: Int) {}
@@ -98,7 +104,7 @@ class OnboardingSetupActivity : AppCompatActivity(),
 
     override fun hideSkipViewAndShowProceedView() {
         skipActionView?.setVisible(show = false)
-        proceedActionView?.setVisible(show = true)
+        proceedToSetup?.setVisible(show = true)
     }
 
     override fun hideOnboardingViewAndShowSetupView() {
@@ -156,10 +162,10 @@ class OnboardingSetupActivity : AppCompatActivity(),
             pageIndicatorView?.selection = 0
         }
         skipActionView?.setOnClickListener(this)
-        proceedActionView?.setFont(R.font.roboto_regular)
-        proceedActionView?.setOnClickListener(this)
+        proceedToSetup?.setFont(R.font.roboto_regular)
+        proceedToSetup?.setOnClickListener(this)
         skipActionView?.setVisible(show = true)
-        proceedActionView?.setVisible(show = false)
+        proceedToSetup?.setVisible(show = false)
     }
 
     private fun initSetupViews() {
@@ -167,7 +173,7 @@ class OnboardingSetupActivity : AppCompatActivity(),
         setupInputPasscodeViewContent()
         setupAllowTouchIdViewContent()
         setupAllowNotificationsViewContent()
-        completeContainer?.setOnClickListener(this)
+        proceedToMainActivity?.setOnClickListener(this)
     }
 
     private fun setupAllowNotificationsViewContent() {

@@ -58,7 +58,7 @@
             tools:textColor="@android:color/white" />
 
         <Button
-            android:id="@+id/proceedActionView"
+            android:id="@+id/proceedToSetup"
             style="@style/BlueFullWidthButton"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
@@ -81,17 +81,6 @@
             android:layout_marginLeft="@dimen/dp_16"
             android:layout_marginTop="@dimen/dp_30"
             android:layout_marginRight="@dimen/dp_16" />
-
-        <com.saltedge.authenticator.widget.InfoView
-            android:id="@+id/completeContainer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            app:iconDimension="@dimen/info_view_big_icon"
-            app:iconSrc="@drawable/ic_complete_ok_70"
-            app:mainActionText="@string/actions_proceed"
-            app:subTitleText="@string/onboarding_completed_description"
-            app:titleText="@string/onboarding_find_bank_completed_title" />
 
         <TextView
             android:id="@+id/headerTitleView"
@@ -122,10 +111,14 @@
 
         <include
             android:id="@+id/allowTouchIdContainer"
-            layout="@layout/fragment_setup_touch_id_view" />
+            layout="@layout/view_touch_id" />
 
         <include
             android:id="@+id/allowNotificationsContainer"
-            layout="@layout/fragment_setup_notifications_view" />
+            layout="@layout/view_notifications" />
+
+        <include
+            android:id="@+id/completeContainer"
+            layout="@layout/view_complete_container" />
     </LinearLayout>
 </FrameLayout>

@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.unitTests.features.onboarding
 
+import androidx.test.annotation.UiThreadTest
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.onboarding.OnboardingPageViewModel
@@ -117,7 +118,7 @@ class OnboardingSetupPresenterTest {
         Mockito.verify(mockView).updateSetupViews(
                 setupStepProgress = 0f,
                 headerTitle = R.string.onboarding_secure_app_passcode_repeat,
-                headerDescription = R.string.onboarding_secure_app_passcode_description,
+                headerDescription = R.string.onboarding_secure_app_passcode_confirm,
                 showPasscodeCancel = true,
                 passcodePositiveActionText = R.string.actions_ok)
         Mockito.verifyNoMoreInteractions(mockView)
@@ -218,8 +219,8 @@ class OnboardingSetupPresenterTest {
 
     @Test
     @Throws(Exception::class)
-    fun onViewClickTest_proceedActionView() {
-        createPresenter(viewContract = mockView).onViewClick(viewId = R.id.proceedActionView)
+    fun onViewClickTest_proceedToSetup() {
+        createPresenter(viewContract = mockView).onViewClick(viewId = R.id.proceedToSetup)
 
         Mockito.verify(mockView).hideOnboardingViewAndShowSetupView()
         Mockito.verify(mockView).setPasscodeInputMode(PasscodeInputView.InputMode.NEW_PASSCODE)
@@ -234,8 +235,8 @@ class OnboardingSetupPresenterTest {
 
     @Test
     @Throws(Exception::class)
-    fun onViewClickTest_proceedActionView_noViewContract() {
-        createPresenter(viewContract = null).onViewClick(viewId = R.id.proceedActionView)
+    fun onViewClickTest_proceedToSetup_noViewContract() {
+        createPresenter(viewContract = null).onViewClick(viewId = R.id.proceedToSetup)
 
         Mockito.verifyNoMoreInteractions(mockView)
     }
@@ -320,6 +321,7 @@ class OnboardingSetupPresenterTest {
     }
 
     @Test
+    @UiThreadTest
     @Throws(Exception::class)
     fun onViewClickTest_allowNotificationsActionView() {
         val presenter = createPresenter(viewContract = mockView)
@@ -330,7 +332,7 @@ class OnboardingSetupPresenterTest {
         assertThat(presenter.setupViewMode, equalTo(SetupViewMode.COMPLETE))
         Mockito.verify(mockView).updateSetupViews(
                 setupStepProgress = 3f,
-                headerTitle = R.string.onboarding_find_bank_completed_title,
+                headerTitle = R.string.onboarding_well_done_title,
                 headerDescription = R.string.onboarding_completed_description,
                 showPasscodeCancel = null,
                 passcodePositiveActionText = null)
@@ -338,6 +340,7 @@ class OnboardingSetupPresenterTest {
     }
 
     @Test
+    @UiThreadTest
     @Throws(Exception::class)
     fun onViewClickTest_allowNotificationsActionView_noViewContract() {
         val presenter = createPresenter(viewContract = null)
@@ -350,6 +353,7 @@ class OnboardingSetupPresenterTest {
     }
 
     @Test
+    @UiThreadTest
     @Throws(Exception::class)
     fun onViewClickTest_skipNotificationsActionView() {
         val presenter = createPresenter(viewContract = mockView)
@@ -360,7 +364,7 @@ class OnboardingSetupPresenterTest {
         assertThat(presenter.setupViewMode, equalTo(SetupViewMode.COMPLETE))
         Mockito.verify(mockView).updateSetupViews(
                 setupStepProgress = 3f,
-                headerTitle = R.string.onboarding_find_bank_completed_title,
+                headerTitle = R.string.onboarding_well_done_title,
                 headerDescription = R.string.onboarding_completed_description,
                 showPasscodeCancel = null,
                 passcodePositiveActionText = null)
@@ -368,6 +372,7 @@ class OnboardingSetupPresenterTest {
     }
 
     @Test
+    @UiThreadTest
     @Throws(Exception::class)
     fun onViewClickTest_skipNotificationsActionView_noViewContract() {
         val presenter = createPresenter(viewContract = null)
@@ -381,8 +386,8 @@ class OnboardingSetupPresenterTest {
 
     @Test
     @Throws(Exception::class)
-    fun onViewClickTest_mainActionView() {
-        createPresenter(viewContract = mockView).onViewClick(R.id.mainActionView)
+    fun onViewClickTest_proceedToMainActivity() {
+        createPresenter(viewContract = mockView).onViewClick(R.id.proceedToMainActivity)
 
         Mockito.verify(mockView).showMainActivity()
     }

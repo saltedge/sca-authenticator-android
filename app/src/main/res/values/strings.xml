@@ -48,6 +48,7 @@
   <string name="actions_allow">Allow</string>
   <string name="actions_connect_provider">Connect Provider</string>
   <string name="actions_confirm">Confirm</string>
+  <string name="actions_enter_passcode_or_fingerprint">Enter Passcode or use Fingerprint</string>
 
   <string name="errors_db_init">Database initialize error</string>
   <string name="errors_camera_init">Camera initialize error</string>
@@ -82,10 +83,11 @@
   <string name="onboarding_carousel_two_description">Each time you make a payment, you’ll receive a confirmation to authorize that transaction, keeping you in control at all times.</string>
   <string name="onboarding_carousel_two_title">Absolute Control</string>
   <string name="onboarding_completed_description">Your App has been successfully set. Connect a Provider, so you can receive a confirmation every time you make a payment.</string>
-  <string name="onboarding_find_bank_completed_title">Sign Up Complete</string>
-  <string name="onboarding_secure_app_passcode_create">Create New Passcode</string>
+  <string name="onboarding_well_done_title">Well done!</string>
+  <string name="onboarding_secure_app_passcode_create">Create Passcode</string>
   <string name="onboarding_secure_app_passcode_description">Create a passcode to keep all your data safe from prying eyes</string>
   <string name="onboarding_secure_app_passcode_repeat">Repeat Passcode</string>
+  <string name="onboarding_secure_app_passcode_confirm">Confirm the previous passcode</string>
   <string name="onboarding_secure_app_touch_id_allow_android">Allow Fingerprint</string>
   <string name="onboarding_secure_app_touch_id_description_android">Use Fingerprint to enter the App faster, but don’t worry, you’ll still have your passcode as backup.</string>
 
@@ -135,5 +137,4 @@
   <string name="fingerprint_scan_continue">Scan your Fingerprint to continue</string>
   <string name="fingerprint_scan_unlock">Scan your Fingerprint to unlock app</string>
   <string name="fingerprint_touch_sensor">Touch Sensor</string>
-  <string name="enter_passcode_or_fingerprint">Enter %d-digit Passcode or use Fingerprint</string>
 </resources>
