@@ -31,7 +31,6 @@ import com.saltedge.authenticator.features.main.MainActivityPresenter
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
-import com.saltedge.authenticator.sdk.model.ProviderData
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert
@@ -57,16 +56,15 @@ class MainActivityPresenterTest {
     @Throws(Exception::class)
     fun launchInitialFragmentTest_normalMode() {
         val presenter = MainActivityPresenter(viewContract = mockView, connectionsRepository = mockConnectionsRepository)
-        presenter.setInitialData(Intent())
 
         Mockito.doReturn(false).`when`(mockConnectionsRepository).hasActiveConnections()
-        presenter.launchInitialFragment()
+        presenter.launchInitialFragment(Intent())
 
         Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_connections)
 
         Mockito.doReturn(true).`when`(mockConnectionsRepository).hasActiveConnections()
         Mockito.clearInvocations(mockConnectionsRepository)
-        presenter.launchInitialFragment()
+        presenter.launchInitialFragment(Intent())
 
         Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_authorizations)
     }
@@ -75,11 +73,8 @@ class MainActivityPresenterTest {
     @Throws(Exception::class)
     fun launchInitialFragmentTest_quickConfirmMode() {
         val presenter = MainActivityPresenter(viewContract = mockView, connectionsRepository = mockConnectionsRepository)
-        presenter.setInitialData(Intent().putExtra(KEY_CONNECTION_ID, "connectionId1").putExtra(KEY_AUTHORIZATION_ID, "authorizationId1"))
+        presenter.launchInitialFragment(Intent().putExtra(KEY_CONNECTION_ID, "connectionId1").putExtra(KEY_AUTHORIZATION_ID, "authorizationId1"))
 
-        presenter.launchInitialFragment()
-
-        Mockito.verify(mockView).hideNavigationBar()
         Mockito.verify(mockView).showAuthorizationDetailsView("connectionId1", "authorizationId1", true)
     }
 
@@ -135,26 +130,24 @@ class MainActivityPresenterTest {
     @Throws(Exception::class)
     fun onFragmentBackStackChangedTest() {
         val presenter = MainActivityPresenter(viewContract = mockView, connectionsRepository = mockConnectionsRepository)
-        presenter.setInitialData(Intent())
-        presenter.onFragmentBackStackChanged(stackIsClear = false)
+        presenter.onFragmentBackStackChanged(stackIsClear = false, intent = Intent())
 
         Mockito.verify(mockView).updateNavigationViewsContent()
 
         Mockito.clearInvocations(mockView)
-        presenter.setInitialData(Intent())
-        presenter.onFragmentBackStackChanged(stackIsClear = true)
+        presenter.onFragmentBackStackChanged(stackIsClear = true, intent = Intent())
 
         Mockito.verify(mockView).updateNavigationViewsContent()
 
         Mockito.clearInvocations(mockView)
-        presenter.setInitialData(Intent().putExtra(KEY_CONNECTION_ID, "connectionId1").putExtra(KEY_AUTHORIZATION_ID, "authorizationId1"))
-        presenter.onFragmentBackStackChanged(stackIsClear = false)
+        presenter.onFragmentBackStackChanged(stackIsClear = false,
+                intent = Intent().putExtra(KEY_CONNECTION_ID, "connectionId1").putExtra(KEY_AUTHORIZATION_ID, "authorizationId1"))
 
         Mockito.verify(mockView).updateNavigationViewsContent()
 
         Mockito.clearInvocations(mockView)
-        presenter.setInitialData(Intent().putExtra(KEY_CONNECTION_ID, "connectionId1").putExtra(KEY_AUTHORIZATION_ID, "authorizationId1"))
-        presenter.onFragmentBackStackChanged(stackIsClear = true)
+        presenter.onFragmentBackStackChanged(stackIsClear = true,
+                intent = Intent().putExtra(KEY_CONNECTION_ID, "connectionId1").putExtra(KEY_AUTHORIZATION_ID, "authorizationId1"))
 
         Mockito.verify(mockView).closeView()
     }
