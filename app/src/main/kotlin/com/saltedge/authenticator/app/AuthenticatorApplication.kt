@@ -29,7 +29,6 @@ import com.saltedge.android.security.RaspChecker
 import com.saltedge.authenticator.app.di.AppComponent
 import com.saltedge.authenticator.app.di.AppModule
 import com.saltedge.authenticator.app.di.DaggerAppComponent
-import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.model.db.RealmManager
 import com.saltedge.authenticator.tool.AppTools
 import com.saltedge.authenticator.tool.createCrashlyticsKit
@@ -88,9 +87,6 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
     override fun onActivityStopped(activity: Activity?) {}
 
     override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {}
-
-    val mainActivityIsActive: Boolean
-        get() = currentActivityName == MainActivity::class.java.name
 
     private fun initFirebaseModules() {
         Fabric.with(this, createCrashlyticsKit())

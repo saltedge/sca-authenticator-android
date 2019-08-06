@@ -26,7 +26,7 @@ import com.saltedge.authenticator.sdk.constants.API_VERSION
  * Checks validity of Provider model
  *
  * @receiver Encrypted authorization
- * @return boolean. true if name, code, connectUrl fields are present
+ * @return boolean. true if `name`, `code` and `connectUrl` fields are present
  * and version code equal to API_VERSION constant
  */
 fun ProviderData.isValid(): Boolean {

@@ -68,9 +68,9 @@ class ConnectionInitConnectorTest {
 
         connector.onResponse(mockCall, Response.success(
                         CreateConnectionResponseData(
-                                AuthenticateConnectionData(connectionId = "333", authenticateUrl = "url"))))
+                                AuthenticateConnectionData(connectionId = "333", redirectUrl = "url"))))
 
-        verify { mockCallback.onConnectionInitSuccess(AuthenticateConnectionData(connectionId = "333", authenticateUrl = "url")) }
+        verify { mockCallback.onConnectionInitSuccess(AuthenticateConnectionData(connectionId = "333", redirectUrl = "url")) }
         confirmVerified(mockCallback)
     }
 

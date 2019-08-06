@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.editName
+package com.saltedge.authenticator.features.connections.edit.name
 
 import android.app.Activity
 import android.app.Dialog

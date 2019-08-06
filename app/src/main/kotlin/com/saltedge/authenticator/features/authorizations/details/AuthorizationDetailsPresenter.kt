@@ -56,10 +56,12 @@ class AuthorizationDetailsPresenter(
 
     override fun baseViewContract(): BaseAuthorizationViewContract? = viewContract
 
-    fun setInitialData(connectionId: String,
-                       authorizationId: String?,
-                       viewModel: AuthorizationViewModel?,
-                       quickConfirmMode: Boolean) {
+    fun setInitialData(
+            connectionId: String,
+            authorizationId: String?,
+            viewModel: AuthorizationViewModel?,
+            quickConfirmMode: Boolean
+    ) {
         this.quickConfirmMode = quickConfirmMode
         super.currentConnectionAndKey = createConnectionAndKey(
                 connectionId,

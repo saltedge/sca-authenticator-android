@@ -60,10 +60,14 @@ class MainActivity : LockableActivity(),
         this.updateScreenshotLocking()
         setContentView(R.layout.activity_main)
         setupViews()
-        presenter.setInitialData(intent)
         if (savedInstanceState == null) {
-            presenter.launchInitialFragment()
+            presenter.launchInitialFragment(intent)
         }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.let { presenter.onNewIntentReceived(it) }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -115,6 +119,10 @@ class MainActivity : LockableActivity(),
         bottomNavigationView?.setVisible(show = false)
     }
 
+    override fun showNavigationBar() {
+        bottomNavigationView?.setVisible(show = true)
+    }
+
     override fun setSelectedTabbarItemId(menuId: Int) {
         bottomNavigationView?.selectedItemId = menuId
     }
@@ -164,7 +172,7 @@ class MainActivity : LockableActivity(),
     override fun getAppBarLayout(): View? = appBarLayout
 
     override fun onBackStackChanged() {
-        presenter.onFragmentBackStackChanged(isTopNavigationLevel())
+        presenter.onFragmentBackStackChanged(isTopNavigationLevel(), intent)
     }
 
     private fun setupViews() {
