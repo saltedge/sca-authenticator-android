@@ -30,6 +30,6 @@ data class CreateConnectionResponseData(
 )
 
 data class AuthenticateConnectionData(
-        @SerializedName(KEY_CONNECT_URL) var authenticateUrl: String? = null,
+        @SerializedName(KEY_CONNECT_URL) var redirectUrl: String? = null,
         @SerializedName(KEY_ID) var connectionId: String? = null
 )

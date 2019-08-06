@@ -24,4 +24,6 @@ interface ActivityComponentsContract {
     fun updateAppbarTitle(title: String)
     fun hideActionBar()
     fun showActionBar()
+    fun hideNavigationBar()
+    fun showNavigationBar()
 }

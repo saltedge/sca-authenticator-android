@@ -69,6 +69,12 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
         negativeActionView?.setOnClickListener(this)
         positiveActionView?.setOnClickListener(this)
         closeActionView?.setOnClickListener(this)
+        activityComponents?.hideNavigationBar()
+    }
+
+    override fun onDestroyView() {
+        activityComponents?.showNavigationBar()
+        super.onDestroyView()
     }
 
     override fun onClick(view: View?) {

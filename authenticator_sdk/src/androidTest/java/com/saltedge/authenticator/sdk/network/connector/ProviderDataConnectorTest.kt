@@ -65,7 +65,7 @@ class ProviderDataConnectorTest {
 
         connector.onResponse(mockCall,
                 Response.success(ProviderResponseData(ProviderData(
-                        connectUrl = "connectUrl",
+                        connectUrl = "redirectUrl",
                         name = "name",
                         code = "code",
                         logoUrl = "url",
@@ -76,7 +76,7 @@ class ProviderDataConnectorTest {
         verify {
             mockCallback.fetchProviderResult(
                 result = ProviderData(
-                        connectUrl = "connectUrl",
+                        connectUrl = "redirectUrl",
                         name = "name",
                         code = "code",
                         logoUrl = "url",

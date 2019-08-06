@@ -29,7 +29,6 @@ import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
-import com.saltedge.authenticator.sdk.tools.extractConnectConfigurationLink
 import com.saltedge.authenticator.tool.ResId
 
 class MainActivityPresenter(
@@ -37,26 +36,37 @@ class MainActivityPresenter(
         private val connectionsRepository: ConnectionsRepositoryAbs
 ) {
 
-    private var connectionId: String = ""//connectionId from Push notification
-    private var authorizationId: String = ""//authorizationId from Push notification
-    private var connectConfigurationLink: String? = null//link to Provider configuration to create new connection
+    /**
+     * Starts initial fragment
+     * if activity is in quickConfirmMode then shows AuthorizationDetails
+     * if exist active connection in db then shows AuthorizationsList
+     * else shows ConnectionsList
+     */
+    fun launchInitialFragment(intent: Intent?) {
+        if (intent != null && (intent.hasConnectionIdAndAuthorizationId || intent.hasConnectConfigurationLink)) {
+            onNewIntentReceived(intent)
+        } else {
+            viewContract.setSelectedTabbarItemId(if (connectionsRepository.hasActiveConnections()) {
+                R.id.menu_authorizations
+            } else {
+                R.id.menu_connections
+            })
+        }
+    }
 
     /**
-     * if received connectionId and authorizationId from notification then should be opened AuthorizationDetailsView
+     * On new intent with data received
      */
-    private val quickConfirmMode: Boolean
-        get() = connectionId.isNotEmpty() && authorizationId.isNotEmpty()
-
-    private val quickConnectMode: Boolean
-        get() = connectConfigurationLink?.isNotEmpty() == true
-
-    /**
-     * Setup initial data for presenter
-     */
-    fun setInitialData(intent: Intent?) {
-        connectionId = intent?.getStringExtra(KEY_CONNECTION_ID) ?: ""
-        authorizationId = intent?.getStringExtra(KEY_AUTHORIZATION_ID) ?: ""
-        connectConfigurationLink = intent?.getStringExtra(KEY_DEEP_LINK)?.extractConnectConfigurationLink()
+    fun onNewIntentReceived(intent: Intent) {
+        when {
+            intent.hasConnectionIdAndAuthorizationId -> {
+                viewContract.showAuthorizationDetailsView(intent.connectionId, intent.authorizationId, quickConfirmMode = true)
+            }
+            intent.hasConnectConfigurationLink -> {
+                viewContract.setSelectedTabbarItemId(R.id.menu_connections)
+                viewContract.showConnectProvider(intent.connectConfigurationLink)
+            }
+        }
     }
 
     /**
@@ -67,30 +77,6 @@ class MainActivityPresenter(
      */
     fun getNavigationIcon(isTopNavigationLevel: Boolean): ResId? =
             if (isTopNavigationLevel) null else R.drawable.ic_arrow_back_white_24dp
-
-    /**
-     * Starts initial fragment
-     * if activity is in quickConfirmMode then shows AuthorizationDetails
-     * if exist active connection in db then shows AuthorizationsList
-     * else shows ConnectionsList
-     */
-    fun launchInitialFragment() {
-        when {
-            quickConfirmMode -> {
-                viewContract.hideNavigationBar()
-                viewContract.showAuthorizationDetailsView(connectionId, authorizationId, quickConfirmMode)
-            }
-            quickConnectMode -> {
-                viewContract.setSelectedTabbarItemId(R.id.menu_connections)
-                connectConfigurationLink?.let { viewContract.showConnectProvider(it) }
-            }
-            else -> viewContract.setSelectedTabbarItemId(if (connectionsRepository.hasActiveConnections()) {
-                R.id.menu_authorizations
-            } else {
-                R.id.menu_connections
-            })
-        }
-    }
 
     /**
      * Handles navigation (Tab Bar) items clicks
@@ -125,10 +111,10 @@ class MainActivityPresenter(
      * if user go back from in quickConfirmMode then will be closed activity
      * else will be updated navigation components
      *
-     * @param stackIsClear
+     * @param stackIsClear Boolean state of fragments stack
      */
-    fun onFragmentBackStackChanged(stackIsClear: Boolean) {
-        if (quickConfirmMode && stackIsClear) viewContract.closeView()
+    fun onFragmentBackStackChanged(stackIsClear: Boolean, intent: Intent?) {
+        if (intent?.hasConnectionIdAndAuthorizationId == true && stackIsClear) viewContract.closeView()
         else viewContract.updateNavigationViewsContent()
     }
 
@@ -136,9 +122,26 @@ class MainActivityPresenter(
     /**
      * Handles clicks on navigation action (back arrow)
      *
-     * @param stackIsClear
+     * @param stackIsClear Boolean state of fragments stack
      */
     fun onNavigationItemClick(stackIsClear: Boolean) {
         if (stackIsClear) viewContract.closeView() else viewContract.popBackStack()
     }
+
+    private val Intent?.connectionId: String
+        get() = this?.getStringExtra(KEY_CONNECTION_ID) ?: ""
+
+    private val Intent?.authorizationId: String
+        get() = this?.getStringExtra(KEY_AUTHORIZATION_ID) ?: ""
+
+    private val Intent?.connectConfigurationLink: String
+        get() = this?.getStringExtra(KEY_DEEP_LINK) ?: ""
+
+    //Show Authorization Details Fragment
+    private val Intent?.hasConnectionIdAndAuthorizationId: Boolean
+        get() = this != null && this.connectionId.isNotEmpty() && this.authorizationId.isNotEmpty()
+
+    //Show Connect Activity
+    private val Intent?.hasConnectConfigurationLink: Boolean
+        get() = connectConfigurationLink.isNotEmpty()
 }

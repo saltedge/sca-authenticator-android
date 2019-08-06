@@ -29,7 +29,7 @@ import com.saltedge.authenticator.features.connections.common.ConnectionOptions
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.connect.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
-import com.saltedge.authenticator.features.connections.editName.EditConnectionNameDialog
+import com.saltedge.authenticator.features.connections.edit.name.EditConnectionNameDialog
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListModule
 import com.saltedge.authenticator.features.connections.options.ConnectionOptionsDialog
 import com.saltedge.authenticator.interfaces.ListItemClickListener

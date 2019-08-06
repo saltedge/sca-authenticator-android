@@ -64,7 +64,7 @@ class ConnectProviderPresenterTest {
     fun onConnectionInitSuccessTestCase1() {
         val presenter = createPresenter(viewContract = mockView)
         val connectUrlData = AuthenticateConnectionData(
-                authenticateUrl = "https://www.fentury.com",
+                redirectUrl = "https://www.fentury.com",
                 connectionId = "connectionId")
         presenter.onConnectionInitSuccess(response = connectUrlData)
 
@@ -77,7 +77,7 @@ class ConnectProviderPresenterTest {
     fun onConnectionInitSuccessTestCase2() {
         val presenter = createPresenter(viewContract = mockView)
         val connectUrlData = AuthenticateConnectionData(
-                authenticateUrl = "invalidUrl",
+                redirectUrl = "invalidUrl",
                 connectionId = "connectionId")
         presenter.onConnectionInitSuccess(response = connectUrlData)
 
@@ -235,7 +235,7 @@ class ConnectProviderPresenterTest {
         assertFalse(presenter.shouldShowWebView)
 
         val connectUrlData = AuthenticateConnectionData(
-                authenticateUrl = "https://www.fentury.com",
+                redirectUrl = "https://www.fentury.com",
                 connectionId = "connectionId")
         presenter.onConnectionInitSuccess(response = connectUrlData)
 
@@ -422,7 +422,7 @@ class ConnectProviderPresenterTest {
     fun onViewCreatedCase1() {
         val presenter = createPresenter(viewContract = mockView)
         val connectUrlData = AuthenticateConnectionData(
-                authenticateUrl = "https://www.fentury.com",
+                redirectUrl = "https://www.fentury.com",
                 connectionId = "connectionId")
         presenter.onConnectionInitSuccess(response = connectUrlData)
 
@@ -496,7 +496,7 @@ class ConnectProviderPresenterTest {
         assertTrue(presenter.shouldShowProgressView)
 
         val connectUrlData = AuthenticateConnectionData(
-                authenticateUrl = "https://www.fentury.com",
+                redirectUrl = "https://www.fentury.com",
                 connectionId = "connectionId")
         presenter.onConnectionInitSuccess(response = connectUrlData)
 

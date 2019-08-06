@@ -33,7 +33,6 @@ interface MainActivityContract {
                 authorizationId: String,
                 quickConfirmMode: Boolean
         )
-        fun hideNavigationBar()
         fun restartActivity()
         fun closeView()
         fun updateNavigationViewsContent()
