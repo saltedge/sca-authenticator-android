@@ -174,14 +174,14 @@ object PreferenceRepository : PreferenceRepositoryAbs {
      * Clear all preferences from app except database key
      */
     override fun clearUserPreferences() {
-        preferences?.edit()?.
-                remove(KEY_PASSCODE)?.
-                remove(KEY_FINGERPRINT)?.
-                remove(KEY_NOTIFICATIONS)?.
-                remove(KEY_LOCALE)?.
-                remove(KEY_PIN_INPUT_ATTEMPTS)?.
-                remove(KEY_PIN_INPUT_TIME)?.
-                apply()
+        preferences?.edit()
+                ?.remove(KEY_PASSCODE)
+                ?.remove(KEY_FINGERPRINT)
+                ?.remove(KEY_NOTIFICATIONS)
+                ?.remove(KEY_LOCALE)
+                ?.remove(KEY_PIN_INPUT_ATTEMPTS)
+                ?.remove(KEY_PIN_INPUT_TIME)
+                ?.apply()
         fingerprintEnabledValue = null
     }
 }

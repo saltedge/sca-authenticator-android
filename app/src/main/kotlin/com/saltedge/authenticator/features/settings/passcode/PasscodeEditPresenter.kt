@@ -28,8 +28,8 @@ import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import javax.inject.Inject
 
 class PasscodeEditPresenter @Inject constructor(
-        private val passcodeTools: PasscodeToolsAbs) :
-        PasscodeEditContract.Presenter, PasscodeSaveResultListener {
+        private val passcodeTools: PasscodeToolsAbs
+) : PasscodeEditContract.Presenter, PasscodeSaveResultListener {
 
     private val savedPasscode: String
         get() = passcodeTools.getPasscode()

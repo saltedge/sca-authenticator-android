@@ -33,17 +33,18 @@ import com.saltedge.authenticator.tool.*
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.view_item_authorization.*
 
-class AuthorizationItemHolder(parent: ViewGroup, private val listener: ListItemClickListener?
+class AuthorizationItemHolder(
+        parent: ViewGroup,
+        private val listener: ListItemClickListener?
 ) : RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_authorization)),
-    LayoutContainer,
-    View.OnClickListener,
-    ViewTreeObserver.OnGlobalLayoutListener
-{
+        LayoutContainer,
+        View.OnClickListener,
+        ViewTreeObserver.OnGlobalLayoutListener {
 
     override val containerView: View?
         get() = itemView
 
-    //DATA
+    // DATA
     private var confirmItem: AuthorizationViewModel? = null
 
     init {

@@ -71,7 +71,7 @@ class CloudMessagingService : FirebaseMessagingService() {
             connectionId: String?,
             authorizationId: String?
     ): PendingIntent? {
-        return if (connectionId?.isNotEmpty() == true && authorizationId?.isNotEmpty() == true)  {
+        return if (connectionId?.isNotEmpty() == true && authorizationId?.isNotEmpty() == true) {
             val activityIntent = Intent(this, MainActivity::class.java)
             activityIntent.putExtra(KEY_CONNECTION_ID, connectionId)
             activityIntent.putExtra(KEY_AUTHORIZATION_ID, authorizationId)

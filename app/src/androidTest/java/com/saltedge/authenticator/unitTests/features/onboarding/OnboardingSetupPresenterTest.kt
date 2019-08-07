@@ -105,7 +105,7 @@ class OnboardingSetupPresenterTest {
     @Throws(Exception::class)
     fun onCreateTest_noViewContract() {
         val presenter = createPresenter(viewContract = null)
-        presenter.onViewClick(viewId = R.id.skipActionView)//setting onboardingPassed == true
+        presenter.onViewClick(viewId = R.id.skipActionView) // setting onboardingPassed == true
 
         Mockito.verifyNoMoreInteractions(mockView)
     }

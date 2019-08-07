@@ -42,7 +42,8 @@ import javax.inject.Inject
 class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         ListItemClickListener, View.OnClickListener {
 
-    @Inject lateinit var presenterContract: ConnectionsListContract.Presenter
+    @Inject
+    lateinit var presenterContract: ConnectionsListContract.Presenter
     private val adapter = ConnectionsListAdapter(clickListener = this)
     private var deleteAllMenuItem: MenuItem? = null
     private var optionsDialog: ConnectionOptionsDialog? = null
@@ -93,7 +94,8 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return item?.itemId?.let { presenterContract.onMenuItemClick(it) } ?: super.onOptionsItemSelected(item)
+        return item?.itemId?.let { presenterContract.onMenuItemClick(it) }
+                ?: super.onOptionsItemSelected(item)
     }
 
     override fun onClick(v: View?) {
@@ -143,9 +145,11 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         activity?.showDialogFragment(dialog)
     }
 
-    override fun showOptionsView(connectionGuid: String,
-                                 options: Array<ConnectionOptions>,
-                                 requestCode: Int) {
+    override fun showOptionsView(
+            connectionGuid: String,
+            options: Array<ConnectionOptions>,
+            requestCode: Int
+    ) {
         optionsDialog?.dismiss()
         optionsDialog = ConnectionOptionsDialog.newInstance(connectionGuid, options).also {
             it.setTargetFragment(this, requestCode)

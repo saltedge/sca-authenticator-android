@@ -36,10 +36,12 @@ class ConnectProviderModule {
 
     @FragmentScope
     @Provides
-    fun providePresenter(appContext: Context,
-                         preferences: PreferenceRepositoryAbs,
-                         connections: ConnectionsRepositoryAbs,
-                         keyStoreManager: KeyStoreManagerAbs): ConnectProviderContract.Presenter {
+    fun providePresenter(
+            appContext: Context,
+            preferences: PreferenceRepositoryAbs,
+            connections: ConnectionsRepositoryAbs,
+            keyStoreManager: KeyStoreManagerAbs
+    ): ConnectProviderContract.Presenter {
         return ConnectProviderPresenter(
                 appContext = appContext,
                 preferenceRepository = preferences,

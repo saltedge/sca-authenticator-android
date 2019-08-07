@@ -33,9 +33,11 @@ class LauncherModule {
 
     @FragmentScope
     @Provides
-    fun providePresenter(preferences: PreferenceRepositoryAbs,
-                         biometricTools: BiometricToolsAbs,
-                         passcodeTools: PasscodeToolsAbs): LauncherPresenter {
+    fun providePresenter(
+            preferences: PreferenceRepositoryAbs,
+            biometricTools: BiometricToolsAbs,
+            passcodeTools: PasscodeToolsAbs
+    ): LauncherPresenter {
         return LauncherPresenter(
                 passcodeTools = passcodeTools,
                 preferenceRepository = preferences,

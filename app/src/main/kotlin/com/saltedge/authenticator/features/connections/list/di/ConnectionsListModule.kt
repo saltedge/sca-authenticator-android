@@ -35,9 +35,11 @@ class ConnectionsListModule {
 
     @Provides
     @FragmentScope
-    fun providePresenter(appContext: Context,
-                         connections: ConnectionsRepositoryAbs,
-                         keyStoreManager: KeyStoreManagerAbs): ConnectionsListContract.Presenter {
+    fun providePresenter(
+            appContext: Context,
+            connections: ConnectionsRepositoryAbs,
+            keyStoreManager: KeyStoreManagerAbs
+    ): ConnectionsListContract.Presenter {
         return ConnectionsListPresenter(
                 appContext = appContext,
                 connectionsRepository = connections,

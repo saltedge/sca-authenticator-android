@@ -433,7 +433,6 @@ class ConnectProviderPresenterTest {
         Mockito.verify(mockView).loadUrlInWebView("https://www.fentury.com")
     }
 
-
     /**
      * test onViewCreated when ViewMode is START
      */

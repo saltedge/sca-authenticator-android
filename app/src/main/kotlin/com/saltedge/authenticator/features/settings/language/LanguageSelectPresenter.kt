@@ -28,7 +28,8 @@ import com.saltedge.authenticator.tool.localeCodeToName
 
 class LanguageSelectPresenter(
         private val appContext: Context,
-        private val preferences: PreferenceRepositoryAbs) : LanguageSelectContract.Presenter {
+        private val preferences: PreferenceRepositoryAbs
+) : LanguageSelectContract.Presenter {
 
     private var availableLocales = appContext.getAvailableLocalizations().sorted()
     override var viewContract: LanguageSelectContract.View? = null

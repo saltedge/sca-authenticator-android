@@ -118,7 +118,6 @@ class MainActivityPresenter(
         else viewContract.updateNavigationViewsContent()
     }
 
-
     /**
      * Handles clicks on navigation action (back arrow)
      *
@@ -137,11 +136,11 @@ class MainActivityPresenter(
     private val Intent?.connectConfigurationLink: String
         get() = this?.getStringExtra(KEY_DEEP_LINK) ?: ""
 
-    //Show Authorization Details Fragment
+    // Show Authorization Details Fragment
     private val Intent?.hasConnectionIdAndAuthorizationId: Boolean
         get() = this != null && this.connectionId.isNotEmpty() && this.authorizationId.isNotEmpty()
 
-    //Show Connect Activity
+    // Show Connect Activity
     private val Intent?.hasConnectConfigurationLink: Boolean
         get() = connectConfigurationLink.isNotEmpty()
 }

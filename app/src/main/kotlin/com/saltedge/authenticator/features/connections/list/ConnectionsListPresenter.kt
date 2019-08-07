@@ -42,8 +42,8 @@ class ConnectionsListPresenter @Inject constructor(
         private val appContext: Context,
         private val keyStoreManager: KeyStoreManagerAbs,
         private val connectionsRepository: ConnectionsRepositoryAbs,
-        private val apiManager: AuthenticatorApiManagerAbs) :
-        ConnectionsListContract.Presenter, ConnectionsRevokeResult {
+        private val apiManager: AuthenticatorApiManagerAbs
+) : ConnectionsListContract.Presenter, ConnectionsRevokeResult {
 
     override var viewContract: ConnectionsListContract.View? = null
 

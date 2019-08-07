@@ -54,13 +54,13 @@ class DotsPageIndicatorView : View, ViewPager.OnPageChangeListener, ValueAnimati
     private var count = DEFAULT_CIRCLES_COUNT
     private var isCountSet: Boolean = false
 
-    //Color
+    // Color
     private var selectedColor = Color.parseColor(DEFAULT_SELECTED_COLOR)
     private var inactiveColor: Int? = null
     private val unselectedColor: Int
         get() = inactiveColor ?: selectedColor.applyAlphaToColor(0.3f)
 
-    //Worm
+    // Worm
     private var frameLeftX: Int = 0
     private var frameRightX: Int = 0
 
@@ -150,7 +150,9 @@ class DotsPageIndicatorView : View, ViewPager.OnPageChangeListener, ValueAnimati
         if (!interactiveAnimation) selection = position
     }
 
-    override fun onPageScrollStateChanged(state: Int) {/*empty*/}
+    override fun onPageScrollStateChanged(state: Int) {
+        /*empty*/
+    }
 
     override fun onWormAnimationUpdated(leftX: Int, rightX: Int) {
         frameLeftX = leftX
@@ -198,7 +200,7 @@ class DotsPageIndicatorView : View, ViewPager.OnPageChangeListener, ValueAnimati
     /**
      * Set progress value in range [0 - 1] to specify step of animation while selecting new circle indicator.
      * @param selectingPosition selecting position with specific progress value.
-     * @param progress          float value of progress.
+     * @param progress float value of progress.
      */
     fun setProgress(newPosition: Int, newProgress: Float) {
         if (interactiveAnimation) {
@@ -334,12 +336,11 @@ class DotsPageIndicatorView : View, ViewPager.OnPageChangeListener, ValueAnimati
             return
         }
 
-        //worm
+        // worm
         val xCoordinate = getXCoordinate(selectedPosition)
         if (xCoordinate - radiusPx >= 0) {
             frameLeftX = xCoordinate - radiusPx
             frameRightX = xCoordinate + radiusPx
-
         } else {
             frameLeftX = xCoordinate
             frameRightX = xCoordinate + radiusPx * 2
@@ -365,7 +366,6 @@ class DotsPageIndicatorView : View, ViewPager.OnPageChangeListener, ValueAnimati
 
             val isRightSide = selectingPosition > selectedPosition
             return animation!!.worm().with(fromX, toX, radiusPx, isRightSide)
-
         }
 
     private fun registerSetObserver() {
@@ -381,7 +381,7 @@ class DotsPageIndicatorView : View, ViewPager.OnPageChangeListener, ValueAnimati
     }
 
     private fun unRegisterSetObserver() {
-        setObserver?.let { viewPager?.adapter?.unregisterDataSetObserver(it)  }
+        setObserver?.let { viewPager?.adapter?.unregisterDataSetObserver(it) }
         setObserver = null
     }
 

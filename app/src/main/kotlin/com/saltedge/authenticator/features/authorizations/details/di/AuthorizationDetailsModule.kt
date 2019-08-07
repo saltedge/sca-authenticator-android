@@ -43,7 +43,8 @@ class AuthorizationDetailsModule {
             biometricTools: BiometricToolsAbs,
             cryptoTools: CryptoToolsAbs,
             keyStoreManager: KeyStoreManagerAbs,
-            apiManager: AuthenticatorApiManagerAbs): AuthorizationDetailsPresenter {
+            apiManager: AuthenticatorApiManagerAbs
+    ): AuthorizationDetailsPresenter {
         return AuthorizationDetailsPresenter(
                 appContext = appContext,
                 connectionsRepository = connections,

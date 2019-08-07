@@ -48,7 +48,8 @@ class ConnectProviderFragment : BaseFragment(),
         View.OnClickListener,
         OnBackPressListener {
 
-    @Inject lateinit var presenterContract: ConnectProviderContract.Presenter
+    @Inject
+    lateinit var presenterContract: ConnectProviderContract.Presenter
     private val webViewClient = ConnectWebClient(contract = this)
 
     override fun onCreate(savedInstanceState: Bundle?) {

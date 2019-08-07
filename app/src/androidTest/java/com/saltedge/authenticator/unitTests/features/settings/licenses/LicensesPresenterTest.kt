@@ -31,7 +31,6 @@ import org.junit.runner.RunWith
 import org.mockito.Mockito
 import org.mockito.Mockito.inOrder
 
-
 @RunWith(AndroidJUnit4::class)
 class LicensesPresenterTest {
 
@@ -102,7 +101,6 @@ class LicensesPresenterTest {
         inOrder.verify(mockView).openLink(url = "https://raw.githubusercontent.com/mockito/mockito/release/2.x/LICENSE", title = "Mockito")
         inOrder.verify(mockView).openLink(url = apacheLicense, title = "MockK")
         inOrder.verify(mockView).openLink(url = "https://raw.githubusercontent.com/findbugsproject/findbugs/master/findbugs/licenses/LICENSE-jsr305.txt", title = "findbugs/jsr305")
-
     }
 
     @Test

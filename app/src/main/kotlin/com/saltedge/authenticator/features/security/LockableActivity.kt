@@ -121,7 +121,8 @@ abstract class LockableActivity : AppCompatActivity(), PasscodeInputViewListener
         displayBiometricPrompt()
     }
 
-    override fun onPasscodeInputCanceledByUser() { //REDUNDANT
+    override fun onPasscodeInputCanceledByUser() {
+        // REDUNDANT
     }
 
     override fun onEnteredPasscodeIsValid() {
@@ -132,7 +133,8 @@ abstract class LockableActivity : AppCompatActivity(), PasscodeInputViewListener
         presenter.onWrongPasscodeInput()
     }
 
-    override fun onNewPasscodeEntered(mode: PasscodeInputView.InputMode, passcode: String) {//REDUNDANT
+    override fun onNewPasscodeEntered(mode: PasscodeInputView.InputMode, passcode: String) {
+        // REDUNDANT
     }
 
     override fun onNewPasscodeConfirmed(passcode: String) {

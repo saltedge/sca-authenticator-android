@@ -48,10 +48,12 @@ class BiometricPromptManagerV28 : BiometricPromptAbs, DialogInterface.OnClickLis
     private var cancellationSignal: CancellationSignal? = null
 
     @RequiresApi(Build.VERSION_CODES.P)
-    override fun showBiometricPrompt(context: FragmentActivity,
-                                     titleResId: ResId,
-                                     descriptionResId: ResId,
-                                     @StringRes negativeActionTextResId: ResId) {
+    override fun showBiometricPrompt(
+            context: FragmentActivity,
+            titleResId: ResId,
+            descriptionResId: ResId,
+            @StringRes negativeActionTextResId: ResId
+    ) {
         cancellationSignal = CancellationSignal().also {
             val builder = BiometricPrompt.Builder(context)
             builder.setTitle(context.getString(titleResId))

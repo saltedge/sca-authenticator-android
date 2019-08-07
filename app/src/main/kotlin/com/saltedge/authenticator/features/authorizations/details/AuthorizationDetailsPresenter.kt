@@ -46,7 +46,7 @@ class AuthorizationDetailsPresenter(
         biometricTools: BiometricToolsAbs,
         apiManager: AuthenticatorApiManagerAbs
 ) : BaseAuthorizationPresenter(appContext, biometricTools, apiManager),
-    FetchAuthorizationContract {
+        FetchAuthorizationContract {
 
     private var pollingService: SingleAuthorizationPollingService = apiManager.createSingleAuthorizationPollingService()
     private var quickConfirmMode: Boolean = false
@@ -142,8 +142,10 @@ class AuthorizationDetailsPresenter(
 
     override fun getConnectionData(): ConnectionAndKey? = currentConnectionAndKey
 
-    override fun fetchAuthorizationResult(result: EncryptedAuthorizationData?,
-                                          error: ApiErrorData?) {
+    override fun fetchAuthorizationResult(
+            result: EncryptedAuthorizationData?,
+            error: ApiErrorData?
+    ) {
         result?.let { processAuthorizationResult(it) }
         error?.let { processAuthorizationError(it) }
     }
@@ -180,7 +182,8 @@ class AuthorizationDetailsPresenter(
                 encryptedData = result,
                 rsaPrivateKey = currentConnectionAndKey?.key
         )?.let {
-            val newViewModel = it.toAuthorizationViewModel(currentConnectionAndKey?.connection ?: return)
+            val newViewModel = it.toAuthorizationViewModel(currentConnectionAndKey?.connection
+                    ?: return)
             if (super.currentViewModel != newViewModel) {
                 val receivedFirstNotNullModel = super.currentViewModel == null
                 super.currentViewModel = newViewModel

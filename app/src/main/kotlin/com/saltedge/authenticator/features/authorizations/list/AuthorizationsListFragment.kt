@@ -48,9 +48,12 @@ private const val RECYCLER_LAYOUT_STATE = "recycler_layout_state"
 
 class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.View {
 
-    @Inject lateinit var presenterContract: AuthorizationsListPresenter
-    @Inject lateinit var biometricPrompt: BiometricPromptAbs
-    @Inject lateinit var timeViewUpdateTimer: Timer
+    @Inject
+    lateinit var presenterContract: AuthorizationsListPresenter
+    @Inject
+    lateinit var biometricPrompt: BiometricPromptAbs
+    @Inject
+    lateinit var timeViewUpdateTimer: Timer
     private val adapter = AuthorizationsListAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,9 +62,11 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View {
         activityComponents?.updateAppbarTitle(getString(R.string.authorizations_feature_title))
         return inflater.inflate(R.layout.fragment_authorizations_list, container, false)
     }
@@ -129,7 +134,6 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelable(RECYCLER_LAYOUT_STATE, recyclerView?.layoutManager?.onSaveInstanceState())
-
     }
 
     override fun showError(error: ApiErrorData) {
@@ -202,7 +206,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         timeViewUpdateTimer.purge()
     }
 
-    //Clear all system notification
+    // Clear all system notification
     private fun clearAllNotifications() {
         activity?.clearNotifications()
     }

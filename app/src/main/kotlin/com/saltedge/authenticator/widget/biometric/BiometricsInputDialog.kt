@@ -56,10 +56,11 @@ class BiometricsInputDialog : BaseRoundedBottomDialogFragment(),
         dialog?.findViewById<TextView>(R.id.cancelActionView)
     }
     override var resultCallback: BiometricPromptCallback? = null
-    override fun showBiometricPrompt(context: FragmentActivity,
-                                     @StringRes titleResId: ResId,
-                                     @StringRes descriptionResId: ResId,
-                                     @StringRes negativeActionTextResId: ResId
+    override fun showBiometricPrompt(
+            context: FragmentActivity,
+            @StringRes titleResId: ResId,
+            @StringRes descriptionResId: ResId,
+            @StringRes negativeActionTextResId: ResId
     ) {
         arguments = Bundle().apply {
             putInt(KEY_TITLE, titleResId)

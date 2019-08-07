@@ -49,7 +49,7 @@ abstract class BaseBottomDialogFragment : BottomSheetDialogFragment() {
 
     private val callback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            if(!slideOffset.isNaN()) dialog.window?.setDimAmount(0.5f - ((slideOffset * -1)/2))
+            if (!slideOffset.isNaN()) dialog.window?.setDimAmount(0.5f - ((slideOffset * -1) / 2))
         }
 
         override fun onStateChanged(bottomSheet: View, newState: Int) {

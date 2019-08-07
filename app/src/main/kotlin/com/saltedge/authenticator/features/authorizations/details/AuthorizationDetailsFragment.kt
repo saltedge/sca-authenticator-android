@@ -47,9 +47,12 @@ import javax.inject.Inject
 
 class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContract.View, View.OnClickListener {
 
-    @Inject lateinit var presenterContract: AuthorizationDetailsPresenter
-    @Inject lateinit var biometricPrompt: BiometricPromptAbs
-    @Inject lateinit var timeViewUpdateTimer: Timer
+    @Inject
+    lateinit var presenterContract: AuthorizationDetailsPresenter
+    @Inject
+    lateinit var biometricPrompt: BiometricPromptAbs
+    @Inject
+    lateinit var timeViewUpdateTimer: Timer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -226,10 +229,11 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
          *
          * @return AuthorizationDetailsFragment
          */
-        fun newInstance(authorizationId: String,
-                        connectionId: String,
-                        quickConfirmMode: Boolean = false,
-                        viewModel: AuthorizationViewModel? = null
+        fun newInstance(
+                authorizationId: String,
+                connectionId: String,
+                quickConfirmMode: Boolean = false,
+                viewModel: AuthorizationViewModel? = null
         ): AuthorizationDetailsFragment {
             return AuthorizationDetailsFragment().apply {
                 arguments = Bundle().apply {

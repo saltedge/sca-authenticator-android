@@ -40,8 +40,11 @@ abstract class BaseAuthorizationPresenter(
     var currentViewModel: AuthorizationViewModel? = null
     var currentConnectionAndKey: ConnectionAndKey? = null
 
-    abstract fun updateConfirmProgressState(authorizationId: String?,
-                                            confirmRequestIsInProgress: Boolean)
+    abstract fun updateConfirmProgressState(
+            authorizationId: String?,
+            confirmRequestIsInProgress: Boolean
+    )
+
     abstract fun onConfirmDenySuccess(authorizationId: String, success: Boolean)
     abstract fun baseViewContract(): BaseAuthorizationViewContract?
 

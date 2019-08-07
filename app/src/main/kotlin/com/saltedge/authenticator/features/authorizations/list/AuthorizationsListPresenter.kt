@@ -46,9 +46,9 @@ class AuthorizationsListPresenter @Inject constructor(
         biometricTools: BiometricToolsAbs,
         apiManager: AuthenticatorApiManagerAbs
 ) : BaseAuthorizationPresenter(appContext, biometricTools, apiManager),
-    ListItemClickListener,
-    FetchAuthorizationsContract,
-    ConfirmAuthorizationResult {
+        ListItemClickListener,
+        FetchAuthorizationsContract,
+        ConfirmAuthorizationResult {
 
     private var pollingService = apiManager.createAuthorizationsPollingService()
     private var connectionsAndKeys: Map<ConnectionID, ConnectionAndKey> = collectConnectionsAndKeys(connectionsRepository, keyStoreManager)
@@ -107,8 +107,10 @@ class AuthorizationsListPresenter @Inject constructor(
     override fun getConnectionsData(): List<ConnectionAndKey>? =
             collectAuthorizationRequestData()
 
-    override fun onFetchAuthorizationsResult(result: List<EncryptedAuthorizationData>,
-                                             errors: List<ApiErrorData>) {
+    override fun onFetchAuthorizationsResult(
+            result: List<EncryptedAuthorizationData>,
+            errors: List<ApiErrorData>
+    ) {
         processAuthorizationsErrors(errors)
         processEncryptedAuthorizationsResult(result)
     }
@@ -148,13 +150,13 @@ class AuthorizationsListPresenter @Inject constructor(
 
     private fun decryptAuthorizations(encryptedData: List<EncryptedAuthorizationData>): List<AuthorizationData> {
         return encryptedData.mapNotNull {
-                    cryptoTools.decryptAuthorizationData(
-                            encryptedData = it,
-                            rsaPrivateKey = connectionsAndKeys[it.connectionId]?.key
-                    )
-                }.filter {
-                    it.isNotExpired()
-                }.sortedBy { it.expiresAt }
+            cryptoTools.decryptAuthorizationData(
+                    encryptedData = it,
+                    rsaPrivateKey = connectionsAndKeys[it.connectionId]?.key
+            )
+        }.filter {
+            it.isNotExpired()
+        }.sortedBy { it.expiresAt }
     }
 
     private fun createViewModels(authorizations: List<AuthorizationData>): List<AuthorizationViewModel> {

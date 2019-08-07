@@ -44,7 +44,8 @@ class OnboardingSetupActivity : AppCompatActivity(),
         View.OnClickListener,
         PasscodeInputViewListener {
 
-    @Inject lateinit var presenter: OnboardingSetupPresenter
+    @Inject
+    lateinit var presenter: OnboardingSetupPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -122,11 +123,13 @@ class OnboardingSetupActivity : AppCompatActivity(),
         this.showWarningDialog(message)
     }
 
-    override fun updateSetupViews(setupStepProgress: Float,
-                                  headerTitle: Int,
-                                  headerDescription: Int,
-                                  showPasscodeCancel: Boolean?,
-                                  passcodePositiveActionText: Int?) {
+    override fun updateSetupViews(
+            setupStepProgress: Float,
+            headerTitle: Int,
+            headerDescription: Int,
+            showPasscodeCancel: Boolean?,
+            passcodePositiveActionText: Int?
+    ) {
         stepProgressView?.setStepProgress(setupStepProgress)
         headerTitleView?.setText(headerTitle)
         headerDescriptionView?.setText(headerDescription)

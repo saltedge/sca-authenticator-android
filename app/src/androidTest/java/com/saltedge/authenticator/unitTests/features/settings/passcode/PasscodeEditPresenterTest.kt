@@ -115,7 +115,6 @@ class PasscodeEditPresenterTest {
         doneSignal!!.await(3, TimeUnit.SECONDS)
 
         Mockito.verify(mockPasscodeTools).savePasscode(passcode = "9753")
-
     }
 
     @Test

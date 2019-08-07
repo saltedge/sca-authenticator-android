@@ -28,8 +28,8 @@ const val SHOW_REQUEST_CODE = 326
 const val DELETE_ALL_REQUEST_CODE = 327
 const val CAMERA_PERMISSION_REQUEST_CODE = 328
 
-const val KEY_ACCESS_TOKEN = "accessToken"//used for database queries
-const val KEY_CREATED_AT = "createdAt"//used for database queries
+const val KEY_ACCESS_TOKEN = "accessToken" // used for database queries
+const val KEY_CREATED_AT = "createdAt" // used for database queries
 const val KEY_ID = "id"
 const val KEY_CODE = "code"
 const val KEY_GUID = "guid"

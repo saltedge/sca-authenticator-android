@@ -65,7 +65,8 @@ fun createConnectionAndKey(
  * @return Pair<ConnectionID, ConnectionAndKey)
  */
 private fun Connection.getPrivateKeyForConnection(
-        keyStoreManager: KeyStoreManagerAbs): Pair<ConnectionID, ConnectionAndKey>? {
+        keyStoreManager: KeyStoreManagerAbs
+): Pair<ConnectionID, ConnectionAndKey>? {
     return keyStoreManager.getKeyPair(this.guid)?.let { pair ->
             Pair(this.id, ConnectionAndKey(connection = this, key = pair.private))
     }

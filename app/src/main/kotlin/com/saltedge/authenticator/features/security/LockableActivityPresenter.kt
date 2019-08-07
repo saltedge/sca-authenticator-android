@@ -31,9 +31,11 @@ import com.saltedge.authenticator.tool.log
 import com.saltedge.authenticator.tool.millisToRemainedMinutes
 import com.saltedge.authenticator.tool.secure.PasscodeTools
 
-class LockableActivityPresenter(val viewContract: LockableActivityContract,
-                                val connectionsRepository: ConnectionsRepositoryAbs,
-                                val preferenceRepository: PreferenceRepositoryAbs) {
+class LockableActivityPresenter(
+        val viewContract: LockableActivityContract,
+        val connectionsRepository: ConnectionsRepositoryAbs,
+        val preferenceRepository: PreferenceRepositoryAbs
+) {
 
     private var returnFromOwnActivity = false
     val savedPasscode: String

@@ -23,8 +23,6 @@ package com.saltedge.authenticator.unitTests.tool
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.testTools.TestTools
-import com.saltedge.authenticator.tool.MAX_LENGTH_FOR_THE_PASSCODE
-import com.saltedge.authenticator.tool.MIN_LENGTH_FOR_THE_PASSCODE
 import com.saltedge.authenticator.tool.validatePasscode
 import com.saltedge.authenticator.tool.isPasscodeValid
 import org.hamcrest.CoreMatchers.equalTo

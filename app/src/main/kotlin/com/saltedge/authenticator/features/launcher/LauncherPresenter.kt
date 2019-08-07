@@ -31,7 +31,8 @@ import javax.inject.Inject
 class LauncherPresenter @Inject constructor(
         private val preferenceRepository: PreferenceRepositoryAbs,
         private val passcodeTools: PasscodeToolsAbs,
-        private val biometricTools: BiometricToolsAbs) {
+        private val biometricTools: BiometricToolsAbs
+) {
 
     fun setupApplication() {
         if (shouldSetupApplication()) {

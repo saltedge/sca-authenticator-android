@@ -139,9 +139,11 @@ class MainActivity : LockableActivity(),
         replaceFragmentInContainer(SettingsListFragment())
     }
 
-    override fun showAuthorizationDetailsView(connectionId: String,
-                                              authorizationId: String,
-                                              quickConfirmMode: Boolean) {
+    override fun showAuthorizationDetailsView(
+            connectionId: String,
+            authorizationId: String,
+            quickConfirmMode: Boolean
+    ) {
         this.addFragment(AuthorizationDetailsFragment.newInstance(
                 connectionId = connectionId,
                 authorizationId = authorizationId,
@@ -162,9 +164,9 @@ class MainActivity : LockableActivity(),
             toolbarView?.navigationIcon = presenter.getNavigationIcon(isOnTop)?.let {
                 this.getDrawable(it)
             }
+
             bottomNavigationLayout?.setVisible(show = isOnTop)
         }
-
     }
 
     override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView

@@ -25,11 +25,11 @@ import android.graphics.RectF
 class RadialProgressPresenter {
 
     var basePadding: Float = 0f
-    var maxProgress: Int = 100//Max progress in seconds
+    var maxProgress: Int = 100 // Max progress in seconds
         set(value) {
             field = if (value < 0) 0 else value
         }
-    var remainedProgress: Int = 0//Progress in seconds
+    var remainedProgress: Int = 0 // Progress in seconds
         set(value) {
             field = if (value < 0) 0 else if (value > maxProgress) maxProgress else value
         }

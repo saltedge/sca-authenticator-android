@@ -66,11 +66,15 @@ fun Context.registerNotificationChannels() {
  * @param activityIntent - pending intent
  * @receiver context - application context
  */
-fun Context.showAuthNotification(notificationTitle: String?,
-                                 notificationBody: String?,
-                                 activityIntent: PendingIntent?) {
-    val contentTitle = notificationTitle ?: this.getString(R.string.authorizations_notification_title)
-    val contentText = notificationBody ?: this.getString(R.string.authorizations_notification_description)
+fun Context.showAuthNotification(
+        notificationTitle: String?,
+        notificationBody: String?,
+        activityIntent: PendingIntent?
+) {
+    val contentTitle = notificationTitle
+            ?: this.getString(R.string.authorizations_notification_title)
+    val contentText = notificationBody
+            ?: this.getString(R.string.authorizations_notification_description)
     val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_app_logo_notifications)
             .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.mipmap.ic_launcher))
