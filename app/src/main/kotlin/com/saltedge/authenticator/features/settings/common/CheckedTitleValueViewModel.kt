@@ -23,9 +23,9 @@ package com.saltedge.authenticator.features.settings.common
 import androidx.annotation.StringRes
 
 data class CheckedTitleValueViewModel(
-        @StringRes val titleId: Int,
-        val value: String? = null,
-        val switchEnabled: Boolean? = null,
-        val isChecked: Boolean = false,
-        val itemIsClickable: Boolean = false
+    @StringRes val titleId: Int,
+    val value: String? = null,
+    val switchEnabled: Boolean? = null,
+    val isChecked: Boolean = false,
+    val itemIsClickable: Boolean = false
 )

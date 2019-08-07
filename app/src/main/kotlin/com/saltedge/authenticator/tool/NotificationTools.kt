@@ -43,7 +43,7 @@ const val NOTIFICATION_ID = 201
 fun Context.registerNotificationChannels() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val notificationChannel: NotificationChannel = NotificationChannel(
-                CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH
+            CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH
         ).apply {
 
             // Configure the notification channel.
@@ -67,23 +67,23 @@ fun Context.registerNotificationChannels() {
  * @receiver context - application context
  */
 fun Context.showAuthNotification(
-        notificationTitle: String?,
-        notificationBody: String?,
-        activityIntent: PendingIntent?
+    notificationTitle: String?,
+    notificationBody: String?,
+    activityIntent: PendingIntent?
 ) {
     val contentTitle = notificationTitle
-            ?: this.getString(R.string.authorizations_notification_title)
+        ?: this.getString(R.string.authorizations_notification_title)
     val contentText = notificationBody
-            ?: this.getString(R.string.authorizations_notification_description)
+        ?: this.getString(R.string.authorizations_notification_description)
     val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_app_logo_notifications)
-            .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.mipmap.ic_launcher))
-            .setContentTitle(contentTitle)
-            .setContentText(contentText)
-            .setAutoCancel(true)
-            .setDefaults(Notification.DEFAULT_SOUND or Notification.DEFAULT_VIBRATE)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(contentText))
-            .apply { activityIntent?.let { setContentIntent(it) } }
+        .setSmallIcon(R.drawable.ic_app_logo_notifications)
+        .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.mipmap.ic_launcher))
+        .setContentTitle(contentTitle)
+        .setContentText(contentText)
+        .setAutoCancel(true)
+        .setDefaults(Notification.DEFAULT_SOUND or Notification.DEFAULT_VIBRATE)
+        .setStyle(NotificationCompat.BigTextStyle().bigText(contentText))
+        .apply { activityIntent?.let { setContentIntent(it) } }
     this.getNotificationManager().notify(NOTIFICATION_ID, notificationBuilder.build())
 }
 
@@ -110,4 +110,4 @@ private fun setVibrationPattern(): LongArray = longArrayOf(0, 150, 100, 150)
  * @return notification manager
  */
 private fun Context.getNotificationManager(): NotificationManager =
-        this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

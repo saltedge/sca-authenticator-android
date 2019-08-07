@@ -63,9 +63,9 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         activityComponents?.updateAppbarTitle(getString(R.string.authorizations_feature_title))
         return inflater.inflate(R.layout.fragment_authorizations_list, container, false)
@@ -133,7 +133,10 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelable(RECYCLER_LAYOUT_STATE, recyclerView?.layoutManager?.onSaveInstanceState())
+        outState.putParcelable(
+            RECYCLER_LAYOUT_STATE,
+            recyclerView?.layoutManager?.onSaveInstanceState()
+        )
     }
 
     override fun showError(error: ApiErrorData) {
@@ -184,7 +187,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     override fun askUserPasscodeConfirmation() {
         activity?.showDialogFragment(
-                ConfirmPasscodeDialog.newInstance(resultCallback = presenterContract)
+            ConfirmPasscodeDialog.newInstance(resultCallback = presenterContract)
         )
     }
 
@@ -212,6 +215,8 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     }
 
     private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addAuthorizationsListModule(AuthorizationsListModule())?.inject(this)
+        authenticatorApp?.appComponent?.addAuthorizationsListModule(AuthorizationsListModule())?.inject(
+            this
+        )
     }
 }

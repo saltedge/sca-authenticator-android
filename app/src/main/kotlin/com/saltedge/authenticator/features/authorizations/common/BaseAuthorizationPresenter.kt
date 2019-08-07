@@ -32,17 +32,17 @@ import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
 
 abstract class BaseAuthorizationPresenter(
-        val appContext: Context,
-        val biometricTools: BiometricToolsAbs,
-        val apiManager: AuthenticatorApiManagerAbs
+    val appContext: Context,
+    val biometricTools: BiometricToolsAbs,
+    val apiManager: AuthenticatorApiManagerAbs
 ) : BiometricPromptCallback, PasscodePromptCallback, ConfirmAuthorizationResult {
 
     var currentViewModel: AuthorizationViewModel? = null
     var currentConnectionAndKey: ConnectionAndKey? = null
 
     abstract fun updateConfirmProgressState(
-            authorizationId: String?,
-            confirmRequestIsInProgress: Boolean
+        authorizationId: String?,
+        confirmRequestIsInProgress: Boolean
     )
 
     abstract fun onConfirmDenySuccess(authorizationId: String, success: Boolean)
@@ -78,8 +78,8 @@ abstract class BaseAuthorizationPresenter(
 
     override fun onConfirmDenyFailure(error: ApiErrorData) {
         updateConfirmProgressState(
-                authorizationId = currentViewModel?.authorizationId,
-                confirmRequestIsInProgress = false
+            authorizationId = currentViewModel?.authorizationId,
+            confirmRequestIsInProgress = false
         )
     }
 
@@ -88,8 +88,8 @@ abstract class BaseAuthorizationPresenter(
             result.authorizationId?.let { onConfirmDenySuccess(it, result.success == true) }
         } else {
             updateConfirmProgressState(
-                    authorizationId = currentViewModel?.authorizationId,
-                    confirmRequestIsInProgress = false
+                authorizationId = currentViewModel?.authorizationId,
+                confirmRequestIsInProgress = false
             )
         }
     }
@@ -100,27 +100,27 @@ abstract class BaseAuthorizationPresenter(
 
     private fun sendConfirmRequest() {
         apiManager.confirmAuthorization(
-                connectionAndKey = currentConnectionAndKey ?: return,
-                authorizationId = currentViewModel?.authorizationId ?: return,
-                authorizationCode = currentViewModel?.authorizationCode,
-                resultCallback = this
+            connectionAndKey = currentConnectionAndKey ?: return,
+            authorizationId = currentViewModel?.authorizationId ?: return,
+            authorizationCode = currentViewModel?.authorizationCode,
+            resultCallback = this
         )
         updateConfirmProgressState(
-                authorizationId = currentViewModel?.authorizationId,
-                confirmRequestIsInProgress = true
+            authorizationId = currentViewModel?.authorizationId,
+            confirmRequestIsInProgress = true
         )
     }
 
     private fun sendDenyRequest() {
         apiManager.denyAuthorization(
-                connectionAndKey = currentConnectionAndKey ?: return,
-                authorizationId = currentViewModel?.authorizationId ?: return,
-                authorizationCode = currentViewModel?.authorizationCode,
-                resultCallback = this
+            connectionAndKey = currentConnectionAndKey ?: return,
+            authorizationId = currentViewModel?.authorizationId ?: return,
+            authorizationCode = currentViewModel?.authorizationCode,
+            resultCallback = this
         )
         updateConfirmProgressState(
-                authorizationId = currentViewModel?.authorizationId,
-                confirmRequestIsInProgress = true
+            authorizationId = currentViewModel?.authorizationId,
+            confirmRequestIsInProgress = true
         )
     }
 }

@@ -24,7 +24,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 
 data class OnboardingPageViewModel(
-        @StringRes val titleResId: Int,
-        @StringRes val subTitleResId: Int,
-        @DrawableRes var imageResId: Int
+    @StringRes val titleResId: Int,
+    @StringRes val subTitleResId: Int,
+    @DrawableRes var imageResId: Int
 )

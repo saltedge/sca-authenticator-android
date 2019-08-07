@@ -38,20 +38,20 @@ class AuthorizationsListModule {
     @Provides
     @FragmentScope
     fun providePresenter(
-            appContext: Context,
-            connections: ConnectionsRepositoryAbs,
-            biometricTools: BiometricToolsAbs,
-            cryptoTools: CryptoToolsAbs,
-            keyStoreManager: KeyStoreManagerAbs,
-            apiManager: AuthenticatorApiManagerAbs
+        appContext: Context,
+        connections: ConnectionsRepositoryAbs,
+        biometricTools: BiometricToolsAbs,
+        cryptoTools: CryptoToolsAbs,
+        keyStoreManager: KeyStoreManagerAbs,
+        apiManager: AuthenticatorApiManagerAbs
     ): AuthorizationsListPresenter {
         return AuthorizationsListPresenter(
-                appContext = appContext,
-                connectionsRepository = connections,
-                keyStoreManager = keyStoreManager,
-                biometricTools = biometricTools,
-                cryptoTools = cryptoTools,
-                apiManager = apiManager
+            appContext = appContext,
+            connectionsRepository = connections,
+            keyStoreManager = keyStoreManager,
+            biometricTools = biometricTools,
+            cryptoTools = cryptoTools,
+            apiManager = apiManager
         )
     }
 

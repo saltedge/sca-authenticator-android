@@ -28,33 +28,38 @@ import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import javax.inject.Inject
 
 class SettingsListPresenter @Inject constructor(
-        private val appContext: Context,
-        private val preferences: PreferenceRepositoryAbs,
-        private val biometricTools: BiometricToolsAbs
+    private val appContext: Context,
+    private val preferences: PreferenceRepositoryAbs,
+    private val biometricTools: BiometricToolsAbs
 ) : SettingsListContract.Presenter {
 
     override var viewContract: SettingsListContract.View? = null
 
     override fun getListItems(): List<CheckedTitleValueViewModel> {
         return listOf(
-                CheckedTitleValueViewModel(
-                        titleId = R.string.settings_passcode,
-                        value = appContext.getString(R.string.settings_passcode_description),
-                        itemIsClickable = true),
-                CheckedTitleValueViewModel(
-                        titleId = R.string.settings_notifications,
-                        switchEnabled = true,
-                        isChecked = preferences.notificationsEnabled),
-                CheckedTitleValueViewModel(
-                        titleId = R.string.settings_screenshot_lock,
-                        switchEnabled = true,
-                        isChecked = preferences.screenshotLockEnabled),
-                CheckedTitleValueViewModel(
-                        titleId = R.string.about_feature_title,
-                        itemIsClickable = true),
-                CheckedTitleValueViewModel(
-                        titleId = R.string.settings_contact_support,
-                        itemIsClickable = true)
+            CheckedTitleValueViewModel(
+                titleId = R.string.settings_passcode,
+                value = appContext.getString(R.string.settings_passcode_description),
+                itemIsClickable = true
+            ),
+            CheckedTitleValueViewModel(
+                titleId = R.string.settings_notifications,
+                switchEnabled = true,
+                isChecked = preferences.notificationsEnabled
+            ),
+            CheckedTitleValueViewModel(
+                titleId = R.string.settings_screenshot_lock,
+                switchEnabled = true,
+                isChecked = preferences.screenshotLockEnabled
+            ),
+            CheckedTitleValueViewModel(
+                titleId = R.string.about_feature_title,
+                itemIsClickable = true
+            ),
+            CheckedTitleValueViewModel(
+                titleId = R.string.settings_contact_support,
+                itemIsClickable = true
+            )
         )
     }
 

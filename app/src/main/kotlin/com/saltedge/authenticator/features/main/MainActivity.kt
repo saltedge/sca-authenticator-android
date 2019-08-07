@@ -44,15 +44,16 @@ import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : LockableActivity(),
-        MainActivityContract.View,
-        ActivityComponentsContract,
-        BottomNavigationView.OnNavigationItemSelectedListener,
-        View.OnClickListener,
-        FragmentManager.OnBackStackChangedListener {
+    MainActivityContract.View,
+    ActivityComponentsContract,
+    BottomNavigationView.OnNavigationItemSelectedListener,
+    View.OnClickListener,
+    FragmentManager.OnBackStackChangedListener {
 
     private val presenter = MainActivityPresenter(
-            viewContract = this,
-            connectionsRepository = ConnectionsRepository)
+        viewContract = this,
+        connectionsRepository = ConnectionsRepository
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (!RealmManager.initialized) RealmManager.initRealm(context = this)
@@ -140,15 +141,17 @@ class MainActivity : LockableActivity(),
     }
 
     override fun showAuthorizationDetailsView(
-            connectionId: String,
-            authorizationId: String,
-            quickConfirmMode: Boolean
+        connectionId: String,
+        authorizationId: String,
+        quickConfirmMode: Boolean
     ) {
-        this.addFragment(AuthorizationDetailsFragment.newInstance(
+        this.addFragment(
+            AuthorizationDetailsFragment.newInstance(
                 connectionId = connectionId,
                 authorizationId = authorizationId,
                 quickConfirmMode = quickConfirmMode
-        ))
+            )
+        )
     }
 
     override fun closeView() {

@@ -34,8 +34,8 @@ class LanguageSelectModule {
     @FragmentScope
     @Provides
     fun providePresenter(
-            appContext: Context,
-            preferences: PreferenceRepositoryAbs
+        appContext: Context,
+        preferences: PreferenceRepositoryAbs
     ): LanguageSelectContract.Presenter {
         return LanguageSelectPresenter(appContext, preferences)
     }

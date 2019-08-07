@@ -32,9 +32,9 @@ import com.saltedge.authenticator.tool.millisToRemainedMinutes
 import com.saltedge.authenticator.tool.secure.PasscodeTools
 
 class LockableActivityPresenter(
-        val viewContract: LockableActivityContract,
-        val connectionsRepository: ConnectionsRepositoryAbs,
-        val preferenceRepository: PreferenceRepositoryAbs
+    val viewContract: LockableActivityContract,
+    val connectionsRepository: ConnectionsRepositoryAbs,
+    val preferenceRepository: PreferenceRepositoryAbs
 ) {
 
     private var returnFromOwnActivity = false
@@ -74,7 +74,8 @@ class LockableActivityPresenter(
     fun onWrongPasscodeInput() {
         val inputAttempt = preferenceRepository.pinInputAttempts + 1
         preferenceRepository.pinInputAttempts = inputAttempt
-        preferenceRepository.blockPinInputTillTime = SystemClock.elapsedRealtime() + calculateWrongAttemptWaitTime(inputAttempt)
+        preferenceRepository.blockPinInputTillTime =
+            SystemClock.elapsedRealtime() + calculateWrongAttemptWaitTime(inputAttempt)
 
         when {
             shouldBlockInput(inputAttempt) -> disableUnlockInput(inputAttempt)

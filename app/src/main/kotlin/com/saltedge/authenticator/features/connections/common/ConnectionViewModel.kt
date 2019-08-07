@@ -23,10 +23,10 @@ package com.saltedge.authenticator.features.connections.common
 import androidx.annotation.ColorRes
 
 data class ConnectionViewModel(
-        val guid: String,
-        val code: String,
-        val name: String,
-        val logoUrl: String,
-        val statusDescription: String,
-        @ColorRes val statusColorResId: Int
+    val guid: String,
+    val code: String,
+    val name: String,
+    val logoUrl: String,
+    val statusDescription: String,
+    @ColorRes val statusColorResId: Int
 )

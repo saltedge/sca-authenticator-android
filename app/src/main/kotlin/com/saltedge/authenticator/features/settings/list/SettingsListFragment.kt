@@ -40,7 +40,8 @@ import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
 
-class SettingsListFragment : BaseFragment(), SettingsListContract.View, CheckableListItemClickListener {
+class SettingsListFragment : BaseFragment(), SettingsListContract.View,
+    CheckableListItemClickListener {
 
     @Inject lateinit var presenterContract: SettingsListContract.Presenter
 
@@ -49,8 +50,11 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View, Checkabl
         injectDependencies()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View
-            = inflater.inflate(R.layout.fragment_base_list, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = inflater.inflate(R.layout.fragment_base_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

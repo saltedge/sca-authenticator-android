@@ -26,7 +26,7 @@ import com.saltedge.authenticator.interfaces.CheckableListItemClickListener
 import com.saltedge.authenticator.widget.list.AbstractListAdapter
 
 class SettingsAdapter(
-        private val clickListener: CheckableListItemClickListener?
+    private val clickListener: CheckableListItemClickListener?
 ) : AbstractListAdapter() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

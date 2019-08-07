@@ -48,8 +48,11 @@ class AboutListFragment : BaseFragment(), AboutListContract.View {
         injectDependencies()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View
-            = inflater.inflate(R.layout.fragment_base_list, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = inflater.inflate(R.layout.fragment_base_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -94,7 +97,9 @@ class AboutListFragment : BaseFragment(), AboutListContract.View {
 
     private fun injectDependencies() {
         activity?.let {
-            DaggerAboutListComponent.builder().aboutListModule(AboutListModule(it)).build().inject(this)
+            DaggerAboutListComponent.builder().aboutListModule(AboutListModule(it)).build().inject(
+                this
+            )
         }
     }
 }

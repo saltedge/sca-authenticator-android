@@ -34,12 +34,12 @@ class CloudMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage?) {
         this.showAuthNotification(
-                remoteMessage?.notification?.title,
-                remoteMessage?.notification?.body,
-                createPendingIntent(
-                        remoteMessage?.data?.get(KEY_CONNECTION_ID),
-                        remoteMessage?.data?.get(KEY_AUTHORIZATION_ID)
-                )
+            remoteMessage?.notification?.title,
+            remoteMessage?.notification?.body,
+            createPendingIntent(
+                remoteMessage?.data?.get(KEY_CONNECTION_ID),
+                remoteMessage?.data?.get(KEY_AUTHORIZATION_ID)
+            )
         )
     }
 
@@ -68,8 +68,8 @@ class CloudMessagingService : FirebaseMessagingService() {
      * @see PendingIntent.getActivity
      */
     private fun createPendingIntent(
-            connectionId: String?,
-            authorizationId: String?
+        connectionId: String?,
+        authorizationId: String?
     ): PendingIntent? {
         return if (connectionId?.isNotEmpty() == true && authorizationId?.isNotEmpty() == true) {
             val activityIntent = Intent(this, MainActivity::class.java)

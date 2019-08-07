@@ -26,7 +26,7 @@ import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.widget.list.AbstractListAdapter
 
 class LicensesAdapter(
-        private val clickListener: ListItemClickListener?
+    private val clickListener: ListItemClickListener?
 ) : AbstractListAdapter() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

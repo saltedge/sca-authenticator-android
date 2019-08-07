@@ -28,25 +28,29 @@ import com.saltedge.authenticator.tool.AppTools
 import javax.inject.Inject
 
 class AboutListPresenter @Inject constructor(
-        private val appContext: Context
+    private val appContext: Context
 ) : AboutListContract.Presenter {
 
     override var viewContract: AboutListContract.View? = null
 
     override fun getListItems(): List<CheckedTitleValueViewModel> {
         return listOf(
-                CheckedTitleValueViewModel(
-                        titleId = R.string.about_app_version,
-                        value = AppTools.getAppVersionName(appContext)),
-                CheckedTitleValueViewModel(
-                        titleId = R.string.about_copyright,
-                        value = appContext.getString(R.string.about_copyright_description)),
-                CheckedTitleValueViewModel(
-                        titleId = R.string.about_terms_service,
-                        itemIsClickable = true),
-                CheckedTitleValueViewModel(
-                        titleId = R.string.about_open_source_licenses,
-                        itemIsClickable = true)
+            CheckedTitleValueViewModel(
+                titleId = R.string.about_app_version,
+                value = AppTools.getAppVersionName(appContext)
+            ),
+            CheckedTitleValueViewModel(
+                titleId = R.string.about_copyright,
+                value = appContext.getString(R.string.about_copyright_description)
+            ),
+            CheckedTitleValueViewModel(
+                titleId = R.string.about_terms_service,
+                itemIsClickable = true
+            ),
+            CheckedTitleValueViewModel(
+                titleId = R.string.about_open_source_licenses,
+                itemIsClickable = true
+            )
         )
     }
 

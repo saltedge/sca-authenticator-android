@@ -39,10 +39,10 @@ import kotlinx.android.synthetic.main.view_touch_id.*
 import javax.inject.Inject
 
 class OnboardingSetupActivity : AppCompatActivity(),
-        OnboardingSetupContract.View,
-        ViewPager.OnPageChangeListener,
-        View.OnClickListener,
-        PasscodeInputViewListener {
+    OnboardingSetupContract.View,
+    ViewPager.OnPageChangeListener,
+    View.OnClickListener,
+    PasscodeInputViewListener {
 
     @Inject
     lateinit var presenter: OnboardingSetupPresenter
@@ -115,8 +115,8 @@ class OnboardingSetupActivity : AppCompatActivity(),
 
     override fun showMainActivity() {
         startActivity(Intent(this, MainActivity::class.java)
-                .apply { putExtra(KEY_SKIP_PIN, true) }
-                .apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK })
+            .apply { putExtra(KEY_SKIP_PIN, true) }
+            .apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK })
     }
 
     override fun showWarningDialogWithMessage(message: String) {
@@ -124,11 +124,11 @@ class OnboardingSetupActivity : AppCompatActivity(),
     }
 
     override fun updateSetupViews(
-            setupStepProgress: Float,
-            headerTitle: Int,
-            headerDescription: Int,
-            showPasscodeCancel: Boolean?,
-            passcodePositiveActionText: Int?
+        setupStepProgress: Float,
+        headerTitle: Int,
+        headerDescription: Int,
+        showPasscodeCancel: Boolean?,
+        passcodePositiveActionText: Int?
     ) {
         stepProgressView?.setStepProgress(setupStepProgress)
         headerTitleView?.setText(headerTitle)
@@ -198,6 +198,8 @@ class OnboardingSetupActivity : AppCompatActivity(),
     }
 
     private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addOnboardingSetupModule(OnboardingSetupModule())?.inject(this)
+        authenticatorApp?.appComponent?.addOnboardingSetupModule(OnboardingSetupModule())?.inject(
+            this
+        )
     }
 }

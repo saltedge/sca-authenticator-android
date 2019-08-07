@@ -31,11 +31,11 @@ interface OnboardingSetupContract {
         fun showMainActivity()
         fun showWarningDialogWithMessage(message: String)
         fun updateSetupViews(
-                setupStepProgress: Float,
-                headerTitle: Int,
-                headerDescription: Int,
-                showPasscodeCancel: Boolean?,
-                passcodePositiveActionText: ResId?
+            setupStepProgress: Float,
+            headerTitle: Int,
+            headerDescription: Int,
+            showPasscodeCancel: Boolean?,
+            passcodePositiveActionText: ResId?
         )
 
         fun hideOnboardingViewAndShowSetupView()

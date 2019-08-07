@@ -31,16 +31,16 @@ import org.joda.time.DateTime
 import java.io.Serializable
 
 data class AuthorizationViewModel(
-        val authorizationId: AuthorizationID,
-        val authorizationCode: String,
-        val title: String,
-        val description: String,
-        val validSeconds: Int,
-        val expiresAt: DateTime,
-        val connectionId: ConnectionID,
-        val connectionName: String,
-        var connectionLogoUrl: String?,
-        var isProcessing: Boolean
+    val authorizationId: AuthorizationID,
+    val authorizationCode: String,
+    val title: String,
+    val description: String,
+    val validSeconds: Int,
+    val expiresAt: DateTime,
+    val connectionId: ConnectionID,
+    val connectionName: String,
+    var connectionLogoUrl: String?,
+    var isProcessing: Boolean
 ) : Serializable
 
 /**
@@ -84,16 +84,17 @@ fun AuthorizationViewModel.remainedTimeTillExpire(): String = expiresAt.remained
  */
 fun AuthorizationData.toAuthorizationViewModel(connection: ConnectionAbs): AuthorizationViewModel {
     return AuthorizationViewModel(
-            title = this.title,
-            description = this.description,
-            connectionId = connection.id,
-            connectionName = connection.name,
-            connectionLogoUrl = connection.logoUrl,
-            validSeconds = authorizationExpirationPeriod(this),
-            expiresAt = this.expiresAt,
-            authorizationId = this.id,
-            authorizationCode = this.authorizationCode ?: "",
-            isProcessing = false)
+        title = this.title,
+        description = this.description,
+        connectionId = connection.id,
+        connectionName = connection.name,
+        connectionLogoUrl = connection.logoUrl,
+        validSeconds = authorizationExpirationPeriod(this),
+        expiresAt = this.expiresAt,
+        authorizationId = this.id,
+        authorizationCode = this.authorizationCode ?: "",
+        isProcessing = false
+    )
 }
 
 /**
