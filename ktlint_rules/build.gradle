@@ -1,0 +1,8 @@
+apply plugin: 'kotlin'
+
+dependencies {
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib")
+    compileOnly("org.jetbrains.kotlin:kotlin-reflect")
+    compileOnly("org.jetbrains.kotlin:kotlin-script-runtime")
+    compileOnly("com.pinterest.ktlint:ktlint-core:0.34.2")
+}
