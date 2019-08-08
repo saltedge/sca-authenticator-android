@@ -198,7 +198,6 @@ class PreferenceRepositoryTest {
                 .getString("KEY_CLOUD_MESSAGING_TOKEN", "")!!, equalTo("token"))
     }
 
-
     private fun clearPreferences() {
         PreferenceManager.getDefaultSharedPreferences(applicationContext).edit().clear().apply()
     }

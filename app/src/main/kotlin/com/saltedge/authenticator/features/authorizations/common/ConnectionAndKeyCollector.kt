@@ -33,8 +33,8 @@ import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
  * @return Map<ConnectionID, ConnectionAndKey)
  */
 fun collectConnectionsAndKeys(
-        repository: ConnectionsRepositoryAbs,
-        keyStoreManager: KeyStoreManagerAbs
+    repository: ConnectionsRepositoryAbs,
+    keyStoreManager: KeyStoreManagerAbs
 ): Map<ConnectionID, ConnectionAndKey> {
     return repository.getAllActiveConnections().mapNotNull {
         it.getPrivateKeyForConnection(keyStoreManager)
@@ -47,9 +47,9 @@ fun collectConnectionsAndKeys(
  * @return ConnectionAndKey
  */
 fun createConnectionAndKey(
-        connectionId: ConnectionID,
-        repository: ConnectionsRepositoryAbs,
-        keyStoreManager: KeyStoreManagerAbs
+    connectionId: ConnectionID,
+    repository: ConnectionsRepositoryAbs,
+    keyStoreManager: KeyStoreManagerAbs
 ): ConnectionAndKey? {
     return repository.getById(connectionId)?.let { connection ->
         connection.getRelatedPrivateKey(keyStoreManager)?.let { key ->
@@ -65,8 +65,9 @@ fun createConnectionAndKey(
  * @return Pair<ConnectionID, ConnectionAndKey)
  */
 private fun Connection.getPrivateKeyForConnection(
-        keyStoreManager: KeyStoreManagerAbs): Pair<ConnectionID, ConnectionAndKey>? {
+    keyStoreManager: KeyStoreManagerAbs
+): Pair<ConnectionID, ConnectionAndKey>? {
     return keyStoreManager.getKeyPair(this.guid)?.let { pair ->
-            Pair(this.id, ConnectionAndKey(connection = this, key = pair.private))
+        Pair(this.id, ConnectionAndKey(connection = this, key = pair.private))
     }
 }

@@ -43,13 +43,13 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
 
     override fun onCreate() {
         super.onCreate()
-        //JodaTime init
+        // JodaTime init
         JodaTimeAndroid.init(this)
 
-        //Crashlytics init
+        // Crashlytics init
         initFirebaseModules()
 
-        //Patch Security Provider
+        // Patch Security Provider
         patchSecurityProvider()
 
         if (AppTools.isTestsSuite(this)) RealmManager.initRealm(this)

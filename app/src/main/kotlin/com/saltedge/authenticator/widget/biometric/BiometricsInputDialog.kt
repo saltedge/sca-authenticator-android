@@ -39,8 +39,8 @@ import com.saltedge.authenticator.tool.showDialogFragment
 import com.saltedge.authenticator.widget.fragment.BaseRoundedBottomDialogFragment
 
 class BiometricsInputDialog : BaseRoundedBottomDialogFragment(),
-        BiometricPromptAbs,
-        BiometricsInputContract.View {
+    BiometricPromptAbs,
+    BiometricsInputContract.View {
 
     private val presenter = BiometricsInputPresenter(contract = this)
     private val titleView: TextView? by lazy {
@@ -56,10 +56,11 @@ class BiometricsInputDialog : BaseRoundedBottomDialogFragment(),
         dialog?.findViewById<TextView>(R.id.cancelActionView)
     }
     override var resultCallback: BiometricPromptCallback? = null
-    override fun showBiometricPrompt(context: FragmentActivity,
-                                     @StringRes titleResId: ResId,
-                                     @StringRes descriptionResId: ResId,
-                                     @StringRes negativeActionTextResId: ResId
+    override fun showBiometricPrompt(
+        context: FragmentActivity,
+        @StringRes titleResId: ResId,
+        @StringRes descriptionResId: ResId,
+        @StringRes negativeActionTextResId: ResId
     ) {
         arguments = Bundle().apply {
             putInt(KEY_TITLE, titleResId)
@@ -100,7 +101,12 @@ class BiometricsInputDialog : BaseRoundedBottomDialogFragment(),
         presenter.onDialogPause()
     }
 
-    override fun updateStatusView(imageResId: Int, textColorResId: Int, textResId: Int, animateText: Boolean) {
+    override fun updateStatusView(
+        imageResId: Int,
+        textColorResId: Int,
+        textResId: Int,
+        animateText: Boolean
+    ) {
         statusImageView?.setImageResourceAnimated(imageResId)
         descriptionView?.setTextColorResId(textColorResId)
         descriptionView?.setText(textResId)
@@ -119,15 +125,15 @@ class BiometricsInputDialog : BaseRoundedBottomDialogFragment(),
 
     private fun ImageView.setImageResourceAnimated(@DrawableRes imageResId: Int) {
         ViewCompat.animate(this).withLayer().setDuration(150)
-                .alpha(0.1f).scaleX(0.1f).scaleY(0.1f)
-                .withEndAction {
-                    this.setImageResource(imageResId)
-                    ViewCompat.animate(this).withLayer()
-                            .alpha(1f).scaleX(1f).scaleY(1f)
-                            .duration = 150
-                }
+            .alpha(0.1f).scaleX(0.1f).scaleY(0.1f)
+            .withEndAction {
+                this.setImageResource(imageResId)
+                ViewCompat.animate(this).withLayer()
+                    .alpha(1f).scaleX(1f).scaleY(1f)
+                    .duration = 150
+            }
     }
 
     private fun View.shakeView() = ViewCompat.animate(this).withLayer()
-            .translationX(20f).setDuration(400).setInterpolator(CycleInterpolator(5f))
+        .translationX(20f).setDuration(400).setInterpolator(CycleInterpolator(5f))
 }

@@ -35,14 +35,14 @@ class SettingsListModule {
     @FragmentScope
     @Provides
     fun providePresenter(
-            appContext: Context,
-            preferences: PreferenceRepositoryAbs,
-            biometricTools: BiometricToolsAbs
+        appContext: Context,
+        preferences: PreferenceRepositoryAbs,
+        biometricTools: BiometricToolsAbs
     ): SettingsListContract.Presenter {
         return SettingsListPresenter(
-                appContext = appContext,
-                preferences = preferences,
-                biometricTools = biometricTools
+            appContext = appContext,
+            preferences = preferences,
+            biometricTools = biometricTools
         )
     }
 }

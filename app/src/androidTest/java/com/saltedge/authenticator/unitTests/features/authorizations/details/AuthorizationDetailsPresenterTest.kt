@@ -811,10 +811,10 @@ class AuthorizationDetailsPresenterTest {
         return AuthorizationData(
                 id = "$id",
                 authorizationCode = "$id$id$id",
-                title = "title$id", 
-                description = "desc$id", 
-                connectionId = "1", 
-                createdAt = createdAt, 
+                title = "title$id",
+                description = "desc$id",
+                connectionId = "1",
+                createdAt = createdAt,
                 expiresAt = createdAt.plusHours(id)
         )
     }

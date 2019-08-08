@@ -32,8 +32,8 @@ import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
 import com.saltedge.authenticator.tool.ResId
 
 class MainActivityPresenter(
-        val viewContract: MainActivityContract.View,
-        private val connectionsRepository: ConnectionsRepositoryAbs
+    val viewContract: MainActivityContract.View,
+    private val connectionsRepository: ConnectionsRepositoryAbs
 ) {
 
     /**
@@ -46,11 +46,13 @@ class MainActivityPresenter(
         if (intent != null && (intent.hasConnectionIdAndAuthorizationId || intent.hasConnectConfigurationLink)) {
             onNewIntentReceived(intent)
         } else {
-            viewContract.setSelectedTabbarItemId(if (connectionsRepository.hasActiveConnections()) {
-                R.id.menu_authorizations
-            } else {
-                R.id.menu_connections
-            })
+            viewContract.setSelectedTabbarItemId(
+                if (connectionsRepository.hasActiveConnections()) {
+                    R.id.menu_authorizations
+                } else {
+                    R.id.menu_connections
+                }
+            )
         }
     }
 
@@ -60,7 +62,11 @@ class MainActivityPresenter(
     fun onNewIntentReceived(intent: Intent) {
         when {
             intent.hasConnectionIdAndAuthorizationId -> {
-                viewContract.showAuthorizationDetailsView(intent.connectionId, intent.authorizationId, quickConfirmMode = true)
+                viewContract.showAuthorizationDetailsView(
+                    intent.connectionId,
+                    intent.authorizationId,
+                    quickConfirmMode = true
+                )
             }
             intent.hasConnectConfigurationLink -> {
                 viewContract.setSelectedTabbarItemId(R.id.menu_connections)
@@ -76,7 +82,7 @@ class MainActivityPresenter(
      * @return icon resource id
      */
     fun getNavigationIcon(isTopNavigationLevel: Boolean): ResId? =
-            if (isTopNavigationLevel) null else R.drawable.ic_arrow_back_white_24dp
+        if (isTopNavigationLevel) null else R.drawable.ic_arrow_back_white_24dp
 
     /**
      * Handles navigation (Tab Bar) items clicks
@@ -118,7 +124,6 @@ class MainActivityPresenter(
         else viewContract.updateNavigationViewsContent()
     }
 
-
     /**
      * Handles clicks on navigation action (back arrow)
      *
@@ -137,11 +142,11 @@ class MainActivityPresenter(
     private val Intent?.connectConfigurationLink: String
         get() = this?.getStringExtra(KEY_DEEP_LINK) ?: ""
 
-    //Show Authorization Details Fragment
+    // Show Authorization Details Fragment
     private val Intent?.hasConnectionIdAndAuthorizationId: Boolean
         get() = this != null && this.connectionId.isNotEmpty() && this.authorizationId.isNotEmpty()
 
-    //Show Connect Activity
+    // Show Connect Activity
     private val Intent?.hasConnectConfigurationLink: Boolean
         get() = connectConfigurationLink.isNotEmpty()
 }

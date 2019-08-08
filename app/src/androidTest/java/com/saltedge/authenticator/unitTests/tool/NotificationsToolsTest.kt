@@ -9,11 +9,9 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationManagerCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.*
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
@@ -45,7 +43,7 @@ class NotificationsToolsTest {
             assertThat(argument.vibrationPattern, equalTo(longArrayOf(0, 150, 100, 150)))
             assertThat(argument.lockscreenVisibility, equalTo(Notification.VISIBILITY_PRIVATE))
         } else {
-            mockContext.registerNotificationChannels()//Dummy call
+            mockContext.registerNotificationChannels() // Dummy call
         }
     }
 }

@@ -95,7 +95,6 @@ class WormAnimation(listener: ValueAnimation.UpdateListener) : AbsAnimation<Anim
                 } else {
                     rectLeftX = value
                 }
-
             } else {
                 if (isRightSide) {
                     rectLeftX = value

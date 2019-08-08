@@ -140,5 +140,3 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
         CHECK_PASSCODE, NEW_PASSCODE, REPEAT_NEW_PASSCODE
     }
 }
-
-

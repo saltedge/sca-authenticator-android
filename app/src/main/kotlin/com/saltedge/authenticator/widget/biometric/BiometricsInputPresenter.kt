@@ -55,7 +55,7 @@ class BiometricsInputPresenter(val contract: BiometricsInputContract.View?) :
      */
     override fun onAuthenticationHelp(helpMsgId: Int, helpString: CharSequence?) {
         super.onAuthenticationHelp(helpMsgId, helpString)
-        //Empty
+        // Empty
     }
 
     override fun onAuthenticationFailed() {

@@ -37,11 +37,11 @@ import com.saltedge.authenticator.sdk.tools.publicKeyToPemEncodedString
 import javax.inject.Inject
 
 class ConnectProviderPresenter @Inject constructor(
-        private val appContext: Context,
-        private val preferenceRepository: PreferenceRepositoryAbs,
-        private val connectionsRepository: ConnectionsRepositoryAbs,
-        private val keyStoreManager: KeyStoreManagerAbs,
-        private val apiManager: AuthenticatorApiManagerAbs
+    private val appContext: Context,
+    private val preferenceRepository: PreferenceRepositoryAbs,
+    private val connectionsRepository: ConnectionsRepositoryAbs,
+    private val keyStoreManager: KeyStoreManagerAbs,
+    private val apiManager: AuthenticatorApiManagerAbs
 ) : ConnectProviderContract.Presenter, ConnectionInitResult, FetchProviderDataResult {
 
     override val reportProblemActionText: Int?
@@ -76,7 +76,7 @@ class ConnectProviderPresenter @Inject constructor(
                 appContext.getString(R.string.connect_status_provider_success_description) ?: ""
             } else {
                 sessionFailMessage ?: appContext.getString(
-                        R.string.errors_connection_failed_description
+                    R.string.errors_connection_failed_description
                 ) ?: ""
             }
         }
@@ -162,10 +162,10 @@ class ConnectProviderPresenter @Inject constructor(
     private fun performNewConnectionRequest() {
         keyStoreManager.createOrReplaceRsaKeyPair(connection.guid)?.publicKeyToPemEncodedString()?.let {
             apiManager.initConnectionRequest(
-                    baseUrl = connection.connectUrl,
-                    publicKey = it,
-                    pushToken = preferenceRepository.cloudMessagingToken,
-                    resultCallback = this
+                baseUrl = connection.connectUrl,
+                publicKey = it,
+                pushToken = preferenceRepository.cloudMessagingToken,
+                resultCallback = this
             )
         }
     }

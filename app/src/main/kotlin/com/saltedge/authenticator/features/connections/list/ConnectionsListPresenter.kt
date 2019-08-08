@@ -39,11 +39,11 @@ import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
 import javax.inject.Inject
 
 class ConnectionsListPresenter @Inject constructor(
-        private val appContext: Context,
-        private val keyStoreManager: KeyStoreManagerAbs,
-        private val connectionsRepository: ConnectionsRepositoryAbs,
-        private val apiManager: AuthenticatorApiManagerAbs) :
-        ConnectionsListContract.Presenter, ConnectionsRevokeResult {
+    private val appContext: Context,
+    private val keyStoreManager: KeyStoreManagerAbs,
+    private val connectionsRepository: ConnectionsRepositoryAbs,
+    private val apiManager: AuthenticatorApiManagerAbs
+) : ConnectionsListContract.Presenter, ConnectionsRevokeResult {
 
     override var viewContract: ConnectionsListContract.View? = null
 
@@ -63,20 +63,25 @@ class ConnectionsListPresenter @Inject constructor(
             }
             RENAME_REQUEST_CODE -> {
                 onUserRenamedConnection(
-                        connectionGuid = data.getStringExtra(KEY_GUID) ?: return,
-                        newConnectionName = data.getStringExtra(KEY_NAME)
+                    connectionGuid = data.getStringExtra(KEY_GUID) ?: return,
+                    newConnectionName = data.getStringExtra(KEY_NAME)
                 )
             }
-            DELETE_REQUEST_CODE -> onUserConfirmedDeleteConnection(connectionGuid = data.getStringExtra(KEY_GUID) ?: return)
+            DELETE_REQUEST_CODE -> onUserConfirmedDeleteConnection(
+                connectionGuid = data.getStringExtra(
+                    KEY_GUID
+                ) ?: return
+            )
             DELETE_ALL_REQUEST_CODE -> onUserConfirmedDeleteAllConnections()
         }
     }
 
     override fun onListItemClick(connectionGuid: GUID) {
         viewContract?.showOptionsView(
-                connectionGuid = connectionGuid,
-                options = createOptionsMenuList(connectionGuid),
-                requestCode = ITEM_OPTIONS_REQUEST_CODE)
+            connectionGuid = connectionGuid,
+            options = createOptionsMenuList(connectionGuid),
+            requestCode = ITEM_OPTIONS_REQUEST_CODE
+        )
     }
 
     override fun onMenuItemClick(menuItemId: Int): Boolean {
@@ -106,9 +111,10 @@ class ConnectionsListPresenter @Inject constructor(
     private fun onRenameOptionSelected(connectionGuid: GUID) {
         connectionsRepository.getByGuid(connectionGuid)?.let { connection ->
             viewContract?.showConnectionNameEditView(
-                    connectionGuid = connectionGuid,
-                    connectionName = connection.name,
-                    requestCode = RENAME_REQUEST_CODE)
+                connectionGuid = connectionGuid,
+                connectionName = connection.name,
+                requestCode = RENAME_REQUEST_CODE
+            )
         }
     }
 
@@ -123,8 +129,9 @@ class ConnectionsListPresenter @Inject constructor(
 
     private fun onDeleteOptionsSelected(connectionGuid: GUID) {
         viewContract?.showDeleteConnectionView(
-                connectionGuid = connectionGuid,
-                requestCode = DELETE_REQUEST_CODE)
+            connectionGuid = connectionGuid,
+            requestCode = DELETE_REQUEST_CODE
+        )
     }
 
     private fun onUserConfirmedDeleteAllConnections() {
@@ -143,7 +150,7 @@ class ConnectionsListPresenter @Inject constructor(
 
     private fun sendRevokeRequestForConnections(connections: List<Connection>) {
         val connectionsAndKeys: List<ConnectionAndKey> = connections.filter { it.isActive() }
-                .mapNotNull { it.toConnectionAndKey(keyStoreManager) }
+            .mapNotNull { it.toConnectionAndKey(keyStoreManager) }
 
         apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = this)
     }
@@ -162,14 +169,18 @@ class ConnectionsListPresenter @Inject constructor(
     private fun createOptionsMenuList(connectionGuid: GUID): Array<ConnectionOptions> {
         return connectionsRepository.getByGuid(connectionGuid)?.let {
             if (it.getStatus() === ConnectionStatus.ACTIVE) {
-                arrayOf(ConnectionOptions.RENAME,
-                        ConnectionOptions.REPORT_PROBLEM,
-                        ConnectionOptions.DELETE)
+                arrayOf(
+                    ConnectionOptions.RENAME,
+                    ConnectionOptions.REPORT_PROBLEM,
+                    ConnectionOptions.DELETE
+                )
             } else {
-                arrayOf(ConnectionOptions.RECONNECT,
-                        ConnectionOptions.RENAME,
-                        ConnectionOptions.REPORT_PROBLEM,
-                        ConnectionOptions.DELETE)
+                arrayOf(
+                    ConnectionOptions.RECONNECT,
+                    ConnectionOptions.RENAME,
+                    ConnectionOptions.REPORT_PROBLEM,
+                    ConnectionOptions.DELETE
+                )
             }
         } ?: emptyArray()
     }

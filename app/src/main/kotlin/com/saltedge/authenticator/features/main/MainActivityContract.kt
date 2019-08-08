@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of the Salt Edge Authenticator distribution 
  * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2019 Salt Edge Inc.
@@ -29,10 +29,11 @@ interface MainActivityContract {
         fun setSelectedTabbarItemId(menuId: Int)
         fun showConnectProvider(connectConfigurationLink: String)
         fun showAuthorizationDetailsView(
-                connectionId: String,
-                authorizationId: String,
-                quickConfirmMode: Boolean
+            connectionId: String,
+            authorizationId: String,
+            quickConfirmMode: Boolean
         )
+
         fun restartActivity()
         fun closeView()
         fun updateNavigationViewsContent()

@@ -24,7 +24,6 @@ import com.saltedge.authenticator.app.*
 import com.saltedge.authenticator.sdk.model.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.Token
-import com.saltedge.authenticator.tool.log
 import io.realm.Realm
 import io.realm.RealmQuery
 import org.joda.time.DateTime

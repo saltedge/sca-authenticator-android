@@ -48,15 +48,21 @@ class BiometricPromptManagerV28 : BiometricPromptAbs, DialogInterface.OnClickLis
     private var cancellationSignal: CancellationSignal? = null
 
     @RequiresApi(Build.VERSION_CODES.P)
-    override fun showBiometricPrompt(context: FragmentActivity,
-                                     titleResId: ResId,
-                                     descriptionResId: ResId,
-                                     @StringRes negativeActionTextResId: ResId) {
+    override fun showBiometricPrompt(
+        context: FragmentActivity,
+        titleResId: ResId,
+        descriptionResId: ResId,
+        @StringRes negativeActionTextResId: ResId
+    ) {
         cancellationSignal = CancellationSignal().also {
             val builder = BiometricPrompt.Builder(context)
             builder.setTitle(context.getString(titleResId))
             builder.setSubtitle(context.getString(descriptionResId))
-            builder.setNegativeButton(context.getString(negativeActionTextResId), context.mainExecutor, this)
+            builder.setNegativeButton(
+                context.getString(negativeActionTextResId),
+                context.mainExecutor,
+                this
+            )
             val prompt: BiometricPrompt = builder.build()
             prompt.authenticate(it, context.mainExecutor, authenticationCallBack)
         }
@@ -72,9 +78,9 @@ class BiometricPromptManagerV28 : BiometricPromptAbs, DialogInterface.OnClickLis
 
 fun BiometricPromptAbs.showAuthorizationConfirm(context: FragmentActivity) {
     this.showBiometricPrompt(
-            context = context,
-            titleResId = R.string.actions_confirm,
-            descriptionResId = R.string.fingerprint_touch_sensor,
-            negativeActionTextResId = R.string.actions_enter_passcode
+        context = context,
+        titleResId = R.string.actions_confirm,
+        descriptionResId = R.string.fingerprint_touch_sensor,
+        negativeActionTextResId = R.string.actions_enter_passcode
     )
 }

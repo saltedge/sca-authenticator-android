@@ -29,9 +29,10 @@ import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import javax.inject.Inject
 
 class LauncherPresenter @Inject constructor(
-        private val preferenceRepository: PreferenceRepositoryAbs,
-        private val passcodeTools: PasscodeToolsAbs,
-        private val biometricTools: BiometricToolsAbs) {
+    private val preferenceRepository: PreferenceRepositoryAbs,
+    private val passcodeTools: PasscodeToolsAbs,
+    private val biometricTools: BiometricToolsAbs
+) {
 
     fun setupApplication() {
         if (shouldSetupApplication()) {
@@ -41,7 +42,7 @@ class LauncherPresenter @Inject constructor(
     }
 
     fun getNextActivityClass(): Class<out Activity> =
-            if (shouldSetupApplication()) OnboardingSetupActivity::class.java else MainActivity::class.java
+        if (shouldSetupApplication()) OnboardingSetupActivity::class.java else MainActivity::class.java
 
     private fun shouldSetupApplication(): Boolean = !preferenceRepository.passcodeExist()
 }

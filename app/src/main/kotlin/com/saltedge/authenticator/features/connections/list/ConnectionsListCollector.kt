@@ -30,19 +30,21 @@ import com.saltedge.authenticator.sdk.model.ConnectionStatus
 import com.saltedge.authenticator.tool.toDateTime
 import com.saltedge.authenticator.tool.toLongDateString
 
-fun collectAllConnectionsViewModels(repository: ConnectionsRepositoryAbs,
-                                 context: Context): List<ConnectionViewModel> {
+fun collectAllConnectionsViewModels(
+    repository: ConnectionsRepositoryAbs,
+    context: Context
+): List<ConnectionViewModel> {
     return repository.getAllConnections().sortedBy { it.createdAt }.map { connection ->
         ConnectionViewModel(
-                guid = connection.guid,
-                code = connection.code,
-                name = connection.name,
-                statusDescription = getConnectionStatusDescription(
-                        context = context,
-                        connection = connection
-                ),
-                statusColorResId = getConnectionStateColorResId(connection),
-                logoUrl = connection.logoUrl
+            guid = connection.guid,
+            code = connection.code,
+            name = connection.name,
+            statusDescription = getConnectionStatusDescription(
+                context = context,
+                connection = connection
+            ),
+            statusColorResId = getConnectionStateColorResId(connection),
+            logoUrl = connection.logoUrl
         )
     }
 }

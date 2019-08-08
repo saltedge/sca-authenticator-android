@@ -31,7 +31,7 @@ fun runMigrations(): RealmMigration {
         val realmSchema: RealmSchema = realm.schema
         for (i in (oldVersion + 1)..newVersion) {
             when (i) {
-                //2L -> //Here to add further migrations
+                // 2L -> // Here to add further migrations
             }
         }
     }

@@ -27,15 +27,16 @@ import com.saltedge.authenticator.tool.getAvailableLocalizations
 import com.saltedge.authenticator.tool.localeCodeToName
 
 class LanguageSelectPresenter(
-        private val appContext: Context,
-        private val preferences: PreferenceRepositoryAbs) : LanguageSelectContract.Presenter {
+    private val appContext: Context,
+    private val preferences: PreferenceRepositoryAbs
+) : LanguageSelectContract.Presenter {
 
     private var availableLocales = appContext.getAvailableLocalizations().sorted()
     override var viewContract: LanguageSelectContract.View? = null
     override var availableLanguages: Array<String> =
-            availableLocales.map { it.localeCodeToName() }.toTypedArray()
+        availableLocales.map { it.localeCodeToName() }.toTypedArray()
     override var currentItemIndex: Int =
-            availableLanguages.indexOf(appContext.currentAppLocaleName())
+        availableLanguages.indexOf(appContext.currentAppLocaleName())
 
     override fun onOkClick() {
         viewContract?.closeView()

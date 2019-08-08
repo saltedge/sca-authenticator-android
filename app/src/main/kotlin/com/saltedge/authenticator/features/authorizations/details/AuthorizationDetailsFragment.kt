@@ -45,25 +45,34 @@ import kotlinx.android.synthetic.main.fragment_authorization_details.*
 import java.util.*
 import javax.inject.Inject
 
-class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContract.View, View.OnClickListener {
+class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContract.View,
+    View.OnClickListener {
 
-    @Inject lateinit var presenterContract: AuthorizationDetailsPresenter
-    @Inject lateinit var biometricPrompt: BiometricPromptAbs
-    @Inject lateinit var timeViewUpdateTimer: Timer
+    @Inject
+    lateinit var presenterContract: AuthorizationDetailsPresenter
+    @Inject
+    lateinit var biometricPrompt: BiometricPromptAbs
+    @Inject
+    lateinit var timeViewUpdateTimer: Timer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectDependencies()
         hideActionBar()
         presenterContract.setInitialData(
-                connectionId = arguments?.getString(KEY_CONNECTION_ID) ?: "",
-                authorizationId = arguments?.getString(KEY_AUTHORIZATION_ID),
-                viewModel = arguments?.getSerializable(KEY_DATA) as AuthorizationViewModel?,
-                quickConfirmMode = arguments?.getBoolean(KEY_MODE) ?: false)
+            connectionId = arguments?.getString(KEY_CONNECTION_ID) ?: "",
+            authorizationId = arguments?.getString(KEY_AUTHORIZATION_ID),
+            viewModel = arguments?.getSerializable(KEY_DATA) as AuthorizationViewModel?,
+            quickConfirmMode = arguments?.getBoolean(KEY_MODE) ?: false
+        )
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-            inflater.inflate(R.layout.fragment_authorization_details, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? =
+        inflater.inflate(R.layout.fragment_authorization_details, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         negativeActionView?.setOnClickListener(this)
@@ -115,7 +124,11 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
         descriptionTextView?.setVisible(show = presenterContract.shouldShowDescriptionTextView)
         descriptionWebView?.setVisible(show = presenterContract.shouldShowDescriptionWebView)
         if (presenterContract.shouldShowDescriptionWebView) {
-            descriptionWebView?.loadData(presenterContract.description, "text/html; charset=utf-8", "UTF-8")
+            descriptionWebView?.loadData(
+                presenterContract.description,
+                "text/html; charset=utf-8",
+                "UTF-8"
+            )
         } else {
             descriptionTextView?.movementMethod = ScrollingMovementMethod()
             descriptionTextView?.text = presenterContract.description
@@ -124,8 +137,8 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
         if (presenterContract.shouldShowProviderLogo) {
             connectionLogoView?.visibility = View.VISIBLE
             connectionLogoView?.loadImage(
-                    imageUrl = presenterContract.providerLogo,
-                    placeholderId = R.drawable.ic_logo_bank_placeholder
+                imageUrl = presenterContract.providerLogo,
+                placeholderId = R.drawable.ic_logo_bank_placeholder
             )
         } else {
             connectionLogoView?.visibility = View.GONE
@@ -150,9 +163,9 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
 
     override fun closeViewWithSuccessResult(authorizationId: String) {
         targetFragment?.onActivityResult(
-                targetRequestCode,
-                Activity.RESULT_OK,
-                Intent().putExtra(KEY_ID, authorizationId)
+            targetRequestCode,
+            Activity.RESULT_OK,
+            Intent().putExtra(KEY_ID, authorizationId)
         )
         completeView?.alpha = 0.1f
         completeView?.setVisible(true)
@@ -165,7 +178,7 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
 
     override fun askUserPasscodeConfirmation() {
         activity?.showDialogFragment(
-                ConfirmPasscodeDialog.newInstance(resultCallback = presenterContract)
+            ConfirmPasscodeDialog.newInstance(resultCallback = presenterContract)
         )
     }
 
@@ -198,7 +211,9 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
     }
 
     private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addAuthorizationDetailsModule(AuthorizationDetailsModule())?.inject(this)
+        authenticatorApp?.appComponent?.addAuthorizationDetailsModule(AuthorizationDetailsModule())?.inject(
+            this
+        )
     }
 
     companion object {
@@ -211,9 +226,10 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
          */
         fun newInstance(viewModel: AuthorizationViewModel): AuthorizationDetailsFragment {
             return newInstance(
-                    authorizationId = viewModel.authorizationId,
-                    connectionId = viewModel.connectionId,
-                    viewModel = viewModel)
+                authorizationId = viewModel.authorizationId,
+                connectionId = viewModel.connectionId,
+                viewModel = viewModel
+            )
         }
 
         /**
@@ -226,10 +242,11 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
          *
          * @return AuthorizationDetailsFragment
          */
-        fun newInstance(authorizationId: String,
-                        connectionId: String,
-                        quickConfirmMode: Boolean = false,
-                        viewModel: AuthorizationViewModel? = null
+        fun newInstance(
+            authorizationId: String,
+            connectionId: String,
+            quickConfirmMode: Boolean = false,
+            viewModel: AuthorizationViewModel? = null
         ): AuthorizationDetailsFragment {
             return AuthorizationDetailsFragment().apply {
                 arguments = Bundle().apply {

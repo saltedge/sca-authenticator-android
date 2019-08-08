@@ -30,11 +30,14 @@ interface OnboardingSetupContract {
         fun hideSkipViewAndShowProceedView()
         fun showMainActivity()
         fun showWarningDialogWithMessage(message: String)
-        fun updateSetupViews(setupStepProgress: Float,
-                             headerTitle: Int,
-                             headerDescription: Int,
-                             showPasscodeCancel: Boolean?,
-                             passcodePositiveActionText: ResId?)
+        fun updateSetupViews(
+            setupStepProgress: Float,
+            headerTitle: Int,
+            headerDescription: Int,
+            showPasscodeCancel: Boolean?,
+            passcodePositiveActionText: ResId?
+        )
+
         fun hideOnboardingViewAndShowSetupView()
         fun setPasscodeInputMode(inputMode: PasscodeInputView.InputMode)
     }

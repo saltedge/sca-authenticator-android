@@ -40,9 +40,10 @@ import kotlinx.android.synthetic.main.fragment_connections_list.*
 import javax.inject.Inject
 
 class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
-        ListItemClickListener, View.OnClickListener {
+    ListItemClickListener, View.OnClickListener {
 
-    @Inject lateinit var presenterContract: ConnectionsListContract.Presenter
+    @Inject
+    lateinit var presenterContract: ConnectionsListContract.Presenter
     private val adapter = ConnectionsListAdapter(clickListener = this)
     private var deleteAllMenuItem: MenuItem? = null
     private var optionsDialog: ConnectionOptionsDialog? = null
@@ -53,7 +54,11 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         activityComponents?.updateAppbarTitle(getString(R.string.connections_feature_title))
         return inflater.inflate(R.layout.fragment_connections_list, container, false)
     }
@@ -93,7 +98,8 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return item?.itemId?.let { presenterContract.onMenuItemClick(it) } ?: super.onOptionsItemSelected(item)
+        return item?.itemId?.let { presenterContract.onMenuItemClick(it) }
+            ?: super.onOptionsItemSelected(item)
     }
 
     override fun onClick(v: View?) {
@@ -129,7 +135,11 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         activity?.addFragment(ConnectProviderFragment.newInstance(connectionGuid = connectionGuid))
     }
 
-    override fun showConnectionNameEditView(connectionGuid: String, connectionName: String, requestCode: Int) {
+    override fun showConnectionNameEditView(
+        connectionGuid: String,
+        connectionName: String,
+        requestCode: Int
+    ) {
         val dialog = EditConnectionNameDialog.newInstance(connectionGuid, connectionName).also {
             it.setTargetFragment(this, requestCode)
         }
@@ -143,9 +153,11 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         activity?.showDialogFragment(dialog)
     }
 
-    override fun showOptionsView(connectionGuid: String,
-                                 options: Array<ConnectionOptions>,
-                                 requestCode: Int) {
+    override fun showOptionsView(
+        connectionGuid: String,
+        options: Array<ConnectionOptions>,
+        requestCode: Int
+    ) {
         optionsDialog?.dismiss()
         optionsDialog = ConnectionOptionsDialog.newInstance(connectionGuid, options).also {
             it.setTargetFragment(this, requestCode)
@@ -158,6 +170,8 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
     }
 
     private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addConnectionsListModule(ConnectionsListModule())?.inject(fragment = this)
+        authenticatorApp?.appComponent?.addConnectionsListModule(ConnectionsListModule())?.inject(
+            fragment = this
+        )
     }
 }

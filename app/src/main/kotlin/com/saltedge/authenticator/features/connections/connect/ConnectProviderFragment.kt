@@ -43,24 +43,29 @@ import kotlinx.android.synthetic.main.fragment_connect_processing_header.*
 import javax.inject.Inject
 
 class ConnectProviderFragment : BaseFragment(),
-        ConnectProviderContract.View,
-        ConnectWebClientContract,
-        View.OnClickListener,
-        OnBackPressListener {
+    ConnectProviderContract.View,
+    ConnectWebClientContract,
+    View.OnClickListener,
+    OnBackPressListener {
 
-    @Inject lateinit var presenterContract: ConnectProviderContract.Presenter
+    @Inject
+    lateinit var presenterContract: ConnectProviderContract.Presenter
     private val webViewClient = ConnectWebClient(contract = this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectDependencies()
         presenterContract.setInitialData(
-                connectConfigurationLink = arguments?.getString(KEY_CONNECT_CONFIGURATION),
-                connectionGuid = arguments?.getString(KEY_GUID)
+            connectConfigurationLink = arguments?.getString(KEY_CONNECT_CONFIGURATION),
+            connectionGuid = arguments?.getString(KEY_GUID)
         )
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         activityComponents?.updateAppbarTitle(getString(R.string.actions_connect))
         return inflater.inflate(R.layout.fragment_connect, container, false)
     }
@@ -103,7 +108,10 @@ class ConnectProviderFragment : BaseFragment(),
     }
 
     override fun updateViewsContent() {
-        providerLogoView?.loadImage(presenterContract.logoUrl, placeholderId = R.drawable.ic_logo_bank_placeholder)
+        providerLogoView?.loadImage(
+            presenterContract.logoUrl,
+            placeholderId = R.drawable.ic_logo_bank_placeholder
+        )
         completeView?.setIconResource(presenterContract.iconResId)
         completeView?.setTitleText(presenterContract.completeTitle)
         completeView?.setSubtitleText(presenterContract.completeMessage)
@@ -139,10 +147,10 @@ class ConnectProviderFragment : BaseFragment(),
 
     override fun showErrorAndFinish(message: String) {
         activity?.showWarningDialog(
-                message = message,
-                listener = DialogInterface.OnClickListener { _: DialogInterface, _: Int ->
-                    activity?.finishFragment()
-                }
+            message = message,
+            listener = DialogInterface.OnClickListener { _: DialogInterface, _: Int ->
+                activity?.finishFragment()
+            }
         )
     }
 
@@ -153,13 +161,15 @@ class ConnectProviderFragment : BaseFragment(),
     }
 
     private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addConnectProviderModule(ConnectProviderModule())?.inject(this)
+        authenticatorApp?.appComponent?.addConnectProviderModule(ConnectProviderModule())?.inject(
+            this
+        )
     }
 
     companion object {
         fun newInstance(
-                connectConfigurationLink: String? = null,
-                connectionGuid: GUID? = null
+            connectConfigurationLink: String? = null,
+            connectionGuid: GUID? = null
         ): ConnectProviderFragment {
             return ConnectProviderFragment().apply {
                 arguments = Bundle().apply {

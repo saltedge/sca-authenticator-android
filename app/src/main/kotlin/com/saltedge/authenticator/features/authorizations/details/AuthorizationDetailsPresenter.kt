@@ -39,16 +39,17 @@ import com.saltedge.authenticator.tool.hasHTMLTags
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 
 class AuthorizationDetailsPresenter(
-        appContext: Context,
-        private val connectionsRepository: ConnectionsRepositoryAbs,
-        private val cryptoTools: CryptoToolsAbs,
-        private val keyStoreManager: KeyStoreManagerAbs,
-        biometricTools: BiometricToolsAbs,
-        apiManager: AuthenticatorApiManagerAbs
+    appContext: Context,
+    private val connectionsRepository: ConnectionsRepositoryAbs,
+    private val cryptoTools: CryptoToolsAbs,
+    private val keyStoreManager: KeyStoreManagerAbs,
+    biometricTools: BiometricToolsAbs,
+    apiManager: AuthenticatorApiManagerAbs
 ) : BaseAuthorizationPresenter(appContext, biometricTools, apiManager),
     FetchAuthorizationContract {
 
-    private var pollingService: SingleAuthorizationPollingService = apiManager.createSingleAuthorizationPollingService()
+    private var pollingService: SingleAuthorizationPollingService =
+        apiManager.createSingleAuthorizationPollingService()
     private var quickConfirmMode: Boolean = false
     private var authorizationId: String? = null
     private var confirmRequestIsInProgress: Boolean = false
@@ -57,16 +58,16 @@ class AuthorizationDetailsPresenter(
     override fun baseViewContract(): BaseAuthorizationViewContract? = viewContract
 
     fun setInitialData(
-            connectionId: String,
-            authorizationId: String?,
-            viewModel: AuthorizationViewModel?,
-            quickConfirmMode: Boolean
+        connectionId: String,
+        authorizationId: String?,
+        viewModel: AuthorizationViewModel?,
+        quickConfirmMode: Boolean
     ) {
         this.quickConfirmMode = quickConfirmMode
         super.currentConnectionAndKey = createConnectionAndKey(
-                connectionId,
-                connectionsRepository,
-                keyStoreManager
+            connectionId,
+            connectionsRepository,
+            keyStoreManager
         )
         super.currentViewModel = viewModel
         this.authorizationId = viewModel?.authorizationId ?: authorizationId
@@ -121,8 +122,9 @@ class AuthorizationDetailsPresenter(
         when (viewId) {
             R.id.positiveActionView, R.id.negativeActionView -> {
                 onAuthorizeActionSelected(
-                        isConfirmed = viewId == R.id.positiveActionView,
-                        quickConfirmMode = quickConfirmMode)
+                    isConfirmed = viewId == R.id.positiveActionView,
+                    quickConfirmMode = quickConfirmMode
+                )
             }
             R.id.closeActionView -> viewContract?.closeView()
         }
@@ -132,8 +134,9 @@ class AuthorizationDetailsPresenter(
         if (currentViewModel?.isNotExpired() == true) {
             currentViewModel?.let {
                 viewContract?.updateTimeView(
-                        remainedSecondsTillExpire = it.remainedSecondsTillExpire(),
-                        remainedTimeDescription = it.remainedTimeTillExpire())
+                    remainedSecondsTillExpire = it.remainedSecondsTillExpire(),
+                    remainedTimeDescription = it.remainedTimeTillExpire()
+                )
             }
         } else {
             viewContract?.closeView()
@@ -142,8 +145,10 @@ class AuthorizationDetailsPresenter(
 
     override fun getConnectionData(): ConnectionAndKey? = currentConnectionAndKey
 
-    override fun fetchAuthorizationResult(result: EncryptedAuthorizationData?,
-                                          error: ApiErrorData?) {
+    override fun fetchAuthorizationResult(
+        result: EncryptedAuthorizationData?,
+        error: ApiErrorData?
+    ) {
         result?.let { processAuthorizationResult(it) }
         error?.let { processAuthorizationError(it) }
     }
@@ -154,7 +159,10 @@ class AuthorizationDetailsPresenter(
         }
     }
 
-    override fun updateConfirmProgressState(authorizationId: String?, confirmRequestIsInProgress: Boolean) {
+    override fun updateConfirmProgressState(
+        authorizationId: String?,
+        confirmRequestIsInProgress: Boolean
+    ) {
         if (confirmRequestIsInProgress) stopPolling() else startPolling()
         this.confirmRequestIsInProgress = confirmRequestIsInProgress
         viewContract?.updateViewContent()
@@ -177,10 +185,13 @@ class AuthorizationDetailsPresenter(
 
     private fun processAuthorizationResult(result: EncryptedAuthorizationData) {
         cryptoTools.decryptAuthorizationData(
-                encryptedData = result,
-                rsaPrivateKey = currentConnectionAndKey?.key
+            encryptedData = result,
+            rsaPrivateKey = currentConnectionAndKey?.key
         )?.let {
-            val newViewModel = it.toAuthorizationViewModel(currentConnectionAndKey?.connection ?: return)
+            val newViewModel = it.toAuthorizationViewModel(
+                currentConnectionAndKey?.connection
+                    ?: return
+            )
             if (super.currentViewModel != newViewModel) {
                 val receivedFirstNotNullModel = super.currentViewModel == null
                 super.currentViewModel = newViewModel

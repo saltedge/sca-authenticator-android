@@ -49,15 +49,17 @@ fun FragmentActivity.showWarningDialog(@StringRes messageId: Int) {
  * @param message - the message that appears in the dialog
  * @param listener - on dialog action click listener
  */
-fun FragmentActivity.showWarningDialog(message: String?,
-                                       listener: DialogInterface.OnClickListener? = null) {
+fun FragmentActivity.showWarningDialog(
+    message: String?,
+    listener: DialogInterface.OnClickListener? = null
+) {
     if (message?.isBlank() != false) return
     try {
         AlertDialog.Builder(this)
-                .setTitle(R.string.errors_warning)
-                .setMessage(message)
-                .setPositiveButton(android.R.string.ok, listener)
-                .show()
+            .setTitle(R.string.errors_warning)
+            .setMessage(message)
+            .setPositiveButton(android.R.string.ok, listener)
+            .show()
     } catch (e: Exception) {
         e.log()
     }

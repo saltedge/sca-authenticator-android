@@ -21,7 +21,6 @@
 package com.saltedge.authenticator.unitTests.features.authorizations.list
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.saltedge.authenticator.R

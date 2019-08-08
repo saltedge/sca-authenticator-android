@@ -24,8 +24,8 @@ import android.os.AsyncTask
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
 
 class PasscodeSaver(
-        private val passcodeTools: PasscodeToolsAbs,
-        override var callback: PasscodeSaveResultListener?
+    private val passcodeTools: PasscodeToolsAbs,
+    override var callback: PasscodeSaveResultListener?
 ) : AsyncTask<String, Void, Boolean>(), PasscodeSaverAbs {
 
     override fun runNewTask(passcode: String) {

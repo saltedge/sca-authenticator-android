@@ -109,7 +109,7 @@ class QrScannerActivity : AppCompatActivity() {
         barcodeDetector = BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.QR_CODE)
                 .build()
-        barcodeDetector?.setProcessor(object : Detector.Processor<Barcode>{
+        barcodeDetector?.setProcessor(object : Detector.Processor<Barcode> {
             override fun release() {
             }
 

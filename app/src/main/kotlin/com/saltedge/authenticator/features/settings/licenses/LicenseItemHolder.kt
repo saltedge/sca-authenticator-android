@@ -29,8 +29,8 @@ import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tool.inflateListItemView
 
 class LicenseItemHolder(
-        parent: ViewGroup,
-        var listener: ListItemClickListener?
+    parent: ViewGroup,
+    var listener: ListItemClickListener?
 ) : RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_license)),
     View.OnClickListener {
 
@@ -42,7 +42,10 @@ class LicenseItemHolder(
 
     override fun onClick(v: View?) {
         if (adapterPosition > RecyclerView.NO_POSITION) {
-            listener?.onListItemClick(itemIndex = adapterPosition, itemCode = titleView.text as String)
+            listener?.onListItemClick(
+                itemIndex = adapterPosition,
+                itemCode = titleView.text as String
+            )
         }
     }
 

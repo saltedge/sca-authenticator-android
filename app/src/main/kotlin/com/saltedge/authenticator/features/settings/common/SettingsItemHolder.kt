@@ -34,8 +34,8 @@ import com.saltedge.authenticator.tool.setSelectableBackground
 import com.saltedge.authenticator.tool.setVisible
 
 class SettingsItemHolder(
-        parent: ViewGroup,
-        var listener: CheckableListItemClickListener?
+    parent: ViewGroup,
+    var listener: CheckableListItemClickListener?
 ) : RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_setting)),
     View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 

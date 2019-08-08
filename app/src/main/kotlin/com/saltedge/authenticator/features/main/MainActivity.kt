@@ -44,15 +44,16 @@ import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : LockableActivity(),
-        MainActivityContract.View,
-        ActivityComponentsContract,
-        BottomNavigationView.OnNavigationItemSelectedListener,
-        View.OnClickListener,
-        FragmentManager.OnBackStackChangedListener {
+    MainActivityContract.View,
+    ActivityComponentsContract,
+    BottomNavigationView.OnNavigationItemSelectedListener,
+    View.OnClickListener,
+    FragmentManager.OnBackStackChangedListener {
 
     private val presenter = MainActivityPresenter(
-            viewContract = this,
-            connectionsRepository = ConnectionsRepository)
+        viewContract = this,
+        connectionsRepository = ConnectionsRepository
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (!RealmManager.initialized) RealmManager.initRealm(context = this)
@@ -139,14 +140,18 @@ class MainActivity : LockableActivity(),
         replaceFragmentInContainer(SettingsListFragment())
     }
 
-    override fun showAuthorizationDetailsView(connectionId: String,
-                                              authorizationId: String,
-                                              quickConfirmMode: Boolean) {
-        this.addFragment(AuthorizationDetailsFragment.newInstance(
+    override fun showAuthorizationDetailsView(
+        connectionId: String,
+        authorizationId: String,
+        quickConfirmMode: Boolean
+    ) {
+        this.addFragment(
+            AuthorizationDetailsFragment.newInstance(
                 connectionId = connectionId,
                 authorizationId = authorizationId,
                 quickConfirmMode = quickConfirmMode
-        ))
+            )
+        )
     }
 
     override fun closeView() {
@@ -162,9 +167,9 @@ class MainActivity : LockableActivity(),
             toolbarView?.navigationIcon = presenter.getNavigationIcon(isOnTop)?.let {
                 this.getDrawable(it)
             }
+
             bottomNavigationLayout?.setVisible(show = isOnTop)
         }
-
     }
 
     override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView

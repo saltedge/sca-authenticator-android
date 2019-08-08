@@ -39,19 +39,20 @@ import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import javax.inject.Inject
 
 class AuthorizationsListPresenter @Inject constructor(
-        appContext: Context,
-        private val cryptoTools: CryptoToolsAbs,
-        private val connectionsRepository: ConnectionsRepositoryAbs,
-        private val keyStoreManager: KeyStoreManagerAbs,
-        biometricTools: BiometricToolsAbs,
-        apiManager: AuthenticatorApiManagerAbs
+    appContext: Context,
+    private val cryptoTools: CryptoToolsAbs,
+    private val connectionsRepository: ConnectionsRepositoryAbs,
+    private val keyStoreManager: KeyStoreManagerAbs,
+    biometricTools: BiometricToolsAbs,
+    apiManager: AuthenticatorApiManagerAbs
 ) : BaseAuthorizationPresenter(appContext, biometricTools, apiManager),
     ListItemClickListener,
     FetchAuthorizationsContract,
     ConfirmAuthorizationResult {
 
     private var pollingService = apiManager.createAuthorizationsPollingService()
-    private var connectionsAndKeys: Map<ConnectionID, ConnectionAndKey> = collectConnectionsAndKeys(connectionsRepository, keyStoreManager)
+    private var connectionsAndKeys: Map<ConnectionID, ConnectionAndKey> =
+        collectConnectionsAndKeys(connectionsRepository, keyStoreManager)
     var viewModels: List<AuthorizationViewModel> = emptyList()
     var viewContract: AuthorizationsListContract.View? = null
 
@@ -105,10 +106,12 @@ class AuthorizationsListPresenter @Inject constructor(
     }
 
     override fun getConnectionsData(): List<ConnectionAndKey>? =
-            collectAuthorizationRequestData()
+        collectAuthorizationRequestData()
 
-    override fun onFetchAuthorizationsResult(result: List<EncryptedAuthorizationData>,
-                                             errors: List<ApiErrorData>) {
+    override fun onFetchAuthorizationsResult(
+        result: List<EncryptedAuthorizationData>,
+        errors: List<ApiErrorData>
+    ) {
         processAuthorizationsErrors(errors)
         processEncryptedAuthorizationsResult(result)
     }
@@ -125,7 +128,10 @@ class AuthorizationsListPresenter @Inject constructor(
         startPolling()
     }
 
-    override fun updateConfirmProgressState(authorizationId: String?, confirmRequestIsInProgress: Boolean) {
+    override fun updateConfirmProgressState(
+        authorizationId: String?,
+        confirmRequestIsInProgress: Boolean
+    ) {
         if (confirmRequestIsInProgress) stopPolling() else startPolling()
         viewModels.find { it.authorizationId == authorizationId }?.let {
             it.isProcessing = confirmRequestIsInProgress
@@ -148,13 +154,13 @@ class AuthorizationsListPresenter @Inject constructor(
 
     private fun decryptAuthorizations(encryptedData: List<EncryptedAuthorizationData>): List<AuthorizationData> {
         return encryptedData.mapNotNull {
-                    cryptoTools.decryptAuthorizationData(
-                            encryptedData = it,
-                            rsaPrivateKey = connectionsAndKeys[it.connectionId]?.key
-                    )
-                }.filter {
-                    it.isNotExpired()
-                }.sortedBy { it.expiresAt }
+            cryptoTools.decryptAuthorizationData(
+                encryptedData = it,
+                rsaPrivateKey = connectionsAndKeys[it.connectionId]?.key
+            )
+        }.filter {
+            it.isNotExpired()
+        }.sortedBy { it.expiresAt }
     }
 
     private fun createViewModels(authorizations: List<AuthorizationData>): List<AuthorizationViewModel> {
@@ -166,7 +172,8 @@ class AuthorizationsListPresenter @Inject constructor(
     }
 
     private fun processAuthorizationsErrors(errors: List<ApiErrorData>) {
-        val invalidTokens = errors.filter { it.isConnectionNotFound() }.mapNotNull { it.accessToken }
+        val invalidTokens =
+            errors.filter { it.isConnectionNotFound() }.mapNotNull { it.accessToken }
         if (invalidTokens.isNotEmpty()) {
             connectionsRepository.invalidateConnectionsByTokens(accessTokens = invalidTokens)
             connectionsAndKeys = collectConnectionsAndKeys(connectionsRepository, keyStoreManager)

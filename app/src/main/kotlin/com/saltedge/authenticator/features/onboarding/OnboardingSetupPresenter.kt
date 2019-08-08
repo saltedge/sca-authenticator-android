@@ -36,10 +36,10 @@ const val COMPLETE_SCREEN_DURATION = 3000L
  * @see OnboardingSetupActivity
  */
 class OnboardingSetupPresenter(
-        private val appContext: Context,
-        private val passcodeTools: PasscodeToolsAbs,
-        private val preferenceRepository: PreferenceRepositoryAbs,
-        private val biometricTools: BiometricToolsAbs
+    private val appContext: Context,
+    private val passcodeTools: PasscodeToolsAbs,
+    private val preferenceRepository: PreferenceRepositoryAbs,
+    private val biometricTools: BiometricToolsAbs
 ) {
     var viewContract: OnboardingSetupContract.View? = null
     var setupViewMode: SetupViewMode = SetupViewMode.INPUT_PASSCODE
@@ -48,34 +48,39 @@ class OnboardingSetupPresenter(
     private var handler: Handler? = null
 
     val onboardingViewModels: List<OnboardingPageViewModel> = listOf(
-            OnboardingPageViewModel(
-                    R.string.onboarding_carousel_one_title,
-                    R.string.onboarding_carousel_one_description,
-                    R.drawable.ic_onboarding_page_1
-            ),
-            OnboardingPageViewModel(
-                    R.string.onboarding_carousel_two_title,
-                    R.string.onboarding_carousel_two_description,
-                    R.drawable.ic_onboarding_page_2
-            ),
-            OnboardingPageViewModel(
-                    R.string.onboarding_carousel_three_title,
-                    R.string.onboarding_carousel_three_description,
-                    R.drawable.ic_onboarding_page_3
-            )
+        OnboardingPageViewModel(
+            R.string.onboarding_carousel_one_title,
+            R.string.onboarding_carousel_one_description,
+            R.drawable.ic_onboarding_page_1
+        ),
+        OnboardingPageViewModel(
+            R.string.onboarding_carousel_two_title,
+            R.string.onboarding_carousel_two_description,
+            R.drawable.ic_onboarding_page_2
+        ),
+        OnboardingPageViewModel(
+            R.string.onboarding_carousel_three_title,
+            R.string.onboarding_carousel_three_description,
+            R.drawable.ic_onboarding_page_3
+        )
     )
     private val setupStepProgress: Float
         get() = setupViewMode.ordinal.toFloat()
-    private var setupModesList: Array<SetupViewMode> = if (biometricTools.isFingerprintSupported(appContext)) {
-        arrayOf(SetupViewMode.INPUT_PASSCODE,
+    private var setupModesList: Array<SetupViewMode> =
+        if (biometricTools.isFingerprintSupported(appContext)) {
+            arrayOf(
+                SetupViewMode.INPUT_PASSCODE,
                 SetupViewMode.ALLOW_BIOMETRICS,
                 SetupViewMode.ALLOW_NOTIFICATIONS,
-                SetupViewMode.COMPLETE)
-    } else {
-        arrayOf(SetupViewMode.INPUT_PASSCODE,
+                SetupViewMode.COMPLETE
+            )
+        } else {
+            arrayOf(
+                SetupViewMode.INPUT_PASSCODE,
                 SetupViewMode.ALLOW_NOTIFICATIONS,
-                SetupViewMode.COMPLETE)
-    }
+                SetupViewMode.COMPLETE
+            )
+        }
 
     fun enteredNewPasscode(inputMode: PasscodeInputView.InputMode) {
         updateSetupViews(inputMode)
@@ -147,17 +152,17 @@ class OnboardingSetupPresenter(
 
     private fun updateSetupViews(inputMode: PasscodeInputView.InputMode?) {
         viewContract?.updateSetupViews(
-                setupStepProgress = setupStepProgress,
-                headerTitle = getSetupTitleResId(setupViewMode, inputMode),
-                headerDescription = getSetupSubtitleResId(setupViewMode, inputMode),
-                showPasscodeCancel = shouldShowPasscodeInputNegativeActionView(inputMode),
-                passcodePositiveActionText = getPositivePasscodeActionViewText(inputMode)
+            setupStepProgress = setupStepProgress,
+            headerTitle = getSetupTitleResId(setupViewMode, inputMode),
+            headerDescription = getSetupSubtitleResId(setupViewMode, inputMode),
+            showPasscodeCancel = shouldShowPasscodeInputNegativeActionView(inputMode),
+            passcodePositiveActionText = getPositivePasscodeActionViewText(inputMode)
         )
     }
 
     private fun getSetupTitleResId(
-            mode: SetupViewMode,
-            passcodeInputMode: PasscodeInputView.InputMode?
+        mode: SetupViewMode,
+        passcodeInputMode: PasscodeInputView.InputMode?
     ): Int {
         return when (mode) {
             SetupViewMode.INPUT_PASSCODE -> {
@@ -170,7 +175,10 @@ class OnboardingSetupPresenter(
         }
     }
 
-    private fun getSetupSubtitleResId(mode: SetupViewMode, passcodeInputMode: PasscodeInputView.InputMode?): Int {
+    private fun getSetupSubtitleResId(
+        mode: SetupViewMode,
+        passcodeInputMode: PasscodeInputView.InputMode?
+    ): Int {
         return when (mode) {
             SetupViewMode.INPUT_PASSCODE -> {
                 if (passcodeInputMode == PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE) R.string.onboarding_secure_app_passcode_confirm
@@ -196,7 +204,7 @@ class OnboardingSetupPresenter(
     }
 
     private fun shouldShowProceedToSetupAction(position: Int): Boolean =
-            position == onboardingViewModels.lastIndex
+        position == onboardingViewModels.lastIndex
 
     private fun onAllowTouchIdClick() {
         val warning = biometricTools.getCurrentFingerprintStateWarningMessage(appContext)

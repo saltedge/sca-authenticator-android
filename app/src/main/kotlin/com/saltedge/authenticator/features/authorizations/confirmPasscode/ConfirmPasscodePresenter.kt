@@ -29,5 +29,4 @@ class ConfirmPasscodePresenter {
      */
     val savedPasscode: String
         get() = PasscodeTools.getPasscode()
-
 }

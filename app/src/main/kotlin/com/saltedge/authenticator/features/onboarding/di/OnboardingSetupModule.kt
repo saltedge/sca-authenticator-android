@@ -34,14 +34,17 @@ class OnboardingSetupModule {
 
     @FragmentScope
     @Provides
-    fun providePresenter(appContext: Context,
-                         preferenceRepository: PreferenceRepositoryAbs,
-                         biometricTools: BiometricToolsAbs,
-                         passcodeTools: PasscodeToolsAbs): OnboardingSetupPresenter {
+    fun providePresenter(
+        appContext: Context,
+        preferenceRepository: PreferenceRepositoryAbs,
+        biometricTools: BiometricToolsAbs,
+        passcodeTools: PasscodeToolsAbs
+    ): OnboardingSetupPresenter {
         return OnboardingSetupPresenter(
-                appContext = appContext,
-                passcodeTools = passcodeTools,
-                preferenceRepository = preferenceRepository,
-                biometricTools = biometricTools)
+            appContext = appContext,
+            passcodeTools = passcodeTools,
+            preferenceRepository = preferenceRepository,
+            biometricTools = biometricTools
+        )
     }
 }

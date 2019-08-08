@@ -79,7 +79,6 @@ class RadialProgressView : View {
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         presenter.onViewSizeChanged(w, h)
-
     }
 
     override fun onSaveInstanceState(): Parcelable {

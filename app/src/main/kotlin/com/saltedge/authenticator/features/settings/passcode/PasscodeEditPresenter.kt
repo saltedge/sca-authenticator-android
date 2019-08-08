@@ -28,8 +28,8 @@ import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import javax.inject.Inject
 
 class PasscodeEditPresenter @Inject constructor(
-        private val passcodeTools: PasscodeToolsAbs) :
-        PasscodeEditContract.Presenter, PasscodeSaveResultListener {
+    private val passcodeTools: PasscodeToolsAbs
+) : PasscodeEditContract.Presenter, PasscodeSaveResultListener {
 
     private val savedPasscode: String
         get() = passcodeTools.getPasscode()
@@ -40,8 +40,8 @@ class PasscodeEditPresenter @Inject constructor(
         val newMode = PasscodeInputView.InputMode.CHECK_PASSCODE
         viewContract?.initInputMode(mode = newMode, passcode = savedPasscode)
         viewContract?.updateViewContent(
-                titleTextResId = getTitleTextResId(newMode),
-                positiveActionTextResId = getPositiveTextResId(newMode)
+            titleTextResId = getTitleTextResId(newMode),
+            positiveActionTextResId = getPositiveTextResId(newMode)
         )
     }
 
@@ -49,15 +49,15 @@ class PasscodeEditPresenter @Inject constructor(
         val newMode = PasscodeInputView.InputMode.NEW_PASSCODE
         viewContract?.initInputMode(mode = newMode, passcode = "")
         viewContract?.updateViewContent(
-                titleTextResId = getTitleTextResId(newMode),
-                positiveActionTextResId = getPositiveTextResId(newMode)
+            titleTextResId = getTitleTextResId(newMode),
+            positiveActionTextResId = getPositiveTextResId(newMode)
         )
     }
 
     override fun enteredNewPasscode(mode: PasscodeInputView.InputMode) {
         viewContract?.updateViewContent(
-                titleTextResId = getTitleTextResId(mode),
-                positiveActionTextResId = getPositiveTextResId(mode)
+            titleTextResId = getTitleTextResId(mode),
+            positiveActionTextResId = getPositiveTextResId(mode)
         )
     }
 
