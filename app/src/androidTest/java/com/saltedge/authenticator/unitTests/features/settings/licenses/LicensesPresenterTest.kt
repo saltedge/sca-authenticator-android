@@ -61,7 +61,8 @@ class LicensesPresenterTest {
                 "Java Hamcrest",
                 "Mockito",
                 "MockK",
-                "findbugs/jsr305"
+                "findbugs/jsr305",
+                "ktlint"
         )))
     }
 

@@ -29,21 +29,22 @@ class LicensesPresenter : ListItemClickListener {
     var viewContract: LicensesContract.View? = null
 
     private val listData: Map<String, String> = mapOf(
-            "Realm" to LINK_APACHE_2_LICENSE,
-            "Dagger" to LINK_APACHE_2_LICENSE,
-            "Android Compat Support Library" to LINK_APACHE_2_LICENSE,
-            "Android Constraint Layout Library" to LINK_APACHE_2_LICENSE,
-            "Android Material Components" to LINK_APACHE_2_LICENSE,
-            "Square/Retrofit2" to LINK_APACHE_2_LICENSE,
-            "Square/Okhttp3" to LINK_APACHE_2_LICENSE,
-            "JodaTime" to LINK_APACHE_2_LICENSE,
-            "Bumptech/Glide" to "https://raw.githubusercontent.com/bumptech/glide/master/LICENSE",
-            "JUnit" to "https://junit.org/junit4/license.html",
-            "Jacoco" to "https://www.jacoco.org/jacoco/trunk/doc/license.html",
-            "Java Hamcrest" to "https://raw.githubusercontent.com/hamcrest/JavaHamcrest/master/LICENSE.txt",
-            "Mockito" to "https://raw.githubusercontent.com/mockito/mockito/release/2.x/LICENSE",
-            "MockK" to LINK_APACHE_2_LICENSE,
-            "findbugs/jsr305" to "https://raw.githubusercontent.com/findbugsproject/findbugs/master/findbugs/licenses/LICENSE-jsr305.txt"
+        "Realm" to LINK_APACHE_2_LICENSE,
+        "Dagger" to LINK_APACHE_2_LICENSE,
+        "Android Compat Support Library" to LINK_APACHE_2_LICENSE,
+        "Android Constraint Layout Library" to LINK_APACHE_2_LICENSE,
+        "Android Material Components" to LINK_APACHE_2_LICENSE,
+        "Square/Retrofit2" to LINK_APACHE_2_LICENSE,
+        "Square/Okhttp3" to LINK_APACHE_2_LICENSE,
+        "JodaTime" to LINK_APACHE_2_LICENSE,
+        "Bumptech/Glide" to "https://raw.githubusercontent.com/bumptech/glide/master/LICENSE",
+        "JUnit" to "https://junit.org/junit4/license.html",
+        "Jacoco" to "https://www.jacoco.org/jacoco/trunk/doc/license.html",
+        "Java Hamcrest" to "https://raw.githubusercontent.com/hamcrest/JavaHamcrest/master/LICENSE.txt",
+        "Mockito" to "https://raw.githubusercontent.com/mockito/mockito/release/2.x/LICENSE",
+        "MockK" to LINK_APACHE_2_LICENSE,
+        "findbugs/jsr305" to "https://raw.githubusercontent.com/findbugsproject/findbugs/master/findbugs/licenses/LICENSE-jsr305.txt",
+        "ktlint" to "https://raw.githubusercontent.com/pinterest/ktlint/master/LICENSE"
     )
 
     fun getListItems(): List<String> = listData.keys.toList()

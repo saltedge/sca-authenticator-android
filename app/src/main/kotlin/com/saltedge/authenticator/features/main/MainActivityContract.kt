@@ -1,4 +1,3 @@
-// ktlint-disable filename
 /*
  * This file is part of the Salt Edge Authenticator distribution 
  * (https://github.com/saltedge/sca-authenticator-android).
