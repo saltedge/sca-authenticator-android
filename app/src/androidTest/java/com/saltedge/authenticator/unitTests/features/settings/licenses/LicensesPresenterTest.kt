@@ -62,7 +62,8 @@ class LicensesPresenterTest {
                 "Mockito",
                 "MockK",
                 "findbugs/jsr305",
-                "ktlint"
+                "ktlint",
+                "jlleitschuh/ktlint-gradle"
         )))
     }
 

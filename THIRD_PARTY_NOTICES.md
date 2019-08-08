@@ -19,6 +19,7 @@ If you modify this Program, or any covered work, by linking or combining it with
 * [Crashlytics (Commercial license)](http://try.crashlytics.com/)
 * [Firebase (Commercial license)](https://firebase.google.com/terms)
 * [ktlint (MIT License)](https://raw.githubusercontent.com/pinterest/ktlint/master/LICENSE)
+* [jlleitschuh/ktlint-gradle (MIT License)](https://raw.githubusercontent.com/JLLeitschuh/ktlint-gradle/master/LICENSE.txt)
     
 ***NOTE***  
 In the event that we accidentally failed something, [please bring it to our attention](mailto:authenticator@saltedge.com).
