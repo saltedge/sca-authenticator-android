@@ -48,8 +48,11 @@ class NotificationsToolsTest {
     @Throws(Exception::class)
     fun registerNotificationChannelsTest() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Mockito.`when`(mockContext.getSystemService(Context.NOTIFICATION_SERVICE)).thenReturn(notificationManager)
-            val captor: ArgumentCaptor<NotificationChannel> = ArgumentCaptor.forClass(NotificationChannel::class.java)
+            Mockito.`when`(mockContext.getSystemService(Context.NOTIFICATION_SERVICE)).thenReturn(
+                notificationManager
+            )
+            val captor: ArgumentCaptor<NotificationChannel> =
+                ArgumentCaptor.forClass(NotificationChannel::class.java)
             mockContext.registerNotificationChannels()
 
             Mockito.verify(notificationManager).createNotificationChannel(captor.capture())
