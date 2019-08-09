@@ -22,6 +22,9 @@ package com.saltedge.authenticator.model.realm
 
 import io.realm.RealmSchema
 
+/**
+ * Adds the supportEmail field to the Connection model
+ */
 fun RealmSchema.runMigration2() {
     get("Connection")?.addField("supportEmail", String::class.java)
 }

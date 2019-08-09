@@ -97,7 +97,7 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View,
     }
 
     override fun openMailApp() {
-        activity?.createSupportMail()
+        activity?.startMailApp()
     }
 
     override fun showInfo(message: Int) {

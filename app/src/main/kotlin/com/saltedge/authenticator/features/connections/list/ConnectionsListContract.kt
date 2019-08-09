@@ -29,7 +29,7 @@ import com.saltedge.authenticator.sdk.model.GUID
 interface ConnectionsListContract {
     interface View : BaseViewContract {
         fun showApiErrorView(message: String)
-        fun showSupportView(supportEmail: String)
+        fun showSupportView(supportEmail: String?)
         fun showConnectView(connectionGuid: GUID)
         fun showConnectionNameEditView(connectionGuid: GUID, connectionName: String, requestCode: Int)
         fun showDeleteConnectionView(connectionGuid: GUID? = null, requestCode: Int)

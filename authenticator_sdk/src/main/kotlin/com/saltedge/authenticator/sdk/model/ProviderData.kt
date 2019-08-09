@@ -33,7 +33,7 @@ data class ProviderData(
         @SerializedName(KEY_NAME) var name: String,
         @SerializedName(KEY_LOGO_URL) var logoUrl: String,
         @SerializedName(KEY_VERSION) var version: String,
-        @SerializedName(KEY_SUPPORT_EMAIL) var supportEmail: String
+        @SerializedName(KEY_SUPPORT_EMAIL) var supportEmail: String?
 ) : Serializable
 
 data class ProviderResponseData(@SerializedName(KEY_DATA) var data: ProviderData)

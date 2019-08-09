@@ -141,7 +141,7 @@ class ConnectionsListPresenterTestPart2 {
                         .putExtra(KEY_OPTION_ID, ConnectionOptions.REPORT_PROBLEM.ordinal)
                         .putExtra(KEY_GUID, "guid1"))
 
-        Mockito.verify(mockView).showSupportView(supportEmail = "")
+        Mockito.verify(mockView).showSupportView(supportEmail = "example@example.com")
     }
 
     /**
@@ -382,7 +382,7 @@ class ConnectionsListPresenterTestPart2 {
     private val allConnections = listOf(
             Connection().setGuid("guid1").setCode("demobank").setName("Demobank1")
                     .setStatus(ConnectionStatus.INACTIVE).setAccessToken("token1")
-                    .setCreatedAt(100L).setUpdatedAt(100L),
+                    .setCreatedAt(100L).setUpdatedAt(100L).setSupportEmail("example@example.com"),
             Connection().setGuid("guid2").setCode("demobank").setName("Demobank2")
                     .setStatus(ConnectionStatus.ACTIVE).setAccessToken("token2")
                     .setCreatedAt(300L).setUpdatedAt(300L),

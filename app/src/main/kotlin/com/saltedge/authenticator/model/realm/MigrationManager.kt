@@ -32,6 +32,9 @@ fun runMigrations(): RealmMigration {
         for (i in (oldVersion + 1)..newVersion) {
             when (i) {
                 2L -> realmSchema.runMigration2()
+                // Here to add future migrations
+                // `XX -> realmSchema.runMigrationXX()`
+                // Where `XX` number of schema version
             }
         }
     }
