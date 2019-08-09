@@ -23,7 +23,7 @@ package com.saltedge.authenticator.sdk.constants
 //Static links
 const val DEFAULT_HOST = "https://www.saltedge.com"
 const val TERMS_LINK = "https://www.saltedge.com/pages/authenticator_terms"
-const val SUPPORT_EMAIL_LINK = "mailto:authenticator@saltedge.com"
+const val SUPPORT_EMAIL_LINK = "authenticator@saltedge.com"
 
 //API endpoints
 const val API_VERSION = "1"
@@ -66,6 +66,7 @@ const val KEY_PROVIDER = "provider"
 const val KEY_NAME = "name"
 const val KEY_SUCCESS = "success"
 const val KEY_VERSION = "version"
+const val KEY_SUPPORT_EMAIL = "support_email"
 
 //Error classes
 const val ERROR_CLASS_AUTHENTICATION_RESPONSE = "AuthenticationError"

@@ -31,6 +31,7 @@ package com.saltedge.authenticator.sdk.model
  * @property connectUrl - Base url of Authenticator API
  * @property accessToken - Access token for accessing Authenticator API resources
  * @property status - Connection Status. ACTIVE or INACTIVE
+ * @property supportEmail - Provider's email
  *
  * @see ProviderData
  */
@@ -45,4 +46,5 @@ interface ConnectionAbs {
     var connectUrl: String
     var accessToken: String
     var status: String
+    var supportEmail: String
 }

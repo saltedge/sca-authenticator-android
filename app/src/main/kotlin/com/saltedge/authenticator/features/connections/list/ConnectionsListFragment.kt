@@ -127,8 +127,8 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         activity?.showWarningDialog(message)
     }
 
-    override fun showSupportView() {
-        activity?.createSupportMail()
+    override fun showSupportView(supportEmail: String) {
+        activity?.createSupportMail(supportEmail)
     }
 
     override fun showConnectView(connectionGuid: GUID) {
