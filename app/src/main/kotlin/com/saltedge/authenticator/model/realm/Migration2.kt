@@ -18,33 +18,11 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.testTools
+package com.saltedge.authenticator.model.realm
 
-import androidx.test.platform.app.InstrumentationRegistry
-import com.saltedge.authenticator.model.realm.RealmManager
-import io.realm.Realm
-import org.junit.After
-import org.junit.Before
+import io.realm.RealmSchema
 
-open class DatabaseTestCase {
-
-    init {
-        RealmManager.initRealm(InstrumentationRegistry.getInstrumentation().targetContext)
-    }
-
-    lateinit var testRealm: Realm
-
-    @Before
-    @Throws(Exception::class)
-    open fun setUp() {
-        TestTools.setLocale("en")
-        testRealm = Realm.getDefaultInstance()
-        testRealm.executeTransaction { it.deleteAll() }
-    }
-
-    @After
-    @Throws(Exception::class)
-    open fun tearDown() {
-        testRealm.close()
-    }
+fun RealmSchema.runMigration2() {
+    get("Connection")?.addField("supportEmail", String::class.java)
 }
+
