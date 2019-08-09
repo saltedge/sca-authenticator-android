@@ -37,7 +37,7 @@ class ConnectionOptionsTest {
         assertThat(ConnectionOptions.RECONNECT.iconId, equalTo(R.drawable.ic_reconnect_gray_24dp))
         assertThat(ConnectionOptions.RECONNECT.textId, equalTo(R.string.actions_reconnect))
         assertThat(ConnectionOptions.REPORT_PROBLEM.iconId, equalTo(R.drawable.ic_about_black54_24dp))
-        assertThat(ConnectionOptions.REPORT_PROBLEM.textId, equalTo(R.string.actions_report_problem))
+        assertThat(ConnectionOptions.REPORT_PROBLEM.textId, equalTo(R.string.actions_contact_support))
         assertThat(ConnectionOptions.RENAME.iconId, equalTo(R.drawable.ic_rename_gray_24dp))
         assertThat(ConnectionOptions.RENAME.textId, equalTo(R.string.actions_rename_connection))
         assertThat(ConnectionOptions.DELETE.iconId, equalTo(R.drawable.ic_delete_gray_24dp))

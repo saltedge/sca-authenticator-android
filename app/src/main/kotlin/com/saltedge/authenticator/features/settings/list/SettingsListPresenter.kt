@@ -57,7 +57,7 @@ class SettingsListPresenter @Inject constructor(
                 itemIsClickable = true
             ),
             CheckedTitleValueViewModel(
-                titleId = R.string.settings_contact_support,
+                titleId = R.string.settings_report_bug,
                 itemIsClickable = true
             )
         )
@@ -87,7 +87,7 @@ class SettingsListPresenter @Inject constructor(
                     viewContract?.showSystemSettings()
                 }
             R.string.about_feature_title -> viewContract?.showAboutList()
-            R.string.settings_contact_support -> viewContract?.openMailApp()
+            R.string.settings_report_bug -> viewContract?.openMailApp()
         }
     }
 }

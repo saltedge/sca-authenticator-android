@@ -332,7 +332,7 @@ class ConnectProviderPresenterTest {
     fun getAltActionTextResIdCase1() {
         val presenter = createPresenter(viewContract = mockView)
 
-        assertThat(presenter.reportProblemActionText, equalTo(R.string.actions_report_problem))
+        assertThat(presenter.reportProblemActionText, equalTo(R.string.actions_contact_support))
     }
 
     /**
