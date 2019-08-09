@@ -141,7 +141,7 @@ class ConnectionsListPresenterTestPart2 {
                         .putExtra(KEY_OPTION_ID, ConnectionOptions.REPORT_PROBLEM.ordinal)
                         .putExtra(KEY_GUID, "guid1"))
 
-        Mockito.verify(mockView).showSupportView()
+        Mockito.verify(mockView).showSupportView(supportEmail = "")
     }
 
     /**

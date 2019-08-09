@@ -43,12 +43,15 @@ class ConnectionExtensionsTest : DatabaseTestCase() {
     @Test
     @Throws(Exception::class)
     fun connectionInitWithProviderDataTest() {
-        var connection = Connection().initWithProviderData(ProviderData(
+        var connection = Connection().initWithProviderData(
+            ProviderData(
                 code = "demobank",
                 name = "Demobank",
                 connectUrl = "url",
                 logoUrl = "url",
-                version = "1")
+                version = "1",
+                supportEmail = "authenticator@saltedge.com"
+            )
         )
 
         Assert.assertTrue(connection.guid.isNotEmpty())
@@ -61,13 +64,17 @@ class ConnectionExtensionsTest : DatabaseTestCase() {
         assertThat(connection.logoUrl, equalTo("url"))
         assertThat(connection.accessToken, equalTo(""))
         assertThat(connection.status, equalTo(ConnectionStatus.INACTIVE.toString()))
+        assertThat(connection.supportEmail, equalTo("authenticator@saltedge.com"))
 
-        connection = connection.initWithProviderData(ProviderData(
+        connection = connection.initWithProviderData(
+            ProviderData(
                 connectUrl = "url1",
                 code = "code2",
                 name = "name3",
                 logoUrl = "url4",
-                version = "1")
+                version = "1",
+                supportEmail = "example@saltedge.com"
+            )
         )
 
         Assert.assertTrue(connection.guid.isNotEmpty())
@@ -80,6 +87,7 @@ class ConnectionExtensionsTest : DatabaseTestCase() {
         assertThat(connection.logoUrl, equalTo("url4"))
         assertThat(connection.accessToken, equalTo(""))
         assertThat(connection.status, equalTo(ConnectionStatus.INACTIVE.toString()))
+        assertThat(connection.supportEmail, equalTo("example@saltedge.com"))
     }
 
     @Test
@@ -95,7 +103,8 @@ class ConnectionExtensionsTest : DatabaseTestCase() {
     @Throws(Exception::class)
     fun connectionToConnectionAndKeyTest() {
         KeyStoreManager.deleteKeyPair("guid1")
-        val pair: ConnectionAndKey? = Connection().setGuid("guid1").toConnectionAndKey(KeyStoreManager)
+        val pair: ConnectionAndKey? =
+            Connection().setGuid("guid1").toConnectionAndKey(KeyStoreManager)
 
         Assert.assertNull(pair)
 

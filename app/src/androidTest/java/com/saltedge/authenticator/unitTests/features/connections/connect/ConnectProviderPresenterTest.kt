@@ -73,8 +73,12 @@ class ConnectProviderPresenterTest {
     @Throws(Exception::class)
     fun onConnectionInitFailureTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.onConnectionInitFailure(ApiErrorData(errorMessage = "test error",
-                errorClassName = ERROR_CLASS_API_RESPONSE))
+        presenter.onConnectionInitFailure(
+            ApiErrorData(
+                errorMessage = "test error",
+                errorClassName = ERROR_CLASS_API_RESPONSE
+            )
+        )
 
         Mockito.verify(mockView).showErrorAndFinish("test error")
     }
@@ -84,8 +88,9 @@ class ConnectProviderPresenterTest {
     fun onConnectionInitSuccessTestCase1() {
         val presenter = createPresenter(viewContract = mockView)
         val connectUrlData = AuthenticateConnectionData(
-                redirectUrl = "https://www.fentury.com",
-                connectionId = "connectionId")
+            redirectUrl = "https://www.fentury.com",
+            connectionId = "connectionId"
+        )
         presenter.onConnectionInitSuccess(response = connectUrlData)
 
         Mockito.verify(mockView).loadUrlInWebView("https://www.fentury.com")
@@ -97,8 +102,9 @@ class ConnectProviderPresenterTest {
     fun onConnectionInitSuccessTestCase2() {
         val presenter = createPresenter(viewContract = mockView)
         val connectUrlData = AuthenticateConnectionData(
-                redirectUrl = "invalidUrl",
-                connectionId = "connectionId")
+            redirectUrl = "invalidUrl",
+            connectionId = "connectionId"
+        )
         presenter.onConnectionInitSuccess(response = connectUrlData)
 
         Mockito.never()
@@ -108,7 +114,10 @@ class ConnectProviderPresenterTest {
     @Throws(Exception::class)
     fun onViewClickTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectConfigurationLink = "connectConfigurationLink", connectionGuid = "guid1")
+        presenter.setInitialData(
+            connectConfigurationLink = "connectConfigurationLink",
+            connectionGuid = "guid1"
+        )
 
         presenter.onViewClick(R.id.mainActionView)
 
@@ -118,17 +127,23 @@ class ConnectProviderPresenterTest {
     @Test
     @Throws(Exception::class)
     fun enumClassTest() {
-        assertThat(ViewMode.values(), equalTo(arrayOf(
+        assertThat(
+            ViewMode.values(), equalTo(
+            arrayOf(
                 ViewMode.START,
                 ViewMode.WEB_ENROLL,
                 ViewMode.COMPLETE_SUCCESS,
                 ViewMode.COMPLETE_ERROR
-        )))
+            )
+        )
+        )
         assertThat(ViewMode.valueOf("START"), equalTo(ViewMode.START))
         assertThat(ViewMode.valueOf("WEB_ENROLL"), equalTo(ViewMode.WEB_ENROLL))
         assertThat(ViewMode.valueOf("COMPLETE_SUCCESS"), equalTo(ViewMode.COMPLETE_SUCCESS))
-        assertThat(ViewMode.valueOf("COMPLETE_ERROR"),
-                equalTo(ViewMode.COMPLETE_ERROR))
+        assertThat(
+            ViewMode.valueOf("COMPLETE_ERROR"),
+            equalTo(ViewMode.COMPLETE_ERROR)
+        )
     }
 
     /**
@@ -137,7 +152,8 @@ class ConnectProviderPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onDestroyViewTestCase1() {
-        val connection = Connection().setGuid("guid2").setAccessToken("").setCode("demobank1").setName("Demobank1")
+        val connection =
+            Connection().setGuid("guid2").setAccessToken("").setCode("demobank1").setName("Demobank1")
         Mockito.`when`(mockConnectionsRepository.getByGuid("guid2")).thenReturn(connection)
         val presenter = createPresenter()
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "guid2")
@@ -152,7 +168,10 @@ class ConnectProviderPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onDestroyViewTestCase2() {
-        val connection = Connection().setGuid("guid2").setAccessToken("accessToken").setCode("demobank1").setName("Demobank1")
+        val connection =
+            Connection().setGuid("guid2").setAccessToken("accessToken").setCode("demobank1").setName(
+                "Demobank1"
+            )
         Mockito.`when`(mockConnectionsRepository.getByGuid("guid2")).thenReturn(connection)
         val presenter = createPresenter()
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "")
@@ -167,7 +186,8 @@ class ConnectProviderPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onDestroyViewTestCase3() {
-        val connection = Connection().setGuid("").setAccessToken("").setCode("demobank1").setName("Demobank1")
+        val connection =
+            Connection().setGuid("").setAccessToken("").setCode("demobank1").setName("Demobank1")
         Mockito.`when`(mockConnectionsRepository.getByGuid("guid2")).thenReturn(connection)
         val presenter = createPresenter()
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "guid2")
@@ -182,7 +202,8 @@ class ConnectProviderPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onDestroyViewTestCase4() {
-        val connection = Connection().setGuid("").setAccessToken("accessToken").setCode("demobank1").setName("Demobank1")
+        val connection =
+            Connection().setGuid("").setAccessToken("accessToken").setCode("demobank1").setName("Demobank1")
         Mockito.`when`(mockConnectionsRepository.getByGuid("guid2")).thenReturn(connection)
         val presenter = createPresenter()
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "guid2")
@@ -198,19 +219,23 @@ class ConnectProviderPresenterTest {
 
         assertTrue(presenter.logoUrl.isEmpty())
 
-        presenter.setInitialData(connectConfigurationLink = "connectConfigurationLink", connectionGuid = "guid1")
+        presenter.setInitialData(
+            connectConfigurationLink = "connectConfigurationLink",
+            connectionGuid = "guid1"
+        )
 
         assertTrue(presenter.logoUrl.isEmpty())
 
         presenter.fetchProviderResult(
-                result = ProviderData(
-                        connectUrl = "https://www.fentury.com",
-                        code = "demobank",
-                        name = "Demobank",
-                        logoUrl = "logoUrl",
-                        version = API_VERSION
-                ),
-                error = null
+            result = ProviderData(
+                connectUrl = "https://www.fentury.com",
+                code = "demobank",
+                name = "Demobank",
+                logoUrl = "logoUrl",
+                version = API_VERSION,
+                supportEmail = "authenticator@saltedge.com"
+            ),
+            error = null
         )
 
         assertThat(presenter.logoUrl, equalTo("logoUrl"))
@@ -233,7 +258,7 @@ class ConnectProviderPresenterTest {
     fun webAuthFinishSuccessTest() {
         val presenter = createPresenter(viewContract = mockView)
         val connection = Connection().setGuid("guid1").setStatus(ConnectionStatus.ACTIVE)
-                .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
+            .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "guid1")
@@ -255,8 +280,9 @@ class ConnectProviderPresenterTest {
         assertFalse(presenter.shouldShowWebView)
 
         val connectUrlData = AuthenticateConnectionData(
-                redirectUrl = "https://www.fentury.com",
-                connectionId = "connectionId")
+            redirectUrl = "https://www.fentury.com",
+            connectionId = "connectionId"
+        )
         presenter.onConnectionInitSuccess(response = connectUrlData)
 
         assertTrue(presenter.shouldShowWebView)
@@ -281,7 +307,7 @@ class ConnectProviderPresenterTest {
     fun getIconResIdTestCase2() {
         val presenter = createPresenter(viewContract = mockView)
         val connection = Connection().setGuid("guid1").setStatus(ConnectionStatus.ACTIVE)
-                .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
+            .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "guid1")
@@ -312,7 +338,7 @@ class ConnectProviderPresenterTest {
     fun mainActionTextResIdCase2() {
         val presenter = createPresenter(viewContract = mockView)
         val connection = Connection().setGuid("guid1").setStatus(ConnectionStatus.ACTIVE)
-                .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
+            .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "guid1")
@@ -343,7 +369,7 @@ class ConnectProviderPresenterTest {
     fun getAltActionTextResIdCase2() {
         val presenter = createPresenter(viewContract = mockView)
         val connection = Connection().setGuid("guid1").setStatus(ConnectionStatus.ACTIVE)
-                .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
+            .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "guid1")
@@ -363,8 +389,10 @@ class ConnectProviderPresenterTest {
     fun getCompleteTitleCase1() {
         val presenter = createPresenter(viewContract = mockView)
 
-        assertThat(presenter.completeTitle,
-                equalTo(getString(R.string.errors_connection_failed)))
+        assertThat(
+            presenter.completeTitle,
+            equalTo(getString(R.string.errors_connection_failed))
+        )
     }
 
     /**
@@ -375,7 +403,7 @@ class ConnectProviderPresenterTest {
     fun getCompleteTitleCase2() {
         val presenter = createPresenter(viewContract = mockView)
         val connection = Connection().setGuid("guid1").setStatus(ConnectionStatus.ACTIVE)
-                .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
+            .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "guid1")
@@ -384,8 +412,10 @@ class ConnectProviderPresenterTest {
 
         presenter.webAuthFinishSuccess(id = "1", accessToken = "access_token")
 
-        assertThat(presenter.completeTitle,
-                equalTo(getString(R.string.connect_status_provider_success).format(connection.name)))
+        assertThat(
+            presenter.completeTitle,
+            equalTo(getString(R.string.connect_status_provider_success).format(connection.name))
+        )
     }
 
     /**
@@ -396,11 +426,13 @@ class ConnectProviderPresenterTest {
     fun getCompleteMessageCase1() {
         val presenter = createPresenter(viewContract = mockView)
 
-        assertThat(presenter.completeMessage,
-                equalTo(getString(R.string.errors_connection_failed_description)))
+        assertThat(
+            presenter.completeMessage,
+            equalTo(getString(R.string.errors_connection_failed_description))
+        )
 
         val connection = Connection().setGuid("guid1").setStatus(ConnectionStatus.ACTIVE)
-                .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
+            .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "guid1")
@@ -409,8 +441,10 @@ class ConnectProviderPresenterTest {
 
         presenter.webAuthFinishError(errorClass = "ERROR", errorMessage = null)
 
-        assertThat(presenter.completeMessage,
-                equalTo(getString(R.string.errors_connection_failed_description)))
+        assertThat(
+            presenter.completeMessage,
+            equalTo(getString(R.string.errors_connection_failed_description))
+        )
     }
 
     /**
@@ -421,7 +455,7 @@ class ConnectProviderPresenterTest {
     fun getCompleteMessageCase2() {
         val presenter = createPresenter(viewContract = mockView)
         val connection = Connection().setGuid("guid1").setStatus(ConnectionStatus.ACTIVE)
-                .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
+            .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "guid1")
@@ -430,8 +464,10 @@ class ConnectProviderPresenterTest {
 
         presenter.webAuthFinishSuccess(id = "1", accessToken = "access_token")
 
-        assertThat(presenter.completeMessage,
-                equalTo(getString(R.string.connect_status_provider_success_description)))
+        assertThat(
+            presenter.completeMessage,
+            equalTo(getString(R.string.connect_status_provider_success_description))
+        )
     }
 
     /**
@@ -442,8 +478,9 @@ class ConnectProviderPresenterTest {
     fun onViewCreatedCase1() {
         val presenter = createPresenter(viewContract = mockView)
         val connectUrlData = AuthenticateConnectionData(
-                redirectUrl = "https://www.fentury.com",
-                connectionId = "connectionId")
+            redirectUrl = "https://www.fentury.com",
+            connectionId = "connectionId"
+        )
         presenter.onConnectionInitSuccess(response = connectUrlData)
 
         Mockito.clearInvocations(mockView)
@@ -473,7 +510,7 @@ class ConnectProviderPresenterTest {
     fun onViewCreatedCase3() {
         val presenter = createPresenter(viewContract = mockView)
         val connection = Connection().setGuid("guid1").setStatus(ConnectionStatus.ACTIVE)
-                .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
+            .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "guid1")
@@ -494,7 +531,7 @@ class ConnectProviderPresenterTest {
     fun onAuthFinishedTestCase4() {
         val presenter = createPresenter(viewContract = mockView)
         val connection = Connection().setGuid("guid1").setStatus(ConnectionStatus.ACTIVE)
-                .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
+            .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "guid1")
@@ -515,8 +552,9 @@ class ConnectProviderPresenterTest {
         assertTrue(presenter.shouldShowProgressView)
 
         val connectUrlData = AuthenticateConnectionData(
-                redirectUrl = "https://www.fentury.com",
-                connectionId = "connectionId")
+            redirectUrl = "https://www.fentury.com",
+            connectionId = "connectionId"
+        )
         presenter.onConnectionInitSuccess(response = connectUrlData)
 
         assertFalse(presenter.shouldShowProgressView)
@@ -533,7 +571,7 @@ class ConnectProviderPresenterTest {
         assertFalse(presenter.shouldShowCompleteView)
 
         val connection = Connection().setGuid("guid1").setStatus(ConnectionStatus.ACTIVE)
-                .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
+            .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "guid1")
@@ -557,7 +595,7 @@ class ConnectProviderPresenterTest {
         assertFalse(presenter.shouldShowCompleteView)
 
         val connection = Connection().setGuid("guid1").setStatus(ConnectionStatus.ACTIVE)
-                .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
+            .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "guid1")
@@ -576,7 +614,7 @@ class ConnectProviderPresenterTest {
         val presenter = createPresenter(viewContract = mockView)
 
         val connection = Connection().setGuid("guid1").setStatus(ConnectionStatus.ACTIVE)
-                .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
+            .setAccessToken("access_token").setCode("demobank1").setName("Demobank1")
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "guid1")
@@ -590,14 +628,14 @@ class ConnectProviderPresenterTest {
     private val mockKeyStoreManager = Mockito.mock(KeyStoreManagerAbs::class.java)
     private val mockApiManager = Mockito.mock(AuthenticatorApiManagerAbs::class.java)
     private val mockView = Mockito.mock(ConnectProviderContract.View::class.java)
-    private val providerData = ProviderData(code = "demobank", name = "Demobank", connectUrl = "url", logoUrl = "url", version = "1")
 
     private fun createPresenter(viewContract: ConnectProviderContract.View? = null): ConnectProviderPresenter {
         return ConnectProviderPresenter(
-                appContext = TestTools.applicationContext,
-                preferenceRepository = mockPreferenceRepository,
-                connectionsRepository = mockConnectionsRepository,
-                keyStoreManager = mockKeyStoreManager,
-                apiManager = mockApiManager).apply { this.viewContract = viewContract }
+            appContext = TestTools.applicationContext,
+            preferenceRepository = mockPreferenceRepository,
+            connectionsRepository = mockConnectionsRepository,
+            keyStoreManager = mockKeyStoreManager,
+            apiManager = mockApiManager
+        ).apply { this.viewContract = viewContract }
     }
 }
