@@ -28,7 +28,7 @@ enum class ConnectionOptions(@DrawableRes val iconId: Int, @StringRes val textId
     RECONNECT(R.drawable.ic_reconnect_gray_24dp,
             R.string.actions_reconnect),
     REPORT_PROBLEM(R.drawable.ic_about_black54_24dp,
-            R.string.actions_report_problem),
+            R.string.actions_contact_support),
     RENAME(R.drawable.ic_rename_gray_24dp,
             R.string.actions_rename_connection),
     DELETE(R.drawable.ic_delete_gray_24dp,

@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.model.db
 
 import com.saltedge.authenticator.app.*
+import com.saltedge.authenticator.model.realm.RealmManager
 import com.saltedge.authenticator.sdk.model.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.Token

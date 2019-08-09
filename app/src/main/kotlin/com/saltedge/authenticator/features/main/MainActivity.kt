@@ -37,7 +37,7 @@ import com.saltedge.authenticator.features.settings.list.SettingsListFragment
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.model.db.ConnectionsRepository
-import com.saltedge.authenticator.model.db.RealmManager
+import com.saltedge.authenticator.model.realm.RealmManager
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
 import com.saltedge.authenticator.widget.fragment.BaseFragment

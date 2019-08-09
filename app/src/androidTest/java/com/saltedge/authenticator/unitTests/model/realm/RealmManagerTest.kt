@@ -18,11 +18,11 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.unitTests.model.db
+package com.saltedge.authenticator.unitTests.model.realm
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.saltedge.authenticator.model.db.DB_SCHEMA_VERSION
-import com.saltedge.authenticator.model.db.RealmManager
+import com.saltedge.authenticator.model.realm.DB_SCHEMA_VERSION
+import com.saltedge.authenticator.model.realm.RealmManager
 import com.saltedge.authenticator.testTools.TestTools
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -38,7 +38,7 @@ class RealmManagerTest {
     fun valuesTest() {
         RealmManager.resetError()
 
-        assertThat(DB_SCHEMA_VERSION, equalTo(1L))
+        assertThat(DB_SCHEMA_VERSION, equalTo(2L))
         Assert.assertFalse(RealmManager.initialized)
         Assert.assertFalse(RealmManager.errorOccurred)
 

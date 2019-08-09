@@ -18,21 +18,14 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.model.db
+package com.saltedge.authenticator.model.realm
 
-import io.realm.RealmMigration
 import io.realm.RealmSchema
 
 /**
- * running db migrations. migrations starts from 2 index
+ * Adds the supportEmail field to the Connection model
  */
-fun runMigrations(): RealmMigration {
-    return RealmMigration { realm, oldVersion, newVersion ->
-        val realmSchema: RealmSchema = realm.schema
-        for (i in (oldVersion + 1)..newVersion) {
-            when (i) {
-                // 2L -> // Here to add further migrations
-            }
-        }
-    }
+fun RealmSchema.runMigration2() {
+    get("Connection")?.addField("supportEmail", String::class.java)
 }
+

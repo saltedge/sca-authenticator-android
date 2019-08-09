@@ -71,7 +71,7 @@ class SettingsListPresenterTest {
                         titleId = R.string.about_feature_title,
                         itemIsClickable = true),
                 CheckedTitleValueViewModel(
-                        titleId = R.string.settings_contact_support,
+                        titleId = R.string.settings_report_bug,
                         itemIsClickable = true)
         )))
     }
@@ -176,12 +176,12 @@ class SettingsListPresenterTest {
     @Throws(Exception::class)
     fun onListItemClickTest_support() {
         val presenter = createPresenter(viewContract = null)
-        presenter.onListItemClick(itemId = R.string.settings_contact_support)
+        presenter.onListItemClick(itemId = R.string.settings_report_bug)
 
         Mockito.verifyNoMoreInteractions(mockView)
 
         presenter.viewContract = mockView
-        presenter.onListItemClick(itemId = R.string.settings_contact_support)
+        presenter.onListItemClick(itemId = R.string.settings_report_bug)
 
         Mockito.verify(mockView).openMailApp()
     }

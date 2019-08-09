@@ -32,7 +32,7 @@ import androidx.fragment.app.FragmentManager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.connections.qr.QrScannerActivity
-import com.saltedge.authenticator.sdk.constants.SUPPORT_EMAIL_LINK
+import com.saltedge.authenticator.sdk.constants.DEFAULT_SUPPORT_EMAIL_LINK
 
 /**
  * Check fragment navigation level
@@ -126,10 +126,10 @@ fun FragmentActivity.finishFragment() {
  *
  * @receiver fragment activity
  */
-fun FragmentActivity.createSupportMail() {
+fun FragmentActivity.startMailApp(supportEmail: String? = DEFAULT_SUPPORT_EMAIL_LINK) {
     try {
         this.startActivityForResult(Intent(Intent.ACTION_SENDTO)
-                .apply { data = Uri.parse(SUPPORT_EMAIL_LINK) }, 0)
+                .apply { data = Uri.parse("mailto:$supportEmail") }, 0)
     } catch (ignored: IllegalStateException) {
     } catch (ignored: ActivityNotFoundException) {
     } catch (e: Exception) {
