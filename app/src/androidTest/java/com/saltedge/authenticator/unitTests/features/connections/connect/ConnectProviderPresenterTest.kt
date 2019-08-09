@@ -127,16 +127,13 @@ class ConnectProviderPresenterTest {
     @Test
     @Throws(Exception::class)
     fun enumClassTest() {
-        assertThat(
-            ViewMode.values(), equalTo(
-            arrayOf(
-                ViewMode.START,
-                ViewMode.WEB_ENROLL,
-                ViewMode.COMPLETE_SUCCESS,
-                ViewMode.COMPLETE_ERROR
-            )
+        val targetArray = arrayOf(
+            ViewMode.START,
+            ViewMode.WEB_ENROLL,
+            ViewMode.COMPLETE_SUCCESS,
+            ViewMode.COMPLETE_ERROR
         )
-        )
+        assertThat(ViewMode.values(), equalTo(targetArray))
         assertThat(ViewMode.valueOf("START"), equalTo(ViewMode.START))
         assertThat(ViewMode.valueOf("WEB_ENROLL"), equalTo(ViewMode.WEB_ENROLL))
         assertThat(ViewMode.valueOf("COMPLETE_SUCCESS"), equalTo(ViewMode.COMPLETE_SUCCESS))
@@ -152,8 +149,11 @@ class ConnectProviderPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onDestroyViewTestCase1() {
-        val connection =
-            Connection().setGuid("guid2").setAccessToken("").setCode("demobank1").setName("Demobank1")
+        val connection = Connection()
+            .setGuid("guid2")
+            .setAccessToken("")
+            .setCode("demobank1")
+            .setName("Demobank1")
         Mockito.`when`(mockConnectionsRepository.getByGuid("guid2")).thenReturn(connection)
         val presenter = createPresenter()
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "guid2")
@@ -168,10 +168,11 @@ class ConnectProviderPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onDestroyViewTestCase2() {
-        val connection =
-            Connection().setGuid("guid2").setAccessToken("accessToken").setCode("demobank1").setName(
-                "Demobank1"
-            )
+        val connection = Connection()
+            .setGuid("guid2")
+            .setAccessToken("accessToken")
+            .setCode("demobank1")
+            .setName("Demobank1")
         Mockito.`when`(mockConnectionsRepository.getByGuid("guid2")).thenReturn(connection)
         val presenter = createPresenter()
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "")
@@ -186,8 +187,11 @@ class ConnectProviderPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onDestroyViewTestCase3() {
-        val connection =
-            Connection().setGuid("").setAccessToken("").setCode("demobank1").setName("Demobank1")
+        val connection = Connection()
+            .setGuid("")
+            .setAccessToken("")
+            .setCode("demobank1")
+            .setName("Demobank1")
         Mockito.`when`(mockConnectionsRepository.getByGuid("guid2")).thenReturn(connection)
         val presenter = createPresenter()
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "guid2")
@@ -202,8 +206,11 @@ class ConnectProviderPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onDestroyViewTestCase4() {
-        val connection =
-            Connection().setGuid("").setAccessToken("accessToken").setCode("demobank1").setName("Demobank1")
+        val connection = Connection()
+            .setGuid("")
+            .setAccessToken("accessToken")
+            .setCode("demobank1")
+            .setName("Demobank1")
         Mockito.`when`(mockConnectionsRepository.getByGuid("guid2")).thenReturn(connection)
         val presenter = createPresenter()
         presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "guid2")
