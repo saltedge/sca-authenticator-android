@@ -50,7 +50,7 @@ class ConnectionExtensionsTest : DatabaseTestCase() {
                 connectUrl = "url",
                 logoUrl = "url",
                 version = "1",
-                supportEmail = "authenticator@saltedge.com"
+                supportEmail = "exampple1@saltedge.com"
             )
         )
 
@@ -64,7 +64,7 @@ class ConnectionExtensionsTest : DatabaseTestCase() {
         assertThat(connection.logoUrl, equalTo("url"))
         assertThat(connection.accessToken, equalTo(""))
         assertThat(connection.status, equalTo(ConnectionStatus.INACTIVE.toString()))
-        assertThat(connection.supportEmail, equalTo("authenticator@saltedge.com"))
+        assertThat(connection.supportEmail, equalTo("exampple1@saltedge.com"))
 
         connection = connection.initWithProviderData(
             ProviderData(
@@ -73,7 +73,7 @@ class ConnectionExtensionsTest : DatabaseTestCase() {
                 name = "name3",
                 logoUrl = "url4",
                 version = "1",
-                supportEmail = "example@saltedge.com"
+                supportEmail = "example2@saltedge.com"
             )
         )
 
@@ -87,7 +87,7 @@ class ConnectionExtensionsTest : DatabaseTestCase() {
         assertThat(connection.logoUrl, equalTo("url4"))
         assertThat(connection.accessToken, equalTo(""))
         assertThat(connection.status, equalTo(ConnectionStatus.INACTIVE.toString()))
-        assertThat(connection.supportEmail, equalTo("example@saltedge.com"))
+        assertThat(connection.supportEmail, equalTo("example2@saltedge.com"))
     }
 
     @Test

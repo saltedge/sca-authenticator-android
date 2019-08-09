@@ -102,9 +102,9 @@ class ConnectionsListPresenter @Inject constructor(
     private fun onOptionItemClick(item: ConnectionOptions, connectionGuid: GUID) {
         when (item) {
             ConnectionOptions.REPORT_PROBLEM -> {
-                connectionsRepository.getByGuid(connectionGuid)?.let {
-                    viewContract?.showSupportView(supportEmail = it.supportEmail)
-                }
+                viewContract?.showSupportView(
+                    supportEmail = connectionsRepository.getByGuid(connectionGuid)?.supportEmail
+                )
             }
             ConnectionOptions.RENAME -> onRenameOptionSelected(connectionGuid = connectionGuid)
             ConnectionOptions.DELETE -> onDeleteOptionsSelected(connectionGuid = connectionGuid)

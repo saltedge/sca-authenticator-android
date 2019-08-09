@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.unitTests.model.db
+package com.saltedge.authenticator.unitTests.model.realm
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.saltedge.authenticator.model.realm.DB_SCHEMA_VERSION

@@ -233,7 +233,7 @@ class ConnectProviderPresenterTest {
                 name = "Demobank",
                 logoUrl = "logoUrl",
                 version = API_VERSION,
-                supportEmail = "authenticator@saltedge.com"
+                supportEmail = "example@saltedge.com"
             ),
             error = null
         )

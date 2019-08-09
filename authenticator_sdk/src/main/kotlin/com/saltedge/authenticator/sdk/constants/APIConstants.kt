@@ -23,7 +23,7 @@ package com.saltedge.authenticator.sdk.constants
 //Static links
 const val DEFAULT_HOST = "https://www.saltedge.com"
 const val TERMS_LINK = "https://www.saltedge.com/pages/authenticator_terms"
-const val SUPPORT_EMAIL_LINK = "authenticator@saltedge.com"
+const val DEFAULT_SUPPORT_EMAIL_LINK = "authenticator@saltedge.com"
 
 //API endpoints
 const val API_VERSION = "1"
