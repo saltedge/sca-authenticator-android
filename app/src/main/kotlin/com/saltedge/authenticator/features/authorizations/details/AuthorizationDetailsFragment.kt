@@ -118,10 +118,10 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
     override fun updateViewContent() {
         updateLayoutsVisibility()
         timerTextView?.text = presenterContract.remainedTimeDescription
-        timeProgressView?.max = presenterContract.maxProgressSeconds
-        timeProgressView?.remainedProgress = presenterContract.remainedSecondsTillExpire
-        providerNameTextView?.text = presenterContract.providerName
+//        timeProgressView?.max = presenterContract.maxProgressSeconds
+//        timeProgressView?.remainedProgress = presenterContract.remainedSecondsTillExpire
         titleTextView?.text = presenterContract.title
+        providerNameView?.text = presenterContract.providerName
 
         descriptionTextView?.setVisible(show = presenterContract.shouldShowDescriptionTextView)
         descriptionWebView?.setVisible(show = presenterContract.shouldShowDescriptionWebView)
@@ -135,11 +135,20 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
             descriptionTextView?.movementMethod = ScrollingMovementMethod()
             descriptionTextView?.text = presenterContract.description
         }
+        if (presenterContract.shouldShowProviderLogo) {
+            connectionLogoView?.visibility = View.VISIBLE
+            connectionLogoView?.loadImage(
+                imageUrl = presenterContract.providerLogo,
+                placeholderId = R.drawable.ic_logo_bank_placeholder
+            )
+        } else {
+            connectionLogoView?.visibility = View.GONE
+        }
     }
 
     override fun updateTimeView(remainedSecondsTillExpire: Int, remainedTimeDescription: String) {
         activity?.runOnUiThread {
-            timeProgressView?.remainedProgress = remainedSecondsTillExpire
+//            timeProgressView?.remainedProgress = remainedSecondsTillExpire
             timerTextView?.text = remainedTimeDescription
         }
     }
@@ -198,8 +207,7 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
 
     private fun setHeaderVisibility(show: Boolean) {
         timerTextView?.setVisible(show)
-        timeProgressView?.setVisible(show)
-        providerNameTextView?.setVisible(show)
+//        timeProgressView?.setVisible(show)
     }
 
     private fun injectDependencies() {

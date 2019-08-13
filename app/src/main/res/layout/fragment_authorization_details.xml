@@ -34,46 +34,52 @@
         <RelativeLayout
             android:id="@+id/headerLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/dp_40"
             android:layout_marginStart="@dimen/dp_32"
             android:layout_marginLeft="@dimen/dp_32"
             android:layout_marginTop="@dimen/dp_20"
             android:layout_marginEnd="@dimen/dp_32"
-            android:layout_marginRight="@dimen/dp_32">
+            android:layout_marginRight="@dimen/dp_32"
+            android:background="@drawable/shape_card_white_rounded_corners"
+            android:elevation="@dimen/dp_12">
 
             <FrameLayout
                 android:id="@+id/closeActionView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/dp_16">
+                android:layout_marginStart="@dimen/dp_14"
+                android:layout_marginTop="@dimen/dp_9"
+                android:layout_marginEnd="@dimen/dp_12"
+                android:layout_marginBottom="@dimen/dp_9">
 
                 <ImageView
-                    android:id="@+id/closeActionImageView"
+                    android:id="@+id/connectionLogoView"
                     android:layout_width="@dimen/dp_24"
                     android:layout_height="@dimen/dp_24"
                     android:contentDescription="@null"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_cancel_gray_light_24" />
+                    tools:background="@color/blue" />
             </FrameLayout>
 
             <TextView
-                android:id="@+id/timerTextView"
-                style="@style/Text14CyanMedium"
+                android:id="@+id/providerNameView"
+                style="@style/Text16BlackRegular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/dp_6"
-                android:layout_toStartOf="@+id/timeProgressView"
-                android:maxLines="1"
-                tools:text="3:25" />
+                android:layout_toEndOf="@+id/closeActionView"
+                tools:text="HSBC Bank UK" />
 
-            <com.saltedge.authenticator.widget.radialprogress.RadialProgressView
-                android:id="@+id/timeProgressView"
-                android:layout_width="@dimen/dp_24"
-                android:layout_height="@dimen/dp_24"
+            <TextView
+                android:id="@+id/timerTextView"
+                style="@style/Text14BlueMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/dp_16" />
+                android:layout_marginEnd="@dimen/dp_12"
+                android:maxLines="1"
+                tools:text="3:25" />
         </RelativeLayout>
 
         <ProgressBar
@@ -99,32 +105,21 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/providerNameTextView"
-                style="@style/Text14GrayRegular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/dp_12"
-                android:maxLines="2"
-                tools:text="Create Payment" />
-
-            <TextView
                 android:id="@+id/titleTextView"
-                style="@style/Text20BlackMedium"
+                style="@style/Text14GrayRegular"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_16"
                 android:gravity="center"
                 android:maxLines="2"
-                tools:text="Pay 99.99 $" />
+                tools:text="Create payment" />
 
             <TextView
                 android:id="@+id/descriptionTextView"
                 style="@style/Text16GrayDarkRegular"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/dp_15"
-                android:gravity="left"
+                android:layout_marginTop="@dimen/dp_12"
+                android:gravity="start"
                 android:scrollbars="vertical"
                 tools:text="Your Bank has been successfully connected to the Authenticator App. You will receive a confirmation every time you make a payment." />
 
@@ -139,7 +134,7 @@
             android:id="@+id/actionsLayout"
             layout="@layout/view_action_buttons"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <com.saltedge.authenticator.widget.InfoView
