@@ -42,6 +42,7 @@ import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.showAuthorizationConfirm
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_authorization_details.*
+import kotlinx.android.synthetic.main.view_action_buttons.*
 import java.util.*
 import javax.inject.Inject
 
@@ -133,16 +134,6 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
         } else {
             descriptionTextView?.movementMethod = ScrollingMovementMethod()
             descriptionTextView?.text = presenterContract.description
-        }
-
-        if (presenterContract.shouldShowProviderLogo) {
-            connectionLogoView?.visibility = View.VISIBLE
-            connectionLogoView?.loadImage(
-                imageUrl = presenterContract.providerLogo,
-                placeholderId = R.drawable.ic_logo_bank_placeholder
-            )
-        } else {
-            connectionLogoView?.visibility = View.GONE
         }
     }
 

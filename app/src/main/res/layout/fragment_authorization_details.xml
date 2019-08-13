@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
- <!--
+<?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2019 Salt Edge Inc.
@@ -29,13 +28,18 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
         <RelativeLayout
             android:id="@+id/headerLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginLeft="@dimen/dp_32"
+            android:layout_marginTop="@dimen/dp_20"
+            android:layout_marginEnd="@dimen/dp_32"
+            android:layout_marginRight="@dimen/dp_32">
 
             <FrameLayout
                 android:id="@+id/closeActionView"
@@ -47,132 +51,104 @@
                     android:id="@+id/closeActionImageView"
                     android:layout_width="@dimen/dp_24"
                     android:layout_height="@dimen/dp_24"
-                    android:src="@drawable/ic_cancel_gray_light_24"
+                    android:contentDescription="@null"
                     android:scaleType="fitCenter"
-                    android:contentDescription="@null"/>
+                    android:src="@drawable/ic_cancel_gray_light_24" />
             </FrameLayout>
 
             <TextView
                 android:id="@+id/timerTextView"
+                style="@style/Text14CyanMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toStartOf="@+id/timeProgressView"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/dp_6"
+                android:layout_toStartOf="@+id/timeProgressView"
                 android:maxLines="1"
-                style="@style/Text14CyanMedium"
-                tools:text="3:25"/>
+                tools:text="3:25" />
 
             <com.saltedge.authenticator.widget.radialprogress.RadialProgressView
                 android:id="@+id/timeProgressView"
                 android:layout_width="@dimen/dp_24"
                 android:layout_height="@dimen/dp_24"
-                android:layout_marginEnd="@dimen/dp_16"
+                android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true" />
+                android:layout_marginEnd="@dimen/dp_16" />
         </RelativeLayout>
 
         <ProgressBar
             android:id="@+id/progressBarView"
+            style="?android:attr/progressBarStyle"
             android:layout_width="@dimen/dp_70"
             android:layout_height="@dimen/dp_70"
             android:layout_marginTop="@dimen/dp_20"
-            style="?android:attr/progressBarStyle"
+            android:indeterminate="true"
             android:indeterminateTint="@color/cyan"
             android:indeterminateTintMode="src_in"
-            android:indeterminate="true"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/contentLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginStart="@dimen/dp_16"
-            android:layout_marginEnd="@dimen/dp_16"
+            android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginTop="@dimen/dp_24"
+            android:layout_marginEnd="@dimen/dp_32"
             android:layout_marginBottom="@dimen/dp_24"
+            android:layout_weight="1"
             android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/connectionLogoView"
-                android:layout_width="@dimen/dp_52"
-                android:layout_height="@dimen/dp_52"
-                android:layout_gravity="center_horizontal" />
 
             <TextView
                 android:id="@+id/providerNameTextView"
+                style="@style/Text14GrayRegular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_12"
                 android:layout_gravity="center_horizontal"
-                android:maxLines="1"
-                style="@style/Text14GrayRegular"
-                tools:text="Demobank"/>
+                android:layout_marginTop="@dimen/dp_12"
+                android:maxLines="2"
+                tools:text="Create Payment" />
 
             <TextView
                 android:id="@+id/titleTextView"
+                style="@style/Text20BlackMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_16"
                 android:gravity="center"
                 android:maxLines="2"
-                style="@style/Text20BlackMedium"
-                tools:text="Pay 99.99 $"/>
-
+                tools:text="Pay 99.99 $" />
 
             <TextView
                 android:id="@+id/descriptionTextView"
+                style="@style/Text16GrayDarkRegular"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="@dimen/dp_15"
                 android:gravity="left"
-                android:scrollbars = "vertical"
-                style="@style/Text16GrayDarkRegular"
-                tools:text="Your Bank has been successfully connected to the Authenticator App. You will receive a confirmation every time you make a payment."/>
+                android:scrollbars="vertical"
+                tools:text="Your Bank has been successfully connected to the Authenticator App. You will receive a confirmation every time you make a payment." />
 
             <WebView
                 android:id="@+id/descriptionWebView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="gone"/>
+                android:visibility="gone" />
         </LinearLayout>
 
-        <LinearLayout
+        <include
             android:id="@+id/actionsLayout"
+            layout="@layout/view_action_buttons"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/dp_24">
-
-            <Button
-                android:id="@+id/negativeActionView"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                style="@style/WhiteButton"
-                android:layout_marginStart="@dimen/dp_16"
-                android:layout_marginEnd="@dimen/dp_10"
-                android:text="@string/actions_deny" />
-
-            <Button
-                android:id="@+id/positiveActionView"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                style="@style/BlueButton"
-                android:layout_marginStart="@dimen/dp_10"
-                android:layout_marginEnd="@dimen/dp_16"
-                android:text="@string/actions_allow" />
-        </LinearLayout>
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <com.saltedge.authenticator.widget.InfoView
         android:id="@+id/completeView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:iconSrc="@drawable/ic_complete_ok_70"
-        app:iconDimension="@dimen/info_view_big_icon"
-        app:titleText="@string/authorizations_finished_successfully"
+        android:background="@android:color/white"
         android:visibility="gone"
-        android:background="@android:color/white"/>
+        app:iconDimension="@dimen/info_view_big_icon"
+        app:iconSrc="@drawable/ic_complete_ok_70"
+        app:titleText="@string/authorizations_finished_successfully" />
 </FrameLayout>

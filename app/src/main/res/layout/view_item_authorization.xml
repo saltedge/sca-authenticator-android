@@ -103,7 +103,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:maxLines="2"
-                tools:background="@color/red"/>
+                tools:background="@color/red"
+                tools:text="Create payment" />
 
             <TextView
                 android:id="@+id/descriptionTextView"
@@ -113,7 +114,7 @@
                 android:layout_marginTop="@dimen/dp_16"
                 android:gravity="start"
                 android:maxLines="6"
-                tools:background="@color/black"/>
+                tools:background="@color/black" />
 
             <TextView
                 android:id="@+id/detailsActionView"
@@ -127,40 +128,14 @@
                 android:maxLines="1"
                 android:padding="@dimen/dp_16"
                 android:text="@string/actions_view_more"
-                tools:background="@color/red"/>
+                tools:background="@color/red" />
         </LinearLayout>
 
-        <LinearLayout
+        <include
             android:id="@+id/actionsLayout"
+            layout="@layout/view_action_buttons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/dp_24">
-
-            <Button
-                android:id="@+id/negativeActionView"
-                style="@style/WhiteButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/dp_16"
-                android:layout_marginEnd="@dimen/dp_10"
-                android:layout_weight="1"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:text="@string/actions_deny" />
-
-            <Button
-                android:id="@+id/positiveActionView"
-                style="@style/BlueButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/dp_10"
-                android:layout_marginEnd="@dimen/dp_16"
-                android:layout_weight="1"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:text="@string/actions_allow" />
-        </LinearLayout>
+            android:layout_alignParentBottom="true" />
     </RelativeLayout>
 </RelativeLayout>

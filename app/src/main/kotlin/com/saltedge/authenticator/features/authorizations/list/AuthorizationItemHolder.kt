@@ -31,6 +31,7 @@ import com.saltedge.authenticator.features.authorizations.common.remainedTimeTil
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tool.*
 import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.view_action_buttons.*
 import kotlinx.android.synthetic.main.view_item_authorization.*
 
 class AuthorizationItemHolder(
