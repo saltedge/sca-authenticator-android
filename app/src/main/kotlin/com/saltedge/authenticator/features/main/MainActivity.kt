@@ -162,6 +162,7 @@ class MainActivity : LockableActivity(),
         supportFragmentManager?.popBackStack()
     }
 
+//    toolbarView?.navigationIcon = this.getDrawable(R.drawable.ic_cancel_gray_light_24)
     override fun updateNavigationViewsContent() {
         isTopNavigationLevel().also { isOnTop ->
             toolbarView?.navigationIcon = presenter.getNavigationIcon(isOnTop)?.let {

@@ -58,7 +58,6 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectDependencies()
-        hideActionBar()
         presenterContract.setInitialData(
             connectionId = arguments?.getString(KEY_CONNECTION_ID) ?: "",
             authorizationId = arguments?.getString(KEY_AUTHORIZATION_ID),
@@ -71,8 +70,10 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? =
-        inflater.inflate(R.layout.fragment_authorization_details, container, false)
+    ): View? {
+        activityComponents?.updateAppbarTitle(getString(R.string.authorizations_feature_title))
+        return inflater.inflate(R.layout.fragment_authorization_details, container, false)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         negativeActionView?.setOnClickListener(this)
