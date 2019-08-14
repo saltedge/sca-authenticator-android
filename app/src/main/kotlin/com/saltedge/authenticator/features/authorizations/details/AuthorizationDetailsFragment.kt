@@ -33,6 +33,7 @@ import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.features.authorizations.confirmPasscode.ConfirmPasscodeDialog
 import com.saltedge.authenticator.features.authorizations.details.di.AuthorizationDetailsModule
+import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
@@ -47,7 +48,7 @@ import java.util.*
 import javax.inject.Inject
 
 class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContract.View,
-    View.OnClickListener {
+    View.OnClickListener, UpActionImageListener {
 
     @Inject
     lateinit var presenterContract: AuthorizationDetailsPresenter
@@ -115,11 +116,13 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
         super.onStop()
     }
 
+    override fun getUpActionImage(): Int? = R.drawable.ic_close_white_24dp
+
     override fun updateViewContent() {
         updateLayoutsVisibility()
         timerTextView?.text = presenterContract.remainedTimeDescription
-//        timeProgressView?.max = presenterContract.maxProgressSeconds
-//        timeProgressView?.remainedProgress = presenterContract.remainedSecondsTillExpire
+        //        timeProgressView?.max = presenterContract.maxProgressSeconds
+        //        timeProgressView?.remainedProgress = presenterContract.remainedSecondsTillExpire
         titleTextView?.text = presenterContract.title
         providerNameView?.text = presenterContract.providerName
 
@@ -148,7 +151,7 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
 
     override fun updateTimeView(remainedSecondsTillExpire: Int, remainedTimeDescription: String) {
         activity?.runOnUiThread {
-//            timeProgressView?.remainedProgress = remainedSecondsTillExpire
+            //            timeProgressView?.remainedProgress = remainedSecondsTillExpire
             timerTextView?.text = remainedTimeDescription
         }
     }
@@ -207,7 +210,7 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
 
     private fun setHeaderVisibility(show: Boolean) {
         timerTextView?.setVisible(show)
-//        timeProgressView?.setVisible(show)
+        //        timeProgressView?.setVisible(show)
     }
 
     private fun injectDependencies() {
