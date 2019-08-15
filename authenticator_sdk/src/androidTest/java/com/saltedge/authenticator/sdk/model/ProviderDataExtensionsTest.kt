@@ -35,7 +35,14 @@ class ProviderDataExtensionsTest {
     @Test
     @Throws(Exception::class)
     fun isValidTest() {
-        val model = ProviderData(code = "", name = "", connectUrl = "", logoUrl = "", version = "")
+        val model = ProviderData(
+            code = "",
+            name = "",
+            connectUrl = "",
+            logoUrl = "",
+            version = "",
+            supportEmail = ""
+        )
 
         Assert.assertFalse(model.isValid())
 
@@ -43,6 +50,7 @@ class ProviderDataExtensionsTest {
         model.name = ""
         model.connectUrl = ""
         model.logoUrl = ""
+        model.supportEmail = ""
 
         Assert.assertFalse(model.isValid())
 
@@ -50,6 +58,7 @@ class ProviderDataExtensionsTest {
         model.name = "Demobank"
         model.connectUrl = ""
         model.logoUrl = ""
+        model.supportEmail = ""
 
         Assert.assertFalse(model.isValid())
 
@@ -57,6 +66,7 @@ class ProviderDataExtensionsTest {
         model.name = "Demobank"
         model.connectUrl = ""
         model.logoUrl = ""
+        model.supportEmail = ""
 
         Assert.assertFalse(model.isValid())
 
@@ -65,6 +75,7 @@ class ProviderDataExtensionsTest {
         model.connectUrl = "requestUrl"
         model.logoUrl = ""
         model.version = ""
+        model.supportEmail = ""
 
         Assert.assertFalse(model.isValid())
 
@@ -80,6 +91,7 @@ class ProviderDataExtensionsTest {
         model.connectUrl = "requestUrl"
         model.logoUrl = "requestUrl"
         model.version = API_VERSION
+        model.supportEmail = ""
 
         Assert.assertTrue(model.isValid())
     }
