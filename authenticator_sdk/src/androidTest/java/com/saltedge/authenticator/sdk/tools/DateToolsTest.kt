@@ -42,6 +42,14 @@ class DateToolsTest {
 
     @Test
     @Throws(Exception::class)
+    fun secondsFromDateTest() {
+        assertThat(DateTime.now().secondsFromDate(), equalTo(0))
+        assertThat(DateTime.now().plusMinutes(1).secondsFromDate(), equalTo(0))
+        assertThat(DateTime.now().minusMinutes(1).secondsFromDate(), equalTo(60))
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun remainedExpirationTimeTest() {
         assertThat(DateTime.now().remainedExpirationTime(), equalTo("-:--"))
         assertThat(DateTime.now().minusMinutes(1).remainedExpirationTime(), equalTo("-:--"))

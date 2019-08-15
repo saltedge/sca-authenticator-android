@@ -95,7 +95,7 @@ class AuthorizationDetailsPresenter(
     val shouldShowActionsLayout: Boolean
         get() = !shouldShowProgressView && sessionIsNotExpired
     val sessionIsNotExpired: Boolean
-        get() = secondsFromStartDate > 0
+        get() = currentViewModel?.isNotExpired() ?: false
     val shouldShowProviderLogo: Boolean
         get() = providerLogo.isNotEmpty()
     val shouldShowDescriptionWebView: Boolean

@@ -48,7 +48,8 @@ class AuthorizationDetailsFragmentTest {
                 connectionId = "1",
                 connectionName = "Demobank",
                 connectionLogoUrl = null,
-                isProcessing = false
+                isProcessing = false,
+                createdAt = DateTime()
         )
         val fragment = AuthorizationDetailsFragment.newInstance(model)
         val data = fragment.arguments!!.getSerializable(KEY_DATA) as? AuthorizationViewModel

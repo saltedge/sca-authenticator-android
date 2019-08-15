@@ -79,18 +79,12 @@ class AuthorizationDetailsPresenterTest {
 
     @Test
     @Throws(Exception::class)
-    fun remainedSecondsTillExpireTest() {
+    fun secondsFromStartDateTest() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(connectionId = "", authorizationId = "",
                 viewModel = null, quickConfirmMode = false)
 
         assertThat(presenter.secondsFromStartDate, equalTo(0))
-
-        val authorizationData = createAuthorizationData(1)
-        presenter.setInitialData(connectionId = "", authorizationId = "",
-                viewModel = authorizationData.toAuthorizationViewModel(connection1), quickConfirmMode = false)
-
-        assertThat(presenter.secondsFromStartDate, anyOf(equalTo(3600), equalTo(3599)))
     }
 
     @Test
