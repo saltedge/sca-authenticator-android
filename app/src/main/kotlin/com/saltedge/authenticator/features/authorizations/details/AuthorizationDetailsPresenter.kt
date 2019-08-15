@@ -31,10 +31,7 @@ import com.saltedge.authenticator.sdk.model.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.EncryptedAuthorizationData
 import com.saltedge.authenticator.sdk.model.isConnectionNotFound
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
-import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
-import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
-import com.saltedge.authenticator.sdk.tools.remainedExpirationTime
-import com.saltedge.authenticator.sdk.tools.remainedSecondsTillExpire
+import com.saltedge.authenticator.sdk.tools.*
 import com.saltedge.authenticator.tool.hasHTMLTags
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 
@@ -76,8 +73,8 @@ class AuthorizationDetailsPresenter(
 
     val remainedTimeDescription: String
         get() = currentViewModel?.expiresAt?.remainedExpirationTime() ?: ""
-    val remainedSecondsTillExpire: Int
-        get() = currentViewModel?.expiresAt?.remainedSecondsTillExpire() ?: 0
+    val secondsFromStartDate: Int
+        get() = currentViewModel?.createdAt?.secondsFromDate() ?: 0
     val maxProgressSeconds: Int
         get() = currentViewModel?.validSeconds ?: 0
     val providerName: String
@@ -98,7 +95,7 @@ class AuthorizationDetailsPresenter(
     val shouldShowActionsLayout: Boolean
         get() = !shouldShowProgressView && sessionIsNotExpired
     val sessionIsNotExpired: Boolean
-        get() = remainedSecondsTillExpire > 0
+        get() = secondsFromStartDate > 0
     val shouldShowProviderLogo: Boolean
         get() = providerLogo.isNotEmpty()
     val shouldShowDescriptionWebView: Boolean
@@ -126,7 +123,7 @@ class AuthorizationDetailsPresenter(
                     quickConfirmMode = quickConfirmMode
                 )
             }
-            R.id.closeActionView -> viewContract?.closeView()
+            R.id.connectionLogoView -> viewContract?.closeView()
         }
     }
 

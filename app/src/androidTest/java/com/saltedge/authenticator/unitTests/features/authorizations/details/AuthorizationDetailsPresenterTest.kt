@@ -84,13 +84,13 @@ class AuthorizationDetailsPresenterTest {
         presenter.setInitialData(connectionId = "", authorizationId = "",
                 viewModel = null, quickConfirmMode = false)
 
-        assertThat(presenter.remainedSecondsTillExpire, equalTo(0))
+        assertThat(presenter.secondsFromStartDate, equalTo(0))
 
         val authorizationData = createAuthorizationData(1)
         presenter.setInitialData(connectionId = "", authorizationId = "",
                 viewModel = authorizationData.toAuthorizationViewModel(connection1), quickConfirmMode = false)
 
-        assertThat(presenter.remainedSecondsTillExpire, anyOf(equalTo(3600), equalTo(3599)))
+        assertThat(presenter.secondsFromStartDate, anyOf(equalTo(3600), equalTo(3599)))
     }
 
     @Test
@@ -447,7 +447,7 @@ class AuthorizationDetailsPresenterTest {
     fun onViewClickTest_closeActionView() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(connectionId = "1", authorizationId = "", viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1), quickConfirmMode = false)
-        presenter.onViewClick(R.id.closeActionView)
+        presenter.onViewClick(R.id.connectionLogoView)
 
         Mockito.verify(mockView).closeView()
     }
@@ -457,7 +457,7 @@ class AuthorizationDetailsPresenterTest {
     fun onViewClickTest_closeActionView_InvalidParams() {
         val presenter = createPresenter(viewContract = null)
         presenter.setInitialData(connectionId = "1", authorizationId = "", viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1), quickConfirmMode = false)
-        presenter.onViewClick(R.id.closeActionView)
+        presenter.onViewClick(R.id.connectionLogoView)
 
         Mockito.verify(mockView, Mockito.never()).closeView()
     }

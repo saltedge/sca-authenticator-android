@@ -41,6 +41,14 @@ fun String.parseToUtcDateTime(): DateTime? {
  */
 fun DateTime.remainedSecondsTillExpire(): Int = secondsBetweenDates(DateTime.now(this.zone), this)
 
+/**
+ * Calculates seconds between receiver's value and now
+ *
+ * @receiver expiresAt datetime
+ * @return seconds from date
+ */
+fun DateTime.secondsFromDate(): Int = secondsBetweenDates(this, DateTime.now(this.zone))
+
 fun secondsBetweenDates(startDate: DateTime, endDate: DateTime): Int =
         (millisBetweenDates(startDate, endDate) / 1000).toInt()
 

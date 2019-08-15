@@ -80,7 +80,7 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         negativeActionView?.setOnClickListener(this)
         positiveActionView?.setOnClickListener(this)
-        closeActionView?.setOnClickListener(this)
+        connectionLogoView?.setOnClickListener(this)
         activityComponents?.hideNavigationBar()
     }
 
@@ -121,8 +121,8 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
     override fun updateViewContent() {
         updateLayoutsVisibility()
         timerTextView?.text = presenterContract.remainedTimeDescription
-        //        timeProgressView?.max = presenterContract.maxProgressSeconds
-        //        timeProgressView?.remainedProgress = presenterContract.remainedSecondsTillExpire
+        progressBar?.max = presenterContract.maxProgressSeconds
+        progressBar?.progress = presenterContract.secondsFromStartDate
         titleTextView?.text = presenterContract.title
         providerNameView?.text = presenterContract.providerName
 
@@ -151,7 +151,7 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
 
     override fun updateTimeView(remainedSecondsTillExpire: Int, remainedTimeDescription: String) {
         activity?.runOnUiThread {
-            //            timeProgressView?.remainedProgress = remainedSecondsTillExpire
+            progressBar?.progress = remainedSecondsTillExpire
             timerTextView?.text = remainedTimeDescription
         }
     }

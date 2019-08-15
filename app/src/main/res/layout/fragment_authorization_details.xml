@@ -31,56 +31,67 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <RelativeLayout
-            android:id="@+id/headerLayout"
+        <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/card_view"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_40"
+            android:layout_height="@dimen/dp_42"
+            android:layout_gravity="center"
             android:layout_marginStart="@dimen/dp_32"
             android:layout_marginLeft="@dimen/dp_32"
             android:layout_marginTop="@dimen/dp_20"
             android:layout_marginEnd="@dimen/dp_32"
             android:layout_marginRight="@dimen/dp_32"
-            android:background="@drawable/shape_card_white_rounded_corners"
-            android:elevation="@dimen/dp_12">
+            card_view:cardCornerRadius="21dp"
+            card_view:cardElevation="12dp">
 
-            <FrameLayout
-                android:id="@+id/closeActionView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/dp_14"
-                android:layout_marginTop="@dimen/dp_9"
-                android:layout_marginEnd="@dimen/dp_12"
-                android:layout_marginBottom="@dimen/dp_9">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
                 <ImageView
                     android:id="@+id/connectionLogoView"
                     android:layout_width="@dimen/dp_24"
                     android:layout_height="@dimen/dp_24"
+                    android:layout_marginStart="@dimen/dp_14"
+                    android:layout_marginTop="@dimen/dp_9"
+                    android:layout_marginEnd="@dimen/dp_12"
+                    android:layout_marginBottom="@dimen/dp_9"
                     android:contentDescription="@null"
                     android:scaleType="fitCenter"
                     tools:background="@color/blue" />
-            </FrameLayout>
 
-            <TextView
-                android:id="@+id/providerNameView"
-                style="@style/Text16BlackRegular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/closeActionView"
-                tools:text="HSBC Bank UK" />
+                <TextView
+                    android:id="@+id/providerNameView"
+                    style="@style/Text16BlackRegular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/connectionLogoView"
+                    tools:text="HSBC Bank UK" />
 
-            <TextView
-                android:id="@+id/timerTextView"
-                style="@style/Text14BlueMedium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/dp_12"
-                android:maxLines="1"
-                tools:text="3:25" />
-        </RelativeLayout>
+                <TextView
+                    android:id="@+id/timerTextView"
+                    style="@style/Text14BlueMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/dp_12"
+                    android:maxLines="1"
+                    tools:text="3:25" />
+            </RelativeLayout>
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_2"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="@dimen/dp_13"
+                android:layout_marginTop="@dimen/dp_38"
+                android:layout_marginEnd="@dimen/dp_13"
+                android:progress="3" />
+        </androidx.cardview.widget.CardView>
 
         <ProgressBar
             android:id="@+id/progressBarView"
