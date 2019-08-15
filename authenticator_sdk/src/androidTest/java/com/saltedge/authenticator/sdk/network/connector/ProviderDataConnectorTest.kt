@@ -63,24 +63,31 @@ class ProviderDataConnectorTest {
 
         verify { mockCall.enqueue(connector) }
 
-        connector.onResponse(mockCall,
-                Response.success(ProviderResponseData(ProviderData(
+        connector.onResponse(
+            mockCall,
+            Response.success(
+                ProviderResponseData(
+                    ProviderData(
                         connectUrl = "connectUrl",
                         name = "name",
                         code = "code",
                         logoUrl = "url",
-                        version = "1"
-                )))
+                        version = "1",
+                        supportEmail = "example@example.com"
+                    )
+                )
+            )
         )
 
         verify {
             mockCallback.fetchProviderResult(
                 result = ProviderData(
-                        connectUrl = "connectUrl",
-                        name = "name",
-                        code = "code",
-                        logoUrl = "url",
-                        version = "1"
+                    connectUrl = "connectUrl",
+                    name = "name",
+                    code = "code",
+                    logoUrl = "url",
+                    version = "1",
+                    supportEmail = "example@example.com"
                 ),
                 error = null
             )
@@ -99,11 +106,19 @@ class ProviderDataConnectorTest {
         }
         verify { mockCall.enqueue(connector) }
 
-        connector.onResponse(mockCall, Response.error(404, ResponseBody.create(null, get404Response())))
+        connector.onResponse(
+            mockCall,
+            Response.error(404, ResponseBody.create(null, get404Response()))
+        )
 
-        verify { mockCallback.fetchProviderResult(
+        verify {
+            mockCallback.fetchProviderResult(
                 result = null,
-                error = ApiErrorData(errorMessage = "Resource not found", errorClassName="NotFound"))
+                error = ApiErrorData(
+                    errorMessage = "Resource not found",
+                    errorClassName = "NotFound"
+                )
+            )
         }
         confirmVerified(mockCallback)
     }
@@ -111,7 +126,8 @@ class ProviderDataConnectorTest {
     private val requestUrl = "https://localhost/api/authenticator/v1/authorizations/authId"
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
     private val mockCallback = mockkClass(FetchProviderDataResult::class)
-    private val mockCall: Call<ProviderResponseData> = mockkClass(Call::class) as Call<ProviderResponseData>
+    private val mockCall: Call<ProviderResponseData> =
+        mockkClass(Call::class) as Call<ProviderResponseData>
 
     @Before
     @Throws(Exception::class)
