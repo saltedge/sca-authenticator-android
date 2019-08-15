@@ -23,13 +23,15 @@ package com.saltedge.authenticator.sdk.testTools
 import com.saltedge.authenticator.sdk.model.ConnectionAbs
 
 data class TestConnection(
-        override var guid: String = "",
-        override var id: String = "",
-        override var createdAt: Long = 0L,
-        override var updatedAt: Long = 0L,
-        override var name: String = "",
-        override var code: String = "",
-        override var connectUrl: String = "",
-        override var logoUrl: String = "",
-        override var accessToken: String = "",
-        override var status: String = "") : ConnectionAbs
+    override var guid: String = "",
+    override var id: String = "",
+    override var createdAt: Long = 0L,
+    override var updatedAt: Long = 0L,
+    override var name: String = "",
+    override var code: String = "",
+    override var connectUrl: String = "",
+    override var logoUrl: String = "",
+    override var accessToken: String = "",
+    override var status: String = "",
+    override var supportEmail: String? = ""
+) : ConnectionAbs
