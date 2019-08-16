@@ -45,6 +45,7 @@ android:
     - tools
     - build-tools-$ANDROID_BUILD_TOOLS_VERSION
     - android-$ANDROID_API_LEVEL
+    - android-$ANDROID_EMULATOR_LEVEL
 
     # Additional components
     - extra-google-google_play_services
