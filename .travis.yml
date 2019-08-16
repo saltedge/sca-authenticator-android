@@ -24,11 +24,12 @@ jdk: oraclejdk8
 env:
   global:
     - ANDROID_API_LEVEL=28
-    - ANDROID_EMULATOR_LEVEL=23
+    - ANDROID_EMULATOR_LEVEL=27
+    - TARGET_EMULATOR=android-27
     - ANDROID_BUILD_TOOLS_VERSION=28.0.3
     - ANDROID_ABI=x86
     - ANDROID_TAG=google_apis
-    - ADB_INSTALL_TIMEOUT=20
+    - ADB_INSTALL_TIMEOUT=20 # minutes
 
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -45,16 +46,15 @@ android:
     - tools
     - build-tools-$ANDROID_BUILD_TOOLS_VERSION
     - android-$ANDROID_API_LEVEL
-    - android-$ANDROID_EMULATOR_LEVEL
+    - $TARGET_EMULATOR
 
     # Additional components
     - extra-google-google_play_services
     - extra-google-m2repository
     - extra-android-m2repository
-    - addon-google_apis-google-$ANDROID_API_LEVEL
+    - addon-google_apis-$ANDROID_API_LEVEL
 
     # Specify at least one system image,
-    # if you need to run emulator(s) during your tests
     - sys-img-$ANDROID_ABI-google_apis-$ANDROID_EMULATOR_LEVEL
 
   licenses:
@@ -67,7 +67,8 @@ before_install:
   - env
 
 before_script:
-  - echo no | android create avd --force -n test -t "android-"$ANDROID_EMULATOR_LEVEL --abi $ANDROID_ABI
+  - android list targets
+  - echo no | android create avd --force -n test -t $TARGET_EMULATOR --abi $ANDROID_ABI --tag $ANDROID_TAG
   - emulator -avd test -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
