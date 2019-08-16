@@ -1,0 +1,64 @@
+#    This file is part of the Salt Edge Authenticator distribution
+#    (https://github.com/saltedge/sca-identity-service-example)
+#    Copyright (c) 2019 Salt Edge Inc.
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, version 3 or later.
+#
+#    This program is distributed in the hope that it will be useful, but
+#    WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+#    General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+#    For the additional permissions granted for Salt Edge Authenticator
+#    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+language: android
+dist: trusty
+jdk: oraclejdk8
+
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+android:
+  components:
+    - platform-tools
+    - tools
+    - build-tools-26.1.1
+    - android-27
+
+    # Additional components
+    - extra-google-google_play_services
+    - extra-google-m2repository
+    - extra-android-m2repository
+    - addon-google_apis-google-27
+
+    # Specify at least one system image,
+    # if you need to run emulator(s) during your tests
+    - sys-img-x86-android-27
+
+  licenses:
+    - android-sdk-preview-license-.+
+    - android-sdk-license-.+
+
+before_install:
+  - export ANDROID_HOME=/Volumes/HDD/android-sdk
+  - cp .ci/google-services-example.json app/google-services.json
+  - env
+
+before_script:
+  - echo no | android create avd --force -n test -t android-27 --abi x86_64
+  - emulator -avd test -no-skin -no-audio -no-window &
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
+
+script: .ci/ci_run_tests.sh
