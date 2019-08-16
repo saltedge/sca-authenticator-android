@@ -24,13 +24,11 @@ import com.saltedge.authenticator.sdk.constants.API_AUTHORIZATIONS
 import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_GET
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationResult
 import com.saltedge.authenticator.sdk.model.ApiErrorData
-import com.saltedge.authenticator.sdk.model.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.response.AuthorizationShowResponseData
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.ApiResponseInterceptor
 import retrofit2.Call
-import java.security.PrivateKey
 
 internal class AuthorizationConnector(
         private val apiInterface: ApiInterface,

@@ -28,9 +28,9 @@ import androidx.annotation.StringRes
 import androidx.core.content.res.ResourcesCompat
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.getEnabledStateColorResId
-import com.saltedge.authenticator.tool.validatePasscode
 import com.saltedge.authenticator.tool.setTextColorResId
 import com.saltedge.authenticator.tool.setVisible
+import com.saltedge.authenticator.tool.validatePasscode
 import kotlinx.android.synthetic.main.view_passcode_input.view.*
 
 class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),

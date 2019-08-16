@@ -115,7 +115,7 @@ class AuthorizationViewModelTest {
                         connectionLogoUrl = "url",
                         validSeconds = 300,
                         isProcessing = false,
-                        createdAt = DateTime()
+                        createdAt = DateTime(0L)
                 )))
     }
 }

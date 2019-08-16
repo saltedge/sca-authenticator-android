@@ -22,9 +22,6 @@ package com.saltedge.authenticator.sdk.model
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.saltedge.authenticator.sdk.constants.API_VERSION
-import com.saltedge.authenticator.sdk.testTools.toJsonString
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith

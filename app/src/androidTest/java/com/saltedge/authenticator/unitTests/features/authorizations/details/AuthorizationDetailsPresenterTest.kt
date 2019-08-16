@@ -438,10 +438,10 @@ class AuthorizationDetailsPresenterTest {
 
     @Test
     @Throws(Exception::class)
-    fun onViewClickTest_closeActionView() {
+    fun onViewClickTest_mainActionView() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(connectionId = "1", authorizationId = "", viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1), quickConfirmMode = false)
-        presenter.onViewClick(R.id.connectionLogoView)
+        presenter.onViewClick(R.id.mainActionView)
 
         Mockito.verify(mockView).closeView()
     }
@@ -464,7 +464,7 @@ class AuthorizationDetailsPresenterTest {
         Mockito.clearInvocations(mockView)
         presenter.onTimerTick()
 
-        Mockito.verify(mockView).closeView()
+        Mockito.verify(mockView).showTimeOutView()
     }
 
     @Test

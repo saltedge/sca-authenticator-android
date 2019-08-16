@@ -23,8 +23,8 @@ package com.saltedge.authenticator.unitTests.tool
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.testTools.TestTools
-import com.saltedge.authenticator.tool.validatePasscode
 import com.saltedge.authenticator.tool.isPasscodeValid
+import com.saltedge.authenticator.tool.validatePasscode
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert

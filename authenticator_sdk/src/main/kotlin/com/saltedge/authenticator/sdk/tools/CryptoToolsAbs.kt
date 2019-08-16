@@ -24,7 +24,6 @@ import com.saltedge.authenticator.sdk.model.AuthorizationData
 import com.saltedge.authenticator.sdk.model.EncryptedAuthorizationData
 import java.security.Key
 import java.security.PrivateKey
-import java.security.PublicKey
 
 /**
  * Abstraction of CryptoTools

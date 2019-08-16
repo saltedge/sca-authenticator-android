@@ -32,8 +32,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.repository.PreferenceRepository
-import com.saltedge.authenticator.tool.*
+import com.saltedge.authenticator.tool.AppTools
+import com.saltedge.authenticator.tool.restartApp
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricTools
+import com.saltedge.authenticator.tool.setVisible
+import com.saltedge.authenticator.tool.showResetUserDialog
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
 import com.saltedge.authenticator.widget.biometric.BiometricPromptManagerV28
