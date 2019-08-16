@@ -123,7 +123,7 @@ class AuthorizationDetailsPresenter(
                     quickConfirmMode = quickConfirmMode
                 )
             }
-            R.id.connectionLogoView -> viewContract?.closeView()
+            R.id.mainActionView -> viewContract?.closeView()
         }
     }
 
@@ -136,7 +136,7 @@ class AuthorizationDetailsPresenter(
                 )
             }
         } else {
-            viewContract?.closeView()
+            viewContract?.showTimeOutView()
         }
     }
 

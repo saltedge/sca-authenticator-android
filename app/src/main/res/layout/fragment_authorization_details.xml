@@ -154,7 +154,5 @@
         android:layout_height="match_parent"
         android:background="@android:color/white"
         android:visibility="gone"
-        app:iconDimension="@dimen/info_view_big_icon"
-        app:iconSrc="@drawable/ic_complete_ok_70"
-        app:titleText="@string/authorizations_finished_successfully" />
+        app:iconDimension="@dimen/info_view_big_icon" />
 </FrameLayout>

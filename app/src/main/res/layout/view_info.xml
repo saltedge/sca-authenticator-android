@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
- <!--
+<?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2019 Salt Edge Inc.
@@ -19,54 +18,55 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_centerInParent="true"
+    android:layout_marginTop="@dimen/dp_72"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/iconView"
+        android:layout_width="@dimen/info_view_small_icon"
+        android:layout_height="@dimen/info_view_small_icon"
+        android:contentDescription="@null"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/titleView"
+        style="@style/Text20BlackMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:layout_marginLeft="@dimen/dp_32"
+        android:layout_marginTop="@dimen/dp_32"
+        android:layout_marginRight="@dimen/dp_32"
+        android:gravity="center_horizontal"
+        android:maxLines="3"
+        tools:text="Title text view" />
 
-        <ImageView
-            android:id="@+id/iconView"
-            android:contentDescription="@null"
-            android:layout_width="@dimen/info_view_small_icon"
-            android:layout_height="@dimen/info_view_small_icon"
-            android:layout_marginBottom="@dimen/dp_32"
-            android:scaleType="fitCenter"
-            android:src="@mipmap/ic_launcher" />
+    <TextView
+        android:id="@+id/subTitleView"
+        style="@style/Text16GrayDarkRegular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp_32"
+        android:layout_marginTop="@dimen/dp_17"
+        android:layout_marginRight="@dimen/dp_32"
+        android:gravity="center_horizontal"
+        tools:text="Subtitle text view" />
 
-        <TextView
-            android:id="@+id/titleView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_32"
-            android:layout_marginRight="@dimen/dp_32"
-            android:layout_marginBottom="@dimen/dp_16"
-            android:gravity="center_horizontal"
-            android:maxLines="3"
-            style="@style/Text20BlackMedium" />
+    <Button
+        android:id="@+id/mainActionView"
+        style="@style/BlueFullWidthButton"
+        android:layout_marginTop="@dimen/dp_32"
+        tools:text="Button"
+        tools:textColor="@android:color/white" />
 
-        <TextView
-            android:id="@+id/subTitleView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_32"
-            android:layout_marginRight="@dimen/dp_32"
-            android:gravity="center_horizontal"
-            style="@style/Text16GrayDarkRegular" />
-
-        <Button
-            android:id="@+id/mainActionView"
-            style="@style/BlueFullWidthButton"
-            android:layout_marginTop="@dimen/dp_40" />
-
-        <TextView
-            android:id="@+id/altActionView"
-            style="@style/WhiteLinkAction"
-            android:layout_marginTop="@dimen/dp_20" />
-    </LinearLayout>
-</RelativeLayout>
+    <TextView
+        android:id="@+id/altActionView"
+        style="@style/WhiteLinkAction"
+        android:layout_marginTop="@dimen/dp_20" />
+</LinearLayout>

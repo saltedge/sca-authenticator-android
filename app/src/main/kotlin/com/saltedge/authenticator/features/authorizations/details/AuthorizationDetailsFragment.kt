@@ -81,6 +81,7 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
         negativeActionView?.setOnClickListener(this)
         positiveActionView?.setOnClickListener(this)
         connectionLogoView?.setOnClickListener(this)
+        completeView?.setOnClickListener(this)
         activityComponents?.hideNavigationBar()
     }
 
@@ -171,9 +172,34 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
             Activity.RESULT_OK,
             Intent().putExtra(KEY_ID, authorizationId)
         )
+        setCompleteView(
+            R.drawable.ic_complete_ok_70, getString(R.string.authorizations_finished_successfully)
+        )
+        completeView?.animate()?.alpha(1f)?.setDuration(1000)?.withEndAction { closeView() }
+    }
+
+    override fun showTimeOutView() {
+        setCompleteView(
+            R.drawable.ic_time_out_70,
+            getString(R.string.authorizations_time_out),
+            getString(R.string.authorizations_time_out_description),
+            R.string.actions_ok
+        )
+        completeView?.animate()?.alpha(1f)?.duration = 1000
+    }
+
+    private fun setCompleteView(
+        drawableResId: Int,
+        titleText: String,
+        subTitleText: String? = null,
+        actionResId: Int? = null
+    ) {
         completeView?.alpha = 0.1f
         completeView?.setVisible(true)
-        completeView?.animate()?.alpha(1f)?.setDuration(1000)?.withEndAction { closeView() }
+        completeView?.setTitleText(titleText)
+        subTitleText?.let { completeView?.setSubtitleText(it) }
+        actionResId?.let { completeView?.setMainActionText(it) }
+        completeView?.setIconResource(drawableResId)
     }
 
     override fun askUserBiometricConfirmation() {
@@ -210,7 +236,6 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
 
     private fun setHeaderVisibility(show: Boolean) {
         timerTextView?.setVisible(show)
-        //        timeProgressView?.setVisible(show)
     }
 
     private fun injectDependencies() {

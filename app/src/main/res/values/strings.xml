@@ -111,6 +111,8 @@
   <string name="authorizations_notification_title">Authorization request</string>
   <string name="authorizations_notification_description">New authorization request available. Tap to proceed.</string>
   <string name="authorizations_finished_successfully">Finished successfully</string>
+  <string name="authorizations_time_out">Time out</string>
+  <string name="authorizations_time_out_description">Time to authorize your action is out. Please initiate action once again.</string>
 
   <string name="settings_feature_title">Settings</string>
   <string name="settings_report_bug">Report a bug</string>
