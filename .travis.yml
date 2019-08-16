@@ -24,11 +24,11 @@ jdk: oraclejdk8
 env:
   global:
     - ANDROID_API_LEVEL=28
-    - ANDROID_EMULATOR_LEVEL=27
-    - TARGET_EMULATOR=android-27
+    - ANDROID_EMULATOR_LEVEL=26
+    - TARGET_EMULATOR=android-26
     - ANDROID_BUILD_TOOLS_VERSION=28.0.3
     - ANDROID_ABI=armeabi-v7a
-    - ANDROID_TAG=google_apis
+    - ANDROID_TAG=google_apis/armeabi-v7a
     - ADB_INSTALL_TIMEOUT=20 # minutes
 
 before_cache:
@@ -56,10 +56,12 @@ android:
 
     # Specify at least one system image,
     - sys-img-$ANDROID_ABI-google_apis-$ANDROID_EMULATOR_LEVEL
+    - sys-img-x86-google_apis-$ANDROID_EMULATOR_LEVEL
 
   licenses:
     - android-sdk-preview-license-.+
     - android-sdk-license-.+
+    - google-gdk-license-.+
 
 before_install:
   - export ANDROID_HOME=/Volumes/HDD/android-sdk
@@ -67,6 +69,7 @@ before_install:
   - env
 
 before_script:
+  - android list sdk --extended --no-ui --all
   - android list targets
   - echo no | android create avd --force -n test -t $TARGET_EMULATOR --abi $ANDROID_ABI --tag $ANDROID_TAG
   - emulator -avd test -no-audio -no-window &
