@@ -55,5 +55,4 @@ class SignatureToolsTest {
     }
 
     private var keyPair: KeyPair = KeyStoreManager.createOrReplaceRsaKeyPair("test")!!
-
 }

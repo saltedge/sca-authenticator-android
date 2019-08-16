@@ -18,6 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
+
 package com.saltedge.ktlint.rules
 
 import com.pinterest.ktlint.core.RuleSet

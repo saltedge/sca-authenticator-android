@@ -26,10 +26,10 @@ import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.constants.KEY_SUCCESS
 
 data class RevokeAccessTokenResponseData(
-        @SerializedName(KEY_DATA) var data: RevokeAccessTokenResultData? = null
+    @SerializedName(KEY_DATA) var data: RevokeAccessTokenResultData? = null
 )
 
 data class RevokeAccessTokenResultData(
-        @SerializedName(KEY_SUCCESS) var success: Boolean? = null,
-        @SerializedName(KEY_ACCESS_TOKEN) var accessToken: String? = null
+    @SerializedName(KEY_SUCCESS) var success: Boolean? = null,
+    @SerializedName(KEY_ACCESS_TOKEN) var accessToken: String? = null
 )

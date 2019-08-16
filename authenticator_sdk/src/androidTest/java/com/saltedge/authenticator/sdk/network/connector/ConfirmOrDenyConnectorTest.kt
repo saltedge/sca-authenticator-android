@@ -68,15 +68,33 @@ class ConfirmOrDenyConnectorTest {
     fun postConfirmOrDenyTest_allSuccess() {
         val connector = ConfirmOrDenyConnector(mockApi, mockCallback)
         connector.updateAuthorization(
-                connectionAndKey = ConnectionAndKey(requestConnection, privateKey),
-                authorizationId = requestAuthorizationId,
-                payloadData = ConfirmDenyData(confirm = true, authorizationCode = "authorizationCode"))
+            connectionAndKey = ConnectionAndKey(requestConnection, privateKey),
+            authorizationId = requestAuthorizationId,
+            payloadData = ConfirmDenyData(confirm = true, authorizationCode = "authorizationCode")
+        )
 
         verify { mockCall.enqueue(connector) }
 
-        connector.onResponse(mockCall, Response.success(ConfirmDenyResponseData(ConfirmDenyResultData(success = true, authorizationId = requestAuthorizationId))))
+        connector.onResponse(
+            mockCall,
+            Response.success(
+                ConfirmDenyResponseData(
+                    ConfirmDenyResultData(
+                        success = true,
+                        authorizationId = requestAuthorizationId
+                    )
+                )
+            )
+        )
 
-        verify { mockCallback.onConfirmDenySuccess(ConfirmDenyResultData(success = true, authorizationId = requestAuthorizationId)) }
+        verify {
+            mockCallback.onConfirmDenySuccess(
+                ConfirmDenyResultData(
+                    success = true,
+                    authorizationId = requestAuthorizationId
+                )
+            )
+        }
         confirmVerified(mockCallback)
     }
 
@@ -85,9 +103,10 @@ class ConfirmOrDenyConnectorTest {
     fun postConfirmOrDenyTest_emptyResponse() {
         val connector = ConfirmOrDenyConnector(mockApi, mockCallback)
         connector.updateAuthorization(
-                connectionAndKey = ConnectionAndKey(requestConnection, privateKey),
-                authorizationId = requestAuthorizationId,
-                payloadData = ConfirmDenyData(confirm = true, authorizationCode = "authorizationCode"))
+            connectionAndKey = ConnectionAndKey(requestConnection, privateKey),
+            authorizationId = requestAuthorizationId,
+            payloadData = ConfirmDenyData(confirm = true, authorizationCode = "authorizationCode")
+        )
 
         verify { mockCall.enqueue(connector) }
 
@@ -102,23 +121,42 @@ class ConfirmOrDenyConnectorTest {
     fun postConfirmOrDenyTest_withError() {
         val connector = ConfirmOrDenyConnector(mockApi, mockCallback)
         connector.updateAuthorization(
-                connectionAndKey = ConnectionAndKey(requestConnection, privateKey),
-                authorizationId = requestAuthorizationId,
-                payloadData = ConfirmDenyData(confirm = true, authorizationCode = "authorizationCode"))
+            connectionAndKey = ConnectionAndKey(requestConnection, privateKey),
+            authorizationId = requestAuthorizationId,
+            payloadData = ConfirmDenyData(confirm = true, authorizationCode = "authorizationCode")
+        )
 
         verify { mockCall.enqueue(connector) }
 
-        connector.onResponse(mockCall, Response.error(404, ResponseBody.create(null, get404Response())))
+        connector.onResponse(
+            mockCall,
+            Response.error(404, ResponseBody.create(null, get404Response()))
+        )
 
-        verify { mockCallback.onConfirmDenyFailure(ApiErrorData(errorMessage = "Resource not found", errorClassName="NotFound", accessToken = "accessToken")) }
+        verify {
+            mockCallback.onConfirmDenyFailure(
+                ApiErrorData(
+                    errorMessage = "Resource not found",
+                    errorClassName = "NotFound",
+                    accessToken = "accessToken"
+                )
+            )
+        }
         confirmVerified(mockCallback)
     }
 
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
-    private val mockCallback: ConfirmAuthorizationResult = mockkClass(ConfirmAuthorizationResult::class)
-    private val mockCall: Call<ConfirmDenyResponseData> = mockkClass(Call::class) as Call<ConfirmDenyResponseData>
+    private val mockCallback: ConfirmAuthorizationResult =
+        mockkClass(ConfirmAuthorizationResult::class)
+    private val mockCall: Call<ConfirmDenyResponseData> =
+        mockkClass(Call::class) as Call<ConfirmDenyResponseData>
     private var privateKey: PrivateKey = KeyStoreManager.createOrReplaceRsaKeyPair("test")!!.private
-    private val requestConnection: ConnectionAbs = TestConnection(id = "333", guid = "test", connectUrl = "https://localhost", accessToken = "accessToken")
+    private val requestConnection: ConnectionAbs = TestConnection(
+        id = "333",
+        guid = "test",
+        connectUrl = "https://localhost",
+        accessToken = "accessToken"
+    )
     private val requestAuthorizationId = "444"
     private val requestUrl = "https://localhost/api/authenticator/v1/authorizations/444"
 
@@ -127,15 +165,17 @@ class ConfirmOrDenyConnectorTest {
     fun setUp() {
         every {
             mockApi.updateAuthorization(
-                    requestUrl = requestUrl,
-                    headersMap = any(),
-                    requestBody = any()
+                requestUrl = requestUrl,
+                headersMap = any(),
+                requestBody = any()
             )
         } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
-        every { mockCall.request() } returns Request.Builder().url(requestUrl).addHeader(HEADER_KEY_ACCESS_TOKEN, "accessToken").build()
+        every { mockCall.request() } returns Request.Builder().url(requestUrl).addHeader(
+            HEADER_KEY_ACCESS_TOKEN,
+            "accessToken"
+        ).build()
         every { mockCallback.onConfirmDenyFailure(any()) } returns Unit
         every { mockCallback.onConfirmDenySuccess(any()) } returns Unit
     }
-
 }

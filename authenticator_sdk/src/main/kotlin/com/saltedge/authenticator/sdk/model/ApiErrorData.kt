@@ -31,9 +31,9 @@ import java.io.Serializable
  * contains accessToken field which is used for further connection invalidation
  */
 data class ApiErrorData(
-        @SerializedName(KEY_ERROR_MESSAGE) var errorMessage: String = "",
-        @SerializedName(KEY_ERROR_CLASS) var errorClassName: String,
-        var accessToken: Token? = null
+    @SerializedName(KEY_ERROR_MESSAGE) var errorMessage: String = "",
+    @SerializedName(KEY_ERROR_CLASS) var errorClassName: String,
+    var accessToken: Token? = null
 ) : Serializable {
 
     init {

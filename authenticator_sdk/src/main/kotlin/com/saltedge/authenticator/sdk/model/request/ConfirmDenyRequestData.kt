@@ -28,6 +28,6 @@ import com.saltedge.authenticator.sdk.constants.KEY_DATA
 data class ConfirmDenyRequestData(@SerializedName(KEY_DATA) val data: ConfirmDenyData)
 
 data class ConfirmDenyData(
-        @SerializedName(KEY_CONFIRM) val confirm: Boolean,
-        @SerializedName(KEY_AUTHORIZATION_CODE) val authorizationCode: String?
+    @SerializedName(KEY_CONFIRM) val confirm: Boolean,
+    @SerializedName(KEY_AUTHORIZATION_CODE) val authorizationCode: String?
 )

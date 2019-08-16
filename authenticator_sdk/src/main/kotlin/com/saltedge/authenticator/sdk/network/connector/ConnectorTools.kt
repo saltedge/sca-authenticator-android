@@ -36,56 +36,56 @@ import java.security.PrivateKey
  * Create Authenticated (with Signature) request data
  */
 internal fun <T> createAuthenticatedRequestData(
-        requestMethod: String,
-        baseUrl: String,
-        apiRoutePath: String,
-        accessToken: String,
-        signPrivateKey: PrivateKey,
-        requestBodyObject: T? = null
+    requestMethod: String,
+    baseUrl: String,
+    apiRoutePath: String,
+    accessToken: String,
+    signPrivateKey: PrivateKey,
+    requestBodyObject: T? = null
 ): AuthenticatedRequestData {
     val requestUrl = createRequestUrl(baseUrl = baseUrl, routePath = apiRoutePath)
     val requestBodyString = requestBodyObject?.let { RestClient.defaultGson.toJson(it) } ?: ""
     return AuthenticatedRequestData(
-            requestUrl = requestUrl,
-            headersMap = createHeaders(
-                    signPrivateKey = signPrivateKey,
-                    accessToken = accessToken,
-                    url = requestUrl,
-                    requestMethod = requestMethod,
-                    requestBody = requestBodyString
-            )
+        requestUrl = requestUrl,
+        headersMap = createHeaders(
+            signPrivateKey = signPrivateKey,
+            accessToken = accessToken,
+            url = requestUrl,
+            requestMethod = requestMethod,
+            requestBody = requestBodyString
+        )
     )
 }
 
 internal fun createRequestUrl(baseUrl: String, routePath: String): String {
     val baseUri = Uri.parse(baseUrl)
     return Uri.Builder()
-            .scheme(baseUri.scheme ?: "https")
-            .encodedAuthority(baseUri.authority ?: "")
-            .appendEncodedPath(routePath)
-            .build()
-            .toString()
+        .scheme(baseUri.scheme ?: "https")
+        .encodedAuthority(baseUri.authority ?: "")
+        .appendEncodedPath(routePath)
+        .build()
+        .toString()
 }
 
 private fun createHeaders(
-        signPrivateKey: PrivateKey,
-        accessToken: String,
-        url: String,
-        requestMethod: String,
-        requestBody: String
+    signPrivateKey: PrivateKey,
+    accessToken: String,
+    url: String,
+    requestMethod: String,
+    requestBody: String
 ): Map<String, String> {
     val expiresAt = createExpiresAtTime().toString()
     val signature = createSignatureHeader(
-                requestMethod = requestMethod,
-                requestUrl = url,
-                expiresAt = expiresAt,
-                requestBody = requestBody,
-                privateKey = signPrivateKey
+        requestMethod = requestMethod,
+        requestUrl = url,
+        expiresAt = expiresAt,
+        requestBody = requestBody,
+        privateKey = signPrivateKey
     )
     return mapOf(
-            HEADER_KEY_ACCESS_TOKEN to accessToken,
-            HEADER_KEY_EXPIRES_AT to expiresAt,
-            HEADER_KEY_SIGNATURE to signature
+        HEADER_KEY_ACCESS_TOKEN to accessToken,
+        HEADER_KEY_EXPIRES_AT to expiresAt,
+        HEADER_KEY_SIGNATURE to signature
     )
 }
 
@@ -93,4 +93,4 @@ private fun createHeaders(
  * Return unix time (seconds) of current time plus timeout (by default 5 minutes)
  */
 internal fun createExpiresAtTime(withMinutesTimeOut: Int = DEFAULT_EXPIRATION_MINUTES): Int =
-        (DateTime.now(DateTimeZone.UTC).plusMinutes(withMinutesTimeOut).millis / 1000).toInt()
+    (DateTime.now(DateTimeZone.UTC).plusMinutes(withMinutesTimeOut).millis / 1000).toInt()
