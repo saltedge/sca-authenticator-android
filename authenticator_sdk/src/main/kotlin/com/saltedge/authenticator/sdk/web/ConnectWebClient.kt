@@ -41,8 +41,8 @@ class ConnectWebClient(val contract: ConnectWebClientContract) : WebViewClient()
             } else {
                 val errorClass = uri.getQueryParameter(KEY_ERROR_CLASS)
                 contract.webAuthFinishError(
-                        errorClass = errorClass ?: ERROR_CLASS_AUTHENTICATION_RESPONSE,
-                        errorMessage = uri.getQueryParameter(KEY_ERROR_MESSAGE)
+                    errorClass = errorClass ?: ERROR_CLASS_AUTHENTICATION_RESPONSE,
+                    errorMessage = uri.getQueryParameter(KEY_ERROR_MESSAGE)
                 )
             }
             true

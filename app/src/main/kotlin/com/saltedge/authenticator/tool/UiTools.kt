@@ -60,8 +60,10 @@ fun getEnabledStateColorResId(isEnabled: Boolean): ResId {
  * @return Int object - number of pixels
  */
 fun convertDpToPx(dp: Float): Int {
-    return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
-            Resources.getSystem().displayMetrics).toInt()
+    return TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP, dp,
+        Resources.getSystem().displayMetrics
+    ).toInt()
 }
 
 /**

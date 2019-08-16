@@ -170,7 +170,40 @@ class CryptoToolsTest {
     }
 
     private val keyPair: KeyPair = KeyStoreManager.createOrReplaceRsaKeyPair("test")!!
-    private val aesKey = byteArrayOf(65, 1, 2, 23, 4, 5, 6, 7, 32, 21, 10, 11, 12, 13, 84, 45, 65, 1, 2, 23, 4, 5, 6, 7, 32, 21, 10, 11, 12, 13, 84, 45)
+    private val aesKey = byteArrayOf(
+        65,
+        1,
+        2,
+        23,
+        4,
+        5,
+        6,
+        7,
+        32,
+        21,
+        10,
+        11,
+        12,
+        13,
+        84,
+        45,
+        65,
+        1,
+        2,
+        23,
+        4,
+        5,
+        6,
+        7,
+        32,
+        21,
+        10,
+        11,
+        12,
+        13,
+        84,
+        45
+    )
     private val aesIV = byteArrayOf(65, 1, 2, 23, 4, 5, 6, 7, 32, 21, 10, 11, 12, 13, 84, 45)
     private val authData = AuthorizationData(
         id = "444",

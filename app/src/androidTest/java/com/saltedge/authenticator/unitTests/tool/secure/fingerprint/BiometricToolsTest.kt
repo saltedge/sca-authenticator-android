@@ -54,7 +54,9 @@ class BiometricToolsTest {
     fun setUp() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             mockFingerprintManager = mock(FingerprintManager::class.java)
-            Mockito.`when`(mockContext.getSystemService(Context.FINGERPRINT_SERVICE)).thenReturn(mockFingerprintManager)
+            Mockito.`when`(mockContext.getSystemService(Context.FINGERPRINT_SERVICE)).thenReturn(
+                mockFingerprintManager
+            )
         }
     }
 
@@ -115,7 +117,9 @@ class BiometricToolsTest {
     @Test
     @Throws(Exception::class)
     fun replaceFingerprintKeyTest() {
-        if (KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN)) KeyStoreManager.deleteKeyPair(FINGERPRINT_ALIAS_FOR_PIN)
+        if (KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN)) KeyStoreManager.deleteKeyPair(
+            FINGERPRINT_ALIAS_FOR_PIN
+        )
 
         assertFalse(KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN))
 
@@ -126,8 +130,10 @@ class BiometricToolsTest {
         val secondKey = BiometricTools.replaceFingerprintKey()!!
 
         assertTrue(KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN))
-        assertThat(initialKey.publicKeyToPemEncodedString(),
-                not(equalTo(secondKey.publicKeyToPemEncodedString())))
+        assertThat(
+            initialKey.publicKeyToPemEncodedString(),
+            not(equalTo(secondKey.publicKeyToPemEncodedString()))
+        )
     }
 
     @Test

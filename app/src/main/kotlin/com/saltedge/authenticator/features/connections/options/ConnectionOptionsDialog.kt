@@ -54,10 +54,10 @@ class ConnectionOptionsDialog : BaseBottomDialogFragment(), ListItemClickListene
         val item = adapter.getItem(itemIndex) as ConnectionOptions
         dismiss()
         targetFragment?.onActivityResult(
-                targetRequestCode,
-                RESULT_OK,
-                Intent().putExtra(KEY_GUID, arguments?.getString(KEY_GUID))
-                        .putExtra(KEY_OPTION_ID, item.ordinal)
+            targetRequestCode,
+            RESULT_OK,
+            Intent().putExtra(KEY_GUID, arguments?.getString(KEY_GUID))
+                .putExtra(KEY_OPTION_ID, item.ordinal)
         )
     }
 
@@ -69,7 +69,10 @@ class ConnectionOptionsDialog : BaseBottomDialogFragment(), ListItemClickListene
     }
 
     companion object {
-        fun newInstance(connectionGuid: String, options: Array<ConnectionOptions>): ConnectionOptionsDialog {
+        fun newInstance(
+            connectionGuid: String,
+            options: Array<ConnectionOptions>
+        ): ConnectionOptionsDialog {
             return ConnectionOptionsDialog().apply {
                 arguments = Bundle().apply {
                     putString(KEY_GUID, connectionGuid)

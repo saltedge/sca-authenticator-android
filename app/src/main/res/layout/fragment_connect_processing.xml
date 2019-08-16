@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
- <!--
+<?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2019 Salt Edge Inc.
@@ -22,30 +21,30 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:focusableInTouchMode="true"
+    android:gravity="center_horizontal"
     android:orientation="vertical"
     android:paddingLeft="@dimen/dp_15"
-    android:paddingRight="@dimen/dp_15"
-    android:gravity="center_horizontal"
-    android:focusableInTouchMode="true"
-    android:background="@android:color/white">
+    android:paddingRight="@dimen/dp_15">
 
-    <include layout="@layout/fragment_connect_processing_header"/>
+    <include layout="@layout/fragment_connect_processing_header" />
 
     <TextView
+        style="@style/Text16GrayDarkRegular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_13"
         android:gravity="center"
         android:maxLines="1"
-        style="@style/Text16GrayDarkRegular"
-        android:text="@string/connect_status_in_progress"/>
+        android:text="@string/connect_status_in_progress" />
 
     <ProgressBar
         android:id="@+id/progressBarView"
-        android:layout_marginTop="@dimen/dp_75"
+        style="?android:attr/progressBarStyle"
         android:layout_width="@dimen/dp_80"
         android:layout_height="@dimen/dp_80"
-        style="?android:attr/progressBarStyle"
+        android:layout_marginTop="@dimen/dp_75"
         android:indeterminate="true"
         android:indeterminateTint="@color/cyan"
         android:indeterminateTintMode="src_in" />
@@ -53,7 +52,7 @@
     <Space
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
-    <include layout="@layout/fragment_connect_processing_footer"/>
+    <include layout="@layout/fragment_connect_processing_footer" />
 </LinearLayout>

@@ -37,7 +37,9 @@ class DeepLinkToolsTest {
         Assert.assertNull("".extractConnectConfigurationLink())
         Assert.assertNull("test".extractConnectConfigurationLink())
         Assert.assertNull("https://google.com".extractConnectConfigurationLink())
-        assertThat("authenticator://saltedge.com/connect?configuration=https://localhost/configuration".extractConnectConfigurationLink(),
-                equalTo("https://localhost/configuration"))
+        assertThat(
+            "authenticator://saltedge.com/connect?configuration=https://localhost/configuration".extractConnectConfigurationLink(),
+            equalTo("https://localhost/configuration")
+        )
     }
 }

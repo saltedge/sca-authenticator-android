@@ -74,8 +74,18 @@ class InfoView(context: Context, attrs: AttributeSet) : LinearLayout(context, at
             attributes.getString(R.styleable.InfoView_subTitleText)?.let { setSubtitleText(it) }
             setMainActionText(attributes.getString(R.styleable.InfoView_mainActionText))
             setAltActionText(attributes.getString(R.styleable.InfoView_altActionText))
-            setIconResource(attributes.getResourceId(R.styleable.InfoView_iconSrc, R.mipmap.ic_launcher))
-            setIconDimension(attributes.getDimension(R.styleable.InfoView_iconDimension, defaultIconDimension))
+            setIconResource(
+                attributes.getResourceId(
+                    R.styleable.InfoView_iconSrc,
+                    R.mipmap.ic_launcher
+                )
+            )
+            setIconDimension(
+                attributes.getDimension(
+                    R.styleable.InfoView_iconDimension,
+                    defaultIconDimension
+                )
+            )
         } finally {
             attributes.recycle()
         }

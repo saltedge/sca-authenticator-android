@@ -31,7 +31,8 @@ import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tool.inflateListItemView
 
 class ConnectionOptionItemHolder(parent: ViewGroup, private val listener: ListItemClickListener?) :
-        RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_connection_option)), View.OnClickListener {
+    RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_connection_option)),
+    View.OnClickListener {
 
     private val optionImageView = itemView.findViewById<ImageView>(R.id.optionImageView)
     private val optionTitleView = itemView.findViewById<TextView>(R.id.optionTitleView)

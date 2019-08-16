@@ -32,30 +32,40 @@ class EncryptedAuthorizationDataExtensionsTest {
     @Throws(Exception::class)
     fun isValidTest() {
         Assert.assertFalse(EncryptedAuthorizationData().isValid())
-        Assert.assertFalse(EncryptedAuthorizationData(
+        Assert.assertFalse(
+            EncryptedAuthorizationData(
                 key = "key"
-        ).isValid())
-        Assert.assertFalse(EncryptedAuthorizationData(
+            ).isValid()
+        )
+        Assert.assertFalse(
+            EncryptedAuthorizationData(
                 key = "key",
                 iv = "iv"
-        ).isValid())
-        Assert.assertFalse(EncryptedAuthorizationData(
+            ).isValid()
+        )
+        Assert.assertFalse(
+            EncryptedAuthorizationData(
                 key = "key",
                 iv = "iv",
                 algorithm = "alg"
-        ).isValid())
-        Assert.assertFalse(EncryptedAuthorizationData(
+            ).isValid()
+        )
+        Assert.assertFalse(
+            EncryptedAuthorizationData(
                 key = "key",
                 iv = "iv",
                 algorithm = "alg",
                 data = "data"
-        ).isValid())
-        Assert.assertTrue(EncryptedAuthorizationData(
+            ).isValid()
+        )
+        Assert.assertTrue(
+            EncryptedAuthorizationData(
                 key = "key",
                 iv = "iv",
                 algorithm = "alg",
                 data = "data",
                 connectionId = "333"
-        ).isValid())
+            ).isValid()
+        )
     }
 }

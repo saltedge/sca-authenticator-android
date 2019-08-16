@@ -55,10 +55,14 @@ class PasscodeEditPresenterTest {
         presenter.viewContract = mockView
         presenter.onViewCreated()
 
-        Mockito.verify(mockView).initInputMode(mode = PasscodeInputView.InputMode.CHECK_PASSCODE, passcode = "1357")
+        Mockito.verify(mockView).initInputMode(
+            mode = PasscodeInputView.InputMode.CHECK_PASSCODE,
+            passcode = "1357"
+        )
         Mockito.verify(mockView).updateViewContent(
-                titleTextResId = R.string.settings_passcode_input_current,
-                positiveActionTextResId = R.string.actions_next)
+            titleTextResId = R.string.settings_passcode_input_current,
+            positiveActionTextResId = R.string.actions_next
+        )
     }
 
     @Test
@@ -72,10 +76,14 @@ class PasscodeEditPresenterTest {
         presenter.viewContract = mockView
         presenter.enteredCurrentPasscode()
 
-        Mockito.verify(mockView).initInputMode(mode = PasscodeInputView.InputMode.NEW_PASSCODE, passcode = "")
+        Mockito.verify(mockView).initInputMode(
+            mode = PasscodeInputView.InputMode.NEW_PASSCODE,
+            passcode = ""
+        )
         Mockito.verify(mockView).updateViewContent(
-                titleTextResId = R.string.settings_passcode_input_new,
-                positiveActionTextResId = R.string.actions_next)
+            titleTextResId = R.string.settings_passcode_input_new,
+            positiveActionTextResId = R.string.actions_next
+        )
     }
 
     @Test
@@ -90,8 +98,9 @@ class PasscodeEditPresenterTest {
         presenter.enteredNewPasscode(PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE)
 
         Mockito.verify(mockView).updateViewContent(
-                titleTextResId = R.string.settings_passcode_repeat_new,
-                positiveActionTextResId = R.string.actions_ok)
+            titleTextResId = R.string.settings_passcode_repeat_new,
+            positiveActionTextResId = R.string.actions_ok
+        )
         Mockito.verifyNoMoreInteractions(mockView)
     }
 

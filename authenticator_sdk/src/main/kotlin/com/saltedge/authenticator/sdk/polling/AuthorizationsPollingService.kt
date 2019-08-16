@@ -36,8 +36,8 @@ class AuthorizationsPollingService : PollingServiceAbs<FetchAuthorizationsContra
     override fun forcedFetch() {
         try {
             val connector = AuthorizationsConnector(
-                    apiInterface = RestClient.apiInterface,
-                    resultCallback = contract
+                apiInterface = RestClient.apiInterface,
+                resultCallback = contract
             )
             contract?.getConnectionsData()?.let { connector.fetchAuthorizations(connectionsAndKeys = it) }
         } catch (e: Exception) {

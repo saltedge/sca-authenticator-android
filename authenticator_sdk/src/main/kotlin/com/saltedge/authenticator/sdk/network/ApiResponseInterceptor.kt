@@ -45,14 +45,14 @@ internal abstract class ApiResponseInterceptor<T> : Callback<T> {
             onSuccessResponse(call, responseBody)
         } else {
             onFailureResponse(call, responseToApiError(response)
-                    .apply { accessToken = extractAccessToken(call) })
+                .apply { accessToken = extractAccessToken(call) })
         }
     }
 
     final override fun onFailure(call: Call<T>, t: Throwable) {
         if (BuildConfig.DEBUG) t.printStackTrace()
         onFailureResponse(call, t.exceptionToApiError()
-                .apply { accessToken = extractAccessToken(call) })
+            .apply { accessToken = extractAccessToken(call) })
     }
 
     abstract fun onSuccessResponse(call: Call<T>, response: T)

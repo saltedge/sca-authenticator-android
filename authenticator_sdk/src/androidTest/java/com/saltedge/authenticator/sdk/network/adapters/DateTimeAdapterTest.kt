@@ -34,18 +34,25 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class DateTimeAdapterTest {
 
-    private var gson: Gson = GsonBuilder().registerTypeAdapter(DateTime::class.java, DateTimeAdapter()).create()
+    private var gson: Gson =
+        GsonBuilder().registerTypeAdapter(DateTime::class.java, DateTimeAdapter()).create()
 
     @Test
     @Throws(Exception::class)
     fun testDeserializeDateTime() {
         var jsonString = "\"2015-01-01T01:02:03.123Z\""
 
-        assertThat(gson.fromJson(jsonString, DateTime::class.java), equalTo(DateTime(1420074123123).withZone(DateTimeZone.UTC)))
+        assertThat(
+            gson.fromJson(jsonString, DateTime::class.java),
+            equalTo(DateTime(1420074123123).withZone(DateTimeZone.UTC))
+        )
 
         jsonString = "\"20150101T010203123Z\""
 
-        assertThat(gson.fromJson(jsonString, DateTime::class.java), equalTo(DateTime(0).withZone(DateTimeZone.UTC)))
+        assertThat(
+            gson.fromJson(jsonString, DateTime::class.java),
+            equalTo(DateTime(0).withZone(DateTimeZone.UTC))
+        )
     }
 
     @Test

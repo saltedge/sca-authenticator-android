@@ -65,8 +65,10 @@ class ConnectionsRepositoryTest : DatabaseTestCase() {
         Connection().setGuid("guid2").setCode("demobank2").save()
 
         assertThat(ConnectionsRepository.getConnectionsCount(), equalTo(2L))
-        assertThat(ConnectionsRepository.getConnectionsCount("demobank1"),
-                equalTo(1L))
+        assertThat(
+            ConnectionsRepository.getConnectionsCount("demobank1"),
+            equalTo(1L)
+        )
     }
 
     @Test
@@ -101,8 +103,10 @@ class ConnectionsRepositoryTest : DatabaseTestCase() {
         Connection().setGuid("guid3").setAccessToken("token3").setStatus(ConnectionStatus.INACTIVE).save()
         Connection().setGuid("guid4").setAccessToken("token4").setStatus(ConnectionStatus.ACTIVE).save()
 
-        assertThat(ConnectionsRepository.getAllConnections().map { it.guid },
-                equalTo(listOf("guid1", "guid2", "guid3", "guid4")))
+        assertThat(
+            ConnectionsRepository.getAllConnections().map { it.guid },
+            equalTo(listOf("guid1", "guid2", "guid3", "guid4"))
+        )
     }
 
     @Test
@@ -115,7 +119,10 @@ class ConnectionsRepositoryTest : DatabaseTestCase() {
         Connection().setGuid("guid3").setAccessToken("token3").setStatus(ConnectionStatus.INACTIVE).save()
         Connection().setGuid("guid4").setAccessToken("token4").setStatus(ConnectionStatus.ACTIVE).save()
 
-        assertThat(ConnectionsRepository.getAllActiveConnections().map { it.guid }, equalTo(listOf("guid4")))
+        assertThat(
+            ConnectionsRepository.getAllActiveConnections().map { it.guid },
+            equalTo(listOf("guid4"))
+        )
     }
 
     @Test
@@ -163,8 +170,10 @@ class ConnectionsRepositoryTest : DatabaseTestCase() {
         Connection().setGuid("guid1").setAccessToken("token3").setStatus(ConnectionStatus.INACTIVE).save()
         Connection().setGuid("guid2").setAccessToken("token4").setStatus(ConnectionStatus.ACTIVE).save()
 
-        assertThat(ConnectionsRepository.getAllActiveConnections().map { it.guid },
-                equalTo(listOf("guid2")))
+        assertThat(
+            ConnectionsRepository.getAllActiveConnections().map { it.guid },
+            equalTo(listOf("guid2"))
+        )
 
         ConnectionsRepository.invalidateConnectionsByTokens(listOf("token4"))
 
@@ -182,7 +191,13 @@ class ConnectionsRepositoryTest : DatabaseTestCase() {
         Assert.assertFalse(ConnectionsRepository.connectionExists(connectionGuid = "guid2"))
 
         Assert.assertTrue(ConnectionsRepository.connectionExists(connection = Connection().setGuid("guid1")))
-        Assert.assertFalse(ConnectionsRepository.connectionExists(connection = Connection().setGuid("guid2")))
+        Assert.assertFalse(
+            ConnectionsRepository.connectionExists(
+                connection = Connection().setGuid(
+                    "guid2"
+                )
+            )
+        )
     }
 
     @Test
@@ -195,8 +210,10 @@ class ConnectionsRepositoryTest : DatabaseTestCase() {
         Connection().setGuid("guid3").setId("id3").save()
 
         assertNull(ConnectionsRepository.getById(connectionId = "id111"))
-        assertThat(ConnectionsRepository.getById(connectionId = "id1")!!.guid,
-                equalTo("guid1"))
+        assertThat(
+            ConnectionsRepository.getById(connectionId = "id1")!!.guid,
+            equalTo("guid1")
+        )
     }
 
     @Test
@@ -211,8 +228,10 @@ class ConnectionsRepositoryTest : DatabaseTestCase() {
         Connection().setGuid("guid3").setId("id3").save()
 
         assertNull(ConnectionsRepository.getByGuid(connectionGuid = "guid111"))
-        assertThat(ConnectionsRepository.getByGuid(connectionGuid = "guid1")!!.guid,
-                equalTo("guid1"))
+        assertThat(
+            ConnectionsRepository.getByGuid(connectionGuid = "guid1")!!.guid,
+            equalTo("guid1")
+        )
     }
 
     @Test
@@ -257,7 +276,9 @@ class ConnectionsRepositoryTest : DatabaseTestCase() {
 
         ConnectionsRepository.fixNameAndSave(Connection().setGuid("guid3").setCode("demo").setName("Demo"))
 
-        assertThat(ConnectionsRepository.getAllConnections().map { it.name },
-                equalTo(listOf("Demo", "Test", "Demo (2)")))
+        assertThat(
+            ConnectionsRepository.getAllConnections().map { it.name },
+            equalTo(listOf("Demo", "Test", "Demo (2)"))
+        )
     }
 }

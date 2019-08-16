@@ -97,11 +97,17 @@ class RadialProgressPresenterTest {
         assertThat(presenter.centerX, equalTo(testSize / 2f))
         assertThat(presenter.centerY, equalTo(testSize / 2f))
         assertThat(presenter.backgroundCircleRadius, equalTo(testSize / 2f - basePadding))
-        assertThat(presenter.progressArcRectF,
-                equalTo(RectF(testSize / 2f - progressArcRadius,
-                        testSize / 2f - progressArcRadius,
-                        testSize / 2f + progressArcRadius,
-                        testSize / 2f + progressArcRadius)))
+        assertThat(
+            presenter.progressArcRectF,
+            equalTo(
+                RectF(
+                    testSize / 2f - progressArcRadius,
+                    testSize / 2f - progressArcRadius,
+                    testSize / 2f + progressArcRadius,
+                    testSize / 2f + progressArcRadius
+                )
+            )
+        )
     }
 
     @Test

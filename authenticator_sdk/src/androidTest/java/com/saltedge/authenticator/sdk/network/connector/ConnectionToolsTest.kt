@@ -35,18 +35,26 @@ class ConnectionToolsTest {
     @Test
     @Throws(Exception::class)
     fun createRequestUrlTest() {
-        assertThat(createRequestUrl("https://google.com", API_AUTHORIZATIONS),
-                equalTo("https://google.com/api/authenticator/v1/authorizations"))
-        assertThat(createRequestUrl("https://google.com/", API_AUTHORIZATIONS),
-                equalTo("https://google.com/api/authenticator/v1/authorizations"))
+        assertThat(
+            createRequestUrl("https://google.com", API_AUTHORIZATIONS),
+            equalTo("https://google.com/api/authenticator/v1/authorizations")
+        )
+        assertThat(
+            createRequestUrl("https://google.com/", API_AUTHORIZATIONS),
+            equalTo("https://google.com/api/authenticator/v1/authorizations")
+        )
     }
 
     @Test
     @Throws(Exception::class)
     fun createExpiresAtTimeTest() {
-        assertThat(createExpiresAtTime(),
-                equalTo((DateTime.now(DateTimeZone.UTC).plusMinutes(5).millis / 1000).toInt()))
-        assertThat(createExpiresAtTime(3),
-                equalTo((DateTime.now(DateTimeZone.UTC).plusMinutes(3).millis / 1000).toInt()))
+        assertThat(
+            createExpiresAtTime(),
+            equalTo((DateTime.now(DateTimeZone.UTC).plusMinutes(5).millis / 1000).toInt())
+        )
+        assertThat(
+            createExpiresAtTime(3),
+            equalTo((DateTime.now(DateTimeZone.UTC).plusMinutes(3).millis / 1000).toInt())
+        )
     }
 }

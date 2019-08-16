@@ -37,6 +37,12 @@ class LauncherModuleTest {
     fun providePresenterTest() {
         val module = LauncherModule()
 
-        Assert.assertNotNull(module.providePresenter(PreferenceRepository, BiometricTools, PasscodeTools))
+        Assert.assertNotNull(
+            module.providePresenter(
+                PreferenceRepository,
+                BiometricTools,
+                PasscodeTools
+            )
+        )
     }
 }

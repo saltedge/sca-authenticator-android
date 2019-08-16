@@ -42,8 +42,8 @@ internal class HeaderInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
         val requestBuilder = originalRequest.newBuilder()
-                .header(HEADER_CONTENT_TYPE, HEADER_VALUE_JSON)
-                .header(HEADER_KEY_ACCEPT_LANGUAGE, HEADER_VALUE_ACCEPT_LANGUAGE)
+            .header(HEADER_CONTENT_TYPE, HEADER_VALUE_JSON)
+            .header(HEADER_KEY_ACCEPT_LANGUAGE, HEADER_VALUE_ACCEPT_LANGUAGE)
         return chain.proceed(requestBuilder.build())
     }
 }

@@ -34,7 +34,8 @@ object PasscodeTools : PasscodeToolsAbs {
      *
      * @return key pair
      */
-    override fun replacePasscodeKey(): SecretKey? = KeyStoreManager.createOrReplaceAesKey(PASSCODE_SECURE_KEY_ALIAS)
+    override fun replacePasscodeKey(): SecretKey? =
+        KeyStoreManager.createOrReplaceAesKey(PASSCODE_SECURE_KEY_ALIAS)
 
     /**
      * Encrypts new passcode and save it in preferences
