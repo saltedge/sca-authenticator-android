@@ -39,6 +39,10 @@ class ConnectionToolsTest {
                 equalTo("https://google.com/api/authenticator/v1/authorizations"))
         assertThat(createRequestUrl("https://google.com/", API_AUTHORIZATIONS),
                 equalTo("https://google.com/api/authenticator/v1/authorizations"))
+        assertThat(createRequestUrl("https://google.com/", "my_route", API_AUTHORIZATIONS),
+            equalTo("https://google.com/my_route/api/authenticator/v1/authorizations"))
+        assertThat(createRequestUrl("https://google.com", "my_route", API_AUTHORIZATIONS),
+            equalTo("https://google.com/my_route/api/authenticator/v1/authorizations"))
     }
 
     @Test

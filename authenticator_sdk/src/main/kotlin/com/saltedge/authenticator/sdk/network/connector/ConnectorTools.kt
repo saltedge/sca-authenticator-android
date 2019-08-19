@@ -43,7 +43,7 @@ internal fun <T> createAuthenticatedRequestData(
         signPrivateKey: PrivateKey,
         requestBodyObject: T? = null
 ): AuthenticatedRequestData {
-    val requestUrl = createRequestUrl(baseUrl = baseUrl, routePath = apiRoutePath)
+    val requestUrl = createRequestUrl(baseUrl, apiRoutePath)
     val requestBodyString = requestBodyObject?.let { RestClient.defaultGson.toJson(it) } ?: ""
     return AuthenticatedRequestData(
             requestUrl = requestUrl,
@@ -57,14 +57,13 @@ internal fun <T> createAuthenticatedRequestData(
     )
 }
 
-internal fun createRequestUrl(baseUrl: String, routePath: String): String {
+internal fun createRequestUrl(baseUrl: String, vararg routePaths: String): String {
     val baseUri = Uri.parse(baseUrl)
-    return Uri.Builder()
+    val builder = Uri.Builder()
             .scheme(baseUri.scheme ?: "https")
             .encodedAuthority(baseUri.authority ?: "")
-            .appendEncodedPath(routePath)
-            .build()
-            .toString()
+    routePaths.forEach { builder.appendEncodedPath(it) }
+    return builder.build().toString()
 }
 
 private fun createHeaders(
