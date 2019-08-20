@@ -59,12 +59,18 @@ internal fun <T> createAuthenticatedRequestData(
 
 internal fun createRequestUrl(baseUrl: String, routePath: String): String {
     val baseUri = Uri.parse(baseUrl)
-    return Uri.Builder()
-            .scheme(baseUri.scheme ?: "https")
+    val baseUriPath = baseUri.encodedPath?.trimStart('/') ?: ""
+    return try {
+        Uri.Builder()
+            .scheme(baseUri.scheme)
             .encodedAuthority(baseUri.authority ?: "")
+            .appendEncodedPath(baseUriPath)
             .appendEncodedPath(routePath)
             .build()
             .toString()
+    } catch (e: Exception) {
+        "$baseUrl/$routePath"
+    }
 }
 
 private fun createHeaders(
