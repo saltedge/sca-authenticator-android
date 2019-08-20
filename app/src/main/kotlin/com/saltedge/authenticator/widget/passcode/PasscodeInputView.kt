@@ -34,7 +34,7 @@ import com.saltedge.authenticator.tool.setVisible
 import kotlinx.android.synthetic.main.view_passcode_input.view.*
 
 class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
-        PinpadInputHandlerContract {
+    PinpadInputHandlerContract {
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_passcode_input, this)
@@ -111,8 +111,14 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
                 validatePasscode(enteredPasscode, context)?.let {
                     onInputError(it)
                 } ?: run {
-                    initInputMode(inputMode = InputMode.REPEAT_NEW_PASSCODE, currentPasscode = enteredPasscode)
-                    listener?.onNewPasscodeEntered(mode = InputMode.REPEAT_NEW_PASSCODE, passcode = currentPasscode)
+                    initInputMode(
+                        inputMode = InputMode.REPEAT_NEW_PASSCODE,
+                        currentPasscode = enteredPasscode
+                    )
+                    listener?.onNewPasscodeEntered(
+                        mode = InputMode.REPEAT_NEW_PASSCODE,
+                        passcode = currentPasscode
+                    )
                 }
             }
             InputMode.REPEAT_NEW_PASSCODE -> {

@@ -44,7 +44,11 @@ class StepProgressView : View, ValueAnimator.AnimatorUpdateListener {
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
 
     private val outerCircleSize: Int
         get() = context.resources.getDimension(R.dimen.dp_12).toInt()
@@ -154,11 +158,11 @@ class StepProgressView : View, ValueAnimator.AnimatorUpdateListener {
         if (activeProgressWidth > 0) {
             val lineEndY = outerCircleRadius + activeProgressWidth
             canvas.drawLine(
-                    lineStartY,
-                    centerY,
-                    lineEndY,
-                    centerY,
-                    linePaint.apply { color = passedStepColor })
+                lineStartY,
+                centerY,
+                lineEndY,
+                centerY,
+                linePaint.apply { color = passedStepColor })
         }
     }
 
@@ -181,29 +185,33 @@ class StepProgressView : View, ValueAnimator.AnimatorUpdateListener {
     }
 
     private fun drawCurrentActiveStepPoint(canvas: Canvas, circleX: Float) {
-        canvas.drawCircle(circleX, centerY, outerCircleRadius, pointPaint.apply { color = passedStepColor })
         canvas.drawCircle(
-                circleX,
-                centerY,
-                outerCircleRadius - lineHeight,
-                pointPaint.apply { color = Color.WHITE })
+            circleX,
+            centerY,
+            outerCircleRadius,
+            pointPaint.apply { color = passedStepColor })
+        canvas.drawCircle(
+            circleX,
+            centerY,
+            outerCircleRadius - lineHeight,
+            pointPaint.apply { color = Color.WHITE })
     }
 
     private fun drawCompletedActiveStepPoint(canvas: Canvas, circleX: Float) {
         drawCurrentActiveStepPoint(canvas, circleX)
         canvas.drawCircle(
-                circleX,
-                centerY,
-                innerCircleRadius,
-                pointPaint.apply { color = passedStepCenterPointColor })
+            circleX,
+            centerY,
+            innerCircleRadius,
+            pointPaint.apply { color = passedStepCenterPointColor })
     }
 
     private fun drawInactiveStepPoint(canvas: Canvas, circleX: Float) {
         canvas.drawCircle(
-                circleX,
-                centerY,
-                outerCircleRadius,
-                pointPaint.apply { color = futureStepsColor })
+            circleX,
+            centerY,
+            outerCircleRadius,
+            pointPaint.apply { color = futureStepsColor })
     }
 
     private fun drawChanges(startStepValue: Float, endStepValue: Float) {

@@ -39,21 +39,28 @@ class ConnectProviderFragmentTest {
     @Throws(Exception::class)
     fun newInstanceTestCase1() {
         val arguments = ConnectProviderFragment.newInstance(
-                connectionGuid = "guid1",
-                connectConfigurationLink = "https://www.fentury.com"
+            connectionGuid = "guid1",
+            connectConfigurationLink = "https://www.fentury.com"
         ).arguments
 
         assertThat(arguments?.getString(KEY_GUID), equalTo("guid1"))
-        assertThat(arguments?.getString(KEY_CONNECT_CONFIGURATION), equalTo("https://www.fentury.com"))
+        assertThat(
+            arguments?.getString(KEY_CONNECT_CONFIGURATION),
+            equalTo("https://www.fentury.com")
+        )
     }
 
     @Test
     @Throws(Exception::class)
     fun newInstanceTestCase2() {
-        val arguments = ConnectProviderFragment.newInstance(connectConfigurationLink = "https://www.fentury.com").arguments
+        val arguments =
+            ConnectProviderFragment.newInstance(connectConfigurationLink = "https://www.fentury.com").arguments
 
         assertNull(arguments?.getString(KEY_GUID))
-        assertThat(arguments?.getString(KEY_CONNECT_CONFIGURATION), equalTo("https://www.fentury.com"))
+        assertThat(
+            arguments?.getString(KEY_CONNECT_CONFIGURATION),
+            equalTo("https://www.fentury.com")
+        )
     }
 
     @Test

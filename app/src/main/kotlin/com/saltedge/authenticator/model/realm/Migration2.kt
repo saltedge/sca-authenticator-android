@@ -28,4 +28,3 @@ import io.realm.RealmSchema
 fun RealmSchema.runMigration2() {
     get("Connection")?.addField("supportEmail", String::class.java)
 }
-

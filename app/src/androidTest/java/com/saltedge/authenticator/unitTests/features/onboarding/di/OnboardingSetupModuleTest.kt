@@ -38,10 +38,13 @@ class OnboardingSetupModuleTest {
     fun providePresenterTest() {
         val module = OnboardingSetupModule()
 
-        Assert.assertNotNull(module.providePresenter(
+        Assert.assertNotNull(
+            module.providePresenter(
                 TestTools.applicationContext,
                 PreferenceRepository,
                 BiometricTools,
-                PasscodeTools))
+                PasscodeTools
+            )
+        )
     }
 }

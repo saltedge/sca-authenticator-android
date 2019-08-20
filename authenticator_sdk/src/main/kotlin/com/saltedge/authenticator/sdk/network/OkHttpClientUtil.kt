@@ -32,9 +32,9 @@ import okhttp3.logging.HttpLoggingInterceptor
  */
 internal fun createOkHttpClient(): OkHttpClient {
     return OkHttpClient.Builder()
-            .addInterceptor(HeaderInterceptor())
-            .addInterceptor(createHttpLoggingInterceptor())
-            .build()
+        .addInterceptor(HeaderInterceptor())
+        .addInterceptor(createHttpLoggingInterceptor())
+        .build()
 }
 
 /**
@@ -45,6 +45,7 @@ internal fun createOkHttpClient(): OkHttpClient {
  */
 private fun createHttpLoggingInterceptor(): HttpLoggingInterceptor {
     return HttpLoggingInterceptor().apply {
-        level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+        level =
+            if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
     }
 }

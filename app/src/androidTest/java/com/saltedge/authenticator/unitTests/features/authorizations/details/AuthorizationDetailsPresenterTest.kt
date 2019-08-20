@@ -65,14 +65,20 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun remainedTimeDescriptionTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1", authorizationId = "",
+            viewModel = null, quickConfirmMode = false
+        )
 
         assertThat(presenter.remainedTimeDescription, equalTo(""))
 
         val authorizationData = createAuthorizationData(1)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = authorizationData.toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = authorizationData.toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
 
         assertThat(presenter.remainedTimeDescription, anyOf(equalTo("1:00:00"), equalTo("59:59")))
     }
@@ -81,14 +87,20 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun remainedSecondsTillExpireTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "", authorizationId = "",
-                viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "", authorizationId = "",
+            viewModel = null, quickConfirmMode = false
+        )
 
         assertThat(presenter.remainedSecondsTillExpire, equalTo(0))
 
         val authorizationData = createAuthorizationData(1)
-        presenter.setInitialData(connectionId = "", authorizationId = "",
-                viewModel = authorizationData.toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "",
+            authorizationId = "",
+            viewModel = authorizationData.toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
 
         assertThat(presenter.remainedSecondsTillExpire, anyOf(equalTo(3600), equalTo(3599)))
     }
@@ -97,15 +109,19 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun maxProgressSecondsTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "", authorizationId = "",
-                viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "", authorizationId = "",
+            viewModel = null, quickConfirmMode = false
+        )
 
         assertThat(presenter.maxProgressSeconds, equalTo(0))
 
         val authorizationData = createAuthorizationData(1)
         val viewModel = authorizationData.toAuthorizationViewModel(connection1)
-        presenter.setInitialData(connectionId = "", authorizationId = "",
-                viewModel = viewModel, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "", authorizationId = "",
+            viewModel = viewModel, quickConfirmMode = false
+        )
 
         assertThat(presenter.maxProgressSeconds, equalTo(viewModel.validSeconds))
     }
@@ -114,13 +130,17 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun providerNameTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "", authorizationId = "",
-                viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "", authorizationId = "",
+            viewModel = null, quickConfirmMode = false
+        )
 
         assertThat(presenter.providerName, equalTo(""))
 
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = viewModel1, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1", authorizationId = "",
+            viewModel = viewModel1, quickConfirmMode = false
+        )
 
         assertThat(presenter.providerName, equalTo("Demobank3"))
     }
@@ -129,13 +149,17 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun providerLogoTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "", authorizationId = "",
-                viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "", authorizationId = "",
+            viewModel = null, quickConfirmMode = false
+        )
 
         assertThat(presenter.providerLogo, equalTo(""))
 
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = viewModel1, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1", authorizationId = "",
+            viewModel = viewModel1, quickConfirmMode = false
+        )
 
         assertThat(presenter.providerLogo, equalTo("url"))
     }
@@ -144,34 +168,49 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun titleTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1", authorizationId = "",
+            viewModel = null, quickConfirmMode = false
+        )
 
         assertThat(presenter.title, equalTo(TestTools.getString(R.string.authorizations_fetching)))
 
         val authorizationData = createAuthorizationData(1)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = authorizationData.toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = authorizationData.toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
 
         assertThat(presenter.title, equalTo("title1"))
 
         presenter.onViewClick(R.id.negativeActionView)
 
-        assertThat(presenter.title, equalTo(TestTools.getString(R.string.authorizations_processing)))
+        assertThat(
+            presenter.title,
+            equalTo(TestTools.getString(R.string.authorizations_processing))
+        )
     }
 
     @Test
     @Throws(Exception::class)
     fun descriptionTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1", authorizationId = "",
+            viewModel = null, quickConfirmMode = false
+        )
 
         assertThat(presenter.description, equalTo(""))
 
         val authorizationData = createAuthorizationData(1)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = authorizationData.toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = authorizationData.toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
 
         assertThat(presenter.description, equalTo("desc1"))
     }
@@ -180,13 +219,22 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun shouldShowTimeViewTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "", viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = null,
+            quickConfirmMode = false
+        )
 
         Assert.assertFalse(presenter.shouldShowTimeView)
 
         val authorizationData = createAuthorizationData(1)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = authorizationData.toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = authorizationData.toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
 
         Assert.assertTrue(presenter.shouldShowTimeView)
 
@@ -200,8 +248,12 @@ class AuthorizationDetailsPresenterTest {
     fun shouldShowProgressViewTest() {
         val presenter = createPresenter(viewContract = mockView)
         val authorizationData = createAuthorizationData(1)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = authorizationData.toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = authorizationData.toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
 
         Assert.assertFalse(presenter.shouldShowProgressView)
 
@@ -214,13 +266,21 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun shouldShowActionsLayoutTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
 
         Assert.assertTrue(presenter.shouldShowActionsLayout)
 
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = createAuthorizationData(0).toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = createAuthorizationData(0).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
 
         Assert.assertFalse(presenter.shouldShowActionsLayout)
 
@@ -228,8 +288,12 @@ class AuthorizationDetailsPresenterTest {
 
         Assert.assertFalse(presenter.shouldShowActionsLayout)
 
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
 
         Assert.assertFalse(presenter.shouldShowActionsLayout)
     }
@@ -238,13 +302,21 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun sessionIsNotExpiredTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = createAuthorizationData(0).toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = createAuthorizationData(0).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
 
         Assert.assertFalse(presenter.sessionIsNotExpired)
 
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
 
         Assert.assertTrue(presenter.sessionIsNotExpired)
     }
@@ -253,12 +325,21 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun shouldShowProviderLogoTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = createAuthorizationData(0).toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = createAuthorizationData(0).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
 
         Assert.assertTrue(presenter.shouldShowProviderLogo)
 
-        presenter.setInitialData(connectionId = "", authorizationId = "", viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "",
+            authorizationId = "",
+            viewModel = null,
+            quickConfirmMode = false
+        )
 
         Assert.assertFalse(presenter.shouldShowProviderLogo)
     }
@@ -270,14 +351,24 @@ class AuthorizationDetailsPresenterTest {
         var viewModel = createAuthorizationData(0).apply {
             description = "<html><h1>Test</h1></html>"
         }.toAuthorizationViewModel(connection1)
-        presenter.setInitialData(connectionId = "1", authorizationId = "", viewModel = viewModel, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = viewModel,
+            quickConfirmMode = false
+        )
 
         Assert.assertTrue(presenter.shouldShowDescriptionWebView)
 
         viewModel = createAuthorizationData(0).apply {
             description = "Test"
         }.toAuthorizationViewModel(connection1)
-        presenter.setInitialData(connectionId = "1", authorizationId = "", viewModel = viewModel, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = viewModel,
+            quickConfirmMode = false
+        )
 
         Assert.assertFalse(presenter.shouldShowDescriptionWebView)
     }
@@ -289,14 +380,24 @@ class AuthorizationDetailsPresenterTest {
         var viewModel = createAuthorizationData(0).apply {
             description = "<html><h1>Test</h1></html>"
         }.toAuthorizationViewModel(connection1)
-        presenter.setInitialData(connectionId = "1", authorizationId = "", viewModel = viewModel, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = viewModel,
+            quickConfirmMode = false
+        )
 
         Assert.assertFalse(presenter.shouldShowDescriptionTextView)
 
         viewModel = createAuthorizationData(0).apply {
             description = "Test"
         }.toAuthorizationViewModel(connection1)
-        presenter.setInitialData(connectionId = "1", authorizationId = "", viewModel = viewModel, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = viewModel,
+            quickConfirmMode = false
+        )
 
         Assert.assertTrue(presenter.shouldShowDescriptionTextView)
     }
@@ -305,8 +406,12 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onViewResumeTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "1",
-                viewModel = createAuthorizationData(0).toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "1",
+            viewModel = createAuthorizationData(0).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
         presenter.onViewResume()
 
         Mockito.verify(mockPollingService).start("1")
@@ -317,8 +422,12 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onViewResumeTest_RunTimer() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
         presenter.onViewResume()
 
         Assert.assertTrue(presenter.sessionIsNotExpired)
@@ -330,8 +439,12 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onViewPauseTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = createAuthorizationData(0).toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = createAuthorizationData(0).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
         presenter.onViewPause()
 
         Mockito.verify(mockPollingService).stop()
@@ -342,15 +455,19 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onViewClickTest_negativeActionView() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
         presenter.onViewClick(R.id.negativeActionView)
 
         Mockito.verify(mockApiManager).denyAuthorization(
-                connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
-                authorizationId = "1",
-                authorizationCode = "111",
-                resultCallback = presenter
+            connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
+            authorizationId = "1",
+            authorizationCode = "111",
+            resultCallback = presenter
         )
         Mockito.verify(mockPollingService).stop()
         Mockito.verify(mockView).updateViewContent()
@@ -360,7 +477,12 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onViewClickTest_negativeActionView_InvalidParams() {
         val presenter = createPresenter(viewContract = null)
-        presenter.setInitialData(connectionId = "1", authorizationId = "", viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
         Mockito.clearInvocations(mockApiManager, mockPollingService, mockView)
         presenter.onViewClick(R.id.negativeActionView)
 
@@ -372,19 +494,34 @@ class AuthorizationDetailsPresenterTest {
 
         Mockito.verifyNoMoreInteractions(mockApiManager, mockPollingService, mockView)
 
-        presenter.setInitialData(connectionId = "1", authorizationId = "", viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = null,
+            quickConfirmMode = false
+        )
         Mockito.clearInvocations(mockApiManager, mockPollingService, mockView)
         presenter.onViewClick(R.id.negativeActionView)
 
         Mockito.verifyNoMoreInteractions(mockApiManager, mockPollingService, mockView)
 
-        presenter.setInitialData(connectionId = "2_noKey", authorizationId = "", viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "2_noKey",
+            authorizationId = "",
+            viewModel = null,
+            quickConfirmMode = false
+        )
         Mockito.clearInvocations(mockApiManager, mockPollingService, mockView)
         presenter.onViewClick(R.id.negativeActionView)
 
         Mockito.verifyNoMoreInteractions(mockApiManager, mockPollingService, mockView)
 
-        presenter.setInitialData(connectionId = "no_connections", authorizationId = "", viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "no_connections",
+            authorizationId = "",
+            viewModel = null,
+            quickConfirmMode = false
+        )
         Mockito.clearInvocations(mockApiManager, mockPollingService, mockView)
         presenter.onViewClick(R.id.negativeActionView)
 
@@ -395,9 +532,11 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onViewClickTest_positiveActionView() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
-                quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1", authorizationId = "",
+            viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
         Mockito.doReturn(true).`when`(mockBiometricTools).isBiometricReady(TestTools.applicationContext)
         presenter.onViewClick(R.id.positiveActionView)
 
@@ -408,16 +547,18 @@ class AuthorizationDetailsPresenterTest {
 
         Mockito.verify(mockView).askUserPasscodeConfirmation()
 
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
-                quickConfirmMode = true)
+        presenter.setInitialData(
+            connectionId = "1", authorizationId = "",
+            viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
+            quickConfirmMode = true
+        )
         presenter.onViewClick(R.id.positiveActionView)
 
         Mockito.verify(mockApiManager).confirmAuthorization(
-                connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
-                authorizationId = "1",
-                authorizationCode = "111",
-                resultCallback = presenter
+            connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
+            authorizationId = "1",
+            authorizationCode = "111",
+            resultCallback = presenter
         )
         Mockito.verify(mockPollingService).stop()
         Mockito.verify(mockView).updateViewContent()
@@ -427,9 +568,11 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onViewClickTest_positiveActionView_InvalidParams() {
         val presenter = createPresenter(viewContract = null)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
-                quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1", authorizationId = "",
+            viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
 
         Mockito.doReturn(true).`when`(mockBiometricTools).isBiometricReady(TestTools.applicationContext)
         presenter.onViewClick(R.id.positiveActionView)
@@ -446,7 +589,12 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onViewClickTest_closeActionView() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "", viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
         presenter.onViewClick(R.id.closeActionView)
 
         Mockito.verify(mockView).closeView()
@@ -456,7 +604,12 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onViewClickTest_closeActionView_InvalidParams() {
         val presenter = createPresenter(viewContract = null)
-        presenter.setInitialData(connectionId = "1", authorizationId = "", viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
         presenter.onViewClick(R.id.closeActionView)
 
         Mockito.verify(mockView, Mockito.never()).closeView()
@@ -466,7 +619,12 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onTimerTickTest_notRemainedTime() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "", viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = null,
+            quickConfirmMode = false
+        )
         Mockito.clearInvocations(mockView)
         presenter.onTimerTick()
 
@@ -477,7 +635,12 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onTimerTickTest_notRemainedTime_InvalidParams() {
         val presenter = createPresenter(viewContract = null)
-        presenter.setInitialData(connectionId = "1", authorizationId = "", viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = null,
+            quickConfirmMode = false
+        )
         presenter.onTimerTick()
 
         Mockito.verifyNoMoreInteractions(mockView)
@@ -489,14 +652,17 @@ class AuthorizationDetailsPresenterTest {
         val presenter = createPresenter(viewContract = mockView)
         val authData = createAuthorizationData(1)
         val viewModel = authData.toAuthorizationViewModel(connection1)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = viewModel, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1", authorizationId = "",
+            viewModel = viewModel, quickConfirmMode = false
+        )
         Mockito.clearInvocations(mockView)
         presenter.onTimerTick()
 
         Mockito.verify(mockView).updateTimeView(
-                viewModel.remainedSecondsTillExpire(),
-                viewModel.remainedTimeTillExpire())
+            viewModel.remainedSecondsTillExpire(),
+            viewModel.remainedTimeTillExpire()
+        )
     }
 
     @Test
@@ -504,8 +670,10 @@ class AuthorizationDetailsPresenterTest {
     fun onTimerTickTest_remainedTime_InvalidParams() {
         val presenter = createPresenter(viewContract = null)
         val viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = viewModel, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1", authorizationId = "",
+            viewModel = viewModel, quickConfirmMode = false
+        )
         presenter.onTimerTick()
 
         Mockito.verifyNoMoreInteractions(mockView)
@@ -515,24 +683,43 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun getRequestDataTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "", authorizationId = null,
-                viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "", authorizationId = null,
+            viewModel = null, quickConfirmMode = false
+        )
 
         Assert.assertNull(presenter.getConnectionData())
 
-        presenter.setInitialData(connectionId = "2_noKey", authorizationId = null,
-                viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "2_noKey", authorizationId = null,
+            viewModel = null, quickConfirmMode = false
+        )
 
         Assert.assertNull(presenter.getConnectionData())
 
-        presenter.setInitialData(connectionId = "1", authorizationId = "2_noKey", viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "2_noKey",
+            viewModel = null,
+            quickConfirmMode = false
+        )
 
-        assertThat(presenter.getConnectionData(), equalTo(ConnectionAndKey(connection1 as ConnectionAbs, mockPrivateKey)))
+        assertThat(
+            presenter.getConnectionData(),
+            equalTo(ConnectionAndKey(connection1 as ConnectionAbs, mockPrivateKey))
+        )
 
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
 
-        assertThat(presenter.getConnectionData(), equalTo(ConnectionAndKey(connection1 as ConnectionAbs, mockPrivateKey)))
+        assertThat(
+            presenter.getConnectionData(),
+            equalTo(ConnectionAndKey(connection1 as ConnectionAbs, mockPrivateKey))
+        )
     }
 
     @Test
@@ -543,7 +730,12 @@ class AuthorizationDetailsPresenterTest {
 
         Mockito.never()
 
-        presenter.setInitialData(connectionId = "1", authorizationId = "", viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = null,
+            quickConfirmMode = false
+        )
 
         assertThat(presenter.description, equalTo(""))
 
@@ -569,7 +761,12 @@ class AuthorizationDetailsPresenterTest {
 
         Mockito.never()
 
-        presenter.setInitialData(connectionId = "1", authorizationId = "", viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = null,
+            quickConfirmMode = false
+        )
         Mockito.clearInvocations(mockView)
         presenter.fetchAuthorizationResult(result = encryptedData1, error = null)
 
@@ -580,43 +777,85 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun fetchAuthorizationResultTest_processAuthorizationError() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "", viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = null,
+            quickConfirmMode = false
+        )
         Mockito.clearInvocations(mockView)
         presenter.fetchAuthorizationResult(result = null, error = createRequestError(404))
 
         Mockito.verifyNoMoreInteractions(mockView)
 
-        presenter.fetchAuthorizationResult(result = null, error = ApiErrorData(errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND))
+        presenter.fetchAuthorizationResult(
+            result = null,
+            error = ApiErrorData(errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND)
+        )
 
         Mockito.verify(mockView).closeView()
-        Mockito.verify(mockConnectionsRepository).invalidateConnectionsByTokens(accessTokens = listOf("token1"))
+        Mockito.verify(mockConnectionsRepository).invalidateConnectionsByTokens(
+            accessTokens = listOf(
+                "token1"
+            )
+        )
 
-        presenter.setInitialData(connectionId = "X", authorizationId = "", viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "X",
+            authorizationId = "",
+            viewModel = null,
+            quickConfirmMode = false
+        )
         Mockito.clearInvocations(mockView, mockConnectionsRepository)
-        presenter.fetchAuthorizationResult(result = null, error = ApiErrorData(errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND))
+        presenter.fetchAuthorizationResult(
+            result = null,
+            error = ApiErrorData(errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND)
+        )
 
         Mockito.verifyNoMoreInteractions(mockView, mockConnectionsRepository)
 
         presenter.viewContract = null
-        presenter.setInitialData(connectionId = "1", authorizationId = "", viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = null,
+            quickConfirmMode = false
+        )
         Mockito.clearInvocations(mockView, mockConnectionsRepository)
-        presenter.fetchAuthorizationResult(result = null, error = ApiErrorData(errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND))
+        presenter.fetchAuthorizationResult(
+            result = null,
+            error = ApiErrorData(errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND)
+        )
 
         Mockito.verifyNoMoreInteractions(mockView)
-        Mockito.verify(mockConnectionsRepository).invalidateConnectionsByTokens(accessTokens = listOf("token1"))
+        Mockito.verify(mockConnectionsRepository).invalidateConnectionsByTokens(
+            accessTokens = listOf(
+                "token1"
+            )
+        )
     }
 
     @Test
     @Throws(Exception::class)
     fun onConfirmDenyFailureTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "", viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = null,
+            quickConfirmMode = false
+        )
         presenter.onConfirmDenyFailure(error = createRequestError(404))
 
         Mockito.verifyNoMoreInteractions(mockPollingService)
         Mockito.verify(mockView).updateViewContent()
 
-        presenter.setInitialData(connectionId = "1", authorizationId = "1", viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "1",
+            viewModel = null,
+            quickConfirmMode = false
+        )
         Mockito.clearInvocations(mockView, mockPollingService)
         presenter.onConfirmDenyFailure(error = createRequestError(404))
 
@@ -635,8 +874,12 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onConfirmDenySuccessTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = authorizationData1.toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = authorizationData1.toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
         Mockito.clearInvocations(mockView, mockPollingService)
         presenter.onConfirmDenySuccess(result = ConfirmDenyResultData())
 
@@ -644,13 +887,23 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verify(mockPollingService).start("")
 
         Mockito.clearInvocations(mockView, mockPollingService)
-        presenter.onConfirmDenySuccess(result = ConfirmDenyResultData(authorizationId = "1", success = true))
+        presenter.onConfirmDenySuccess(
+            result = ConfirmDenyResultData(
+                authorizationId = "1",
+                success = true
+            )
+        )
 
         Mockito.verify(mockView).closeViewWithSuccessResult(authorizationId = "1")
 
         presenter.viewContract = null
         Mockito.clearInvocations(mockView)
-        presenter.onConfirmDenySuccess(result = ConfirmDenyResultData(authorizationId = "1", success = true))
+        presenter.onConfirmDenySuccess(
+            result = ConfirmDenyResultData(
+                authorizationId = "1",
+                success = true
+            )
+        )
 
         Mockito.verifyNoMoreInteractions(mockView)
     }
@@ -659,16 +912,20 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun biometricAuthFinishedTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
         presenter.biometricAuthFinished()
 
         Mockito.verify(mockPollingService).stop()
         Mockito.verify(mockApiManager).confirmAuthorization(
-                connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
-                authorizationId = "1",
-                authorizationCode = "111",
-                resultCallback = presenter
+            connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
+            authorizationId = "1",
+            authorizationCode = "111",
+            resultCallback = presenter
         )
         Mockito.verify(mockView).updateViewContent()
     }
@@ -677,37 +934,45 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun biometricAuthFinishedTest_InvalidParams() {
         val presenter = createPresenter(viewContract = null)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
-                quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1", authorizationId = "",
+            viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
         Mockito.clearInvocations(mockView, mockPollingService, mockApiManager)
         presenter.biometricAuthFinished()
 
         Mockito.verify(mockApiManager).confirmAuthorization(
-                connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
-                authorizationId = "1",
-                authorizationCode = "111",
-                resultCallback = presenter
+            connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
+            authorizationId = "1",
+            authorizationCode = "111",
+            resultCallback = presenter
         )
         Mockito.verify(mockPollingService).stop()
         Mockito.verifyNoMoreInteractions(mockView)
 
-        presenter.setInitialData(connectionId = "1", authorizationId = null,
-                viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1", authorizationId = null,
+            viewModel = null, quickConfirmMode = false
+        )
         Mockito.clearInvocations(mockView, mockPollingService, mockApiManager)
         presenter.biometricAuthFinished()
 
         Mockito.verifyNoMoreInteractions(mockView, mockPollingService, mockApiManager)
 
-        presenter.setInitialData(connectionId = "2_noKey", authorizationId = null,
-                viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "2_noKey", authorizationId = null,
+            viewModel = null, quickConfirmMode = false
+        )
         Mockito.clearInvocations(mockView, mockPollingService, mockApiManager)
         presenter.biometricAuthFinished()
 
         Mockito.verifyNoMoreInteractions(mockView, mockPollingService, mockApiManager)
 
-        presenter.setInitialData(connectionId = "no_connection", authorizationId = null,
-                viewModel = null, quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "no_connection", authorizationId = null,
+            viewModel = null, quickConfirmMode = false
+        )
         Mockito.clearInvocations(mockView, mockPollingService, mockApiManager)
         presenter.biometricAuthFinished()
 
@@ -718,9 +983,11 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun biometricsCanceledByUserTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
-                quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1", authorizationId = "",
+            viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
         presenter.biometricsCanceledByUser()
 
         Mockito.verify(mockView).askUserPasscodeConfirmation()
@@ -735,15 +1002,19 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun successAuthWithPasscodeTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = "1", authorizationId = "",
-                viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1), quickConfirmMode = false)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
+            quickConfirmMode = false
+        )
         presenter.successAuthWithPasscode()
 
         Mockito.verify(mockApiManager).confirmAuthorization(
-                connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
-                authorizationId = "1",
-                authorizationCode = "111",
-                resultCallback = presenter
+            connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
+            authorizationId = "1",
+            authorizationCode = "111",
+            resultCallback = presenter
         )
         Mockito.verify(mockPollingService).stop()
         Mockito.verify(mockView).updateViewContent()
@@ -762,14 +1033,20 @@ class AuthorizationDetailsPresenterTest {
         Mockito.doReturn(connection1).`when`(mockConnectionsRepository).getById("1")
         Mockito.doReturn(connection2).`when`(mockConnectionsRepository).getById("2_noKey")
         Mockito.doReturn(mockPollingService).`when`(mockApiManager)
-                .createSingleAuthorizationPollingService()
+            .createSingleAuthorizationPollingService()
         Mockito.doReturn(KeyPair(null, mockPrivateKey))
-                .`when`(mockKeyStoreManager).getKeyPair("guid1")
+            .`when`(mockKeyStoreManager).getKeyPair("guid1")
         Mockito.doReturn(null).`when`(mockKeyStoreManager).getKeyPair("guid2")
         Mockito.doReturn(authorizationData1).`when`(mockCryptoTools)
-                .decryptAuthorizationData(encryptedData = encryptedData1, rsaPrivateKey = mockPrivateKey)
+            .decryptAuthorizationData(
+                encryptedData = encryptedData1,
+                rsaPrivateKey = mockPrivateKey
+            )
         Mockito.doReturn(authorizationData2).`when`(mockCryptoTools)
-                .decryptAuthorizationData(encryptedData = encryptedData2, rsaPrivateKey = mockPrivateKey)
+            .decryptAuthorizationData(
+                encryptedData = encryptedData2,
+                rsaPrivateKey = mockPrivateKey
+            )
     }
 
     private val mockKeyStoreManager = Mockito.mock(KeyStoreManagerAbs::class.java)
@@ -782,13 +1059,13 @@ class AuthorizationDetailsPresenterTest {
     private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
 
     private val connection1 = Connection().setGuid("guid1").setId("1")
-            .setCode("demobank3").setName("Demobank3")
-            .setStatus(ConnectionStatus.ACTIVE).setAccessToken("token1").setLogoUrl("url")
-            .setCreatedAt(200L).setUpdatedAt(200L)
+        .setCode("demobank3").setName("Demobank3")
+        .setStatus(ConnectionStatus.ACTIVE).setAccessToken("token1").setLogoUrl("url")
+        .setCreatedAt(200L).setUpdatedAt(200L)
     private val connection2 = Connection().setGuid("guid2").setId("2_noKey")
-            .setCode("demobank2").setName("Demobank2")
-            .setStatus(ConnectionStatus.ACTIVE).setAccessToken("").setLogoUrl("")
-            .setCreatedAt(300L).setUpdatedAt(300L)
+        .setCode("demobank2").setName("Demobank2")
+        .setStatus(ConnectionStatus.ACTIVE).setAccessToken("").setLogoUrl("")
+        .setCreatedAt(300L).setUpdatedAt(300L)
     private val encryptedData1 = EncryptedAuthorizationData(id = "1", connectionId = "1")
     private val encryptedData2 = EncryptedAuthorizationData(id = "2_noKey", connectionId = "1")
     private val authorizationData1 = createAuthorizationData(id = 1)
@@ -796,26 +1073,27 @@ class AuthorizationDetailsPresenterTest {
     private val viewModel1 = authorizationData1.toAuthorizationViewModel(connection1)
 
     private fun createPresenter(viewContract: AuthorizationDetailsContract.View? = null):
-            AuthorizationDetailsPresenter {
+        AuthorizationDetailsPresenter {
         return AuthorizationDetailsPresenter(
-                appContext = TestTools.applicationContext,
-                connectionsRepository = mockConnectionsRepository,
-                keyStoreManager = mockKeyStoreManager,
-                biometricTools = mockBiometricTools,
-                cryptoTools = mockCryptoTools,
-                apiManager = mockApiManager).apply { this.viewContract = viewContract }
+            appContext = TestTools.applicationContext,
+            connectionsRepository = mockConnectionsRepository,
+            keyStoreManager = mockKeyStoreManager,
+            biometricTools = mockBiometricTools,
+            cryptoTools = mockCryptoTools,
+            apiManager = mockApiManager
+        ).apply { this.viewContract = viewContract }
     }
 
     private fun createAuthorizationData(id: Int): AuthorizationData {
         val createdAt = DateTime.now(DateTimeZone.UTC)
         return AuthorizationData(
-                id = "$id",
-                authorizationCode = "$id$id$id",
-                title = "title$id",
-                description = "desc$id",
-                connectionId = "1",
-                createdAt = createdAt,
-                expiresAt = createdAt.plusHours(id)
+            id = "$id",
+            authorizationCode = "$id$id$id",
+            title = "title$id",
+            description = "desc$id",
+            connectionId = "1",
+            createdAt = createdAt,
+            expiresAt = createdAt.plusHours(id)
         )
     }
 }

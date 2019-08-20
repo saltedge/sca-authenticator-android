@@ -32,7 +32,11 @@ import java.lang.reflect.Type
 internal class LocalDateAdapter : JsonDeserializer<LocalDate>, JsonSerializer<LocalDate> {
 
     @Throws(JsonParseException::class)
-    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): LocalDate {
+    override fun deserialize(
+        json: JsonElement,
+        typeOfT: Type,
+        context: JsonDeserializationContext
+    ): LocalDate {
         return try {
             LocalDate.parse(json.asString)
         } catch (e: Exception) {
@@ -40,6 +44,10 @@ internal class LocalDateAdapter : JsonDeserializer<LocalDate>, JsonSerializer<Lo
         }
     }
 
-    override fun serialize(src: LocalDate, typeOfSrc: Type, context: JsonSerializationContext): JsonElement =
-            JsonPrimitive(src.toString())
+    override fun serialize(
+        src: LocalDate,
+        typeOfSrc: Type,
+        context: JsonSerializationContext
+    ): JsonElement =
+        JsonPrimitive(src.toString())
 }

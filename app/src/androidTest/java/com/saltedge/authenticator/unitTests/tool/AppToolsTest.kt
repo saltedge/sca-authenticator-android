@@ -33,7 +33,9 @@ class AppToolsTest {
     @Test
     @Throws(Exception::class)
     fun testIsTestsSuite() {
-        Assert.assertTrue(TestTools.applicationContext.classLoader?.toString()?.contains("test") ?: false)
+        Assert.assertTrue(
+            TestTools.applicationContext.classLoader?.toString()?.contains("test") ?: false
+        )
         Assert.assertTrue(AppTools.isTestsSuite(TestTools.applicationContext))
     }
 }

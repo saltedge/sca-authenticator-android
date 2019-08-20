@@ -20,12 +20,6 @@
  */
 package com.saltedge.authenticator.sdk.testTools
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.saltedge.authenticator.sdk.network.adapter.DateTimeAdapter
-import com.saltedge.authenticator.sdk.network.adapter.LocalDateAdapter
-import org.joda.time.DateTime
-import org.joda.time.LocalDate
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream

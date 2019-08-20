@@ -23,10 +23,10 @@ package com.saltedge.authenticator.tool.secure
 import com.saltedge.authenticator.model.repository.MAX_KEY_LENGTH
 import java.util.*
 
-    /**
-     * Get random string
-     *
-     * @return a string containing 64 characters
-     */
-    fun createRandomBytesString(): String =
-            (UUID.randomUUID().toString() + UUID.randomUUID().toString()).take(MAX_KEY_LENGTH)
+/**
+ * Get random string
+ *
+ * @return a string containing 64 characters
+ */
+fun createRandomBytesString(): String =
+    (UUID.randomUUID().toString() + UUID.randomUUID().toString()).take(MAX_KEY_LENGTH)

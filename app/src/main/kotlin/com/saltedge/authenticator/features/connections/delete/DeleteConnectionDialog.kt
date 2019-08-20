@@ -32,7 +32,7 @@ import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.tool.setButtonsColor
 
 class DeleteConnectionDialog : DialogFragment(), DeleteConnectionContract.View,
-        DialogInterface.OnClickListener {
+    DialogInterface.OnClickListener {
 
     private var presenter = DeleteConnectionPresenter(viewContract = this)
 
@@ -43,11 +43,11 @@ class DeleteConnectionDialog : DialogFragment(), DeleteConnectionContract.View,
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(activity!!)
-                .setTitle(presenter.viewTitle(targetRequestCode))
-                .setPositiveButton(presenter.viewPositiveActionText(targetRequestCode), this)
-                .setNegativeButton(R.string.actions_cancel, this)
-                .setMessage(presenter.viewMessage(targetRequestCode))
-                .create()
+            .setTitle(presenter.viewTitle(targetRequestCode))
+            .setPositiveButton(presenter.viewPositiveActionText(targetRequestCode), this)
+            .setNegativeButton(R.string.actions_cancel, this)
+            .setMessage(presenter.viewMessage(targetRequestCode))
+            .create()
     }
 
     override fun onStart() {
@@ -69,8 +69,8 @@ class DeleteConnectionDialog : DialogFragment(), DeleteConnectionContract.View,
 
     companion object {
         fun newInstance(connectionGuid: String?): DeleteConnectionDialog =
-                DeleteConnectionDialog().apply {
-                    arguments = Bundle().apply { putString(KEY_GUID, connectionGuid) }
-                }
+            DeleteConnectionDialog().apply {
+                arguments = Bundle().apply { putString(KEY_GUID, connectionGuid) }
+            }
     }
 }

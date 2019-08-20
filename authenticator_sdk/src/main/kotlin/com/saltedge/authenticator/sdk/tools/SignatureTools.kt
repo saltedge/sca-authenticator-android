@@ -25,11 +25,13 @@ import java.nio.charset.StandardCharsets
 import java.security.PrivateKey
 import java.security.Signature
 
-fun createSignatureHeader(requestMethod: String,
-                          requestUrl: String,
-                          expiresAt: String,
-                          requestBody: String,
-                          privateKey: PrivateKey): String {
+fun createSignatureHeader(
+    requestMethod: String,
+    requestUrl: String,
+    expiresAt: String,
+    requestBody: String,
+    privateKey: PrivateKey
+): String {
     val payload = "${requestMethod.toLowerCase()}|$requestUrl|$expiresAt|$requestBody"
     return payload.toByteArray(StandardCharsets.UTF_8).signWith(privateKey)?.let {
         Base64.encodeToString(it, Base64.NO_WRAP)

@@ -70,6 +70,6 @@ class LanguageSelectPresenterTest {
 
     private fun createPresenter(viewContract: LanguageSelectContract.View? = null): LanguageSelectPresenter {
         return LanguageSelectPresenter(TestTools.applicationContext, mockPreferenceRepository)
-                .apply { this.viewContract = viewContract }
+            .apply { this.viewContract = viewContract }
     }
 }

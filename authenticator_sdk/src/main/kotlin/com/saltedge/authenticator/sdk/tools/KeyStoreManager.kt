@@ -125,15 +125,19 @@ object KeyStoreManager : KeyStoreManagerAbs {
     fun createOrReplaceAesKey(alias: String): SecretKey? {
         return try {
             val mKeyGenerator = KeyGenerator.getInstance(
-                    KeyProperties.KEY_ALGORITHM_AES,
-                    STORE_TYPE
+                KeyProperties.KEY_ALGORITHM_AES,
+                STORE_TYPE
             )
-            mKeyGenerator.init(KeyGenParameterSpec.Builder(alias,
-                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+            mKeyGenerator.init(
+                KeyGenParameterSpec.Builder(
+                    alias,
+                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+                )
                     .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                     .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                     .setRandomizedEncryptionRequired(false)
-                    .build())
+                    .build()
+            )
             mKeyGenerator.generateKey()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -149,17 +153,19 @@ object KeyStoreManager : KeyStoreManagerAbs {
      */
     override fun createOrReplaceAesBiometricKey(alias: String): SecretKey? {
         return try {
-            val builder = KeyGenParameterSpec.Builder(alias,
-                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
-                    .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                    .setUserAuthenticationRequired(true)
-                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+            val builder = KeyGenParameterSpec.Builder(
+                alias,
+                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+            )
+                .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+                .setUserAuthenticationRequired(true)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 builder.setInvalidatedByBiometricEnrollment(true)
             }
             val mKeyGenerator = KeyGenerator.getInstance(
-                    KeyProperties.KEY_ALGORITHM_AES,
-                    STORE_TYPE
+                KeyProperties.KEY_ALGORITHM_AES,
+                STORE_TYPE
             )
             mKeyGenerator.init(builder.build())
             mKeyGenerator.generateKey()
@@ -178,7 +184,7 @@ object KeyStoreManager : KeyStoreManagerAbs {
     fun createNewRsaKeyPair(alias: String): KeyPair? {
         val spec = getNewSdkKeyGenSpec(alias)
         return KeyPairGenerator.getInstance(KEY_ALGORITHM_RSA, STORE_TYPE)
-                .apply { initialize(spec) }.generateKeyPair()
+            .apply { initialize(spec) }.generateKeyPair()
     }
 
     /**
@@ -189,12 +195,15 @@ object KeyStoreManager : KeyStoreManagerAbs {
      * @return algorithm parameter spec
      */
     private fun getNewSdkKeyGenSpec(alias: String): AlgorithmParameterSpec {
-        return KeyGenParameterSpec.Builder(alias, KeyProperties.PURPOSE_DECRYPT or KeyProperties.PURPOSE_SIGN)
-                .setDigests(KeyProperties.DIGEST_SHA256)
-                .setKeySize(KEY_SIZE)
-                .setSignaturePaddings(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
-                .build()
+        return KeyGenParameterSpec.Builder(
+            alias,
+            KeyProperties.PURPOSE_DECRYPT or KeyProperties.PURPOSE_SIGN
+        )
+            .setDigests(KeyProperties.DIGEST_SHA256)
+            .setKeySize(KEY_SIZE)
+            .setSignaturePaddings(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
+            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+            .build()
     }
 
     /**

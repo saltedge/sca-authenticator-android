@@ -36,27 +36,41 @@ class SetupViewModeTest {
     fun containerIdTest() {
         assertThat(SetupViewMode.INPUT_PASSCODE.containerId, equalTo(R.id.passcodeInputView))
         assertThat(SetupViewMode.ALLOW_BIOMETRICS.containerId, equalTo(R.id.allowTouchIdContainer))
-        assertThat(SetupViewMode.ALLOW_NOTIFICATIONS.containerId, equalTo(R.id.allowNotificationsContainer))
+        assertThat(
+            SetupViewMode.ALLOW_NOTIFICATIONS.containerId,
+            equalTo(R.id.allowNotificationsContainer)
+        )
         assertThat(SetupViewMode.COMPLETE.containerId, equalTo(R.id.completeContainer))
     }
 
     @Test
     @Throws(Exception::class)
     fun valuesTest() {
-        assertThat(SetupViewMode.values(),
-                equalTo(arrayOf(
-                        SetupViewMode.INPUT_PASSCODE,
-                        SetupViewMode.ALLOW_BIOMETRICS,
-                        SetupViewMode.ALLOW_NOTIFICATIONS,
-                        SetupViewMode.COMPLETE)))
+        assertThat(
+            SetupViewMode.values(),
+            equalTo(
+                arrayOf(
+                    SetupViewMode.INPUT_PASSCODE,
+                    SetupViewMode.ALLOW_BIOMETRICS,
+                    SetupViewMode.ALLOW_NOTIFICATIONS,
+                    SetupViewMode.COMPLETE
+                )
+            )
+        )
     }
 
     @Test
     @Throws(Exception::class)
     fun valueOfTest() {
         assertThat(SetupViewMode.valueOf("INPUT_PASSCODE"), equalTo(SetupViewMode.INPUT_PASSCODE))
-        assertThat(SetupViewMode.valueOf("ALLOW_BIOMETRICS"), equalTo(SetupViewMode.ALLOW_BIOMETRICS))
-        assertThat(SetupViewMode.valueOf("ALLOW_NOTIFICATIONS"), equalTo(SetupViewMode.ALLOW_NOTIFICATIONS))
+        assertThat(
+            SetupViewMode.valueOf("ALLOW_BIOMETRICS"),
+            equalTo(SetupViewMode.ALLOW_BIOMETRICS)
+        )
+        assertThat(
+            SetupViewMode.valueOf("ALLOW_NOTIFICATIONS"),
+            equalTo(SetupViewMode.ALLOW_NOTIFICATIONS)
+        )
         assertThat(SetupViewMode.valueOf("COMPLETE"), equalTo(SetupViewMode.COMPLETE))
     }
 }

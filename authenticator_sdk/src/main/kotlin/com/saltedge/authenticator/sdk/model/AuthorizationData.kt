@@ -30,12 +30,12 @@ import java.io.Serializable
  * with annotation for GSON parsing
  */
 data class AuthorizationData(
-        @SerializedName(KEY_ID) var id: String,
-        @SerializedName(KEY_CREATED_AT) var createdAt: DateTime? = null,
-        @SerializedName(KEY_UPDATED_AT) var updatedAt: DateTime? = null,
-        @SerializedName(KEY_TITLE) var title: String,
-        @SerializedName(KEY_DESCRIPTION) var description: String,
-        @SerializedName(KEY_AUTHORIZATION_CODE) var authorizationCode: String? = null,
-        @SerializedName(KEY_CONNECTION_ID) var connectionId: String,
-        @SerializedName(KEY_EXPIRES_AT) var expiresAt: DateTime
+    @SerializedName(KEY_ID) var id: String,
+    @SerializedName(KEY_CREATED_AT) var createdAt: DateTime? = null,
+    @SerializedName(KEY_UPDATED_AT) var updatedAt: DateTime? = null,
+    @SerializedName(KEY_TITLE) var title: String,
+    @SerializedName(KEY_DESCRIPTION) var description: String,
+    @SerializedName(KEY_AUTHORIZATION_CODE) var authorizationCode: String? = null,
+    @SerializedName(KEY_CONNECTION_ID) var connectionId: String,
+    @SerializedName(KEY_EXPIRES_AT) var expiresAt: DateTime
 ) : Serializable

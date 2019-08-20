@@ -35,11 +35,14 @@ class ConnectionStatusTest {
     @Test
     @Throws(Exception::class)
     fun valuesTest() {
-        assertThat(ConnectionStatus.values(),
-                equalTo(arrayOf(
-                        ConnectionStatus.INACTIVE,
-                        ConnectionStatus.ACTIVE
-                ))
+        assertThat(
+            ConnectionStatus.values(),
+            equalTo(
+                arrayOf(
+                    ConnectionStatus.INACTIVE,
+                    ConnectionStatus.ACTIVE
+                )
+            )
         )
     }
 

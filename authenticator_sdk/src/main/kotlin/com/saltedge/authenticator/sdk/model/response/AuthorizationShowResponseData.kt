@@ -25,5 +25,5 @@ import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.model.EncryptedAuthorizationData
 
 data class AuthorizationShowResponseData(
-        @SerializedName(KEY_DATA) var data: EncryptedAuthorizationData? = null
+    @SerializedName(KEY_DATA) var data: EncryptedAuthorizationData? = null
 )

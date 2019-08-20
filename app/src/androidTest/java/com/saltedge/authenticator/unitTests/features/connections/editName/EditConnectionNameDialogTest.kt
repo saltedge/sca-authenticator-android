@@ -35,7 +35,8 @@ class EditConnectionNameDialogTest {
     @Test
     @Throws(Exception::class)
     fun newInstanceTest() {
-        val arguments = EditConnectionNameDialog.newInstance(guid = "guid1", name = "Demobank").arguments!!
+        val arguments =
+            EditConnectionNameDialog.newInstance(guid = "guid1", name = "Demobank").arguments!!
 
         assertThat(arguments.getString(KEY_GUID), equalTo("guid1"))
         assertThat(arguments.getString(KEY_NAME), equalTo("Demobank"))

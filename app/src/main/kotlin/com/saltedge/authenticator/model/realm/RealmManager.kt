@@ -41,8 +41,8 @@ object RealmManager {
     fun initRealm(context: Context) {
         Realm.init(context)
         val builder = RealmConfiguration.Builder()
-                .schemaVersion(DB_SCHEMA_VERSION)
-                .name(DB_NAME)
+            .schemaVersion(DB_SCHEMA_VERSION)
+            .name(DB_NAME)
         builder.migration(runMigrations())
         if (AppTools.isTestsSuite(context)) builder.inMemory()
         else builder.encryptionKey(getOrCreateDatabaseKey())
@@ -62,7 +62,8 @@ object RealmManager {
      * @return database key
      */
     private fun getOrCreateDatabaseKey(): ByteArray {
-        if (PreferenceRepository.dbKey.isEmpty()) PreferenceRepository.dbKey = createRandomBytesString()
+        if (PreferenceRepository.dbKey.isEmpty()) PreferenceRepository.dbKey =
+            createRandomBytesString()
         return PreferenceRepository.dbKey.toByteArray()
     }
 

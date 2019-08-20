@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
- <!--
+<?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2019 Salt Edge Inc.
@@ -24,16 +23,16 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:contentDescription="@string/onboarding_secure_app_touch_id_allow_android"
         style="@style/SetupLogoImage"
-        android:src="@drawable/ic_setup_fingerprint"/>
+        android:contentDescription="@string/onboarding_secure_app_touch_id_allow_android"
+        android:src="@drawable/ic_setup_fingerprint" />
 
     <Button
         android:id="@+id/allowTouchIdActionView"
         style="@style/BlueFullWidthButton"
-        android:layout_marginBottom="@dimen/dp_20"
         android:layout_above="@+id/skipTouchIdActionView"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/dp_20"
         android:text="@string/onboarding_secure_app_touch_id_allow_android" />
 
     <TextView

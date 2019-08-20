@@ -36,8 +36,14 @@ class ConnectionOptionsTest {
     fun iconIdTest() {
         assertThat(ConnectionOptions.RECONNECT.iconId, equalTo(R.drawable.ic_reconnect_gray_24dp))
         assertThat(ConnectionOptions.RECONNECT.textId, equalTo(R.string.actions_reconnect))
-        assertThat(ConnectionOptions.REPORT_PROBLEM.iconId, equalTo(R.drawable.ic_about_black54_24dp))
-        assertThat(ConnectionOptions.REPORT_PROBLEM.textId, equalTo(R.string.actions_contact_support))
+        assertThat(
+            ConnectionOptions.REPORT_PROBLEM.iconId,
+            equalTo(R.drawable.ic_about_black54_24dp)
+        )
+        assertThat(
+            ConnectionOptions.REPORT_PROBLEM.textId,
+            equalTo(R.string.actions_contact_support)
+        )
         assertThat(ConnectionOptions.RENAME.iconId, equalTo(R.drawable.ic_rename_gray_24dp))
         assertThat(ConnectionOptions.RENAME.textId, equalTo(R.string.actions_rename_connection))
         assertThat(ConnectionOptions.DELETE.iconId, equalTo(R.drawable.ic_delete_gray_24dp))
@@ -47,19 +53,26 @@ class ConnectionOptionsTest {
     @Test
     @Throws(Exception::class)
     fun valuesTest() {
-        assertThat(ConnectionOptions.values(), equalTo(arrayOf(
+        assertThat(
+            ConnectionOptions.values(), equalTo(
+            arrayOf(
                 ConnectionOptions.RECONNECT,
                 ConnectionOptions.REPORT_PROBLEM,
                 ConnectionOptions.RENAME,
                 ConnectionOptions.DELETE
-        )))
+            )
+        )
+        )
     }
 
     @Test
     @Throws(Exception::class)
     fun valueOfTest() {
         assertThat(ConnectionOptions.valueOf("RECONNECT"), equalTo(ConnectionOptions.RECONNECT))
-        assertThat(ConnectionOptions.valueOf("REPORT_PROBLEM"), equalTo(ConnectionOptions.REPORT_PROBLEM))
+        assertThat(
+            ConnectionOptions.valueOf("REPORT_PROBLEM"),
+            equalTo(ConnectionOptions.REPORT_PROBLEM)
+        )
         assertThat(ConnectionOptions.valueOf("RENAME"), equalTo(ConnectionOptions.RENAME))
         assertThat(ConnectionOptions.valueOf("DELETE"), equalTo(ConnectionOptions.DELETE))
     }

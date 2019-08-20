@@ -33,12 +33,12 @@ class AuthorizationDataExtensionsTest {
     @Throws(Exception::class)
     fun isNotExpiredTest() {
         val authData = AuthorizationData(
-                id = "444",
-                title = "title",
-                description = "description",
-                connectionId = "333",
-                expiresAt = DateTime(),
-                authorizationCode = "111"
+            id = "444",
+            title = "title",
+            description = "description",
+            connectionId = "333",
+            expiresAt = DateTime(),
+            authorizationCode = "111"
         )
 
         Assert.assertTrue(authData.copy(expiresAt = DateTime.now().plusMinutes(1)).isNotExpired())

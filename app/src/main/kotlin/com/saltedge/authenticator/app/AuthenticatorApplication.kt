@@ -55,8 +55,8 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
         if (AppTools.isTestsSuite(this)) RealmManager.initRealm(this)
 
         appComponent = DaggerAppComponent.builder()
-                .appModule(AppModule(applicationContext))
-                .build()
+            .appModule(AppModule(applicationContext))
+            .build()
 
         registerActivityLifecycleCallbacks(this)
     }

@@ -38,10 +38,13 @@ class ConnectProviderModuleTest {
     fun providePresenterTest() {
         val module = ConnectProviderModule()
 
-        assertNotNull(module.providePresenter(
+        assertNotNull(
+            module.providePresenter(
                 appContext = TestTools.applicationContext,
                 preferences = PreferenceRepository,
                 connections = ConnectionsRepository,
-                keyStoreManager = KeyStoreManager))
+                keyStoreManager = KeyStoreManager
+            )
+        )
     }
 }

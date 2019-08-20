@@ -38,11 +38,11 @@ class SignatureToolsTest {
     fun createSignatureHeaderTest() {
         val expiresAt = createExpiresAtTime()
         val signatureHeader = createSignatureHeader(
-                requestMethod = "POST",
-                requestUrl = "localhost",
-                expiresAt = expiresAt.toString(),
-                requestBody = "{}",
-                privateKey = keyPair.private
+            requestMethod = "POST",
+            requestUrl = "localhost",
+            expiresAt = expiresAt.toString(),
+            requestBody = "{}",
+            privateKey = keyPair.private
         )
 
         val signatureHeaderBytes = Base64.decode(signatureHeader, Base64.NO_WRAP)
@@ -55,5 +55,4 @@ class SignatureToolsTest {
     }
 
     private var keyPair: KeyPair = KeyStoreManager.createOrReplaceRsaKeyPair("test")!!
-
 }

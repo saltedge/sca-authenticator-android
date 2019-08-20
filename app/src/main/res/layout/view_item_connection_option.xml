@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
- <!--
+<?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2019 Salt Edge Inc.
@@ -19,31 +18,30 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/dp_48"
     android:background="?android:attr/selectableItemBackground"
-    android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/optionImageView"
-        android:contentDescription="@null"
         android:layout_width="@dimen/dp_24"
         android:layout_height="@dimen/dp_24"
         android:layout_marginStart="@dimen/dp_16"
+        android:contentDescription="@null"
         android:scaleType="fitCenter"
-        tools:src="@drawable/ic_about_black54_24dp"/>
+        tools:src="@drawable/ic_about_black54_24dp" />
 
     <TextView
         android:id="@+id/optionTitleView"
+        style="@style/Text16BlackRegular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_24"
         android:layout_marginEnd="@dimen/dp_16"
         android:maxLines="1"
-        tools:text="@string/actions_delete"
-        style="@style/Text16BlackRegular" />
+        tools:text="@string/actions_delete" />
 </LinearLayout>

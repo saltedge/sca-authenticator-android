@@ -33,17 +33,31 @@ class FingerprintStateTest {
     @Test
     @Throws(Exception::class)
     fun valuesTest() {
-        assertThat(FingerprintState.values(), equalTo(arrayOf(FingerprintState.NOT_SUPPORTED,
-                FingerprintState.NOT_BLOCKED_DEVICE, FingerprintState.NO_FINGERPRINTS,
-                FingerprintState.READY)))
+        val arrayOfFingerprintState = arrayOf(
+            FingerprintState.NOT_SUPPORTED,
+            FingerprintState.NOT_BLOCKED_DEVICE, FingerprintState.NO_FINGERPRINTS,
+            FingerprintState.READY
+        )
+        assertThat(
+            FingerprintState.values(), equalTo(arrayOfFingerprintState)
+        )
     }
 
     @Test
     @Throws(Exception::class)
     fun valueOfTest() {
-        assertThat(FingerprintState.valueOf("NOT_SUPPORTED"), equalTo(FingerprintState.NOT_SUPPORTED))
-        assertThat(FingerprintState.valueOf("NOT_BLOCKED_DEVICE"), equalTo(FingerprintState.NOT_BLOCKED_DEVICE))
-        assertThat(FingerprintState.valueOf("NO_FINGERPRINTS"), equalTo(FingerprintState.NO_FINGERPRINTS))
+        assertThat(
+            FingerprintState.valueOf("NOT_SUPPORTED"),
+            equalTo(FingerprintState.NOT_SUPPORTED)
+        )
+        assertThat(
+            FingerprintState.valueOf("NOT_BLOCKED_DEVICE"),
+            equalTo(FingerprintState.NOT_BLOCKED_DEVICE)
+        )
+        assertThat(
+            FingerprintState.valueOf("NO_FINGERPRINTS"),
+            equalTo(FingerprintState.NO_FINGERPRINTS)
+        )
         assertThat(FingerprintState.valueOf("READY"), equalTo(FingerprintState.READY))
     }
 }

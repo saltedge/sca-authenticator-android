@@ -28,21 +28,25 @@ import com.saltedge.authenticator.sdk.network.ApiResponseInterceptor
 import retrofit2.Call
 
 internal class ProviderDataConnector(
-        private val apiInterface: ApiInterface,
-        var resultCallback: FetchProviderDataResult?
+    private val apiInterface: ApiInterface,
+    var resultCallback: FetchProviderDataResult?
 ) : ApiResponseInterceptor<ProviderResponseData>() {
 
     fun fetchProviderData(requestUrl: String) {
         apiInterface.getProviderData(requestUrl = requestUrl).enqueue(this)
     }
 
-    override fun onSuccessResponse(call: Call<ProviderResponseData>,
-                                   response: ProviderResponseData) {
+    override fun onSuccessResponse(
+        call: Call<ProviderResponseData>,
+        response: ProviderResponseData
+    ) {
         resultCallback?.fetchProviderResult(result = response.data, error = null)
     }
 
-    override fun onFailureResponse(call: Call<ProviderResponseData>,
-                                   error: ApiErrorData) {
+    override fun onFailureResponse(
+        call: Call<ProviderResponseData>,
+        error: ApiErrorData
+    ) {
         resultCallback?.fetchProviderResult(result = null, error = error)
     }
 }

@@ -41,7 +41,8 @@ const val FINGERPRINT_ALIAS_FOR_PIN = "fingerprint_alias_for_pin"
 @Suppress("DEPRECATION")
 object BiometricTools : BiometricToolsAbs {
 
-    override fun replaceFingerprintKey() = KeyStoreManager.createOrReplaceRsaKeyPair(FINGERPRINT_ALIAS_FOR_PIN)
+    override fun replaceFingerprintKey() =
+        KeyStoreManager.createOrReplaceRsaKeyPair(FINGERPRINT_ALIAS_FOR_PIN)
 
     override fun activateFingerprint(): Boolean {
         KeyStoreManager.createOrReplaceAesBiometricKey(FINGERPRINT_ALIAS_FOR_PIN)
@@ -54,18 +55,20 @@ object BiometricTools : BiometricToolsAbs {
     override fun isFingerprintNotConfigured(context: Context): Boolean = !isBiometricReady(context)
 
     override fun isFingerprintSupported(context: Context) =
-            getFingerprintState(context) !== FingerprintState.NOT_SUPPORTED
+        getFingerprintState(context) !== FingerprintState.NOT_SUPPORTED
 
     override fun isBiometricReady(context: Context) =
-            getFingerprintState(context) === FingerprintState.READY
+        getFingerprintState(context) === FingerprintState.READY
 
     override fun getCurrentFingerprintStateWarningMessage(context: Context): String? {
-        return context.getString(when (getFingerprintState(context)) {
-            FingerprintState.NOT_SUPPORTED -> R.string.errors_touch_id_not_supported
-            FingerprintState.NOT_BLOCKED_DEVICE -> R.string.errors_activate_touch_id
-            FingerprintState.NO_FINGERPRINTS -> R.string.errors_touch_id_not_enrolled
-            else -> return null
-        })
+        return context.getString(
+            when (getFingerprintState(context)) {
+                FingerprintState.NOT_SUPPORTED -> R.string.errors_touch_id_not_supported
+                FingerprintState.NOT_BLOCKED_DEVICE -> R.string.errors_activate_touch_id
+                FingerprintState.NO_FINGERPRINTS -> R.string.errors_touch_id_not_enrolled
+                else -> return null
+            }
+        )
     }
 
     @SuppressLint("NewApi")
@@ -96,8 +99,9 @@ object BiometricTools : BiometricToolsAbs {
     @RequiresApi(Build.VERSION_CODES.M)
     private fun isFingerprintPermissionGranted(context: Context): Boolean {
         return ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.USE_FINGERPRINT) == PackageManager.PERMISSION_GRANTED
+            context,
+            Manifest.permission.USE_FINGERPRINT
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun getFingerprintState(context: Context): FingerprintState {
