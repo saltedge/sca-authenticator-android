@@ -52,7 +52,7 @@ internal class ConnectionInitConnector(
      * @param pushToken - Firebase Cloud Messaging token of current app
      */
     fun postConnectionData(baseUrl: String, publicKey: String, pushToken: String) {
-        val url = createRequestUrl(baseUrl, API_CONNECTIONS)
+        val url = createRequestUrl(baseUrl = baseUrl, routePath = API_CONNECTIONS)
         val requestData = CreateConnectionRequestData(
             data = CreateConnectionData(publicKey = publicKey, pushToken = pushToken)
         )

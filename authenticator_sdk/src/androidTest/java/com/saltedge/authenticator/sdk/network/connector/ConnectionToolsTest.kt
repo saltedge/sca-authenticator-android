@@ -36,12 +36,16 @@ class ConnectionToolsTest {
     @Throws(Exception::class)
     fun createRequestUrlTest() {
         assertThat(
-            createRequestUrl("https://google.com", API_AUTHORIZATIONS),
-            equalTo("https://google.com/api/authenticator/v1/authorizations")
+            createRequestUrl("https://example.com", API_AUTHORIZATIONS),
+            equalTo("https://example.com/api/authenticator/v1/authorizations")
         )
         assertThat(
-            createRequestUrl("https://google.com/", API_AUTHORIZATIONS),
-            equalTo("https://google.com/api/authenticator/v1/authorizations")
+            createRequestUrl("http://example.com/", API_AUTHORIZATIONS),
+            equalTo("http://example.com/api/authenticator/v1/authorizations")
+        )
+        assertThat(
+            createRequestUrl("https://connector.example.com:8080/path/my_id", API_AUTHORIZATIONS),
+            equalTo("https://connector.example.com:8080/path/my_id/api/authenticator/v1/authorizations")
         )
     }
 
