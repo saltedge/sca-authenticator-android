@@ -91,12 +91,21 @@ class DotsPageIndicatorView : View, ViewPager.OnPageChangeListener, ValueAnimati
         init(attrs)
     }
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
         init(attrs)
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) : super(
+        context,
+        attrs,
+        defStyleAttr,
+        defStyleRes
+    ) {
         init(attrs)
     }
 
@@ -204,7 +213,8 @@ class DotsPageIndicatorView : View, ViewPager.OnPageChangeListener, ValueAnimati
      */
     fun setProgress(newPosition: Int, newProgress: Float) {
         if (interactiveAnimation) {
-            this.selectingPosition = if (newPosition < 0) 0 else if (newPosition > count - 1) count - 1 else newPosition
+            this.selectingPosition =
+                if (newPosition < 0) 0 else if (newPosition > count - 1) count - 1 else newPosition
             val progress = if (newProgress < 0) 0f else if (newProgress > 1) 1f else newProgress
             selectedAnimation.progress(progress)
         }
@@ -264,13 +274,16 @@ class DotsPageIndicatorView : View, ViewPager.OnPageChangeListener, ValueAnimati
     }
 
     private fun drawCircle(canvas: Canvas, position: Int, x: Int, y: Int) {
-        val selectedItem = !interactiveAnimation && (position == selectedPosition || position == lastSelectedPosition)
-        val selectingItem = interactiveAnimation && (position == selectingPosition || position == selectedPosition)
+        val selectedItem =
+            !interactiveAnimation && (position == selectedPosition || position == lastSelectedPosition)
+        val selectingItem =
+            interactiveAnimation && (position == selectingPosition || position == selectedPosition)
         if (selectedItem or selectingItem) drawWithAnimationEffect(canvas, x.toFloat(), y.toFloat())
         else drawWithNoEffect(canvas, position, x.toFloat(), y.toFloat())
     }
 
-    private fun drawWithAnimationEffect(canvas: Canvas, x: Float, y: Float) = drawWithWormAnimation(canvas, x, y)
+    private fun drawWithAnimationEffect(canvas: Canvas, x: Float, y: Float) =
+        drawWithWormAnimation(canvas, x, y)
 
     private fun drawWithWormAnimation(canvas: Canvas, x: Float, y: Float) {
         val dotRadius = radiusPx
@@ -297,7 +310,8 @@ class DotsPageIndicatorView : View, ViewPager.OnPageChangeListener, ValueAnimati
 
     private fun initAttributes(attrs: AttributeSet?) {
         if (attrs == null) return
-        val attributes = context.obtainStyledAttributes(attrs, R.styleable.DotsPageIndicatorView, 0, 0)
+        val attributes =
+            context.obtainStyledAttributes(attrs, R.styleable.DotsPageIndicatorView, 0, 0)
         try {
             initCountAttribute(attributes)
             initColorAttribute(attributes)
@@ -323,8 +337,12 @@ class DotsPageIndicatorView : View, ViewPager.OnPageChangeListener, ValueAnimati
 
     private fun initColorAttribute(typedArray: TypedArray) {
         if (typedArray.hasValue(R.styleable.DotsPageIndicatorView_unselectedColor))
-            inactiveColor = typedArray.getColor(R.styleable.DotsPageIndicatorView_unselectedColor, Color.parseColor(DEFAULT_UNSELECTED_COLOR))
-        selectedColor = typedArray.getColor(R.styleable.DotsPageIndicatorView_selectedColor, selectedColor)
+            inactiveColor = typedArray.getColor(
+                R.styleable.DotsPageIndicatorView_unselectedColor,
+                Color.parseColor(DEFAULT_UNSELECTED_COLOR)
+            )
+        selectedColor =
+            typedArray.getColor(R.styleable.DotsPageIndicatorView_selectedColor, selectedColor)
     }
 
     private fun initAnimation() {
@@ -356,7 +374,12 @@ class DotsPageIndicatorView : View, ViewPager.OnPageChangeListener, ValueAnimati
         val isRightSide = selectedPosition > lastSelectedPosition
 
         animation?.worm()?.end()
-        animation?.worm()?.with(fromX, toX, radiusPx, isRightSide)?.duration(animationDuration)?.start()
+        animation?.worm()?.with(
+            fromX,
+            toX,
+            radiusPx,
+            isRightSide
+        )?.duration(animationDuration)?.start()
     }
 
     private val selectedAnimation: AbsAnimation<*>

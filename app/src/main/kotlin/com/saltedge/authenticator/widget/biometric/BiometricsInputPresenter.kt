@@ -19,6 +19,7 @@
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
 @file:Suppress("DEPRECATION")
+
 package com.saltedge.authenticator.widget.biometric
 
 import android.content.Context
@@ -32,7 +33,7 @@ import com.saltedge.authenticator.tool.secure.fingerprint.BiometricTools
 import com.saltedge.authenticator.tool.secure.fingerprint.getFingerprintManager
 
 class BiometricsInputPresenter(val contract: BiometricsInputContract.View?) :
-        FingerprintManager.AuthenticationCallback() {
+    FingerprintManager.AuthenticationCallback() {
 
     private var fingerprintManager: FingerprintManager? = null
     private val cryptoObject: FingerprintManager.CryptoObject? = initCryptoObject()
@@ -69,7 +70,13 @@ class BiometricsInputPresenter(val contract: BiometricsInputContract.View?) :
             if (BiometricTools.isFingerprintAuthAvailable(context) && cryptoObject != null) {
                 fingerprintManager = context.getFingerprintManager()
                 mCancellationSignal = CancellationSignal()
-                fingerprintManager?.authenticate(cryptoObject, mCancellationSignal, 0/* flags */, this, null)
+                fingerprintManager?.authenticate(
+                    cryptoObject,
+                    mCancellationSignal,
+                    0/* flags */,
+                    this,
+                    null
+                )
             }
         } catch (e: SecurityException) {
             e.log()
@@ -96,10 +103,10 @@ class BiometricsInputPresenter(val contract: BiometricsInputContract.View?) :
                 R.string.error_fingerprint_not_recognized
             }
             contract?.updateStatusView(
-                    imageResId = image,
-                    textColorResId = colorResId,
-                    textResId = text,
-                    animateText = !success
+                imageResId = image,
+                textColorResId = colorResId,
+                textResId = text,
+                animateText = !success
             )
             if (success) contract?.sendAuthSuccessResult()
         }
@@ -110,5 +117,5 @@ class BiometricsInputPresenter(val contract: BiometricsInputContract.View?) :
     }
 
     private fun biometricPromptIsNotCanceled(errorCode: Int): Boolean =
-            errorCode != BIOMETRIC_ERROR_CANCELED && errorCode != BIOMETRIC_ERROR_USER_CANCELED
+        errorCode != BIOMETRIC_ERROR_CANCELED && errorCode != BIOMETRIC_ERROR_USER_CANCELED
 }

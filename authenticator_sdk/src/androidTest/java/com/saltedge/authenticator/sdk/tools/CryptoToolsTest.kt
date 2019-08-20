@@ -50,7 +50,7 @@ class CryptoToolsTest {
     @Test
     @Throws(Exception::class)
     fun rsaEncryptDecryptTest() {
-        assertThat(aesKey.size, equalTo(32))//AES-256
+        assertThat(aesKey.size, equalTo(32)) // AES-256
         assertThat(aesIV.size, equalTo(16))
 
         val encryptedKey = rsaEncrypt(aesKey, keyPair.public)!!
@@ -64,7 +64,6 @@ class CryptoToolsTest {
             override fun getAlgorithm(): String = ""
             override fun getEncoded(): ByteArray = byteArrayOf()
             override fun getFormat(): String = ""
-
         }
         Assert.assertNull(rsaEncrypt(byteArrayOf(), invalidCertificate))
     }
@@ -79,7 +78,10 @@ class CryptoToolsTest {
         val encryptedMessage = encryptAesCBCString(errorMessage, aesKey, aesIV)!!
 
         assertThat(encryptedMessage, not(equalTo(errorMessage)))
-        assertThat(encryptedMessage, equalTo("MBrw7K2rCIKop50b2PmkmlAVO9Bulhl7yO8ZPw2ulVnh7MB9yI0vRJjum6xFnQMq\n9BR172WT/KAw78Zg4++EQQ=="))
+        assertThat(
+            encryptedMessage,
+            equalTo("MBrw7K2rCIKop50b2PmkmlAVO9Bulhl7yO8ZPw2ulVnh7MB9yI0vRJjum6xFnQMq\n9BR172WT/KAw78Zg4++EQQ==")
+        )
         assertThat(aesDecrypt(encryptedMessage, aesKey, aesIV), equalTo(errorMessage))
         Assert.assertNull(aesDecrypt(encryptedMessage, aesKey, aesKey))
     }
@@ -104,45 +106,118 @@ class CryptoToolsTest {
     @Test
     @Throws(Exception::class)
     fun decryptAuthorizationDataTest() {
-        assertThat(aesKey.size, equalTo(32))//AES-256
+        assertThat(aesKey.size, equalTo(32)) // AES-256
         assertThat(aesIV.size, equalTo(16))
 
         val encryptedData = EncryptedAuthorizationData(
-                id = authData.id,
-                connectionId = authData.connectionId,
-                algorithm = "AES-256-CBC",
-                key = rsaEncrypt(aesKey, keyPair.public)!!,
-                iv = rsaEncrypt(aesIV, keyPair.public)!!,
-                data = encryptAesCBCString(authData.toJsonString(), aesKey, aesIV)!!
+            id = authData.id,
+            connectionId = authData.connectionId,
+            algorithm = "AES-256-CBC",
+            key = rsaEncrypt(aesKey, keyPair.public)!!,
+            iv = rsaEncrypt(aesIV, keyPair.public)!!,
+            data = encryptAesCBCString(authData.toJsonString(), aesKey, aesIV)!!
         )
 
-        assertThat(decryptAuthorizationData(encryptedData = encryptedData, rsaPrivateKey = keyPair.private!!),
-                equalTo(authData))
-        Assert.assertNull(decryptAuthorizationData(encryptedData = encryptedData, rsaPrivateKey = null))
-        Assert.assertNull(decryptAuthorizationData(encryptedData = encryptedData.copy(key = null), rsaPrivateKey = keyPair.private!!))
-        Assert.assertNull(decryptAuthorizationData(encryptedData = encryptedData.copy(iv = null), rsaPrivateKey = keyPair.private!!))
-        Assert.assertNull(decryptAuthorizationData(encryptedData = encryptedData.copy(data = null), rsaPrivateKey = keyPair.private!!))
-        Assert.assertNull(decryptAuthorizationData(encryptedData = encryptedData.copy(key = ""), rsaPrivateKey = keyPair.private!!))
-        Assert.assertNull(decryptAuthorizationData(encryptedData = encryptedData.copy(iv = ""), rsaPrivateKey = keyPair.private!!))
-        Assert.assertNull(decryptAuthorizationData(encryptedData = encryptedData.copy(data = ""), rsaPrivateKey = keyPair.private!!))
+        assertThat(
+            decryptAuthorizationData(
+                encryptedData = encryptedData,
+                rsaPrivateKey = keyPair.private!!
+            ),
+            equalTo(authData)
+        )
+        Assert.assertNull(
+            decryptAuthorizationData(
+                encryptedData = encryptedData,
+                rsaPrivateKey = null
+            )
+        )
+        Assert.assertNull(
+            decryptAuthorizationData(
+                encryptedData = encryptedData.copy(key = null),
+                rsaPrivateKey = keyPair.private!!
+            )
+        )
+        Assert.assertNull(
+            decryptAuthorizationData(
+                encryptedData = encryptedData.copy(iv = null),
+                rsaPrivateKey = keyPair.private!!
+            )
+        )
+        Assert.assertNull(
+            decryptAuthorizationData(
+                encryptedData = encryptedData.copy(data = null),
+                rsaPrivateKey = keyPair.private!!
+            )
+        )
+        Assert.assertNull(
+            decryptAuthorizationData(
+                encryptedData = encryptedData.copy(key = ""),
+                rsaPrivateKey = keyPair.private!!
+            )
+        )
+        Assert.assertNull(
+            decryptAuthorizationData(
+                encryptedData = encryptedData.copy(iv = ""),
+                rsaPrivateKey = keyPair.private!!
+            )
+        )
+        Assert.assertNull(
+            decryptAuthorizationData(
+                encryptedData = encryptedData.copy(data = ""),
+                rsaPrivateKey = keyPair.private!!
+            )
+        )
     }
 
     private val keyPair: KeyPair = KeyStoreManager.createOrReplaceRsaKeyPair("test")!!
-    private val aesKey = byteArrayOf(65, 1, 2, 23, 4, 5, 6, 7, 32, 21, 10, 11, 12, 13, 84, 45, 65, 1, 2, 23, 4, 5, 6, 7, 32, 21, 10, 11, 12, 13, 84, 45)
+    private val aesKey = byteArrayOf(
+        65,
+        1,
+        2,
+        23,
+        4,
+        5,
+        6,
+        7,
+        32,
+        21,
+        10,
+        11,
+        12,
+        13,
+        84,
+        45,
+        65,
+        1,
+        2,
+        23,
+        4,
+        5,
+        6,
+        7,
+        32,
+        21,
+        10,
+        11,
+        12,
+        13,
+        84,
+        45
+    )
     private val aesIV = byteArrayOf(65, 1, 2, 23, 4, 5, 6, 7, 32, 21, 10, 11, 12, 13, 84, 45)
     private val authData = AuthorizationData(
-            id = "444",
-            title = "title",
-            description = "description",
-            connectionId = "333",
-            expiresAt = DateTime(0),
-            authorizationCode = "111"
+        id = "444",
+        title = "title",
+        description = "description",
+        connectionId = "333",
+        expiresAt = DateTime(0),
+        authorizationCode = "111"
     )
-
 
     private fun rsaEncrypt(input: ByteArray, publicKey: PublicKey): String? {
         try {
-            val encryptCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidKeyStoreBCWorkaround")
+            val encryptCipher =
+                Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidKeyStoreBCWorkaround")
             encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey)
 
             val outputStream = ByteArrayOutputStream()

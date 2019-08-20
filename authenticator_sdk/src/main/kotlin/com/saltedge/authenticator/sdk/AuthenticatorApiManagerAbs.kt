@@ -34,43 +34,43 @@ interface AuthenticatorApiManagerAbs {
     fun getProviderData(providerConfigurationUrl: String, resultCallback: FetchProviderDataResult)
 
     fun initConnectionRequest(
-            baseUrl: String,
-            publicKey: String,
-            pushToken: String,
-            resultCallback: ConnectionInitResult
+        baseUrl: String,
+        publicKey: String,
+        pushToken: String,
+        resultCallback: ConnectionInitResult
     )
 
     fun revokeConnections(
-            connectionsAndKeys: List<ConnectionAndKey>,
-            resultCallback: ConnectionsRevokeResult
+        connectionsAndKeys: List<ConnectionAndKey>,
+        resultCallback: ConnectionsRevokeResult
     )
 
     fun getAuthorizations(
-            connectionsAndKeys: List<ConnectionAndKey>,
-            resultCallback: FetchAuthorizationsResult
+        connectionsAndKeys: List<ConnectionAndKey>,
+        resultCallback: FetchAuthorizationsResult
     )
 
     fun createAuthorizationsPollingService(): PollingServiceAbs<FetchAuthorizationsContract>
 
     fun getAuthorization(
-            connectionAndKey: ConnectionAndKey,
-            authorizationId: String,
-            resultCallback: FetchAuthorizationResult
+        connectionAndKey: ConnectionAndKey,
+        authorizationId: String,
+        resultCallback: FetchAuthorizationResult
     )
 
     fun createSingleAuthorizationPollingService(): SingleAuthorizationPollingService
 
     fun confirmAuthorization(
-            connectionAndKey: ConnectionAndKey,
-            authorizationId: String,
-            authorizationCode: String?,
-            resultCallback: ConfirmAuthorizationResult
+        connectionAndKey: ConnectionAndKey,
+        authorizationId: String,
+        authorizationCode: String?,
+        resultCallback: ConfirmAuthorizationResult
     )
 
     fun denyAuthorization(
-            connectionAndKey: ConnectionAndKey,
-            authorizationId: String,
-            authorizationCode: String?,
-            resultCallback: ConfirmAuthorizationResult
+        connectionAndKey: ConnectionAndKey,
+        authorizationId: String,
+        authorizationCode: String?,
+        resultCallback: ConfirmAuthorizationResult
     )
 }

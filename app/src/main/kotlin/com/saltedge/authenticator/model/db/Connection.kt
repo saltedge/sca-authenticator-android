@@ -48,4 +48,6 @@ open class Connection : RealmObject(), ConnectionAbs {
     override var accessToken: String = ""
     @Keep @Required
     override var status: String = ""
+    @Keep
+    override var supportEmail: String? = null
 }

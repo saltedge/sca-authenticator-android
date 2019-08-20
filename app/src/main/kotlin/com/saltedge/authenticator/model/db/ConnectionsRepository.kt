@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.model.db
 
 import com.saltedge.authenticator.app.*
+import com.saltedge.authenticator.model.realm.RealmManager
 import com.saltedge.authenticator.sdk.model.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.Token
@@ -120,7 +121,7 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
         RealmManager.getDefaultInstance().use {
             it.executeTransaction { realmDb ->
                 realmDb.where(Connection::class.java).equalTo(KEY_GUID, connectionGuid)
-                        .findAll().deleteAllFromRealm()
+                    .findAll().deleteAllFromRealm()
             }
         }
         return true
@@ -137,12 +138,12 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
         RealmManager.getDefaultInstance().use {
             it.executeTransaction { realmDb ->
                 realmDb.where(Connection::class.java)
-                        .`in`(KEY_ACCESS_TOKEN, accessTokens.toTypedArray())
-                        .findAll()
-                        .forEach { model ->
-                            model.status = ConnectionStatus.INACTIVE.toString()
-                            model.accessToken = ""
-                        }
+                    .`in`(KEY_ACCESS_TOKEN, accessTokens.toTypedArray())
+                    .findAll()
+                    .forEach { model ->
+                        model.status = ConnectionStatus.INACTIVE.toString()
+                        model.accessToken = ""
+                    }
             }
         }
     }
@@ -153,7 +154,8 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
      * @param connection - Connection model
      * @return boolean, true if connection exists
      */
-    override fun connectionExists(connection: Connection): Boolean = connectionExists(connection.guid)
+    override fun connectionExists(connection: Connection): Boolean =
+        connectionExists(connection.guid)
 
     /**
      * Check if connection with specific guid exist in db
@@ -162,7 +164,8 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
      * @return boolean, true if connection exist
      * @see getByGuid
      */
-    override fun connectionExists(connectionGuid: GUID?): Boolean = getByGuid(connectionGuid) != null
+    override fun connectionExists(connectionGuid: GUID?): Boolean =
+        getByGuid(connectionGuid) != null
 
     /**
      * Get Connection by Guid
@@ -173,7 +176,10 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
     override fun getByGuid(connectionGuid: GUID?): Connection? {
         return RealmManager.getDefaultInstance().use { realmDb ->
             if (connectionGuid.isNullOrEmpty()) null else {
-                realmDb.where(Connection::class.java).equalTo(KEY_GUID, connectionGuid).findFirst()?.let {
+                realmDb.where(Connection::class.java).equalTo(
+                    KEY_GUID,
+                    connectionGuid
+                ).findFirst()?.let {
                     realmDb.copyFromRealm(it)
                 }
             }
@@ -204,7 +210,9 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
         connection.updatedAt = DateTime.now().withZone(DateTimeZone.UTC).millis
         var result: Connection? = null
         RealmManager.getDefaultInstance().use {
-            it.executeTransaction { realmDb -> result = realmDb.copyFromRealm(realmDb.copyToRealmOrUpdate(connection)) }
+            it.executeTransaction { realmDb ->
+                result = realmDb.copyFromRealm(realmDb.copyToRealmOrUpdate(connection))
+            }
         }
         return result
     }
@@ -244,8 +252,8 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
      */
     private fun Realm.createActiveConnectionsQuery(): RealmQuery<Connection> {
         return this.where(Connection::class.java)
-                .equalTo(KEY_STATUS, ConnectionStatus.ACTIVE.toString())
-                .notEqualTo(KEY_ACCESS_TOKEN, "")
-                .sort(KEY_CREATED_AT)
+            .equalTo(KEY_STATUS, ConnectionStatus.ACTIVE.toString())
+            .notEqualTo(KEY_ACCESS_TOKEN, "")
+            .sort(KEY_CREATED_AT)
     }
 }

@@ -72,9 +72,24 @@ class ConnectionsRevokeConnectorTest {
 
         verify { mockCall.enqueue(connector) }
 
-        connector.onResponse(mockCall, Response.success(RevokeAccessTokenResponseData(RevokeAccessTokenResultData(success = true, accessToken = "accessToken"))))
+        connector.onResponse(
+            mockCall,
+            Response.success(
+                RevokeAccessTokenResponseData(
+                    RevokeAccessTokenResultData(
+                        success = true,
+                        accessToken = "accessToken"
+                    )
+                )
+            )
+        )
 
-        verify { mockCallback.onConnectionsRevokeResult(revokedTokens = listOf("accessToken"), apiError = null) }
+        verify {
+            mockCallback.onConnectionsRevokeResult(
+                revokedTokens = listOf("accessToken"),
+                apiError = null
+            )
+        }
         confirmVerified(mockCallback)
     }
 
@@ -86,12 +101,20 @@ class ConnectionsRevokeConnectorTest {
 
         verify { mockCall.enqueue(connector) }
 
-        connector.onResponse(mockCall, Response.error(404, ResponseBody.create(null, get404Response())))
+        connector.onResponse(
+            mockCall,
+            Response.error(404, ResponseBody.create(null, get404Response()))
+        )
 
         verify {
             mockCallback.onConnectionsRevokeResult(
-                    revokedTokens = emptyList(),
-                    apiError = ApiErrorData(errorMessage = "Resource not found", errorClassName="NotFound", accessToken = "accessToken"))
+                revokedTokens = emptyList(),
+                apiError = ApiErrorData(
+                    errorMessage = "Resource not found",
+                    errorClassName = "NotFound",
+                    accessToken = "accessToken"
+                )
+            )
         }
         confirmVerified(mockCallback)
     }
@@ -104,8 +127,13 @@ class ConnectionsRevokeConnectorTest {
 
         verify {
             mockCallback.onConnectionsRevokeResult(
-                    revokedTokens = emptyList(),
-                    apiError = ApiErrorData(errorMessage = "Request Error (200)", errorClassName = ERROR_CLASS_API_RESPONSE, accessToken = "accessToken"))
+                revokedTokens = emptyList(),
+                apiError = ApiErrorData(
+                    errorMessage = "Request Error (200)",
+                    errorClassName = ERROR_CLASS_API_RESPONSE,
+                    accessToken = "accessToken"
+                )
+            )
         }
         confirmVerified(mockCallback)
     }
@@ -114,12 +142,20 @@ class ConnectionsRevokeConnectorTest {
     @Throws(Exception::class)
     fun revokeTokensForTest_withUnknownError() {
         val connector = ConnectionsRevokeConnector(mockApi, mockCallback)
-        connector.onResponse(mockCall, Response.error(404, ResponseBody.create(null, "{\"message\":\"Unknown error\"}")))
+        connector.onResponse(
+            mockCall,
+            Response.error(404, ResponseBody.create(null, "{\"message\":\"Unknown error\"}"))
+        )
 
         verify {
             mockCallback.onConnectionsRevokeResult(
-                    revokedTokens = emptyList(),
-                    apiError = ApiErrorData(errorMessage = "Request Error (404)", errorClassName = ERROR_CLASS_API_RESPONSE, accessToken = "accessToken"))
+                revokedTokens = emptyList(),
+                apiError = ApiErrorData(
+                    errorMessage = "Request Error (404)",
+                    errorClassName = ERROR_CLASS_API_RESPONSE,
+                    accessToken = "accessToken"
+                )
+            )
         }
         confirmVerified(mockCallback)
     }
@@ -130,15 +166,29 @@ class ConnectionsRevokeConnectorTest {
         val connector = ConnectionsRevokeConnector(mockApi, mockCallback)
         connector.onFailure(mockCall, ConnectException())
 
-        verify { mockCallback.onConnectionsRevokeResult(revokedTokens = emptyList(), apiError = ApiErrorData(errorClassName = ERROR_CLASS_HOST_UNREACHABLE, accessToken = "accessToken")) }
+        verify {
+            mockCallback.onConnectionsRevokeResult(
+                revokedTokens = emptyList(),
+                apiError = ApiErrorData(
+                    errorClassName = ERROR_CLASS_HOST_UNREACHABLE,
+                    accessToken = "accessToken"
+                )
+            )
+        }
         confirmVerified(mockCallback)
     }
 
     private var privateKey: PrivateKey = KeyStoreManager.createOrReplaceRsaKeyPair("test")!!.private
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
     private val mockCallback: ConnectionsRevokeResult = mockkClass(ConnectionsRevokeResult::class)
-    private val mockCall: Call<RevokeAccessTokenResponseData> = mockkClass(Call::class) as Call<RevokeAccessTokenResponseData>
-    private val requestConnection: ConnectionAbs = TestConnection(id = "333", guid = "test", connectUrl = "https://localhost", accessToken = "accessToken")
+    private val mockCall: Call<RevokeAccessTokenResponseData> =
+        mockkClass(Call::class) as Call<RevokeAccessTokenResponseData>
+    private val requestConnection: ConnectionAbs = TestConnection(
+        id = "333",
+        guid = "test",
+        connectUrl = "https://localhost",
+        accessToken = "accessToken"
+    )
     private val requestUrl = "https://localhost/api/authenticator/v1/connections"
 
     @Before
@@ -146,13 +196,15 @@ class ConnectionsRevokeConnectorTest {
     fun setUp() {
         every {
             mockApi.deleteAccessToken(
-                    requestUrl = requestUrl,
-                    headersMap = any()
+                requestUrl = requestUrl,
+                headersMap = any()
             )
         } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
-        every { mockCall.request() } returns Request.Builder().url(requestUrl).addHeader(HEADER_KEY_ACCESS_TOKEN, "accessToken").build()
+        every { mockCall.request() } returns Request.Builder().url(requestUrl).addHeader(
+            HEADER_KEY_ACCESS_TOKEN,
+            "accessToken"
+        ).build()
         every { mockCallback.onConnectionsRevokeResult(any(), any()) } returns Unit
     }
-
 }

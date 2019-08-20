@@ -39,8 +39,8 @@ import retrofit2.Call
  * @param resultCallback - instance of ConnectionInitResult for returning query result
  */
 internal class ConnectionInitConnector(
-        private val apiInterface: ApiInterface,
-        var resultCallback: ConnectionInitResult?
+    private val apiInterface: ApiInterface,
+    var resultCallback: ConnectionInitResult?
 ) : ApiResponseInterceptor<CreateConnectionResponseData>() {
 
     /**
@@ -52,9 +52,10 @@ internal class ConnectionInitConnector(
      * @param pushToken - Firebase Cloud Messaging token of current app
      */
     fun postConnectionData(baseUrl: String, publicKey: String, pushToken: String) {
-        val url = createRequestUrl(baseUrl, API_CONNECTIONS)
+        val url = createRequestUrl(baseUrl = baseUrl, routePath = API_CONNECTIONS)
         val requestData = CreateConnectionRequestData(
-                data = CreateConnectionData(publicKey = publicKey, pushToken = pushToken))
+            data = CreateConnectionData(publicKey = publicKey, pushToken = pushToken)
+        )
         apiInterface.postNewConnectionData(url, requestData).enqueue(this)
     }
 
@@ -66,7 +67,10 @@ internal class ConnectionInitConnector(
      * @param call - retrofit call
      * @param response - CreateConnectionResponse model
      */
-    override fun onSuccessResponse(call: Call<CreateConnectionResponseData>, response: CreateConnectionResponseData) {
+    override fun onSuccessResponse(
+        call: Call<CreateConnectionResponseData>,
+        response: CreateConnectionResponseData
+    ) {
         val data = response.data
         if (data == null) {
             onFailureResponse(call, createInvalidResponseError())

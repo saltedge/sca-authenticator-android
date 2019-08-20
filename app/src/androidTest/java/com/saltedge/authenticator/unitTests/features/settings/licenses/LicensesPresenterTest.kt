@@ -46,7 +46,9 @@ class LicensesPresenterTest {
     fun getListItemsTest() {
         val presenter = createPresenter(viewContract = mockView)
 
-        assertThat(presenter.getListItems(), equalTo(listOf(
+        assertThat(
+            presenter.getListItems(), equalTo(
+            listOf(
                 "Realm",
                 "Dagger",
                 "Android Compat Support Library",
@@ -64,7 +66,9 @@ class LicensesPresenterTest {
                 "findbugs/jsr305",
                 "ktlint",
                 "jlleitschuh/ktlint-gradle"
-        )))
+            )
+        )
+        )
     }
 
     @Test
@@ -90,19 +94,46 @@ class LicensesPresenterTest {
         val inOrder = inOrder(mockView)
         inOrder.verify(mockView).openLink(url = apacheLicense, title = "Realm")
         inOrder.verify(mockView).openLink(url = apacheLicense, title = "Dagger")
-        inOrder.verify(mockView).openLink(url = apacheLicense, title = "Android Compat Support Library")
-        inOrder.verify(mockView).openLink(url = apacheLicense, title = "Android Constraint Layout Library")
-        inOrder.verify(mockView).openLink(url = apacheLicense, title = "Android Material Components")
+        inOrder.verify(mockView).openLink(
+            url = apacheLicense,
+            title = "Android Compat Support Library"
+        )
+        inOrder.verify(mockView).openLink(
+            url = apacheLicense,
+            title = "Android Constraint Layout Library"
+        )
+        inOrder.verify(mockView).openLink(
+            url = apacheLicense,
+            title = "Android Material Components"
+        )
         inOrder.verify(mockView).openLink(url = apacheLicense, title = "Square/Retrofit2")
         inOrder.verify(mockView).openLink(url = apacheLicense, title = "Square/Okhttp3")
         inOrder.verify(mockView).openLink(url = apacheLicense, title = "JodaTime")
-        inOrder.verify(mockView).openLink(url = "https://raw.githubusercontent.com/bumptech/glide/master/LICENSE", title = "Bumptech/Glide")
-        inOrder.verify(mockView).openLink(url = "https://junit.org/junit4/license.html", title = "JUnit")
-        inOrder.verify(mockView).openLink(url = "https://www.jacoco.org/jacoco/trunk/doc/license.html", title = "Jacoco")
-        inOrder.verify(mockView).openLink(url = "https://raw.githubusercontent.com/hamcrest/JavaHamcrest/master/LICENSE.txt", title = "Java Hamcrest")
-        inOrder.verify(mockView).openLink(url = "https://raw.githubusercontent.com/mockito/mockito/release/2.x/LICENSE", title = "Mockito")
+        inOrder.verify(mockView).openLink(
+            url = "https://raw.githubusercontent.com/bumptech/glide/master/LICENSE",
+            title = "Bumptech/Glide"
+        )
+        inOrder.verify(mockView).openLink(
+            url = "https://junit.org/junit4/license.html",
+            title = "JUnit"
+        )
+        inOrder.verify(mockView).openLink(
+            url = "https://www.jacoco.org/jacoco/trunk/doc/license.html",
+            title = "Jacoco"
+        )
+        inOrder.verify(mockView).openLink(
+            url = "https://raw.githubusercontent.com/hamcrest/JavaHamcrest/master/LICENSE.txt",
+            title = "Java Hamcrest"
+        )
+        inOrder.verify(mockView).openLink(
+            url = "https://raw.githubusercontent.com/mockito/mockito/release/2.x/LICENSE",
+            title = "Mockito"
+        )
         inOrder.verify(mockView).openLink(url = apacheLicense, title = "MockK")
-        inOrder.verify(mockView).openLink(url = "https://raw.githubusercontent.com/findbugsproject/findbugs/master/findbugs/licenses/LICENSE-jsr305.txt", title = "findbugs/jsr305")
+        inOrder.verify(mockView).openLink(
+            url = "https://raw.githubusercontent.com/findbugsproject/findbugs/master/findbugs/licenses/LICENSE-jsr305.txt",
+            title = "findbugs/jsr305"
+        )
     }
 
     @Test

@@ -20,12 +20,12 @@
  */
 package com.saltedge.authenticator.sdk.constants
 
-//Static links
+// Static links
 const val DEFAULT_HOST = "https://www.saltedge.com"
 const val TERMS_LINK = "https://www.saltedge.com/pages/authenticator_terms"
-const val SUPPORT_EMAIL_LINK = "mailto:authenticator@saltedge.com"
+const val DEFAULT_SUPPORT_EMAIL_LINK = "authenticator@saltedge.com"
 
-//API endpoints
+// API endpoints
 const val API_VERSION = "1"
 private const val API_VERSION_NAMESPACE = "api/authenticator/v$API_VERSION"
 const val API_CONNECTIONS = "$API_VERSION_NAMESPACE/connections"
@@ -35,7 +35,7 @@ const val DEFAULT_RETURN_URL = "authenticator://oauth/redirect"
 const val DEFAULT_PLATFORM_NAME = "android"
 const val DEFAULT_EXPIRATION_MINUTES = 5
 
-//Model fields
+// Model fields
 const val KEY_DATA = "data"
 const val KEY_PUBLIC_KEY = "public_key"
 const val KEY_RETURN_URL = "return_url"
@@ -66,15 +66,16 @@ const val KEY_PROVIDER = "provider"
 const val KEY_NAME = "name"
 const val KEY_SUCCESS = "success"
 const val KEY_VERSION = "version"
+const val KEY_SUPPORT_EMAIL = "support_email"
 
-//Error classes
+// Error classes
 const val ERROR_CLASS_AUTHENTICATION_RESPONSE = "AuthenticationError"
 const val ERROR_CLASS_API_RESPONSE = "ApiResponseError"
 const val ERROR_CLASS_HOST_UNREACHABLE = "HostUnreachable"
 const val ERROR_CLASS_SSL_HANDSHAKE = "SSLHandshakeException"
 const val ERROR_CLASS_CONNECTION_NOT_FOUND = "ConnectionNotFound"
 
-//REQUEST METHODS
+// REQUEST METHODS
 const val REQUEST_METHOD_GET = "GET"
 const val REQUEST_METHOD_POST = "POST"
 const val REQUEST_METHOD_PUT = "PUT"

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
- <!--
+<?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2019 Salt Edge Inc.
@@ -19,8 +18,7 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<com.saltedge.authenticator.widget.CustomWebView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.saltedge.authenticator.widget.CustomWebView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/customWebView"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />

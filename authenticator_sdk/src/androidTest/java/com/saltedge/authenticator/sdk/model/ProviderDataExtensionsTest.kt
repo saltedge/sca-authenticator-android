@@ -22,9 +22,6 @@ package com.saltedge.authenticator.sdk.model
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.saltedge.authenticator.sdk.constants.API_VERSION
-import com.saltedge.authenticator.sdk.testTools.toJsonString
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -35,7 +32,14 @@ class ProviderDataExtensionsTest {
     @Test
     @Throws(Exception::class)
     fun isValidTest() {
-        val model = ProviderData(code = "", name = "", connectUrl = "", logoUrl = "", version = "")
+        val model = ProviderData(
+            code = "",
+            name = "",
+            connectUrl = "",
+            logoUrl = "",
+            version = "",
+            supportEmail = ""
+        )
 
         Assert.assertFalse(model.isValid())
 
@@ -43,6 +47,7 @@ class ProviderDataExtensionsTest {
         model.name = ""
         model.connectUrl = ""
         model.logoUrl = ""
+        model.supportEmail = ""
 
         Assert.assertFalse(model.isValid())
 
@@ -50,6 +55,7 @@ class ProviderDataExtensionsTest {
         model.name = "Demobank"
         model.connectUrl = ""
         model.logoUrl = ""
+        model.supportEmail = ""
 
         Assert.assertFalse(model.isValid())
 
@@ -57,6 +63,7 @@ class ProviderDataExtensionsTest {
         model.name = "Demobank"
         model.connectUrl = ""
         model.logoUrl = ""
+        model.supportEmail = ""
 
         Assert.assertFalse(model.isValid())
 
@@ -65,6 +72,7 @@ class ProviderDataExtensionsTest {
         model.connectUrl = "requestUrl"
         model.logoUrl = ""
         model.version = ""
+        model.supportEmail = ""
 
         Assert.assertFalse(model.isValid())
 
@@ -80,6 +88,7 @@ class ProviderDataExtensionsTest {
         model.connectUrl = "requestUrl"
         model.logoUrl = "requestUrl"
         model.version = API_VERSION
+        model.supportEmail = ""
 
         Assert.assertTrue(model.isValid())
     }

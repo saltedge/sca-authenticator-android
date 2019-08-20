@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.model.db
+package com.saltedge.authenticator.model.realm
 
 import io.realm.RealmMigration
 import io.realm.RealmSchema
@@ -31,7 +31,10 @@ fun runMigrations(): RealmMigration {
         val realmSchema: RealmSchema = realm.schema
         for (i in (oldVersion + 1)..newVersion) {
             when (i) {
-                // 2L -> // Here to add further migrations
+                2L -> realmSchema.runMigration2()
+                // Here to add future migrations
+                // `XX -> realmSchema.runMigrationXX()`
+                // Where `XX` number of schema version
             }
         }
     }

@@ -29,11 +29,21 @@ import com.saltedge.authenticator.sdk.model.GUID
 interface ConnectionsListContract {
     interface View : BaseViewContract {
         fun showApiErrorView(message: String)
-        fun showSupportView()
+        fun showSupportView(supportEmail: String?)
         fun showConnectView(connectionGuid: GUID)
-        fun showConnectionNameEditView(connectionGuid: GUID, connectionName: String, requestCode: Int)
+        fun showConnectionNameEditView(
+            connectionGuid: GUID,
+            connectionName: String,
+            requestCode: Int
+        )
+
         fun showDeleteConnectionView(connectionGuid: GUID? = null, requestCode: Int)
-        fun showOptionsView(connectionGuid: GUID, options: Array<ConnectionOptions>, requestCode: Int)
+        fun showOptionsView(
+            connectionGuid: GUID,
+            options: Array<ConnectionOptions>,
+            requestCode: Int
+        )
+
         fun showQrScanView()
         fun updateListItemName(connectionGuid: GUID, name: String)
     }

@@ -36,7 +36,14 @@ class JsonToolsTest {
     fun toJsonStringTest() {
         assertEquals("\"test\"", "test".toJsonString())
 
-        val data = ProviderData(connectUrl = "", logoUrl = "", name = "", code = "", version = "")
+        val data = ProviderData(
+            connectUrl = "",
+            logoUrl = "",
+            name = "",
+            code = "",
+            version = "",
+            supportEmail = "example@example.com"
+        )
 
         assertTrue(data.toJsonString().isNotEmpty())
     }

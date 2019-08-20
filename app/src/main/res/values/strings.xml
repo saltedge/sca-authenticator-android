@@ -39,7 +39,7 @@
   <string name="actions_reconnect">Reconnect</string>
   <string name="actions_refresh">Refresh</string>
   <string name="actions_rename_connection">Rename Connection</string>
-  <string name="actions_report_problem">Report a Problem</string>
+  <string name="actions_contact_support">Contact Support</string>
   <string name="actions_search">Search</string>
   <string name="actions_skip">Skip</string>
   <string name="actions_try_again">Try Again</string>
@@ -113,7 +113,7 @@
   <string name="authorizations_finished_successfully">Finished successfully</string>
 
   <string name="settings_feature_title">Settings</string>
-  <string name="settings_contact_support">Contact Support</string>
+  <string name="settings_report_bug">Report a bug</string>
   <string name="settings_language">Language</string>
   <string name="settings_notifications">Notifications</string>
   <string name="settings_passcode">Change Passcode</string>

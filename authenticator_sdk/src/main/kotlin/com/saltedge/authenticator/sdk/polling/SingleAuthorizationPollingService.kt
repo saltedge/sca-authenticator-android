@@ -38,8 +38,8 @@ open class SingleAuthorizationPollingService : PollingServiceAbs<FetchAuthorizat
     fun start(authorizationId: String) {
         this.authorizationId = authorizationId
         connector = AuthorizationConnector(
-                apiInterface = RestClient.apiInterface,
-                resultCallback = contract
+            apiInterface = RestClient.apiInterface,
+            resultCallback = contract
         )
         super.start()
     }
@@ -53,8 +53,8 @@ open class SingleAuthorizationPollingService : PollingServiceAbs<FetchAuthorizat
         try {
             contract?.getConnectionData()?.let {
                 connector?.getAuthorization(
-                        connectionAndKey = it,
-                        authorizationId = authorizationId
+                    connectionAndKey = it,
+                    authorizationId = authorizationId
                 )
             }
         } catch (e: Exception) {

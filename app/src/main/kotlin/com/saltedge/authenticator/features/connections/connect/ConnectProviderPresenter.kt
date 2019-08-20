@@ -45,7 +45,7 @@ class ConnectProviderPresenter @Inject constructor(
 ) : ConnectProviderContract.Presenter, ConnectionInitResult, FetchProviderDataResult {
 
     override val reportProblemActionText: Int?
-        get() = if (viewMode.isCompleteWithSuccess) null else R.string.actions_report_problem
+        get() = if (viewMode.isCompleteWithSuccess) null else R.string.actions_contact_support
     private var sessionFailMessage: String? = null
     private var connectConfigurationLink: String = ""
     private var connectUrlData: AuthenticateConnectionData? = null

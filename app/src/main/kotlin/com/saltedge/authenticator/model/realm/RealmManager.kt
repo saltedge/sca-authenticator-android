@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.model.db
+package com.saltedge.authenticator.model.realm
 
 import android.content.Context
 import com.saltedge.authenticator.model.repository.PreferenceRepository
@@ -27,7 +27,7 @@ import com.saltedge.authenticator.tool.secure.createRandomBytesString
 import io.realm.Realm
 import io.realm.RealmConfiguration
 
-const val DB_SCHEMA_VERSION = 1L
+const val DB_SCHEMA_VERSION = 2L
 
 object RealmManager {
 
@@ -41,8 +41,8 @@ object RealmManager {
     fun initRealm(context: Context) {
         Realm.init(context)
         val builder = RealmConfiguration.Builder()
-                .schemaVersion(DB_SCHEMA_VERSION)
-                .name(DB_NAME)
+            .schemaVersion(DB_SCHEMA_VERSION)
+            .name(DB_NAME)
         builder.migration(runMigrations())
         if (AppTools.isTestsSuite(context)) builder.inMemory()
         else builder.encryptionKey(getOrCreateDatabaseKey())
@@ -62,7 +62,8 @@ object RealmManager {
      * @return database key
      */
     private fun getOrCreateDatabaseKey(): ByteArray {
-        if (PreferenceRepository.dbKey.isEmpty()) PreferenceRepository.dbKey = createRandomBytesString()
+        if (PreferenceRepository.dbKey.isEmpty()) PreferenceRepository.dbKey =
+            createRandomBytesString()
         return PreferenceRepository.dbKey.toByteArray()
     }
 

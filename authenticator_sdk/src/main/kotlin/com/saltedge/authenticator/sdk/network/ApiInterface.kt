@@ -37,27 +37,32 @@ interface ApiInterface {
 
     @POST
     fun postNewConnectionData(
-            @Url requestUrl: String,
-            @Body body: CreateConnectionRequestData): Call<CreateConnectionResponseData>
+        @Url requestUrl: String,
+        @Body body: CreateConnectionRequestData
+    ): Call<CreateConnectionResponseData>
 
     @DELETE
     fun deleteAccessToken(
-            @Url requestUrl: String,
-            @HeaderMap headersMap: Map<String, String>): Call<RevokeAccessTokenResponseData>
+        @Url requestUrl: String,
+        @HeaderMap headersMap: Map<String, String>
+    ): Call<RevokeAccessTokenResponseData>
 
     @GET
     fun getAuthorizations(
-            @Url requestUrl: String,
-            @HeaderMap headersMap: Map<String, String>): Call<AuthorizationsResponseData>
+        @Url requestUrl: String,
+        @HeaderMap headersMap: Map<String, String>
+    ): Call<AuthorizationsResponseData>
 
     @GET
     fun getAuthorization(
-            @Url requestUrl: String,
-            @HeaderMap headersMap: Map<String, String>): Call<AuthorizationShowResponseData>
+        @Url requestUrl: String,
+        @HeaderMap headersMap: Map<String, String>
+    ): Call<AuthorizationShowResponseData>
 
     @PUT
     fun updateAuthorization(
-            @Url requestUrl: String,
-            @HeaderMap headersMap: Map<String, String>,
-            @Body requestBody: ConfirmDenyRequestData): Call<ConfirmDenyResponseData>
+        @Url requestUrl: String,
+        @HeaderMap headersMap: Map<String, String>,
+        @Body requestBody: ConfirmDenyRequestData
+    ): Call<ConfirmDenyResponseData>
 }

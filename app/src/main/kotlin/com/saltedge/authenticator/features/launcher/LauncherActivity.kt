@@ -28,7 +28,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.features.launcher.di.LauncherModule
-import com.saltedge.authenticator.model.db.RealmManager
+import com.saltedge.authenticator.model.realm.RealmManager
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
 import com.saltedge.authenticator.tool.*
@@ -66,12 +66,12 @@ class LauncherActivity : AppCompatActivity() {
         presenter.setupApplication()
 
         this.startActivity(Intent(this, presenter.getNextActivityClass())
-                .putExtra(KEY_CONNECTION_ID, intent.getStringExtra(KEY_CONNECTION_ID))
-                .putExtra(KEY_AUTHORIZATION_ID, intent.getStringExtra(KEY_AUTHORIZATION_ID))
-                .putExtra(KEY_DEEP_LINK, intent.dataString)
-                .apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                })
+            .putExtra(KEY_CONNECTION_ID, intent.getStringExtra(KEY_CONNECTION_ID))
+            .putExtra(KEY_AUTHORIZATION_ID, intent.getStringExtra(KEY_AUTHORIZATION_ID))
+            .putExtra(KEY_DEEP_LINK, intent.dataString)
+            .apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            })
     }
 
     private fun animateComponents() {

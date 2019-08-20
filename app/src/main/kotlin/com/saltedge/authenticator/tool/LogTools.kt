@@ -50,7 +50,7 @@ fun Throwable.log(message: String = "") {
  * @return crashlytics
  */
 fun createCrashlyticsKit(): Crashlytics =
-        Crashlytics.Builder().core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()).build()
+    Crashlytics.Builder().core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()).build()
 
 /**
  * Show log/logs with given message and tag

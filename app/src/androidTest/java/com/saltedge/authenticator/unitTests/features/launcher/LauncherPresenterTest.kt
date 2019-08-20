@@ -71,8 +71,9 @@ class LauncherPresenterTest {
 
     private fun createPresenter(): LauncherPresenter {
         return LauncherPresenter(
-                preferenceRepository = mockPreferenceRepository,
-                passcodeTools = mockPasscodeTools,
-                biometricTools = mockBiometricTools)
+            preferenceRepository = mockPreferenceRepository,
+            passcodeTools = mockPasscodeTools,
+            biometricTools = mockBiometricTools
+        )
     }
 }

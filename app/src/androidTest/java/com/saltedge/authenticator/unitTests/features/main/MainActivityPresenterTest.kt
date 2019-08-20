@@ -44,18 +44,26 @@ class MainActivityPresenterTest {
     @Test
     @Throws(Exception::class)
     fun getNavigationIconResourceIdTest() {
-        val presenter = MainActivityPresenter(viewContract = mockView, connectionsRepository = mockConnectionsRepository)
+        val presenter = MainActivityPresenter(
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository
+        )
 
         Assert.assertNotNull(presenter.viewContract)
-        assertThat(presenter.getNavigationIcon(isTopNavigationLevel = false),
-                equalTo(R.drawable.ic_arrow_back_white_24dp))
+        assertThat(
+            presenter.getNavigationIcon(isTopNavigationLevel = false),
+            equalTo(R.drawable.ic_arrow_back_white_24dp)
+        )
         Assert.assertNull(presenter.getNavigationIcon(isTopNavigationLevel = true))
     }
 
     @Test
     @Throws(Exception::class)
     fun launchInitialFragmentTest_normalMode() {
-        val presenter = MainActivityPresenter(viewContract = mockView, connectionsRepository = mockConnectionsRepository)
+        val presenter = MainActivityPresenter(
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository
+        )
 
         Mockito.doReturn(false).`when`(mockConnectionsRepository).hasActiveConnections()
         presenter.launchInitialFragment(Intent())
@@ -72,16 +80,31 @@ class MainActivityPresenterTest {
     @Test
     @Throws(Exception::class)
     fun launchInitialFragmentTest_quickConfirmMode() {
-        val presenter = MainActivityPresenter(viewContract = mockView, connectionsRepository = mockConnectionsRepository)
-        presenter.launchInitialFragment(Intent().putExtra(KEY_CONNECTION_ID, "connectionId1").putExtra(KEY_AUTHORIZATION_ID, "authorizationId1"))
+        val presenter = MainActivityPresenter(
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository
+        )
+        presenter.launchInitialFragment(
+            Intent().putExtra(
+                KEY_CONNECTION_ID,
+                "connectionId1"
+            ).putExtra(KEY_AUTHORIZATION_ID, "authorizationId1")
+        )
 
-        Mockito.verify(mockView).showAuthorizationDetailsView("connectionId1", "authorizationId1", true)
+        Mockito.verify(mockView).showAuthorizationDetailsView(
+            "connectionId1",
+            "authorizationId1",
+            true
+        )
     }
 
     @Test
     @Throws(Exception::class)
     fun onNavigationItemSelectedTest() {
-        val presenter = MainActivityPresenter(viewContract = mockView, connectionsRepository = mockConnectionsRepository)
+        val presenter = MainActivityPresenter(
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository
+        )
 
         Assert.assertTrue(presenter.onNavigationItemSelected(R.id.menu_authorizations))
 
@@ -106,9 +129,16 @@ class MainActivityPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onActivityResultTest() {
-        val presenter = MainActivityPresenter(viewContract = mockView, connectionsRepository = mockConnectionsRepository)
+        val presenter = MainActivityPresenter(
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository
+        )
         val intent = Intent().putExtra(KEY_CONNECT_CONFIGURATION, "configuration_link")
-        presenter.onActivityResult(requestCode = QR_SCAN_REQUEST_CODE, resultCode = Activity.RESULT_OK, data = intent)
+        presenter.onActivityResult(
+            requestCode = QR_SCAN_REQUEST_CODE,
+            resultCode = Activity.RESULT_OK,
+            data = intent
+        )
 
         Mockito.verify(mockView).showConnectProvider(connectConfigurationLink = "configuration_link")
 
@@ -117,11 +147,19 @@ class MainActivityPresenterTest {
 
         Mockito.verifyNoMoreInteractions(mockView)
 
-        presenter.onActivityResult(requestCode = 0, resultCode = Activity.RESULT_CANCELED, data = intent)
+        presenter.onActivityResult(
+            requestCode = 0,
+            resultCode = Activity.RESULT_CANCELED,
+            data = intent
+        )
 
         Mockito.verifyNoMoreInteractions(mockView)
 
-        presenter.onActivityResult(requestCode = 0, resultCode = Activity.RESULT_CANCELED, data = null)
+        presenter.onActivityResult(
+            requestCode = 0,
+            resultCode = Activity.RESULT_CANCELED,
+            data = null
+        )
 
         Mockito.verifyNoMoreInteractions(mockView)
     }
@@ -129,7 +167,10 @@ class MainActivityPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onFragmentBackStackChangedTest() {
-        val presenter = MainActivityPresenter(viewContract = mockView, connectionsRepository = mockConnectionsRepository)
+        val presenter = MainActivityPresenter(
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository
+        )
         presenter.onFragmentBackStackChanged(stackIsClear = false, intent = Intent())
 
         Mockito.verify(mockView).updateNavigationViewsContent()
@@ -140,14 +181,24 @@ class MainActivityPresenterTest {
         Mockito.verify(mockView).updateNavigationViewsContent()
 
         Mockito.clearInvocations(mockView)
-        presenter.onFragmentBackStackChanged(stackIsClear = false,
-                intent = Intent().putExtra(KEY_CONNECTION_ID, "connectionId1").putExtra(KEY_AUTHORIZATION_ID, "authorizationId1"))
+        presenter.onFragmentBackStackChanged(
+            stackIsClear = false,
+            intent = Intent().putExtra(KEY_CONNECTION_ID, "connectionId1").putExtra(
+                KEY_AUTHORIZATION_ID,
+                "authorizationId1"
+            )
+        )
 
         Mockito.verify(mockView).updateNavigationViewsContent()
 
         Mockito.clearInvocations(mockView)
-        presenter.onFragmentBackStackChanged(stackIsClear = true,
-                intent = Intent().putExtra(KEY_CONNECTION_ID, "connectionId1").putExtra(KEY_AUTHORIZATION_ID, "authorizationId1"))
+        presenter.onFragmentBackStackChanged(
+            stackIsClear = true,
+            intent = Intent().putExtra(KEY_CONNECTION_ID, "connectionId1").putExtra(
+                KEY_AUTHORIZATION_ID,
+                "authorizationId1"
+            )
+        )
 
         Mockito.verify(mockView).closeView()
     }
@@ -155,7 +206,10 @@ class MainActivityPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onNavigationItemClickTest() {
-        val presenter = MainActivityPresenter(viewContract = mockView, connectionsRepository = mockConnectionsRepository)
+        val presenter = MainActivityPresenter(
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository
+        )
         presenter.onNavigationItemClick(stackIsClear = false)
 
         Mockito.verify(mockView).popBackStack()

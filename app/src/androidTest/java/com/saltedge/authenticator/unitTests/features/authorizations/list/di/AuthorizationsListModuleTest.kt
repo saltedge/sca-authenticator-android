@@ -41,14 +41,16 @@ class AuthorizationsListModuleTest {
     fun providePresenterTest() {
         val module = AuthorizationsListModule()
 
-        Assert.assertNotNull(module.providePresenter(
+        Assert.assertNotNull(
+            module.providePresenter(
                 appContext = TestTools.applicationContext,
                 connections = mockConnectionsRepository,
                 biometricTools = mockBiometricTools,
                 cryptoTools = mockCryptoTools,
                 keyStoreManager = mockKeyStoreManager,
                 apiManager = mockApiManager
-        ))
+            )
+        )
     }
 
     @Test

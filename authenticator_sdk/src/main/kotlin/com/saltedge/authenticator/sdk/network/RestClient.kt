@@ -36,10 +36,10 @@ internal object RestClient {
 
     init {
         apiInterface = Retrofit.Builder()
-                .baseUrl(DEFAULT_HOST)
-                .client(createOkHttpClient())
-                .addConverterFactory(GsonConverterFactory.create(defaultGson))
-                .build()
-                .create(ApiInterface::class.java)
+            .baseUrl(DEFAULT_HOST)
+            .client(createOkHttpClient())
+            .addConverterFactory(GsonConverterFactory.create(defaultGson))
+            .build()
+            .create(ApiInterface::class.java)
     }
 }

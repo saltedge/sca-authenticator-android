@@ -43,6 +43,7 @@ fun Connection.initWithProviderData(providerData: ProviderData): Connection {
     this.status = ConnectionStatus.INACTIVE.toString()
     this.createdAt = DateTime.now().withZone(DateTimeZone.UTC).millis
     this.updatedAt = this.createdAt
+    this.supportEmail = providerData.supportEmail
     return this
 }
 
@@ -75,8 +76,13 @@ fun Connection.getStatus(): ConnectionStatus {
  * @return ConnectionAndKey?
  */
 fun Connection.toConnectionAndKey(keyStoreManager: KeyStoreManagerAbs):
-        ConnectionAndKey? {
-    return getRelatedPrivateKey(keyStoreManager)?.let { ConnectionAndKey(this as ConnectionAbs, it) }
+    ConnectionAndKey? {
+    return getRelatedPrivateKey(keyStoreManager)?.let {
+        ConnectionAndKey(
+            this as ConnectionAbs,
+            it
+        )
+    }
 }
 
 /**

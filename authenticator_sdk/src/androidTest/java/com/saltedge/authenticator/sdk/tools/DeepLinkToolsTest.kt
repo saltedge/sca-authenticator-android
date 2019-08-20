@@ -18,6 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
+
 package com.saltedge.authenticator.sdk.tools
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -36,7 +37,9 @@ class DeepLinkToolsTest {
         Assert.assertNull("".extractConnectConfigurationLink())
         Assert.assertNull("test".extractConnectConfigurationLink())
         Assert.assertNull("https://google.com".extractConnectConfigurationLink())
-        assertThat("authenticator://saltedge.com/connect?configuration=https://localhost/configuration".extractConnectConfigurationLink(),
-                equalTo("https://localhost/configuration"))
+        assertThat(
+            "authenticator://saltedge.com/connect?configuration=https://localhost/configuration".extractConnectConfigurationLink(),
+            equalTo("https://localhost/configuration")
+        )
     }
 }

@@ -68,25 +68,29 @@ class AuthorizationConnectorTest {
     fun fetchAuthorizationTest_allSuccess() {
         val connector = AuthorizationConnector(mockApi, mockCallback)
         connector.getAuthorization(
-                connectionAndKey = ConnectionAndKey(requestConnection, privateKey),
-                authorizationId = requestAuthorizationId)
+            connectionAndKey = ConnectionAndKey(requestConnection, privateKey),
+            authorizationId = requestAuthorizationId
+        )
 
         verify { mockCall.enqueue(connector) }
 
-        connector.onResponse(mockCall, Response.success(
-                AuthorizationShowResponseData(
-                        EncryptedAuthorizationData(
-                                id = "444",
-                                connectionId = "333",
-                                algorithm = "AES-256-CBC",
-                                iv = "o3TDCc3rKYTx...RVH+aOFpS9NIg==\n",
-                                key = "BtV7EB3Erv8xEQ.../jeBRyFa75A6po5XlwWiEiuzQ==\n",
-                                data = "YlnrNOHvUIPem/O58rMzdsvkXidLvgGpdMalD9c1mlg=\n"
-                        )
+        connector.onResponse(
+            mockCall, Response.success(
+            AuthorizationShowResponseData(
+                EncryptedAuthorizationData(
+                    id = "444",
+                    connectionId = "333",
+                    algorithm = "AES-256-CBC",
+                    iv = "o3TDCc3rKYTx...RVH+aOFpS9NIg==\n",
+                    key = "BtV7EB3Erv8xEQ.../jeBRyFa75A6po5XlwWiEiuzQ==\n",
+                    data = "YlnrNOHvUIPem/O58rMzdsvkXidLvgGpdMalD9c1mlg=\n"
                 )
-        ))
+            )
+        )
+        )
 
-        verify { mockCallback.fetchAuthorizationResult(
+        verify {
+            mockCallback.fetchAuthorizationResult(
                 result = EncryptedAuthorizationData(
                     id = "444",
                     connectionId = "333",
@@ -95,7 +99,8 @@ class AuthorizationConnectorTest {
                     key = "BtV7EB3Erv8xEQ.../jeBRyFa75A6po5XlwWiEiuzQ==\n",
                     data = "YlnrNOHvUIPem/O58rMzdsvkXidLvgGpdMalD9c1mlg=\n"
                 ),
-                error = null)
+                error = null
+            )
         }
         confirmVerified(mockCallback)
     }
@@ -105,33 +110,50 @@ class AuthorizationConnectorTest {
     fun fetchAuthorizationTest_withError() {
         val connector = AuthorizationConnector(mockApi, mockCallback)
         connector.getAuthorization(
-                connectionAndKey = ConnectionAndKey(requestConnection, privateKey),
-                authorizationId = requestAuthorizationId)
+            connectionAndKey = ConnectionAndKey(requestConnection, privateKey),
+            authorizationId = requestAuthorizationId
+        )
 
         verify(exactly = 1) {
             mockApi.getAuthorization(
                 requestUrl = requestUrl,
-                headersMap = capturedHeaders.first())
+                headersMap = capturedHeaders.first()
+            )
         }
         verify { mockCall.enqueue(connector) }
         assertThat(capturedHeaders.first()[HEADER_KEY_ACCESS_TOKEN], equalTo("accessToken"))
 
-        connector.onResponse(mockCall, Response.error(404, ResponseBody.create(null, get404Response())))
+        connector.onResponse(
+            mockCall,
+            Response.error(404, ResponseBody.create(null, get404Response()))
+        )
 
-        verify { mockCallback.fetchAuthorizationResult(
+        verify {
+            mockCallback.fetchAuthorizationResult(
                 result = null,
-                error = ApiErrorData(errorMessage = "Resource not found", errorClassName="NotFound", accessToken = "accessToken"))
+                error = ApiErrorData(
+                    errorMessage = "Resource not found",
+                    errorClassName = "NotFound",
+                    accessToken = "accessToken"
+                )
+            )
         }
         confirmVerified(mockCallback)
     }
 
     private val requestUrl = "https://localhost/api/authenticator/v1/authorizations/authId"
     private var privateKey: PrivateKey = KeyStoreManager.createOrReplaceRsaKeyPair("test")!!.private
-    private val requestConnection: ConnectionAbs = TestConnection(id = "id", guid = "test", connectUrl = "https://localhost", accessToken = "accessToken")
+    private val requestConnection: ConnectionAbs = TestConnection(
+        id = "id",
+        guid = "test",
+        connectUrl = "https://localhost",
+        accessToken = "accessToken"
+    )
     private val requestAuthorizationId = "authId"
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
     private val mockCallback = mockkClass(FetchAuthorizationContract::class)
-    private val mockCall: Call<AuthorizationShowResponseData> = mockkClass(Call::class) as Call<AuthorizationShowResponseData>
+    private val mockCall: Call<AuthorizationShowResponseData> =
+        mockkClass(Call::class) as Call<AuthorizationShowResponseData>
     private var capturedHeaders: MutableList<Map<String, String>> = mutableListOf()
 
     @Before
@@ -142,7 +164,10 @@ class AuthorizationConnectorTest {
             mockApi.getAuthorization(requestUrl = requestUrl, headersMap = capture(capturedHeaders))
         } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
-        every { mockCall.request() } returns Request.Builder().url(requestUrl).addHeader(HEADER_KEY_ACCESS_TOKEN, "accessToken").build()
+        every { mockCall.request() } returns Request.Builder().url(requestUrl).addHeader(
+            HEADER_KEY_ACCESS_TOKEN,
+            "accessToken"
+        ).build()
         every { mockCallback.getConnectionData() } returns null
         every { mockCallback.fetchAuthorizationResult(any(), any()) } returns Unit
     }

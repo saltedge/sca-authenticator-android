@@ -31,7 +31,7 @@ class AuthorizationsListAdapter : AbstractListAdapter() {
     var clickListener: ListItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
-            AuthorizationItemHolder(parent, clickListener)
+        AuthorizationItemHolder(parent, clickListener)
 
     override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
         (holder as AuthorizationItemHolder).bind(item as AuthorizationViewModel)

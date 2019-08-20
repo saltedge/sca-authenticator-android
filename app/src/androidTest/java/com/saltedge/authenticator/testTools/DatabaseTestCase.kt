@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.testTools
 
 import androidx.test.platform.app.InstrumentationRegistry
-import com.saltedge.authenticator.model.db.RealmManager
+import com.saltedge.authenticator.model.realm.RealmManager
 import io.realm.Realm
 import org.junit.After
 import org.junit.Before

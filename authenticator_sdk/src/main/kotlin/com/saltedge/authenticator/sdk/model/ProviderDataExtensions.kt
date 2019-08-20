@@ -31,10 +31,10 @@ import com.saltedge.authenticator.sdk.constants.API_VERSION
  */
 fun ProviderData.isValid(): Boolean {
     return try {
-        name.isNotEmpty()
-                && code.isNotEmpty()
-                && connectUrl.isNotEmpty()
-                && version == API_VERSION
+        name.isNotEmpty() &&
+            code.isNotEmpty() &&
+            connectUrl.isNotEmpty() &&
+            version == API_VERSION
     } catch (e: Exception) {
         e.printStackTrace()
         false

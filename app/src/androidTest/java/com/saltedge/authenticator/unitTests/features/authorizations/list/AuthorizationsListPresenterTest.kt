@@ -94,7 +94,8 @@ class AuthorizationsListPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onTimerTickTest_Case1() {
-        val viewModels = listOf(viewModel1, viewModel2.copy(expiresAt = DateTime.now().minusMinutes(1)))
+        val viewModels =
+            listOf(viewModel1, viewModel2.copy(expiresAt = DateTime.now().minusMinutes(1)))
         val presenter = createPresenter(viewContract = null)
         presenter.viewModels = viewModels
         presenter.onTimerTick()
@@ -131,7 +132,10 @@ class AuthorizationsListPresenterTest {
     @Throws(Exception::class)
     fun onListItemClickTest_invalidParams() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.onFetchAuthorizationsResult(result = listOf(encryptedData1, encryptedData2), errors = emptyList())
+        presenter.onFetchAuthorizationsResult(
+            result = listOf(encryptedData1, encryptedData2),
+            errors = emptyList()
+        )
 
         val inOrder = inOrder(mockCryptoTools)
         inOrder.verify(mockCryptoTools).decryptAuthorizationData(encryptedData1, mockPrivateKey)
@@ -152,15 +156,22 @@ class AuthorizationsListPresenterTest {
     @Throws(Exception::class)
     fun onListItemClickTest_negativeActionView() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.onFetchAuthorizationsResult(result = listOf(encryptedData1, encryptedData2), errors = emptyList())
-        presenter.onListItemClick(itemIndex = 1, itemCode = "1", itemViewId = R.id.negativeActionView)
+        presenter.onFetchAuthorizationsResult(
+            result = listOf(encryptedData1, encryptedData2),
+            errors = emptyList()
+        )
+        presenter.onListItemClick(
+            itemIndex = 1,
+            itemCode = "1",
+            itemViewId = R.id.negativeActionView
+        )
 
         Mockito.verify(mockPollingService).stop()
         Mockito.verify(mockApiManager).denyAuthorization(
-                connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
-                authorizationId = viewModel1.authorizationId,
-                authorizationCode = viewModel1.authorizationCode,
-                resultCallback = presenter
+            connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
+            authorizationId = viewModel1.authorizationId,
+            authorizationCode = viewModel1.authorizationCode,
+            resultCallback = presenter
         )
         val viewModel = viewModel1.copy(isProcessing = true)
         Mockito.verify(mockView).updateItem(viewModel, 0)
@@ -171,9 +182,16 @@ class AuthorizationsListPresenterTest {
     fun onListItemClickTest_positiveActionView() {
         Mockito.doReturn(true).`when`(mockBiometricTools).isBiometricReady(TestTools.applicationContext)
         val presenter = createPresenter(viewContract = mockView)
-        presenter.onFetchAuthorizationsResult(result = listOf(encryptedData1, encryptedData2), errors = emptyList())
+        presenter.onFetchAuthorizationsResult(
+            result = listOf(encryptedData1, encryptedData2),
+            errors = emptyList()
+        )
         Mockito.clearInvocations(mockApiManager, mockPollingService)
-        presenter.onListItemClick(itemIndex = 1, itemCode = viewModel1.authorizationId, itemViewId = R.id.positiveActionView)
+        presenter.onListItemClick(
+            itemIndex = 1,
+            itemCode = viewModel1.authorizationId,
+            itemViewId = R.id.positiveActionView
+        )
 
         Mockito.verify(mockView).askUserBiometricConfirmation()
         Mockito.verifyNoMoreInteractions(mockApiManager, mockPollingService)
@@ -181,7 +199,11 @@ class AuthorizationsListPresenterTest {
         Mockito.doReturn(false).`when`(mockBiometricTools).isBiometricReady(TestTools.applicationContext)
 
         Mockito.clearInvocations(mockView, mockApiManager, mockPollingService)
-        presenter.onListItemClick(itemIndex = 1, itemCode = viewModel1.authorizationId, itemViewId = R.id.positiveActionView)
+        presenter.onListItemClick(
+            itemIndex = 1,
+            itemCode = viewModel1.authorizationId,
+            itemViewId = R.id.positiveActionView
+        )
 
         Mockito.verify(mockView).askUserPasscodeConfirmation()
     }
@@ -191,9 +213,15 @@ class AuthorizationsListPresenterTest {
     fun onListItemClickTest_positiveActionView_invalidParams() {
         Mockito.doReturn(true).`when`(mockBiometricTools).isBiometricReady(TestTools.applicationContext)
         val presenter = createPresenter(viewContract = null)
-        presenter.onFetchAuthorizationsResult(result = listOf(encryptedData1, encryptedData2), errors = emptyList())
+        presenter.onFetchAuthorizationsResult(
+            result = listOf(encryptedData1, encryptedData2),
+            errors = emptyList()
+        )
         Mockito.clearInvocations(mockApiManager, mockPollingService)
-        presenter.onListItemClick(itemCode = viewModel1.authorizationId, itemViewId = R.id.positiveActionView)
+        presenter.onListItemClick(
+            itemCode = viewModel1.authorizationId,
+            itemViewId = R.id.positiveActionView
+        )
 
         Mockito.verify(mockView, Mockito.never()).askUserBiometricConfirmation()
         Mockito.verifyNoMoreInteractions(mockApiManager, mockPollingService)
@@ -201,7 +229,11 @@ class AuthorizationsListPresenterTest {
         Mockito.doReturn(false).`when`(mockBiometricTools).isBiometricReady(TestTools.applicationContext)
 
         Mockito.clearInvocations(mockView, mockApiManager, mockPollingService)
-        presenter.onListItemClick(itemIndex = 1, itemCode = viewModel1.authorizationId, itemViewId = R.id.positiveActionView)
+        presenter.onListItemClick(
+            itemIndex = 1,
+            itemCode = viewModel1.authorizationId,
+            itemViewId = R.id.positiveActionView
+        )
 
         Mockito.verify(mockView, Mockito.never()).askUserPasscodeConfirmation()
     }
@@ -211,16 +243,27 @@ class AuthorizationsListPresenterTest {
     fun onListItemClickTest_detailsActionView() {
         Mockito.doReturn(true).`when`(mockBiometricTools).isBiometricReady(TestTools.applicationContext)
         val presenter = createPresenter(viewContract = mockView)
-        presenter.onFetchAuthorizationsResult(result = listOf(encryptedData1, encryptedData2), errors = emptyList())
+        presenter.onFetchAuthorizationsResult(
+            result = listOf(encryptedData1, encryptedData2),
+            errors = emptyList()
+        )
         Mockito.clearInvocations(mockApiManager, mockPollingService)
-        presenter.onListItemClick(itemIndex = 1, itemCode = viewModel1.authorizationId, itemViewId = R.id.detailsActionView)
+        presenter.onListItemClick(
+            itemIndex = 1,
+            itemCode = viewModel1.authorizationId,
+            itemViewId = R.id.detailsActionView
+        )
 
         Mockito.verify(mockView).showAuthorizationDetailsView(viewModel1)
         Mockito.verifyNoMoreInteractions(mockApiManager, mockPollingService)
 
         Mockito.clearInvocations(mockView, mockApiManager, mockPollingService)
         presenter.viewContract = null
-        presenter.onListItemClick(itemIndex = 1, itemCode = viewModel1.authorizationId, itemViewId = R.id.detailsActionView)
+        presenter.onListItemClick(
+            itemIndex = 1,
+            itemCode = viewModel1.authorizationId,
+            itemViewId = R.id.detailsActionView
+        )
 
         Mockito.verifyNoMoreInteractions(mockView, mockApiManager, mockPollingService)
     }
@@ -232,25 +275,45 @@ class AuthorizationsListPresenterTest {
     @Throws(Exception::class)
     fun onActivityResultTest_Case1() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.processFragmentResult(requestCode = SHOW_REQUEST_CODE, resultCode = Activity.RESULT_OK, data = null)
+        presenter.processFragmentResult(
+            requestCode = SHOW_REQUEST_CODE,
+            resultCode = Activity.RESULT_OK,
+            data = null
+        )
 
         Mockito.never()
 
-        presenter.processFragmentResult(requestCode = SHOW_REQUEST_CODE, resultCode = Activity.RESULT_CANCELED, data = Intent())
+        presenter.processFragmentResult(
+            requestCode = SHOW_REQUEST_CODE,
+            resultCode = Activity.RESULT_CANCELED,
+            data = Intent()
+        )
 
         Mockito.never()
 
-        presenter.processFragmentResult(requestCode = SHOW_REQUEST_CODE, resultCode = Activity.RESULT_OK, data = Intent())
+        presenter.processFragmentResult(
+            requestCode = SHOW_REQUEST_CODE,
+            resultCode = Activity.RESULT_OK,
+            data = Intent()
+        )
 
         Mockito.never()
 
-        presenter.processFragmentResult(requestCode = DELETE_REQUEST_CODE, resultCode = Activity.RESULT_OK, data = Intent().putExtra(KEY_ID, "1"))
+        presenter.processFragmentResult(
+            requestCode = DELETE_REQUEST_CODE,
+            resultCode = Activity.RESULT_OK,
+            data = Intent().putExtra(KEY_ID, "1")
+        )
 
         Mockito.never()
 
         Mockito.clearInvocations(mockView, mockApiManager, mockPollingService)
         presenter.viewContract = null
-        presenter.processFragmentResult(requestCode = SHOW_REQUEST_CODE, resultCode = Activity.RESULT_OK, data = Intent().putExtra(KEY_ID, viewModel1.authorizationId))
+        presenter.processFragmentResult(
+            requestCode = SHOW_REQUEST_CODE,
+            resultCode = Activity.RESULT_OK,
+            data = Intent().putExtra(KEY_ID, viewModel1.authorizationId)
+        )
 
         Mockito.verifyNoMoreInteractions(mockView, mockApiManager, mockPollingService)
     }
@@ -262,13 +325,20 @@ class AuthorizationsListPresenterTest {
     @Throws(Exception::class)
     fun onActivityResultTest_Case2() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.onFetchAuthorizationsResult(result = listOf(encryptedData1, encryptedData2), errors = emptyList())
+        presenter.onFetchAuthorizationsResult(
+            result = listOf(encryptedData1, encryptedData2),
+            errors = emptyList()
+        )
 
         assertThat(presenter.viewModels, equalTo(listOf(viewModel1, viewModel2)))
 
         Mockito.clearInvocations(mockView, mockApiManager, mockPollingService)
 
-        presenter.processFragmentResult(requestCode = SHOW_REQUEST_CODE, resultCode = Activity.RESULT_OK, data = Intent().putExtra(KEY_ID, viewModel1.authorizationId))
+        presenter.processFragmentResult(
+            requestCode = SHOW_REQUEST_CODE,
+            resultCode = Activity.RESULT_OK,
+            data = Intent().putExtra(KEY_ID, viewModel1.authorizationId)
+        )
 
         assertThat(presenter.viewModels, equalTo(listOf(viewModel2)))
         Mockito.verify(mockView).updateViewContent()
@@ -289,7 +359,10 @@ class AuthorizationsListPresenterTest {
     fun getConnectionsDataTest() {
         val presenter = createPresenter(viewContract = mockView)
 
-        assertThat(presenter.getConnectionsData(), equalTo(listOf(ConnectionAndKey(connection1 as ConnectionAbs, mockPrivateKey))))
+        assertThat(
+            presenter.getConnectionsData(),
+            equalTo(listOf(ConnectionAndKey(connection1 as ConnectionAbs, mockPrivateKey)))
+        )
     }
 
     @Test
@@ -297,18 +370,29 @@ class AuthorizationsListPresenterTest {
     fun onFetchAuthorizationsResultTest_processAuthorizationsErrors() {
         val presenter = createPresenter(viewContract = mockView)
         Mockito.clearInvocations(mockConnectionsRepository)
-        presenter.onFetchAuthorizationsResult(result = emptyList(),
-                errors = listOf(createRequestError(404)))
+        presenter.onFetchAuthorizationsResult(
+            result = emptyList(),
+            errors = listOf(createRequestError(404))
+        )
 
         Mockito.verifyNoMoreInteractions(mockConnectionsRepository)
 
-        presenter.onFetchAuthorizationsResult(result = emptyList(),
-                errors = listOf(ApiErrorData(errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND)))
+        presenter.onFetchAuthorizationsResult(
+            result = emptyList(),
+            errors = listOf(ApiErrorData(errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND))
+        )
 
         Mockito.verifyNoMoreInteractions(mockConnectionsRepository)
 
-        presenter.onFetchAuthorizationsResult(result = emptyList(),
-                errors = listOf(ApiErrorData(errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND, accessToken = "token")))
+        presenter.onFetchAuthorizationsResult(
+            result = emptyList(),
+            errors = listOf(
+                ApiErrorData(
+                    errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND,
+                    accessToken = "token"
+                )
+            )
+        )
 
         Mockito.verify(mockConnectionsRepository).invalidateConnectionsByTokens(listOf("token"))
         Mockito.verify(mockConnectionsRepository).getAllActiveConnections()
@@ -319,11 +403,17 @@ class AuthorizationsListPresenterTest {
     fun onFetchAuthorizationsResultTest_processEncryptedAuthorizationsResult() {
         val presenter = createPresenter(viewContract = mockView)
         Mockito.clearInvocations(mockConnectionsRepository)
-        presenter.onFetchAuthorizationsResult(errors = emptyList(), result = listOf(encryptedData1, encryptedData2))
+        presenter.onFetchAuthorizationsResult(
+            errors = emptyList(),
+            result = listOf(encryptedData1, encryptedData2)
+        )
 
         Mockito.verify(mockView).updateViewContent()
 
-        presenter.onFetchAuthorizationsResult(errors = emptyList(), result = listOf(encryptedData1, encryptedData2))
+        presenter.onFetchAuthorizationsResult(
+            errors = emptyList(),
+            result = listOf(encryptedData1, encryptedData2)
+        )
 
         Mockito.verify(mockView).updateViewContent()
     }
@@ -351,12 +441,20 @@ class AuthorizationsListPresenterTest {
     @Throws(Exception::class)
     fun onConfirmDenySuccessTest() {
         val presenter: AuthorizationsListPresenter = createPresenter(viewContract = mockView)
-        presenter.onFetchAuthorizationsResult(result = listOf(encryptedData1, encryptedData2), errors = emptyList())
+        presenter.onFetchAuthorizationsResult(
+            result = listOf(encryptedData1, encryptedData2),
+            errors = emptyList()
+        )
         Mockito.clearInvocations(mockView, mockPollingService)
 
         assertThat(presenter.viewModels.count(), equalTo(2))
 
-        presenter.onConfirmDenySuccess(result = ConfirmDenyResultData(authorizationId = "2", success = true))
+        presenter.onConfirmDenySuccess(
+            result = ConfirmDenyResultData(
+                authorizationId = "2",
+                success = true
+            )
+        )
 
         assertThat(presenter.viewModels.count(), equalTo(1))
         Mockito.verify(mockView).updateViewContent()
@@ -373,14 +471,24 @@ class AuthorizationsListPresenterTest {
         Mockito.verifyNoMoreInteractions(mockView)
 
         Mockito.clearInvocations(mockView, mockPollingService)
-        presenter.onConfirmDenySuccess(result = ConfirmDenyResultData(authorizationId = "1", success = true))
+        presenter.onConfirmDenySuccess(
+            result = ConfirmDenyResultData(
+                authorizationId = "1",
+                success = true
+            )
+        )
 
         Mockito.verify(mockView).updateViewContent()
         Mockito.verify(mockPollingService).start()
 
         Mockito.clearInvocations(mockView, mockPollingService)
         presenter.viewContract = null
-        presenter.onConfirmDenySuccess(result = ConfirmDenyResultData(authorizationId = "1", success = true))
+        presenter.onConfirmDenySuccess(
+            result = ConfirmDenyResultData(
+                authorizationId = "1",
+                success = true
+            )
+        )
 
         Mockito.verifyNoMoreInteractions(mockView)
         Mockito.verify(mockPollingService).start()
@@ -390,7 +498,10 @@ class AuthorizationsListPresenterTest {
     @Throws(Exception::class)
     fun biometricAuthFinishedTest_invalidParams() {
         val presenter = createPresenter(viewContract = null)
-        presenter.onFetchAuthorizationsResult(result = listOf(encryptedData1, encryptedData2), errors = emptyList())
+        presenter.onFetchAuthorizationsResult(
+            result = listOf(encryptedData1, encryptedData2),
+            errors = emptyList()
+        )
         presenter.biometricAuthFinished()
 
         Mockito.verifyNoMoreInteractions(mockView)
@@ -404,7 +515,10 @@ class AuthorizationsListPresenterTest {
     @Throws(Exception::class)
     fun biometricAuthFinishedTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.onFetchAuthorizationsResult(result = listOf(encryptedData1, encryptedData2), errors = emptyList())
+        presenter.onFetchAuthorizationsResult(
+            result = listOf(encryptedData1, encryptedData2),
+            errors = emptyList()
+        )
         presenter.currentViewModel = viewModel1
         presenter.currentConnectionAndKey = connectionAndKey
         Mockito.clearInvocations(mockView, mockApiManager, mockPollingService)
@@ -412,13 +526,16 @@ class AuthorizationsListPresenterTest {
         presenter.biometricAuthFinished()
 
         Mockito.verify(mockApiManager).confirmAuthorization(
-                connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
-                authorizationId = "1",
-                authorizationCode = "111",
-                resultCallback = presenter
+            connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
+            authorizationId = "1",
+            authorizationCode = "111",
+            resultCallback = presenter
         )
         Mockito.verify(mockPollingService).stop()
-        Mockito.verify(mockView).updateItem(viewModel = viewModel1.copy(isProcessing = true), itemId = 0)
+        Mockito.verify(mockView).updateItem(
+            viewModel = viewModel1.copy(isProcessing = true),
+            itemId = 0
+        )
     }
 
     @Test
@@ -441,20 +558,26 @@ class AuthorizationsListPresenterTest {
     @Throws(Exception::class)
     fun passcodeAuthFinishedTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.onFetchAuthorizationsResult(result = listOf(encryptedData1, encryptedData2), errors = emptyList())
+        presenter.onFetchAuthorizationsResult(
+            result = listOf(encryptedData1, encryptedData2),
+            errors = emptyList()
+        )
         presenter.currentViewModel = viewModel1
         presenter.currentConnectionAndKey = connectionAndKey
         Mockito.clearInvocations(mockView, mockApiManager, mockPollingService)
         presenter.successAuthWithPasscode()
 
         Mockito.verify(mockApiManager).confirmAuthorization(
-                connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
-                authorizationId = "1",
-                authorizationCode = "111",
-                resultCallback = presenter
+            connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
+            authorizationId = "1",
+            authorizationCode = "111",
+            resultCallback = presenter
         )
         Mockito.verify(mockPollingService).stop()
-        Mockito.verify(mockView).updateItem(viewModel = viewModel1.copy(isProcessing = true), itemId = 0)
+        Mockito.verify(mockView).updateItem(
+            viewModel = viewModel1.copy(isProcessing = true),
+            itemId = 0
+        )
     }
 
     @Test
@@ -471,10 +594,21 @@ class AuthorizationsListPresenterTest {
         Mockito.doReturn(listOf(connection1)).`when`(mockConnectionsRepository).getAllActiveConnections()
         Mockito.doReturn(connection1).`when`(mockConnectionsRepository).getById("1")
         Mockito.doReturn(connection2).`when`(mockConnectionsRepository).getById("2_noKey")
-        Mockito.doReturn(KeyPair(null, mockPrivateKey)).`when`(mockKeyStoreManager).getKeyPair("guid1")
+        Mockito.doReturn(
+            KeyPair(
+                null,
+                mockPrivateKey
+            )
+        ).`when`(mockKeyStoreManager).getKeyPair("guid1")
         Mockito.doReturn(null).`when`(mockKeyStoreManager).getKeyPair("guid2")
-        Mockito.doReturn(authorizationData1).`when`(mockCryptoTools).decryptAuthorizationData(encryptedData = encryptedData1, rsaPrivateKey = mockPrivateKey)
-        Mockito.doReturn(authorizationData2).`when`(mockCryptoTools).decryptAuthorizationData(encryptedData = encryptedData2, rsaPrivateKey = mockPrivateKey)
+        Mockito.doReturn(authorizationData1).`when`(mockCryptoTools).decryptAuthorizationData(
+            encryptedData = encryptedData1,
+            rsaPrivateKey = mockPrivateKey
+        )
+        Mockito.doReturn(authorizationData2).`when`(mockCryptoTools).decryptAuthorizationData(
+            encryptedData = encryptedData2,
+            rsaPrivateKey = mockPrivateKey
+        )
         Mockito.doReturn(mockPollingService).`when`(mockApiManager).createAuthorizationsPollingService()
     }
 
@@ -496,11 +630,13 @@ class AuthorizationsListPresenterTest {
         assertThat(presenter.apiManager, equalTo(mockApiManager))
     }
 
-    private val connection1 = Connection().setGuid("guid1").setId("1").setCode("demobank3").setName("Demobank3")
+    private val connection1 =
+        Connection().setGuid("guid1").setId("1").setCode("demobank3").setName("Demobank3")
             .setStatus(ConnectionStatus.ACTIVE).setAccessToken("token1").setLogoUrl("url")
             .setCreatedAt(200L).setUpdatedAt(200L)
     private val connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey)
-    private val connection2 = Connection().setGuid("guid2").setId("2_noKey").setCode("demobank2").setName("Demobank2")
+    private val connection2 =
+        Connection().setGuid("guid2").setId("2_noKey").setCode("demobank2").setName("Demobank2")
             .setStatus(ConnectionStatus.ACTIVE).setAccessToken("").setLogoUrl("")
             .setCreatedAt(300L).setUpdatedAt(300L)
     private val encryptedData1 = EncryptedAuthorizationData(id = "1", connectionId = "1")
@@ -512,24 +648,25 @@ class AuthorizationsListPresenterTest {
 
     private fun createPresenter(viewContract: AuthorizationsListContract.View? = null): AuthorizationsListPresenter {
         return AuthorizationsListPresenter(
-                appContext = TestTools.applicationContext,
-                connectionsRepository = mockConnectionsRepository,
-                keyStoreManager = mockKeyStoreManager,
-                biometricTools = mockBiometricTools,
-                cryptoTools = mockCryptoTools,
-                apiManager = mockApiManager).apply { this.viewContract = viewContract }
+            appContext = TestTools.applicationContext,
+            connectionsRepository = mockConnectionsRepository,
+            keyStoreManager = mockKeyStoreManager,
+            biometricTools = mockBiometricTools,
+            cryptoTools = mockCryptoTools,
+            apiManager = mockApiManager
+        ).apply { this.viewContract = viewContract }
     }
 
     private fun createAuthorization(id: Int): AuthorizationData {
         val createdAt = DateTime.now(DateTimeZone.UTC)
         return AuthorizationData(
-                id = "$id",
-                authorizationCode = "$id$id$id",
-                createdAt = createdAt,
-                expiresAt = createdAt.plusMinutes(3),
-                title = "title$id",
-                description = "desc$id",
-                connectionId = "1"
+            id = "$id",
+            authorizationCode = "$id$id$id",
+            createdAt = createdAt,
+            expiresAt = createdAt.plusMinutes(3),
+            title = "title$id",
+            description = "desc$id",
+            connectionId = "1"
         )
     }
 }

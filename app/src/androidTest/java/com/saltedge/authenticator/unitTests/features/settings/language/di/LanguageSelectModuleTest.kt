@@ -36,6 +36,11 @@ class LanguageSelectModuleTest {
     fun initTest() {
         val module = LanguageSelectModule()
 
-        Assert.assertNotNull(module.providePresenter(TestTools.applicationContext, PreferenceRepository))
+        Assert.assertNotNull(
+            module.providePresenter(
+                TestTools.applicationContext,
+                PreferenceRepository
+            )
+        )
     }
 }

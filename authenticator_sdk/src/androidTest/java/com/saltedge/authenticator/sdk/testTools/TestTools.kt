@@ -56,7 +56,12 @@ object TestTools {
 
     @Throws(Exception::class)
     fun setLocale(language: String, country: String = "") {
-        InstrumentationRegistry.getInstrumentation().targetContext.updateApplicationLocale(Locale(language, country))
+        InstrumentationRegistry.getInstrumentation().targetContext.updateApplicationLocale(
+            Locale(
+                language,
+                country
+            )
+        )
     }
 }
 

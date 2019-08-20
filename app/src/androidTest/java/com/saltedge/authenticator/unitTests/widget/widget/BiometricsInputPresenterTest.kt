@@ -52,10 +52,10 @@ class BiometricsInputPresenterTest {
         presenter.onAuthenticationFailed()
 
         Mockito.verify(mockView).updateStatusView(
-                imageResId = R.drawable.ic_fingerprint_error,
-                textColorResId = R.color.red,
-                textResId = R.string.error_fingerprint_not_recognized,
-                animateText = true
+            imageResId = R.drawable.ic_fingerprint_error,
+            textColorResId = R.color.red,
+            textResId = R.string.error_fingerprint_not_recognized,
+            animateText = true
         )
     }
 
@@ -68,27 +68,30 @@ class BiometricsInputPresenterTest {
         presenter.onAuthenticationSucceeded(null)
 
         Mockito.verify(mockView).updateStatusView(
-                imageResId = R.drawable.ic_fingerprint_confirmed,
-                textColorResId = R.color.colorPrimary,
-                textResId = R.string.fingerprint_confirmed,
-                animateText = false
+            imageResId = R.drawable.ic_fingerprint_confirmed,
+            textColorResId = R.color.colorPrimary,
+            textResId = R.string.fingerprint_confirmed,
+            animateText = false
         )
 
         presenter.onDialogPause()
         presenter.onAuthenticationSucceeded(null)
 
         Mockito.verify(mockView).updateStatusView(
-                imageResId = R.drawable.ic_fingerprint_confirmed,
-                textColorResId = R.color.colorPrimary,
-                textResId = R.string.fingerprint_confirmed,
-                animateText = false
+            imageResId = R.drawable.ic_fingerprint_confirmed,
+            textColorResId = R.color.colorPrimary,
+            textResId = R.string.fingerprint_confirmed,
+            animateText = false
         )
     }
 
     @Test
     @Throws(Exception::class)
     fun onAuthenticationErrorTest() {
-        createPresenter(viewContract = mockView).onAuthenticationError(errMsgId = 10, errString = "")
+        createPresenter(viewContract = mockView).onAuthenticationError(
+            errMsgId = 10,
+            errString = ""
+        )
 
         Mockito.never()
     }
@@ -96,7 +99,10 @@ class BiometricsInputPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onAuthenticationHelpTest() {
-        createPresenter(viewContract = mockView).onAuthenticationHelp(helpMsgId = 1, helpString = "")
+        createPresenter(viewContract = mockView).onAuthenticationHelp(
+            helpMsgId = 1,
+            helpString = ""
+        )
 
         Mockito.never()
     }

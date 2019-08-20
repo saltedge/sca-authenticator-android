@@ -37,8 +37,10 @@ class HTMLToolsTest {
         var spannedMessage = "<a href='https://www.fentury.com/'>Fentury</a>".parseHTML()
 
         assertThat(spannedMessage.toString(), equalTo("Fentury"))
-        assertThat(spannedMessage.getSpans(0, 7, URLSpan::class.java).first().url,
-                equalTo("https://www.fentury.com/"))
+        assertThat(
+            spannedMessage.getSpans(0, 7, URLSpan::class.java).first().url,
+            equalTo("https://www.fentury.com/")
+        )
 
         spannedMessage = "Fentury.com".parseHTML()
 

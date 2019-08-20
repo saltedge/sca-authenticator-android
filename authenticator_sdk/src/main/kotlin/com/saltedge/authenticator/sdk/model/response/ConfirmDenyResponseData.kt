@@ -18,6 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
+
 package com.saltedge.authenticator.sdk.model.response
 
 import com.google.gson.annotations.SerializedName
@@ -28,8 +29,8 @@ import com.saltedge.authenticator.sdk.constants.KEY_SUCCESS
 data class ConfirmDenyResponseData(@SerializedName(KEY_DATA) var data: ConfirmDenyResultData? = null)
 
 data class ConfirmDenyResultData(
-        @SerializedName(KEY_SUCCESS) var success: Boolean? = null,
-        @SerializedName(KEY_ID) var authorizationId: String? = null
+    @SerializedName(KEY_SUCCESS) var success: Boolean? = null,
+    @SerializedName(KEY_ID) var authorizationId: String? = null
 )
 
 fun ConfirmDenyResultData.isValid(): Boolean {
