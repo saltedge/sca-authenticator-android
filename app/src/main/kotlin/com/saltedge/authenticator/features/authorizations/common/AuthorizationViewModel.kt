@@ -71,9 +71,10 @@ fun AuthorizationViewModel.remainedSecondsTillExpire(): Int = expiresAt.remained
  * Calculates interval between current time and expiresAt time and prepare timestamp string result
  *
  * @receiver authorization view model
- * @return timestamp string
+ * @return timestamp string in "minutes:seconds" format
  */
-fun AuthorizationViewModel.remainedTimeTillExpire(): String = expiresAt.remainedExpirationTime()
+fun AuthorizationViewModel.remainedTimeStringTillExpire(): String =
+        expiresAt.remainedSecondsTillExpire().remainedExpirationTime()
 
 /**
  * Converts AuthorizationData in AuthorizationViewModel

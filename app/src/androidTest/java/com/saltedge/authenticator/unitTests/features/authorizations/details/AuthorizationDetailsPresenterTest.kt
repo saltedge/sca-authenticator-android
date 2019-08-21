@@ -22,8 +22,6 @@ package com.saltedge.authenticator.unitTests.features.authorizations.details
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.authorizations.common.remainedSecondsTillExpire
-import com.saltedge.authenticator.features.authorizations.common.remainedTimeTillExpire
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationViewModel
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsContract
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsPresenter
@@ -47,6 +45,8 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito
 import java.security.KeyPair
 import java.security.PrivateKey
@@ -494,9 +494,10 @@ class AuthorizationDetailsPresenterTest {
         Mockito.clearInvocations(mockView)
         presenter.onTimerTick()
 
-        Mockito.verify(mockView).updateTimeView(
-                viewModel.remainedSecondsTillExpire(),
-                viewModel.remainedTimeTillExpire())
+        val secondsCaptor: ArgumentCaptor<Int> = ArgumentCaptor.forClass(Int::class.java)
+        Mockito.verify(mockView).updateTimeView(secondsCaptor.capture(), anyString())
+
+        assertThat(secondsCaptor.value, anyOf(equalTo(3600), equalTo(3599)))
     }
 
     @Test
