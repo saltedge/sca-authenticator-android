@@ -30,7 +30,7 @@ import com.saltedge.authenticator.widget.list.AbstractListAdapter
 class ConnectionsListAdapter(val clickListener: ListItemClickListener?) : AbstractListAdapter() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
-            ConnectionItemHolder(parent, clickListener)
+        ConnectionItemHolder(parent, clickListener)
 
     override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
         (holder as ConnectionItemHolder).bind(item as ConnectionViewModel)
@@ -38,8 +38,8 @@ class ConnectionsListAdapter(val clickListener: ListItemClickListener?) : Abstra
 
     fun updateListItemName(connectionGuid: GUID, name: String) {
         data.mapIndexed { index, any -> index to (any as ConnectionViewModel) }
-                .firstOrNull { it.second.guid == connectionGuid }?.let { (itemIndex, item) ->
-                    updateItem(item.copy(name = name), itemIndex)
-        }
+            .firstOrNull { it.second.guid == connectionGuid }?.let { (itemIndex, item) ->
+                updateItem(item.copy(name = name), itemIndex)
+            }
     }
 }

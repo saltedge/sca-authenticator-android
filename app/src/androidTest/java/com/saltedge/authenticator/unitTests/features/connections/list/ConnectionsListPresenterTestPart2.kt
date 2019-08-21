@@ -58,23 +58,26 @@ class ConnectionsListPresenterTestPart2 {
     fun onActivityResultTest() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.onActivityResult(
-                requestCode = ITEM_OPTIONS_REQUEST_CODE,
-                resultCode = Activity.RESULT_CANCELED,
-                data = Intent())
+            requestCode = ITEM_OPTIONS_REQUEST_CODE,
+            resultCode = Activity.RESULT_CANCELED,
+            data = Intent()
+        )
 
         Mockito.never()
 
         presenter.onActivityResult(
-                requestCode = ITEM_OPTIONS_REQUEST_CODE,
-                resultCode = Activity.RESULT_OK,
-                data = null)
+            requestCode = ITEM_OPTIONS_REQUEST_CODE,
+            resultCode = Activity.RESULT_OK,
+            data = null
+        )
 
         Mockito.never()
 
         presenter.onActivityResult(
-                requestCode = -1,
-                resultCode = Activity.RESULT_OK,
-                data = Intent())
+            requestCode = -1,
+            resultCode = Activity.RESULT_OK,
+            data = Intent()
+        )
 
         Mockito.never()
     }
@@ -88,31 +91,39 @@ class ConnectionsListPresenterTestPart2 {
     @Throws(Exception::class)
     fun onActivityResultTest_Options_InvalidParams() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = ITEM_OPTIONS_REQUEST_CODE,
-                data = Intent()
-                        .putExtra(KEY_OPTION_ID, -1)
-                        .putExtra(KEY_GUID, "guid1"))
+        presenter.onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = ITEM_OPTIONS_REQUEST_CODE,
+            data = Intent()
+                .putExtra(KEY_OPTION_ID, -1)
+                .putExtra(KEY_GUID, "guid1")
+        )
 
         Mockito.never()
 
-        presenter.onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = ITEM_OPTIONS_REQUEST_CODE,
-                data = Intent().putExtra(KEY_OPTION_ID, ConnectionOptions.REPORT_PROBLEM.ordinal))
+        presenter.onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = ITEM_OPTIONS_REQUEST_CODE,
+            data = Intent().putExtra(KEY_OPTION_ID, ConnectionOptions.REPORT_PROBLEM.ordinal)
+        )
 
         Mockito.never()
 
-        presenter.onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = ITEM_OPTIONS_REQUEST_CODE,
-                data = Intent()
-                        .putExtra(KEY_OPTION_ID, ConnectionOptions.RENAME.ordinal)
-                        .putExtra(KEY_GUID, "guidX"))
+        presenter.onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = ITEM_OPTIONS_REQUEST_CODE,
+            data = Intent()
+                .putExtra(KEY_OPTION_ID, ConnectionOptions.RENAME.ordinal)
+                .putExtra(KEY_GUID, "guidX")
+        )
 
         Mockito.never()
 
-        createPresenter(viewContract = null).onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = ITEM_OPTIONS_REQUEST_CODE,
-                data = Intent().putExtra(KEY_OPTION_ID, ConnectionOptions.REPORT_PROBLEM.ordinal))
+        createPresenter(viewContract = null).onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = ITEM_OPTIONS_REQUEST_CODE,
+            data = Intent().putExtra(KEY_OPTION_ID, ConnectionOptions.REPORT_PROBLEM.ordinal)
+        )
 
         Mockito.never()
     }
@@ -127,19 +138,23 @@ class ConnectionsListPresenterTestPart2 {
     @Test
     @Throws(Exception::class)
     fun onActivityResultTest_OptionsReport() {
-        createPresenter(viewContract = null).onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = ITEM_OPTIONS_REQUEST_CODE,
-                data = Intent()
-                        .putExtra(KEY_OPTION_ID, ConnectionOptions.REPORT_PROBLEM.ordinal)
-                        .putExtra(KEY_GUID, "guid1"))
+        createPresenter(viewContract = null).onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = ITEM_OPTIONS_REQUEST_CODE,
+            data = Intent()
+                .putExtra(KEY_OPTION_ID, ConnectionOptions.REPORT_PROBLEM.ordinal)
+                .putExtra(KEY_GUID, "guid1")
+        )
 
         Mockito.never()
 
-        createPresenter(viewContract = mockView).onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = ITEM_OPTIONS_REQUEST_CODE,
-                data = Intent()
-                        .putExtra(KEY_OPTION_ID, ConnectionOptions.REPORT_PROBLEM.ordinal)
-                        .putExtra(KEY_GUID, "guid1"))
+        createPresenter(viewContract = mockView).onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = ITEM_OPTIONS_REQUEST_CODE,
+            data = Intent()
+                .putExtra(KEY_OPTION_ID, ConnectionOptions.REPORT_PROBLEM.ordinal)
+                .putExtra(KEY_GUID, "guid1")
+        )
 
         Mockito.verify(mockView).showSupportView(supportEmail = "example@example.com")
     }
@@ -154,24 +169,28 @@ class ConnectionsListPresenterTestPart2 {
     @Test
     @Throws(Exception::class)
     fun onActivityResultTest_OptionsRename() {
-        createPresenter(viewContract = null).onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = ITEM_OPTIONS_REQUEST_CODE,
-                data = Intent()
-                        .putExtra(KEY_OPTION_ID, ConnectionOptions.RENAME.ordinal)
-                        .putExtra(KEY_GUID, "guid1"))
+        createPresenter(viewContract = null).onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = ITEM_OPTIONS_REQUEST_CODE,
+            data = Intent()
+                .putExtra(KEY_OPTION_ID, ConnectionOptions.RENAME.ordinal)
+                .putExtra(KEY_GUID, "guid1")
+        )
 
         Mockito.never()
 
-        createPresenter(viewContract = mockView).onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = ITEM_OPTIONS_REQUEST_CODE,
-                data = Intent()
-                        .putExtra(KEY_OPTION_ID, ConnectionOptions.RENAME.ordinal)
-                        .putExtra(KEY_GUID, "guid1"))
+        createPresenter(viewContract = mockView).onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = ITEM_OPTIONS_REQUEST_CODE,
+            data = Intent()
+                .putExtra(KEY_OPTION_ID, ConnectionOptions.RENAME.ordinal)
+                .putExtra(KEY_GUID, "guid1")
+        )
 
         Mockito.verify(mockView).showConnectionNameEditView(
-                connectionGuid = "guid1",
-                connectionName = "Demobank1",
-                requestCode = RENAME_REQUEST_CODE
+            connectionGuid = "guid1",
+            connectionName = "Demobank1",
+            requestCode = RENAME_REQUEST_CODE
         )
     }
 
@@ -185,23 +204,27 @@ class ConnectionsListPresenterTestPart2 {
     @Test
     @Throws(Exception::class)
     fun onActivityResultTest_OptionsDelete() {
-        createPresenter(viewContract = null).onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = ITEM_OPTIONS_REQUEST_CODE,
-                data = Intent()
-                        .putExtra(KEY_OPTION_ID, ConnectionOptions.DELETE.ordinal)
-                        .putExtra(KEY_GUID, "guid1"))
+        createPresenter(viewContract = null).onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = ITEM_OPTIONS_REQUEST_CODE,
+            data = Intent()
+                .putExtra(KEY_OPTION_ID, ConnectionOptions.DELETE.ordinal)
+                .putExtra(KEY_GUID, "guid1")
+        )
 
         Mockito.never()
 
-        createPresenter(viewContract = mockView).onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = ITEM_OPTIONS_REQUEST_CODE,
-                data = Intent()
-                        .putExtra(KEY_OPTION_ID, ConnectionOptions.DELETE.ordinal)
-                        .putExtra(KEY_GUID, "guid1"))
+        createPresenter(viewContract = mockView).onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = ITEM_OPTIONS_REQUEST_CODE,
+            data = Intent()
+                .putExtra(KEY_OPTION_ID, ConnectionOptions.DELETE.ordinal)
+                .putExtra(KEY_GUID, "guid1")
+        )
 
         Mockito.verify(mockView).showDeleteConnectionView(
-                connectionGuid = "guid1",
-                requestCode = DELETE_REQUEST_CODE
+            connectionGuid = "guid1",
+            requestCode = DELETE_REQUEST_CODE
         )
     }
 
@@ -215,19 +238,23 @@ class ConnectionsListPresenterTestPart2 {
     @Test
     @Throws(Exception::class)
     fun onActivityResultTest_OptionsReconnect() {
-        createPresenter(viewContract = null).onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = ITEM_OPTIONS_REQUEST_CODE,
-                data = Intent()
-                        .putExtra(KEY_OPTION_ID, ConnectionOptions.RECONNECT.ordinal)
-                        .putExtra(KEY_GUID, "guid1"))
+        createPresenter(viewContract = null).onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = ITEM_OPTIONS_REQUEST_CODE,
+            data = Intent()
+                .putExtra(KEY_OPTION_ID, ConnectionOptions.RECONNECT.ordinal)
+                .putExtra(KEY_GUID, "guid1")
+        )
 
         Mockito.never()
 
-        createPresenter(viewContract = mockView).onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = ITEM_OPTIONS_REQUEST_CODE,
-                data = Intent()
-                        .putExtra(KEY_OPTION_ID, ConnectionOptions.RECONNECT.ordinal)
-                        .putExtra(KEY_GUID, "guid1"))
+        createPresenter(viewContract = mockView).onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = ITEM_OPTIONS_REQUEST_CODE,
+            data = Intent()
+                .putExtra(KEY_OPTION_ID, ConnectionOptions.RECONNECT.ordinal)
+                .putExtra(KEY_GUID, "guid1")
+        )
 
         Mockito.verify(mockView).showConnectView(connectionGuid = "guid1")
     }
@@ -242,41 +269,51 @@ class ConnectionsListPresenterTestPart2 {
     @Test
     @Throws(Exception::class)
     fun onActivityResultTest_Rename_InvalidParams() {
-        createPresenter(viewContract = mockView).onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = RENAME_REQUEST_CODE,
-                data = Intent().putExtra(KEY_NAME, "new name"))
+        createPresenter(viewContract = mockView).onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = RENAME_REQUEST_CODE,
+            data = Intent().putExtra(KEY_NAME, "new name")
+        )
 
         Mockito.never()
 
-        createPresenter(viewContract = mockView).onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = RENAME_REQUEST_CODE,
-                data = Intent()
-                        .putExtra(KEY_NAME, "new name")
-                        .putExtra(KEY_GUID, "guidX"))
+        createPresenter(viewContract = mockView).onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = RENAME_REQUEST_CODE,
+            data = Intent()
+                .putExtra(KEY_NAME, "new name")
+                .putExtra(KEY_GUID, "guidX")
+        )
 
         Mockito.never()
 
-        createPresenter(viewContract = null).onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = RENAME_REQUEST_CODE,
-                data = Intent()
-                        .putExtra(KEY_NAME, "new name")
-                        .putExtra(KEY_GUID, "guid2"))
+        createPresenter(viewContract = null).onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = RENAME_REQUEST_CODE,
+            data = Intent()
+                .putExtra(KEY_NAME, "new name")
+                .putExtra(KEY_GUID, "guid2")
+        )
 
         Mockito.never()
 
-        createPresenter(viewContract = mockView).onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = RENAME_REQUEST_CODE,
-                data = Intent()
-                        .putExtra(KEY_NAME, "")
-                        .putExtra(KEY_GUID, "guid2"))
+        createPresenter(viewContract = mockView).onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = RENAME_REQUEST_CODE,
+            data = Intent()
+                .putExtra(KEY_NAME, "")
+                .putExtra(KEY_GUID, "guid2")
+        )
 
         Mockito.never()
 
-        createPresenter(viewContract = mockView).onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = RENAME_REQUEST_CODE,
-                data = Intent()
-                        .putExtra(KEY_NAME, "Demobank2")
-                        .putExtra(KEY_GUID, "guid2"))
+        createPresenter(viewContract = mockView).onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = RENAME_REQUEST_CODE,
+            data = Intent()
+                .putExtra(KEY_NAME, "Demobank2")
+                .putExtra(KEY_GUID, "guid2")
+        )
 
         Mockito.never()
     }
@@ -291,16 +328,18 @@ class ConnectionsListPresenterTestPart2 {
     @Test
     @Throws(Exception::class)
     fun onActivityResultTest_Rename() {
-        createPresenter(viewContract = mockView).onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = RENAME_REQUEST_CODE,
-                data = Intent()
-                        .putExtra(KEY_NAME, "new name")
-                        .putExtra(KEY_GUID, "guid2"))
+        createPresenter(viewContract = mockView).onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = RENAME_REQUEST_CODE,
+            data = Intent()
+                .putExtra(KEY_NAME, "new name")
+                .putExtra(KEY_GUID, "guid2")
+        )
 
         Mockito.verify(mockConnectionsRepository)
-                .updateNameAndSave(connection = allConnections[1], newName = "new name")
+            .updateNameAndSave(connection = allConnections[1], newName = "new name")
         Mockito.verify(mockView)
-                .updateListItemName(connectionGuid = "guid2", name = "new name")
+            .updateListItemName(connectionGuid = "guid2", name = "new name")
     }
 
     /**
@@ -314,10 +353,19 @@ class ConnectionsListPresenterTestPart2 {
     fun onActivityResultTest_DeleteSingleConnection_InvalidParams_Case1() {
         val presenter = createPresenter(viewContract = null)
         Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid2")
-        presenter.onActivityResult(resultCode = Activity.RESULT_OK, requestCode = DELETE_REQUEST_CODE,
-                data = Intent().putExtra(KEY_GUID, "guid2"))
+        presenter.onActivityResult(
+            resultCode = Activity.RESULT_OK, requestCode = DELETE_REQUEST_CODE,
+            data = Intent().putExtra(KEY_GUID, "guid2")
+        )
 
-        Mockito.verify(mockApiManager).revokeConnections(listOf(ConnectionAndKey(allConnections[1], mockPrivateKey)), presenter)
+        Mockito.verify(mockApiManager).revokeConnections(
+            listOf(
+                ConnectionAndKey(
+                    allConnections[1],
+                    mockPrivateKey
+                )
+            ), presenter
+        )
         Mockito.verify(mockConnectionsRepository).deleteConnection("guid2")
         Mockito.verify(mockKeyStoreManager).deleteKeyPair("guid2")
         Mockito.verifyNoMoreInteractions(mockView)
@@ -333,11 +381,20 @@ class ConnectionsListPresenterTestPart2 {
     fun onActivityResultTest_DeleteSingleConnection() {
         Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid2")
         val presenter = createPresenter(viewContract = mockView)
-        presenter.onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = DELETE_REQUEST_CODE,
-                data = Intent().putExtra(KEY_GUID, "guid2"))
+        presenter.onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = DELETE_REQUEST_CODE,
+            data = Intent().putExtra(KEY_GUID, "guid2")
+        )
 
-        Mockito.verify(mockApiManager).revokeConnections(listOf(ConnectionAndKey(allConnections[1], mockPrivateKey)), presenter)
+        Mockito.verify(mockApiManager).revokeConnections(
+            listOf(
+                ConnectionAndKey(
+                    allConnections[1],
+                    mockPrivateKey
+                )
+            ), presenter
+        )
         Mockito.verify(mockConnectionsRepository).deleteConnection("guid2")
         Mockito.verify(mockKeyStoreManager).deleteKeyPair("guid2")
         Mockito.verify(mockView).updateViewContent()
@@ -351,13 +408,17 @@ class ConnectionsListPresenterTestPart2 {
     @Throws(Exception::class)
     fun onActivityResultTest_DeleteAllConnections() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.onActivityResult(resultCode = Activity.RESULT_OK,
-                requestCode = DELETE_ALL_REQUEST_CODE,
-                data = Intent())
+        presenter.onActivityResult(
+            resultCode = Activity.RESULT_OK,
+            requestCode = DELETE_ALL_REQUEST_CODE,
+            data = Intent()
+        )
 
-        Mockito.verify(mockApiManager).revokeConnections(listOf(
+        Mockito.verify(mockApiManager).revokeConnections(
+            listOf(
                 ConnectionAndKey(activeConnections.first(), mockPrivateKey)
-        ), presenter)
+            ), presenter
+        )
         Mockito.verify(mockConnectionsRepository).deleteAllConnections()
         Mockito.verify(mockKeyStoreManager).deleteKeyPairs(listOf("guid1", "guid2", "guid3"))
         Mockito.verify(mockView).updateViewContent()
@@ -371,7 +432,9 @@ class ConnectionsListPresenterTestPart2 {
         Mockito.doReturn(allConnections[0]).`when`(mockConnectionsRepository).getByGuid("guid1")
         Mockito.doReturn(allConnections[1]).`when`(mockConnectionsRepository).getByGuid("guid2")
         Mockito.doReturn(allConnections[2]).`when`(mockConnectionsRepository).getByGuid("guid3")
-        Mockito.doReturn(KeyPair(null, mockPrivateKey)).`when`(mockKeyStoreManager).getKeyPair(Mockito.anyString())
+        Mockito.doReturn(KeyPair(null, mockPrivateKey)).`when`(mockKeyStoreManager).getKeyPair(
+            Mockito.anyString()
+        )
     }
 
     private val mockKeyStoreManager = Mockito.mock(KeyStoreManagerAbs::class.java)
@@ -380,23 +443,24 @@ class ConnectionsListPresenterTestPart2 {
     private val mockView = Mockito.mock(ConnectionsListContract.View::class.java)
     private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
     private val allConnections = listOf(
-            Connection().setGuid("guid1").setCode("demobank").setName("Demobank1")
-                    .setStatus(ConnectionStatus.INACTIVE).setAccessToken("token1")
-                    .setCreatedAt(100L).setUpdatedAt(100L).setSupportEmail("example@example.com"),
-            Connection().setGuid("guid2").setCode("demobank").setName("Demobank2")
-                    .setStatus(ConnectionStatus.ACTIVE).setAccessToken("token2")
-                    .setCreatedAt(300L).setUpdatedAt(300L),
-            Connection().setGuid("guid3").setCode("test").setName("Demobank3")
-                    .setStatus(ConnectionStatus.ACTIVE).setAccessToken("")
-                    .setCreatedAt(200L).setUpdatedAt(200L)
+        Connection().setGuid("guid1").setCode("demobank").setName("Demobank1")
+            .setStatus(ConnectionStatus.INACTIVE).setAccessToken("token1")
+            .setCreatedAt(100L).setUpdatedAt(100L).setSupportEmail("example@example.com"),
+        Connection().setGuid("guid2").setCode("demobank").setName("Demobank2")
+            .setStatus(ConnectionStatus.ACTIVE).setAccessToken("token2")
+            .setCreatedAt(300L).setUpdatedAt(300L),
+        Connection().setGuid("guid3").setCode("test").setName("Demobank3")
+            .setStatus(ConnectionStatus.ACTIVE).setAccessToken("")
+            .setCreatedAt(200L).setUpdatedAt(200L)
     )
     private val activeConnections = allConnections.filter { it.isActive() }
 
     private fun createPresenter(viewContract: ConnectionsListContract.View? = null): ConnectionsListPresenter {
         return ConnectionsListPresenter(
-                appContext = TestTools.applicationContext,
-                keyStoreManager = mockKeyStoreManager,
-                connectionsRepository = mockConnectionsRepository,
-                apiManager = mockApiManager).apply { this.viewContract = viewContract }
+            appContext = TestTools.applicationContext,
+            keyStoreManager = mockKeyStoreManager,
+            connectionsRepository = mockConnectionsRepository,
+            apiManager = mockApiManager
+        ).apply { this.viewContract = viewContract }
     }
 }

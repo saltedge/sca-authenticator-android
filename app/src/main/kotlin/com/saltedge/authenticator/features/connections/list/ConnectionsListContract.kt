@@ -31,9 +31,19 @@ interface ConnectionsListContract {
         fun showApiErrorView(message: String)
         fun showSupportView(supportEmail: String?)
         fun showConnectView(connectionGuid: GUID)
-        fun showConnectionNameEditView(connectionGuid: GUID, connectionName: String, requestCode: Int)
+        fun showConnectionNameEditView(
+            connectionGuid: GUID,
+            connectionName: String,
+            requestCode: Int
+        )
+
         fun showDeleteConnectionView(connectionGuid: GUID? = null, requestCode: Int)
-        fun showOptionsView(connectionGuid: GUID, options: Array<ConnectionOptions>, requestCode: Int)
+        fun showOptionsView(
+            connectionGuid: GUID,
+            options: Array<ConnectionOptions>,
+            requestCode: Int
+        )
+
         fun showQrScanView()
         fun updateListItemName(connectionGuid: GUID, name: String)
     }

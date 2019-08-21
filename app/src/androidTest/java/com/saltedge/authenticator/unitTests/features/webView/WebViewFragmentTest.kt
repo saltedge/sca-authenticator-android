@@ -37,7 +37,10 @@ class WebViewFragmentTest {
     @Test
     @Throws(Exception::class)
     fun newInstanceTest() {
-        var arguments = WebViewFragment.newInstance(url = "www.priora.com", title = TestTools.getString(R.string.app_name)).arguments!!
+        var arguments = WebViewFragment.newInstance(
+            url = "www.priora.com",
+            title = TestTools.getString(R.string.app_name)
+        ).arguments!!
 
         assertThat(arguments.getString(WebViewFragment.KEY_URL), equalTo("www.priora.com"))
         assertThat(arguments.getString(KEY_TITLE), equalTo(TestTools.getString(R.string.app_name)))

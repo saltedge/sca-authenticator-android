@@ -24,12 +24,9 @@ import android.security.keystore.KeyProperties
 import android.util.Base64
 import com.saltedge.authenticator.sdk.model.AuthorizationData
 import com.saltedge.authenticator.sdk.model.EncryptedAuthorizationData
-import java.io.ByteArrayOutputStream
 import java.security.Key
 import java.security.PrivateKey
-import java.security.PublicKey
 import javax.crypto.Cipher
-import javax.crypto.CipherOutputStream
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -82,7 +79,11 @@ object CryptoTools : CryptoToolsAbs {
     override fun aesDecrypt(encryptedText: String, key: ByteArray, iv: ByteArray): String? {
         try {
             val decryptCipher = Cipher.getInstance(AES_EXTERNAL_TRANSFORMATION) ?: return null
-            decryptCipher.init(Cipher.DECRYPT_MODE, SecretKeySpec(key, KeyProperties.KEY_ALGORITHM_AES), IvParameterSpec(iv))
+            decryptCipher.init(
+                Cipher.DECRYPT_MODE,
+                SecretKeySpec(key, KeyProperties.KEY_ALGORITHM_AES),
+                IvParameterSpec(iv)
+            )
             val decryptedBytes = decryptCipher.doFinal(decodeFromPemBase64String(encryptedText))
             return String(decryptedBytes)
         } catch (e: Exception) {
@@ -91,8 +92,10 @@ object CryptoTools : CryptoToolsAbs {
         return null
     }
 
-    override fun decryptAuthorizationData(encryptedData: EncryptedAuthorizationData,
-                                          rsaPrivateKey: PrivateKey?): AuthorizationData? {
+    override fun decryptAuthorizationData(
+        encryptedData: EncryptedAuthorizationData,
+        rsaPrivateKey: PrivateKey?
+    ): AuthorizationData? {
         if (encryptedData.algorithm != supportedAlgorithm) return null
         try {
             val privateKey = rsaPrivateKey ?: return null

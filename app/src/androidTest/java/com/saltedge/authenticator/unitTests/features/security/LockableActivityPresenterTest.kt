@@ -53,20 +53,29 @@ class LockableActivityPresenterTest {
     @Test
     @Throws(Exception::class)
     fun getViewContractTest() {
-        assertThat(LockableActivityPresenter(
+        assertThat(
+            LockableActivityPresenter(
                 viewContract = mockView,
                 connectionsRepository = mockConnectionsRepository,
-                preferenceRepository = mockPreferenceRepository).viewContract, equalTo(mockView))
-        assertThat(LockableActivityPresenter(
+                preferenceRepository = mockPreferenceRepository
+            ).viewContract, equalTo(mockView)
+        )
+        assertThat(
+            LockableActivityPresenter(
                 viewContract = mockView,
                 connectionsRepository = mockConnectionsRepository,
-                preferenceRepository = mockPreferenceRepository).connectionsRepository,
-                equalTo(mockConnectionsRepository))
-        assertThat(LockableActivityPresenter(
+                preferenceRepository = mockPreferenceRepository
+            ).connectionsRepository,
+            equalTo(mockConnectionsRepository)
+        )
+        assertThat(
+            LockableActivityPresenter(
                 viewContract = mockView,
                 connectionsRepository = mockConnectionsRepository,
-                preferenceRepository = mockPreferenceRepository).preferenceRepository,
-                equalTo(mockPreferenceRepository))
+                preferenceRepository = mockPreferenceRepository
+            ).preferenceRepository,
+            equalTo(mockPreferenceRepository)
+        )
     }
 
     @Test
@@ -74,9 +83,10 @@ class LockableActivityPresenterTest {
     fun getSavedPasscodeTest() {
         replacePasscodeKey()
         val presenter = LockableActivityPresenter(
-                viewContract = mockView,
-                connectionsRepository = mockConnectionsRepository,
-                preferenceRepository = mockPreferenceRepository)
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository,
+            preferenceRepository = mockPreferenceRepository
+        )
 
         assertThat(presenter.savedPasscode, equalTo(""))
 
@@ -89,9 +99,10 @@ class LockableActivityPresenterTest {
     @Throws(Exception::class)
     fun onActivityCreateTest() {
         val presenter = LockableActivityPresenter(
-                viewContract = mockView,
-                connectionsRepository = mockConnectionsRepository,
-                preferenceRepository = mockPreferenceRepository)
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository,
+            preferenceRepository = mockPreferenceRepository
+        )
         presenter.onActivityCreate()
         presenter.onActivityStart(Intent())
 
@@ -105,9 +116,10 @@ class LockableActivityPresenterTest {
     @Throws(Exception::class)
     fun onActivityStartTestCase1() {
         val presenter = LockableActivityPresenter(
-                viewContract = mockView,
-                connectionsRepository = mockConnectionsRepository,
-                preferenceRepository = mockPreferenceRepository)
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository,
+            preferenceRepository = mockPreferenceRepository
+        )
         presenter.onActivityResult()
         presenter.onActivityStart(Intent())
 
@@ -121,9 +133,10 @@ class LockableActivityPresenterTest {
     @Throws(Exception::class)
     fun onActivityStartTestCase2() {
         val presenter = LockableActivityPresenter(
-                viewContract = mockView,
-                connectionsRepository = mockConnectionsRepository,
-                preferenceRepository = mockPreferenceRepository)
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository,
+            preferenceRepository = mockPreferenceRepository
+        )
         presenter.onActivityResult()
         presenter.onActivityStart(Intent())
 
@@ -137,9 +150,10 @@ class LockableActivityPresenterTest {
     @Throws(Exception::class)
     fun onActivityStartTestCase3() {
         val presenter = LockableActivityPresenter(
-                viewContract = mockView,
-                connectionsRepository = mockConnectionsRepository,
-                preferenceRepository = mockPreferenceRepository)
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository,
+            preferenceRepository = mockPreferenceRepository
+        )
         presenter.onActivityStart(Intent())
 
         Mockito.verify(mockView).lockScreen()
@@ -152,9 +166,10 @@ class LockableActivityPresenterTest {
     @Throws(Exception::class)
     fun onActivityStartTestCase4() {
         val presenter = LockableActivityPresenter(
-                viewContract = mockView,
-                connectionsRepository = mockConnectionsRepository,
-                preferenceRepository = mockPreferenceRepository)
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository,
+            preferenceRepository = mockPreferenceRepository
+        )
         presenter.onActivityStart(Intent().putExtra(KEY_SKIP_PIN, true))
 
         Mockito.verify(mockView).closeLockView()
@@ -167,9 +182,10 @@ class LockableActivityPresenterTest {
     @Throws(Exception::class)
     fun onActivityStartTestCase5() {
         val presenter = LockableActivityPresenter(
-                viewContract = mockView,
-                connectionsRepository = mockConnectionsRepository,
-                preferenceRepository = mockPreferenceRepository)
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository,
+            preferenceRepository = mockPreferenceRepository
+        )
         presenter.onActivityStart(Intent().putExtra(KEY_SKIP_PIN, false))
 
         Mockito.verify(mockView).lockScreen()
@@ -185,9 +201,10 @@ class LockableActivityPresenterTest {
         Mockito.doReturn(true).`when`(mockView).isBiometricReady()
 
         val presenter = LockableActivityPresenter(
-                viewContract = mockView,
-                connectionsRepository = mockConnectionsRepository,
-                preferenceRepository = mockPreferenceRepository)
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository,
+            preferenceRepository = mockPreferenceRepository
+        )
         presenter.onActivityStart(Intent())
 
         Mockito.verify(mockView).isBiometricReady()
@@ -201,9 +218,10 @@ class LockableActivityPresenterTest {
     @Throws(Exception::class)
     fun onActivityStartTestCase7() {
         val presenter = LockableActivityPresenter(
-                viewContract = mockView,
-                connectionsRepository = mockConnectionsRepository,
-                preferenceRepository = mockPreferenceRepository)
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository,
+            preferenceRepository = mockPreferenceRepository
+        )
 
         Mockito.doReturn(6).`when`(mockPreferenceRepository).pinInputAttempts
         Mockito.doReturn(999L + SystemClock.elapsedRealtime()).`when`(mockPreferenceRepository).blockPinInputTillTime
@@ -220,9 +238,10 @@ class LockableActivityPresenterTest {
     @Throws(Exception::class)
     fun onActivityStartTestCase8() {
         val presenter = LockableActivityPresenter(
-                viewContract = mockView,
-                connectionsRepository = mockConnectionsRepository,
-                preferenceRepository = mockPreferenceRepository)
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository,
+            preferenceRepository = mockPreferenceRepository
+        )
         mockPreferenceRepository.pinInputAttempts = 7
         mockPreferenceRepository.blockPinInputTillTime = 0L
         presenter.onActivityStart(Intent())
@@ -234,9 +253,10 @@ class LockableActivityPresenterTest {
     @Throws(Exception::class)
     fun onSuccessAuthenticationTest() {
         val presenter = LockableActivityPresenter(
-                viewContract = mockView,
-                connectionsRepository = mockConnectionsRepository,
-                preferenceRepository = mockPreferenceRepository)
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository,
+            preferenceRepository = mockPreferenceRepository
+        )
         mockPreferenceRepository.pinInputAttempts = 7
         mockPreferenceRepository.blockPinInputTillTime = 999L + SystemClock.elapsedRealtime()
         presenter.onSuccessAuthentication()
@@ -254,9 +274,10 @@ class LockableActivityPresenterTest {
     @Throws(Exception::class)
     fun onWrongPasscodeInputTestCase1() {
         val presenter = LockableActivityPresenter(
-                viewContract = mockView,
-                connectionsRepository = mockConnectionsRepository,
-                preferenceRepository = mockPreferenceRepository)
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository,
+            preferenceRepository = mockPreferenceRepository
+        )
 
         Mockito.doReturn(11).`when`(mockPreferenceRepository).pinInputAttempts
 
@@ -272,9 +293,10 @@ class LockableActivityPresenterTest {
     @Throws(Exception::class)
     fun onWrongPasscodeInputTestCase2() {
         val presenter = LockableActivityPresenter(
-                viewContract = mockView,
-                connectionsRepository = mockConnectionsRepository,
-                preferenceRepository = mockPreferenceRepository)
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository,
+            preferenceRepository = mockPreferenceRepository
+        )
         mockPreferenceRepository.pinInputAttempts = 3
         presenter.onWrongPasscodeInput()
 
@@ -288,9 +310,10 @@ class LockableActivityPresenterTest {
     @Throws(Exception::class)
     fun onWrongPasscodeInputTestCase3() {
         val presenter = LockableActivityPresenter(
-                viewContract = mockView,
-                connectionsRepository = mockConnectionsRepository,
-                preferenceRepository = mockPreferenceRepository)
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository,
+            preferenceRepository = mockPreferenceRepository
+        )
 
         Mockito.doReturn(5).`when`(mockPreferenceRepository).pinInputAttempts
         Mockito.doReturn(1000L + SystemClock.elapsedRealtime()).`when`(mockPreferenceRepository).blockPinInputTillTime

@@ -71,24 +71,34 @@ class ConnectionsListPresenterTestPart1 {
     fun getListItemsTestCase2() {
         val presenterContract = createPresenter(viewContract = mockView)
 
-        assertThat(presenterContract.getListItems(), equalTo(listOf(
+        assertThat(
+            presenterContract.getListItems(), equalTo(
+            listOf(
                 ConnectionViewModel(
-                        guid = "guid1", code = "demobank", name = "Demobank1",
-                        statusDescription = TestTools.getString(R.string.connection_status_inactive),
-                        statusColorResId = R.color.red,
-                        logoUrl = ""),
+                    guid = "guid1", code = "demobank", name = "Demobank1",
+                    statusDescription = TestTools.getString(R.string.connection_status_inactive),
+                    statusColorResId = R.color.red,
+                    logoUrl = ""
+                ),
                 ConnectionViewModel(
-                        guid = "guid3", code = "demobank3", name = "Demobank3",
-                        statusDescription = "${TestTools.getString(R.string.connection_status_connected_on)} ${300L.toDateTime().toLongDateString(TestTools.applicationContext)}",
-                        statusColorResId = R.color.gray_dark,
-                        logoUrl = ""),
+                    guid = "guid3", code = "demobank3", name = "Demobank3",
+                    statusDescription = "${TestTools.getString(R.string.connection_status_connected_on)} ${300L.toDateTime().toLongDateString(
+                        TestTools.applicationContext
+                    )}",
+                    statusColorResId = R.color.gray_dark,
+                    logoUrl = ""
+                ),
                 ConnectionViewModel(
-                        guid = "guid2", code = "demobank", name = "Demobank2",
-                        statusDescription = "${TestTools.getString(R.string.connection_status_connected_on)} ${200L.toDateTime().toLongDateString(TestTools.applicationContext)}",
-                        statusColorResId = R.color.gray_dark,
-                        logoUrl = "")
+                    guid = "guid2", code = "demobank", name = "Demobank2",
+                    statusDescription = "${TestTools.getString(R.string.connection_status_connected_on)} ${200L.toDateTime().toLongDateString(
+                        TestTools.applicationContext
+                    )}",
+                    statusColorResId = R.color.gray_dark,
+                    logoUrl = ""
                 )
-        ))
+            )
+        )
+        )
     }
 
     @Test
@@ -102,24 +112,36 @@ class ConnectionsListPresenterTestPart1 {
         presenter.onListItemClick(connectionGuid = "guidX")
 
         Mockito.verify(mockView).showOptionsView(
-                connectionGuid = "guidX",
-                options = emptyArray(),
-                requestCode = ITEM_OPTIONS_REQUEST_CODE)
+            connectionGuid = "guidX",
+            options = emptyArray(),
+            requestCode = ITEM_OPTIONS_REQUEST_CODE
+        )
 
         presenter.onListItemClick("guid2")
 
         Mockito.verify(mockView).showOptionsView(
-                connectionGuid = "guid2",
-                options = arrayOf(ConnectionOptions.RENAME, ConnectionOptions.REPORT_PROBLEM, ConnectionOptions.DELETE),
-                requestCode = ITEM_OPTIONS_REQUEST_CODE)
+            connectionGuid = "guid2",
+            options = arrayOf(
+                ConnectionOptions.RENAME,
+                ConnectionOptions.REPORT_PROBLEM,
+                ConnectionOptions.DELETE
+            ),
+            requestCode = ITEM_OPTIONS_REQUEST_CODE
+        )
 
         Mockito.reset(mockView)
         presenter.onListItemClick("guid1")
 
         Mockito.verify(mockView).showOptionsView(
-                connectionGuid = "guid1",
-                options = arrayOf(ConnectionOptions.RECONNECT, ConnectionOptions.RENAME, ConnectionOptions.REPORT_PROBLEM, ConnectionOptions.DELETE),
-                requestCode = ITEM_OPTIONS_REQUEST_CODE)
+            connectionGuid = "guid1",
+            options = arrayOf(
+                ConnectionOptions.RECONNECT,
+                ConnectionOptions.RENAME,
+                ConnectionOptions.REPORT_PROBLEM,
+                ConnectionOptions.DELETE
+            ),
+            requestCode = ITEM_OPTIONS_REQUEST_CODE
+        )
     }
 
     @Test
@@ -137,7 +159,10 @@ class ConnectionsListPresenterTestPart1 {
 
         Assert.assertTrue(presenter.onMenuItemClick(menuItemId = R.id.menu_delete_all))
 
-        Mockito.verify(mockView).showDeleteConnectionView(connectionGuid = null, requestCode = DELETE_ALL_REQUEST_CODE)
+        Mockito.verify(mockView).showDeleteConnectionView(
+            connectionGuid = null,
+            requestCode = DELETE_ALL_REQUEST_CODE
+        )
     }
 
     @Test
@@ -172,7 +197,8 @@ class ConnectionsListPresenterTestPart1 {
     @Throws(Exception::class)
     fun onConnectionsRevokeResultTest() {
         createPresenter(viewContract = mockView).onConnectionsRevokeResult(
-                revokedTokens = emptyList(), apiError = createInvalidResponseError())
+            revokedTokens = emptyList(), apiError = createInvalidResponseError()
+        )
 
         Mockito.never()
     }
@@ -191,21 +217,22 @@ class ConnectionsListPresenterTestPart1 {
     private val mockView = Mockito.mock(ConnectionsListContract.View::class.java)
     private val connections = listOf(
         Connection().setGuid("guid1").setCode("demobank").setName("Demobank1")
-                .setStatus(ConnectionStatus.INACTIVE).setAccessToken("token1")
-                .setCreatedAt(100L).setUpdatedAt(100L),
+            .setStatus(ConnectionStatus.INACTIVE).setAccessToken("token1")
+            .setCreatedAt(100L).setUpdatedAt(100L),
         Connection().setGuid("guid2").setCode("demobank").setName("Demobank2")
-                .setStatus(ConnectionStatus.ACTIVE).setAccessToken("token1")
-                .setCreatedAt(300L).setUpdatedAt(300L),
+            .setStatus(ConnectionStatus.ACTIVE).setAccessToken("token1")
+            .setCreatedAt(300L).setUpdatedAt(300L),
         Connection().setGuid("guid3").setCode("demobank3").setName("Demobank3")
-                .setStatus(ConnectionStatus.ACTIVE).setAccessToken("")
-                .setCreatedAt(200L).setUpdatedAt(200L)
+            .setStatus(ConnectionStatus.ACTIVE).setAccessToken("")
+            .setCreatedAt(200L).setUpdatedAt(200L)
     )
 
     private fun createPresenter(viewContract: ConnectionsListContract.View? = null): ConnectionsListPresenter {
         return ConnectionsListPresenter(
-                appContext = TestTools.applicationContext,
-                keyStoreManager = mockKeyStoreManager,
-                connectionsRepository = mockConnectionsRepository,
-                apiManager = mockApiManager).apply { this.viewContract = viewContract }
+            appContext = TestTools.applicationContext,
+            keyStoreManager = mockKeyStoreManager,
+            connectionsRepository = mockConnectionsRepository,
+            apiManager = mockApiManager
+        ).apply { this.viewContract = viewContract }
     }
 }

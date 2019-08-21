@@ -25,12 +25,20 @@ import androidx.annotation.StringRes
 import com.saltedge.authenticator.R
 
 enum class ConnectionOptions(@DrawableRes val iconId: Int, @StringRes val textId: Int) {
-    RECONNECT(R.drawable.ic_reconnect_gray_24dp,
-            R.string.actions_reconnect),
-    REPORT_PROBLEM(R.drawable.ic_about_black54_24dp,
-            R.string.actions_contact_support),
-    RENAME(R.drawable.ic_rename_gray_24dp,
-            R.string.actions_rename_connection),
-    DELETE(R.drawable.ic_delete_gray_24dp,
-            R.string.actions_delete);
+    RECONNECT(
+        R.drawable.ic_reconnect_gray_24dp,
+        R.string.actions_reconnect
+    ),
+    REPORT_PROBLEM(
+        R.drawable.ic_about_black54_24dp,
+        R.string.actions_contact_support
+    ),
+    RENAME(
+        R.drawable.ic_rename_gray_24dp,
+        R.string.actions_rename_connection
+    ),
+    DELETE(
+        R.drawable.ic_delete_gray_24dp,
+        R.string.actions_delete
+    );
 }

@@ -48,7 +48,7 @@ fun String.parseToUtcDateTime(): DateTime? {
 fun DateTime.remainedSecondsTillExpire(): Int = secondsBetweenDates(DateTime.now(this.zone), this)
 
 fun secondsBetweenDates(startDate: DateTime, endDate: DateTime): Int =
-        (millisBetweenDates(startDate, endDate) / 1000).toInt()
+    (millisBetweenDates(startDate, endDate) / 1000).toInt()
 
 /**
  * Create description of remained time
@@ -61,12 +61,12 @@ fun Int.remainedExpirationTime(): String {
     else {
         val period = Period(this * 1000L)
         PeriodFormatterBuilder()
-                .appendHours()
-                .appendSeparatorIfFieldsBefore(":")
-                .printZeroAlways().minimumPrintedDigits(if (period.hours > 0) 2 else 1).appendMinutes()
-                .appendSeparator(":")
-                .minimumPrintedDigits(2).appendSeconds()
-                .toFormatter().print(period)
+            .appendHours()
+            .appendSeparatorIfFieldsBefore(":")
+            .printZeroAlways().minimumPrintedDigits(if (period.hours > 0) 2 else 1).appendMinutes()
+            .appendSeparator(":")
+            .minimumPrintedDigits(2).appendSeconds()
+            .toFormatter().print(period)
     }
 }
 

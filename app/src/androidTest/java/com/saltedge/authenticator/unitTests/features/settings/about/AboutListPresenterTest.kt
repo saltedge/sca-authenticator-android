@@ -49,24 +49,28 @@ class AboutListPresenterTest {
     fun getListItemsTest() {
         val presenter = createPresenter(viewContract = mockView)
 
-        assertThat(presenter.getListItems(), equalTo(listOf(
+        assertThat(
+            presenter.getListItems(), equalTo(
+            listOf(
                 CheckedTitleValueViewModel(
-                        titleId = R.string.about_app_version,
-                        value = "2.0.0-rc5"
+                    titleId = R.string.about_app_version,
+                    value = "2.0.0-rc5"
                 ),
                 CheckedTitleValueViewModel(
-                        titleId = R.string.about_copyright,
-                        value = TestTools.getString(R.string.about_copyright_description)
+                    titleId = R.string.about_copyright,
+                    value = TestTools.getString(R.string.about_copyright_description)
                 ),
                 CheckedTitleValueViewModel(
-                        titleId = R.string.about_terms_service,
-                        itemIsClickable = true
+                    titleId = R.string.about_terms_service,
+                    itemIsClickable = true
                 ),
                 CheckedTitleValueViewModel(
-                        titleId = R.string.about_open_source_licenses,
-                        itemIsClickable = true
+                    titleId = R.string.about_open_source_licenses,
+                    itemIsClickable = true
                 )
-        )))
+            )
+        )
+        )
     }
 
     @Test
@@ -119,6 +123,6 @@ class AboutListPresenterTest {
 
     private fun createPresenter(viewContract: AboutListContract.View? = null): AboutListPresenter {
         return AboutListPresenter(TestTools.applicationContext)
-                .apply { this.viewContract = viewContract }
+            .apply { this.viewContract = viewContract }
     }
 }

@@ -40,7 +40,8 @@ import com.saltedge.authenticator.sdk.constants.DEFAULT_SUPPORT_EMAIL_LINK
  * @receiver fragment activity
  * @return boolean, true if backStackEntryCount == 0
  */
-fun FragmentActivity?.isTopNavigationLevel(): Boolean = (this?.supportFragmentManager?.backStackEntryCount ?: 0) == 0
+fun FragmentActivity?.isTopNavigationLevel(): Boolean =
+    (this?.supportFragmentManager?.backStackEntryCount ?: 0) == 0
 
 /**
  * Add fragment in back stack
@@ -50,8 +51,8 @@ fun FragmentActivity?.isTopNavigationLevel(): Boolean = (this?.supportFragmentMa
 fun FragmentActivity.addFragment(fragment: Fragment) {
     try {
         supportFragmentManager?.beginTransaction()
-                ?.replace(R.id.container, fragment, fragment.createTagName())
-                ?.addToBackStack(null)?.commit()
+            ?.replace(R.id.container, fragment, fragment.createTagName())
+            ?.addToBackStack(null)?.commit()
     } catch (ignored: IllegalStateException) {
     } catch (e: Exception) {
         e.log()
@@ -66,10 +67,13 @@ fun FragmentActivity.addFragment(fragment: Fragment) {
 fun FragmentActivity.replaceFragment(fragment: Fragment) {
     try {
         if (!isTopNavigationLevel()) {
-            supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            supportFragmentManager.popBackStackImmediate(
+                null,
+                FragmentManager.POP_BACK_STACK_INCLUSIVE
+            )
         }
         supportFragmentManager?.beginTransaction()
-                ?.replace(R.id.container, fragment, fragment.createTagName())?.commit()
+            ?.replace(R.id.container, fragment, fragment.createTagName())?.commit()
     } catch (ignored: IllegalStateException) {
     } catch (e: Exception) {
         e.log()
@@ -129,7 +133,8 @@ fun FragmentActivity.finishFragment() {
 fun FragmentActivity.startMailApp(supportEmail: String? = DEFAULT_SUPPORT_EMAIL_LINK) {
     try {
         this.startActivityForResult(Intent(Intent.ACTION_SENDTO)
-                .apply { data = Uri.parse("mailto:$supportEmail") }, 0)
+            .apply { data = Uri.parse("mailto:$supportEmail") }, 0
+        )
     } catch (ignored: IllegalStateException) {
     } catch (ignored: ActivityNotFoundException) {
     } catch (e: Exception) {
@@ -160,8 +165,9 @@ fun FragmentActivity.startSystemSettings() {
 fun FragmentActivity.startQrScannerActivity() {
     try {
         this.startActivityForResult(
-                Intent(this, QrScannerActivity::class.java),
-                QR_SCAN_REQUEST_CODE)
+            Intent(this, QrScannerActivity::class.java),
+            QR_SCAN_REQUEST_CODE
+        )
     } catch (ignored: IllegalStateException) {
     } catch (ignored: ActivityNotFoundException) {
     } catch (e: Exception) {
@@ -179,7 +185,8 @@ fun FragmentActivity.restartApp() {
         val intent = this.packageManager.getLaunchIntentForPackage(this.packageName)
         intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         this.startActivity(intent)
-    } catch (ignored: Exception) { }
+    } catch (ignored: Exception) {
+    }
 }
 
 /**

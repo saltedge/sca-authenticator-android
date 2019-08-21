@@ -58,7 +58,10 @@ class SingleAuthorizationPollingServiceTest {
     fun startTest() {
         val service = SingleAuthorizationPollingService()
         service.contract = mockContract
-        every { mockContract.getConnectionData() } returns ConnectionAndKey(requestConnection, privateKey)
+        every { mockContract.getConnectionData() } returns ConnectionAndKey(
+            requestConnection,
+            privateKey
+        )
         service.start(authorizationId = "1")
 
         Assert.assertTrue(service.isRunning())
@@ -71,7 +74,10 @@ class SingleAuthorizationPollingServiceTest {
     fun forcedFetchTest() {
         val service = SingleAuthorizationPollingService()
         service.contract = mockContract
-        every { mockContract.getConnectionData() } returns ConnectionAndKey(requestConnection, privateKey)
+        every { mockContract.getConnectionData() } returns ConnectionAndKey(
+            requestConnection,
+            privateKey
+        )
         service.forcedFetch()
 
         verify(atLeast = 1) { mockContract.getConnectionData() }
@@ -82,7 +88,10 @@ class SingleAuthorizationPollingServiceTest {
     fun stopTest() {
         val service = SingleAuthorizationPollingService()
         service.contract = mockContract
-        every { mockContract.getConnectionData() } returns ConnectionAndKey(requestConnection, privateKey)
+        every { mockContract.getConnectionData() } returns ConnectionAndKey(
+            requestConnection,
+            privateKey
+        )
         service.stop()
         service.forcedFetch()
 
@@ -97,9 +106,11 @@ class SingleAuthorizationPollingServiceTest {
 
     private var privateKey: PrivateKey = KeyStoreManager.createOrReplaceRsaKeyPair("test")!!.private
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
-    private val mockContract: FetchAuthorizationContract = mockkClass(FetchAuthorizationContract::class)
+    private val mockContract: FetchAuthorizationContract =
+        mockkClass(FetchAuthorizationContract::class)
     private val mockCall = mockkClass(Call::class) as Call<AuthorizationShowResponseData>
-    private val requestConnection: ConnectionAbs = TestConnection(id = "333", guid = "test", connectUrl = "/", accessToken = "accessToken")
+    private val requestConnection: ConnectionAbs =
+        TestConnection(id = "333", guid = "test", connectUrl = "/", accessToken = "accessToken")
 
     @Before
     @Throws(Exception::class)

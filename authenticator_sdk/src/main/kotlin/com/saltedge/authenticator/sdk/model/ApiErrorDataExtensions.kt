@@ -51,7 +51,8 @@ fun ApiErrorData.getErrorMessage(context: Context): String {
  * @receiver api error
  * @return boolean. true if errorClassName == ERROR_CLASS_CONNECTION_NOT_FOUND
  */
-fun ApiErrorData.isConnectionNotFound(): Boolean = errorClassName == ERROR_CLASS_CONNECTION_NOT_FOUND
+fun ApiErrorData.isConnectionNotFound(): Boolean =
+    errorClassName == ERROR_CLASS_CONNECTION_NOT_FOUND
 
 /**
  * Creates Api Error for unknown network error
@@ -62,8 +63,9 @@ fun ApiErrorData.isConnectionNotFound(): Boolean = errorClassName == ERROR_CLASS
  */
 fun createRequestError(responseCode: Int): ApiErrorData {
     return ApiErrorData(
-            errorMessage = "Request Error ($responseCode)",
-            errorClassName = ERROR_CLASS_API_RESPONSE)
+        errorMessage = "Request Error ($responseCode)",
+        errorClassName = ERROR_CLASS_API_RESPONSE
+    )
 }
 
 /**
@@ -74,6 +76,7 @@ fun createRequestError(responseCode: Int): ApiErrorData {
  */
 fun createInvalidResponseError(): ApiErrorData {
     return ApiErrorData(
-            errorMessage = "Invalid response",
-            errorClassName = ERROR_CLASS_API_RESPONSE)
+        errorMessage = "Invalid response",
+        errorClassName = ERROR_CLASS_API_RESPONSE
+    )
 }

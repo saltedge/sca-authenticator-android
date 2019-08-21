@@ -23,7 +23,13 @@ package com.saltedge.authenticator.widget.biometric
 interface BiometricsInputContract {
 
     interface View {
-        fun updateStatusView(imageResId: Int, textColorResId: Int, textResId: Int, animateText: Boolean)
+        fun updateStatusView(
+            imageResId: Int,
+            textColorResId: Int,
+            textResId: Int,
+            animateText: Boolean
+        )
+
         fun sendAuthSuccessResult()
     }
 }

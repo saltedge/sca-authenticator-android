@@ -21,5 +21,6 @@
 package com.saltedge.authenticator.sdk.model.request
 
 internal data class AuthenticatedRequestData(
-        val requestUrl: String, val headersMap: Map<String, String>
+    val requestUrl: String,
+    val headersMap: Map<String, String>
 )

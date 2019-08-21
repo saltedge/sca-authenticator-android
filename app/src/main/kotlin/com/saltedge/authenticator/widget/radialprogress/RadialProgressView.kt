@@ -54,7 +54,11 @@ class RadialProgressView : View {
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
 
     var max: Int
         get() = presenter.maxProgress
@@ -100,10 +104,14 @@ class RadialProgressView : View {
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         canvas?.let {
-            it.drawCircle(presenter.centerX, presenter.centerY,
-                    presenter.backgroundCircleRadius, backgroundCirclePaint)
-            it.drawArc(presenter.progressArcRectF, presenter.calculateStartAngle(),
-                    presenter.calculateSweepAngle(), true, progressArcPaint)
+            it.drawCircle(
+                presenter.centerX, presenter.centerY,
+                presenter.backgroundCircleRadius, backgroundCirclePaint
+            )
+            it.drawArc(
+                presenter.progressArcRectF, presenter.calculateStartAngle(),
+                presenter.calculateSweepAngle(), true, progressArcPaint
+            )
         }
     }
 }

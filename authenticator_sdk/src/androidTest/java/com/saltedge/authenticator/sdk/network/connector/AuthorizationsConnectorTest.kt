@@ -49,7 +49,6 @@ import retrofit2.Call
 import retrofit2.Response
 import java.security.PrivateKey
 
-
 @RunWith(AndroidJUnit4::class)
 class AuthorizationsConnectorTest {
 
@@ -73,29 +72,37 @@ class AuthorizationsConnectorTest {
 
         verify { mockCall.enqueue(connector) }
 
-        connector.onResponse(mockCall, Response.success(
-                AuthorizationsResponseData(
-                        data = listOf(EncryptedAuthorizationData(
-                                id = "444",
-                                connectionId = "333",
-                                algorithm = "AES-256-CBC",
-                                iv = "o3TDCc3rKYTx...RVH+aOFpS9NIg==\n",
-                                key = "BtV7EB3Erv8xEQ.../jeBRyFa75A6po5XlwWiEiuzQ==\n",
-                                data = "YlnrNOHvUIPem/O58rMzdsvkXidLvgGpdMalD9c1mlg=\n"
-                        ))
-                )
-        ))
-
-        verify { mockCallback.onFetchAuthorizationsResult(
-                result = listOf(EncryptedAuthorizationData(
+        connector.onResponse(
+            mockCall, Response.success(
+            AuthorizationsResponseData(
+                data = listOf(
+                    EncryptedAuthorizationData(
                         id = "444",
                         connectionId = "333",
                         algorithm = "AES-256-CBC",
                         iv = "o3TDCc3rKYTx...RVH+aOFpS9NIg==\n",
                         key = "BtV7EB3Erv8xEQ.../jeBRyFa75A6po5XlwWiEiuzQ==\n",
                         data = "YlnrNOHvUIPem/O58rMzdsvkXidLvgGpdMalD9c1mlg=\n"
-                )),
-                errors = emptyList())
+                    )
+                )
+            )
+        )
+        )
+
+        verify {
+            mockCallback.onFetchAuthorizationsResult(
+                result = listOf(
+                    EncryptedAuthorizationData(
+                        id = "444",
+                        connectionId = "333",
+                        algorithm = "AES-256-CBC",
+                        iv = "o3TDCc3rKYTx...RVH+aOFpS9NIg==\n",
+                        key = "BtV7EB3Erv8xEQ.../jeBRyFa75A6po5XlwWiEiuzQ==\n",
+                        data = "YlnrNOHvUIPem/O58rMzdsvkXidLvgGpdMalD9c1mlg=\n"
+                    )
+                ),
+                errors = emptyList()
+            )
         }
         confirmVerified(mockCallback)
     }
@@ -108,27 +115,45 @@ class AuthorizationsConnectorTest {
 
         verify(exactly = 1) {
             mockApi.getAuthorizations(
-                    requestUrl = requestUrl,
-                    headersMap = capturedHeaders.first())
+                requestUrl = requestUrl,
+                headersMap = capturedHeaders.first()
+            )
         }
         verify { mockCall.enqueue(connector) }
         assertThat(capturedHeaders.first()[HEADER_KEY_ACCESS_TOKEN], equalTo("accessToken"))
 
-        connector.onResponse(mockCall, Response.error(404, ResponseBody.create(null, get404Response())))
+        connector.onResponse(
+            mockCall,
+            Response.error(404, ResponseBody.create(null, get404Response()))
+        )
 
-        verify { mockCallback.onFetchAuthorizationsResult(
+        verify {
+            mockCallback.onFetchAuthorizationsResult(
                 result = emptyList(),
-                errors = listOf(ApiErrorData(errorMessage = "Resource not found", errorClassName="NotFound", accessToken = "accessToken")))
+                errors = listOf(
+                    ApiErrorData(
+                        errorMessage = "Resource not found",
+                        errorClassName = "NotFound",
+                        accessToken = "accessToken"
+                    )
+                )
+            )
         }
         confirmVerified(mockCallback)
     }
 
     private val requestUrl = "https://localhost/api/authenticator/v1/authorizations"
     private var privateKey: PrivateKey = KeyStoreManager.createOrReplaceRsaKeyPair("test")!!.private
-    private val requestConnection: ConnectionAbs = TestConnection(id = "333", guid = "test", connectUrl = "https://localhost", accessToken = "accessToken")
+    private val requestConnection: ConnectionAbs = TestConnection(
+        id = "333",
+        guid = "test",
+        connectUrl = "https://localhost",
+        accessToken = "accessToken"
+    )
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
     private val mockCallback = mockkClass(FetchAuthorizationsContract::class)
-    private val mockCall: Call<AuthorizationsResponseData> = mockkClass(Call::class) as Call<AuthorizationsResponseData>
+    private val mockCall: Call<AuthorizationsResponseData> =
+        mockkClass(Call::class) as Call<AuthorizationsResponseData>
     private var capturedHeaders: MutableList<Map<String, String>> = mutableListOf()
 
     @Before
@@ -136,10 +161,16 @@ class AuthorizationsConnectorTest {
     fun setUp() {
         capturedHeaders = mutableListOf()
         every {
-            mockApi.getAuthorizations(requestUrl = requestUrl, headersMap = capture(capturedHeaders))
+            mockApi.getAuthorizations(
+                requestUrl = requestUrl,
+                headersMap = capture(capturedHeaders)
+            )
         } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
-        every { mockCall.request() } returns Request.Builder().url(requestUrl).addHeader(HEADER_KEY_ACCESS_TOKEN, "accessToken").build()
+        every { mockCall.request() } returns Request.Builder().url(requestUrl).addHeader(
+            HEADER_KEY_ACCESS_TOKEN,
+            "accessToken"
+        ).build()
         every { mockCallback.getConnectionsData() } returns null
         every { mockCallback.onFetchAuthorizationsResult(any(), any()) } returns Unit
     }

@@ -70,11 +70,17 @@ class DeleteConnectionPresenterTest : DeleteConnectionContract.View {
         val presenter = DeleteConnectionPresenter(viewContract = this)
         presenter.guid = null
 
-        assertThat(presenter.viewTitle(DELETE_ALL_REQUEST_CODE), equalTo(R.string.actions_delete_connections_query))
+        assertThat(
+            presenter.viewTitle(DELETE_ALL_REQUEST_CODE),
+            equalTo(R.string.actions_delete_connections_query)
+        )
 
         presenter.guid = "guid1"
 
-        assertThat(presenter.viewTitle(DELETE_REQUEST_CODE), equalTo(R.string.actions_delete_connection_query))
+        assertThat(
+            presenter.viewTitle(DELETE_REQUEST_CODE),
+            equalTo(R.string.actions_delete_connection_query)
+        )
     }
 
     @Test
@@ -83,11 +89,17 @@ class DeleteConnectionPresenterTest : DeleteConnectionContract.View {
         val presenter = DeleteConnectionPresenter(viewContract = this)
         presenter.guid = null
 
-        assertThat(presenter.viewPositiveActionText(DELETE_ALL_REQUEST_CODE), equalTo(R.string.actions_delete_all))
+        assertThat(
+            presenter.viewPositiveActionText(DELETE_ALL_REQUEST_CODE),
+            equalTo(R.string.actions_delete_all)
+        )
 
         presenter.guid = "guid1"
 
-        assertThat(presenter.viewPositiveActionText(DELETE_REQUEST_CODE), equalTo(R.string.actions_delete))
+        assertThat(
+            presenter.viewPositiveActionText(DELETE_REQUEST_CODE),
+            equalTo(R.string.actions_delete)
+        )
     }
 
     @Test
@@ -96,11 +108,17 @@ class DeleteConnectionPresenterTest : DeleteConnectionContract.View {
         val presenter = DeleteConnectionPresenter(viewContract = this)
         presenter.guid = null
 
-        assertThat(presenter.viewMessage(DELETE_ALL_REQUEST_CODE), equalTo(R.string.connections_list_delete_all_connections))
+        assertThat(
+            presenter.viewMessage(DELETE_ALL_REQUEST_CODE),
+            equalTo(R.string.connections_list_delete_all_connections)
+        )
 
         presenter.guid = "guid1"
 
-        assertThat(presenter.viewMessage(DELETE_REQUEST_CODE), equalTo(R.string.connections_list_delete_connection))
+        assertThat(
+            presenter.viewMessage(DELETE_REQUEST_CODE),
+            equalTo(R.string.connections_list_delete_connection)
+        )
     }
 
     @Test

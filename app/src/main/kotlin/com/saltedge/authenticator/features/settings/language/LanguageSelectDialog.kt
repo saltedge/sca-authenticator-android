@@ -42,15 +42,16 @@ class LanguageSelectDialog : DialogFragment(), LanguageSelectContract.View {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(activity, R.style.MaterialThemeDialog)
-                .setTitle(R.string.settings_language)
-                .setSingleChoiceItems(
-                        presenterContract.availableLanguages,
-                        presenterContract.currentItemIndex) { _, which ->
-                    presenterContract.currentItemIndex = which
-                }
-                .setPositiveButton(R.string.actions_ok) { _, _ -> presenterContract.onOkClick() }
-                .setNegativeButton(R.string.actions_cancel) { _, _ -> closeView() }
-                .create()
+            .setTitle(R.string.settings_language)
+            .setSingleChoiceItems(
+                presenterContract.availableLanguages,
+                presenterContract.currentItemIndex
+            ) { _, which ->
+                presenterContract.currentItemIndex = which
+            }
+            .setPositiveButton(R.string.actions_ok) { _, _ -> presenterContract.onOkClick() }
+            .setNegativeButton(R.string.actions_cancel) { _, _ -> closeView() }
+            .create()
     }
 
     override fun closeView() {

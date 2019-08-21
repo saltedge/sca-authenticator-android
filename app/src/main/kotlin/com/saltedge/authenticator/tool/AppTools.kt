@@ -55,7 +55,8 @@ object AppTools : AppToolsAbs {
      * @return height size
      */
     override fun getDisplayHeight(appContext: Context): Int {
-        val display = (appContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
+        val display =
+            (appContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
         val size = Point()
         display?.getSize(size)
         return size.y
@@ -68,7 +69,8 @@ object AppTools : AppToolsAbs {
      * @return width size
      */
     override fun getDisplayWidth(appContext: Context): Int {
-        val display = (appContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
+        val display =
+            (appContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
         val size = Point()
         display?.getSize(size)
         return size.x
@@ -83,10 +85,11 @@ object AppTools : AppToolsAbs {
     override fun getAppVersionName(appContext: Context): String {
         try {
             return appContext.packageManager?.getPackageInfo(appContext.packageName, 0)?.versionName
-                    ?: "unknown"
+                ?: "unknown"
         } catch (e: PackageManager.NameNotFoundException) {
             Crashlytics.logException(e)
-        } catch (ignored: Exception) { }
+        } catch (ignored: Exception) {
+        }
         return "unknown"
     }
 }

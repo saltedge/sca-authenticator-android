@@ -36,8 +36,10 @@ class DateToolsTest {
     fun remainedSecondsTillExpireTest() {
         assertThat(DateTime.now().remainedSecondsTillExpire(), equalTo(0))
         assertThat(DateTime.now().minusMinutes(1).remainedSecondsTillExpire(), equalTo(0))
-        assertThat(DateTime.now().plusMinutes(1).remainedSecondsTillExpire(),
-                anyOf(equalTo(59), equalTo(60)))
+        assertThat(
+            DateTime.now().plusMinutes(1).remainedSecondsTillExpire(),
+            anyOf(equalTo(59), equalTo(60))
+        )
     }
 
     @Test

@@ -50,7 +50,10 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
     }
 
     fun setSavedPasscode(currentPasscode: String) {
-        passcodeInputView?.initInputMode(PasscodeInputView.InputMode.CHECK_PASSCODE, currentPasscode)
+        passcodeInputView?.initInputMode(
+            PasscodeInputView.InputMode.CHECK_PASSCODE,
+            currentPasscode
+        )
     }
 
     fun setDescriptionText(textResId: Int) {
@@ -71,8 +74,8 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
 
     private fun updateDescription(biometricsActionIsAvailable: Boolean) {
         descriptionView?.setText(
-                if (biometricsActionIsAvailable) R.string.actions_enter_passcode_or_fingerprint
-                else R.string.actions_enter_passcode
+            if (biometricsActionIsAvailable) R.string.actions_enter_passcode_or_fingerprint
+            else R.string.actions_enter_passcode
         )
     }
 }

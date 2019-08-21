@@ -46,7 +46,11 @@ class QrScannerBorderView : View {
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -54,10 +58,11 @@ class QrScannerBorderView : View {
         val centerX = w.toFloat() / 2
         val centerY = h.toFloat() / 2
         borderRect = RectF(
-                centerX - rectHalfSize,
-                centerY - rectHalfSize,
-                centerX + rectHalfSize,
-                centerY + rectHalfSize)
+            centerX - rectHalfSize,
+            centerY - rectHalfSize,
+            centerX + rectHalfSize,
+            centerY + rectHalfSize
+        )
     }
 
     override fun onDraw(canvas: Canvas?) {

@@ -48,9 +48,9 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val adb = AlertDialog.Builder(activity!!)
-                .setTitle(R.string.actions_rename_connection)
-                .setPositiveButton(R.string.actions_ok, this)
-                .setNegativeButton(R.string.actions_cancel, this)
+            .setTitle(R.string.actions_rename_connection)
+            .setPositiveButton(R.string.actions_ok, this)
+            .setNegativeButton(R.string.actions_cancel, this)
         val view = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_name, null)
         val dialog = adb.setView(view).create()
         dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
@@ -91,10 +91,10 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
         if (inputValue.isNotEmpty()) {
             dismissDialog()
             targetFragment?.onActivityResult(
-                    targetRequestCode,
-                    Activity.RESULT_OK,
-                    Intent().putExtra(KEY_GUID, arguments?.getString(KEY_GUID))
-                            .putExtra(KEY_NAME, inputValue)
+                targetRequestCode,
+                Activity.RESULT_OK,
+                Intent().putExtra(KEY_GUID, arguments?.getString(KEY_GUID))
+                    .putExtra(KEY_NAME, inputValue)
             )
         }
     }
@@ -106,10 +106,10 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
 
     companion object {
         fun newInstance(guid: String, name: String): EditConnectionNameDialog =
-                EditConnectionNameDialog().apply {
-                    arguments = Bundle()
-                            .apply { putString(KEY_GUID, guid) }
-                            .apply { putString(KEY_NAME, name) }
-                }
+            EditConnectionNameDialog().apply {
+                arguments = Bundle()
+                    .apply { putString(KEY_GUID, guid) }
+                    .apply { putString(KEY_NAME, name) }
+            }
     }
 }

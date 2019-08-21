@@ -43,7 +43,11 @@ class PasscodeEditFragment : BaseFragment(), PasscodeEditContract.View, Passcode
         injectDependencies()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         activityComponents?.updateAppbarTitle(getString(R.string.settings_passcode))
         return inflater.inflate(R.layout.fragment_edit_passcode, container, false)
     }

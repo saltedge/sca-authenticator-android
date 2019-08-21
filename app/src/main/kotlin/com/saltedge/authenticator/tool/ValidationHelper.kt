@@ -48,8 +48,8 @@ fun validatePasscode(passcode: String, context: Context): String? {
         passcode.isEmpty() -> context.getString(R.string.errors_empty_passcode)
         !isPasscodeValid(passcode) ->
             context.getString(
-                    R.string.errors_passcode_info, MIN_LENGTH_FOR_THE_PASSCODE,
-                    MAX_LENGTH_FOR_THE_PASSCODE
+                R.string.errors_passcode_info, MIN_LENGTH_FOR_THE_PASSCODE,
+                MAX_LENGTH_FOR_THE_PASSCODE
             )
         else -> null
     }

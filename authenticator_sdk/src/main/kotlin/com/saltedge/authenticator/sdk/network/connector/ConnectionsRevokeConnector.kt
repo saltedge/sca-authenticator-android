@@ -38,8 +38,8 @@ import retrofit2.Call
  * @param resultCallback - instance of ConnectionsRevokeResult for returning query result
  */
 internal class ConnectionsRevokeConnector(
-        private val apiInterface: ApiInterface,
-        var resultCallback: ConnectionsRevokeResult? = null
+    private val apiInterface: ApiInterface,
+    var resultCallback: ConnectionsRevokeResult? = null
 ) : QueueConnector<RevokeAccessTokenResponseData>() {
 
     private var result = mutableListOf<Token>()
@@ -55,11 +55,12 @@ internal class ConnectionsRevokeConnector(
         if (super.queueIsEmpty()) {
             val requestData: List<AuthenticatedRequestData> = connections.map { (connection, key) ->
                 createAuthenticatedRequestData<Nothing>(
-                        requestMethod = REQUEST_METHOD_DELETE,
-                        baseUrl = connection.connectUrl,
-                        apiRoutePath = API_CONNECTIONS,
-                        accessToken = connection.accessToken,
-                        signPrivateKey = key)
+                    requestMethod = REQUEST_METHOD_DELETE,
+                    baseUrl = connection.connectUrl,
+                    apiRoutePath = API_CONNECTIONS,
+                    accessToken = connection.accessToken,
+                    signPrivateKey = key
+                )
             }
             this.result = ArrayList()
             super.setQueueSize(requestData.size)
@@ -82,7 +83,10 @@ internal class ConnectionsRevokeConnector(
      * @param call - retrofit call
      * @param response - RevokeAccessTokenResponseData model
      */
-    override fun onSuccessResponse(call: Call<RevokeAccessTokenResponseData>, response: RevokeAccessTokenResponseData) {
+    override fun onSuccessResponse(
+        call: Call<RevokeAccessTokenResponseData>,
+        response: RevokeAccessTokenResponseData
+    ) {
         response.data?.accessToken?.let {
             if ((response.data?.success == true)) result.add(it)
         }
@@ -102,7 +106,8 @@ internal class ConnectionsRevokeConnector(
 
     private fun sendRequest(requestData: AuthenticatedRequestData) {
         apiInterface.deleteAccessToken(
-                requestUrl = requestData.requestUrl,
-                headersMap = requestData.headersMap).enqueue(this)
+            requestUrl = requestData.requestUrl,
+            headersMap = requestData.headersMap
+        ).enqueue(this)
     }
 }

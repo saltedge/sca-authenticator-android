@@ -30,7 +30,8 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.setVisible
 import kotlinx.android.synthetic.main.view_pinpad.view.*
 
-class PinpadView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs), View.OnClickListener {
+class PinpadView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
+    View.OnClickListener {
 
     var inputHandler: PinpadInputHandler? = null
 
@@ -46,7 +47,7 @@ class PinpadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
             R.id.fingerView -> inputHandler?.onKeyClick(Control.FINGER)
             R.id.deleteView -> inputHandler?.onKeyClick(Control.DELETE)
             else -> (view as? TextView)?.text
-                    ?.let { inputHandler?.onKeyClick(Control.NUMBER, it.toString()) }
+                ?.let { inputHandler?.onKeyClick(Control.NUMBER, it.toString()) }
         }
     }
 

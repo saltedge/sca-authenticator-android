@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
- <!--
+<?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2019 Salt Edge Inc.
@@ -22,25 +21,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
 
     <ImageView
-        android:contentDescription="@null"
         android:layout_width="@dimen/dp_24"
         android:layout_height="@dimen/dp_24"
+        android:contentDescription="@null"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_lock_aquamarine"/>
+        android:src="@drawable/ic_lock_aquamarine" />
 
     <TextView
         android:id="@+id/sslNotesView"
+        style="@style/Text14GrayDarkRegular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_10"
         android:layout_marginBottom="@dimen/dp_16"
+        android:gravity="center"
         android:lines="2"
         android:maxLines="2"
-        android:gravity="center"
-        android:text="@string/connect_status_encrypted_connection"
-        style="@style/Text14GrayDarkRegular"/>
+        android:text="@string/connect_status_encrypted_connection" />
 </LinearLayout>

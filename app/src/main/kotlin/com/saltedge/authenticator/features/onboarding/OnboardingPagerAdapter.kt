@@ -29,7 +29,10 @@ import android.widget.TextView
 import androidx.viewpager.widget.PagerAdapter
 import com.saltedge.authenticator.R
 
-class OnboardingPagerAdapter(val context: Context, private var items: List<OnboardingPageViewModel>) : PagerAdapter() {
+class OnboardingPagerAdapter(
+    val context: Context,
+    private var items: List<OnboardingPageViewModel>
+) : PagerAdapter() {
 
     private val layoutInflater: LayoutInflater
         get() = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater

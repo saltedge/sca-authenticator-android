@@ -42,8 +42,10 @@ class KeyStoreManagerTest {
 
         if (secretKey == null) {
             assertThat(KeyStoreManager.getKeyStoreAliases(), equalTo(listOf("test1")))
-        }
-        else assertThat(KeyStoreManager.getKeyStoreAliases(), equalTo(listOf("test1", "biometric")))
+        } else assertThat(
+            KeyStoreManager.getKeyStoreAliases(),
+            equalTo(listOf("test1", "biometric"))
+        )
     }
 
     @Test

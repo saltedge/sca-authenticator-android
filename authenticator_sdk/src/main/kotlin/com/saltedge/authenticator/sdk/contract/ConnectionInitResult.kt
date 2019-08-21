@@ -26,5 +26,4 @@ import com.saltedge.authenticator.sdk.model.response.AuthenticateConnectionData
 interface ConnectionInitResult {
     fun onConnectionInitFailure(error: ApiErrorData)
     fun onConnectionInitSuccess(response: AuthenticateConnectionData)
-
 }
