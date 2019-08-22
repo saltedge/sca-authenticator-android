@@ -61,8 +61,8 @@ android {
         compileSdkVersion 28
         targetSdkVersion 28
 
-        versionCode 29
-        versionName '2.0.0-rc5'
+        versionCode 30
+        versionName '2.0.0-rc6'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
