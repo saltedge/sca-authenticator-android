@@ -40,8 +40,8 @@ import retrofit2.Call
  * @see QueueConnector
  */
 internal class AuthorizationsConnector(
-        val apiInterface: ApiInterface,
-        var resultCallback: FetchAuthorizationsResult?
+    val apiInterface: ApiInterface,
+    var resultCallback: FetchAuthorizationsResult?
 ) : QueueConnector<AuthorizationsResponseData>() {
 
     private var result = mutableListOf<EncryptedAuthorizationData>()
@@ -49,15 +49,16 @@ internal class AuthorizationsConnector(
 
     fun fetchAuthorizations(connectionsAndKeys: List<ConnectionAndKey>) {
         if (super.queueIsEmpty()) {
-            val requestData: List<AuthenticatedRequestData> = connectionsAndKeys.map { (connection, key) ->
-                createAuthenticatedRequestData<Nothing>(
+            val requestData: List<AuthenticatedRequestData> =
+                connectionsAndKeys.map { (connection, key) ->
+                    createAuthenticatedRequestData<Nothing>(
                         requestMethod = REQUEST_METHOD_GET,
                         baseUrl = connection.connectUrl,
                         apiRoutePath = API_AUTHORIZATIONS,
                         accessToken = connection.accessToken,
                         signPrivateKey = key
-                )
-            }
+                    )
+                }
             result.clear()
             errors.clear()
             super.setQueueSize(requestData.size)
@@ -71,7 +72,10 @@ internal class AuthorizationsConnector(
         resultCallback?.onFetchAuthorizationsResult(result, errors)
     }
 
-    override fun onSuccessResponse(call: Call<AuthorizationsResponseData>, response: AuthorizationsResponseData) {
+    override fun onSuccessResponse(
+        call: Call<AuthorizationsResponseData>,
+        response: AuthorizationsResponseData
+    ) {
         response.data?.filter { it.isValid() }?.let { result.addAll(it) }
         super.onResponseReceived()
     }
@@ -83,8 +87,8 @@ internal class AuthorizationsConnector(
 
     private fun sendRequest(requestData: AuthenticatedRequestData) {
         apiInterface.getAuthorizations(
-                requestUrl = requestData.requestUrl,
-                headersMap = requestData.headersMap
+            requestUrl = requestData.requestUrl,
+            headersMap = requestData.headersMap
         ).enqueue(this)
     }
 }

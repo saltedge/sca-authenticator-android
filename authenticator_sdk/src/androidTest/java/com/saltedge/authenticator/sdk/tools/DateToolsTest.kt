@@ -36,8 +36,10 @@ class DateToolsTest {
     fun remainedSecondsTillExpireTest() {
         assertThat(DateTime.now().remainedSecondsTillExpire(), equalTo(0))
         assertThat(DateTime.now().minusMinutes(1).remainedSecondsTillExpire(), equalTo(0))
-        assertThat(DateTime.now().plusMinutes(1).remainedSecondsTillExpire(),
-                anyOf(equalTo(59), equalTo(60)))
+        assertThat(
+            DateTime.now().plusMinutes(1).remainedSecondsTillExpire(),
+            anyOf(equalTo(59), equalTo(60))
+        )
     }
 
     @Test
@@ -53,12 +55,18 @@ class DateToolsTest {
     fun remainedExpirationTimeTest() {
         assertThat(DateTime.now().remainedExpirationTime(), equalTo("-:--"))
         assertThat(DateTime.now().minusMinutes(1).remainedExpirationTime(), equalTo("-:--"))
-        assertThat(DateTime.now().plusMinutes(1).remainedExpirationTime(),
-                anyOf(equalTo("0:59"), equalTo("1:00")))
-        assertThat(DateTime.now().plusMinutes(10).plusSeconds(59).remainedExpirationTime(),
-                anyOf(equalTo("10:58"), equalTo("10:59")))
-        assertThat(DateTime.now().plusHours(1).remainedExpirationTime(),
-                anyOf(equalTo("59:59"), equalTo("1:00:00")))
+        assertThat(
+            DateTime.now().plusMinutes(1).remainedExpirationTime(),
+            anyOf(equalTo("0:59"), equalTo("1:00"))
+        )
+        assertThat(
+            DateTime.now().plusMinutes(10).plusSeconds(59).remainedExpirationTime(),
+            anyOf(equalTo("10:58"), equalTo("10:59"))
+        )
+        assertThat(
+            DateTime.now().plusHours(1).remainedExpirationTime(),
+            anyOf(equalTo("59:59"), equalTo("1:00:00"))
+        )
     }
 
     @Test

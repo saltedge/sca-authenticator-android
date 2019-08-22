@@ -175,13 +175,13 @@ object PreferenceRepository : PreferenceRepositoryAbs {
      */
     override fun clearUserPreferences() {
         preferences?.edit()
-                ?.remove(KEY_PASSCODE)
-                ?.remove(KEY_FINGERPRINT)
-                ?.remove(KEY_NOTIFICATIONS)
-                ?.remove(KEY_LOCALE)
-                ?.remove(KEY_PIN_INPUT_ATTEMPTS)
-                ?.remove(KEY_PIN_INPUT_TIME)
-                ?.apply()
+            ?.remove(KEY_PASSCODE)
+            ?.remove(KEY_FINGERPRINT)
+            ?.remove(KEY_NOTIFICATIONS)
+            ?.remove(KEY_LOCALE)
+            ?.remove(KEY_PIN_INPUT_ATTEMPTS)
+            ?.remove(KEY_PIN_INPUT_TIME)
+            ?.apply()
         fingerprintEnabledValue = null
     }
 }

@@ -48,7 +48,7 @@ fun DateTime.isAfterOrEqual(time: DateTime) = isAfter(time) || isEqual(time)
  * @return milliseconds
  */
 fun millisToRemainedMinutes(remainedMillis: Long): Int =
-        Math.ceil((remainedMillis.toDouble() / MILLIS_IN_MINUTE)).toInt()
+    Math.ceil((remainedMillis.toDouble() / MILLIS_IN_MINUTE)).toInt()
 
 /**
  * Converts the current date time to a string presentation
@@ -58,4 +58,4 @@ fun millisToRemainedMinutes(remainedMillis: Long): Int =
  * @return the date as a string
  */
 fun DateTime.toLongDateString(appContext: Context): String =
-        this.toString("d MMM yyyy, HH:mm", appContext.getCurrentAppLocale()) ?: ""
+    this.toString("d MMM yyyy, HH:mm", appContext.getCurrentAppLocale()) ?: ""

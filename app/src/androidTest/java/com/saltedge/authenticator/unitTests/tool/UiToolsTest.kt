@@ -60,8 +60,14 @@ class UiToolsTest {
     @Test
     @Throws(Exception::class)
     fun getEnabledStateColorResIdTest() {
-        assertThat(getEnabledStateColorResId(isEnabled = true), equalTo(R.color.button_blue_default))
-        assertThat(getEnabledStateColorResId(isEnabled = false), equalTo(R.color.button_blue_disabled))
+        assertThat(
+            getEnabledStateColorResId(isEnabled = true),
+            equalTo(R.color.button_blue_default)
+        )
+        assertThat(
+            getEnabledStateColorResId(isEnabled = false),
+            equalTo(R.color.button_blue_disabled)
+        )
     }
 
     @Test

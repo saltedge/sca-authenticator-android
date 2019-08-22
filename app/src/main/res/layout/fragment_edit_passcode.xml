@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
- <!--
+<?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2019 Salt Edge Inc.
@@ -20,31 +19,31 @@
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@android:color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/titleView"
+        style="@style/Text20BlackRegular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_64"
         android:layout_marginStart="@dimen/dp_32"
+        android:layout_marginTop="@dimen/dp_64"
         android:layout_marginEnd="@dimen/dp_32"
-        android:lines="2"
-        android:maxLines="2"
         android:gravity="center_horizontal"
-        style="@style/Text20BlackRegular" />
+        android:lines="2"
+        android:maxLines="2" />
 
     <com.saltedge.authenticator.widget.passcode.PasscodeInputView
         android:id="@+id/passcodeInputView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/titleView"/>
+        android:layout_below="@+id/titleView" />
 
     <include
         android:id="@+id/loaderView"
-        android:visibility="gone"
-        layout="@layout/view_progress"/>
+        layout="@layout/view_progress"
+        android:visibility="gone" />
 </RelativeLayout>

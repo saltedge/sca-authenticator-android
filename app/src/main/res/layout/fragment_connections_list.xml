@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
- <!--
+<?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2019 Salt Edge Inc.
@@ -29,29 +28,29 @@
         android:id="@+id/connectionsListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical"
+        android:visibility="gone" />
 
     <com.saltedge.authenticator.widget.InfoView
         android:id="@+id/emptyView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:titleText="@string/connections_list_no_connections"
-        app:subTitleText="@string/connections_list_no_connections_description"
-        app:mainActionText="@string/actions_connect_provider"
+        app:iconDimension="@dimen/info_view_big_icon"
         app:iconSrc="@drawable/ic_no_connections_80dp"
-        app:iconDimension="@dimen/info_view_big_icon"/>
+        app:mainActionText="@string/actions_connect_provider"
+        app:subTitleText="@string/connections_list_no_connections_description"
+        app:titleText="@string/connections_list_no_connections" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/connectionsFabView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/dp_16"
         android:src="@drawable/ic_add_white_24dp"
         app:backgroundTint="@color/blue"
         app:borderWidth="0dp"
         app:elevation="@dimen/dp_4"
-        app:fabSize="normal"/>
+        app:fabSize="normal" />
 </RelativeLayout>

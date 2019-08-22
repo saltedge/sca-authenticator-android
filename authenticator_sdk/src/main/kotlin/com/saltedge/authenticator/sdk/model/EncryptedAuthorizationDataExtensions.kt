@@ -27,9 +27,9 @@ package com.saltedge.authenticator.sdk.model
  * @return boolean. true if key, iv, algorithm, data, connection_id fields are present
  */
 fun EncryptedAuthorizationData.isValid(): Boolean {
-    return !key.isNullOrEmpty()
-            && !iv.isNullOrEmpty()
-            && !algorithm.isNullOrEmpty()
-            && !data.isNullOrEmpty()
-            && !connectionId.isNullOrEmpty()
+    return !key.isNullOrEmpty() &&
+        !iv.isNullOrEmpty() &&
+        !algorithm.isNullOrEmpty() &&
+        !data.isNullOrEmpty() &&
+        !connectionId.isNullOrEmpty()
 }

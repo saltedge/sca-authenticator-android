@@ -46,13 +46,16 @@ class RadialProgressPresenter {
         centerX = width.toFloat() / 2f
         centerY = height.toFloat() / 2f
         backgroundCircleRadius = if (centerX < basePadding) 0f else centerX - basePadding
-        val progressArcRadius = if (backgroundCircleRadius < basePadding) 0f else backgroundCircleRadius - basePadding
-        progressArcRectF = RectF(centerX - progressArcRadius, centerY - progressArcRadius,
-                centerX + progressArcRadius, centerY + progressArcRadius)
+        val progressArcRadius =
+            if (backgroundCircleRadius < basePadding) 0f else backgroundCircleRadius - basePadding
+        progressArcRectF = RectF(
+            centerX - progressArcRadius, centerY - progressArcRadius,
+            centerX + progressArcRadius, centerY + progressArcRadius
+        )
     }
 
     fun calculateSweepAngle(): Float =
-            if (maxProgress == 0) 0f else 360f * remainedProgress.toFloat() / maxProgress
+        if (maxProgress == 0) 0f else 360f * remainedProgress.toFloat() / maxProgress
 
     fun calculateStartAngle(): Float = 270f - calculateSweepAngle()
 }

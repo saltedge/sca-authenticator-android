@@ -36,17 +36,17 @@ import org.junit.runner.RunWith
 class AuthorizationViewModelTest {
 
     private val model = AuthorizationViewModel(
-            authorizationId = "444",
-            authorizationCode = "111",
-            title = "title",
-            description = "description",
-            expiresAt = DateTime(),
-            connectionId = "333",
-            connectionName = "Demobank",
-            connectionLogoUrl = "url",
-            validSeconds = 300,
-            isProcessing = false,
-            createdAt = DateTime()
+        authorizationId = "444",
+        authorizationCode = "111",
+        title = "title",
+        description = "description",
+        expiresAt = DateTime(),
+        connectionId = "333",
+        connectionName = "Demobank",
+        connectionLogoUrl = "url",
+        validSeconds = 300,
+        isProcessing = false,
+        createdAt = DateTime()
     )
 
     @Test
@@ -72,8 +72,10 @@ class AuthorizationViewModelTest {
     fun remainedTimeTillExpireTest() {
         val now = DateTime.now()
 
-        assertThat(model.copy(expiresAt = now.plusMinutes(1)).remainedTimeTillExpire(),
-                anyOf(equalTo("0:59"), equalTo("1:00")))
+        assertThat(
+            model.copy(expiresAt = now.plusMinutes(1)).remainedTimeTillExpire(),
+            anyOf(equalTo("0:59"), equalTo("1:00"))
+        )
     }
 
     @Test
@@ -81,21 +83,23 @@ class AuthorizationViewModelTest {
     fun remainedSecondsTillExpireTest() {
         val now = DateTime.now()
 
-        assertThat(model.copy(expiresAt = now.plusMinutes(1)).remainedSecondsTillExpire(),
-                anyOf(equalTo(59), equalTo(60)))
+        assertThat(
+            model.copy(expiresAt = now.plusMinutes(1)).remainedSecondsTillExpire(),
+            anyOf(equalTo(59), equalTo(60))
+        )
     }
 
     @Test
     @Throws(Exception::class)
     fun authorizationDataToAuthorizationViewModelTest() {
         val data = AuthorizationData(
-                id = "444",
-                authorizationCode = "111",
-                title = "title",
-                description = "description",
-                createdAt = DateTime(0L),
-                expiresAt = DateTime(300000L),
-                connectionId = "333"
+            id = "444",
+            authorizationCode = "111",
+            title = "title",
+            description = "description",
+            createdAt = DateTime(0L),
+            expiresAt = DateTime(300000L),
+            connectionId = "333"
         )
         val connection = Connection().apply {
             id = "333"
@@ -103,19 +107,23 @@ class AuthorizationViewModelTest {
             logoUrl = "url"
         }
 
-        assertThat(data.toAuthorizationViewModel(connection = connection),
-                equalTo(AuthorizationViewModel(
-                        authorizationId = "444",
-                        authorizationCode = "111",
-                        title = "title",
-                        description = "description",
-                        expiresAt = DateTime(300000L),
-                        connectionId = "333",
-                        connectionName = "Demobank",
-                        connectionLogoUrl = "url",
-                        validSeconds = 300,
-                        isProcessing = false,
-                        createdAt = DateTime(0L)
-                )))
+        assertThat(
+            data.toAuthorizationViewModel(connection = connection),
+            equalTo(
+                AuthorizationViewModel(
+                    authorizationId = "444",
+                    authorizationCode = "111",
+                    title = "title",
+                    description = "description",
+                    expiresAt = DateTime(300000L),
+                    connectionId = "333",
+                    connectionName = "Demobank",
+                    connectionLogoUrl = "url",
+                    validSeconds = 300,
+                    isProcessing = false,
+                    createdAt = DateTime(0L)
+                )
+            )
+        )
     }
 }

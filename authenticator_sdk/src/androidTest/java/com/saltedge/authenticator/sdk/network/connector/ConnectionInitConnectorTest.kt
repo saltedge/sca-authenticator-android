@@ -62,15 +62,30 @@ class ConnectionInitConnectorTest {
     @Throws(Exception::class)
     fun postConnectionDataTest_allSuccess() {
         val connector = ConnectionInitConnector(mockApi, mockCallback)
-        connector.postConnectionData(baseUrl = "https://localhost", publicKey = "key", pushToken = "pushToken")
+        connector.postConnectionData(
+            baseUrl = "https://localhost",
+            publicKey = "key",
+            pushToken = "pushToken"
+        )
 
         verify { mockCall.enqueue(connector) }
 
-        connector.onResponse(mockCall, Response.success(
-                        CreateConnectionResponseData(
-                                AuthenticateConnectionData(connectionId = "333", redirectUrl = "url"))))
+        connector.onResponse(
+            mockCall, Response.success(
+            CreateConnectionResponseData(
+                AuthenticateConnectionData(connectionId = "333", redirectUrl = "url")
+            )
+        )
+        )
 
-        verify { mockCallback.onConnectionInitSuccess(AuthenticateConnectionData(connectionId = "333", redirectUrl = "url")) }
+        verify {
+            mockCallback.onConnectionInitSuccess(
+                AuthenticateConnectionData(
+                    connectionId = "333",
+                    redirectUrl = "url"
+                )
+            )
+        }
         confirmVerified(mockCallback)
     }
 
@@ -78,7 +93,11 @@ class ConnectionInitConnectorTest {
     @Throws(Exception::class)
     fun postConnectionDataTest_emptyResponse() {
         val connector = ConnectionInitConnector(mockApi, mockCallback)
-        connector.postConnectionData(baseUrl = "https://localhost", publicKey = "key", pushToken = "pushToken")
+        connector.postConnectionData(
+            baseUrl = "https://localhost",
+            publicKey = "key",
+            pushToken = "pushToken"
+        )
 
         verify { mockCall.enqueue(connector) }
 
@@ -92,21 +111,41 @@ class ConnectionInitConnectorTest {
     @Throws(Exception::class)
     fun postConnectionDataTest_withError() {
         val connector = ConnectionInitConnector(mockApi, mockCallback)
-        connector.postConnectionData(baseUrl = "https://localhost", publicKey = "key", pushToken = "pushToken")
+        connector.postConnectionData(
+            baseUrl = "https://localhost",
+            publicKey = "key",
+            pushToken = "pushToken"
+        )
 
         verify { mockApi.postNewConnectionData(requestUrl = requestUrl, body = requestData) }
         verify { mockCall.enqueue(connector) }
 
-        connector.onResponse(mockCall, Response.error(404, ResponseBody.create(null, get404Response())))
+        connector.onResponse(
+            mockCall,
+            Response.error(404, ResponseBody.create(null, get404Response()))
+        )
 
-        verify { mockCallback.onConnectionInitFailure(ApiErrorData(errorMessage = "Resource not found", errorClassName="NotFound")) }
+        verify {
+            mockCallback.onConnectionInitFailure(
+                ApiErrorData(
+                    errorMessage = "Resource not found",
+                    errorClassName = "NotFound"
+                )
+            )
+        }
         confirmVerified(mockCallback)
     }
 
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
     private val mockCallback = mockkClass(ConnectionInitResult::class)
-    private val mockCall: Call<CreateConnectionResponseData> = mockkClass(Call::class) as Call<CreateConnectionResponseData>
-    private val requestData = CreateConnectionRequestData(data = CreateConnectionData(publicKey = "key", pushToken = "pushToken"))
+    private val mockCall: Call<CreateConnectionResponseData> =
+        mockkClass(Call::class) as Call<CreateConnectionResponseData>
+    private val requestData = CreateConnectionRequestData(
+        data = CreateConnectionData(
+            publicKey = "key",
+            pushToken = "pushToken"
+        )
+    )
     private val requestUrl = "https://localhost/api/authenticator/v1/connections"
 
     @Before

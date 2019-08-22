@@ -33,8 +33,16 @@ class PinpadControlTest {
     @Test
     @Throws(Exception::class)
     fun valuesTest() {
-        assertThat(PinpadView.Control.values(),
-                equalTo(arrayOf(PinpadView.Control.DELETE, PinpadView.Control.FINGER, PinpadView.Control.NUMBER)))
+        assertThat(
+            PinpadView.Control.values(),
+            equalTo(
+                arrayOf(
+                    PinpadView.Control.DELETE,
+                    PinpadView.Control.FINGER,
+                    PinpadView.Control.NUMBER
+                )
+            )
+        )
         assertThat(PinpadView.Control.valueOf("DELETE"), equalTo(PinpadView.Control.DELETE))
         assertThat(PinpadView.Control.valueOf("FINGER"), equalTo(PinpadView.Control.FINGER))
         assertThat(PinpadView.Control.valueOf("NUMBER"), equalTo(PinpadView.Control.NUMBER))

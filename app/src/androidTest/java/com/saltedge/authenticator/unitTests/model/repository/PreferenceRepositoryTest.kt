@@ -43,8 +43,13 @@ class PreferenceRepositoryTest {
         PreferenceRepository.encryptedPasscode = "test"
 
         assertThat(PreferenceRepository.encryptedPasscode, equalTo("test"))
-        assertThat(PreferenceManager.getDefaultSharedPreferences(applicationContext).getString(KEY_PASSCODE, "")!!,
-                equalTo("test"))
+        assertThat(
+            PreferenceManager.getDefaultSharedPreferences(applicationContext).getString(
+                KEY_PASSCODE,
+                ""
+            )!!,
+            equalTo("test")
+        )
     }
 
     @Test
@@ -57,8 +62,13 @@ class PreferenceRepositoryTest {
         PreferenceRepository.dbKey = "dbKey"
 
         assertThat(PreferenceRepository.dbKey, equalTo("dbKey"))
-        assertThat(PreferenceManager.getDefaultSharedPreferences(applicationContext).getString(KEY_DATABASE_KEY, "")!!,
-                equalTo("dbKey"))
+        assertThat(
+            PreferenceManager.getDefaultSharedPreferences(applicationContext).getString(
+                KEY_DATABASE_KEY,
+                ""
+            )!!,
+            equalTo("dbKey")
+        )
     }
 
     @Test
@@ -71,7 +81,12 @@ class PreferenceRepositoryTest {
         PreferenceRepository.fingerprintEnabled = true
 
         assertTrue(PreferenceRepository.fingerprintEnabled)
-        assertTrue(PreferenceManager.getDefaultSharedPreferences(applicationContext).getBoolean(KEY_FINGERPRINT, false))
+        assertTrue(
+            PreferenceManager.getDefaultSharedPreferences(applicationContext).getBoolean(
+                KEY_FINGERPRINT,
+                false
+            )
+        )
     }
 
     @Test
@@ -84,7 +99,12 @@ class PreferenceRepositoryTest {
         PreferenceRepository.notificationsEnabled = true
 
         assertTrue(PreferenceRepository.notificationsEnabled)
-        assertTrue(PreferenceManager.getDefaultSharedPreferences(applicationContext).getBoolean(KEY_NOTIFICATIONS, false))
+        assertTrue(
+            PreferenceManager.getDefaultSharedPreferences(applicationContext).getBoolean(
+                KEY_NOTIFICATIONS,
+                false
+            )
+        )
     }
 
     @Test
@@ -97,7 +117,12 @@ class PreferenceRepositoryTest {
         PreferenceRepository.screenshotLockEnabled = false
 
         assertFalse(PreferenceRepository.screenshotLockEnabled)
-        assertFalse(PreferenceManager.getDefaultSharedPreferences(applicationContext).getBoolean(KEY_SCREENSHOT_LOCK, true))
+        assertFalse(
+            PreferenceManager.getDefaultSharedPreferences(applicationContext).getBoolean(
+                KEY_SCREENSHOT_LOCK,
+                true
+            )
+        )
     }
 
     @Test
@@ -110,8 +135,13 @@ class PreferenceRepositoryTest {
         PreferenceRepository.currentLocale = "en"
 
         assertThat(PreferenceRepository.currentLocale, equalTo("en"))
-        assertThat(PreferenceManager.getDefaultSharedPreferences(applicationContext).getString(KEY_LOCALE, "")!!,
-                equalTo("en"))
+        assertThat(
+            PreferenceManager.getDefaultSharedPreferences(applicationContext).getString(
+                KEY_LOCALE,
+                ""
+            )!!,
+            equalTo("en")
+        )
     }
 
     @Test
@@ -124,8 +154,13 @@ class PreferenceRepositoryTest {
         PreferenceRepository.pinInputAttempts = 9
 
         assertThat(PreferenceRepository.pinInputAttempts, equalTo(9))
-        assertThat(PreferenceManager.getDefaultSharedPreferences(applicationContext).getInt(KEY_PIN_INPUT_ATTEMPTS, 0),
-                equalTo(9))
+        assertThat(
+            PreferenceManager.getDefaultSharedPreferences(applicationContext).getInt(
+                KEY_PIN_INPUT_ATTEMPTS,
+                0
+            ),
+            equalTo(9)
+        )
     }
 
     @Test
@@ -138,8 +173,13 @@ class PreferenceRepositoryTest {
         PreferenceRepository.blockPinInputTillTime = 9000L
 
         assertThat(PreferenceRepository.blockPinInputTillTime, equalTo(9000L))
-        assertThat(PreferenceManager.getDefaultSharedPreferences(applicationContext).getLong(KEY_PIN_INPUT_TIME, 0L),
-                equalTo(9000L))
+        assertThat(
+            PreferenceManager.getDefaultSharedPreferences(applicationContext).getLong(
+                KEY_PIN_INPUT_TIME,
+                0L
+            ),
+            equalTo(9000L)
+        )
     }
 
     @Test
@@ -194,8 +234,10 @@ class PreferenceRepositoryTest {
         PreferenceRepository.cloudMessagingToken = "token"
 
         assertThat(PreferenceRepository.cloudMessagingToken, equalTo("token"))
-        assertThat(PreferenceManager.getDefaultSharedPreferences(applicationContext)
-                .getString("KEY_CLOUD_MESSAGING_TOKEN", "")!!, equalTo("token"))
+        assertThat(
+            PreferenceManager.getDefaultSharedPreferences(applicationContext)
+                .getString("KEY_CLOUD_MESSAGING_TOKEN", "")!!, equalTo("token")
+        )
     }
 
     private fun clearPreferences() {

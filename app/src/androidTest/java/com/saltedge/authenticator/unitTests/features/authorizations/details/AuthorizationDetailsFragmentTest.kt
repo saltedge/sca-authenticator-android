@@ -39,17 +39,17 @@ class AuthorizationDetailsFragmentTest {
     fun newInstanceTest() {
         val createdAt = DateTime.now(DateTimeZone.UTC)
         val model = AuthorizationViewModel(
-                authorizationId = "1",
-                authorizationCode = "111",
-                expiresAt = createdAt.plusMinutes(3),
-                title = "title1",
-                description = "desc1",
-                validSeconds = 300,
-                connectionId = "1",
-                connectionName = "Demobank",
-                connectionLogoUrl = null,
-                isProcessing = false,
-                createdAt = DateTime()
+            authorizationId = "1",
+            authorizationCode = "111",
+            expiresAt = createdAt.plusMinutes(3),
+            title = "title1",
+            description = "desc1",
+            validSeconds = 300,
+            connectionId = "1",
+            connectionName = "Demobank",
+            connectionLogoUrl = null,
+            isProcessing = false,
+            createdAt = DateTime()
         )
         val fragment = AuthorizationDetailsFragment.newInstance(model)
         val data = fragment.arguments!!.getSerializable(KEY_DATA) as? AuthorizationViewModel

@@ -76,8 +76,13 @@ fun Connection.getStatus(): ConnectionStatus {
  * @return ConnectionAndKey?
  */
 fun Connection.toConnectionAndKey(keyStoreManager: KeyStoreManagerAbs):
-        ConnectionAndKey? {
-    return getRelatedPrivateKey(keyStoreManager)?.let { ConnectionAndKey(this as ConnectionAbs, it) }
+    ConnectionAndKey? {
+    return getRelatedPrivateKey(keyStoreManager)?.let {
+        ConnectionAndKey(
+            this as ConnectionAbs,
+            it
+        )
+    }
 }
 
 /**

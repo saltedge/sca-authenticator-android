@@ -37,10 +37,12 @@ class SettingsListModuleTest {
     fun providePresenterTest() {
         val module = SettingsListModule()
 
-        Assert.assertNotNull(module.providePresenter(
+        Assert.assertNotNull(
+            module.providePresenter(
                 TestTools.applicationContext,
                 PreferenceRepository,
                 BiometricTools
-        ))
+            )
+        )
     }
 }

@@ -54,26 +54,35 @@ class SettingsListPresenterTest {
         Mockito.doReturn(screenshotLockEnabled).`when`(mockPreferences).screenshotLockEnabled
         val presenter = createPresenter(viewContract = mockView)
 
-        assertThat(presenter.getListItems(), equalTo(listOf(
+        assertThat(
+            presenter.getListItems(), equalTo(
+            listOf(
                 CheckedTitleValueViewModel(
-                        titleId = R.string.settings_passcode,
-                        value = TestTools.getString(R.string.settings_passcode_description),
-                        itemIsClickable = true),
+                    titleId = R.string.settings_passcode,
+                    value = TestTools.getString(R.string.settings_passcode_description),
+                    itemIsClickable = true
+                ),
                 CheckedTitleValueViewModel(
-                        titleId = R.string.settings_notifications,
-                        switchEnabled = true,
-                        isChecked = notificationsEnabled),
+                    titleId = R.string.settings_notifications,
+                    switchEnabled = true,
+                    isChecked = notificationsEnabled
+                ),
                 CheckedTitleValueViewModel(
-                        titleId = R.string.settings_screenshot_lock,
-                        switchEnabled = true,
-                        isChecked = screenshotLockEnabled),
+                    titleId = R.string.settings_screenshot_lock,
+                    switchEnabled = true,
+                    isChecked = screenshotLockEnabled
+                ),
                 CheckedTitleValueViewModel(
-                        titleId = R.string.about_feature_title,
-                        itemIsClickable = true),
+                    titleId = R.string.about_feature_title,
+                    itemIsClickable = true
+                ),
                 CheckedTitleValueViewModel(
-                        titleId = R.string.settings_report_bug,
-                        itemIsClickable = true)
-        )))
+                    titleId = R.string.settings_report_bug,
+                    itemIsClickable = true
+                )
+            )
+        )
+        )
     }
 
     @Test
@@ -81,12 +90,18 @@ class SettingsListPresenterTest {
     fun onListItemCheckedStateChangedTest_touchId() {
         val presenter = createPresenter(viewContract = mockView)
         Mockito.doReturn(false).`when`(mockBiometricTools).isBiometricReady(TestTools.applicationContext)
-        presenter.onListItemCheckedStateChanged(itemId = R.string.settings_fingerprint, checked = true)
+        presenter.onListItemCheckedStateChanged(
+            itemId = R.string.settings_fingerprint,
+            checked = true
+        )
 
         Mockito.verifyNoMoreInteractions(mockPreferences)
 
         Mockito.doReturn(true).`when`(mockBiometricTools).isBiometricReady(TestTools.applicationContext)
-        presenter.onListItemCheckedStateChanged(itemId = R.string.settings_fingerprint, checked = true)
+        presenter.onListItemCheckedStateChanged(
+            itemId = R.string.settings_fingerprint,
+            checked = true
+        )
 
         Mockito.verify(mockPreferences).fingerprintEnabled = true
     }
@@ -95,7 +110,10 @@ class SettingsListPresenterTest {
     @Throws(Exception::class)
     fun onListItemCheckedStateChangedTest_notifications() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.onListItemCheckedStateChanged(itemId = R.string.settings_notifications, checked = true)
+        presenter.onListItemCheckedStateChanged(
+            itemId = R.string.settings_notifications,
+            checked = true
+        )
 
         Mockito.verify(mockPreferences).notificationsEnabled = true
     }
@@ -104,7 +122,10 @@ class SettingsListPresenterTest {
     @Throws(Exception::class)
     fun onListItemCheckedStateChangedTest_screenshot() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.onListItemCheckedStateChanged(itemId = R.string.settings_screenshot_lock, checked = true)
+        presenter.onListItemCheckedStateChanged(
+            itemId = R.string.settings_screenshot_lock,
+            checked = true
+        )
 
         Mockito.verify(mockPreferences).screenshotLockEnabled = true
     }
@@ -200,7 +221,11 @@ class SettingsListPresenterTest {
     private val mockBiometricTools = Mockito.mock(BiometricToolsAbs::class.java)
 
     private fun createPresenter(viewContract: SettingsListContract.View? = null): SettingsListPresenter {
-        return SettingsListPresenter(TestTools.applicationContext, mockPreferences, mockBiometricTools)
-                .apply { this.viewContract = viewContract }
+        return SettingsListPresenter(
+            TestTools.applicationContext,
+            mockPreferences,
+            mockBiometricTools
+        )
+            .apply { this.viewContract = viewContract }
     }
 }

@@ -18,22 +18,23 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
+
 package com.saltedge.authenticator.sdk.tools
 
 private val CONNECTION_EXCEPTIONS = listOf(
-        "ConnectException",
-        "UnknownHostException",
-        "SocketTimeoutException",
-        "IOException",
-        "SocketException",
-        "NoRouteToHostException",
-        "InterruptedIOException"
+    "ConnectException",
+    "UnknownHostException",
+    "SocketTimeoutException",
+    "IOException",
+    "SocketException",
+    "NoRouteToHostException",
+    "InterruptedIOException"
 )
 
 private val SSL_EXCEPTIONS = listOf(
-        "SSLHandshakeException",
-        "SSLException",
-        "SSLPeerUnverifiedException"
+    "SSLHandshakeException",
+    "SSLException",
+    "SSLPeerUnverifiedException"
 )
 
 /**
@@ -43,7 +44,8 @@ private val SSL_EXCEPTIONS = listOf(
  * @return boolean, true if in class we contains list of connection exception
  * @see CONNECTION_EXCEPTIONS
  */
-fun Throwable.isNoConnectionException(): Boolean = CONNECTION_EXCEPTIONS.contains(this.javaClass.simpleName)
+fun Throwable.isNoConnectionException(): Boolean =
+    CONNECTION_EXCEPTIONS.contains(this.javaClass.simpleName)
 
 /**
  * Checks if is no ssl exception

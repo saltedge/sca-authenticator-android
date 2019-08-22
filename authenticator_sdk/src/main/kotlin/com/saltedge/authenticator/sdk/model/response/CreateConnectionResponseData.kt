@@ -26,10 +26,10 @@ import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.constants.KEY_ID
 
 data class CreateConnectionResponseData(
-        @SerializedName(KEY_DATA) var data: AuthenticateConnectionData? = null
+    @SerializedName(KEY_DATA) var data: AuthenticateConnectionData? = null
 )
 
 data class AuthenticateConnectionData(
-        @SerializedName(KEY_CONNECT_URL) var redirectUrl: String? = null,
-        @SerializedName(KEY_ID) var connectionId: String? = null
+    @SerializedName(KEY_CONNECT_URL) var redirectUrl: String? = null,
+    @SerializedName(KEY_ID) var connectionId: String? = null
 )

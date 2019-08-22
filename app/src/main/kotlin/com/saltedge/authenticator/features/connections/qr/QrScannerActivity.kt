@@ -55,7 +55,11 @@ class QrScannerActivity : AppCompatActivity() {
         setupViews()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == CAMERA_PERMISSION_REQUEST_CODE && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
             startCameraSource()
@@ -84,15 +88,20 @@ class QrScannerActivity : AppCompatActivity() {
         val height = getDisplayHeight(this)
         val width = getDisplayWidth(this)
         cameraSource = CameraSource.Builder(applicationContext, barcodeDetector)
-                .setRequestedPreviewSize(height, width)
-                .setFacing(CameraSource.CAMERA_FACING_BACK)
-                .setAutoFocusEnabled(true)
-                .build()
+            .setRequestedPreviewSize(height, width)
+            .setFacing(CameraSource.CAMERA_FACING_BACK)
+            .setAutoFocusEnabled(true)
+            .build()
     }
 
     private fun setupSurface() {
         surfaceView?.holder?.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
+            override fun surfaceChanged(
+                holder: SurfaceHolder?,
+                format: Int,
+                width: Int,
+                height: Int
+            ) {
             }
 
             override fun surfaceDestroyed(holder: SurfaceHolder?) {
@@ -107,8 +116,8 @@ class QrScannerActivity : AppCompatActivity() {
 
     private fun setupBarcodeDetector() {
         barcodeDetector = BarcodeDetector.Builder(this)
-                .setBarcodeFormats(Barcode.QR_CODE)
-                .build()
+            .setBarcodeFormats(Barcode.QR_CODE)
+            .build()
         barcodeDetector?.setProcessor(object : Detector.Processor<Barcode> {
             override fun release() {
             }
@@ -131,10 +140,17 @@ class QrScannerActivity : AppCompatActivity() {
 
     private fun startCameraSource() {
         try {
-            if (ActivityCompat.checkSelfPermission(applicationContext, permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(
+                    applicationContext,
+                    permission.CAMERA
+                ) == PackageManager.PERMISSION_GRANTED) {
                 cameraSource?.start(surfaceView?.holder)
             } else {
-                ActivityCompat.requestPermissions(this, arrayOf(permission.CAMERA), CAMERA_PERMISSION_REQUEST_CODE)
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(permission.CAMERA),
+                    CAMERA_PERMISSION_REQUEST_CODE
+                )
             }
         } catch (e: IOException) {
             showError(getString(R.string.errors_camera_init))
@@ -143,14 +159,17 @@ class QrScannerActivity : AppCompatActivity() {
     }
 
     private fun returnResultAndFinish(connectConfigurationLink: String) {
-        this.setResult(Activity.RESULT_OK, intent.putExtra(KEY_CONNECT_CONFIGURATION, connectConfigurationLink))
+        this.setResult(
+            Activity.RESULT_OK,
+            intent.putExtra(KEY_CONNECT_CONFIGURATION, connectConfigurationLink)
+        )
         this.finish()
     }
 
     private fun showError(reason: String?) {
         AlertDialog.Builder(this)
-                .setTitle(android.R.string.dialog_alert_title)
-                .setMessage(reason ?: getString(R.string.errors_invalid_qr))
-                .show()
+            .setTitle(android.R.string.dialog_alert_title)
+            .setMessage(reason ?: getString(R.string.errors_invalid_qr))
+            .show()
     }
 }

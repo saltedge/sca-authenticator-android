@@ -35,7 +35,7 @@ interface CryptoToolsAbs {
     fun rsaDecrypt(encryptedText: String, privateKey: PrivateKey): ByteArray?
     fun aesDecrypt(encryptedText: String, key: ByteArray, iv: ByteArray): String?
     fun decryptAuthorizationData(
-            encryptedData: EncryptedAuthorizationData,
-            rsaPrivateKey: PrivateKey?
+        encryptedData: EncryptedAuthorizationData,
+        rsaPrivateKey: PrivateKey?
     ): AuthorizationData?
 }

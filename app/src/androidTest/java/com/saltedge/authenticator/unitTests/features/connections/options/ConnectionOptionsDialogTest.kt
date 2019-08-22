@@ -37,9 +37,13 @@ class ConnectionOptionsDialogTest {
     @Throws(Exception::class)
     fun newInstanceTest() {
         val arguments = ConnectionOptionsDialog.newInstance(
-                connectionGuid = "88", options = arrayOf(ConnectionOptions.RECONNECT)).arguments!!
+            connectionGuid = "88", options = arrayOf(ConnectionOptions.RECONNECT)
+        ).arguments!!
 
         assertThat(arguments.getString(KEY_GUID), equalTo("88"))
-        assertThat(arguments.getIntArray(KEY_OPTION_ID), equalTo(intArrayOf(ConnectionOptions.RECONNECT.ordinal)))
+        assertThat(
+            arguments.getIntArray(KEY_OPTION_ID),
+            equalTo(intArrayOf(ConnectionOptions.RECONNECT.ordinal))
+        )
     }
 }

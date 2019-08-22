@@ -22,7 +22,8 @@ package com.saltedge.authenticator.widget.list
 
 import androidx.recyclerview.widget.RecyclerView
 
-abstract class AbstractListAdapter(initialData: List<Any> = emptyList()) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+abstract class AbstractListAdapter(initialData: List<Any> = emptyList()) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var _data: MutableList<Any> = initialData.toMutableList()
     var data: List<Any>

@@ -32,7 +32,7 @@ import com.saltedge.authenticator.tool.loadImage
 import com.saltedge.authenticator.tool.setTextColorResId
 
 class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClickListener?) :
-        RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_connection)) {
+    RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_connection)) {
 
     private val logoImageView = itemView.findViewById<ImageView>(R.id.logoImageView)
     private val titleView = itemView.findViewById<TextView>(R.id.titleView)
@@ -47,8 +47,9 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
 
     fun bind(item: ConnectionViewModel) {
         logoImageView.loadImage(
-                imageUrl = item.logoUrl,
-                placeholderId = R.drawable.ic_logo_bank_placeholder)
+            imageUrl = item.logoUrl,
+            placeholderId = R.drawable.ic_logo_bank_placeholder
+        )
         titleView.text = item.name
         subTitleView.text = item.statusDescription
         subTitleView.setTextColorResId(item.statusColorResId)

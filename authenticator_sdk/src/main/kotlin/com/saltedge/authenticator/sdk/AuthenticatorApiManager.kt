@@ -34,73 +34,87 @@ import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
  */
 object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
 
-    override fun getProviderData(providerConfigurationUrl: String,
-                                 resultCallback: FetchProviderDataResult) {
+    override fun getProviderData(
+        providerConfigurationUrl: String,
+        resultCallback: FetchProviderDataResult
+    ) {
         ProviderDataConnector(RestClient.apiInterface, resultCallback)
-                .fetchProviderData(providerConfigurationUrl)
+            .fetchProviderData(providerConfigurationUrl)
     }
 
-    override fun initConnectionRequest(baseUrl: String,
-                                       publicKey: String,
-                                       pushToken: String,
-                                       resultCallback: ConnectionInitResult) {
+    override fun initConnectionRequest(
+        baseUrl: String,
+        publicKey: String,
+        pushToken: String,
+        resultCallback: ConnectionInitResult
+    ) {
         ConnectionInitConnector(RestClient.apiInterface, resultCallback)
-                .postConnectionData(baseUrl, publicKey, pushToken)
+            .postConnectionData(baseUrl, publicKey, pushToken)
     }
 
-    override fun revokeConnections(connectionsAndKeys: List<ConnectionAndKey>,
-                                   resultCallback: ConnectionsRevokeResult) {
+    override fun revokeConnections(
+        connectionsAndKeys: List<ConnectionAndKey>,
+        resultCallback: ConnectionsRevokeResult
+    ) {
         ConnectionsRevokeConnector(RestClient.apiInterface, resultCallback)
-                .revokeTokensFor(connectionsAndKeys)
+            .revokeTokensFor(connectionsAndKeys)
     }
 
-    override fun getAuthorizations(connectionsAndKeys: List<ConnectionAndKey>,
-                                   resultCallback: FetchAuthorizationsResult) {
+    override fun getAuthorizations(
+        connectionsAndKeys: List<ConnectionAndKey>,
+        resultCallback: FetchAuthorizationsResult
+    ) {
         AuthorizationsConnector(RestClient.apiInterface, resultCallback)
-                .fetchAuthorizations(connectionsAndKeys = connectionsAndKeys)
+            .fetchAuthorizations(connectionsAndKeys = connectionsAndKeys)
     }
 
     override fun createAuthorizationsPollingService(): PollingServiceAbs<FetchAuthorizationsContract> {
         return AuthorizationsPollingService()
     }
 
-    override fun getAuthorization(connectionAndKey: ConnectionAndKey,
-                                  authorizationId: String,
-                                  resultCallback: FetchAuthorizationResult) {
+    override fun getAuthorization(
+        connectionAndKey: ConnectionAndKey,
+        authorizationId: String,
+        resultCallback: FetchAuthorizationResult
+    ) {
         AuthorizationConnector(RestClient.apiInterface, resultCallback)
-                .getAuthorization(connectionAndKey, authorizationId)
+            .getAuthorization(connectionAndKey, authorizationId)
     }
 
     override fun createSingleAuthorizationPollingService(): SingleAuthorizationPollingService =
-            SingleAuthorizationPollingService()
+        SingleAuthorizationPollingService()
 
-    override fun confirmAuthorization(connectionAndKey: ConnectionAndKey,
-                                      authorizationId: String,
-                                      authorizationCode: String?,
-                                      resultCallback: ConfirmAuthorizationResult) {
+    override fun confirmAuthorization(
+        connectionAndKey: ConnectionAndKey,
+        authorizationId: String,
+        authorizationCode: String?,
+        resultCallback: ConfirmAuthorizationResult
+    ) {
         ConfirmOrDenyConnector(RestClient.apiInterface, resultCallback)
-                .updateAuthorization(
-                        connectionAndKey = connectionAndKey,
-                        authorizationId = authorizationId,
-                        payloadData = ConfirmDenyData(
-                                authorizationCode = authorizationCode,
-                                confirm = true
-                        )
+            .updateAuthorization(
+                connectionAndKey = connectionAndKey,
+                authorizationId = authorizationId,
+                payloadData = ConfirmDenyData(
+                    authorizationCode = authorizationCode,
+                    confirm = true
                 )
+            )
     }
 
-    override fun denyAuthorization(connectionAndKey: ConnectionAndKey,
-                                   authorizationId: String,
-                                   authorizationCode: String?,
-                                   resultCallback: ConfirmAuthorizationResult) {
+    override fun denyAuthorization(
+        connectionAndKey: ConnectionAndKey,
+        authorizationId: String,
+        authorizationCode: String?,
+        resultCallback: ConfirmAuthorizationResult
+    ) {
         ConfirmOrDenyConnector(RestClient.apiInterface, resultCallback)
-                .updateAuthorization(
-                        connectionAndKey = connectionAndKey,
-                        authorizationId = authorizationId,
-                        payloadData = ConfirmDenyData(
-                                authorizationCode = authorizationCode,
-                                confirm = false
-                        )
+            .updateAuthorization(
+                connectionAndKey = connectionAndKey,
+                authorizationId = authorizationId,
+                payloadData = ConfirmDenyData(
+                    authorizationCode = authorizationCode,
+                    confirm = false
                 )
+            )
     }
 }

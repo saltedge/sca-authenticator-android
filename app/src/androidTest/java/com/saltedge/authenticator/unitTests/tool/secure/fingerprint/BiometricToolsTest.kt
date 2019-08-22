@@ -28,6 +28,7 @@ import androidx.test.filters.SdkSuppress
 import com.saltedge.authenticator.model.repository.PreferenceRepository
 import com.saltedge.authenticator.sdk.tools.KeyStoreManager
 import com.saltedge.authenticator.sdk.tools.publicKeyToPemEncodedString
+import com.saltedge.authenticator.testTools.TestTools
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricTools
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricTools.isFingerprintAuthAvailable
 import com.saltedge.authenticator.tool.secure.fingerprint.FINGERPRINT_ALIAS_FOR_PIN
@@ -54,7 +55,9 @@ class BiometricToolsTest {
     fun setUp() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             mockFingerprintManager = mock(FingerprintManager::class.java)
-            Mockito.`when`(mockContext.getSystemService(Context.FINGERPRINT_SERVICE)).thenReturn(mockFingerprintManager)
+            Mockito.`when`(mockContext.getSystemService(Context.FINGERPRINT_SERVICE)).thenReturn(
+                mockFingerprintManager
+            )
         }
     }
 
@@ -115,7 +118,9 @@ class BiometricToolsTest {
     @Test
     @Throws(Exception::class)
     fun replaceFingerprintKeyTest() {
-        if (KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN)) KeyStoreManager.deleteKeyPair(FINGERPRINT_ALIAS_FOR_PIN)
+        if (KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN)) KeyStoreManager.deleteKeyPair(
+            FINGERPRINT_ALIAS_FOR_PIN
+        )
 
         assertFalse(KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN))
 
@@ -126,21 +131,24 @@ class BiometricToolsTest {
         val secondKey = BiometricTools.replaceFingerprintKey()!!
 
         assertTrue(KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN))
-        assertThat(initialKey.publicKeyToPemEncodedString(),
-                not(equalTo(secondKey.publicKeyToPemEncodedString())))
+        assertThat(
+            initialKey.publicKeyToPemEncodedString(),
+            not(equalTo(secondKey.publicKeyToPemEncodedString()))
+        )
     }
 
     @Test
     @Throws(Exception::class)
     fun activateFingerprintTest() {
+        val biometricIsAvailable = isFingerprintAuthAvailable(TestTools.applicationContext)
         if (KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN)) {
             KeyStoreManager.deleteKeyPair(FINGERPRINT_ALIAS_FOR_PIN)
         }
         PreferenceRepository.fingerprintEnabled = false
 
         assertFalse(KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN))
-        assertTrue(BiometricTools.activateFingerprint())
-        assertTrue(KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN))
-        assertTrue(PreferenceRepository.fingerprintEnabled)
+        assertThat(BiometricTools.activateFingerprint(), equalTo(biometricIsAvailable))
+        assertThat(KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN), equalTo(biometricIsAvailable))
+        assertThat(PreferenceRepository.fingerprintEnabled, equalTo(biometricIsAvailable))
     }
 }

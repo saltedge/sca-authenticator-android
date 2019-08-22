@@ -34,30 +34,35 @@ import com.saltedge.authenticator.sdk.network.ApiResponseInterceptor
 import retrofit2.Call
 
 internal class ConfirmOrDenyConnector(
-        private val apiInterface: ApiInterface,
-        var resultCallback: ConfirmAuthorizationResult?
+    private val apiInterface: ApiInterface,
+    var resultCallback: ConfirmAuthorizationResult?
 ) : ApiResponseInterceptor<ConfirmDenyResponseData>() {
 
-    fun updateAuthorization(connectionAndKey: ConnectionAndKey,
-                            authorizationId: String,
-                            payloadData: ConfirmDenyData) {
+    fun updateAuthorization(
+        connectionAndKey: ConnectionAndKey,
+        authorizationId: String,
+        payloadData: ConfirmDenyData
+    ) {
         val requestBody = ConfirmDenyRequestData(payloadData)
         val requestData = createAuthenticatedRequestData(
-                requestMethod = REQUEST_METHOD_PUT,
-                baseUrl = connectionAndKey.connection.connectUrl,
-                apiRoutePath = "$API_AUTHORIZATIONS/$authorizationId",
-                accessToken = connectionAndKey.connection.accessToken,
-                signPrivateKey = connectionAndKey.key,
-                requestBodyObject = requestBody
+            requestMethod = REQUEST_METHOD_PUT,
+            baseUrl = connectionAndKey.connection.connectUrl,
+            apiRoutePath = "$API_AUTHORIZATIONS/$authorizationId",
+            accessToken = connectionAndKey.connection.accessToken,
+            signPrivateKey = connectionAndKey.key,
+            requestBodyObject = requestBody
         )
         apiInterface.updateAuthorization(
-                requestUrl = requestData.requestUrl,
-                headersMap = requestData.headersMap,
-                requestBody = requestBody
+            requestUrl = requestData.requestUrl,
+            headersMap = requestData.headersMap,
+            requestBody = requestBody
         ).enqueue(this)
     }
 
-    override fun onSuccessResponse(call: Call<ConfirmDenyResponseData>, response: ConfirmDenyResponseData) {
+    override fun onSuccessResponse(
+        call: Call<ConfirmDenyResponseData>,
+        response: ConfirmDenyResponseData
+    ) {
         val data = response.data
         if (data == null) onFailureResponse(call, createInvalidResponseError())
         else resultCallback?.onConfirmDenySuccess(result = data)

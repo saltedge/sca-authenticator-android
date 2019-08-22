@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
- <!--
+<?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2019 Salt Edge Inc.
@@ -19,8 +18,8 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<RelativeLayout android:id="@+id/itemContainer"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/itemContainer"
     android:layout_width="match_parent"
     android:layout_height="@dimen/dp_75"
     android:background="?android:attr/selectableItemBackground">
@@ -29,33 +28,33 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:orientation="vertical"
         android:layout_marginStart="@dimen/dp_15"
         android:layout_marginEnd="@dimen/dp_15"
-        android:layout_toStartOf="@+id/checkView">
+        android:layout_toStartOf="@+id/checkView"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/titleView"
+            style="@style/Text16BlackRegular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxLines="1"
-            style="@style/Text16BlackRegular" />
+            android:maxLines="1" />
 
         <TextView
             android:id="@+id/valueView"
+            style="@style/Text14GrayDarkRegular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxLines="2"
-            style="@style/Text14GrayDarkRegular" />
+            android:maxLines="2" />
     </LinearLayout>
 
     <Switch
         android:id="@+id/checkView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/dp_15"
-        android:visibility="gone"
-        android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
-        android:thumbTint="@color/switch_thumb_color_selector"/>
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/dp_15"
+        android:thumbTint="@color/switch_thumb_color_selector"
+        android:visibility="gone" />
 </RelativeLayout>

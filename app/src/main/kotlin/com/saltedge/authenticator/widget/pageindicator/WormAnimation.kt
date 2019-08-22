@@ -83,7 +83,11 @@ class WormAnimation(listener: ValueAnimation.UpdateListener) : AbsAnimation<Anim
         return this
     }
 
-    private fun createValueAnimator(fromX: Int, toX: Int, isReverseAnimator: Boolean): ValueAnimator {
+    private fun createValueAnimator(
+        fromX: Int,
+        toX: Int,
+        isReverseAnimator: Boolean
+    ): ValueAnimator {
         val anim = ValueAnimator.ofInt(fromX, toX)
         anim.duration = animationDuration
         anim.addUpdateListener { animation ->
@@ -110,7 +114,12 @@ class WormAnimation(listener: ValueAnimation.UpdateListener) : AbsAnimation<Anim
     }
 
     @SuppressWarnings("RedundantIfStatement")
-    private fun hasChanges(fromValue: Int, toValue: Int, radius: Int, isRightSide: Boolean): Boolean {
+    private fun hasChanges(
+        fromValue: Int,
+        toValue: Int,
+        radius: Int,
+        isRightSide: Boolean
+    ): Boolean {
         return this.fromValue != fromValue || this.toValue != toValue || this.radius != radius || this.isRightSide != isRightSide
     }
 
@@ -138,5 +147,10 @@ class WormAnimation(listener: ValueAnimation.UpdateListener) : AbsAnimation<Anim
         return AnimationValues(fromX, toX, reverseFromX, reverseToX)
     }
 
-    private inner class AnimationValues(val fromX: Int, val toX: Int, val reverseFromX: Int, val reverseToX: Int)
+    private inner class AnimationValues(
+        val fromX: Int,
+        val toX: Int,
+        val reverseFromX: Int,
+        val reverseToX: Int
+    )
 }

@@ -44,7 +44,11 @@ class WebViewFragment : BaseFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         activityComponents?.updateAppbarTitle(title = title)
         return inflater.inflate(R.layout.fragment_web_view, container, false)
     }

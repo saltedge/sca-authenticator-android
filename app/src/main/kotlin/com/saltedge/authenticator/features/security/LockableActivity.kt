@@ -47,7 +47,8 @@ import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 const val KEY_SKIP_PIN = "KEY_SKIP_PIN"
 
 @SuppressLint("Registered")
-abstract class LockableActivity : AppCompatActivity(), PasscodeInputViewListener, BiometricPromptCallback {
+abstract class LockableActivity : AppCompatActivity(), PasscodeInputViewListener,
+    BiometricPromptCallback {
 
     abstract fun getUnlockAppInputView(): UnlockAppInputView?
     abstract fun getAppBarLayout(): View?
@@ -90,9 +91,10 @@ abstract class LockableActivity : AppCompatActivity(), PasscodeInputViewListener
     }
 
     private var presenter = LockableActivityPresenter(
-            viewContract = viewContract,
-            connectionsRepository = ConnectionsRepository,
-            preferenceRepository = PreferenceRepository)
+        viewContract = viewContract,
+        connectionsRepository = ConnectionsRepository,
+        preferenceRepository = PreferenceRepository
+    )
     private var biometricPrompt: BiometricPromptAbs? = null
     private var vibrator: Vibrator? = null
 
@@ -166,16 +168,20 @@ abstract class LockableActivity : AppCompatActivity(), PasscodeInputViewListener
         }
         biometricPrompt?.resultCallback = this
         biometricPrompt?.showBiometricPrompt(
-                context = this,
-                titleResId = R.string.app_name,
-                descriptionResId = R.string.fingerprint_scan_unlock,
-                negativeActionTextResId = R.string.actions_cancel
+            context = this,
+            titleResId = R.string.app_name,
+            descriptionResId = R.string.fingerprint_scan_unlock,
+            negativeActionTextResId = R.string.actions_cancel
         )
     }
 
     private fun showWrongPasscodeErrorAndDisablePasscodeInput(remainedMinutes: Int) {
         val wrongPasscodeMessage = getString(R.string.errors_wrong_passcode)
-        val retryMessage = resources.getQuantityString(R.plurals.errors_passcode_try_again, remainedMinutes, remainedMinutes)
+        val retryMessage = resources.getQuantityString(
+            R.plurals.errors_passcode_try_again,
+            remainedMinutes,
+            remainedMinutes
+        )
         getUnlockAppInputView()?.let {
             it.setDescriptionText("$wrongPasscodeMessage\n$retryMessage")
             it.setInputViewVisibility(show = false)

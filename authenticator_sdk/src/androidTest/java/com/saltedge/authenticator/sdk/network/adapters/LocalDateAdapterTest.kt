@@ -34,15 +34,20 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class LocalDateAdapterTest {
 
-    private var gson: Gson = GsonBuilder().registerTypeAdapter(LocalDate::class.java, LocalDateAdapter()).create()
+    private var gson: Gson =
+        GsonBuilder().registerTypeAdapter(LocalDate::class.java, LocalDateAdapter()).create()
 
     @Test
     @Throws(Exception::class)
     fun testDeserializeLocalDate() {
-        assertThat(gson.fromJson("\"2015-01-01\"", LocalDate::class.java),
-                equalTo(LocalDate.parse("2015-01-01")))
-        assertThat(gson.fromJson("\"Z20150101\"", LocalDate::class.java),
-                equalTo(LocalDate(0)))
+        assertThat(
+            gson.fromJson("\"2015-01-01\"", LocalDate::class.java),
+            equalTo(LocalDate.parse("2015-01-01"))
+        )
+        assertThat(
+            gson.fromJson("\"Z20150101\"", LocalDate::class.java),
+            equalTo(LocalDate(0))
+        )
     }
 
     @Test

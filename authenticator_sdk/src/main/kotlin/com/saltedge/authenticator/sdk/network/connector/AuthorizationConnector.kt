@@ -31,32 +31,38 @@ import com.saltedge.authenticator.sdk.network.ApiResponseInterceptor
 import retrofit2.Call
 
 internal class AuthorizationConnector(
-        private val apiInterface: ApiInterface,
-        var resultCallback: FetchAuthorizationResult?
+    private val apiInterface: ApiInterface,
+    var resultCallback: FetchAuthorizationResult?
 ) : ApiResponseInterceptor<AuthorizationShowResponseData>() {
 
-    fun getAuthorization(connectionAndKey: ConnectionAndKey,
-                         authorizationId: String) {
+    fun getAuthorization(
+        connectionAndKey: ConnectionAndKey,
+        authorizationId: String
+    ) {
         val requestData = createAuthenticatedRequestData<Nothing>(
-                requestMethod = REQUEST_METHOD_GET,
-                baseUrl = connectionAndKey.connection.connectUrl,
-                apiRoutePath = "$API_AUTHORIZATIONS/$authorizationId",
-                accessToken = connectionAndKey.connection.accessToken,
-                signPrivateKey = connectionAndKey.key
+            requestMethod = REQUEST_METHOD_GET,
+            baseUrl = connectionAndKey.connection.connectUrl,
+            apiRoutePath = "$API_AUTHORIZATIONS/$authorizationId",
+            accessToken = connectionAndKey.connection.accessToken,
+            signPrivateKey = connectionAndKey.key
         )
         apiInterface.getAuthorization(
-                requestUrl = requestData.requestUrl,
-                headersMap = requestData.headersMap
+            requestUrl = requestData.requestUrl,
+            headersMap = requestData.headersMap
         ).enqueue(this)
     }
 
-    override fun onSuccessResponse(call: Call<AuthorizationShowResponseData>,
-                                   response: AuthorizationShowResponseData) {
+    override fun onSuccessResponse(
+        call: Call<AuthorizationShowResponseData>,
+        response: AuthorizationShowResponseData
+    ) {
         resultCallback?.fetchAuthorizationResult(result = response.data, error = null)
     }
 
-    override fun onFailureResponse(call: Call<AuthorizationShowResponseData>,
-                                   error: ApiErrorData) {
+    override fun onFailureResponse(
+        call: Call<AuthorizationShowResponseData>,
+        error: ApiErrorData
+    ) {
         resultCallback?.fetchAuthorizationResult(result = null, error = error)
     }
 }

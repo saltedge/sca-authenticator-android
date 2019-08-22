@@ -34,7 +34,11 @@ import java.lang.reflect.Type
 internal class DateTimeAdapter : JsonDeserializer<DateTime>, JsonSerializer<DateTime> {
 
     @Throws(JsonParseException::class)
-    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): DateTime? {
+    override fun deserialize(
+        json: JsonElement,
+        typeOfT: Type,
+        context: JsonDeserializationContext
+    ): DateTime? {
         return try {
             json.asString.parseToUtcDateTime() ?: DateTime(0).withZone(DateTimeZone.UTC)
         } catch (e: Exception) {
@@ -42,7 +46,11 @@ internal class DateTimeAdapter : JsonDeserializer<DateTime>, JsonSerializer<Date
         }
     }
 
-    override fun serialize(src: DateTime, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
+    override fun serialize(
+        src: DateTime,
+        typeOfSrc: Type,
+        context: JsonSerializationContext
+    ): JsonElement {
         return JsonPrimitive(src.withZone(DateTimeZone.UTC).toString())
     }
 }

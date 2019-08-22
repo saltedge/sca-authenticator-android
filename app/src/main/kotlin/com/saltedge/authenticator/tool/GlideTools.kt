@@ -6,7 +6,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 
 private val imageLoaderOptions = RequestOptions()
-        .diskCacheStrategy(DiskCacheStrategy.ALL)
+    .diskCacheStrategy(DiskCacheStrategy.ALL)
 
 /**
  * Loads image from remote resource to image view
@@ -18,12 +18,12 @@ private val imageLoaderOptions = RequestOptions()
 fun ImageView.loadImage(imageUrl: String?, placeholderId: Int) {
     try {
         Glide.with(context)
-                .load(imageUrl)
-                .apply(imageLoaderOptions)
-                .placeholder(placeholderId)
-                .error(placeholderId)
-                .fitCenter()
-                .into(this)
+            .load(imageUrl)
+            .apply(imageLoaderOptions)
+            .placeholder(placeholderId)
+            .error(placeholderId)
+            .fitCenter()
+            .into(this)
     } catch (e: Exception) {
         e.printStackTrace()
     }

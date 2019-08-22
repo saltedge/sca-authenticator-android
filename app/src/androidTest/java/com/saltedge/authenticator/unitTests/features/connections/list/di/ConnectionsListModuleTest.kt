@@ -37,7 +37,11 @@ class ConnectionsListModuleTest {
     fun providePresenterTest() {
         val module = ConnectionsListModule()
 
-        Assert.assertNotNull(module.providePresenter(TestTools.applicationContext,
-                ConnectionsRepository, KeyStoreManager))
+        Assert.assertNotNull(
+            module.providePresenter(
+                TestTools.applicationContext,
+                ConnectionsRepository, KeyStoreManager
+            )
+        )
     }
 }

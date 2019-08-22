@@ -50,7 +50,7 @@ fun DateTime.remainedSecondsTillExpire(): Int = secondsBetweenDates(DateTime.now
 fun DateTime.secondsFromDate(): Int = secondsBetweenDates(this, DateTime.now(this.zone))
 
 fun secondsBetweenDates(startDate: DateTime, endDate: DateTime): Int =
-        (millisBetweenDates(startDate, endDate) / 1000).toInt()
+    (millisBetweenDates(startDate, endDate) / 1000).toInt()
 
 /**
  * Calculates seconds between now and receiver's value
@@ -64,12 +64,12 @@ fun DateTime.remainedExpirationTime(): String {
     else {
         val period = Period(remainedSeconds * 1000L)
         PeriodFormatterBuilder()
-                .appendHours()
-                .appendSeparatorIfFieldsBefore(":")
-                .printZeroAlways().minimumPrintedDigits(if (period.hours > 0) 2 else 1).appendMinutes()
-                .appendSeparator(":")
-                .minimumPrintedDigits(2).appendSeconds()
-                .toFormatter().print(period)
+            .appendHours()
+            .appendSeparatorIfFieldsBefore(":")
+            .printZeroAlways().minimumPrintedDigits(if (period.hours > 0) 2 else 1).appendMinutes()
+            .appendSeparator(":")
+            .minimumPrintedDigits(2).appendSeconds()
+            .toFormatter().print(period)
     }
 }
 

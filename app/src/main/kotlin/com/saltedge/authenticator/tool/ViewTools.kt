@@ -59,7 +59,8 @@ fun View?.setInvisible(invisible: Boolean = true) {
  */
 fun EditText.hideSystemKeyboard() {
     val context = this.context
-    val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+    val inputMethodManager =
+        context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
     inputMethodManager?.hideSoftInputFromWindow(windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
 }
 
@@ -105,7 +106,7 @@ fun View.setSelectableBackground() {
  * @return View object
  */
 fun ViewGroup.inflateListItemView(resId: Int): View =
-        LayoutInflater.from(context).inflate(resId, this, false)
+    LayoutInflater.from(context).inflate(resId, this, false)
 
 /**
  * Allows to set the color of the text

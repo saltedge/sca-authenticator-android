@@ -79,7 +79,11 @@ object CryptoTools : CryptoToolsAbs {
     override fun aesDecrypt(encryptedText: String, key: ByteArray, iv: ByteArray): String? {
         try {
             val decryptCipher = Cipher.getInstance(AES_EXTERNAL_TRANSFORMATION) ?: return null
-            decryptCipher.init(Cipher.DECRYPT_MODE, SecretKeySpec(key, KeyProperties.KEY_ALGORITHM_AES), IvParameterSpec(iv))
+            decryptCipher.init(
+                Cipher.DECRYPT_MODE,
+                SecretKeySpec(key, KeyProperties.KEY_ALGORITHM_AES),
+                IvParameterSpec(iv)
+            )
             val decryptedBytes = decryptCipher.doFinal(decodeFromPemBase64String(encryptedText))
             return String(decryptedBytes)
         } catch (e: Exception) {
@@ -88,8 +92,10 @@ object CryptoTools : CryptoToolsAbs {
         return null
     }
 
-    override fun decryptAuthorizationData(encryptedData: EncryptedAuthorizationData,
-                                          rsaPrivateKey: PrivateKey?): AuthorizationData? {
+    override fun decryptAuthorizationData(
+        encryptedData: EncryptedAuthorizationData,
+        rsaPrivateKey: PrivateKey?
+    ): AuthorizationData? {
         if (encryptedData.algorithm != supportedAlgorithm) return null
         try {
             val privateKey = rsaPrivateKey ?: return null

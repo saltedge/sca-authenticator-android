@@ -29,8 +29,10 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class Base64CompatTest {
 
-    private val testString = "Salt Edge Solution for PISP is designed to help your business embrace the open source technology opportunities."
-    private val base64String = "U2FsdCBFZGdlIFNvbHV0aW9uIGZvciBQSVNQIGlzIGRlc2lnbmVkIHRvIGhlbHAg\n" +
+    private val testString =
+        "Salt Edge Solution for PISP is designed to help your business embrace the open source technology opportunities."
+    private val base64String =
+        "U2FsdCBFZGdlIFNvbHV0aW9uIGZvciBQSVNQIGlzIGRlc2lnbmVkIHRvIGhlbHAg\n" +
             "eW91ciBidXNpbmVzcyBlbWJyYWNlIHRoZSBvcGVuIHNvdXJjZSB0ZWNobm9sb2d5\n" +
             "IG9wcG9ydHVuaXRpZXMu"
 
