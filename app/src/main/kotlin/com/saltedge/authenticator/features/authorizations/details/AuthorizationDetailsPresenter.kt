@@ -74,10 +74,10 @@ class AuthorizationDetailsPresenter(
         if (!initialValuesValid) viewContract?.closeView()
     }
 
-    val remainedTimeDescription: String
-        get() = currentViewModel?.expiresAt?.remainedExpirationTime() ?: ""
     val remainedSecondsTillExpire: Int
-        get() = currentViewModel?.expiresAt?.remainedSecondsTillExpire() ?: 0
+        get() = currentViewModel?.remainedSecondsTillExpire() ?: 0
+    val remainedTimeDescription: String
+        get() = currentViewModel?.remainedTimeStringTillExpire() ?: ""
     val maxProgressSeconds: Int
         get() = currentViewModel?.validSeconds ?: 0
     val providerName: String
@@ -135,7 +135,7 @@ class AuthorizationDetailsPresenter(
             currentViewModel?.let {
                 viewContract?.updateTimeView(
                     remainedSecondsTillExpire = it.remainedSecondsTillExpire(),
-                    remainedTimeDescription = it.remainedTimeTillExpire()
+                    remainedTimeDescription = it.remainedTimeStringTillExpire()
                 )
             }
         } else {

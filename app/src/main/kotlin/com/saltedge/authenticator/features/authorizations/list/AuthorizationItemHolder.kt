@@ -27,7 +27,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.features.authorizations.common.remainedSecondsTillExpire
-import com.saltedge.authenticator.features.authorizations.common.remainedTimeTillExpire
+import com.saltedge.authenticator.features.authorizations.common.remainedTimeStringTillExpire
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tool.*
 import kotlinx.android.extensions.LayoutContainer
@@ -78,7 +78,7 @@ class AuthorizationItemHolder(
     private fun updateProgressViews(viewModel: AuthorizationViewModel) {
         progressView?.max = viewModel.validSeconds
         progressView?.remainedProgress = viewModel.remainedSecondsTillExpire()
-        timerTextView?.text = viewModel.remainedTimeTillExpire()
+        timerTextView?.text = viewModel.remainedTimeStringTillExpire()
     }
 
     private fun updateDescriptionViews(viewModel: AuthorizationViewModel) {

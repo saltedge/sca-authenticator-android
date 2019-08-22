@@ -71,10 +71,8 @@ class AuthorizationViewModelTest {
     fun remainedTimeTillExpireTest() {
         val now = DateTime.now()
 
-        assertThat(
-            model.copy(expiresAt = now.plusMinutes(1)).remainedTimeTillExpire(),
-            anyOf(equalTo("0:59"), equalTo("1:00"))
-        )
+        assertThat(model.copy(expiresAt = now.plusMinutes(1)).remainedTimeStringTillExpire(),
+                anyOf(equalTo("0:59"), equalTo("1:00")))
     }
 
     @Test

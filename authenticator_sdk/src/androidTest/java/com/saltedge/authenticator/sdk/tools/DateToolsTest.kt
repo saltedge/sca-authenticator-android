@@ -45,20 +45,11 @@ class DateToolsTest {
     @Test
     @Throws(Exception::class)
     fun remainedExpirationTimeTest() {
-        assertThat(DateTime.now().remainedExpirationTime(), equalTo("-:--"))
-        assertThat(DateTime.now().minusMinutes(1).remainedExpirationTime(), equalTo("-:--"))
-        assertThat(
-            DateTime.now().plusMinutes(1).remainedExpirationTime(),
-            anyOf(equalTo("0:59"), equalTo("1:00"))
-        )
-        assertThat(
-            DateTime.now().plusMinutes(10).plusSeconds(59).remainedExpirationTime(),
-            anyOf(equalTo("10:58"), equalTo("10:59"))
-        )
-        assertThat(
-            DateTime.now().plusHours(1).remainedExpirationTime(),
-            anyOf(equalTo("59:59"), equalTo("1:00:00"))
-        )
+        assertThat(0.remainedExpirationTime(), equalTo("-:--"))
+        assertThat((-60).remainedExpirationTime(), equalTo("-:--"))
+        assertThat(60.remainedExpirationTime(), equalTo("1:00"))
+        assertThat(659.remainedExpirationTime(), equalTo("10:59"))
+        assertThat(3600.remainedExpirationTime(), equalTo("1:00:00"))
     }
 
     @Test

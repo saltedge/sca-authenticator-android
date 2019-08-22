@@ -25,6 +25,12 @@ import org.joda.time.DateTimeZone
 import org.joda.time.Period
 import org.joda.time.format.PeriodFormatterBuilder
 
+/**
+ * Parse String to DateTime object in UTC time zone
+ *
+ * @receiver datetime string
+ * @return DateTime object
+ */
 fun String.parseToUtcDateTime(): DateTime? {
     return try {
         DateTime.parse(this).withZone(DateTimeZone.UTC)
@@ -34,7 +40,7 @@ fun String.parseToUtcDateTime(): DateTime? {
 }
 
 /**
- * Calculates seconds between now and receiver's value
+ * Calculates seconds between now and expiration time
  *
  * @receiver expiresAt datetime
  * @return seconds till expire time
@@ -45,16 +51,15 @@ fun secondsBetweenDates(startDate: DateTime, endDate: DateTime): Int =
     (millisBetweenDates(startDate, endDate) / 1000).toInt()
 
 /**
- * Calculates seconds between now and receiver's value
+ * Create description of remained time
  *
- * @receiver expiresAt datetime
+ * @receiver period of remained seconds
  * @return String timestamp in "minutes:seconds" format
  */
-fun DateTime.remainedExpirationTime(): String {
-    val remainedSeconds = this.remainedSecondsTillExpire()
-    return if (remainedSeconds <= 0) return "-:--"
+fun Int.remainedExpirationTime(): String {
+    return if (this <= 0) return "-:--"
     else {
-        val period = Period(remainedSeconds * 1000L)
+        val period = Period(this * 1000L)
         PeriodFormatterBuilder()
             .appendHours()
             .appendSeparatorIfFieldsBefore(":")
