@@ -22,25 +22,28 @@ package com.saltedge.authenticator.features.authorizations.list
 
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
-import com.saltedge.authenticator.features.authorizations.common.remainedSecondsTillExpire
 import com.saltedge.authenticator.features.authorizations.common.remainedTimeTillExpire
 import com.saltedge.authenticator.interfaces.ListItemClickListener
+import com.saltedge.authenticator.sdk.tools.remainedExpirationTime
+import com.saltedge.authenticator.sdk.tools.secondsFromDate
 import com.saltedge.authenticator.tool.*
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.view_action_buttons.*
+import kotlinx.android.synthetic.main.fragment_authorization_details.*
 import kotlinx.android.synthetic.main.view_item_authorization.*
+import kotlinx.android.synthetic.main.view_item_authorization.connectionLogoView
+import kotlinx.android.synthetic.main.view_item_authorization.progressBar
+import kotlinx.android.synthetic.main.view_item_authorization.providerNameView
+import kotlinx.android.synthetic.main.view_item_authorization.timerTextView
 
 class AuthorizationItemHolder(
     parent: ViewGroup,
     private val listener: ListItemClickListener?
 ) : RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_authorization)),
     LayoutContainer,
-    View.OnClickListener,
-    ViewTreeObserver.OnGlobalLayoutListener {
+    View.OnClickListener {
 
     override val containerView: View?
         get() = itemView
@@ -48,23 +51,8 @@ class AuthorizationItemHolder(
     // DATA
     private var confirmItem: AuthorizationViewModel? = null
 
-    init {
-        negativeActionView?.setFont(R.font.roboto_medium)
-        positiveActionView?.setFont(R.font.roboto_medium)
-        negativeActionView?.setOnClickListener(this)
-        positiveActionView?.setOnClickListener(this)
-        detailsActionView?.setOnClickListener(this)
-    }
-
     override fun onClick(v: View?) {
         notifyClickListener(viewId = v?.id ?: return, code = confirmItem?.authorizationId ?: return)
-    }
-
-    override fun onGlobalLayout() {
-        descriptionTextView?.viewTreeObserver?.removeOnGlobalLayoutListener(this)
-        descriptionTextView?.isTextTruncated()?.let {
-            detailsActionView?.setVisible(show = it)
-        }
     }
 
     fun bind(newConfirmItem: AuthorizationViewModel) {
@@ -72,18 +60,17 @@ class AuthorizationItemHolder(
         if (confirmItem != newConfirmItem) {
             confirmItem = newConfirmItem
             updateDescriptionViews(newConfirmItem)
-            updateLayoutsVisibility(newConfirmItem.isProcessing)
         }
     }
 
     private fun updateProgressViews(viewModel: AuthorizationViewModel) {
-        progressView?.max = viewModel.validSeconds
-        progressView?.remainedProgress = viewModel.remainedSecondsTillExpire()
-        timerTextView?.text = viewModel.remainedTimeTillExpire()
+        progressBar?.max = viewModel.validSeconds
+        progressBar?.progress = viewModel.createdAt.secondsFromDate()
+        timerTextView?.text = viewModel.expiresAt.remainedExpirationTime()
     }
 
     private fun updateDescriptionViews(viewModel: AuthorizationViewModel) {
-        connectionNameView?.text = viewModel.connectionName
+        providerNameView?.text = viewModel.connectionName
         if (viewModel.connectionLogoUrl?.isEmpty() == true) {
             connectionLogoView?.setVisible(false)
         } else {
@@ -91,26 +78,6 @@ class AuthorizationItemHolder(
                 imageUrl = viewModel.connectionLogoUrl,
                 placeholderId = R.drawable.ic_logo_bank_placeholder
             )
-        }
-        titleTextView?.text = viewModel.title
-        descriptionTextView?.text = viewModel.description.parseHTML()
-    }
-
-    private fun updateLayoutsVisibility(isInProgress: Boolean) {
-        headerLayout?.setVisible(show = !isInProgress)
-        actionsLayout?.setVisible(show = !isInProgress)
-        progressBarView?.setVisible(show = isInProgress)
-        updateExpandDescriptionActionView()
-    }
-
-    private fun updateExpandDescriptionActionView() {
-        val descriptionView = descriptionTextView ?: return
-        val isTextTruncated = descriptionView.isTextTruncated()
-        if (isTextTruncated != null) {
-            detailsActionView?.setVisible(show = isTextTruncated)
-        } else {
-            detailsActionView?.setVisible(show = false)
-            descriptionView.viewTreeObserver.addOnGlobalLayoutListener(this)
         }
     }
 

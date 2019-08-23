@@ -99,9 +99,6 @@ class AuthorizationsListPresenter @Inject constructor(
                 super.currentConnectionAndKey = connectionsAndKeys[viewModel.connectionId]
                 onAuthorizeActionSelected(isConfirmed = itemViewId == R.id.positiveActionView)
             }
-            R.id.detailsActionView -> {
-                viewContract?.showAuthorizationDetailsView(authorizationViewModel = viewModel)
-            }
         }
     }
 

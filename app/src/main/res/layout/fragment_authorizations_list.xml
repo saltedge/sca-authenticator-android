@@ -22,16 +22,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/base_container_bg">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_88"
+        android:scrollbars="horizontal"
+        tools:visibility="visible"
+        tools:background="@color/red"/>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipChildren="false"
-        android:scrollbars="vertical"
-        android:transitionGroup="false"
-        android:visibility="gone" />
+        android:layout_marginTop="@dimen/dp_86"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:background="@color/blue"/>
 
     <com.saltedge.authenticator.widget.InfoView
         android:id="@+id/emptyView"

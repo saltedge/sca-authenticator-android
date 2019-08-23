@@ -54,7 +54,8 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     lateinit var biometricPrompt: BiometricPromptAbs
     @Inject
     lateinit var timeViewUpdateTimer: Timer
-    private val adapter = AuthorizationsListAdapter()
+    private var adapter: AuthorizationsPagerAdapter? = null
+    private var cardAdapter = AuthorizationsListAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +68,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        adapter = activity?.applicationContext?.let { AuthorizationsPagerAdapter(it) }
         activityComponents?.updateAppbarTitle(getString(R.string.authorizations_feature_title))
         return inflater.inflate(R.layout.fragment_authorizations_list, container, false)
     }
@@ -97,7 +99,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         super.onStart()
         presenterContract.viewContract = this
         biometricPrompt.resultCallback = presenterContract
-        adapter.clickListener = presenterContract
+        adapter?.listener = presenterContract
         startListUpdateTimer()
         clearAllNotifications()
     }
@@ -116,7 +118,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         stopListUpdateTimer()
         biometricPrompt.resultCallback = null
         presenterContract.viewContract = null
-        adapter.clickListener = null
+        adapter?.listener = null
         super.onStop()
     }
 
@@ -146,7 +148,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     }
 
     override fun refreshListView() {
-        if (isVisible) adapter.notifyDataSetChanged()
+        if (isVisible) adapter?.notifyDataSetChanged()
     }
 
     override fun updateViewsContentInUiThread() {
@@ -155,22 +157,26 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     override fun reinitAndUpdateViewsContent(listState: Parcelable?) {
         activity?.let {
-            recyclerView?.layoutManager = LinearLayoutManager(it)
-            recyclerView?.adapter = adapter
+            recyclerView?.layoutManager = LinearLayoutManager(activity?.applicationContext,LinearLayoutManager.HORIZONTAL,false)
+            recyclerView?.adapter = cardAdapter
             updateViewContent()
-            if (adapter.data.isNotEmpty()) {
-                listState?.let { state ->
-                    recyclerView?.layoutManager?.onRestoreInstanceState(state)
-                }
-            }
+//            if (cardAdapter.data.isNotEmpty()) {
+//                listState?.let { state ->
+//                    recyclerView?.layoutManager?.onRestoreInstanceState(state)
+//                }
+//            }
         }
     }
 
     override fun updateViewContent() {
         try {
-            adapter.data = presenterContract.viewModels
-            val viewIsEmpty = adapter.data.isEmpty()
+            adapter?.data = presenterContract.viewModels
+            viewPager?.adapter = adapter
+            cardAdapter.data = presenterContract.viewModels
+            recyclerView?.adapter = cardAdapter
+            val viewIsEmpty = adapter?.isEmpty ?: false
             emptyView?.setVisible(viewIsEmpty)
+            viewPager?.setVisible(!viewIsEmpty)
             recyclerView?.setVisible(!viewIsEmpty)
         } catch (e: Exception) {
             e.log()
@@ -178,7 +184,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     }
 
     override fun updateItem(viewModel: AuthorizationViewModel, itemId: Int) {
-        adapter.updateItem(viewModel, itemId)
+//        cardAdapter.updateItem(viewModel, itemId)
     }
 
     override fun askUserBiometricConfirmation() {
