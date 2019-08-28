@@ -56,6 +56,15 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
+
+    testOptions {
+        execution 'ANDROID_TEST_ORCHESTRATOR'
+        animationsDisabled true
+
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -67,7 +76,11 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.13.1'
     implementation 'net.danlew:android.joda:2.10.1.1'
 
+    androidTestUtil 'com.android.support.test:orchestrator:1.0.2'
     testImplementation 'junit:junit:4.12'
+    testImplementation 'androidx.test:core:1.2.0'
+    testImplementation 'org.robolectric:robolectric:4.3'
+    testImplementation "io.mockk:mockk:1.9.3"
     androidTestImplementation('io.mockk:mockk-android:1.9.3')
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test:runner:1.2.0'

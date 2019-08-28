@@ -22,20 +22,20 @@
 sdk_report_file="authenticator_sdk/build/reports/jacocoTestReport/html/index.html"
 app_report_file="app/build/reports/jacocoTestReport/html/index.html"
 
-adb uninstall com.saltedge.authenticator.tests 2>&1
-adb uninstall com.saltedge.authenticator 2>&1
+#adb uninstall com.saltedge.authenticator.tests 2>&1
+#adb uninstall com.saltedge.authenticator 2>&1
 
 ./gradlew clean
 ./gradlew --stacktrace authenticator_sdk:jacocoTestReport 2>&1
 status=$?
 echo "authenticator_sdk test:$status"
 [[ ${status} -ne 0 ]] && exit ${status}
-./gradlew --stacktrace app:jacocoTestReport 2>&1
-status=$?
-echo "app test:$status"
-[[ ${status} -ne 0 ]] && exit ${status}
+#./gradlew --stacktrace app:jacocoTestReport 2>&1
+#status=$?
+#echo "app test:$status"
+#[[ ${status} -ne 0 ]] && exit ${status}
 
 sdk_coverage=$(grep -Eo "Total.+?(\d{1,3}\%)" "$sdk_report_file" | grep -Eo "\d{1,3}\%")
-app_coverage=$(grep -Eo "Total.+?(\d{1,3}\%)" "$app_report_file" | grep -Eo "\d{1,3}\%")
+#app_coverage=$(grep -Eo "Total.+?(\d{1,3}\%)" "$app_report_file" | grep -Eo "\d{1,3}\%")
 
 echo "Total Coverage: SDK:$sdk_coverage, APP:$app_coverage"
