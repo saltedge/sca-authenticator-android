@@ -24,8 +24,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.*
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.SHOW_REQUEST_CODE
@@ -55,7 +53,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     @Inject
     lateinit var timeViewUpdateTimer: Timer
     private var adapter: AuthorizationsPagerAdapter? = null
-    private var cardAdapter = AuthorizationsListAdapter()
+    private var cardAdapter: AuthorizationsCardPagerAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +67,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         savedInstanceState: Bundle?
     ): View {
         adapter = activity?.applicationContext?.let { AuthorizationsPagerAdapter(it) }
+        cardAdapter = activity?.applicationContext?.let { AuthorizationsCardPagerAdapter(it) }
         activityComponents?.updateAppbarTitle(getString(R.string.authorizations_feature_title))
         return inflater.inflate(R.layout.fragment_authorizations_list, container, false)
     }
@@ -135,10 +134,10 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelable(
-            RECYCLER_LAYOUT_STATE,
-            recyclerView?.layoutManager?.onSaveInstanceState()
-        )
+//        outState.putParcelable(
+//            RECYCLER_LAYOUT_STATE,
+//            recyclerView?.layoutManager?.onSaveInstanceState()
+//        )
     }
 
     override fun showError(error: ApiErrorData) {
@@ -157,14 +156,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     override fun reinitAndUpdateViewsContent(listState: Parcelable?) {
         activity?.let {
-            recyclerView?.layoutManager = LinearLayoutManager(activity?.applicationContext,LinearLayoutManager.HORIZONTAL,false)
-            recyclerView?.adapter = cardAdapter
             updateViewContent()
-//            if (cardAdapter.data.isNotEmpty()) {
-//                listState?.let { state ->
-//                    recyclerView?.layoutManager?.onRestoreInstanceState(state)
-//                }
-//            }
         }
     }
 
@@ -172,12 +164,12 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         try {
             adapter?.data = presenterContract.viewModels
             viewPager?.adapter = adapter
-            cardAdapter.data = presenterContract.viewModels
-            recyclerView?.adapter = cardAdapter
+            cardAdapter?.data = presenterContract.viewModels
+            cardViewPager?.adapter = cardAdapter
             val viewIsEmpty = adapter?.isEmpty ?: false
             emptyView?.setVisible(viewIsEmpty)
             viewPager?.setVisible(!viewIsEmpty)
-            recyclerView?.setVisible(!viewIsEmpty)
+            cardViewPager?.setVisible(!viewIsEmpty)
         } catch (e: Exception) {
             e.log()
         }
@@ -202,9 +194,9 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         timeViewUpdateTimer.schedule(object : TimerTask() {
             override fun run() {
                 activity?.runOnUiThread {
-                    if (recyclerView?.scrollState == RecyclerView.SCROLL_STATE_IDLE) {
-                        presenterContract.onTimerTick()
-                    }
+//                    if (recyclerView?.scrollState == RecyclerView.SCROLL_STATE_IDLE) {
+//                        presenterContract.onTimerTick()
+//                    }
                 }
             }
         }, 0, TIME_VIEW_UPDATE_TIMEOUT)

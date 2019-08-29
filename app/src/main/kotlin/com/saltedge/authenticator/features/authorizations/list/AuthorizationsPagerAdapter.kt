@@ -48,6 +48,8 @@ class AuthorizationsPagerAdapter(
         get() = _data.isEmpty()
     var itemPosition: Int = 0
     var listener: ListItemClickListener? = null
+    private val layoutInflater: LayoutInflater =
+        context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
     override fun getItemPosition(`object`: Any): Int {
         return super.getItemPosition(`object`)
@@ -73,9 +75,6 @@ class AuthorizationsPagerAdapter(
         super.setPrimaryItem(container, position, `object`)
         itemPosition = position
     }
-
-    private val layoutInflater: LayoutInflater =
-        context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
     private fun inflatePageView(position: Int): View {
         val pageView = layoutInflater.inflate(R.layout.authorization_item, null)

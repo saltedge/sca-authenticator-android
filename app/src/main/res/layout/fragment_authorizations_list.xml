@@ -25,11 +25,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/base_container_bg">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/cardViewPager"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_88"
-        android:scrollbars="horizontal"
+        android:visibility="gone"
         tools:visibility="visible"
         tools:background="@color/red"/>
 
