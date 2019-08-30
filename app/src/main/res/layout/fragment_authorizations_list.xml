@@ -23,9 +23,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/base_container_bg">
+    android:background="@android:color/white">
 
-    <androidx.viewpager.widget.ViewPager
+    <com.saltedge.authenticator.features.authorizations.list.WrapContentViewPager
         android:id="@+id/cardViewPager"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_88"

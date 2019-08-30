@@ -24,18 +24,19 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
+<!--    TODO: Check dimensions in design-->
     <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_42"
         android:layout_gravity="center"
-        android:layout_marginStart="@dimen/dp_60"
-        android:layout_marginLeft="@dimen/dp_60"
+        android:layout_marginStart="@dimen/dp_6"
+        android:layout_marginLeft="@dimen/dp_6"
         android:layout_marginTop="@dimen/dp_20"
-        android:layout_marginEnd="@dimen/dp_60"
-        android:layout_marginRight="@dimen/dp_60"
+        android:layout_marginEnd="@dimen/dp_6"
+        android:layout_marginRight="@dimen/dp_6"
         card_view:cardCornerRadius="21dp"
-        card_view:cardElevation="12dp">
+        card_view:cardElevation="6dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
