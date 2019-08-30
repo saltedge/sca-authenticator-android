@@ -26,7 +26,7 @@
     android:background="@android:color/white">
 
     <com.saltedge.authenticator.features.authorizations.list.WrapContentViewPager
-        android:id="@+id/cardViewPager"
+        android:id="@+id/headerViewPager"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_88"
         android:visibility="gone"
@@ -34,7 +34,7 @@
         tools:background="@color/red"/>
 
     <androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewPager"
+        android:id="@+id/contentViewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/dp_86"

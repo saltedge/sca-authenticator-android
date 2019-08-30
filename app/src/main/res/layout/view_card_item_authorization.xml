@@ -22,6 +22,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginStart="@dimen/dp_60"
     android:background="@android:color/white">
 
 <!--    TODO: Check dimensions in design-->
@@ -30,11 +31,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_42"
         android:layout_gravity="center"
-        android:layout_marginStart="@dimen/dp_6"
-        android:layout_marginLeft="@dimen/dp_6"
         android:layout_marginTop="@dimen/dp_20"
-        android:layout_marginEnd="@dimen/dp_6"
-        android:layout_marginRight="@dimen/dp_6"
+        android:layout_marginEnd="@dimen/dp_14"
         card_view:cardCornerRadius="21dp"
         card_view:cardElevation="6dp">
 

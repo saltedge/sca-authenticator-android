@@ -2,6 +2,7 @@ package com.saltedge.authenticator.features.authorizations.list
 
 import android.view.View
 import androidx.viewpager.widget.ViewPager
+import kotlin.math.abs
 
 class CarouselPagerTransformer(private val pager: View) : ViewPager.PageTransformer {
 
@@ -11,7 +12,7 @@ class CarouselPagerTransformer(private val pager: View) : ViewPager.PageTransfor
         val adjustedPosition = position - freeSpace / page.width
 
         scale = if (adjustedPosition >= -1 && adjustedPosition <= 1) {
-            val k = 1 - Math.abs(adjustedPosition)
+            val k = 1 - abs(adjustedPosition)
             MIN_SCALE + (MAX_SCALE - MIN_SCALE) * k
         } else {
             MIN_SCALE

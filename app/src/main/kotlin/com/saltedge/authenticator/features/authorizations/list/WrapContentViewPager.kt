@@ -6,10 +6,6 @@ import androidx.viewpager.widget.ViewPager
 
 class WrapContentViewPager: ViewPager {
 
-    init {
-        setPageTransformer(true, CarouselPagerTransformer(this))
-    }
-
     constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
