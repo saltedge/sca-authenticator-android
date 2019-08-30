@@ -66,7 +66,7 @@ class SingleAuthorizationPollingServiceTest {
 
         Assert.assertTrue(service.isRunning())
         Assert.assertNotNull(service.connector)
-        verify(atLeast = 1) { mockContract.getConnectionData() }
+        verify(atLeast = 2) { mockContract.getConnectionData() }
     }
 
     @Test
