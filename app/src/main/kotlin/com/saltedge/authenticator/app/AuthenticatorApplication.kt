@@ -96,7 +96,7 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
         try {
             ProviderInstaller.installIfNeeded(this)
         } catch (e: Exception) {
-            e.log()
+//            e.log()
         }
     }
 }

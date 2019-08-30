@@ -55,7 +55,7 @@ class AppModule(context: Context) {
 
     @Provides
     @Singleton
-    fun provideBiometricTools(): BiometricToolsAbs = BiometricTools
+    fun provideBiometricTools(): BiometricToolsAbs = BiometricTools(provideKeyStoreManager(), providePreferenceRepository())
 
     @Provides
     fun provideBiometricPrompt(): BiometricPromptAbs {

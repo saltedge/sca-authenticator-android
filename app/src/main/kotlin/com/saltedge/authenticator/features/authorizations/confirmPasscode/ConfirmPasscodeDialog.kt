@@ -23,14 +23,16 @@ package com.saltedge.authenticator.features.authorizations.confirmPasscode
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.tool.secure.PasscodeTools
 import com.saltedge.authenticator.widget.fragment.BaseRoundedBottomDialogFragment
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 
 class ConfirmPasscodeDialog : BaseRoundedBottomDialogFragment(), PasscodeInputViewListener {
 
-    private val presenter = ConfirmPasscodePresenter()
     var callback: PasscodePromptCallback? = null
+
+    private val presenter = ConfirmPasscodePresenter(passcodeTools = PasscodeTools)
     private val passcodeInputView: PasscodeInputView? by lazy {
         dialog?.findViewById<PasscodeInputView>(R.id.passcodeInputView)
     }
