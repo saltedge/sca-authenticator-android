@@ -210,9 +210,15 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
                 if (scrollState == ViewPager.SCROLL_STATE_IDLE) {
                     return
                 }
-                val a = headerViewPager.width.minus(headerViewPager.paddingStart + headerViewPager.paddingEnd).toFloat()
-                val x = headerViewPager.scrollX.toFloat() * (contentViewPager.width.toFloat() / a)
-                contentViewPager?.scrollTo(x.toInt(), contentViewPager.scrollY)
+                val headerWidth = headerViewPager.width.minus(
+                    headerViewPager.paddingStart
+                        .plus(headerViewPager.paddingEnd)
+                ).toFloat()
+                val contentWidth = contentViewPager.width.toFloat()
+                contentViewPager?.scrollTo(
+                    (headerViewPager.scrollX.toFloat() * (contentWidth / headerWidth)).toInt(),
+                    contentViewPager.scrollY
+                )
             }
 
             override fun onPageSelected(position: Int) {}
@@ -236,11 +242,15 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
                 if (scrollState == ViewPager.SCROLL_STATE_IDLE) {
                     return
                 }
-
-                //TODO: think about it
-                val a = contentViewPager.width.minus(contentViewPager.paddingStart + contentViewPager.paddingEnd).toFloat()
-                val x = contentViewPager.scrollX.toFloat() * (headerViewPager.width.toFloat() / a)
-                headerViewPager?.scrollTo(x.toInt(), headerViewPager.scrollY)
+                val headerWidth = headerViewPager.width.minus(
+                    headerViewPager.paddingStart
+                        .plus(headerViewPager.paddingEnd)
+                ).toFloat()
+                val contentWidth = contentViewPager.width.toFloat()
+                headerViewPager?.scrollTo(
+                    (contentViewPager.scrollX.toFloat() * (headerWidth / contentWidth)).toInt(),
+                    headerViewPager.scrollY
+                )
             }
 
             override fun onPageSelected(position: Int) {}

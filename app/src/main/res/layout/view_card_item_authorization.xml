@@ -22,19 +22,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginStart="@dimen/dp_60"
     android:background="@android:color/white">
 
-<!--    TODO: Check dimensions in design-->
     <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_42"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/dp_20"
+        android:layout_marginStart="@dimen/dp_14"
         android:layout_marginEnd="@dimen/dp_14"
+        android:layout_marginTop="@dimen/dp_20"
         card_view:cardCornerRadius="21dp"
         card_view:cardElevation="6dp">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_2"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="@dimen/dp_13"
+            android:layout_marginTop="@dimen/dp_38"
+            android:layout_marginEnd="@dimen/dp_13"
+            android:progress="3" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -72,16 +82,5 @@
                 android:maxLines="1"
                 tools:text="3:25" />
         </RelativeLayout>
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_2"
-            android:layout_gravity="bottom"
-            android:layout_marginStart="@dimen/dp_13"
-            android:layout_marginTop="@dimen/dp_38"
-            android:layout_marginEnd="@dimen/dp_13"
-            android:progress="3" />
     </androidx.cardview.widget.CardView>
 </RelativeLayout>
