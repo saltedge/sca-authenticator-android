@@ -23,6 +23,7 @@ package com.saltedge.authenticator.features.authorizations.list
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.SHOW_REQUEST_CODE
 import com.saltedge.authenticator.features.authorizations.common.*

@@ -23,6 +23,7 @@ package com.saltedge.authenticator.features.authorizations.list
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.Log
 import android.view.*
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.snackbar.Snackbar
@@ -56,6 +57,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     private var contentAdapter: AuthorizationsContentPagerAdapter? = null
     private var headerAdapter: AuthorizationsCardPagerAdapter? = null
     private var scrollState = ViewPager.SCROLL_STATE_IDLE
+    private var scrollingPosition: Float = 0.0F
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -134,14 +136,6 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         activity?.addFragment(fragment)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-//        outState.putParcelable(
-//            RECYCLER_LAYOUT_STATE,
-//            recyclerView?.layoutManager?.onSaveInstanceState()
-//        )
-    }
-
     override fun showError(error: ApiErrorData) {
         view?.let {
             Snackbar.make(it, error.getErrorMessage(it.context), Snackbar.LENGTH_LONG).show()
@@ -205,18 +199,18 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
                 positionOffset: Float,
                 positionOffsetPixels: Int
             ) {
-                if (scrollState == ViewPager.SCROLL_STATE_IDLE) {
-                    return
+                scrollingPosition = positionOffset
+                if (scrollState != ViewPager.SCROLL_STATE_IDLE) {
+                    val headerWidth = headerViewPager.width.minus(
+                        headerViewPager.paddingStart
+                            .plus(headerViewPager.paddingEnd)
+                    ).toFloat()
+                    val contentWidth = contentViewPager.width.toFloat()
+                    contentViewPager?.scrollTo(
+                        (headerViewPager.scrollX.toFloat() * (contentWidth / headerWidth)).toInt(),
+                        contentViewPager.scrollY
+                    )
                 }
-                val headerWidth = headerViewPager.width.minus(
-                    headerViewPager.paddingStart
-                        .plus(headerViewPager.paddingEnd)
-                ).toFloat()
-                val contentWidth = contentViewPager.width.toFloat()
-                contentViewPager?.scrollTo(
-                    (headerViewPager.scrollX.toFloat() * (contentWidth / headerWidth)).toInt(),
-                    contentViewPager.scrollY
-                )
             }
 
             override fun onPageSelected(position: Int) {}
@@ -237,18 +231,18 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
                 positionOffset: Float,
                 positionOffsetPixels: Int
             ) {
-                if (scrollState == ViewPager.SCROLL_STATE_IDLE) {
-                    return
+                scrollingPosition = positionOffset
+                if (scrollState != ViewPager.SCROLL_STATE_IDLE) {
+                    val headerWidth = headerViewPager.width.minus(
+                        headerViewPager.paddingStart
+                            .plus(headerViewPager.paddingEnd)
+                    ).toFloat()
+                    val contentWidth = contentViewPager.width.toFloat()
+                    headerViewPager?.scrollTo(
+                        (contentViewPager.scrollX.toFloat() * (headerWidth / contentWidth)).toInt(),
+                        headerViewPager.scrollY
+                    )
                 }
-                val headerWidth = headerViewPager.width.minus(
-                    headerViewPager.paddingStart
-                        .plus(headerViewPager.paddingEnd)
-                ).toFloat()
-                val contentWidth = contentViewPager.width.toFloat()
-                headerViewPager?.scrollTo(
-                    (contentViewPager.scrollX.toFloat() * (headerWidth / contentWidth)).toInt(),
-                    headerViewPager.scrollY
-                )
             }
 
             override fun onPageSelected(position: Int) {}
@@ -260,10 +254,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         timeViewUpdateTimer.schedule(object : TimerTask() {
             override fun run() {
                 activity?.runOnUiThread {
-                    presenterContract.onTimerTick()
-//                    if (recyclerView?.scrollState == RecyclerView.SCROLL_STATE_IDLE) {
-//                        presenterContract.onTimerTick()
-//                    }
+                     if (scrollingPosition == 0.0F) presenterContract.onTimerTick()
                 }
             }
         }, 0, TIME_VIEW_UPDATE_TIMEOUT)
