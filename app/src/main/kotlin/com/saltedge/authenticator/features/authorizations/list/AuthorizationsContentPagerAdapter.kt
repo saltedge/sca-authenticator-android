@@ -33,7 +33,7 @@ import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tool.parseHTML
 import com.saltedge.authenticator.tool.setFont
 
-class AuthorizationsPagerAdapter(
+class AuthorizationsContentPagerAdapter(
     context: Context
 ) : PagerAdapter(), View.OnClickListener {
 
@@ -46,10 +46,10 @@ class AuthorizationsPagerAdapter(
         }
     val isEmpty: Boolean
         get() = _data.isEmpty()
-    var itemPosition: Int = 0
     var listener: ListItemClickListener? = null
     private val layoutInflater: LayoutInflater =
         context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    private var itemPosition: Int = 0
 
     override fun getItemPosition(`object`: Any): Int {
         return super.getItemPosition(`object`)

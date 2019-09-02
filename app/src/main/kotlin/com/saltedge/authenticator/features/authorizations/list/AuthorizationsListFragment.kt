@@ -53,7 +53,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     lateinit var biometricPrompt: BiometricPromptAbs
     @Inject
     lateinit var timeViewUpdateTimer: Timer
-    private var contentAdapter: AuthorizationsPagerAdapter? = null
+    private var contentAdapter: AuthorizationsContentPagerAdapter? = null
     private var headerAdapter: AuthorizationsCardPagerAdapter? = null
     private var scrollState = ViewPager.SCROLL_STATE_IDLE
 
@@ -68,7 +68,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        contentAdapter = activity?.applicationContext?.let { AuthorizationsPagerAdapter(it) }
+        contentAdapter = activity?.applicationContext?.let { AuthorizationsContentPagerAdapter(it) }
         headerAdapter = activity?.applicationContext?.let { AuthorizationsCardPagerAdapter(it) }
         activityComponents?.updateAppbarTitle(getString(R.string.authorizations_feature_title))
         return inflater.inflate(R.layout.fragment_authorizations_list, container, false)
@@ -149,7 +149,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     }
 
     override fun refreshListView() {
-        if (isVisible) contentAdapter?.notifyDataSetChanged()
+        if (isVisible) headerAdapter?.notifyDataSetChanged()
     }
 
     override fun updateViewsContentInUiThread() {
@@ -157,9 +157,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     }
 
     override fun reinitAndUpdateViewsContent(listState: Parcelable?) {
-        activity?.let {
-            updateViewContent()
-        }
+        activity?.let { updateViewContent() }
     }
 
     override fun updateViewContent() {
@@ -262,6 +260,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         timeViewUpdateTimer.schedule(object : TimerTask() {
             override fun run() {
                 activity?.runOnUiThread {
+                    presenterContract.onTimerTick()
 //                    if (recyclerView?.scrollState == RecyclerView.SCROLL_STATE_IDLE) {
 //                        presenterContract.onTimerTick()
 //                    }

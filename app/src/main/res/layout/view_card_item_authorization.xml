@@ -30,8 +30,8 @@
         android:layout_height="@dimen/dp_42"
         android:layout_gravity="center"
         android:layout_marginStart="@dimen/dp_14"
-        android:layout_marginEnd="@dimen/dp_14"
         android:layout_marginTop="@dimen/dp_20"
+        android:layout_marginEnd="@dimen/dp_14"
         card_view:cardCornerRadius="21dp"
         card_view:cardElevation="6dp">
 
@@ -44,7 +44,7 @@
             android:layout_marginStart="@dimen/dp_13"
             android:layout_marginTop="@dimen/dp_38"
             android:layout_marginEnd="@dimen/dp_13"
-            android:progress="3" />
+            android:progress="75" />
 
         <RelativeLayout
             android:layout_width="match_parent"
