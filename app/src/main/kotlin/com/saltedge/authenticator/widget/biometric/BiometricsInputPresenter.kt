@@ -30,13 +30,16 @@ import android.os.CancellationSignal
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.log
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricTools
+import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import com.saltedge.authenticator.tool.secure.fingerprint.getFingerprintManager
 
-class BiometricsInputPresenter(val contract: BiometricsInputContract.View?) :
-    FingerprintManager.AuthenticationCallback() {
+class BiometricsInputPresenter(
+    val biometricTools: BiometricToolsAbs,
+    val contract: BiometricsInputContract.View?
+) : FingerprintManager.AuthenticationCallback() {
 
     private var fingerprintManager: FingerprintManager? = null
-    private val cryptoObject: FingerprintManager.CryptoObject? = initCryptoObject()
+    private val cryptoObject: FingerprintManager.CryptoObject? = createCryptoObject()
     private var mCancellationSignal: CancellationSignal? = null
     private var isDialogVisible = false
 
@@ -67,7 +70,7 @@ class BiometricsInputPresenter(val contract: BiometricsInputContract.View?) :
     fun onDialogResume(context: Context) {
         isDialogVisible = true
         try {
-            if (BiometricTools.isFingerprintAuthAvailable(context) && cryptoObject != null) {
+            if (biometricTools.isFingerprintAuthAvailable(context) && cryptoObject != null) {
                 fingerprintManager = context.getFingerprintManager()
                 mCancellationSignal = CancellationSignal()
                 fingerprintManager?.authenticate(
@@ -112,8 +115,8 @@ class BiometricsInputPresenter(val contract: BiometricsInputContract.View?) :
         }
     }
 
-    private fun initCryptoObject(): FingerprintManager.CryptoObject? {
-        return BiometricTools.initFingerprintCipher()?.let { FingerprintManager.CryptoObject(it) }
+    private fun createCryptoObject(): FingerprintManager.CryptoObject? {
+        return biometricTools.createFingerprintCipher()?.let { FingerprintManager.CryptoObject(it) }
     }
 
     private fun biometricPromptIsNotCanceled(errorCode: Int): Boolean =

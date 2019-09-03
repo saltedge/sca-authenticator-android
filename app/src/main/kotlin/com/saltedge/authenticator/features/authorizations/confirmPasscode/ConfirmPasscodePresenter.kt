@@ -20,13 +20,13 @@
  */
 package com.saltedge.authenticator.features.authorizations.confirmPasscode
 
-import com.saltedge.authenticator.tool.secure.PasscodeTools
+import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
 
-class ConfirmPasscodePresenter {
+class ConfirmPasscodePresenter(val passcodeTools: PasscodeToolsAbs) {
 
     /**
      * Computed property that read the encrypted passcode from preferences
      */
     val savedPasscode: String
-        get() = PasscodeTools.getPasscode()
+        get() = passcodeTools.getPasscode()
 }

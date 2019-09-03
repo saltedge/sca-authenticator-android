@@ -21,11 +21,11 @@
 apply plugin: 'jacoco'
 
 jacoco {
-    toolVersion = "0.7.9"
+    toolVersion = "0.8.4"
     reportsDir = file("$buildDir/reports")
 }
 
-task jacocoTestReport(type:JacocoReport, dependsOn: "connectedDebugAndroidTest") {
+task jacocoTestReport(type:JacocoReport, dependsOn: ['testDebugUnitTest']) {
     println ":${project.name}: Generating Jacoco reports"
     group = "Reporting"
     description = "Generate Jacoco coverage reports for Debug build"

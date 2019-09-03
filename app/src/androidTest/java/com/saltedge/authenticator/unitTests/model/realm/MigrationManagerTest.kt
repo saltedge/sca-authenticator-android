@@ -25,7 +25,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.realm.DB_SCHEMA_VERSION
 import com.saltedge.authenticator.model.realm.runMigrations
-import com.saltedge.authenticator.testTools.TestTools
+import com.saltedge.authenticator.instrumentationTestTools.TestTools
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import org.hamcrest.CoreMatchers.equalTo

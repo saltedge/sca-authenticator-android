@@ -29,17 +29,18 @@ import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tool.MILLIS_IN_MINUTE
 import com.saltedge.authenticator.tool.log
 import com.saltedge.authenticator.tool.millisToRemainedMinutes
-import com.saltedge.authenticator.tool.secure.PasscodeTools
+import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
 
 class LockableActivityPresenter(
     val viewContract: LockableActivityContract,
     val connectionsRepository: ConnectionsRepositoryAbs,
-    val preferenceRepository: PreferenceRepositoryAbs
+    val preferenceRepository: PreferenceRepositoryAbs,
+    val passcodeTools: PasscodeToolsAbs
 ) {
 
     private var returnFromOwnActivity = false
     val savedPasscode: String
-        get() = PasscodeTools.getPasscode()
+        get() = passcodeTools.getPasscode()
     private var timer: CountDownTimer? = null
 
     fun onActivityCreate() {

@@ -31,18 +31,25 @@ import androidx.core.view.ViewCompat
 import androidx.fragment.app.FragmentActivity
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_ACTION
+import com.saltedge.authenticator.model.repository.PreferenceRepository
 import com.saltedge.authenticator.sdk.constants.KEY_DESCRIPTION
 import com.saltedge.authenticator.sdk.constants.KEY_TITLE
+import com.saltedge.authenticator.sdk.tools.KeyStoreManager
 import com.saltedge.authenticator.tool.ResId
+import com.saltedge.authenticator.tool.secure.fingerprint.BiometricTools
 import com.saltedge.authenticator.tool.setTextColorResId
 import com.saltedge.authenticator.tool.showDialogFragment
 import com.saltedge.authenticator.widget.fragment.BaseRoundedBottomDialogFragment
 
-class BiometricsInputDialog : BaseRoundedBottomDialogFragment(),
+class BiometricsInputDialog :
+    BaseRoundedBottomDialogFragment(),
     BiometricPromptAbs,
-    BiometricsInputContract.View {
-
-    private val presenter = BiometricsInputPresenter(contract = this)
+    BiometricsInputContract.View
+{
+    private val presenter = BiometricsInputPresenter(
+        biometricTools = BiometricTools(KeyStoreManager, PreferenceRepository),
+        contract = this
+    )
     private val titleView: TextView? by lazy {
         dialog?.findViewById<TextView>(R.id.titleView)
     }
