@@ -23,7 +23,6 @@ package com.saltedge.authenticator.features.authorizations.list
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
-import android.util.Log
 import android.view.*
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.snackbar.Snackbar
