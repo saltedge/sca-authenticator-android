@@ -51,9 +51,7 @@ class AuthorizationsContentPagerAdapter(
         context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     private var itemPosition: Int = 0
 
-    override fun getItemPosition(`object`: Any): Int {
-        return super.getItemPosition(`object`)
-    }
+    override fun getItemPosition(item: Any) = POSITION_NONE
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         return inflatePageView(position).also { container.addView(it, 0) }
