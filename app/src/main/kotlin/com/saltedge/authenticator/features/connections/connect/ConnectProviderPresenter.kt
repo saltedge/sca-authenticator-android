@@ -142,7 +142,7 @@ class ConnectProviderPresenter @Inject constructor(
     override fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token) {
         viewMode = ViewMode.COMPLETE_SUCCESS
         connection.accessToken = accessToken
-        connection.status = ConnectionStatus.ACTIVE.toString()
+        connection.status = "${ConnectionStatus.ACTIVE}"
         if (connectionsRepository.connectionExists(connection)) {
             connectionsRepository.saveModel(connection)
         } else {

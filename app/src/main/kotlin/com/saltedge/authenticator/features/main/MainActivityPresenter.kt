@@ -29,6 +29,7 @@ import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
+import com.saltedge.authenticator.sdk.tools.extractConnectConfigurationLink
 import com.saltedge.authenticator.tool.ResId
 
 class MainActivityPresenter(
@@ -43,7 +44,7 @@ class MainActivityPresenter(
      * else shows ConnectionsList
      */
     fun launchInitialFragment(intent: Intent?) {
-        if (intent != null && (intent.hasConnectionIdAndAuthorizationId || intent.hasConnectConfigurationLink)) {
+        if (intent != null && (intent.hasConnectionIdAndAuthorizationId || intent.hasDeepLink)) {
             onNewIntentReceived(intent)
         } else {
             viewContract.setSelectedTabbarItemId(
@@ -68,9 +69,11 @@ class MainActivityPresenter(
                     quickConfirmMode = true
                 )
             }
-            intent.hasConnectConfigurationLink -> {
+            intent.hasDeepLink -> {
                 viewContract.setSelectedTabbarItemId(R.id.menu_connections)
-                viewContract.showConnectProvider(intent.connectConfigurationLink)
+                intent.deepLink.extractConnectConfigurationLink()?.let {
+                    viewContract.showConnectProvider(connectConfigurationLink = it)
+                }
             }
         }
     }
@@ -139,7 +142,7 @@ class MainActivityPresenter(
     private val Intent?.authorizationId: String
         get() = this?.getStringExtra(KEY_AUTHORIZATION_ID) ?: ""
 
-    private val Intent?.connectConfigurationLink: String
+    private val Intent?.deepLink: String
         get() = this?.getStringExtra(KEY_DEEP_LINK) ?: ""
 
     // Show Authorization Details Fragment
@@ -147,6 +150,6 @@ class MainActivityPresenter(
         get() = this != null && this.connectionId.isNotEmpty() && this.authorizationId.isNotEmpty()
 
     // Show Connect Activity
-    private val Intent?.hasConnectConfigurationLink: Boolean
-        get() = connectConfigurationLink.isNotEmpty()
+    private val Intent?.hasDeepLink: Boolean
+        get() = deepLink.isNotEmpty()
 }
