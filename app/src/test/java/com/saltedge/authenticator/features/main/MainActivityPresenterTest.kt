@@ -24,6 +24,7 @@ import android.app.Activity
 import android.content.Intent
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_CONNECT_CONFIGURATION
+import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
@@ -83,10 +84,9 @@ class MainActivityPresenterTest {
             connectionsRepository = mockConnectionsRepository
         )
         presenter.launchInitialFragment(
-            Intent().putExtra(
-                KEY_CONNECTION_ID,
-                "connectionId1"
-            ).putExtra(KEY_AUTHORIZATION_ID, "authorizationId1")
+            Intent()
+                .putExtra(KEY_CONNECTION_ID, "connectionId1")
+                .putExtra(KEY_AUTHORIZATION_ID, "authorizationId1")
         )
 
         Mockito.verify(mockView).showAuthorizationDetailsView(
@@ -94,6 +94,89 @@ class MainActivityPresenterTest {
             "authorizationId1",
             true
         )
+    }
+
+    /**
+     * test onNewIntentReceived with empty intent
+     * nothing should happen
+     */
+    @Test
+    @Throws(Exception::class)
+    fun onNewIntentReceivedTest_case1() {
+        val presenter = MainActivityPresenter(
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository
+        )
+
+        presenter.onNewIntentReceived(Intent())
+
+        Mockito.verifyNoMoreInteractions(mockView, mockConnectionsRepository)
+    }
+
+    /**
+     * test onNewIntentReceived where intent has connection id and authorization id
+     * should show AuthorizationDetails
+     */
+    @Test
+    @Throws(Exception::class)
+    fun onNewIntentReceivedTest_case2() {
+        val presenter = MainActivityPresenter(
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository
+        )
+
+        presenter.onNewIntentReceived(
+            Intent()
+                .putExtra(KEY_CONNECTION_ID, "connectionId1")
+        )
+
+        Mockito.verifyNoMoreInteractions(mockView, mockConnectionsRepository)
+
+        presenter.onNewIntentReceived(
+            Intent()
+                .putExtra(KEY_CONNECTION_ID, "connectionId1")
+                .putExtra(KEY_AUTHORIZATION_ID, "authorizationId1")
+        )
+
+        Mockito.verify(mockView).showAuthorizationDetailsView(
+            "connectionId1",
+            "authorizationId1",
+            true
+        )
+    }
+
+    /**
+     * test onNewIntentReceived where intent deep-link
+     * should show AuthorizationDetails
+     */
+    @Test
+    @Throws(Exception::class)
+    fun onNewIntentReceivedTest_case3() {
+        val presenter = MainActivityPresenter(
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository
+        )
+
+        //Invalid Deep-link
+        presenter.onNewIntentReceived(
+            Intent().putExtra(
+                KEY_DEEP_LINK, "authenticator://saltedge.com/connect"
+            )
+        )
+        Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_connections)
+        Mockito.verifyNoMoreInteractions(mockView, mockConnectionsRepository)
+
+        //Valid Deep-link
+        Mockito.clearInvocations(mockView)
+        presenter.onNewIntentReceived(
+            Intent().putExtra(
+                KEY_DEEP_LINK, "authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration"
+            )
+        )
+
+        Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_connections)
+        Mockito.verify(mockView)
+            .showConnectProvider(connectConfigurationLink = "https://saltedge.com/configuration")
     }
 
     @Test
