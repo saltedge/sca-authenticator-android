@@ -85,18 +85,6 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.menu_authorizations, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == R.id.menu_refresh) {
-            presenterContract.onRefreshClick()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     override fun onStart() {
         super.onStart()
         presenterContract.viewContract = this

@@ -80,14 +80,6 @@ class AuthorizationsListPresenterTest {
         Mockito.verify(mockPollingService).stop()
     }
 
-    @Test
-    @Throws(Exception::class)
-    fun runFetchTest() {
-        createPresenter(viewContract = mockView).onRefreshClick()
-
-        Mockito.verify(mockPollingService).forcedFetch()
-    }
-
     /**
      * test onTimerTick when exist Expired Sessions
      */
@@ -236,36 +228,6 @@ class AuthorizationsListPresenterTest {
         )
 
         Mockito.verify(mockView, Mockito.never()).askUserPasscodeConfirmation()
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onListItemClickTest_detailsActionView() {
-        Mockito.doReturn(true).`when`(mockBiometricTools).isBiometricReady(TestTools.applicationContext)
-        val presenter = createPresenter(viewContract = mockView)
-        presenter.onFetchAuthorizationsResult(
-            result = listOf(encryptedData1, encryptedData2),
-            errors = emptyList()
-        )
-        Mockito.clearInvocations(mockApiManager, mockPollingService)
-        presenter.onListItemClick(
-            itemIndex = 1,
-            itemCode = viewModel1.authorizationId,
-            itemViewId = R.id.detailsActionView
-        )
-
-        Mockito.verify(mockView).showAuthorizationDetailsView(viewModel1)
-        Mockito.verifyNoMoreInteractions(mockApiManager, mockPollingService)
-
-        Mockito.clearInvocations(mockView, mockApiManager, mockPollingService)
-        presenter.viewContract = null
-        presenter.onListItemClick(
-            itemIndex = 1,
-            itemCode = viewModel1.authorizationId,
-            itemViewId = R.id.detailsActionView
-        )
-
-        Mockito.verifyNoMoreInteractions(mockView, mockApiManager, mockPollingService)
     }
 
     /**

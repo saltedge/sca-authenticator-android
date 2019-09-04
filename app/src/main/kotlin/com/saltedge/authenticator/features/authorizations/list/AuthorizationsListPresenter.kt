@@ -66,11 +66,6 @@ class AuthorizationsListPresenter @Inject constructor(
         stopPolling()
     }
 
-    fun onRefreshClick() {
-        pollingService.contract = this
-        pollingService.forcedFetch()
-    }
-
     fun onTimerTick() {
         if (existExpiredSessions()) {
             cleanDataSet()
