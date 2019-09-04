@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.authorizations.list
+package com.saltedge.authenticator.features.authorizations.list.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -26,44 +26,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.viewpager.widget.PagerAdapter
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tool.parseHTML
 import com.saltedge.authenticator.tool.setFont
 
 class AuthorizationsContentPagerAdapter(
     context: Context
-) : PagerAdapter(), View.OnClickListener {
+) : AuthorizationsPagerAdapter(), View.OnClickListener {
 
-    private var _data: List<AuthorizationViewModel> = emptyList()
-    var data: List<AuthorizationViewModel>
-        get() = _data
-        set(value) {
-            _data = value.toMutableList()
-            notifyDataSetChanged()
-        }
-    val isEmpty: Boolean
-        get() = _data.isEmpty()
     var listener: ListItemClickListener? = null
     private val layoutInflater: LayoutInflater =
         context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     private var itemPosition: Int = 0
-
-    override fun getItemPosition(item: Any) = POSITION_NONE
-
+]
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         return inflatePageView(position).also { container.addView(it, 0) }
     }
-
-    override fun destroyItem(container: ViewGroup, position: Int, view: Any) {
-        container.removeView(view as View)
-    }
-
-    override fun getCount(): Int = data.size
-
-    override fun isViewFromObject(view: View, `object`: Any): Boolean = view == `object`
 
     override fun onClick(view: View?) {
         notifyClickListener(viewId = view?.id ?: return, code = data[itemPosition].authorizationId)

@@ -1,4 +1,4 @@
-package com.saltedge.authenticator.features.authorizations.list
+package com.saltedge.authenticator.features.authorizations.list.adapters
 
 import android.content.Context
 import android.graphics.PorterDuff
@@ -9,40 +9,20 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.viewpager.widget.PagerAdapter
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.sdk.tools.remainedExpirationTime
 import com.saltedge.authenticator.sdk.tools.secondsFromDate
 import com.saltedge.authenticator.tool.loadImage
 import com.saltedge.authenticator.tool.setVisible
 
-class AuthorizationsCardPagerAdapter(context: Context) : PagerAdapter() {
+class AuthorizationsCardPagerAdapter(context: Context) : AuthorizationsPagerAdapter() {
 
-    private var _data: List<AuthorizationViewModel> = emptyList()
-    var data: List<AuthorizationViewModel>
-        get() = _data
-        set(value) {
-            _data = value.toMutableList()
-            notifyDataSetChanged()
-        }
-    val isEmpty: Boolean
-        get() = _data.isEmpty()
     private val layoutInflater: LayoutInflater =
         context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-
-    override fun isViewFromObject(view: View, `object`: Any): Boolean = view == `object`
-
-    override fun getCount(): Int = data.size
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         return inflatePageView(position).also { container.addView(it, 0) }
     }
-
-    override fun destroyItem(container: ViewGroup, position: Int, view: Any) =
-        container.removeView(view as View)
-
-    override fun getItemPosition(item: Any) = POSITION_NONE
 
     private fun inflatePageView(position: Int): View {
         val pageView = layoutInflater.inflate(R.layout.view_card_item_authorization, null)

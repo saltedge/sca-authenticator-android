@@ -32,6 +32,8 @@ import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.features.authorizations.confirmPasscode.ConfirmPasscodeDialog
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
+import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsCardPagerAdapter
+import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsContentPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.di.AuthorizationsListModule
 import com.saltedge.authenticator.sdk.model.ApiErrorData
 import com.saltedge.authenticator.sdk.model.getErrorMessage
@@ -69,8 +71,16 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        contentAdapter = activity?.applicationContext?.let { AuthorizationsContentPagerAdapter(it) }
-        headerAdapter = activity?.applicationContext?.let { AuthorizationsCardPagerAdapter(it) }
+        contentAdapter = activity?.applicationContext?.let {
+            AuthorizationsContentPagerAdapter(
+                it
+            )
+        }
+        headerAdapter = activity?.applicationContext?.let {
+            AuthorizationsCardPagerAdapter(
+                it
+            )
+        }
         activityComponents?.updateAppbarTitle(getString(R.string.authorizations_feature_title))
         return inflater.inflate(R.layout.fragment_authorizations_list, container, false)
     }
