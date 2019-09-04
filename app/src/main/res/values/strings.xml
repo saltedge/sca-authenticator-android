@@ -82,7 +82,7 @@
   <string name="onboarding_carousel_three_title">One App for all Payment Accounts</string>
   <string name="onboarding_carousel_two_description">Each time you make a payment, you’ll receive a confirmation to authorize that transaction, keeping you in control at all times.</string>
   <string name="onboarding_carousel_two_title">Absolute Control</string>
-  <string name="onboarding_completed_description">Your App has been successfully set. Connect a Provider, so you can receive a confirmation every time you make a payment.</string>
+  <string name="onboarding_completed_description">Application has been successfully set. Connect a Service Provider, so you can receive an authorization request every time you make an action.</string>
   <string name="onboarding_well_done_title">Well done!</string>
   <string name="onboarding_secure_app_passcode_create">Create Passcode</string>
   <string name="onboarding_secure_app_passcode_description">Create a passcode to keep all your data safe from prying eyes</string>
