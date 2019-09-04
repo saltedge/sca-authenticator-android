@@ -169,7 +169,8 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     }
 
     override fun updateItem(viewModel: AuthorizationViewModel, itemId: Int) {
-//        cardAdapter.updateItem(viewModel, itemId)
+        contentAdapter?.updateItem(viewModel, itemId)
+        headerAdapter?.updateItem(viewModel, itemId)
     }
 
     override fun askUserBiometricConfirmation() {

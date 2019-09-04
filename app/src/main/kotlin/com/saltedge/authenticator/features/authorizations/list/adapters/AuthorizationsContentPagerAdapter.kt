@@ -27,6 +27,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tool.parseHTML
 import com.saltedge.authenticator.tool.setFont
@@ -39,13 +40,16 @@ class AuthorizationsContentPagerAdapter(
     private val layoutInflater: LayoutInflater =
         context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     private var itemPosition: Int = 0
-]
+
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         return inflatePageView(position).also { container.addView(it, 0) }
     }
 
     override fun onClick(view: View?) {
-        notifyClickListener(viewId = view?.id ?: return, code = data[itemPosition].authorizationId)
+        notifyClickListener(
+            viewId = view?.id ?: return,
+            code = (data[itemPosition] as AuthorizationViewModel).authorizationId
+        )
     }
 
     override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
@@ -67,9 +71,10 @@ class AuthorizationsContentPagerAdapter(
     }
 
     private fun updateViewContent(pageView: View, position: Int) {
-        pageView.findViewById<TextView>(R.id.titleTextView).text = data[position].title
+        pageView.findViewById<TextView>(R.id.titleTextView).text =
+            (data[position] as AuthorizationViewModel).title
         pageView.findViewById<TextView>(R.id.descriptionTextView).text =
-            data[position].description.parseHTML()
+            (data[position] as AuthorizationViewModel).description.parseHTML()
         pageView.findViewById<Button>(R.id.negativeActionView).setOnClickListener(this)
         pageView.findViewById<Button>(R.id.positiveActionView).setOnClickListener(this)
 
