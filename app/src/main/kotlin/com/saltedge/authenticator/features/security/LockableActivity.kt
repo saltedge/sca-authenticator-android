@@ -32,8 +32,13 @@ import androidx.appcompat.app.AppCompatActivity
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.repository.PreferenceRepository
-import com.saltedge.authenticator.tool.*
+import com.saltedge.authenticator.sdk.tools.KeyStoreManager
+import com.saltedge.authenticator.tool.AppTools
+import com.saltedge.authenticator.tool.restartApp
+import com.saltedge.authenticator.tool.secure.PasscodeTools
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricTools
+import com.saltedge.authenticator.tool.setVisible
+import com.saltedge.authenticator.tool.showResetUserDialog
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
 import com.saltedge.authenticator.widget.biometric.BiometricPromptManagerV28
@@ -44,8 +49,11 @@ import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 const val KEY_SKIP_PIN = "KEY_SKIP_PIN"
 
 @SuppressLint("Registered")
-abstract class LockableActivity : AppCompatActivity(), PasscodeInputViewListener,
-    BiometricPromptCallback {
+abstract class LockableActivity :
+    AppCompatActivity(),
+    PasscodeInputViewListener,
+    BiometricPromptCallback
+{
 
     abstract fun getUnlockAppInputView(): UnlockAppInputView?
     abstract fun getAppBarLayout(): View?
@@ -90,10 +98,12 @@ abstract class LockableActivity : AppCompatActivity(), PasscodeInputViewListener
     private var presenter = LockableActivityPresenter(
         viewContract = viewContract,
         connectionsRepository = ConnectionsRepository,
-        preferenceRepository = PreferenceRepository
+        preferenceRepository = PreferenceRepository,
+        passcodeTools = PasscodeTools
     )
     private var biometricPrompt: BiometricPromptAbs? = null
     private var vibrator: Vibrator? = null
+    private var biometricTools = BiometricTools(KeyStoreManager, PreferenceRepository)
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
@@ -154,7 +164,7 @@ abstract class LockableActivity : AppCompatActivity(), PasscodeInputViewListener
         finish()
     }
 
-    private fun isBiometricInputReady(): Boolean = BiometricTools.isBiometricReady(context = this)
+    private fun isBiometricInputReady(): Boolean = biometricTools.isBiometricReady(context = this)
 
     @TargetApi(Build.VERSION_CODES.P)
     private fun displayBiometricPrompt() {

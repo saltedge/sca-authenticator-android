@@ -80,7 +80,7 @@ object KeyStoreManager : KeyStoreManagerAbs {
      *
      * @return SecretKey object
      */
-    fun getSecretKey(alias: String?): Key? {
+    override fun getSecretKey(alias: String?): Key? {
         return androidKeyStore?.getKey(alias ?: return null, null)
     }
 

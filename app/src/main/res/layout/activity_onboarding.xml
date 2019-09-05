@@ -102,7 +102,7 @@
             android:layout_marginTop="@dimen/dp_12"
             android:layout_marginRight="@dimen/dp_32"
             android:gravity="center_horizontal"
-            android:maxLines="4" />
+            android:lines="4" />
 
         <com.saltedge.authenticator.widget.passcode.PasscodeInputView
             android:id="@+id/passcodeInputView"

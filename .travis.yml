@@ -1,0 +1,69 @@
+#    This file is part of the Salt Edge Authenticator distribution
+#    (https://github.com/saltedge/sca-identity-service-example)
+#    Copyright (c) 2019 Salt Edge Inc.
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, version 3 or later.
+#
+#    This program is distributed in the hope that it will be useful, but
+#    WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+#    General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+#    For the additional permissions granted for Salt Edge Authenticator
+#    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+
+sudo: false
+language: android
+dist: trusty
+jdk: oraclejdk8
+env:
+  global:
+    - ANDROID_HOME=/usr/local/android-sdk
+    - TOOLS=${ANDROID_HOME}/tools
+    - ANDROID_API_LEVEL=28
+    - ANDROID_ABI=armeabi-v7a
+    - ANDROID_TAG=google_apis
+android:
+  components:
+    - tools
+    - platform-tools
+    - tools
+    - add-on
+    - extra
+    # The SDK version used to compile your project
+    - android-$ANDROID_API_LEVEL
+    # Additional components
+    - extra-google-google_play_services
+    - extra-android-support
+    # Latest artifacts in local repository
+    - extra-google-m2repository
+    - extra-android-m2repository
+  licenses:
+    - 'android-sdk-preview-license-.+'
+    - 'android-sdk-license-.+'
+    - 'google-gdk-license-.+'
+    - '.+'
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - "$HOME/.m2"
+    - "$HOME/.gradle/caches/"
+    - "$HOME/.gradle/wrapper/"
+    - "$HOME/.android/build-cache"
+before_install:
+  - cp .ci/google-services-example.json app/google-services.json
+  - env
+  - echo yes | sdkmanager "platforms;android-27"
+  - echo yes | sdkmanager "build-tools;28.0.3"
+script: .ci/ci_run_tests.sh
+after_failure:
+  - cat authenticator_sdk/build/reports/tests/testDebugUnitTest/*/*.html
+
+

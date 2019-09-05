@@ -24,6 +24,7 @@ import android.util.Base64
 import java.nio.charset.StandardCharsets
 import java.security.PrivateKey
 import java.security.Signature
+import java.util.*
 
 fun createSignatureHeader(
     requestMethod: String,
@@ -32,7 +33,8 @@ fun createSignatureHeader(
     requestBody: String,
     privateKey: PrivateKey
 ): String {
-    val payload = "${requestMethod.toLowerCase()}|$requestUrl|$expiresAt|$requestBody"
+
+    val payload = "${requestMethod.toLowerCase(Locale.US)}|$requestUrl|$expiresAt|$requestBody"
     return payload.toByteArray(StandardCharsets.UTF_8).signWith(privateKey)?.let {
         Base64.encodeToString(it, Base64.NO_WRAP)
     } ?: return ""

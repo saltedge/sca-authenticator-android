@@ -95,13 +95,3 @@ fun Connection.toConnectionAndKey(keyStoreManager: KeyStoreManagerAbs):
 fun ConnectionAbs.getRelatedPrivateKey(keyStoreManager: KeyStoreManagerAbs): PrivateKey? {
     return keyStoreManager.getKeyPair(this.guid)?.private
 }
-
-/**
- * Delete connection from database
- *
- * @see ConnectionsRepository.deleteConnection
- * @receiver connection
- */
-fun Connection.delete() {
-    ConnectionsRepository.deleteConnection(this.guid)
-}

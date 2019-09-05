@@ -32,20 +32,20 @@ import com.saltedge.authenticator.tool.showAuthNotification
 
 class CloudMessagingService : FirebaseMessagingService() {
 
-    override fun onMessageReceived(remoteMessage: RemoteMessage?) {
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
         this.showAuthNotification(
-            remoteMessage?.notification?.title,
-            remoteMessage?.notification?.body,
+            remoteMessage.notification?.title,
+            remoteMessage.notification?.body,
             createPendingIntent(
-                remoteMessage?.data?.get(KEY_CONNECTION_ID),
-                remoteMessage?.data?.get(KEY_AUTHORIZATION_ID)
+                remoteMessage.data[KEY_CONNECTION_ID],
+                remoteMessage.data[KEY_AUTHORIZATION_ID]
             )
         )
     }
 
-    override fun onNewToken(token: String?) {
+    override fun onNewToken(token: String) {
         super.onNewToken(token)
-        token?.let { saveToken(it) }
+        saveToken(token)
     }
 
     /**

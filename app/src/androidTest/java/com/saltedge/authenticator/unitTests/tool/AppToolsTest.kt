@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.unitTests.tool
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.saltedge.authenticator.testTools.TestTools
+import com.saltedge.authenticator.instrumentationTestTools.TestTools
 import com.saltedge.authenticator.tool.AppTools
 import org.junit.Assert
 import org.junit.Test
