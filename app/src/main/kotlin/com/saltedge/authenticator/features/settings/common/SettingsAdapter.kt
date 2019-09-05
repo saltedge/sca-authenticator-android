@@ -32,22 +32,22 @@ class SettingsAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
-            is CheckedTitleValueViewModel -> ItemViewType.CHECKED_TITLE_VALUE
-            is HeaderViewModel -> ItemViewType.HEADER
+            is SettingsItemViewModel -> ItemViewType.CHECKED_TITLE_VALUE
+            is SettingsHeaderViewModel -> ItemViewType.HEADER
             else -> throw InvalidClassException("class ${getItem(position)?.javaClass?.name} is not handled")
         }.ordinal
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (ItemViewType.values()[viewType]) {
-            ItemViewType.CHECKED_TITLE_VALUE -> CheckedTitleValueHolder(parent, clickListener)
-            ItemViewType.HEADER -> HeaderViewHolder(parent)
+            ItemViewType.CHECKED_TITLE_VALUE -> SettingsItemViewHolder(parent, clickListener)
+            ItemViewType.HEADER -> SettingsHeaderViewHolder(parent)
         }
     }
 
     override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
         when (holder) {
-            is CheckedTitleValueHolder -> holder.bind(item as CheckedTitleValueViewModel)
+            is SettingsItemViewHolder -> holder.bind(item as SettingsItemViewModel)
         }
     }
 

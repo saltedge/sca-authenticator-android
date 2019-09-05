@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.features.settings.about
 
-import com.saltedge.authenticator.features.settings.common.CheckedTitleValueViewModel
+import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.interfaces.CheckableListItemClickListener
 
 interface AboutListContract {
@@ -32,6 +32,6 @@ interface AboutListContract {
 
     interface Presenter : CheckableListItemClickListener {
         var viewContract: View?
-        fun getListItems(): List<CheckedTitleValueViewModel>
+        fun getListItems(): List<SettingsItemViewModel>
     }
 }

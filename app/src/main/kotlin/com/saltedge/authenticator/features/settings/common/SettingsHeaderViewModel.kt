@@ -20,4 +20,4 @@
  */
 package com.saltedge.authenticator.features.settings.common
 
-class HeaderViewModel
+class SettingsHeaderViewModel

@@ -31,7 +31,7 @@ import com.saltedge.authenticator.interfaces.CheckableListItemClickListener
 import com.saltedge.authenticator.tool.inflateListItemView
 import com.saltedge.authenticator.tool.setVisible
 
-class CheckedTitleValueHolder(
+class SettingsItemViewHolder(
     parent: ViewGroup,
     var listener: CheckableListItemClickListener?
 ) : RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_setting)),
@@ -51,7 +51,7 @@ class CheckedTitleValueHolder(
             listener?.onListItemCheckedStateChanged(itemId = code, checked = isChecked)
     }
 
-    fun bind(item: CheckedTitleValueViewModel) {
+    fun bind(item: SettingsItemViewModel) {
         code = item.titleId
         titleView.setText(item.titleId)
         valueView.setVisible(item.value != null)

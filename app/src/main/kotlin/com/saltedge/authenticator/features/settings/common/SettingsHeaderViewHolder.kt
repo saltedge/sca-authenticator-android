@@ -20,12 +20,10 @@
  */
 package com.saltedge.authenticator.features.settings.common
 
-import androidx.annotation.StringRes
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.saltedge.authenticator.R
+import com.saltedge.authenticator.tool.inflateListItemView
 
-data class CheckedTitleValueViewModel(
-    @StringRes val titleId: Int,
-    val value: String? = null,
-    val switchEnabled: Boolean? = null,
-    val isChecked: Boolean = false,
-    val itemIsClickable: Boolean = false
-)
+class SettingsHeaderViewHolder(parent: ViewGroup) :
+    RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.list_settings_header))

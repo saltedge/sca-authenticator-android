@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.settings.about
 
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.settings.common.CheckedTitleValueViewModel
+import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.sdk.constants.TERMS_LINK
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo
@@ -50,19 +50,19 @@ class AboutListPresenterTest {
         assertThat(
             presenter.getListItems(), equalTo(
             listOf(
-                CheckedTitleValueViewModel(
+                SettingsItemViewModel(
                     titleId = R.string.about_app_version,
                     value = "2.0.0-rc6"
                 ),
-                CheckedTitleValueViewModel(
+                SettingsItemViewModel(
                     titleId = R.string.about_copyright,
                     value = TestAppTools.getString(R.string.about_copyright_description)
                 ),
-                CheckedTitleValueViewModel(
+                SettingsItemViewModel(
                     titleId = R.string.about_terms_service,
                     itemIsClickable = true
                 ),
-                CheckedTitleValueViewModel(
+                SettingsItemViewModel(
                     titleId = R.string.about_open_source_licenses,
                     itemIsClickable = true
                 )
