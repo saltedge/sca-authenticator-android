@@ -24,16 +24,35 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.interfaces.CheckableListItemClickListener
 import com.saltedge.authenticator.widget.list.AbstractListAdapter
+import java.io.InvalidClassException
 
 class SettingsAdapter(
     private val clickListener: CheckableListItemClickListener?
 ) : AbstractListAdapter() {
 
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is CheckedTitleValueViewModel -> ItemViewType.CHECKED_TITLE_VALUE
+            is HeaderViewModel -> ItemViewType.HEADER
+            else -> throw InvalidClassException("class ${getItem(position)?.javaClass?.name} is not handled")
+        }.ordinal
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return SettingsItemHolder(parent, clickListener)
+        return when (ItemViewType.values()[viewType]) {
+            ItemViewType.CHECKED_TITLE_VALUE -> CheckedTitleValueHolder(parent, clickListener)
+            ItemViewType.HEADER -> HeaderViewHolder(parent)
+        }
     }
 
     override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
-        (holder as SettingsItemHolder).bind(item as CheckedTitleValueViewModel)
+        when (holder) {
+            is CheckedTitleValueHolder -> holder.bind(item as CheckedTitleValueViewModel)
+        }
+    }
+
+    enum class ItemViewType {
+        CHECKED_TITLE_VALUE,
+        HEADER
     }
 }

@@ -116,11 +116,11 @@
   <string name="settings_report_bug">Report a bug</string>
   <string name="settings_language">Language</string>
   <string name="settings_notifications">Notifications</string>
-  <string name="settings_passcode">Change Passcode</string>
-  <string name="settings_passcode_description">Here you can change your passcode</string>
-  <string name="settings_passcode_input_current">Input current Passcode</string>
-  <string name="settings_passcode_input_new">Input New Passcode</string>
-  <string name="settings_passcode_repeat_new">Repeat New Passcode</string>
+  <string name="settings_passcode">Passcode</string>
+  <string name="settings_passcode_description">Change passcode</string>
+  <string name="settings_passcode_input_current">Input current passcode</string>
+  <string name="settings_passcode_input_new">Input new passcode</string>
+  <string name="settings_passcode_repeat_new">Repeat new passcode</string>
   <string name="settings_passcode_success">New passcode successfully set</string>
   <string name="settings_fingerprint">Fingerprint</string>
   <string name="settings_screenshot_lock">Screenshot lock</string>
