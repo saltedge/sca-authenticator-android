@@ -54,7 +54,7 @@ class AboutListPresenterTest {
             listOf(
                 CheckedTitleValueViewModel(
                     titleId = R.string.about_app_version,
-                    value = "2.0.0-rc6"
+                    value = "2.0.0-rc7"
                 ),
                 CheckedTitleValueViewModel(
                     titleId = R.string.about_copyright,
