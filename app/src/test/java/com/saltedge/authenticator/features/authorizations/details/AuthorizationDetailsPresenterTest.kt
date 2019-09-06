@@ -26,6 +26,7 @@ import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_CONNECTION_NOT_FOUND
+import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_SSL_HANDSHAKE
 import com.saltedge.authenticator.sdk.model.*
 import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResultData
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
@@ -765,7 +766,7 @@ class AuthorizationDetailsPresenterTest {
             viewModel = null,
             quickConfirmMode = false
         )
-        Mockito.clearInvocations(mockView)
+        Mockito.clearInvocations(mockView, mockConnectionsRepository)
         presenter.fetchAuthorizationResult(result = encryptedData1, error = null)
 
         Mockito.verify(mockView, Mockito.never()).updateViewContent()
@@ -773,7 +774,24 @@ class AuthorizationDetailsPresenterTest {
 
     @Test
     @Throws(Exception::class)
-    fun fetchAuthorizationResultTest_processAuthorizationError() {
+    fun fetchAuthorizationResultTest_processAuthorizationError_noViewContract() {
+        val presenter = createPresenter(viewContract = null)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = null,
+            quickConfirmMode = false
+        )
+
+        Mockito.clearInvocations(mockView, mockConnectionsRepository)
+        presenter.fetchAuthorizationResult(result = null, error = createRequestError(404))
+
+        Mockito.verifyNoMoreInteractions(mockView, mockConnectionsRepository)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun fetchAuthorizationResultTest_processAuthorizationError_anyError() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(
             connectionId = "1",
@@ -781,21 +799,52 @@ class AuthorizationDetailsPresenterTest {
             viewModel = null,
             quickConfirmMode = false
         )
-        Mockito.clearInvocations(mockView)
+
+        Mockito.clearInvocations(mockView, mockConnectionsRepository)
         presenter.fetchAuthorizationResult(result = null, error = createRequestError(404))
 
-        Mockito.verifyNoMoreInteractions(mockView)
+        Mockito.verify(mockView).closeViewWithErrorResult("Request Error (404)")
+        Mockito.verifyNoMoreInteractions(mockConnectionsRepository)
+    }
 
-        presenter.fetchAuthorizationResult(
-            result = null,
-            error = ApiErrorData(errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND)
+    @Test
+    @Throws(Exception::class)
+    fun fetchAuthorizationResultTest_processAuthorizationError_connectivityError() {
+        val error = ApiErrorData(errorClassName = ERROR_CLASS_SSL_HANDSHAKE, errorMessage = "ErrorMessage")
+        val presenter = createPresenter(viewContract = mockView)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = null,
+            quickConfirmMode = false
         )
 
-        Mockito.verify(mockView).closeView()
+        Mockito.clearInvocations(mockView)
+        Mockito.clearInvocations(mockConnectionsRepository)
+        presenter.fetchAuthorizationResult(result = null, error = error)
+
+        Mockito.verify(mockView).showError("ErrorMessage")
+        Mockito.verifyNoMoreInteractions(mockConnectionsRepository)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun fetchAuthorizationResultTest_processAuthorizationError_connectionNotFound() {
+        val error = ApiErrorData(errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND, errorMessage = "Not found")
+        val presenter = createPresenter(viewContract = mockView)
+        presenter.setInitialData(
+            connectionId = "1",
+            authorizationId = "",
+            viewModel = null,
+            quickConfirmMode = false
+        )
+
+        Mockito.clearInvocations(mockView)
+        presenter.fetchAuthorizationResult(result = null, error = error)
+
+        Mockito.verify(mockView).closeViewWithErrorResult("Not found")
         Mockito.verify(mockConnectionsRepository).invalidateConnectionsByTokens(
-            accessTokens = listOf(
-                "token1"
-            )
+            accessTokens = listOf("token1")
         )
 
         presenter.setInitialData(
@@ -805,32 +854,10 @@ class AuthorizationDetailsPresenterTest {
             quickConfirmMode = false
         )
         Mockito.clearInvocations(mockView, mockConnectionsRepository)
-        presenter.fetchAuthorizationResult(
-            result = null,
-            error = ApiErrorData(errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND)
-        )
+        presenter.fetchAuthorizationResult(result = null, error = error)
 
-        Mockito.verifyNoMoreInteractions(mockView, mockConnectionsRepository)
-
-        presenter.viewContract = null
-        presenter.setInitialData(
-            connectionId = "1",
-            authorizationId = "",
-            viewModel = null,
-            quickConfirmMode = false
-        )
-        Mockito.clearInvocations(mockView, mockConnectionsRepository)
-        presenter.fetchAuthorizationResult(
-            result = null,
-            error = ApiErrorData(errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND)
-        )
-
-        Mockito.verifyNoMoreInteractions(mockView)
-        Mockito.verify(mockConnectionsRepository).invalidateConnectionsByTokens(
-            accessTokens = listOf(
-                "token1"
-            )
-        )
+        Mockito.verify(mockView).closeViewWithErrorResult("Not found")
+        Mockito.verifyNoMoreInteractions(mockConnectionsRepository)
     }
 
     @Test
