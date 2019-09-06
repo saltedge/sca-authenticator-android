@@ -23,7 +23,6 @@ package com.saltedge.authenticator.features.settings.list
 import android.content.Context
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
-import com.saltedge.authenticator.features.settings.common.SettingsHeaderViewModel
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import javax.inject.Inject
@@ -36,9 +35,8 @@ class SettingsListPresenter @Inject constructor(
 
     override var viewContract: SettingsListContract.View? = null
 
-    override fun getListItems(): List<Any> {
+    override fun getListItems(): List<SettingsItemViewModel> {
         return listOf(
-            SettingsHeaderViewModel(),
             SettingsItemViewModel(
                 titleId = R.string.settings_passcode,
                 value = appContext.getString(R.string.settings_passcode_description),
@@ -54,7 +52,6 @@ class SettingsListPresenter @Inject constructor(
                 switchEnabled = true,
                 isChecked = preferences.screenshotLockEnabled
             ),
-            SettingsHeaderViewModel(),
             SettingsItemViewModel(
                 titleId = R.string.about_feature_title,
                 itemIsClickable = true

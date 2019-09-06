@@ -21,7 +21,6 @@
 package com.saltedge.authenticator.features.settings.list
 
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.settings.common.SettingsHeaderViewModel
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.testTools.TestAppTools
@@ -56,7 +55,6 @@ class SettingsListPresenterTest {
         assertThat(
             presenter.getListItems(), equalTo(
             listOf(
-                SettingsHeaderViewModel(),
                 SettingsItemViewModel(
                     titleId = R.string.settings_passcode,
                     value = TestAppTools.getString(R.string.settings_passcode_description),
@@ -72,7 +70,6 @@ class SettingsListPresenterTest {
                     switchEnabled = true,
                     isChecked = screenshotLockEnabled
                 ),
-                SettingsHeaderViewModel(),
                 SettingsItemViewModel(
                     titleId = R.string.about_feature_title,
                     itemIsClickable = true
