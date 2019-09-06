@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.settings.about.AboutListFragment
+import com.saltedge.authenticator.features.settings.common.HeaderItemDecoration
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
 import com.saltedge.authenticator.features.settings.list.di.SettingsListModule
@@ -112,6 +113,8 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View,
             ContextCompat.getDrawable(context ?: return, R.drawable.shape_full_divider)?.let {
                 dividerItemDecoration.setDrawable(it)
             }
+            val whiteSpaceDecoration = activity?.applicationContext?.let { HeaderItemDecoration(it) }
+            whiteSpaceDecoration?.let { recyclerView?.addItemDecoration(it) }
             recyclerView?.addItemDecoration(dividerItemDecoration)
             recyclerView?.adapter = SettingsAdapter(this).apply {
                 data = presenterContract.getListItems()
