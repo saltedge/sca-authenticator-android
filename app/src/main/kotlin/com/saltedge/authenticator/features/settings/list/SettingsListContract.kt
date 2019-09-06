@@ -20,6 +20,8 @@
  */
 package com.saltedge.authenticator.features.settings.list
 
+import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
+
 interface SettingsListContract {
 
     interface View {
@@ -33,7 +35,7 @@ interface SettingsListContract {
 
     interface Presenter {
         var viewContract: View?
-        fun getListItems(): List<Any>
+        fun getListItems(): List<SettingsItemViewModel>
         fun onListItemCheckedStateChanged(itemId: Int, checked: Boolean)
         fun onListItemClick(itemId: Int)
     }
