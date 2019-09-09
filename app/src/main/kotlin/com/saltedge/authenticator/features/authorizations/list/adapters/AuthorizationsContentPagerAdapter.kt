@@ -30,7 +30,7 @@ import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tool.parseHTML
 
 class AuthorizationsContentPagerAdapter(context: Context) :
-    AuthorizationsPagerAdapter(context, R.layout.authorization_item), View.OnClickListener {
+    AuthorizationsPagerAdapter(context, R.layout.authorization_info), View.OnClickListener {
 
     var listener: ListItemClickListener? = null
 
