@@ -32,8 +32,8 @@
         android:layout_marginStart="@dimen/dp_14"
         android:layout_marginTop="@dimen/dp_20"
         android:layout_marginEnd="@dimen/dp_14"
-        card_view:cardCornerRadius="21dp"
-        card_view:cardElevation="6dp">
+        card_view:cardCornerRadius="@dimen/dp_21"
+        card_view:cardElevation="@dimen/dp_6">
 
         <ProgressBar
             android:id="@+id/progressBar"

@@ -173,19 +173,20 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
             Intent().putExtra(KEY_ID, authorizationId)
         )
         setCompleteView(
-            R.drawable.ic_complete_ok_70, getString(R.string.authorizations_finished_successfully)
+            drawableResId = R.drawable.ic_complete_ok_70,
+            titleText = getString(R.string.authorizations_finished_successfully)
         )
         completeView?.animate()?.alpha(1f)?.setDuration(1000)?.withEndAction { closeView() }
     }
 
     override fun showTimeOutView() {
         setCompleteView(
-            R.drawable.ic_time_out_70,
-            getString(R.string.authorizations_time_out),
-            getString(R.string.authorizations_time_out_description),
-            R.string.actions_ok
+            drawableResId = R.drawable.ic_time_out_70,
+            titleText = getString(R.string.authorizations_time_out),
+            subTitleText = getString(R.string.authorizations_time_out_description),
+            actionResId = R.string.actions_ok
         )
-        completeView?.animate()?.alpha(1f)?.duration = 1000
+        completeView?.animate()?.alpha(1f)
     }
 
     private fun setCompleteView(

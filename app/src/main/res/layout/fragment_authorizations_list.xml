@@ -20,27 +20,27 @@
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@android:color/white">
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/contentViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/headerViewPager"
+        android:visibility="gone"
+        tools:background="@color/blue"
+        tools:visibility="visible" />
 
     <com.saltedge.authenticator.features.authorizations.list.WrapContentViewPager
         android:id="@+id/headerViewPager"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_88"
         android:visibility="gone"
-        tools:visibility="visible"
-        tools:background="@color/red"/>
-
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/contentViewPager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/dp_86"
-        android:visibility="gone"
-        tools:visibility="visible"
-        tools:background="@color/blue"/>
+        tools:background="@color/red"
+        tools:visibility="visible" />
 
     <com.saltedge.authenticator.widget.InfoView
         android:id="@+id/emptyView"

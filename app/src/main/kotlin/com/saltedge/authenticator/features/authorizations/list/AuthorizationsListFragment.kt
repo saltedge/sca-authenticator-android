@@ -230,17 +230,18 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
                 positionOffsetPixels: Int
             ) {
                 scrollingPosition = positionOffset
-                if (scrollState != ViewPager.SCROLL_STATE_IDLE) {
-                    val headerWidth = headerViewPager.width.minus(
-                        headerViewPager.paddingStart
-                            .plus(headerViewPager.paddingEnd)
-                    ).toFloat()
-                    val contentWidth = contentViewPager.width.toFloat()
-                    headerViewPager?.scrollTo(
-                        (contentViewPager.scrollX.toFloat() * (headerWidth / contentWidth)).toInt(),
-                        headerViewPager.scrollY
-                    )
-                }
+//                TODO: Fix problem with the behavior of the headerViewPager https://github.com/saltedge/sca-authenticator-android/issues/4
+//                if (scrollState != ViewPager.SCROLL_STATE_IDLE) {
+//                    val headerWidth = headerViewPager.width.minus(
+//                        headerViewPager.paddingStart
+//                            .plus(headerViewPager.paddingEnd)
+//                    ).toFloat()
+//                    val contentWidth = contentViewPager.width.toFloat()
+//                    headerViewPager?.scrollTo(
+//                        (contentViewPager.scrollX.toFloat() * (headerWidth / contentWidth)).toInt(),
+//                        headerViewPager.scrollY
+//                    )
+//                }
             }
 
             override fun onPageSelected(position: Int) {}
