@@ -11,11 +11,11 @@ import com.saltedge.authenticator.R
 
 class HeaderItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
 
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    private val spacePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = ContextCompat.getColor(context, R.color.gray_extra_light)
         style = Paint.Style.FILL
     }
-    private val blackPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    private val dividerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = ContextCompat.getColor(context, R.color.divider_color)
         style = Paint.Style.FILL
     }
@@ -35,12 +35,7 @@ class HeaderItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
         }
     }
 
-    private fun needDrawBottomDelimiter(parent: RecyclerView, view: View): Boolean {
-        val viewPosition = parent.getChildAdapterPosition(view)
-        return viewPosition == 0 || viewPosition == 3
-    }
-
-    override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
+    override fun onDraw(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         val dividerStart = parent.paddingStart
         val dividerEnd = parent.width - parent.paddingEnd
         val endIndex = parent.adapter?.itemCount ?: 0
@@ -53,9 +48,14 @@ class HeaderItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
                 val topY = topView.toFloat() - rectHeight
                 val endX = dividerEnd.toFloat()
                 val bottomY = topView.toFloat()
-                c.drawRect(startX, topY, endX, bottomY, paint)
-                c.drawLine(startX, bottomY - 1, endX, bottomY - 1, blackPaint)
+                canvas.drawRect(startX, topY, endX, bottomY, spacePaint)
+                canvas.drawLine(startX, bottomY - 1, endX, bottomY - 1, dividerPaint)
             }
         }
+    }
+
+    private fun needDrawBottomDelimiter(parent: RecyclerView, view: View): Boolean {
+        val viewPosition = parent.getChildAdapterPosition(view)
+        return viewPosition == 0 || viewPosition == 3
     }
 }
