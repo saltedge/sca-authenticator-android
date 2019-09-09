@@ -33,7 +33,6 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class PreferenceRepositoryTest {
 
-
     @Before
     fun setUp() {
         PreferenceRepository.initObject(TestAppTools.applicationContext)

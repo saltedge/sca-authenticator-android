@@ -33,8 +33,6 @@ import com.saltedge.authenticator.sdk.model.isConnectionNotFound
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
 import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
-import com.saltedge.authenticator.sdk.tools.remainedExpirationTime
-import com.saltedge.authenticator.sdk.tools.remainedSecondsTillExpire
 import com.saltedge.authenticator.tool.hasHTMLTags
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 

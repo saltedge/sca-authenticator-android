@@ -157,7 +157,7 @@ class MainActivityPresenterTest {
             connectionsRepository = mockConnectionsRepository
         )
 
-        //Invalid Deep-link
+        // Invalid Deep-link
         presenter.onNewIntentReceived(
             Intent().putExtra(
                 KEY_DEEP_LINK, "authenticator://saltedge.com/connect"
@@ -166,7 +166,7 @@ class MainActivityPresenterTest {
         Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_connections)
         Mockito.verifyNoMoreInteractions(mockView, mockConnectionsRepository)
 
-        //Valid Deep-link
+        // Valid Deep-link
         Mockito.clearInvocations(mockView)
         presenter.onNewIntentReceived(
             Intent().putExtra(

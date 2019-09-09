@@ -34,8 +34,7 @@ import com.saltedge.authenticator.tool.setButtonsColor
 class DeleteConnectionDialog :
     DialogFragment(),
     DeleteConnectionContract.View,
-    DialogInterface.OnClickListener
-{
+    DialogInterface.OnClickListener {
 
     private var presenter = DeleteConnectionPresenter(viewContract = this)
 

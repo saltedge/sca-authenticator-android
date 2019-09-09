@@ -270,7 +270,7 @@ class LockableActivityPresenterTest {
         Mockito.verify(mockView).disableUnlockInput(inputAttempt = 10, remainedMinutes = 60)
         Mockito.clearInvocations(mockView)
     }
-    
+
     private fun createPresenter(): LockableActivityPresenter {
         return LockableActivityPresenter(
             viewContract = mockView,

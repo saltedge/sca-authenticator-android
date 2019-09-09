@@ -44,8 +44,8 @@ import com.saltedge.authenticator.widget.fragment.BaseRoundedBottomDialogFragmen
 class BiometricsInputDialog :
     BaseRoundedBottomDialogFragment(),
     BiometricPromptAbs,
-    BiometricsInputContract.View
-{
+    BiometricsInputContract.View {
+
     private val presenter = BiometricsInputPresenter(
         biometricTools = BiometricTools(KeyStoreManager, PreferenceRepository),
         contract = this

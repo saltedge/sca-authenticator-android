@@ -107,8 +107,6 @@ class ProviderDataConnectorTest {
 
         connector.onResponse(mockCall, get404Response())
 
-        //Response.error(404, ResponseBody.create(null, get404ResponseBody()))
-
         verify {
             mockCallback.fetchProviderResult(
                 result = null,
