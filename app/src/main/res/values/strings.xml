@@ -111,6 +111,7 @@
   <string name="authorizations_notification_title">Authorization request</string>
   <string name="authorizations_notification_description">New authorization request available. Tap to proceed.</string>
   <string name="authorizations_finished_successfully">Finished successfully</string>
+  <string name="authorizations_finished_error">Authorization unavailable</string>
 
   <string name="settings_feature_title">Settings</string>
   <string name="settings_report_bug">Report a bug</string>
