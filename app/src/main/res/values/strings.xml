@@ -82,7 +82,7 @@
   <string name="onboarding_carousel_three_title">One App for all Payment Accounts</string>
   <string name="onboarding_carousel_two_description">Each time you make a payment, you’ll receive a confirmation to authorize that transaction, keeping you in control at all times.</string>
   <string name="onboarding_carousel_two_title">Absolute Control</string>
-  <string name="onboarding_completed_description">Your App has been successfully set. Connect a Provider, so you can receive a confirmation every time you make a payment.</string>
+  <string name="onboarding_completed_description">Application has been successfully set. Connect a Service Provider, so you can receive an authorization request every time you make an action.</string>
   <string name="onboarding_well_done_title">Well done!</string>
   <string name="onboarding_secure_app_passcode_create">Create Passcode</string>
   <string name="onboarding_secure_app_passcode_description">Create a passcode to keep all your data safe from prying eyes</string>
@@ -113,16 +113,17 @@
   <string name="authorizations_finished_successfully">Finished successfully</string>
   <string name="authorizations_time_out">Time out</string>
   <string name="authorizations_time_out_description">Time to authorize your action is out. Please initiate action once again.</string>
+  <string name="authorizations_finished_error">Authorization unavailable</string>
 
   <string name="settings_feature_title">Settings</string>
   <string name="settings_report_bug">Report a bug</string>
   <string name="settings_language">Language</string>
   <string name="settings_notifications">Notifications</string>
-  <string name="settings_passcode">Change Passcode</string>
-  <string name="settings_passcode_description">Here you can change your passcode</string>
-  <string name="settings_passcode_input_current">Input current Passcode</string>
-  <string name="settings_passcode_input_new">Input New Passcode</string>
-  <string name="settings_passcode_repeat_new">Repeat New Passcode</string>
+  <string name="settings_passcode">Passcode</string>
+  <string name="settings_passcode_description">Change passcode</string>
+  <string name="settings_passcode_input_current">Input current passcode</string>
+  <string name="settings_passcode_input_new">Input new passcode</string>
+  <string name="settings_passcode_repeat_new">Repeat new passcode</string>
   <string name="settings_passcode_success">New passcode successfully set</string>
   <string name="settings_fingerprint">Fingerprint</string>
   <string name="settings_screenshot_lock">Screenshot lock</string>

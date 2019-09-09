@@ -35,7 +35,8 @@ interface BiometricToolsAbs {
     fun activateFingerprint(): Boolean
     fun isFingerprintNotConfigured(context: Context): Boolean
     fun isFingerprintSupported(context: Context): Boolean
+    fun isFingerprintAuthAvailable(context: Context): Boolean
     fun isBiometricReady(context: Context): Boolean
     fun getCurrentFingerprintStateWarningMessage(context: Context): String?
-    @SuppressLint("NewApi") fun initFingerprintCipher(): Cipher?
+    @SuppressLint("NewApi") fun createFingerprintCipher(): Cipher?
 }

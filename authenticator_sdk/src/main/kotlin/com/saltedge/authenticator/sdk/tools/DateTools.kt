@@ -25,6 +25,12 @@ import org.joda.time.DateTimeZone
 import org.joda.time.Period
 import org.joda.time.format.PeriodFormatterBuilder
 
+/**
+ * Parse String to DateTime object in UTC time zone
+ *
+ * @receiver datetime string
+ * @return DateTime object
+ */
 fun String.parseToUtcDateTime(): DateTime? {
     return try {
         DateTime.parse(this).withZone(DateTimeZone.UTC)
@@ -34,7 +40,7 @@ fun String.parseToUtcDateTime(): DateTime? {
 }
 
 /**
- * Calculates seconds between now and receiver's value
+ * Calculates seconds between now and expiration time
  *
  * @receiver expiresAt datetime
  * @return seconds till expire time
@@ -51,6 +57,26 @@ fun DateTime.secondsFromDate(): Int = secondsBetweenDates(this, DateTime.now(thi
 
 fun secondsBetweenDates(startDate: DateTime, endDate: DateTime): Int =
     (millisBetweenDates(startDate, endDate) / 1000).toInt()
+
+/**
+ * Create description of remained time
+ *
+ * @receiver period of remained seconds
+ * @return String timestamp in "minutes:seconds" format
+ */
+fun Int.remainedExpirationTime(): String {
+    return if (this <= 0) return "-:--"
+    else {
+        val period = Period(this * 1000L)
+        PeriodFormatterBuilder()
+            .appendHours()
+            .appendSeparatorIfFieldsBefore(":")
+            .printZeroAlways().minimumPrintedDigits(if (period.hours > 0) 2 else 1).appendMinutes()
+            .appendSeparator(":")
+            .minimumPrintedDigits(2).appendSeconds()
+            .toFormatter().print(period)
+    }
+}
 
 /**
  * Calculates seconds between now and receiver's value

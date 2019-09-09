@@ -22,9 +22,6 @@
 sdk_report_file="authenticator_sdk/build/reports/jacocoTestReport/html/index.html"
 app_report_file="app/build/reports/jacocoTestReport/html/index.html"
 
-adb uninstall com.saltedge.authenticator.tests 2>&1
-adb uninstall com.saltedge.authenticator 2>&1
-
 ./gradlew clean
 ./gradlew --stacktrace authenticator_sdk:jacocoTestReport 2>&1
 status=$?

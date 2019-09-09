@@ -22,7 +22,7 @@ package com.saltedge.authenticator.features.settings.list
 
 import android.content.Context
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.settings.common.CheckedTitleValueViewModel
+import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import javax.inject.Inject
@@ -35,28 +35,28 @@ class SettingsListPresenter @Inject constructor(
 
     override var viewContract: SettingsListContract.View? = null
 
-    override fun getListItems(): List<CheckedTitleValueViewModel> {
+    override fun getListItems(): List<SettingsItemViewModel> {
         return listOf(
-            CheckedTitleValueViewModel(
+            SettingsItemViewModel(
                 titleId = R.string.settings_passcode,
                 value = appContext.getString(R.string.settings_passcode_description),
                 itemIsClickable = true
             ),
-            CheckedTitleValueViewModel(
+            SettingsItemViewModel(
                 titleId = R.string.settings_notifications,
                 switchEnabled = true,
                 isChecked = preferences.notificationsEnabled
             ),
-            CheckedTitleValueViewModel(
+            SettingsItemViewModel(
                 titleId = R.string.settings_screenshot_lock,
                 switchEnabled = true,
                 isChecked = preferences.screenshotLockEnabled
             ),
-            CheckedTitleValueViewModel(
+            SettingsItemViewModel(
                 titleId = R.string.about_feature_title,
                 itemIsClickable = true
             ),
-            CheckedTitleValueViewModel(
+            SettingsItemViewModel(
                 titleId = R.string.settings_report_bug,
                 itemIsClickable = true
             )

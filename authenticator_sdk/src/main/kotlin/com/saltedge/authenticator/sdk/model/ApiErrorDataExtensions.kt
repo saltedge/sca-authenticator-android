@@ -55,6 +55,15 @@ fun ApiErrorData.isConnectionNotFound(): Boolean =
     errorClassName == ERROR_CLASS_CONNECTION_NOT_FOUND
 
 /**
+ * Checks if errorClassName is equal to ERROR_CLASS_SSL_HANDSHAKE or ERROR_CLASS_HOST_UNREACHABLE
+ *
+ * @receiver api error
+ * @return boolean. true if errorClassName == ERROR_CLASS_SSL_HANDSHAKE || errorClassName == ERROR_CLASS_HOST_UNREACHABLE
+ */
+fun ApiErrorData.isConnectivityError(): Boolean =
+    errorClassName == ERROR_CLASS_SSL_HANDSHAKE || errorClassName == ERROR_CLASS_HOST_UNREACHABLE
+
+/**
  * Creates Api Error for unknown network error
  * with class name `ERROR_CLASS_API_RESPONSE` and message `Request Error ($responseCode)`
  *

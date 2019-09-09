@@ -116,7 +116,7 @@ object CryptoTools : CryptoToolsAbs {
         try {
             // AndroidOpenSSL causes error in android 6: InvalidKeyException: Need RSA private or public key (AndroidKeyStoreBCWorkaround)
             // AndroidKeyStoreBCWorkaround causes error in android 5: NoSuchProviderException: Provider not available (AndroidOpenSSL)
-            return Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidKeyStoreBCWorkaround")
+            return Cipher.getInstance("RSA/ECB/PKCS1Padding")
         } catch (e: Exception) {
             e.printStackTrace()
         }

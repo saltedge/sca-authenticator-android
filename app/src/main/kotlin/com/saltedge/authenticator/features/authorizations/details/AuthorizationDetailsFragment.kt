@@ -27,6 +27,7 @@ import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_MODE
 import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
@@ -47,8 +48,10 @@ import kotlinx.android.synthetic.main.view_action_buttons.*
 import java.util.*
 import javax.inject.Inject
 
-class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContract.View,
-    View.OnClickListener, UpActionImageListener {
+class AuthorizationDetailsFragment : BaseFragment(),
+    AuthorizationDetailsContract.View,
+    View.OnClickListener,
+    UpActionImageListener {
 
     @Inject
     lateinit var presenterContract: AuthorizationDetailsPresenter
@@ -162,8 +165,21 @@ class AuthorizationDetailsFragment : BaseFragment(), AuthorizationDetailsContrac
         actionsLayout?.isEnabled = show
     }
 
+    override fun showError(errorMessage: String) {
+        view?.let { Snackbar.make(it, errorMessage, Snackbar.LENGTH_LONG).show() }
+    }
+
     override fun closeView() {
         activity?.finishFragment()
+    }
+
+    override fun closeViewWithErrorResult(errorMessage: String) {
+        completeView?.setTitleText(getString(R.string.authorizations_finished_error))
+        completeView?.setSubtitleText(errorMessage)
+        completeView?.setIconResource(R.drawable.ic_complete_error_70)
+        completeView?.alpha = 0.75f
+        completeView?.setVisible(true)
+        completeView?.animate()?.alpha(1f)?.setDuration(1000)?.withEndAction { closeView() }
     }
 
     override fun closeViewWithSuccessResult(authorizationId: String) {

@@ -31,23 +31,26 @@ import android.security.keystore.KeyProperties
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.model.repository.PreferenceRepository
-import com.saltedge.authenticator.sdk.tools.KeyStoreManager
+import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
 import com.saltedge.authenticator.tool.log
 import javax.crypto.Cipher
 
 const val FINGERPRINT_ALIAS_FOR_PIN = "fingerprint_alias_for_pin"
 
 @Suppress("DEPRECATION")
-object BiometricTools : BiometricToolsAbs {
+class BiometricTools(
+    val keyStoreManager: KeyStoreManagerAbs,
+    val preferenceRepository: PreferenceRepositoryAbs
+) : BiometricToolsAbs {
 
     override fun replaceFingerprintKey() =
-        KeyStoreManager.createOrReplaceRsaKeyPair(FINGERPRINT_ALIAS_FOR_PIN)
+        keyStoreManager.createOrReplaceRsaKeyPair(FINGERPRINT_ALIAS_FOR_PIN)
 
     override fun activateFingerprint(): Boolean {
-        KeyStoreManager.createOrReplaceAesBiometricKey(FINGERPRINT_ALIAS_FOR_PIN)
-        return if (KeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN)) {
-            PreferenceRepository.fingerprintEnabled = true
+        keyStoreManager.createOrReplaceAesBiometricKey(FINGERPRINT_ALIAS_FOR_PIN)
+        return if (keyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN)) {
+            preferenceRepository.fingerprintEnabled = true
             true
         } else false
     }
@@ -55,14 +58,14 @@ object BiometricTools : BiometricToolsAbs {
     override fun isFingerprintNotConfigured(context: Context): Boolean = !isBiometricReady(context)
 
     override fun isFingerprintSupported(context: Context) =
-        getFingerprintState(context) !== FingerprintState.NOT_SUPPORTED
+        context.getFingerprintState() !== FingerprintState.NOT_SUPPORTED
 
     override fun isBiometricReady(context: Context) =
-        getFingerprintState(context) === FingerprintState.READY
+        context.getFingerprintState() === FingerprintState.READY
 
     override fun getCurrentFingerprintStateWarningMessage(context: Context): String? {
         return context.getString(
-            when (getFingerprintState(context)) {
+            when (context.getFingerprintState()) {
                 FingerprintState.NOT_SUPPORTED -> R.string.errors_touch_id_not_supported
                 FingerprintState.NOT_BLOCKED_DEVICE -> R.string.errors_activate_touch_id
                 FingerprintState.NO_FINGERPRINTS -> R.string.errors_touch_id_not_enrolled
@@ -72,9 +75,9 @@ object BiometricTools : BiometricToolsAbs {
     }
 
     @SuppressLint("NewApi")
-    override fun initFingerprintCipher(): Cipher? {
+    override fun createFingerprintCipher(): Cipher? {
         try {
-            val key = KeyStoreManager.getSecretKey(FINGERPRINT_ALIAS_FOR_PIN) ?: return null
+            val key = keyStoreManager.getSecretKey(FINGERPRINT_ALIAS_FOR_PIN) ?: return null
             val mCipher = Cipher.getInstance("AES/CBC/${KeyProperties.ENCRYPTION_PADDING_PKCS7}")
             mCipher?.init(Cipher.ENCRYPT_MODE, key)
             return mCipher
@@ -84,7 +87,7 @@ object BiometricTools : BiometricToolsAbs {
         return null
     }
 
-    fun isFingerprintAuthAvailable(context: Context): Boolean {
+    override fun isFingerprintAuthAvailable(context: Context): Boolean {
         try {
             if (isFingerprintPermissionGranted(context)) {
                 val manager = context.getFingerprintManager() ?: return false
@@ -104,18 +107,18 @@ object BiometricTools : BiometricToolsAbs {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun getFingerprintState(context: Context): FingerprintState {
+    private fun Context.getFingerprintState(): FingerprintState {
         return when {
-            context.isFingerprintHardwareNotAvailable() -> FingerprintState.NOT_SUPPORTED
-            context.inNotSecuredDevice() -> FingerprintState.NOT_BLOCKED_DEVICE
-            context.noEnrolledFingerprints() -> FingerprintState.NOT_BLOCKED_DEVICE
+            this.isFingerprintHardwareNotAvailable() -> FingerprintState.NOT_SUPPORTED
+            this.inNotSecuredDevice() -> FingerprintState.NOT_BLOCKED_DEVICE
+            this.noEnrolledFingerprints() -> FingerprintState.NOT_BLOCKED_DEVICE
             else -> FingerprintState.READY
         }
     }
 
     private fun Context.isFingerprintHardwareNotAvailable(): Boolean {
         return !try {
-            getFingerprintManager()?.isHardwareDetected ?: false
+            this.getFingerprintManager()?.isHardwareDetected ?: false
         } catch (e: Exception) {
             e.log()
             false
@@ -124,7 +127,7 @@ object BiometricTools : BiometricToolsAbs {
 
     private fun Context.inNotSecuredDevice(): Boolean {
         return !try {
-            getKeyguardManager()?.isKeyguardSecure ?: false
+            this.getKeyguardManager()?.isKeyguardSecure ?: false
         } catch (e: Exception) {
             e.log()
             false
@@ -133,7 +136,7 @@ object BiometricTools : BiometricToolsAbs {
 
     private fun Context.noEnrolledFingerprints(): Boolean {
         return !try {
-            getFingerprintManager()?.hasEnrolledFingerprints() ?: false
+            this.getFingerprintManager()?.hasEnrolledFingerprints() ?: false
         } catch (e: Exception) {
             e.log()
             false
@@ -141,10 +144,10 @@ object BiometricTools : BiometricToolsAbs {
     }
 
     private fun Context.getKeyguardManager(): KeyguardManager? {
-        return getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
+        return this.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
     }
 }
 
 fun Context.getFingerprintManager(): FingerprintManager? {
-    return getSystemService(Context.FINGERPRINT_SERVICE) as? FingerprintManager
+    return this.getSystemService(Context.FINGERPRINT_SERVICE) as? FingerprintManager
 }
