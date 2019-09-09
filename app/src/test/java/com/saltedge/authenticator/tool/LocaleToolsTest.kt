@@ -23,7 +23,6 @@ package com.saltedge.authenticator.tool
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.repository.PreferenceRepository
 import com.saltedge.authenticator.testTools.TestAppTools
-import com.saltedge.authenticator.tool.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.isEmptyString

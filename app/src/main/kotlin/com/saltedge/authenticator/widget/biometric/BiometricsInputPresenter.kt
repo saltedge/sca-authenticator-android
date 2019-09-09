@@ -29,7 +29,6 @@ import android.hardware.fingerprint.FingerprintManager
 import android.os.CancellationSignal
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.log
-import com.saltedge.authenticator.tool.secure.fingerprint.BiometricTools
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import com.saltedge.authenticator.tool.secure.fingerprint.getFingerprintManager
 

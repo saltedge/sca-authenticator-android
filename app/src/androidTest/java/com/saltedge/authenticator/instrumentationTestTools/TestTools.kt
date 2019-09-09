@@ -21,10 +21,7 @@
 package com.saltedge.authenticator.instrumentationTestTools
 
 import android.content.Context
-import android.graphics.Color
-import androidx.core.content.ContextCompat
 import androidx.test.platform.app.InstrumentationRegistry
-import com.saltedge.authenticator.tool.log
 import com.saltedge.authenticator.tool.updateApplicationLocale
 import java.util.*
 

@@ -52,8 +52,7 @@ const val KEY_SKIP_PIN = "KEY_SKIP_PIN"
 abstract class LockableActivity :
     AppCompatActivity(),
     PasscodeInputViewListener,
-    BiometricPromptCallback
-{
+    BiometricPromptCallback {
 
     abstract fun getUnlockAppInputView(): UnlockAppInputView?
     abstract fun getAppBarLayout(): View?

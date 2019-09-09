@@ -81,14 +81,14 @@ class CryptoToolsTest {
     @Test
     @Throws(Exception::class)
     fun rsaEncryptDecryptTestCase2() {
-        Assert.assertNull(rsaDecrypt("", privateKey))//Empty encrypted text
+        Assert.assertNull(rsaDecrypt("", privateKey)) // Empty encrypted text
 
         val invalidCertificate: PublicKey = object : PublicKey {
             override fun getAlgorithm(): String = ""
             override fun getEncoded(): ByteArray = byteArrayOf()
             override fun getFormat(): String = ""
         }
-        Assert.assertNull(rsaEncrypt(byteArrayOf(), invalidCertificate))//Invalid public key
+        Assert.assertNull(rsaEncrypt(byteArrayOf(), invalidCertificate)) // Invalid public key
     }
 
     /**
@@ -115,7 +115,6 @@ class CryptoToolsTest {
     @Throws(Exception::class)
     fun aesDecryptTestCase2() {
         val initialTextValue = "test key"
-//        val testKey: SecretKey = KeyStoreManager.createOrReplaceAesKey("test")!!//TODO REMOVE
         val testKey: SecretKey = SecretKeySpec(aesKey, 0, aesKey.size, "AES")
 
         val encryptedMessage = aesEncrypt(initialTextValue, testKey)!!
@@ -135,7 +134,7 @@ class CryptoToolsTest {
         val errorMessage = "{\"name\":\"Andrey\", \"age\":27, \"car\":\"BMW\", \"mileage\":null}"
         val encryptedMessage = encryptAesCBCString(errorMessage, aesKey, aesIV)!!
 
-        Assert.assertNull(aesDecrypt(encryptedMessage, aesKey, aesKey))//Invalid IV
+        Assert.assertNull(aesDecrypt(encryptedMessage, aesKey, aesKey)) // Invalid IV
     }
 
     @Test
