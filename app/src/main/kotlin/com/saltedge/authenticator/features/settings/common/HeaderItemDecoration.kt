@@ -17,7 +17,8 @@ class HeaderItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
     }
     private val dividerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = ContextCompat.getColor(context, R.color.divider_color)
-        style = Paint.Style.FILL
+        style = Paint.Style.STROKE
+        strokeWidth = context.resources.getDimension(R.dimen.dp_2)
     }
 
     private val rectHeight = context.resources.getDimensionPixelSize(R.dimen.dp_20)
@@ -42,14 +43,13 @@ class HeaderItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
         for (index in 0 until endIndex) {
             val currentChild = parent.getChildAt(index)
             if (needDrawBottomDelimiter(parent, currentChild)) {
-                val params = currentChild.layoutParams as RecyclerView.LayoutParams
-                val topView = currentChild.top + params.topMargin
+                val topOfCurrentView = currentChild.top
                 val startX = dividerStart.toFloat()
-                val topY = topView.toFloat() - rectHeight
+                val topY = topOfCurrentView.toFloat() - rectHeight
                 val endX = dividerEnd.toFloat()
-                val bottomY = topView.toFloat()
+                val bottomY = topOfCurrentView.toFloat()
                 canvas.drawRect(startX, topY, endX, bottomY, spacePaint)
-                canvas.drawLine(startX, bottomY - 1, endX, bottomY - 1, dividerPaint)
+                canvas.drawLine(startX, bottomY, endX, bottomY, dividerPaint)
             }
         }
     }
