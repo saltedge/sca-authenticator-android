@@ -71,16 +71,8 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        contentAdapter = activity?.applicationContext?.let {
-            AuthorizationsContentPagerAdapter(
-                it
-            )
-        }
-        headerAdapter = activity?.applicationContext?.let {
-            AuthorizationsCardPagerAdapter(
-                it
-            )
-        }
+        activity?.application?.let { contentAdapter = AuthorizationsContentPagerAdapter(it) }
+        activity?.application?.let { headerAdapter = AuthorizationsCardPagerAdapter(it) }
         activityComponents?.updateAppbarTitle(getString(R.string.authorizations_feature_title))
         return inflater.inflate(R.layout.fragment_authorizations_list, container, false)
     }
@@ -139,7 +131,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         }
     }
 
-    override fun refreshListView() {
+    override fun refreshTimerProgress() {
         if (isVisible) headerAdapter?.notifyDataSetChanged()
     }
 
@@ -161,8 +153,8 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
             emptyView?.setVisible(viewIsEmpty)
             contentViewPager?.setVisible(!viewIsEmpty)
             headerViewPager?.setVisible(!viewIsEmpty)
-            swipeContentAuthorizations()
-            swipeHeaderAuthorizations()
+            initHeaderViewPagerOnPageChangeListener()
+            initContentViewPagerOnPageChangeListener()
         } catch (e: Exception) {
             e.log()
         }
@@ -183,7 +175,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         )
     }
 
-    private fun swipeContentAuthorizations() {
+    private fun initHeaderViewPagerOnPageChangeListener() {
         headerViewPager?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
                 scrollState = state
@@ -215,7 +207,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         })
     }
 
-    private fun swipeHeaderAuthorizations() {
+    private fun initContentViewPagerOnPageChangeListener() {
         contentViewPager?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
                 scrollState = state

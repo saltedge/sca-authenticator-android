@@ -30,7 +30,7 @@ interface AuthorizationsListContract {
     interface View : BaseAuthorizationViewContract {
         fun showAuthorizationDetailsView(authorizationViewModel: AuthorizationViewModel)
         fun showError(error: ApiErrorData)
-        fun refreshListView()
+        fun refreshTimerProgress()
         fun updateViewsContentInUiThread()
         fun reinitAndUpdateViewsContent(listState: Parcelable?)
         fun updateItem(viewModel: AuthorizationViewModel, itemId: Int)

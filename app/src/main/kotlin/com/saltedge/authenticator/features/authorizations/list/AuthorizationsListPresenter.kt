@@ -70,7 +70,7 @@ class AuthorizationsListPresenter @Inject constructor(
         if (existExpiredSessions()) {
             cleanDataSet()
             viewContract?.updateViewsContentInUiThread()
-        } else viewContract?.refreshListView()
+        } else viewContract?.refreshTimerProgress()
     }
 
     /**

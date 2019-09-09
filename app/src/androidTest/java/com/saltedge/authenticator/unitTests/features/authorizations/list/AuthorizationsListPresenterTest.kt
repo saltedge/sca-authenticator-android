@@ -112,12 +112,12 @@ class AuthorizationsListPresenterTest {
         presenter.onTimerTick()
 
         assertThat(presenter.viewModels, equalTo(listOf(viewModel1)))
-        Mockito.verify(mockView, Mockito.never()).refreshListView()
+        Mockito.verify(mockView, Mockito.never()).refreshTimerProgress()
 
         presenter.viewContract = mockView
         presenter.onTimerTick()
 
-        Mockito.verify(mockView).refreshListView()
+        Mockito.verify(mockView).refreshTimerProgress()
     }
 
     @Test

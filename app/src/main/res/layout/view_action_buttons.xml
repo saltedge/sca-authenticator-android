@@ -15,6 +15,7 @@
         android:layout_weight="1"
         android:focusable="false"
         android:focusableInTouchMode="false"
+        android:fontFamily="@font/roboto_medium"
         android:text="@string/actions_deny" />
 
     <Button
@@ -27,5 +28,6 @@
         android:layout_weight="1"
         android:focusable="false"
         android:focusableInTouchMode="false"
+        android:fontFamily="@font/roboto_medium"
         android:text="@string/actions_allow" />
 </LinearLayout>

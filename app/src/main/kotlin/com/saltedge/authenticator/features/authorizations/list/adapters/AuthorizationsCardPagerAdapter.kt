@@ -27,26 +27,23 @@ class AuthorizationsCardPagerAdapter(context: Context) : AuthorizationsPagerAdap
 
     private fun inflatePageView(position: Int): View {
         val pageView = layoutInflater.inflate(R.layout.view_card_item_authorization, null)
-        return pageView.apply { updateViewContent(this, position) }
+        return pageView.apply { updateViewContent(this, data[position]) }
     }
 
-    private fun updateViewContent(pageView: View, position: Int) {
-        pageView.findViewById<TextView>(R.id.providerNameView).text = (data[position] as AuthorizationViewModel).connectionName
+    private fun updateViewContent(pageView: View, model: AuthorizationViewModel) {
+        pageView.findViewById<TextView>(R.id.providerNameView).text = model.connectionName
         val connectionLogoView = pageView.findViewById<ImageView>(R.id.connectionLogoView)
-        if ((data[position] as AuthorizationViewModel).connectionLogoUrl?.isEmpty() == true) {
+        if (model.connectionLogoUrl?.isEmpty() == true) {
             connectionLogoView?.setVisible(false)
         } else {
             connectionLogoView?.loadImage(
-                imageUrl = (data[position] as AuthorizationViewModel).connectionLogoUrl,
+                imageUrl = model.connectionLogoUrl,
                 placeholderId = R.drawable.ic_logo_bank_placeholder
             )
         }
-        pageView.findViewById<TextView>(R.id.timerTextView)?.text =
-            (data[position] as AuthorizationViewModel).expiresAt.remainedExpirationTime()
-        pageView.findViewById<ProgressBar>(R.id.progressBar)?.max =
-            (data[position] as AuthorizationViewModel).validSeconds
-        pageView.findViewById<ProgressBar>(R.id.progressBar)?.progress =
-            (data[position] as AuthorizationViewModel).createdAt.secondsFromDate()
+        pageView.findViewById<TextView>(R.id.timerTextView)?.text = model.expiresAt.remainedExpirationTime()
+        pageView.findViewById<ProgressBar>(R.id.progressBar)?.max = model.validSeconds
+        pageView.findViewById<ProgressBar>(R.id.progressBar)?.progress = model.createdAt.secondsFromDate()
         pageView.findViewById<ProgressBar>(R.id.progressBar)?.progressDrawable?.setColorFilter(
             ContextCompat.getColor(pageView.context, R.color.blue),
             PorterDuff.Mode.SRC_IN

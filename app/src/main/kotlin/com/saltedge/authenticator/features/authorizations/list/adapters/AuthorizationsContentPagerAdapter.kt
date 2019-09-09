@@ -30,25 +30,25 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tool.parseHTML
-import com.saltedge.authenticator.tool.setFont
 
 class AuthorizationsContentPagerAdapter(
     context: Context
 ) : AuthorizationsPagerAdapter(), View.OnClickListener {
 
     var listener: ListItemClickListener? = null
-    private val layoutInflater: LayoutInflater =
+    private val layoutInflater: LayoutInflater = //move in adapter
         context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     private var itemPosition: Int = 0
 
-    override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        return inflatePageView(position).also { container.addView(it, 0) }
+    override fun instantiateItem(container: ViewGroup, position: Int): Any { //move in adapter
+        return inflatePageView(position).apply { container.addView(this, 0) }
     }
 
     override fun onClick(view: View?) {
-        notifyClickListener(
-            viewId = view?.id ?: return,
-            code = (data[itemPosition] as AuthorizationViewModel).authorizationId
+        listener?.onListItemClick(
+            itemIndex = getItemPosition(data),
+            itemCode = (data[itemPosition]).authorizationId,
+            itemViewId = view?.id ?: return
         )
     }
 
@@ -59,26 +59,13 @@ class AuthorizationsContentPagerAdapter(
 
     private fun inflatePageView(position: Int): View {
         val pageView = layoutInflater.inflate(R.layout.authorization_item, null)
-        return pageView.apply { updateViewContent(this, position) }
+        return pageView.apply { updateViewContent(this, data[position]) }
     }
 
-    private fun notifyClickListener(viewId: Int, code: String) {
-        listener?.onListItemClick(
-            itemIndex = getItemPosition(data),
-            itemCode = code,
-            itemViewId = viewId
-        )
-    }
-
-    private fun updateViewContent(pageView: View, position: Int) {
-        pageView.findViewById<TextView>(R.id.titleTextView).text =
-            (data[position] as AuthorizationViewModel).title
-        pageView.findViewById<TextView>(R.id.descriptionTextView).text =
-            (data[position] as AuthorizationViewModel).description.parseHTML()
+    private fun updateViewContent(pageView: View, model: AuthorizationViewModel) {
+        pageView.findViewById<TextView>(R.id.titleTextView).text = model.title
+        pageView.findViewById<TextView>(R.id.descriptionTextView).text = model.description.parseHTML()
         pageView.findViewById<Button>(R.id.negativeActionView).setOnClickListener(this)
         pageView.findViewById<Button>(R.id.positiveActionView).setOnClickListener(this)
-
-        pageView.findViewById<Button>(R.id.negativeActionView).setFont(R.font.roboto_medium)
-        pageView.findViewById<Button>(R.id.positiveActionView).setFont(R.font.roboto_medium)
     }
 }
