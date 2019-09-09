@@ -18,7 +18,7 @@ class HeaderItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
     private val dividerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = ContextCompat.getColor(context, R.color.divider_color)
         style = Paint.Style.STROKE
-        strokeWidth = context.resources.getDimension(R.dimen.dp_2)
+        strokeWidth = context.resources.getDimension(R.dimen.dp_1)
     }
 
     private val rectHeight = context.resources.getDimensionPixelSize(R.dimen.dp_20)
