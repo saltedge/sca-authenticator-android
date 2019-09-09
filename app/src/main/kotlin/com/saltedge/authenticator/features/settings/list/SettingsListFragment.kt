@@ -113,9 +113,7 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View,
             ContextCompat.getDrawable(context ?: return, R.drawable.shape_full_divider)?.let {
                 dividerItemDecoration.setDrawable(it)
             }
-            activity?.applicationContext?.let {
-                HeaderItemDecoration(it)
-            }?.let { recyclerView?.addItemDecoration(it) }
+            context?.let { recyclerView?.addItemDecoration(HeaderItemDecoration(it)) }
             recyclerView?.addItemDecoration(dividerItemDecoration)
             recyclerView?.adapter = SettingsAdapter(this).apply {
                 data = presenterContract.getListItems()
