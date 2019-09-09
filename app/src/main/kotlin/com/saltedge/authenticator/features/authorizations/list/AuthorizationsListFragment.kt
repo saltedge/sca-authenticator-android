@@ -29,11 +29,9 @@ import android.view.ViewGroup
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.SHOW_REQUEST_CODE
 import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.features.authorizations.confirmPasscode.ConfirmPasscodeDialog
-import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
 import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsCardPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsContentPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.di.AuthorizationsListModule
@@ -119,12 +117,6 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         presenterContract.processFragmentResult(requestCode, resultCode, data)
-    }
-
-    override fun showAuthorizationDetailsView(authorizationViewModel: AuthorizationViewModel) {
-        val fragment = AuthorizationDetailsFragment.newInstance(viewModel = authorizationViewModel)
-        fragment.setTargetFragment(this, SHOW_REQUEST_CODE)
-        activity?.addFragment(fragment)
     }
 
     override fun showError(error: ApiErrorData) {

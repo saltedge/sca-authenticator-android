@@ -70,7 +70,6 @@ class AuthorizationDetailsPresenter(
         this.authorizationId = viewModel?.authorizationId ?: authorizationId
         if (!initialValuesValid) viewContract?.closeView()
     }
-
     val remainedTimeDescription: String
         get() = currentViewModel?.expiresAt?.remainedExpirationTime() ?: ""
     val secondsFromStartDate: Int

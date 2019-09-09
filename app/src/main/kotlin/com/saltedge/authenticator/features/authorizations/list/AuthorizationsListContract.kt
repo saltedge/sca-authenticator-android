@@ -28,7 +28,6 @@ import com.saltedge.authenticator.sdk.model.ApiErrorData
 interface AuthorizationsListContract {
 
     interface View : BaseAuthorizationViewContract {
-        fun showAuthorizationDetailsView(authorizationViewModel: AuthorizationViewModel)
         fun showError(error: ApiErrorData)
         fun refreshTimerProgress()
         fun updateViewsContentInUiThread()
