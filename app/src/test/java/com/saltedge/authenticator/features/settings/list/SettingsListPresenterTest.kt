@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.settings.list
 
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.settings.common.CheckedTitleValueViewModel
+import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
@@ -55,26 +55,26 @@ class SettingsListPresenterTest {
         assertThat(
             presenter.getListItems(), equalTo(
             listOf(
-                CheckedTitleValueViewModel(
+                SettingsItemViewModel(
                     titleId = R.string.settings_passcode,
                     value = TestAppTools.getString(R.string.settings_passcode_description),
                     itemIsClickable = true
                 ),
-                CheckedTitleValueViewModel(
+                SettingsItemViewModel(
                     titleId = R.string.settings_notifications,
                     switchEnabled = true,
                     isChecked = notificationsEnabled
                 ),
-                CheckedTitleValueViewModel(
+                SettingsItemViewModel(
                     titleId = R.string.settings_screenshot_lock,
                     switchEnabled = true,
                     isChecked = screenshotLockEnabled
                 ),
-                CheckedTitleValueViewModel(
+                SettingsItemViewModel(
                     titleId = R.string.about_feature_title,
                     itemIsClickable = true
                 ),
-                CheckedTitleValueViewModel(
+                SettingsItemViewModel(
                     titleId = R.string.settings_report_bug,
                     itemIsClickable = true
                 )

@@ -30,10 +30,10 @@ class SettingsAdapter(
 ) : AbstractListAdapter() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return SettingsItemHolder(parent, clickListener)
+        return SettingsItemViewHolder(parent, clickListener)
     }
 
     override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
-        (holder as SettingsItemHolder).bind(item as CheckedTitleValueViewModel)
+        (holder as SettingsItemViewHolder).bind(item as SettingsItemViewModel)
     }
 }

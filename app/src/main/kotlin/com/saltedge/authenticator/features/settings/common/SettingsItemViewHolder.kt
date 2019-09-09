@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.settings.common
 
-import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
@@ -30,16 +29,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.interfaces.CheckableListItemClickListener
 import com.saltedge.authenticator.tool.inflateListItemView
-import com.saltedge.authenticator.tool.setSelectableBackground
 import com.saltedge.authenticator.tool.setVisible
 
-class SettingsItemHolder(
+class SettingsItemViewHolder(
     parent: ViewGroup,
     var listener: CheckableListItemClickListener?
 ) : RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_setting)),
     View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
-    private val itemContainer = itemView.findViewById<View>(R.id.itemContainer)
     private val titleView = itemView.findViewById<TextView>(R.id.titleView)
     private val valueView = itemView.findViewById<TextView>(R.id.valueView)
     private var checkView = itemView.findViewById<Switch>(R.id.checkView)
@@ -54,7 +51,7 @@ class SettingsItemHolder(
             listener?.onListItemCheckedStateChanged(itemId = code, checked = isChecked)
     }
 
-    fun bind(item: CheckedTitleValueViewModel) {
+    fun bind(item: SettingsItemViewModel) {
         code = item.titleId
         titleView.setText(item.titleId)
         valueView.setVisible(item.value != null)
@@ -71,10 +68,5 @@ class SettingsItemHolder(
         checkView.setOnCheckedChangeListener(this)
 
         itemView.setOnClickListener(if (item.itemIsClickable) this else null)
-        if (item.itemIsClickable) {
-            itemContainer.setSelectableBackground()
-        } else {
-            itemContainer.setBackgroundColor(Color.TRANSPARENT)
-        }
     }
 }

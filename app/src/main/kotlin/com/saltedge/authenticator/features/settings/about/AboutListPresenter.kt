@@ -22,7 +22,7 @@ package com.saltedge.authenticator.features.settings.about
 
 import android.content.Context
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.settings.common.CheckedTitleValueViewModel
+import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.sdk.constants.TERMS_LINK
 import com.saltedge.authenticator.tool.AppTools
 import javax.inject.Inject
@@ -33,21 +33,21 @@ class AboutListPresenter @Inject constructor(
 
     override var viewContract: AboutListContract.View? = null
 
-    override fun getListItems(): List<CheckedTitleValueViewModel> {
+    override fun getListItems(): List<SettingsItemViewModel> {
         return listOf(
-            CheckedTitleValueViewModel(
+            SettingsItemViewModel(
                 titleId = R.string.about_app_version,
                 value = AppTools.getAppVersionName(appContext)
             ),
-            CheckedTitleValueViewModel(
+            SettingsItemViewModel(
                 titleId = R.string.about_copyright,
                 value = appContext.getString(R.string.about_copyright_description)
             ),
-            CheckedTitleValueViewModel(
+            SettingsItemViewModel(
                 titleId = R.string.about_terms_service,
                 itemIsClickable = true
             ),
-            CheckedTitleValueViewModel(
+            SettingsItemViewModel(
                 titleId = R.string.about_open_source_licenses,
                 itemIsClickable = true
             )

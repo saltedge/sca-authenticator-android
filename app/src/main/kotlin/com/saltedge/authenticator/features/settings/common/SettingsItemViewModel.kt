@@ -22,7 +22,7 @@ package com.saltedge.authenticator.features.settings.common
 
 import androidx.annotation.StringRes
 
-data class CheckedTitleValueViewModel(
+data class SettingsItemViewModel(
     @StringRes val titleId: Int,
     val value: String? = null,
     val switchEnabled: Boolean? = null,
