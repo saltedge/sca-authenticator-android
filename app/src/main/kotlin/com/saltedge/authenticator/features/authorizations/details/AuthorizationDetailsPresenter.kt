@@ -26,15 +26,10 @@ import com.saltedge.authenticator.features.authorizations.common.*
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
-import com.saltedge.authenticator.sdk.model.ApiErrorData
-import com.saltedge.authenticator.sdk.model.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.EncryptedAuthorizationData
-import com.saltedge.authenticator.sdk.model.isConnectionNotFound
+import com.saltedge.authenticator.sdk.model.*
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
 import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
-import com.saltedge.authenticator.sdk.tools.remainedExpirationTime
-import com.saltedge.authenticator.sdk.tools.remainedSecondsTillExpire
 import com.saltedge.authenticator.tool.hasHTMLTags
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 
@@ -207,8 +202,12 @@ class AuthorizationDetailsPresenter(
         if (error.isConnectionNotFound()) {
             currentConnectionAndKey?.connection?.accessToken?.let {
                 connectionsRepository.invalidateConnectionsByTokens(accessTokens = listOf(it))
-                viewContract?.closeView()
             }
+        }
+        if (error.isConnectivityError()) {
+            viewContract?.showError(error.getErrorMessage(appContext))
+        } else {
+            viewContract?.closeViewWithErrorResult(error.getErrorMessage(appContext))
         }
     }
 }
