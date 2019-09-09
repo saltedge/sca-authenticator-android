@@ -26,8 +26,10 @@ interface AuthorizationDetailsContract {
     interface View : BaseAuthorizationViewContract {
         fun updateTimeView(remainedSecondsTillExpire: Int, remainedTimeDescription: String)
         fun setActionsLayoutVisibility(show: Boolean)
+        fun showError(errorMessage: String)
         fun closeView()
         fun closeViewWithSuccessResult(authorizationId: String)
+        fun closeViewWithErrorResult(errorMessage: String)
         fun startTimer()
         fun stopTimer()
     }

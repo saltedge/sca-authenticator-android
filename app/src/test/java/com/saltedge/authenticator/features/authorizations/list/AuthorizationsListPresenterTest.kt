@@ -78,14 +78,6 @@ class AuthorizationsListPresenterTest {
         Mockito.verify(mockPollingService).stop()
     }
 
-    @Test
-    @Throws(Exception::class)
-    fun runFetchTest() {
-        createPresenter(viewContract = mockView).onRefreshClick()
-
-        Mockito.verify(mockPollingService).forcedFetch()
-    }
-
     /**
      * test onTimerTick when exist Expired Sessions
      */

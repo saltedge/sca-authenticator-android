@@ -100,6 +100,29 @@ class ApiErrorDataExtensionsTest {
 
     @Test
     @Throws(Exception::class)
+    fun isConnectivityErrorTest() {
+        Assert.assertTrue(
+            ApiErrorData(
+                errorClassName = ERROR_CLASS_SSL_HANDSHAKE,
+                errorMessage = "ErrorMessage"
+            ).isConnectivityError()
+        )
+        Assert.assertTrue(
+            ApiErrorData(
+                errorClassName = ERROR_CLASS_HOST_UNREACHABLE,
+                errorMessage = "ErrorMessage"
+            ).isConnectivityError()
+        )
+        Assert.assertFalse(
+            ApiErrorData(
+                errorClassName = "ErrorClass",
+                errorMessage = "ErrorMessage"
+            ).isConnectivityError()
+        )
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun createRequestErrorTest() {
         assertThat(
             createRequestError(404),
