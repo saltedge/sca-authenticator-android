@@ -36,6 +36,7 @@ import com.saltedge.authenticator.features.security.UnlockAppInputView
 import com.saltedge.authenticator.features.settings.list.SettingsListFragment
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
 import com.saltedge.authenticator.interfaces.OnBackPressListener
+import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.realm.RealmManager
 import com.saltedge.authenticator.tool.*
@@ -164,9 +165,11 @@ class MainActivity : LockableActivity(),
 
     override fun updateNavigationViewsContent() {
         isTopNavigationLevel().also { isOnTop ->
-            toolbarView?.navigationIcon = presenter.getNavigationIcon(isOnTop)?.let {
-                this.getDrawable(it)
-            }
+            val imageResId = (currentFragmentInContainer() as? UpActionImageListener)?.getUpActionImage()
+            toolbarView?.navigationIcon =
+                (imageResId ?: presenter.getNavigationIcon(isOnTop))?.let { resId ->
+                    this.getDrawable(resId)
+                }
 
             bottomNavigationLayout?.setVisible(show = isOnTop)
         }

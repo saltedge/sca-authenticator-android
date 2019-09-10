@@ -31,6 +31,7 @@ import com.saltedge.authenticator.app.KEY_CONNECT_CONFIGURATION
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.features.connections.connect.di.ConnectProviderModule
 import com.saltedge.authenticator.interfaces.OnBackPressListener
+import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.Token
@@ -46,7 +47,8 @@ class ConnectProviderFragment : BaseFragment(),
     ConnectProviderContract.View,
     ConnectWebClientContract,
     View.OnClickListener,
-    OnBackPressListener {
+    OnBackPressListener,
+    UpActionImageListener {
 
     @Inject
     lateinit var presenterContract: ConnectProviderContract.Presenter
@@ -153,6 +155,8 @@ class ConnectProviderFragment : BaseFragment(),
             }
         )
     }
+
+    override fun getUpActionImage(): Int? = R.drawable.ic_close_white_24dp
 
     private fun updateLayoutsVisibility() {
         fragmentConnectProcessing?.setVisible(show = presenterContract.shouldShowProgressView)
