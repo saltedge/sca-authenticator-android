@@ -70,7 +70,7 @@ class AuthorizationsListPresenter @Inject constructor(
         if (existExpiredSessions()) {
             cleanDataSet()
             viewContract?.updateViewsContentInUiThread()
-        } else viewContract?.refreshListView()
+        } else viewContract?.refreshTimerProgress()
     }
 
     /**
@@ -93,9 +93,6 @@ class AuthorizationsListPresenter @Inject constructor(
                 super.currentViewModel = viewModel
                 super.currentConnectionAndKey = connectionsAndKeys[viewModel.connectionId]
                 onAuthorizeActionSelected(isConfirmed = itemViewId == R.id.positiveActionView)
-            }
-            R.id.detailsActionView -> {
-                viewContract?.showAuthorizationDetailsView(authorizationViewModel = viewModel)
             }
         }
     }

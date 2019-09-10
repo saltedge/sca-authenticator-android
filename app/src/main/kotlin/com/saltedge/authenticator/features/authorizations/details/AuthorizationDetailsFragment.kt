@@ -34,6 +34,7 @@ import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.features.authorizations.confirmPasscode.ConfirmPasscodeDialog
 import com.saltedge.authenticator.features.authorizations.details.di.AuthorizationDetailsModule
+import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
@@ -43,13 +44,14 @@ import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.showAuthorizationConfirm
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_authorization_details.*
+import kotlinx.android.synthetic.main.view_action_buttons.*
 import java.util.*
 import javax.inject.Inject
 
 class AuthorizationDetailsFragment : BaseFragment(),
     AuthorizationDetailsContract.View,
-    View.OnClickListener
-{
+    View.OnClickListener,
+    UpActionImageListener {
 
     @Inject
     lateinit var presenterContract: AuthorizationDetailsPresenter
@@ -61,7 +63,6 @@ class AuthorizationDetailsFragment : BaseFragment(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectDependencies()
-        hideActionBar()
         presenterContract.setInitialData(
             connectionId = arguments?.getString(KEY_CONNECTION_ID) ?: "",
             authorizationId = arguments?.getString(KEY_AUTHORIZATION_ID),
@@ -74,13 +75,16 @@ class AuthorizationDetailsFragment : BaseFragment(),
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? =
-        inflater.inflate(R.layout.fragment_authorization_details, container, false)
+    ): View? {
+        activityComponents?.updateAppbarTitle(getString(R.string.authorizations_feature_title))
+        return inflater.inflate(R.layout.fragment_authorization_details, container, false)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         negativeActionView?.setOnClickListener(this)
         positiveActionView?.setOnClickListener(this)
-        closeActionView?.setOnClickListener(this)
+        connectionLogoView?.setOnClickListener(this)
+        completeView?.setOnClickListener(this)
         activityComponents?.hideNavigationBar()
     }
 
@@ -116,13 +120,15 @@ class AuthorizationDetailsFragment : BaseFragment(),
         super.onStop()
     }
 
+    override fun getUpActionImage(): Int? = R.drawable.ic_close_white_24dp
+
     override fun updateViewContent() {
         updateLayoutsVisibility()
         timerTextView?.text = presenterContract.remainedTimeDescription
-        timeProgressView?.max = presenterContract.maxProgressSeconds
-        timeProgressView?.remainedProgress = presenterContract.remainedSecondsTillExpire
-        providerNameTextView?.text = presenterContract.providerName
+        progressBar?.max = presenterContract.maxProgressSeconds
+        progressBar?.progress = presenterContract.secondsFromStartDate
         titleTextView?.text = presenterContract.title
+        providerNameView?.text = presenterContract.providerName
 
         descriptionTextView?.setVisible(show = presenterContract.shouldShowDescriptionTextView)
         descriptionWebView?.setVisible(show = presenterContract.shouldShowDescriptionWebView)
@@ -136,7 +142,6 @@ class AuthorizationDetailsFragment : BaseFragment(),
             descriptionTextView?.movementMethod = ScrollingMovementMethod()
             descriptionTextView?.text = presenterContract.description
         }
-
         if (presenterContract.shouldShowProviderLogo) {
             connectionLogoView?.visibility = View.VISIBLE
             connectionLogoView?.loadImage(
@@ -150,7 +155,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
 
     override fun updateTimeView(remainedSecondsTillExpire: Int, remainedTimeDescription: String) {
         activity?.runOnUiThread {
-            timeProgressView?.remainedProgress = remainedSecondsTillExpire
+            progressBar?.progress = remainedSecondsTillExpire
             timerTextView?.text = remainedTimeDescription
         }
     }
@@ -183,9 +188,35 @@ class AuthorizationDetailsFragment : BaseFragment(),
             Activity.RESULT_OK,
             Intent().putExtra(KEY_ID, authorizationId)
         )
+        setCompleteView(
+            drawableResId = R.drawable.ic_complete_ok_70,
+            titleText = getString(R.string.authorizations_finished_successfully)
+        )
+        completeView?.animate()?.alpha(1f)?.setDuration(1000)?.withEndAction { closeView() }
+    }
+
+    override fun showTimeOutView() {
+        setCompleteView(
+            drawableResId = R.drawable.ic_time_out_70,
+            titleText = getString(R.string.authorizations_time_out),
+            subTitleText = getString(R.string.authorizations_time_out_description),
+            actionResId = R.string.actions_ok
+        )
+        completeView?.animate()?.alpha(1f)
+    }
+
+    private fun setCompleteView(
+        drawableResId: Int,
+        titleText: String,
+        subTitleText: String? = null,
+        actionResId: Int? = null
+    ) {
         completeView?.alpha = 0.1f
         completeView?.setVisible(true)
-        completeView?.animate()?.alpha(1f)?.setDuration(1000)?.withEndAction { closeView() }
+        completeView?.setTitleText(titleText)
+        subTitleText?.let { completeView?.setSubtitleText(it) }
+        actionResId?.let { completeView?.setMainActionText(it) }
+        completeView?.setIconResource(drawableResId)
     }
 
     override fun askUserBiometricConfirmation() {
@@ -222,8 +253,6 @@ class AuthorizationDetailsFragment : BaseFragment(),
 
     private fun setHeaderVisibility(show: Boolean) {
         timerTextView?.setVisible(show)
-        timeProgressView?.setVisible(show)
-        providerNameTextView?.setVisible(show)
     }
 
     private fun injectDependencies() {

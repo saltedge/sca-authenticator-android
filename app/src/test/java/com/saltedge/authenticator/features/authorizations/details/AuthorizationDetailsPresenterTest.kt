@@ -84,24 +84,14 @@ class AuthorizationDetailsPresenterTest {
 
     @Test
     @Throws(Exception::class)
-    fun remainedSecondsTillExpireTest() {
+    fun secondsFromStartDateTest() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(
             connectionId = "", authorizationId = "",
             viewModel = null, quickConfirmMode = false
         )
 
-        assertThat(presenter.remainedSecondsTillExpire, equalTo(0))
-
-        val authorizationData = createAuthorizationData(1)
-        presenter.setInitialData(
-            connectionId = "",
-            authorizationId = "",
-            viewModel = authorizationData.toAuthorizationViewModel(connection1),
-            quickConfirmMode = false
-        )
-
-        assertThat(presenter.remainedSecondsTillExpire, anyOf(equalTo(3600), equalTo(3599)))
+        assertThat(presenter.secondsFromStartDate, equalTo(0))
     }
 
     @Test
@@ -586,7 +576,7 @@ class AuthorizationDetailsPresenterTest {
 
     @Test
     @Throws(Exception::class)
-    fun onViewClickTest_closeActionView() {
+    fun onViewClickTest_mainActionView() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(
             connectionId = "1",
@@ -594,14 +584,14 @@ class AuthorizationDetailsPresenterTest {
             viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
             quickConfirmMode = false
         )
-        presenter.onViewClick(R.id.closeActionView)
+        presenter.onViewClick(R.id.mainActionView)
 
         Mockito.verify(mockView).closeView()
     }
 
     @Test
     @Throws(Exception::class)
-    fun onViewClickTest_closeActionView_InvalidParams() {
+    fun onViewClickTest_connectionLogoView_InvalidParams() {
         val presenter = createPresenter(viewContract = null)
         presenter.setInitialData(
             connectionId = "1",
@@ -609,7 +599,7 @@ class AuthorizationDetailsPresenterTest {
             viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
             quickConfirmMode = false
         )
-        presenter.onViewClick(R.id.closeActionView)
+        presenter.onViewClick(R.id.connectionLogoView)
 
         Mockito.verify(mockView, Mockito.never()).closeView()
     }
@@ -627,7 +617,7 @@ class AuthorizationDetailsPresenterTest {
         Mockito.clearInvocations(mockView)
         presenter.onTimerTick()
 
-        Mockito.verify(mockView).closeView()
+        Mockito.verify(mockView).showTimeOutView()
     }
 
     @Test
