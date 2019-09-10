@@ -37,6 +37,7 @@ data class AuthorizationViewModel(
     val description: String,
     val validSeconds: Int,
     val expiresAt: DateTime,
+    val createdAt: DateTime,
     val connectionId: ConnectionID,
     val connectionName: String,
     var connectionLogoUrl: String?,
@@ -92,6 +93,7 @@ fun AuthorizationData.toAuthorizationViewModel(connection: ConnectionAbs): Autho
         connectionLogoUrl = connection.logoUrl,
         validSeconds = authorizationExpirationPeriod(this),
         expiresAt = this.expiresAt,
+        createdAt = this.createdAt ?: DateTime(0L),
         authorizationId = this.id,
         authorizationCode = this.authorizationCode ?: "",
         isProcessing = false

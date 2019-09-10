@@ -44,7 +44,8 @@ class AuthorizationViewModelTest {
         connectionName = "Demobank",
         connectionLogoUrl = "url",
         validSeconds = 300,
-        isProcessing = false
+        isProcessing = false,
+        createdAt = DateTime()
     )
 
     @Test
@@ -116,7 +117,8 @@ class AuthorizationViewModelTest {
                     connectionName = "Demobank",
                     connectionLogoUrl = "url",
                     validSeconds = 300,
-                    isProcessing = false
+                    isProcessing = false,
+                    createdAt = DateTime(0L)
                 )
             )
         )

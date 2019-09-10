@@ -32,5 +32,6 @@ interface AuthorizationDetailsContract {
         fun closeViewWithErrorResult(errorMessage: String)
         fun startTimer()
         fun stopTimer()
+        fun showTimeOutView()
     }
 }

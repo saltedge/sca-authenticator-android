@@ -30,6 +30,8 @@ import com.saltedge.authenticator.sdk.model.*
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
 import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.tools.remainedExpirationTime
+import com.saltedge.authenticator.sdk.tools.secondsFromDate
 import com.saltedge.authenticator.tool.hasHTMLTags
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 
@@ -68,11 +70,10 @@ class AuthorizationDetailsPresenter(
         this.authorizationId = viewModel?.authorizationId ?: authorizationId
         if (!initialValuesValid) viewContract?.closeView()
     }
-
-    val remainedSecondsTillExpire: Int
-        get() = currentViewModel?.remainedSecondsTillExpire() ?: 0
     val remainedTimeDescription: String
-        get() = currentViewModel?.remainedTimeStringTillExpire() ?: ""
+        get() = currentViewModel?.expiresAt?.remainedExpirationTime() ?: ""
+    val secondsFromStartDate: Int
+        get() = currentViewModel?.createdAt?.secondsFromDate() ?: 0
     val maxProgressSeconds: Int
         get() = currentViewModel?.validSeconds ?: 0
     val providerName: String
@@ -93,7 +94,7 @@ class AuthorizationDetailsPresenter(
     val shouldShowActionsLayout: Boolean
         get() = !shouldShowProgressView && sessionIsNotExpired
     val sessionIsNotExpired: Boolean
-        get() = remainedSecondsTillExpire > 0
+        get() = currentViewModel?.isNotExpired() ?: false
     val shouldShowProviderLogo: Boolean
         get() = providerLogo.isNotEmpty()
     val shouldShowDescriptionWebView: Boolean
@@ -121,7 +122,7 @@ class AuthorizationDetailsPresenter(
                     quickConfirmMode = quickConfirmMode
                 )
             }
-            R.id.closeActionView -> viewContract?.closeView()
+            R.id.mainActionView -> viewContract?.closeView()
         }
     }
 
@@ -134,7 +135,7 @@ class AuthorizationDetailsPresenter(
                 )
             }
         } else {
-            viewContract?.closeView()
+            viewContract?.showTimeOutView()
         }
     }
 

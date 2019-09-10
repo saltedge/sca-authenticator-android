@@ -105,12 +105,14 @@
 
   <string name="authorizations_feature_title">Authorizations</string>
   <string name="authorizations_nothing_confirm">Nothing to confirm</string>
-  <string name="authorizations_nothing_confirm_description">You have no active authorizations. Once a confirmation is generated, it will be valid for a few minutes.</string>
+  <string name="authorizations_nothing_confirm_description">You have no active authorizations. Once an action authorization is generated, it will be valid for a few minutes.</string>
   <string name="authorizations_processing">Processing…</string>
   <string name="authorizations_fetching">Fetching authorization data…</string>
   <string name="authorizations_notification_title">Authorization request</string>
   <string name="authorizations_notification_description">New authorization request available. Tap to proceed.</string>
   <string name="authorizations_finished_successfully">Finished successfully</string>
+  <string name="authorizations_time_out">Time out</string>
+  <string name="authorizations_time_out_description">Time to authorize your action is out. Please initiate action once again.</string>
   <string name="authorizations_finished_error">Authorization unavailable</string>
 
   <string name="settings_feature_title">Settings</string>
