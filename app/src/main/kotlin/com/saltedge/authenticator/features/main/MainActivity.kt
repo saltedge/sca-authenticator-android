@@ -165,11 +165,10 @@ class MainActivity : LockableActivity(),
 
     override fun updateNavigationViewsContent() {
         isTopNavigationLevel().also { isOnTop ->
-            val imageResId = (currentFragmentInContainer() as? UpActionImageListener)?.getUpActionImage()
-            toolbarView?.navigationIcon =
-                (imageResId ?: presenter.getNavigationIcon(isOnTop))?.let { resId ->
-                    this.getDrawable(resId)
-                }
+            toolbarView?.navigationIcon = ((currentFragmentInContainer() as? UpActionImageListener)?.getUpActionImage()
+                ?: presenter.getNavigationIcon(isOnTop))?.let { resId ->
+                this.getDrawable(resId)
+            }
 
             bottomNavigationLayout?.setVisible(show = isOnTop)
         }
