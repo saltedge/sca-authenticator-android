@@ -792,19 +792,11 @@ class AuthorizationDetailsPresenterTest {
 
         Mockito.clearInvocations(mockView, mockConnectionsRepository)
         presenter.fetchAuthorizationResult(result = null, error = createRequestError(404))
-<<<<<<< HEAD:app/src/test/java/com/saltedge/authenticator/features/authorizations/details/AuthorizationDetailsPresenterTest.kt
 
         Mockito.verify(mockView).closeViewWithErrorResult("Request Error (404)")
         Mockito.verifyNoMoreInteractions(mockConnectionsRepository)
     }
 
-=======
-
-        Mockito.verify(mockView).closeViewWithErrorResult("Request Error (404)")
-        Mockito.verifyNoMoreInteractions(mockConnectionsRepository)
-    }
-
->>>>>>> 50de26c33ac7000f275cff3472b6a444e48786f1:app/src/test/java/com/saltedge/authenticator/features/authorizations/details/AuthorizationDetailsPresenterTest.kt
     @Test
     @Throws(Exception::class)
     fun fetchAuthorizationResultTest_processAuthorizationError_connectivityError() {
