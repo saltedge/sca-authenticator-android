@@ -36,8 +36,8 @@
             android:layout_marginTop="@dimen/dp_20"
             android:layout_marginEnd="@dimen/dp_32"
             android:layout_marginRight="@dimen/dp_32"
-            card_view:cardCornerRadius="21dp"
-            card_view:cardElevation="12dp">
+            card_view:cardCornerRadius="@dimen/dp_21"
+            card_view:cardElevation="@dimen/dp_12">
 
             <RelativeLayout
                 android:layout_width="match_parent"
