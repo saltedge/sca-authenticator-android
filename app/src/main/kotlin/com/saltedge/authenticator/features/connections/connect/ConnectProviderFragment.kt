@@ -40,7 +40,6 @@ import com.saltedge.authenticator.sdk.web.ConnectWebClientContract
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_connect.*
-import kotlinx.android.synthetic.main.fragment_connect_processing_header.*
 import javax.inject.Inject
 
 class ConnectProviderFragment : BaseFragment(),
@@ -110,10 +109,6 @@ class ConnectProviderFragment : BaseFragment(),
     }
 
     override fun updateViewsContent() {
-        providerLogoView?.loadImage(
-            presenterContract.logoUrl,
-            placeholderId = R.drawable.ic_logo_bank_placeholder
-        )
         completeView?.setIconResource(presenterContract.iconResId)
         completeView?.setTitleText(presenterContract.completeTitle)
         completeView?.setSubtitleText(presenterContract.completeMessage)
