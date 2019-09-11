@@ -94,7 +94,7 @@ class ConnectProviderPresenter @Inject constructor(
     override fun onViewCreated() {
         when (viewMode) {
             ViewMode.START -> startConnectFlow()
-            ViewMode.WEB_ENROLL -> loadWevRedirectUrl()
+            ViewMode.WEB_ENROLL -> loadWebRedirectUrl()
             ViewMode.COMPLETE_SUCCESS -> Unit
             ViewMode.COMPLETE_ERROR -> Unit
         }
@@ -123,7 +123,7 @@ class ConnectProviderPresenter @Inject constructor(
             connectUrlData = response
             viewMode = ViewMode.WEB_ENROLL
             viewContract?.updateViewsContent()
-            loadWevRedirectUrl()
+            loadWebRedirectUrl()
         }
     }
 
@@ -137,6 +137,11 @@ class ConnectProviderPresenter @Inject constructor(
         viewMode = ViewMode.COMPLETE_ERROR
         sessionFailMessage = errorMessage
         viewContract?.updateViewsContent()
+    }
+
+
+    override fun getTitleResId(): Int {
+        return if (this.connection.guid.isEmpty()) R.string.connections_new_connection else R.string.actions_reconnect
     }
 
     override fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token) {
@@ -170,7 +175,7 @@ class ConnectProviderPresenter @Inject constructor(
         }
     }
 
-    private fun loadWevRedirectUrl() {
+    private fun loadWebRedirectUrl() {
         viewContract?.loadUrlInWebView(url = connectUrlData?.redirectUrl ?: "")
     }
 }

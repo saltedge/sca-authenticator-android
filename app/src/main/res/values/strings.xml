@@ -91,6 +91,7 @@
   <string name="onboarding_secure_app_touch_id_allow_android">Allow Fingerprint</string>
   <string name="onboarding_secure_app_touch_id_description_android">Use Fingerprint to enter the App faster, but don’t worry, you’ll still have your passcode as backup.</string>
 
+  <string name="connections_new_connection">New connection</string>
   <string name="connections_feature_title">Connections</string>
   <string name="connections_list_no_connections">No Active Connections</string>
   <string name="connections_list_no_connections_description">You have no currently connected service providers. Connect one to start receiving confirmations for your actions (e.g. payments).</string>

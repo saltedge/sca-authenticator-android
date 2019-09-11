@@ -67,7 +67,8 @@ class ConnectProviderFragment : BaseFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activityComponents?.updateAppbarTitle(getString(R.string.actions_connect))
+        val titleResId: Int = presenterContract.getTitleResId()
+        activityComponents?.updateAppbarTitle(getString(titleResId))
         return inflater.inflate(R.layout.fragment_connect, container, false)
     }
 
