@@ -139,11 +139,6 @@ class ConnectProviderPresenter @Inject constructor(
         viewContract?.updateViewsContent()
     }
 
-
-    override fun getTitleResId(): Int {
-        return if (this.connection.guid.isEmpty()) R.string.connections_new_connection else R.string.actions_reconnect
-    }
-
     override fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token) {
         viewMode = ViewMode.COMPLETE_SUCCESS
         connection.accessToken = accessToken
@@ -154,6 +149,11 @@ class ConnectProviderPresenter @Inject constructor(
             connectionsRepository.fixNameAndSave(connection)
         }
         viewContract?.updateViewsContent()
+    }
+
+    override fun getTitleResId(): Int {
+        return if (this.connection.guid.isEmpty()) R.string.connections_new_connection
+        else R.string.actions_reconnect
     }
 
     private fun startConnectFlow() {
