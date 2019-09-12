@@ -93,7 +93,10 @@ class AuthorizationDetailsPresenter(
     fun onViewClick(viewId: Int) {
         when (viewId) {
             R.id.positiveActionView, R.id.negativeActionView -> {
-                onAuthorizeActionSelected(confirmRequest = viewId == R.id.positiveActionView)
+                onAuthorizeActionSelected(
+                    confirmRequest = viewId == R.id.positiveActionView,
+                    quickConfirmMode = true
+                )
             }
             R.id.mainActionView -> viewContract?.closeView()
         }
@@ -111,7 +114,7 @@ class AuthorizationDetailsPresenter(
 
     override fun getConnectionData(): ConnectionAndKey? = currentConnectionAndKey
 
-    override fun fetchAuthorizationResult(
+    override fun onFetchAuthorizationResult(
         result: EncryptedAuthorizationData?,
         error: ApiErrorData?
     ) {

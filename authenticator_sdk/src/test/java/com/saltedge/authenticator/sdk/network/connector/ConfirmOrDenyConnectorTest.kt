@@ -91,7 +91,8 @@ class ConfirmOrDenyConnectorTest {
                 ConfirmDenyResultData(
                     success = true,
                     authorizationId = requestAuthorizationId
-                )
+                ),
+                connectionID = "333"
             )
         }
         confirmVerified(mockCallback)
@@ -111,7 +112,7 @@ class ConfirmOrDenyConnectorTest {
 
         connector.onResponse(mockCall, Response.success(ConfirmDenyResponseData()))
 
-        verify { mockCallback.onConfirmDenyFailure(createInvalidResponseError()) }
+        verify { mockCallback.onConfirmDenyFailure(createInvalidResponseError(), authorizationID = "444", connectionID = "333") }
         confirmVerified(mockCallback)
     }
 
@@ -135,7 +136,9 @@ class ConfirmOrDenyConnectorTest {
                     errorMessage = "Resource not found",
                     errorClassName = "NotFound",
                     accessToken = "accessToken"
-                )
+                ),
+                authorizationID = "444",
+                connectionID = "333"
             )
         }
         confirmVerified(mockCallback)
@@ -166,7 +169,18 @@ class ConfirmOrDenyConnectorTest {
             HEADER_KEY_ACCESS_TOKEN,
             "accessToken"
         ).build()
-        every { mockCallback.onConfirmDenyFailure(any()) } returns Unit
-        every { mockCallback.onConfirmDenySuccess(any()) } returns Unit
+        every {
+            mockCallback.onConfirmDenyFailure(
+                error = any(),
+                connectionID = "333",
+                authorizationID = "444"
+            )
+        } returns Unit
+        every {
+            mockCallback.onConfirmDenySuccess(
+                result = any(),
+                connectionID = "333"
+            )
+        } returns Unit
     }
 }

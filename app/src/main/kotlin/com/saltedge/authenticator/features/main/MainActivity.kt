@@ -141,11 +141,11 @@ class MainActivity : LockableActivity(),
         replaceFragmentInContainer(SettingsListFragment())
     }
 
-    override fun showAuthorizationDetailsView(connectionId: String, authorizationId: String) {
+    override fun showAuthorizationDetailsView(connectionID: String, authorizationID: String) {
         this.addFragment(
             AuthorizationDetailsFragment.newInstance(
-                connectionId = connectionId,
-                authorizationId = authorizationId
+                connectionId = connectionID,
+                authorizationId = authorizationID
             )
         )
     }
