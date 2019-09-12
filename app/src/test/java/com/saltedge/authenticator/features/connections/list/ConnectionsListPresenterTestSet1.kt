@@ -21,7 +21,6 @@
 package com.saltedge.authenticator.features.connections.list
 
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
 import com.saltedge.authenticator.app.ITEM_OPTIONS_REQUEST_CODE
 import com.saltedge.authenticator.features.connections.common.ConnectionOptions
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel

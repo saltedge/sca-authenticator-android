@@ -35,7 +35,7 @@ enum class ConnectionOptions(@DrawableRes val iconId: Int, @StringRes val textId
     ),
     RENAME(
         R.drawable.ic_rename_gray_24dp,
-        R.string.actions_rename_connection
+        R.string.actions_rename
     ),
     DELETE(
         R.drawable.ic_delete_gray_24dp,

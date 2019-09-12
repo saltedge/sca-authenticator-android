@@ -22,9 +22,6 @@ package com.saltedge.authenticator.features.connections.delete
 
 import android.content.DialogInterface
 import android.content.Intent
-import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
-import com.saltedge.authenticator.app.DELETE_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_GUID
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*
@@ -60,63 +57,6 @@ class DeleteConnectionPresenterTest : DeleteConnectionContract.View {
 
         assertNull(presenter.guid)
         assertNotNull(presenter.viewContract)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun getTitleTest() {
-        val presenter = DeleteConnectionPresenter(viewContract = this)
-        presenter.guid = null
-
-        assertThat(
-            presenter.viewTitle(DELETE_ALL_REQUEST_CODE),
-            equalTo(R.string.actions_delete_connections_query)
-        )
-
-        presenter.guid = "guid1"
-
-        assertThat(
-            presenter.viewTitle(DELETE_REQUEST_CODE),
-            equalTo(R.string.actions_delete_connection_query)
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun getPositiveActionTextTest() {
-        val presenter = DeleteConnectionPresenter(viewContract = this)
-        presenter.guid = null
-
-        assertThat(
-            presenter.viewPositiveActionText(DELETE_ALL_REQUEST_CODE),
-            equalTo(R.string.actions_delete_all)
-        )
-
-        presenter.guid = "guid1"
-
-        assertThat(
-            presenter.viewPositiveActionText(DELETE_REQUEST_CODE),
-            equalTo(R.string.actions_delete)
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun getMessageTest() {
-        val presenter = DeleteConnectionPresenter(viewContract = this)
-        presenter.guid = null
-
-        assertThat(
-            presenter.viewMessage(DELETE_ALL_REQUEST_CODE),
-            equalTo(R.string.connections_list_delete_all_connections)
-        )
-
-        presenter.guid = "guid1"
-
-        assertThat(
-            presenter.viewMessage(DELETE_REQUEST_CODE),
-            equalTo(R.string.connections_list_delete_connection)
-        )
     }
 
     @Test

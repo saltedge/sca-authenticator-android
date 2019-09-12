@@ -398,30 +398,6 @@ class ConnectionsListPresenterTestSet2 {
         Mockito.verify(mockView).updateViewContent()
     }
 
-    /**
-     * test onActivityResult, requestCode = DELETE_ALL_REQUEST_CODE, GUID == null.
-     * User confirmed all Connections deletion
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onActivityResultTest_DeleteAllConnections() {
-        val presenter = createPresenter(viewContract = mockView)
-        presenter.onActivityResult(
-            resultCode = Activity.RESULT_OK,
-            requestCode = DELETE_ALL_REQUEST_CODE,
-            data = Intent()
-        )
-
-        Mockito.verify(mockApiManager).revokeConnections(
-            listOf(
-                ConnectionAndKey(activeConnections.first(), mockPrivateKey)
-            ), presenter
-        )
-        Mockito.verify(mockConnectionsRepository).deleteAllConnections()
-        Mockito.verify(mockKeyStoreManager).deleteKeyPairs(listOf("guid1", "guid2", "guid3"))
-        Mockito.verify(mockView).updateViewContent()
-    }
-
     @Before
     fun setUp() {
         Mockito.doReturn(allConnections).`when`(mockConnectionsRepository).getAllConnections()

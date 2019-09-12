@@ -28,8 +28,9 @@
   <string name="actions_ok">Ok</string>
   <string name="actions_connect">Connect</string>
   <string name="actions_delete">Delete</string>
+  <string name="actions_submit">Submit</string>
   <string name="actions_delete_all">Delete All</string>
-  <string name="actions_delete_connection_query">Are you sure you want to delete this connection?</string>
+  <string name="actions_delete_connection_query">Delete connection</string>
   <string name="actions_delete_connections_query">Are you sure you want to delete all connections?</string>
   <string name="actions_deny">Deny</string>
   <string name="actions_enter_passcode">Enter Passcode</string>
@@ -38,7 +39,7 @@
   <string name="actions_proceed">Proceed</string>
   <string name="actions_reconnect">Reconnect</string>
   <string name="actions_refresh">Refresh</string>
-  <string name="actions_rename_connection">Rename Connection</string>
+  <string name="actions_rename">Rename</string>
   <string name="actions_contact_support">Contact Support</string>
   <string name="actions_search">Search</string>
   <string name="actions_skip">Skip</string>
@@ -96,7 +97,7 @@
   <string name="connections_list_no_connections">No Connections</string>
   <string name="connections_list_no_connections_description">You have no currently connected service providers. Connect one to start receiving authorizations for your actions (e.g. payments).</string>
   <string name="connections_list_delete_all_connections">Delete all connections and stop receiving confirmations until another Provider is connected.</string>
-  <string name="connections_list_delete_connection">Delete the connection and stop receiving confirmations for this Provider.</string>
+  <string name="connections_list_delete_connection">You will stop receiving authorization requests from provider. Are you sure you want to delete this connection?</string>
   <string name="connection_status_connected_on">Connected on</string>
   <string name="connection_status_inactive">Inactive connection. Remove or reconnect.</string>
   <string name="connect_status_encrypted_connection">Your connection is encrypted and\nsecurely transmitted using SSL</string>
