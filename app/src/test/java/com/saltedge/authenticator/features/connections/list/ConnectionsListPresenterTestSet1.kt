@@ -147,27 +147,6 @@ class ConnectionsListPresenterTestSet1 {
 
     @Test
     @Throws(Exception::class)
-    fun onMenuItemClickTest() {
-        Assert.assertFalse(createPresenter(viewContract = null).onMenuItemClick(menuItemId = -1))
-
-        Mockito.never()
-
-        val presenter = createPresenter(viewContract = mockView)
-
-        Assert.assertFalse(presenter.onMenuItemClick(menuItemId = -1))
-
-        Mockito.never()
-
-        Assert.assertTrue(presenter.onMenuItemClick(menuItemId = R.id.menu_delete_all))
-
-        Mockito.verify(mockView).showDeleteConnectionView(
-            connectionGuid = null,
-            requestCode = DELETE_ALL_REQUEST_CODE
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
     fun onViewClickTestCase1() {
         createPresenter(viewContract = null).onViewClick(viewId = -1)
 
