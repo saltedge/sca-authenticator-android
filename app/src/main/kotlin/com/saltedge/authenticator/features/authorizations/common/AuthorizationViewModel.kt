@@ -24,25 +24,28 @@ import com.saltedge.authenticator.sdk.model.AuthorizationData
 import com.saltedge.authenticator.sdk.model.AuthorizationID
 import com.saltedge.authenticator.sdk.model.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.ConnectionID
-import com.saltedge.authenticator.sdk.tools.remainedExpirationTime
-import com.saltedge.authenticator.sdk.tools.remainedSecondsTillExpire
+import com.saltedge.authenticator.sdk.tools.remainedSeconds
+import com.saltedge.authenticator.sdk.tools.remainedTimeDescription
 import com.saltedge.authenticator.sdk.tools.secondsBetweenDates
 import org.joda.time.DateTime
 import java.io.Serializable
 
 data class AuthorizationViewModel(
-    val authorizationId: AuthorizationID,
+    val authorizationID: AuthorizationID,
     val authorizationCode: String,
     val title: String,
     val description: String,
     val validSeconds: Int,
     val expiresAt: DateTime,
     val createdAt: DateTime,
-    val connectionId: ConnectionID,
+    val connectionID: ConnectionID,
     val connectionName: String,
     var connectionLogoUrl: String?,
     var isProcessing: Boolean
 ) : Serializable
+
+val AuthorizationViewModel.isIdle: Boolean
+    get() = !isProcessing
 
 /**
  * Check what authorization is expired
@@ -66,7 +69,7 @@ fun AuthorizationViewModel.isNotExpired(): Boolean = expiresAt.isAfterNow
  * @receiver authorization view model
  * @return integer, seconds
  */
-fun AuthorizationViewModel.remainedSecondsTillExpire(): Int = expiresAt.remainedSecondsTillExpire()
+fun AuthorizationViewModel.remainedSecondsTillExpire(): Int = expiresAt.remainedSeconds()
 
 /**
  * Calculates interval between current time and expiresAt time and prepare timestamp string result
@@ -75,7 +78,7 @@ fun AuthorizationViewModel.remainedSecondsTillExpire(): Int = expiresAt.remained
  * @return timestamp string in "minutes:seconds" format
  */
 fun AuthorizationViewModel.remainedTimeStringTillExpire(): String =
-        expiresAt.remainedSecondsTillExpire().remainedExpirationTime()
+        expiresAt.remainedSeconds().remainedTimeDescription()
 
 /**
  * Converts AuthorizationData in AuthorizationViewModel
@@ -88,13 +91,13 @@ fun AuthorizationData.toAuthorizationViewModel(connection: ConnectionAbs): Autho
     return AuthorizationViewModel(
         title = this.title,
         description = this.description,
-        connectionId = connection.id,
+        connectionID = connection.id,
         connectionName = connection.name,
         connectionLogoUrl = connection.logoUrl,
         validSeconds = authorizationExpirationPeriod(this),
         expiresAt = this.expiresAt,
         createdAt = this.createdAt ?: DateTime(0L),
-        authorizationId = this.id,
+        authorizationID = this.id,
         authorizationCode = this.authorizationCode ?: "",
         isProcessing = false
     )

@@ -401,7 +401,7 @@ class AuthorizationDetailsPresenterTest {
             viewModel = createAuthorizationData(0).toAuthorizationViewModel(connection1),
             quickConfirmMode = false
         )
-        presenter.onViewResume()
+        presenter.onFragmentResume()
 
         Mockito.verify(mockPollingService).start("1")
         Mockito.verifyNoMoreInteractions(mockView)
@@ -417,7 +417,7 @@ class AuthorizationDetailsPresenterTest {
             viewModel = createAuthorizationData(1).toAuthorizationViewModel(connection1),
             quickConfirmMode = false
         )
-        presenter.onViewResume()
+        presenter.onFragmentResume()
 
         Assert.assertTrue(presenter.sessionIsNotExpired)
         Mockito.verify(mockPollingService).start("1")
@@ -434,7 +434,7 @@ class AuthorizationDetailsPresenterTest {
             viewModel = createAuthorizationData(0).toAuthorizationViewModel(connection1),
             quickConfirmMode = false
         )
-        presenter.onViewPause()
+        presenter.onFragmentPause()
 
         Mockito.verify(mockPollingService).stop()
         Mockito.verify(mockView).stopTimer()
@@ -617,7 +617,7 @@ class AuthorizationDetailsPresenterTest {
         Mockito.clearInvocations(mockView)
         presenter.onTimerTick()
 
-        Mockito.verify(mockView).showTimeOutView()
+        Mockito.verify(mockView).closeViewWithTimeOutResults()
     }
 
     @Test

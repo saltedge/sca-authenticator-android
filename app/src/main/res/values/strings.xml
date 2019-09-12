@@ -104,6 +104,7 @@
   <string name="connect_status_provider_success_description">Your Provider has been successfully connected to the Authenticator App. You will receive a confirmation every time you make a payment.</string>
 
   <string name="authorizations_feature_title">Authorizations</string>
+  <string name="authorization_feature_title">Authorization</string>
   <string name="authorizations_nothing_confirm">Nothing to confirm</string>
   <string name="authorizations_nothing_confirm_description">You have no active authorizations. Once an action authorization is generated, it will be valid for a few minutes.</string>
   <string name="authorizations_processing">Processing…</string>

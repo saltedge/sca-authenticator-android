@@ -26,14 +26,12 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.viewpager.widget.ViewPager
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.features.authorizations.confirmPasscode.ConfirmPasscodeDialog
-import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsCardPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsContentPagerAdapter
+import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsHeaderPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.di.AuthorizationsListModule
 import com.saltedge.authenticator.sdk.model.ApiErrorData
 import com.saltedge.authenticator.sdk.model.getErrorMessage
@@ -42,23 +40,18 @@ import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.showAuthorizationConfirm
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_authorizations_list.*
-import java.util.*
 import javax.inject.Inject
-
-private const val RECYCLER_LAYOUT_STATE = "recycler_layout_state"
 
 class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.View {
 
     @Inject
-    lateinit var presenterContract: AuthorizationsListPresenter
+    lateinit var presenter: AuthorizationsListPresenter
     @Inject
     lateinit var biometricPrompt: BiometricPromptAbs
-    @Inject
-    lateinit var timeViewUpdateTimer: Timer
+    private val pagersScrollSyncronizer = PagersScrollSyncronizer()
+
+    private var headerAdapter: AuthorizationsHeaderPagerAdapter? = null
     private var contentAdapter: AuthorizationsContentPagerAdapter? = null
-    private var headerAdapter: AuthorizationsCardPagerAdapter? = null
-    private var scrollState = ViewPager.SCROLL_STATE_IDLE
-    private var scrollingPosition: Float = 0.0F
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,8 +64,6 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activity?.application?.let { contentAdapter = AuthorizationsContentPagerAdapter(it) }
-        activity?.application?.let { headerAdapter = AuthorizationsCardPagerAdapter(it) }
         activityComponents?.updateAppbarTitle(getString(R.string.authorizations_feature_title))
         return inflater.inflate(R.layout.fragment_authorizations_list, container, false)
     }
@@ -80,8 +71,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         try {
-            val listState: Parcelable? = savedInstanceState?.getParcelable(RECYCLER_LAYOUT_STATE)
-            reinitAndUpdateViewsContent(listState)
+            setupViews()
         } catch (e: Exception) {
             e.log()
         }
@@ -89,34 +79,34 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     override fun onStart() {
         super.onStart()
-        presenterContract.viewContract = this
-        biometricPrompt.resultCallback = presenterContract
-        contentAdapter?.listener = presenterContract
-        startListUpdateTimer()
+        presenter.viewContract = this
+        biometricPrompt.resultCallback = presenter
+        contentAdapter?.listItemClickListener = presenter
         clearAllNotifications()
     }
 
     override fun onResume() {
         super.onResume()
-        presenterContract.onFragmentStart()
+        presenter.onFragmentResume()
+        headerAdapter?.startTimer()
     }
 
     override fun onPause() {
-        presenterContract.onFragmentStop()
+        headerAdapter?.stopTimer()
+        presenter.onFragmentPause()
         super.onPause()
     }
 
     override fun onStop() {
-        stopListUpdateTimer()
         biometricPrompt.resultCallback = null
-        presenterContract.viewContract = null
-        contentAdapter?.listener = null
+        presenter.viewContract = null
+        contentAdapter?.listItemClickListener = null
         super.onStop()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        presenterContract.processFragmentResult(requestCode, resultCode, data)
+        presenter.processResultIntent(requestCode, resultCode, data)
     }
 
     override fun showError(error: ApiErrorData) {
@@ -125,30 +115,16 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         }
     }
 
-    override fun refreshTimerProgress() {
-        if (isVisible) headerAdapter?.notifyDataSetChanged()
-    }
-
-    override fun updateViewsContentInUiThread() {
-        activity?.runOnUiThread { if (this.isVisible) updateViewContent() }
-    }
-
-    override fun reinitAndUpdateViewsContent(listState: Parcelable?) {
-        activity?.let { updateViewContent() }
-    }
-
     override fun updateViewContent() {
         try {
-            contentAdapter?.data = presenterContract.viewModels
-            contentViewPager?.adapter = contentAdapter
-            headerAdapter?.data = presenterContract.viewModels
-            headerViewPager?.adapter = headerAdapter
-            val viewIsEmpty = contentAdapter?.isEmpty ?: false
-            emptyView?.setVisible(viewIsEmpty)
-            contentViewPager?.setVisible(!viewIsEmpty)
-            headerViewPager?.setVisible(!viewIsEmpty)
-            initHeaderViewPagerOnPageChangeListener()
-            initContentViewPagerOnPageChangeListener()
+            contentViewPager?.setVisible(presenter.showContentViews)
+            headerViewPager?.setVisible(presenter.showContentViews)
+            emptyView?.setVisible(presenter.showEmptyView)
+
+            if (presenter.showContentViews) {
+                headerAdapter?.data = presenter.viewModels
+                contentAdapter?.data = presenter.viewModels
+            }
         } catch (e: Exception) {
             e.log()
         }
@@ -164,90 +140,19 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     }
 
     override fun askUserPasscodeConfirmation() {
-        activity?.showDialogFragment(
-            ConfirmPasscodeDialog.newInstance(resultCallback = presenterContract)
-        )
+        activity?.showDialogFragment(ConfirmPasscodeDialog.newInstance(resultCallback = presenter))
     }
 
-    private fun initHeaderViewPagerOnPageChangeListener() {
-        headerViewPager?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {
-                scrollState = state
-                if (state == ViewPager.SCROLL_STATE_IDLE) {
-                    contentViewPager.setCurrentItem(headerViewPager.currentItem, false)
-                }
+    private fun setupViews() {
+        activity?.let {
+            contentAdapter = AuthorizationsContentPagerAdapter(it).apply {
+                contentViewPager?.adapter = this
             }
-
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-                scrollingPosition = positionOffset
-                if (scrollState != ViewPager.SCROLL_STATE_IDLE) {
-                    val headerWidth = headerViewPager.width.minus(
-                        headerViewPager.paddingStart
-                            .plus(headerViewPager.paddingEnd)
-                    ).toFloat()
-                    val contentWidth = contentViewPager.width.toFloat()
-                    contentViewPager?.scrollTo(
-                        (headerViewPager.scrollX.toFloat() * (contentWidth / headerWidth)).toInt(),
-                        contentViewPager.scrollY
-                    )
-                }
+            headerAdapter = AuthorizationsHeaderPagerAdapter(it, presenter).apply {
+                headerViewPager?.adapter = this
             }
-
-            override fun onPageSelected(position: Int) {}
-        })
-    }
-
-    private fun initContentViewPagerOnPageChangeListener() {
-        contentViewPager?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {
-                scrollState = state
-                if (state == ViewPager.SCROLL_STATE_IDLE) {
-                    headerViewPager.setCurrentItem(contentViewPager.currentItem, false)
-                }
-            }
-
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-                scrollingPosition = positionOffset
-//                TODO: Fix problem with the behavior of the headerViewPager https://github.com/saltedge/sca-authenticator-android/issues/4
-//                if (scrollState != ViewPager.SCROLL_STATE_IDLE) {
-//                    val headerWidth = headerViewPager.width.minus(
-//                        headerViewPager.paddingStart
-//                            .plus(headerViewPager.paddingEnd)
-//                    ).toFloat()
-//                    val contentWidth = contentViewPager.width.toFloat()
-//                    headerViewPager?.scrollTo(
-//                        (contentViewPager.scrollX.toFloat() * (headerWidth / contentWidth)).toInt(),
-//                        headerViewPager.scrollY
-//                    )
-//                }
-            }
-
-            override fun onPageSelected(position: Int) {}
-        })
-    }
-
-    private fun startListUpdateTimer() {
-        timeViewUpdateTimer = Timer()
-        timeViewUpdateTimer.schedule(object : TimerTask() {
-            override fun run() {
-                activity?.runOnUiThread {
-                     if (scrollingPosition == 0.0F) presenterContract.onTimerTick()
-                }
-            }
-        }, 0, TIME_VIEW_UPDATE_TIMEOUT)
-    }
-
-    private fun stopListUpdateTimer() {
-        timeViewUpdateTimer.cancel()
-        timeViewUpdateTimer.purge()
+        }
+        pagersScrollSyncronizer.initViews(headerViewPager, contentViewPager)
     }
 
     // Clear all system notification
@@ -256,8 +161,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     }
 
     private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addAuthorizationsListModule(AuthorizationsListModule())?.inject(
-            this
-        )
+        authenticatorApp?.appComponent
+            ?.addAuthorizationsListModule(AuthorizationsListModule())?.inject(this)
     }
 }

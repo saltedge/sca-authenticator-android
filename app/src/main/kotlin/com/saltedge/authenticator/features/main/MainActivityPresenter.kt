@@ -65,8 +65,7 @@ class MainActivityPresenter(
             intent.hasConnectionIdAndAuthorizationId -> {
                 viewContract.showAuthorizationDetailsView(
                     intent.connectionId,
-                    intent.authorizationId,
-                    quickConfirmMode = true
+                    intent.authorizationId
                 )
             }
             intent.hasDeepLink -> {

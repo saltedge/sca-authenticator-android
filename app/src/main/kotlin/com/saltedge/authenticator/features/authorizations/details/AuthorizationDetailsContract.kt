@@ -24,14 +24,15 @@ import com.saltedge.authenticator.features.authorizations.common.BaseAuthorizati
 
 interface AuthorizationDetailsContract {
     interface View : BaseAuthorizationViewContract {
-        fun updateTimeView(remainedSecondsTillExpire: Int, remainedTimeDescription: String)
-        fun setActionsLayoutVisibility(show: Boolean)
+        fun updateTimeViews()
+        fun setHeaderVisibility(show: Boolean)
+        fun setContentVisibility(show: Boolean)
         fun showError(errorMessage: String)
+        fun startTimer()
+        fun stopTimer()
         fun closeView()
         fun closeViewWithSuccessResult(authorizationId: String)
         fun closeViewWithErrorResult(errorMessage: String)
-        fun startTimer()
-        fun stopTimer()
-        fun showTimeOutView()
+        fun closeViewWithTimeOutResults()
     }
 }

@@ -28,11 +28,7 @@ interface MainActivityContract {
         fun showSettingsList()
         fun setSelectedTabbarItemId(menuId: Int)
         fun showConnectProvider(connectConfigurationLink: String)
-        fun showAuthorizationDetailsView(
-            connectionId: String,
-            authorizationId: String,
-            quickConfirmMode: Boolean
-        )
+        fun showAuthorizationDetailsView(connectionId: String, authorizationId: String)
 
         fun restartActivity()
         fun closeView()

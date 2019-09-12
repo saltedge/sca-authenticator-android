@@ -91,15 +91,14 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         presenterContract.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.menu_connections, menu)
-        deleteAllMenuItem = menu?.findItem(R.id.menu_delete_all)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_connections, menu)
+        deleteAllMenuItem = menu.findItem(R.id.menu_delete_all)
         deleteAllMenuItem?.isVisible = !adapter.isEmpty
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return item?.itemId?.let { presenterContract.onMenuItemClick(it) }
-            ?: super.onOptionsItemSelected(item)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return item.itemId.let { presenterContract.onMenuItemClick(it) }
     }
 
     override fun onClick(v: View?) {

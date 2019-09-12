@@ -65,7 +65,7 @@ class AuthorizationsListPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onFragmentStartTest() {
-        createPresenter(viewContract = mockView).onFragmentStart()
+        createPresenter(viewContract = mockView).onFragmentResume()
 
         Mockito.verify(mockPollingService).start()
     }
@@ -73,7 +73,7 @@ class AuthorizationsListPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onFragmentStopTest() {
-        createPresenter(viewContract = mockView).onFragmentStop()
+        createPresenter(viewContract = mockView).onFragmentPause()
 
         Mockito.verify(mockPollingService).stop()
     }
@@ -159,7 +159,7 @@ class AuthorizationsListPresenterTest {
         Mockito.verify(mockPollingService).stop()
         Mockito.verify(mockApiManager).denyAuthorization(
             connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
-            authorizationId = viewModel1.authorizationId,
+            authorizationId = viewModel1.authorizationID,
             authorizationCode = viewModel1.authorizationCode,
             resultCallback = presenter
         )
@@ -179,7 +179,7 @@ class AuthorizationsListPresenterTest {
         Mockito.clearInvocations(mockApiManager, mockPollingService)
         presenter.onListItemClick(
             itemIndex = 1,
-            itemCode = viewModel1.authorizationId,
+            itemCode = viewModel1.authorizationID,
             itemViewId = R.id.positiveActionView
         )
 
@@ -191,7 +191,7 @@ class AuthorizationsListPresenterTest {
         Mockito.clearInvocations(mockView, mockApiManager, mockPollingService)
         presenter.onListItemClick(
             itemIndex = 1,
-            itemCode = viewModel1.authorizationId,
+            itemCode = viewModel1.authorizationID,
             itemViewId = R.id.positiveActionView
         )
 
@@ -209,7 +209,7 @@ class AuthorizationsListPresenterTest {
         )
         Mockito.clearInvocations(mockApiManager, mockPollingService)
         presenter.onListItemClick(
-            itemCode = viewModel1.authorizationId,
+            itemCode = viewModel1.authorizationID,
             itemViewId = R.id.positiveActionView
         )
 
@@ -221,7 +221,7 @@ class AuthorizationsListPresenterTest {
         Mockito.clearInvocations(mockView, mockApiManager, mockPollingService)
         presenter.onListItemClick(
             itemIndex = 1,
-            itemCode = viewModel1.authorizationId,
+            itemCode = viewModel1.authorizationID,
             itemViewId = R.id.positiveActionView
         )
 
@@ -235,7 +235,7 @@ class AuthorizationsListPresenterTest {
     @Throws(Exception::class)
     fun onActivityResultTest_Case1() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.processFragmentResult(
+        presenter.processResultIntent(
             requestCode = SHOW_REQUEST_CODE,
             resultCode = Activity.RESULT_OK,
             data = null
@@ -243,7 +243,7 @@ class AuthorizationsListPresenterTest {
 
         Mockito.never()
 
-        presenter.processFragmentResult(
+        presenter.processResultIntent(
             requestCode = SHOW_REQUEST_CODE,
             resultCode = Activity.RESULT_CANCELED,
             data = Intent()
@@ -251,7 +251,7 @@ class AuthorizationsListPresenterTest {
 
         Mockito.never()
 
-        presenter.processFragmentResult(
+        presenter.processResultIntent(
             requestCode = SHOW_REQUEST_CODE,
             resultCode = Activity.RESULT_OK,
             data = Intent()
@@ -259,7 +259,7 @@ class AuthorizationsListPresenterTest {
 
         Mockito.never()
 
-        presenter.processFragmentResult(
+        presenter.processResultIntent(
             requestCode = DELETE_REQUEST_CODE,
             resultCode = Activity.RESULT_OK,
             data = Intent().putExtra(KEY_ID, "1")
@@ -269,10 +269,10 @@ class AuthorizationsListPresenterTest {
 
         Mockito.clearInvocations(mockView, mockApiManager, mockPollingService)
         presenter.viewContract = null
-        presenter.processFragmentResult(
+        presenter.processResultIntent(
             requestCode = SHOW_REQUEST_CODE,
             resultCode = Activity.RESULT_OK,
-            data = Intent().putExtra(KEY_ID, viewModel1.authorizationId)
+            data = Intent().putExtra(KEY_ID, viewModel1.authorizationID)
         )
 
         Mockito.verifyNoMoreInteractions(mockView, mockApiManager, mockPollingService)
@@ -294,10 +294,10 @@ class AuthorizationsListPresenterTest {
 
         Mockito.clearInvocations(mockView, mockApiManager, mockPollingService)
 
-        presenter.processFragmentResult(
+        presenter.processResultIntent(
             requestCode = SHOW_REQUEST_CODE,
             resultCode = Activity.RESULT_OK,
-            data = Intent().putExtra(KEY_ID, viewModel1.authorizationId)
+            data = Intent().putExtra(KEY_ID, viewModel1.authorizationID)
         )
 
         assertThat(presenter.viewModels, equalTo(listOf(viewModel2)))

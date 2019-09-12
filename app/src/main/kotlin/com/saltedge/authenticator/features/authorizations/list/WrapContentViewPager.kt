@@ -24,7 +24,9 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.viewpager.widget.ViewPager
 
-class WrapContentViewPager: ViewPager {
+private const val PADDING_TO_WIDTH_RATIO = 0.15
+
+class WrapContentViewPager : ViewPager {
 
     constructor(context: Context) : super(context)
 
@@ -37,9 +39,5 @@ class WrapContentViewPager: ViewPager {
         clipToPadding = false
         pageMargin = 0
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-    }
-
-    companion object{
-        const val PADDING_TO_WIDTH_RATIO = 0.18
     }
 }

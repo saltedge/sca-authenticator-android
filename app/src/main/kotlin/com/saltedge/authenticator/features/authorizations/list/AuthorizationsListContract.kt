@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
-import android.os.Parcelable
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.features.authorizations.common.BaseAuthorizationViewContract
 import com.saltedge.authenticator.sdk.model.ApiErrorData
@@ -29,9 +28,6 @@ interface AuthorizationsListContract {
 
     interface View : BaseAuthorizationViewContract {
         fun showError(error: ApiErrorData)
-        fun refreshTimerProgress()
-        fun updateViewsContentInUiThread()
-        fun reinitAndUpdateViewsContent(listState: Parcelable?)
         fun updateItem(viewModel: AuthorizationViewModel, itemId: Int)
     }
 }

@@ -20,20 +20,14 @@
  */
 package com.saltedge.authenticator.features.authorizations.list.adapters
 
-import android.content.Context
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager.widget.PagerAdapter
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 
-abstract class AuthorizationsPagerAdapter(
-    context: Context,
-    private val layoutId: Int,
-    initialData: List<AuthorizationViewModel> = emptyList()
-) : PagerAdapter() {
+abstract class AuthorizationsPagerAdapter : PagerAdapter() {
 
-    private var _data: MutableList<AuthorizationViewModel> = initialData.toMutableList()
+    private var _data: MutableList<AuthorizationViewModel> = mutableListOf()
     var data: List<AuthorizationViewModel>
         get() = _data
         set(value) {
@@ -52,10 +46,6 @@ abstract class AuthorizationsPagerAdapter(
         }
     }
 
-    override fun instantiateItem(container: ViewGroup, position: Int): Any { //move in adapter
-        return inflatePageView(position).apply { container.addView(this, 0) }
-    }
-
     override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
         super.setPrimaryItem(container, position, `object`)
         itemPosition = position
@@ -69,14 +59,4 @@ abstract class AuthorizationsPagerAdapter(
         container.removeView(view as View)
 
     override fun isViewFromObject(view: View, `object`: Any): Boolean = view == `object`
-
-    abstract fun updateViewContent(pageView: View, model: AuthorizationViewModel)
-
-    private fun inflatePageView(position: Int): View {
-        val pageView = layoutInflater.inflate(layoutId, null)
-        return pageView.apply { updateViewContent(this, data[position]) }
-    }
-
-    private val layoutInflater: LayoutInflater =
-        context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 }

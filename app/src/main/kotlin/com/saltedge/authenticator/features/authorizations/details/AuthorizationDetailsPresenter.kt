@@ -30,10 +30,8 @@ import com.saltedge.authenticator.sdk.model.*
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
 import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
-import com.saltedge.authenticator.sdk.tools.remainedExpirationTime
-import com.saltedge.authenticator.sdk.tools.secondsFromDate
-import com.saltedge.authenticator.tool.hasHTMLTags
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
+import org.joda.time.DateTime
 
 class AuthorizationDetailsPresenter(
     appContext: Context,
@@ -45,41 +43,15 @@ class AuthorizationDetailsPresenter(
 ) : BaseAuthorizationPresenter(appContext, biometricTools, apiManager),
     FetchAuthorizationContract {
 
-    private var pollingService: SingleAuthorizationPollingService =
-        apiManager.createSingleAuthorizationPollingService()
-    private var quickConfirmMode: Boolean = false
-    private var authorizationId: String? = null
-    private var confirmRequestIsInProgress: Boolean = false
     var viewContract: AuthorizationDetailsContract.View? = null
-
-    override fun baseViewContract(): BaseAuthorizationViewContract? = viewContract
-
-    fun setInitialData(
-        connectionId: String,
-        authorizationId: String?,
-        viewModel: AuthorizationViewModel?,
-        quickConfirmMode: Boolean
-    ) {
-        this.quickConfirmMode = quickConfirmMode
-        super.currentConnectionAndKey = createConnectionAndKey(
-            connectionId,
-            connectionsRepository,
-            keyStoreManager
-        )
-        super.currentViewModel = viewModel
-        this.authorizationId = viewModel?.authorizationId ?: authorizationId
-        if (!initialValuesValid) viewContract?.closeView()
-    }
-    val remainedTimeDescription: String
-        get() = currentViewModel?.expiresAt?.remainedExpirationTime() ?: ""
-    val secondsFromStartDate: Int
-        get() = currentViewModel?.createdAt?.secondsFromDate() ?: 0
-    val maxProgressSeconds: Int
-        get() = currentViewModel?.validSeconds ?: 0
     val providerName: String
         get() = currentViewModel?.connectionName ?: ""
     val providerLogo: String
         get() = currentViewModel?.connectionLogoUrl ?: ""
+    val startTime: DateTime?
+        get() = currentViewModel?.createdAt
+    val endTime: DateTime?
+        get() = currentViewModel?.expiresAt
     val title: String
         get() {
             return if (confirmRequestIsInProgress) appContext.getString(R.string.authorizations_processing)
@@ -87,29 +59,33 @@ class AuthorizationDetailsPresenter(
         }
     val description: String
         get() = currentViewModel?.description ?: ""
-    val shouldShowTimeView: Boolean
-        get() = currentViewModel != null && !confirmRequestIsInProgress
-    val shouldShowProgressView: Boolean
-        get() = confirmRequestIsInProgress
-    val shouldShowActionsLayout: Boolean
-        get() = !shouldShowProgressView && sessionIsNotExpired
     val sessionIsNotExpired: Boolean
         get() = currentViewModel?.isNotExpired() ?: false
-    val shouldShowProviderLogo: Boolean
-        get() = providerLogo.isNotEmpty()
-    val shouldShowDescriptionWebView: Boolean
-        get() = description.hasHTMLTags()
-    val shouldShowDescriptionTextView: Boolean
-        get() = !shouldShowDescriptionWebView
+    private var pollingService: SingleAuthorizationPollingService =
+        apiManager.createSingleAuthorizationPollingService()
+    private var authorizationId: String? = null
+    private var confirmRequestIsInProgress: Boolean = false
+    private val initialValuesValid: Boolean
+        get() = currentConnectionAndKey != null && authorizationId?.isNotEmpty() == true
 
-    fun onViewResume() {
+    fun setInitialData(connectionId: String?, authorizationId: String?) {
+        super.currentConnectionAndKey = createConnectionAndKey(
+            connectionID = connectionId ?: "",
+            repository = connectionsRepository,
+            keyStoreManager = keyStoreManager
+        )
+        this.authorizationId = authorizationId
+    }
+
+    fun onFragmentResume() {
         startPolling()
         if (sessionIsNotExpired) {
             viewContract?.startTimer()
+            updateViewContent()
         }
     }
 
-    fun onViewPause() {
+    fun onFragmentPause() {
         viewContract?.stopTimer()
         stopPolling()
     }
@@ -117,10 +93,7 @@ class AuthorizationDetailsPresenter(
     fun onViewClick(viewId: Int) {
         when (viewId) {
             R.id.positiveActionView, R.id.negativeActionView -> {
-                onAuthorizeActionSelected(
-                    isConfirmed = viewId == R.id.positiveActionView,
-                    quickConfirmMode = quickConfirmMode
-                )
+                onAuthorizeActionSelected(confirmRequest = viewId == R.id.positiveActionView)
             }
             R.id.mainActionView -> viewContract?.closeView()
         }
@@ -128,16 +101,13 @@ class AuthorizationDetailsPresenter(
 
     fun onTimerTick() {
         if (currentViewModel?.isNotExpired() == true) {
-            currentViewModel?.let {
-                viewContract?.updateTimeView(
-                    remainedSecondsTillExpire = it.remainedSecondsTillExpire(),
-                    remainedTimeDescription = it.remainedTimeStringTillExpire()
-                )
-            }
+            viewContract?.updateTimeViews()
         } else {
-            viewContract?.showTimeOutView()
+            viewContract?.closeViewWithTimeOutResults()
         }
     }
+
+    override fun baseViewContract(): BaseAuthorizationViewContract? = viewContract
 
     override fun getConnectionData(): ConnectionAndKey? = currentConnectionAndKey
 
@@ -149,14 +119,19 @@ class AuthorizationDetailsPresenter(
         error?.let { processAuthorizationError(it) }
     }
 
-    override fun onConfirmDenySuccess(authorizationId: String, success: Boolean) {
+    override fun onConfirmDenySuccess(
+        authorizationId: String,
+        connectionID: ConnectionID,
+        success: Boolean
+    ) {
         if (success) {
             viewContract?.closeViewWithSuccessResult(authorizationId)
         }
     }
 
     override fun updateConfirmProgressState(
-        authorizationId: String?,
+        connectionID: ConnectionID,
+        authorizationID: AuthorizationID,
         confirmRequestIsInProgress: Boolean
     ) {
         if (confirmRequestIsInProgress) stopPolling() else startPolling()
@@ -176,8 +151,13 @@ class AuthorizationDetailsPresenter(
         pollingService.stop()
     }
 
-    private val initialValuesValid: Boolean
-        get() = currentConnectionAndKey != null && authorizationId?.isNotEmpty() == true
+    private fun updateViewContent() {
+        viewContract?.setHeaderVisibility(show = currentViewModel != null)
+        viewContract?.setContentVisibility(show = currentViewModel != null)
+        if (currentViewModel != null) {
+            viewContract?.updateViewContent()
+        }//TODO show progress or invalid IDs error
+    }
 
     private fun processAuthorizationResult(result: EncryptedAuthorizationData) {
         cryptoTools.decryptAuthorizationData(
@@ -185,8 +165,7 @@ class AuthorizationDetailsPresenter(
             rsaPrivateKey = currentConnectionAndKey?.key
         )?.let {
             val newViewModel = it.toAuthorizationViewModel(
-                currentConnectionAndKey?.connection
-                    ?: return
+                connection = currentConnectionAndKey?.connection ?: return
             )
             if (super.currentViewModel != newViewModel) {
                 val receivedFirstNotNullModel = super.currentViewModel == null
