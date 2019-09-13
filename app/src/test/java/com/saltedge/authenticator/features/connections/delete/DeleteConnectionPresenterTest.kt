@@ -22,6 +22,8 @@ package com.saltedge.authenticator.features.connections.delete
 
 import android.content.DialogInterface
 import android.content.Intent
+import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_GUID
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*
@@ -80,5 +82,37 @@ class DeleteConnectionPresenterTest : DeleteConnectionContract.View {
 
         assertTrue(dismissViewCallback)
         assertThat(resultIntentCallback!!.getStringExtra(KEY_GUID), equalTo("test"))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun viewTitleTest() {
+        val presenter = DeleteConnectionPresenter(viewContract = this)
+        presenter.guid = null
+
+        assertThat(
+            presenter.viewTitle(DELETE_ALL_REQUEST_CODE),
+            equalTo(R.string.ui_dialog_clear_data_title)
+        )
+
+        presenter.guid = "guid1"
+
+        assertThat(presenter.viewTitle(0), equalTo(R.string.ui_dialog_delete_title))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun viewMessageTest() {
+        val presenter = DeleteConnectionPresenter(viewContract = this)
+        presenter.guid = null
+
+        assertThat(
+            presenter.viewMessage(DELETE_ALL_REQUEST_CODE),
+            equalTo(R.string.ui_dialog_clear_data_question)
+        )
+
+        presenter.guid = "guid1"
+
+        assertThat(presenter.viewMessage(0), equalTo(R.string.ui_dialog_delete_question))
     }
 }

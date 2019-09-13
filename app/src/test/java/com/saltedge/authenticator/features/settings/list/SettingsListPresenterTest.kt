@@ -22,7 +22,10 @@ package com.saltedge.authenticator.features.settings.list
 
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
+import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
+import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import org.hamcrest.CoreMatchers.equalTo
@@ -222,10 +225,16 @@ class SettingsListPresenterTest {
     private val mockView = Mockito.mock(SettingsListContract.View::class.java)
     private val mockPreferences = Mockito.mock(PreferenceRepositoryAbs::class.java)
     private val mockBiometricTools = Mockito.mock(BiometricToolsAbs::class.java)
+    private val mockKeyStoreManager = Mockito.mock(KeyStoreManagerAbs::class.java)
+    private val mockApiManager = Mockito.mock(AuthenticatorApiManagerAbs::class.java)
+    private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
 
     private fun createPresenter(viewContract: SettingsListContract.View? = null): SettingsListPresenter {
         return SettingsListPresenter(
             TestAppTools.applicationContext,
+            mockKeyStoreManager,
+            mockApiManager,
+            mockConnectionsRepository,
             mockPreferences,
             mockBiometricTools
         )
