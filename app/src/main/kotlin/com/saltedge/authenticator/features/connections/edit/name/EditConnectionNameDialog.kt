@@ -48,7 +48,7 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val adb = AlertDialog.Builder(activity!!)
-            .setTitle(R.string.actions_rename)
+            .setTitle(R.string.ui_dialog_rename_title)
             .setPositiveButton(R.string.actions_ok, this)
             .setNegativeButton(R.string.actions_cancel, this)
         val view = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_name, null)

@@ -56,6 +56,6 @@ class HeaderItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
 
     private fun needDrawBottomDelimiter(parent: RecyclerView, view: View): Boolean {
         val viewPosition = parent.getChildAdapterPosition(view)
-        return viewPosition == 0 || viewPosition == 3
+        return viewPosition == 0 || viewPosition == 3 || viewPosition == 5
     }
 }

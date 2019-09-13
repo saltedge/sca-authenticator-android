@@ -59,6 +59,11 @@ class SettingsListPresenter @Inject constructor(
             SettingsItemViewModel(
                 titleId = R.string.settings_report_bug,
                 itemIsClickable = true
+            ),
+            SettingsItemViewModel(
+                titleId = R.string.settings_clear_all_data,
+                itemIsClickable = true,
+                colorResId = R.color.red
             )
         )
     }
