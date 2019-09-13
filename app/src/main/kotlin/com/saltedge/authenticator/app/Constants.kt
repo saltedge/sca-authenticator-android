@@ -25,6 +25,7 @@ const val ITEM_OPTIONS_REQUEST_CODE = 323
 const val RENAME_REQUEST_CODE = 324
 const val DELETE_REQUEST_CODE = 325
 const val SHOW_REQUEST_CODE = 326
+const val DELETE_ALL_REQUEST_CODE = 327
 const val CAMERA_PERMISSION_REQUEST_CODE = 328
 
 const val KEY_ACCESS_TOKEN = "accessToken" // used for database queries

@@ -22,10 +22,22 @@ package com.saltedge.authenticator.features.connections.delete
 
 import android.content.DialogInterface
 import android.content.Intent
+import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_GUID
 
 class DeleteConnectionPresenter(var viewContract: DeleteConnectionContract.View?) {
     var guid: String? = null
+
+    fun viewTitle(requestCode: Int): Int {
+        return if (requestCode == DELETE_ALL_REQUEST_CODE) R.string.ui_dialog_clear_data_title
+        else R.string.ui_dialog_delete_title
+    }
+
+    fun viewMessage(requestCode: Int): Int {
+        return if (requestCode == DELETE_ALL_REQUEST_CODE) R.string.ui_dialog_clear_data_question
+        else R.string.ui_dialog_delete_question
+    }
 
     fun onActionViewClick(dialogActionId: Int) {
         when (dialogActionId) {

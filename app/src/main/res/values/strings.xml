@@ -141,6 +141,8 @@
     <string name="fingerprint_scan_unlock">Scan your Fingerprint to unlock app</string>
     <string name="fingerprint_touch_sensor">Touch Sensor</string>
 
+    <string name="ui_dialog_clear_data_title">Delete all data?</string>
+    <string name="ui_dialog_clear_data_question">All app data including service providers, user data and settings will be permanently deleted.</string>
     <string name="ui_dialog_rename_title">Rename connection</string>
     <string name="ui_dialog_delete_title">Delete connection</string>
     <string name="ui_dialog_delete_question">You will stop receiving authorization requests from provider. Are you sure you want to delete this connection?</string>

@@ -20,18 +20,34 @@
  */
 package com.saltedge.authenticator.features.settings.list
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
+import com.saltedge.authenticator.model.db.Connection
+import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.model.db.isActive
+import com.saltedge.authenticator.model.db.toConnectionAndKey
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
+import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeResult
+import com.saltedge.authenticator.sdk.model.ApiErrorData
+import com.saltedge.authenticator.sdk.model.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.Token
+import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import javax.inject.Inject
 
 class SettingsListPresenter @Inject constructor(
     private val appContext: Context,
+    private val keyStoreManager: KeyStoreManagerAbs,
+    private val apiManager: AuthenticatorApiManagerAbs,
+    private val connectionsRepository: ConnectionsRepositoryAbs,
     private val preferences: PreferenceRepositoryAbs,
     private val biometricTools: BiometricToolsAbs
-) : SettingsListContract.Presenter {
+) : SettingsListContract.Presenter, ConnectionsRevokeResult {
 
     override var viewContract: SettingsListContract.View? = null
 
@@ -68,6 +84,15 @@ class SettingsListPresenter @Inject constructor(
         )
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (data == null || resultCode != Activity.RESULT_OK) return
+        when (requestCode) {
+            DELETE_ALL_REQUEST_CODE -> onUserConfirmedDeleteAllConnections()
+        }
+    }
+
+    override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?) {}
+
     override fun onListItemCheckedStateChanged(itemId: Int, checked: Boolean) {
         when (itemId) {
             R.string.settings_fingerprint ->
@@ -93,6 +118,27 @@ class SettingsListPresenter @Inject constructor(
                 }
             R.string.about_feature_title -> viewContract?.showAboutList()
             R.string.settings_report_bug -> viewContract?.openMailApp()
+            R.string.settings_clear_all_data -> viewContract?.showDeleteConnectionView(requestCode = DELETE_ALL_REQUEST_CODE)
         }
+    }
+
+    private fun onUserConfirmedDeleteAllConnections() {
+        sendRevokeRequestForConnections(connectionsRepository.getAllActiveConnections())
+        deleteAllConnectionsAndKeys()
+    }
+
+    private fun deleteAllConnectionsAndKeys() {
+        val connectionGuids = connectionsRepository.getAllConnections().map { it.guid }
+        keyStoreManager.deleteKeyPairs(connectionGuids)
+        connectionsRepository.deleteAllConnections()
+        preferences.clearUserPreferences()
+    }
+
+
+    private fun sendRevokeRequestForConnections(connections: List<Connection>) {
+        val connectionsAndKeys: List<ConnectionAndKey> = connections.filter { it.isActive() }
+            .mapNotNull { it.toConnectionAndKey(keyStoreManager) }
+
+        apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = this)
     }
 }
