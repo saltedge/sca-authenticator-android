@@ -94,11 +94,11 @@
 
     <!--BANKS LIST-->
     <style name="ConnectionLogoImage">
-        <item name="android:layout_width">@dimen/dp_60</item>
-        <item name="android:layout_height">@dimen/dp_60</item>
+        <item name="android:layout_width">@dimen/dp_48</item>
+        <item name="android:layout_height">@dimen/dp_48</item>
         <item name="android:layout_marginStart">@dimen/dp_15</item>
         <item name="android:layout_marginEnd">@dimen/dp_15</item>
-        <item name="android:padding">@dimen/dp_18</item>
+        <item name="android:padding">@dimen/dp_12</item>
         <item name="android:scaleType">fitCenter</item>
     </style>
 </resources>

@@ -35,8 +35,8 @@ class DeleteConnectionPresenter(var viewContract: DeleteConnectionContract.View?
     }
 
     fun viewMessage(requestCode: Int): Int {
-        return if (requestCode == DELETE_ALL_REQUEST_CODE) R.string.ui_dialog_clear_data_question
-        else R.string.ui_dialog_delete_question
+        return if (requestCode == DELETE_ALL_REQUEST_CODE) R.string.ui_dialog_clear_data_message
+        else R.string.ui_dialog_delete_message
     }
 
     fun onActionViewClick(dialogActionId: Int) {

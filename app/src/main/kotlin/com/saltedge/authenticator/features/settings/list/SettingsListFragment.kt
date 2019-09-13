@@ -121,20 +121,19 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View,
 
     private fun setupViews() {
         try {
-            val layoutManager = LinearLayoutManager(activity)
+            val context = activity ?: return
+            val layoutManager = LinearLayoutManager(context)
             recyclerView?.layoutManager = layoutManager
             val dividerItemDecoration = DividerItemDecoration(context, layoutManager.orientation)
-            ContextCompat.getDrawable(context ?: return, R.drawable.shape_full_divider)?.let {
+            ContextCompat.getDrawable(context, R.drawable.shape_full_divider)?.let {
                 dividerItemDecoration.setDrawable(it)
             }
-            context?.let {
-                recyclerView?.addItemDecoration(
-                    HeaderItemDecoration(
-                        context = it,
-                        delimiterPositions = presenterContract.getPositionsOfDelimiters()
-                    )
+            recyclerView?.addItemDecoration(
+                HeaderItemDecoration(
+                    context = context,
+                    delimiterPositions = presenterContract.getPositionsOfDelimiters()
                 )
-            }
+            )
             recyclerView?.addItemDecoration(dividerItemDecoration)
             recyclerView?.adapter = SettingsAdapter(this).apply {
                 data = presenterContract.getListItems()

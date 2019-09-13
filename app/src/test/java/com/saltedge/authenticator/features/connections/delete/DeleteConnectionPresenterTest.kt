@@ -108,11 +108,11 @@ class DeleteConnectionPresenterTest : DeleteConnectionContract.View {
 
         assertThat(
             presenter.viewMessage(DELETE_ALL_REQUEST_CODE),
-            equalTo(R.string.ui_dialog_clear_data_question)
+            equalTo(R.string.ui_dialog_clear_data_message)
         )
 
         presenter.guid = "guid1"
 
-        assertThat(presenter.viewMessage(0), equalTo(R.string.ui_dialog_delete_question))
+        assertThat(presenter.viewMessage(0), equalTo(R.string.ui_dialog_delete_message))
     }
 }
