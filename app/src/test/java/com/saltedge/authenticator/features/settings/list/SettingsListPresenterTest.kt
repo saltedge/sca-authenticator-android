@@ -126,6 +126,13 @@ class SettingsListPresenterTest {
 
     @Test
     @Throws(Exception::class)
+    fun getPositionsOfDelimitersTest() {
+        val presenter = createPresenter(viewContract = mockView)
+        assertThat(presenter.getPositionsOfDelimiters(), equalTo(arrayOf(0, 3, 5)))
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun onListItemCheckedStateChangedTest_screenshot() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.onListItemCheckedStateChanged(

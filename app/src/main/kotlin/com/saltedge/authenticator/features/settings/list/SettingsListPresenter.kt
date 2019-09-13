@@ -117,6 +117,8 @@ class SettingsListPresenter @Inject constructor(
         }
     }
 
+    override fun getPositionsOfDelimiters(): Array<Int> = arrayOf(0, 3, 5)
+
     private fun onUserConfirmedDeleteAllConnections() {
         sendRevokeRequestForConnections(connectionsRepository.getAllActiveConnections())
         deleteAllConnectionsAndKeys()
