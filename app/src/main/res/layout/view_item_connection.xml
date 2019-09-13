@@ -19,6 +19,7 @@
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/transparent"
@@ -37,6 +38,7 @@
         <ImageView
             android:id="@+id/logoImageView"
             style="@style/ConnectionLogoImage"
+            android:background="@drawable/shape_gray_circle"
             android:contentDescription="@null" />
 
         <LinearLayout
@@ -52,7 +54,8 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="bottom"
-                android:maxLines="1" />
+                android:maxLines="1"
+                tools:text="Demobank" />
 
             <TextView
                 android:id="@+id/subTitleView"
@@ -60,7 +63,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:maxLines="1" />
+                android:maxLines="1"
+                tools:text="Connected on 12 sept. 2019, 18:02" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
