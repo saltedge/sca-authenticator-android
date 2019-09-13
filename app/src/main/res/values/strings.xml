@@ -27,7 +27,6 @@
     <string name="actions_ok">Ok</string>
     <string name="actions_connect">Connect</string>
     <string name="actions_delete">Delete</string>
-    <string name="actions_submit">Submit</string>
     <string name="actions_delete_all">Delete All</string>
     <string name="actions_deny">Deny</string>
     <string name="actions_enter_passcode">Enter Passcode</string>

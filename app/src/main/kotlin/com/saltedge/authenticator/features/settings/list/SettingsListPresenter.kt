@@ -32,10 +32,7 @@ import com.saltedge.authenticator.model.db.isActive
 import com.saltedge.authenticator.model.db.toConnectionAndKey
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeResult
-import com.saltedge.authenticator.sdk.model.ApiErrorData
 import com.saltedge.authenticator.sdk.model.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.Token
 import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import javax.inject.Inject
@@ -47,7 +44,7 @@ class SettingsListPresenter @Inject constructor(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val preferences: PreferenceRepositoryAbs,
     private val biometricTools: BiometricToolsAbs
-) : SettingsListContract.Presenter, ConnectionsRevokeResult {
+) : SettingsListContract.Presenter {
 
     override var viewContract: SettingsListContract.View? = null
 
@@ -90,8 +87,6 @@ class SettingsListPresenter @Inject constructor(
             DELETE_ALL_REQUEST_CODE -> onUserConfirmedDeleteAllConnections()
         }
     }
-
-    override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?) {}
 
     override fun onListItemCheckedStateChanged(itemId: Int, checked: Boolean) {
         when (itemId) {
@@ -139,6 +134,6 @@ class SettingsListPresenter @Inject constructor(
         val connectionsAndKeys: List<ConnectionAndKey> = connections.filter { it.isActive() }
             .mapNotNull { it.toConnectionAndKey(keyStoreManager) }
 
-        apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = this)
+        apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = null)
     }
 }

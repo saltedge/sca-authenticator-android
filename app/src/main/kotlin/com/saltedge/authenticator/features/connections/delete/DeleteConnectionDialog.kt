@@ -46,7 +46,7 @@ class DeleteConnectionDialog :
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(activity!!)
             .setTitle(presenter.viewTitle(targetRequestCode))
-            .setPositiveButton(R.string.actions_submit, this)
+            .setPositiveButton(R.string.actions_ok, this)
             .setNegativeButton(R.string.actions_cancel, this)
             .setMessage(presenter.viewMessage(targetRequestCode))
             .create()
