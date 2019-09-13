@@ -72,7 +72,6 @@ class ConnectionsListPresenter @Inject constructor(
                     KEY_GUID
                 ) ?: return
             )
-            DELETE_ALL_REQUEST_CODE -> onUserConfirmedDeleteAllConnections()
         }
     }
 
@@ -82,13 +81,6 @@ class ConnectionsListPresenter @Inject constructor(
             options = createOptionsMenuList(connectionGuid),
             requestCode = ITEM_OPTIONS_REQUEST_CODE
         )
-    }
-
-    override fun onMenuItemClick(menuItemId: Int): Boolean {
-        return if (menuItemId == R.id.menu_delete_all) {
-            viewContract?.showDeleteConnectionView(requestCode = DELETE_ALL_REQUEST_CODE)
-            true
-        } else false
     }
 
     override fun onViewClick(viewId: Int) {
@@ -138,12 +130,6 @@ class ConnectionsListPresenter @Inject constructor(
         )
     }
 
-    private fun onUserConfirmedDeleteAllConnections() {
-        sendRevokeRequestForConnections(connectionsRepository.getAllActiveConnections())
-        deleteAllConnectionsAndKeys()
-        viewContract?.updateViewContent()
-    }
-
     private fun onUserConfirmedDeleteConnection(connectionGuid: GUID) {
         connectionsRepository.getByGuid(connectionGuid)?.let { connection ->
             sendRevokeRequestForConnections(listOf(connection))
@@ -157,12 +143,6 @@ class ConnectionsListPresenter @Inject constructor(
             .mapNotNull { it.toConnectionAndKey(keyStoreManager) }
 
         apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = this)
-    }
-
-    private fun deleteAllConnectionsAndKeys() {
-        val connectionGuids = connectionsRepository.getAllConnections().map { it.guid }
-        keyStoreManager.deleteKeyPairs(connectionGuids)
-        connectionsRepository.deleteAllConnections()
     }
 
     private fun deleteConnectionsAndKeys(connectionGuid: GUID) {

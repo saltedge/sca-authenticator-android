@@ -9,7 +9,10 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
 
-class HeaderItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
+/**
+ * Draw large delimiters between some of settings items
+ */
+class HeaderItemDecoration(context: Context, private val delimiterPositions: Array<Int>) : RecyclerView.ItemDecoration() {
 
     private val spacePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = ContextCompat.getColor(context, R.color.gray_extra_light)
@@ -54,8 +57,11 @@ class HeaderItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
         }
     }
 
+    /**
+     * Determines at which positions the header delimiters should be drawn
+     */
     private fun needDrawBottomDelimiter(parent: RecyclerView, view: View): Boolean {
         val viewPosition = parent.getChildAdapterPosition(view)
-        return viewPosition == 0 || viewPosition == 3
+        return delimiterPositions.contains(viewPosition)
     }
 }

@@ -56,7 +56,6 @@ interface ConnectionsListContract {
         var viewContract: View?
         fun getListItems(): List<ConnectionViewModel>
         fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
-        fun onMenuItemClick(menuItemId: Int): Boolean
         fun onListItemClick(connectionGuid: String)
         fun onViewClick(viewId: Int)
     }

@@ -54,7 +54,7 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
 
     override fun revokeConnections(
         connectionsAndKeys: List<ConnectionAndKey>,
-        resultCallback: ConnectionsRevokeResult
+        resultCallback: ConnectionsRevokeResult?
     ) {
         ConnectionsRevokeConnector(RestClient.apiInterface, resultCallback)
             .revokeTokensFor(connectionsAndKeys)

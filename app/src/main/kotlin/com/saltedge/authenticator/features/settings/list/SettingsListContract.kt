@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.settings.list
 
+import android.content.Intent
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 
 interface SettingsListContract {
@@ -31,6 +32,7 @@ interface SettingsListContract {
         fun showAboutList()
         fun openMailApp()
         fun showInfo(message: Int)
+        fun showDeleteConnectionView(requestCode: Int)
     }
 
     interface Presenter {
@@ -38,5 +40,7 @@ interface SettingsListContract {
         fun getListItems(): List<SettingsItemViewModel>
         fun onListItemCheckedStateChanged(itemId: Int, checked: Boolean)
         fun onListItemClick(itemId: Int)
+        fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+        fun getPositionsOfDelimiters(): Array<Int>
     }
 }

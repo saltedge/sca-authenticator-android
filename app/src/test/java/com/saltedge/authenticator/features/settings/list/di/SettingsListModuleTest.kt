@@ -20,7 +20,9 @@
  */
 package com.saltedge.authenticator.features.settings.list.di
 
+import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import org.junit.Assert
@@ -39,11 +41,15 @@ class SettingsListModuleTest {
             SettingsListModule().providePresenter(
                 TestAppTools.applicationContext,
                 mockPreferences,
-                mockBiometricTools
+                mockBiometricTools,
+                mockConnectionsRepository,
+                mockKeyStoreManager
             )
         )
     }
 
     private val mockPreferences = Mockito.mock(PreferenceRepositoryAbs::class.java)
     private val mockBiometricTools = Mockito.mock(BiometricToolsAbs::class.java)
+    private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
+    private val mockKeyStoreManager = Mockito.mock(KeyStoreManagerAbs::class.java)
 }
