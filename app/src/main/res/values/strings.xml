@@ -137,7 +137,7 @@
 
     <string name="fingerprint_confirmed">Fingerprint confirmed</string>
     <string name="fingerprint_scan_continue">Scan your Fingerprint to continue</string>
-    <string name="fingerprint_scan_unlock">Scan your Fingerprint to unlock app</string>
+    <string name="fingerprint_scan_unlock">Unlock the app with biometrics</string>
     <string name="fingerprint_touch_sensor">Touch Sensor</string>
 
     <string name="ui_dialog_clear_data_title">Delete all data?</string>
