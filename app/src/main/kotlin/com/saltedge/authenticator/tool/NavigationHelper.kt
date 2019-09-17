@@ -130,10 +130,10 @@ fun FragmentActivity.finishFragment() {
  *
  * @receiver fragment activity
  */
-fun FragmentActivity.startMailApp(supportEmail: String? = DEFAULT_SUPPORT_EMAIL_LINK) {
+fun FragmentActivity.startMailApp(supportEmail: String? = null) {
     try {
         this.startActivityForResult(Intent(Intent.ACTION_SENDTO)
-            .apply { data = Uri.parse("mailto:$supportEmail") }, 0
+            .apply { data = Uri.parse("mailto:${supportEmail ?: DEFAULT_SUPPORT_EMAIL_LINK}") }, 0
         )
     } catch (ignored: IllegalStateException) {
     } catch (ignored: ActivityNotFoundException) {
