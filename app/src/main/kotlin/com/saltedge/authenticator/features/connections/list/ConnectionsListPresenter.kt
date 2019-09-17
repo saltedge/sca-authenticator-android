@@ -29,6 +29,7 @@ import com.saltedge.authenticator.features.connections.common.ConnectionOptions
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.model.db.*
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
+import com.saltedge.authenticator.sdk.constants.DEFAULT_SUPPORT_EMAIL_LINK
 import com.saltedge.authenticator.sdk.constants.KEY_NAME
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeResult
 import com.saltedge.authenticator.sdk.model.ApiErrorData
@@ -95,7 +96,7 @@ class ConnectionsListPresenter @Inject constructor(
         when (item) {
             ConnectionOptions.REPORT_PROBLEM -> {
                 viewContract?.showSupportView(
-                    supportEmail = connectionsRepository.getByGuid(connectionGuid)?.supportEmail
+                    supportEmail = connectionsRepository.getByGuid(connectionGuid)?.supportEmail ?: DEFAULT_SUPPORT_EMAIL_LINK
                 )
             }
             ConnectionOptions.RENAME -> onRenameOptionSelected(connectionGuid = connectionGuid)
