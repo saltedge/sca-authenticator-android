@@ -76,7 +76,7 @@ class QrScannerActivity : AppCompatActivity() {
 
     private fun setupViews() {
         setSupportActionBar(toolbarView)
-        toolbarView?.navigationIcon = getDrawable(R.drawable.ic_arrow_back_white_24dp)
+        toolbarView?.navigationIcon = getDrawable(R.drawable.ic_close_white_24dp)
         toolbarView?.setNavigationOnClickListener { finish() }
 
         setupBarcodeDetector()

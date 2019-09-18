@@ -50,5 +50,6 @@ interface ConnectProviderContract {
         fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token)
         fun webAuthFinishError(errorClass: String, errorMessage: String?)
         fun onViewClick(viewId: Int)
+        fun getTitleResId(): Int
     }
 }

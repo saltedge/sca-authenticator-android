@@ -65,10 +65,9 @@ class AuthorizationDetailsPresenterTest {
 
         Assert.assertNull(presenter.startTime)
 
-        val authorization = viewModel1
-        presenter.currentViewModel = authorization
+        presenter.currentViewModel = viewModel1
 
-        assertThat(presenter.startTime, equalTo(authorization.createdAt))
+        assertThat(presenter.startTime, equalTo(viewModel1.createdAt))
     }
 
     @Test
@@ -79,10 +78,9 @@ class AuthorizationDetailsPresenterTest {
 
         Assert.assertNull(presenter.endTime)
 
-        val authorization = viewModel1
-        presenter.currentViewModel = authorization
+        presenter.currentViewModel = viewModel1
 
-        assertThat(presenter.endTime, equalTo(authorization.expiresAt))
+        assertThat(presenter.endTime, equalTo(viewModel1.expiresAt))
     }
 
     @Test
@@ -93,8 +91,7 @@ class AuthorizationDetailsPresenterTest {
 
         assertThat(presenter.providerName, equalTo(""))
 
-        val authorization = viewModel1
-        presenter.currentViewModel = authorization
+        presenter.currentViewModel = viewModel1
 
         assertThat(presenter.providerName, equalTo("Demobank3"))
     }
@@ -107,8 +104,7 @@ class AuthorizationDetailsPresenterTest {
 
         assertThat(presenter.providerLogo, equalTo(""))
 
-        val authorization = viewModel1
-        presenter.currentViewModel = authorization
+        presenter.currentViewModel = viewModel1
 
         assertThat(presenter.providerLogo, equalTo("url"))
     }
@@ -121,8 +117,7 @@ class AuthorizationDetailsPresenterTest {
 
         assertThat(presenter.title, equalTo(TestAppTools.getString(R.string.authorizations_fetching)))
 
-        val authorization = viewModel1
-        presenter.currentViewModel = authorization
+        presenter.currentViewModel = viewModel1
 
         assertThat(presenter.title, equalTo("title1"))
     }
@@ -135,8 +130,7 @@ class AuthorizationDetailsPresenterTest {
 
         assertThat(presenter.description, equalTo(""))
 
-        val authorization = viewModel1
-        presenter.currentViewModel = authorization
+        presenter.currentViewModel = viewModel1
 
         assertThat(presenter.description, equalTo("desc1"))
     }
@@ -149,8 +143,7 @@ class AuthorizationDetailsPresenterTest {
 
         Assert.assertFalse(presenter.sessionIsNotExpired)
 
-        val authorization = viewModel1
-        presenter.currentViewModel = authorization
+        presenter.currentViewModel = viewModel1
 
         Assert.assertTrue(presenter.sessionIsNotExpired)
     }
@@ -175,9 +168,8 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onViewResumeTest_RunTimer() {
         val presenter = createPresenter(viewContract = mockView)
-        val authorization = viewModel1
-        presenter.setInitialData(connectionId = authorization.connectionID, authorizationId = authorization.authorizationID)
-        presenter.currentViewModel = authorization
+        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.currentViewModel = viewModel1
         presenter.onFragmentResume()
 
         Assert.assertTrue(presenter.sessionIsNotExpired)
@@ -199,9 +191,8 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onViewClickTest_negativeActionView() {
         val presenter = createPresenter(viewContract = mockView)
-        val authorization = viewModel1
-        presenter.setInitialData(connectionId = authorization.connectionID, authorizationId = authorization.authorizationID)
-        presenter.currentViewModel = authorization
+        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.currentViewModel = viewModel1
 
         presenter.onViewClick(R.id.negativeActionView)
 
@@ -219,9 +210,8 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onViewClickTest_negativeActionView_InvalidParams() {
         val presenter = createPresenter(viewContract = null)
-        val authorization = viewModel1
-        presenter.setInitialData(connectionId = authorization.connectionID, authorizationId = authorization.authorizationID)
-        presenter.currentViewModel = authorization
+        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.currentViewModel = viewModel1
 
         Mockito.clearInvocations(mockApiManager, mockPollingService, mockView)
         presenter.onViewClick(R.id.negativeActionView)
@@ -247,9 +237,8 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onViewClickTest_positiveActionView() {
         val presenter = createPresenter(viewContract = mockView)
-        val authorization = viewModel1
-        presenter.setInitialData(connectionId = authorization.connectionID, authorizationId = authorization.authorizationID)
-        presenter.currentViewModel = authorization
+        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.currentViewModel = viewModel1
 
         Mockito.doReturn(true).`when`(mockBiometricTools).isBiometricReady(TestAppTools.applicationContext)
         presenter.onViewClick(R.id.positiveActionView)
@@ -268,9 +257,8 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onViewClickTest_positiveActionView_InvalidParams() {
         val presenter = createPresenter(viewContract = null)
-        val authorization = viewModel1
-        presenter.setInitialData(connectionId = authorization.connectionID, authorizationId = authorization.authorizationID)
-        presenter.currentViewModel = authorization
+        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.currentViewModel = viewModel1
 
         Mockito.doReturn(true).`when`(mockBiometricTools).isBiometricReady(TestAppTools.applicationContext)
         presenter.onViewClick(R.id.positiveActionView)
@@ -287,9 +275,8 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onViewClickTest_mainActionView() {
         val presenter = createPresenter(viewContract = mockView)
-        val authorization = viewModel1
-        presenter.setInitialData(connectionId = authorization.connectionID, authorizationId = authorization.authorizationID)
-        presenter.currentViewModel = authorization
+        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.currentViewModel = viewModel1
 
         presenter.onViewClick(R.id.mainActionView)
 
@@ -320,9 +307,8 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onTimerTickTest_remainedTime() {
         val presenter = createPresenter(viewContract = mockView)
-        val authorization = viewModel1
-        presenter.setInitialData(connectionId = authorization.connectionID, authorizationId = authorization.authorizationID)
-        presenter.currentViewModel = authorization
+        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.currentViewModel = viewModel1
 
         presenter.onTimerTick()
 
@@ -333,9 +319,8 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onTimerTickTest_remainedTime_InvalidParams() {
         val presenter = createPresenter(viewContract = null)
-        val authorization = viewModel1
-        presenter.setInitialData(connectionId = authorization.connectionID, authorizationId = authorization.authorizationID)
-        presenter.currentViewModel = authorization
+        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.currentViewModel = viewModel1
 
         presenter.onTimerTick()
 
@@ -535,9 +520,8 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun biometricAuthFinishedTest() {
         val presenter = createPresenter(viewContract = mockView)
-        val authorization = viewModel1
-        presenter.setInitialData(connectionId = authorization.connectionID, authorizationId = authorization.authorizationID)
-        presenter.currentViewModel = authorization
+        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.currentViewModel = viewModel1
         presenter.biometricAuthFinished()
 
         Mockito.verify(mockPollingService).stop()
@@ -554,9 +538,8 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun biometricAuthFinishedTest_InvalidParams() {
         val presenter = createPresenter(viewContract = null)
-        val authorization = viewModel1
-        presenter.setInitialData(connectionId = authorization.connectionID, authorizationId = authorization.authorizationID)
-        presenter.currentViewModel = authorization
+        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.currentViewModel = viewModel1
 
         presenter.biometricAuthFinished()
 
@@ -581,9 +564,8 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun biometricsCanceledByUserTest() {
         val presenter = createPresenter(viewContract = mockView)
-        val authorization = viewModel1
-        presenter.setInitialData(connectionId = authorization.connectionID, authorizationId = authorization.authorizationID)
-        presenter.currentViewModel = authorization
+        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.currentViewModel = viewModel1
 
         presenter.biometricsCanceledByUser()
 
@@ -599,9 +581,8 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun successAuthWithPasscodeTest() {
         val presenter = createPresenter(viewContract = mockView)
-        val authorization = viewModel1
-        presenter.setInitialData(connectionId = authorization.connectionID, authorizationId = authorization.authorizationID)
-        presenter.currentViewModel = authorization
+        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.currentViewModel = viewModel1
 
         presenter.successAuthWithPasscode()
 

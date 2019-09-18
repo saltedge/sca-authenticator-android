@@ -25,6 +25,7 @@ import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.Switch
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.interfaces.CheckableListItemClickListener
@@ -54,6 +55,7 @@ class SettingsItemViewHolder(
     fun bind(item: SettingsItemViewModel) {
         code = item.titleId
         titleView.setText(item.titleId)
+        titleView.setTextColor(ContextCompat.getColor(titleView.context, item.colorResId))
         valueView.setVisible(item.value != null)
         if (item.value != null) {
             valueView.text = item.value

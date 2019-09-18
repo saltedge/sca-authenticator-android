@@ -21,11 +21,13 @@
 package com.saltedge.authenticator.features.settings.common
 
 import androidx.annotation.StringRes
+import com.saltedge.authenticator.R
 
 data class SettingsItemViewModel(
     @StringRes val titleId: Int,
     val value: String? = null,
     val switchEnabled: Boolean? = null,
     val isChecked: Boolean = false,
-    val itemIsClickable: Boolean = false
+    val itemIsClickable: Boolean = false,
+    val colorResId: Int = R.color.black
 )

@@ -44,7 +44,7 @@ class ConnectionOptionsTest {
             equalTo(R.string.actions_contact_support)
         )
         assertThat(ConnectionOptions.RENAME.iconId, equalTo(R.drawable.ic_rename_gray_24dp))
-        assertThat(ConnectionOptions.RENAME.textId, equalTo(R.string.actions_rename_connection))
+        assertThat(ConnectionOptions.RENAME.textId, equalTo(R.string.actions_rename))
         assertThat(ConnectionOptions.DELETE.iconId, equalTo(R.drawable.ic_delete_gray_24dp))
         assertThat(ConnectionOptions.DELETE.textId, equalTo(R.string.actions_delete))
     }

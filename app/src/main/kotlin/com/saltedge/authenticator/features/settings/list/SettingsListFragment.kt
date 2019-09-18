@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.settings.list
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,6 +30,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
 import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.common.HeaderItemDecoration
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
@@ -105,15 +107,33 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View,
         view?.let { Snackbar.make(it, message, Snackbar.LENGTH_LONG).show() }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        presenterContract.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun showDeleteConnectionView(requestCode: Int) {
+        val dialog = DeleteConnectionDialog.newInstance(null).also {
+            it.setTargetFragment(this, requestCode)
+        }
+        activity?.showDialogFragment(dialog)
+    }
+
     private fun setupViews() {
         try {
-            val layoutManager = LinearLayoutManager(activity)
+            val context = activity ?: return
+            val layoutManager = LinearLayoutManager(context)
             recyclerView?.layoutManager = layoutManager
             val dividerItemDecoration = DividerItemDecoration(context, layoutManager.orientation)
-            ContextCompat.getDrawable(context ?: return, R.drawable.shape_full_divider)?.let {
+            ContextCompat.getDrawable(context, R.drawable.shape_full_divider)?.let {
                 dividerItemDecoration.setDrawable(it)
             }
-            context?.let { recyclerView?.addItemDecoration(HeaderItemDecoration(it)) }
+            recyclerView?.addItemDecoration(
+                HeaderItemDecoration(
+                    context = context,
+                    delimiterPositions = presenterContract.getPositionsOfDelimiters()
+                )
+            )
             recyclerView?.addItemDecoration(dividerItemDecoration)
             recyclerView?.adapter = SettingsAdapter(this).apply {
                 data = presenterContract.getListItems()

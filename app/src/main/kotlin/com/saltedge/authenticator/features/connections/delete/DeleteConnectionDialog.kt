@@ -46,7 +46,7 @@ class DeleteConnectionDialog :
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(activity!!)
             .setTitle(presenter.viewTitle(targetRequestCode))
-            .setPositiveButton(presenter.viewPositiveActionText(targetRequestCode), this)
+            .setPositiveButton(R.string.actions_ok, this)
             .setNegativeButton(R.string.actions_cancel, this)
             .setMessage(presenter.viewMessage(targetRequestCode))
             .create()
@@ -54,7 +54,7 @@ class DeleteConnectionDialog :
 
     override fun onStart() {
         super.onStart()
-        (dialog as AlertDialog).setButtonsColor(R.color.red)
+        (dialog as AlertDialog).setButtonsColor(R.color.blue)
     }
 
     override fun onClick(dialog: DialogInterface?, which: Int) {

@@ -24,7 +24,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
-import com.saltedge.authenticator.app.DELETE_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_GUID
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*
@@ -64,63 +63,6 @@ class DeleteConnectionPresenterTest : DeleteConnectionContract.View {
 
     @Test
     @Throws(Exception::class)
-    fun getTitleTest() {
-        val presenter = DeleteConnectionPresenter(viewContract = this)
-        presenter.guid = null
-
-        assertThat(
-            presenter.viewTitle(DELETE_ALL_REQUEST_CODE),
-            equalTo(R.string.actions_delete_connections_query)
-        )
-
-        presenter.guid = "guid1"
-
-        assertThat(
-            presenter.viewTitle(DELETE_REQUEST_CODE),
-            equalTo(R.string.actions_delete_connection_query)
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun getPositiveActionTextTest() {
-        val presenter = DeleteConnectionPresenter(viewContract = this)
-        presenter.guid = null
-
-        assertThat(
-            presenter.viewPositiveActionText(DELETE_ALL_REQUEST_CODE),
-            equalTo(R.string.actions_delete_all)
-        )
-
-        presenter.guid = "guid1"
-
-        assertThat(
-            presenter.viewPositiveActionText(DELETE_REQUEST_CODE),
-            equalTo(R.string.actions_delete)
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun getMessageTest() {
-        val presenter = DeleteConnectionPresenter(viewContract = this)
-        presenter.guid = null
-
-        assertThat(
-            presenter.viewMessage(DELETE_ALL_REQUEST_CODE),
-            equalTo(R.string.connections_list_delete_all_connections)
-        )
-
-        presenter.guid = "guid1"
-
-        assertThat(
-            presenter.viewMessage(DELETE_REQUEST_CODE),
-            equalTo(R.string.connections_list_delete_connection)
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
     fun onActionViewClickTestCase1() {
         val presenter = DeleteConnectionPresenter(viewContract = this)
 
@@ -140,5 +82,37 @@ class DeleteConnectionPresenterTest : DeleteConnectionContract.View {
 
         assertTrue(dismissViewCallback)
         assertThat(resultIntentCallback!!.getStringExtra(KEY_GUID), equalTo("test"))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun viewTitleTest() {
+        val presenter = DeleteConnectionPresenter(viewContract = this)
+        presenter.guid = null
+
+        assertThat(
+            presenter.viewTitle(DELETE_ALL_REQUEST_CODE),
+            equalTo(R.string.ui_dialog_clear_data_title)
+        )
+
+        presenter.guid = "guid1"
+
+        assertThat(presenter.viewTitle(0), equalTo(R.string.ui_dialog_delete_title))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun viewMessageTest() {
+        val presenter = DeleteConnectionPresenter(viewContract = this)
+        presenter.guid = null
+
+        assertThat(
+            presenter.viewMessage(DELETE_ALL_REQUEST_CODE),
+            equalTo(R.string.ui_dialog_clear_data_message)
+        )
+
+        presenter.guid = "guid1"
+
+        assertThat(presenter.viewMessage(0), equalTo(R.string.ui_dialog_delete_message))
     }
 }

@@ -31,6 +31,7 @@ import com.saltedge.authenticator.app.KEY_CONNECT_CONFIGURATION
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.features.connections.connect.di.ConnectProviderModule
 import com.saltedge.authenticator.interfaces.OnBackPressListener
+import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.Token
@@ -39,14 +40,14 @@ import com.saltedge.authenticator.sdk.web.ConnectWebClientContract
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_connect.*
-import kotlinx.android.synthetic.main.fragment_connect_processing_header.*
 import javax.inject.Inject
 
 class ConnectProviderFragment : BaseFragment(),
     ConnectProviderContract.View,
     ConnectWebClientContract,
     View.OnClickListener,
-    OnBackPressListener {
+    OnBackPressListener,
+    UpActionImageListener {
 
     @Inject
     lateinit var presenterContract: ConnectProviderContract.Presenter
@@ -66,7 +67,7 @@ class ConnectProviderFragment : BaseFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activityComponents?.updateAppbarTitle(getString(R.string.actions_connect))
+        activityComponents?.updateAppbarTitle(getString(presenterContract.getTitleResId()))
         return inflater.inflate(R.layout.fragment_connect, container, false)
     }
 
@@ -108,10 +109,6 @@ class ConnectProviderFragment : BaseFragment(),
     }
 
     override fun updateViewsContent() {
-        providerLogoView?.loadImage(
-            presenterContract.logoUrl,
-            placeholderId = R.drawable.ic_logo_bank_placeholder
-        )
         completeView?.setIconResource(presenterContract.iconResId)
         completeView?.setTitleText(presenterContract.completeTitle)
         completeView?.setSubtitleText(presenterContract.completeMessage)
@@ -153,6 +150,8 @@ class ConnectProviderFragment : BaseFragment(),
             }
         )
     }
+
+    override fun getUpActionImage(): Int? = R.drawable.ic_close_white_24dp
 
     private fun updateLayoutsVisibility() {
         fragmentConnectProcessing?.setVisible(show = presenterContract.shouldShowProgressView)

@@ -42,7 +42,7 @@ interface AuthenticatorApiManagerAbs {
 
     fun revokeConnections(
         connectionsAndKeys: List<ConnectionAndKey>,
-        resultCallback: ConnectionsRevokeResult
+        resultCallback: ConnectionsRevokeResult?
     )
 
     fun getAuthorizations(

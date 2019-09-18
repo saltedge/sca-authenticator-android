@@ -36,19 +36,6 @@ class AuthorizationsHeaderPagerAdapter(
     private val timeUpdateListeners: HashSet<TimeUpdateListener> = HashSet()
     private var timeViewUpdateTimer: Timer = Timer()
 
-    override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val view = AuthorizationHeaderView(context = context)
-        updateViewContent(view, data[position])
-        container.addView(view, 0)
-        timeUpdateListeners.add(view as TimeUpdateListener)
-        return view
-    }
-
-    override fun destroyItem(container: ViewGroup, position: Int, view: Any) {
-        super.destroyItem(container, position, view)
-        timeUpdateListeners.remove(view as TimeUpdateListener)
-    }
-
     fun startTimer() {
         timeViewUpdateTimer = Timer()
         timeViewUpdateTimer.schedule(object : TimerTask() {
@@ -62,6 +49,19 @@ class AuthorizationsHeaderPagerAdapter(
     fun stopTimer() {
         timeViewUpdateTimer.cancel()
         timeViewUpdateTimer.purge()
+    }
+
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        val view = AuthorizationHeaderView(context = context)
+        updateViewContent(view, data[position])
+        container.addView(view, 0)
+        timeUpdateListeners.add(view as TimeUpdateListener)
+        return view
+    }
+
+    override fun destroyItem(container: ViewGroup, position: Int, view: Any) {
+        super.destroyItem(container, position, view)
+        timeUpdateListeners.remove(view as TimeUpdateListener)
     }
 
     private fun existExpiredSessions(): Boolean = data.any { it.isExpired() }

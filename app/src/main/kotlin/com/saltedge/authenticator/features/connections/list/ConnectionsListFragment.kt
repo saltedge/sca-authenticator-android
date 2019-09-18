@@ -22,7 +22,9 @@ package com.saltedge.authenticator.features.connections.list
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.common.ConnectionOptions
@@ -45,7 +47,6 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
     @Inject
     lateinit var presenterContract: ConnectionsListContract.Presenter
     private val adapter = ConnectionsListAdapter(clickListener = this)
-    private var deleteAllMenuItem: MenuItem? = null
     private var optionsDialog: ConnectionOptionsDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,16 +92,6 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         presenterContract.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_connections, menu)
-        deleteAllMenuItem = menu.findItem(R.id.menu_delete_all)
-        deleteAllMenuItem?.isVisible = !adapter.isEmpty
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return item.itemId.let { presenterContract.onMenuItemClick(it) }
-    }
-
     override fun onClick(v: View?) {
         presenterContract.onViewClick(v?.id ?: return)
     }
@@ -118,7 +109,6 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         val viewIsEmpty = adapter.isEmpty
         emptyView?.setVisible(viewIsEmpty)
         connectionsListView?.setVisible(!viewIsEmpty)
-        deleteAllMenuItem?.isVisible = !viewIsEmpty
         connectionsFabView?.setVisible(!viewIsEmpty)
     }
 
