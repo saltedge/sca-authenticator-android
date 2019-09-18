@@ -49,7 +49,6 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     @Inject
     lateinit var biometricPrompt: BiometricPromptAbs
     private val pagersScrollSyncronizer = PagersScrollSyncronizer()
-
     private var headerAdapter: AuthorizationsHeaderPagerAdapter? = null
     private var contentAdapter: AuthorizationsContentPagerAdapter? = null
 

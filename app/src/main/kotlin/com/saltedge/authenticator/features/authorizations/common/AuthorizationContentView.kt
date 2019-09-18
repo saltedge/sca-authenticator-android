@@ -36,7 +36,7 @@ class AuthorizationContentView : LinearLayout {
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
     init {
-        inflateView()
+        inflate(context, R.layout.view_authorization_content,this)
     }
 
     fun setTitle(title: String) {
@@ -44,10 +44,10 @@ class AuthorizationContentView : LinearLayout {
     }
 
     fun setDescription(description: String) {
-        with(shouldShowDescriptionWebView(description)) {
-            descriptionTextView?.setVisible(show = !this)
-            descriptionWebView?.setVisible(show = this)
-            if (this) {
+        description.hasHTMLTags().let { shouldShowDescriptionView ->
+            descriptionTextView?.setVisible(show = !shouldShowDescriptionView)
+            descriptionWebView?.setVisible(show = shouldShowDescriptionView)
+            if (shouldShowDescriptionView) {
                 descriptionWebView?.loadData(description, "text/html; charset=utf-8", "UTF-8")
             } else {
                 descriptionTextView?.movementMethod = ScrollingMovementMethod()
@@ -59,14 +59,5 @@ class AuthorizationContentView : LinearLayout {
     fun setActionClickListener(actionViewClickListener: OnClickListener) {
         negativeActionView?.setOnClickListener(actionViewClickListener)
         positiveActionView?.setOnClickListener(actionViewClickListener)
-
-    }
-
-    private fun inflateView() {
-        inflate(context, R.layout.view_authorization_content,this)
-    }
-
-    private fun shouldShowDescriptionWebView(description: String): Boolean {
-        return description.hasHTMLTags()
     }
 }

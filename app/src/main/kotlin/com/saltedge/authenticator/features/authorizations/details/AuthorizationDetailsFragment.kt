@@ -154,8 +154,6 @@ class AuthorizationDetailsFragment : BaseFragment(),
             drawableResId = R.drawable.ic_complete_ok_70,
             titleText = getString(R.string.authorizations_finished_successfully)
         )
-
-        completeView?.animate()?.alpha(1f)?.setDuration(1000)?.withEndAction { closeView() }
     }
 
     override fun closeViewWithErrorResult(errorMessage: String) {
@@ -165,19 +163,15 @@ class AuthorizationDetailsFragment : BaseFragment(),
             subTitleText = errorMessage,
             alpha = 0.75f
         )
-
-        completeView?.animate()?.alpha(1f)?.setDuration(1000)?.withEndAction { closeView() }
     }
 
-    override fun closeViewWithTimeOutResults() {
+    override fun closeViewWithTimeOutResult() {
         setCompleteView(
             drawableResId = R.drawable.ic_time_out_70,
             titleText = getString(R.string.authorizations_time_out),
             subTitleText = getString(R.string.authorizations_time_out_description),
             actionResId = R.string.actions_ok
         )
-
-        completeView?.animate()?.alpha(1f)?.setDuration(1000)?.withEndAction { closeView() }
     }
 
     override fun askUserBiometricConfirmation() {
@@ -219,6 +213,8 @@ class AuthorizationDetailsFragment : BaseFragment(),
         subTitleText?.let { completeView?.setSubtitleText(it) }
         actionResId?.let { completeView?.setMainActionText(it) }
         completeView?.setIconResource(drawableResId)
+
+        completeView?.animate()?.alpha(1f)?.setDuration(1000)?.withEndAction { closeView() }
     }
 
     private fun injectDependencies() {

@@ -290,7 +290,7 @@ class AuthorizationDetailsPresenterTest {
         presenter.currentViewModel = null
         presenter.onTimerTick()
 
-        Mockito.verify(mockView).closeViewWithTimeOutResults()
+        Mockito.verify(mockView).closeViewWithTimeOutResult()
     }
 
     @Test

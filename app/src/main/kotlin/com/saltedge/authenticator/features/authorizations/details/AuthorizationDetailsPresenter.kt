@@ -106,7 +106,7 @@ class AuthorizationDetailsPresenter(
         if (currentViewModel?.isNotExpired() == true) {
             viewContract?.updateTimeViews()
         } else {
-            viewContract?.closeViewWithTimeOutResults()
+            viewContract?.closeViewWithTimeOutResult()
         }
     }
 
