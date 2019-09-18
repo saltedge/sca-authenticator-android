@@ -47,7 +47,7 @@ fun FragmentActivity.showWarningDialog(@StringRes messageId: Int) {
  *
  * @receiver FragmentActivity
  * @param message - the message that appears in the dialog
- * @param listener - on dialog action click listItemClickListener
+ * @param listener - on dialog action click listener
  */
 fun FragmentActivity.showWarningDialog(
     message: String?,
@@ -69,7 +69,7 @@ fun FragmentActivity.showWarningDialog(
  * Show database init error
  *
  * @receiver FragmentActivity
- * @param listener - on dialog action click listItemClickListener
+ * @param listener - on dialog action click listener
  */
 fun FragmentActivity.showDbErrorDialog(listener: DialogInterface.OnClickListener) {
     showWarningDialog(message = getString(R.string.errors_db_init), listener = listener)
@@ -79,7 +79,7 @@ fun FragmentActivity.showDbErrorDialog(listener: DialogInterface.OnClickListener
  * Show warning about reseting of all user data
  *
  * @receiver FragmentActivity
- * @param listener - on dialog action click listItemClickListener
+ * @param listener - on dialog action click listener
  */
 fun FragmentActivity.showResetUserDialog(listener: DialogInterface.OnClickListener) {
     showWarningDialog(message = getString(R.string.errors_account_reset), listener = listener)
