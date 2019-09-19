@@ -18,18 +18,8 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.contract
+package com.saltedge.authenticator.features.authorizations.common
 
-import com.saltedge.authenticator.sdk.model.ApiErrorData
-import com.saltedge.authenticator.sdk.model.AuthorizationID
-import com.saltedge.authenticator.sdk.model.ConnectionID
-import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResultData
-
-interface ConfirmAuthorizationResult {
-    fun onConfirmDenyFailure(
-        error: ApiErrorData,
-        connectionID: ConnectionID,
-        authorizationID: AuthorizationID
-    )
-    fun onConfirmDenySuccess(result: ConfirmDenyResultData, connectionID: ConnectionID)
+interface TimeUpdateListener {
+    fun onTimeUpdate()
 }

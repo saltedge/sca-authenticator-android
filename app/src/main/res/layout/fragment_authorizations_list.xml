@@ -25,20 +25,18 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
+    <com.saltedge.authenticator.features.authorizations.list.WrapContentViewPager
+        android:id="@+id/headerViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="82dp"
+        tools:background="@color/red"/>
+
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/contentViewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/headerViewPager"
         tools:background="@color/blue"
-        tools:visibility="visible" />
-
-    <com.saltedge.authenticator.features.authorizations.list.WrapContentViewPager
-        android:id="@+id/headerViewPager"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_88"
-        tools:background="@color/red"
-        tools:visibility="visible" />
+        android:layout_below="@+id/headerViewPager" />
 
     <com.saltedge.authenticator.widget.InfoView
         android:id="@+id/emptyView"

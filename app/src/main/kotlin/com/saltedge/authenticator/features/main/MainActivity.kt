@@ -141,16 +141,11 @@ class MainActivity : LockableActivity(),
         replaceFragmentInContainer(SettingsListFragment())
     }
 
-    override fun showAuthorizationDetailsView(
-        connectionId: String,
-        authorizationId: String,
-        quickConfirmMode: Boolean
-    ) {
+    override fun showAuthorizationDetailsView(connectionID: String, authorizationID: String) {
         this.addFragment(
             AuthorizationDetailsFragment.newInstance(
-                connectionId = connectionId,
-                authorizationId = authorizationId,
-                quickConfirmMode = quickConfirmMode
+                connectionId = connectionID,
+                authorizationId = authorizationID
             )
         )
     }

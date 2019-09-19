@@ -45,7 +45,7 @@ fun String.parseToUtcDateTime(): DateTime? {
  * @receiver expiresAt datetime
  * @return seconds till expire time
  */
-fun DateTime.remainedSecondsTillExpire(): Int = secondsBetweenDates(DateTime.now(this.zone), this)
+fun DateTime.remainedSeconds(): Int = secondsBetweenDates(DateTime.now(this.zone), this)
 
 /**
  * Calculates seconds between receiver's value and now
@@ -53,7 +53,7 @@ fun DateTime.remainedSecondsTillExpire(): Int = secondsBetweenDates(DateTime.now
  * @receiver expiresAt datetime
  * @return seconds from date
  */
-fun DateTime.secondsFromDate(): Int = secondsBetweenDates(this, DateTime.now(this.zone))
+fun DateTime.secondsPassedFromDate(): Int = secondsBetweenDates(this, DateTime.now(this.zone))
 
 fun secondsBetweenDates(startDate: DateTime, endDate: DateTime): Int =
     (millisBetweenDates(startDate, endDate) / 1000).toInt()
@@ -64,7 +64,7 @@ fun secondsBetweenDates(startDate: DateTime, endDate: DateTime): Int =
  * @receiver period of remained seconds
  * @return String timestamp in "minutes:seconds" format
  */
-fun Int.remainedExpirationTime(): String {
+fun Int.remainedTimeDescription(): String {
     return if (this <= 0) return "-:--"
     else {
         val period = Period(this * 1000L)
@@ -84,8 +84,8 @@ fun Int.remainedExpirationTime(): String {
  * @receiver expiresAt datetime
  * @return String timestamp in "minutes:seconds" format
  */
-fun DateTime.remainedExpirationTime(): String {
-    val remainedSeconds = this.remainedSecondsTillExpire()
+fun DateTime.remainedTimeDescription(): String {
+    val remainedSeconds = this.remainedSeconds()
     return if (remainedSeconds <= 0) return "-:--"
     else {
         val period = Period(remainedSeconds * 1000L)

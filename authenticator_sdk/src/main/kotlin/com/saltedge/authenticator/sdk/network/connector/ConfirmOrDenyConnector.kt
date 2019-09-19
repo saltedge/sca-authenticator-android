@@ -23,9 +23,7 @@ package com.saltedge.authenticator.sdk.network.connector
 import com.saltedge.authenticator.sdk.constants.API_AUTHORIZATIONS
 import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_PUT
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationResult
-import com.saltedge.authenticator.sdk.model.ApiErrorData
-import com.saltedge.authenticator.sdk.model.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.createInvalidResponseError
+import com.saltedge.authenticator.sdk.model.*
 import com.saltedge.authenticator.sdk.model.request.ConfirmDenyData
 import com.saltedge.authenticator.sdk.model.request.ConfirmDenyRequestData
 import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData
@@ -38,11 +36,16 @@ internal class ConfirmOrDenyConnector(
     var resultCallback: ConfirmAuthorizationResult?
 ) : ApiResponseInterceptor<ConfirmDenyResponseData>() {
 
+    private var connectionId: ConnectionID = ""
+    private var authorizationId: AuthorizationID = ""
+
     fun updateAuthorization(
         connectionAndKey: ConnectionAndKey,
         authorizationId: String,
         payloadData: ConfirmDenyData
     ) {
+        this.connectionId = connectionAndKey.connection.id
+        this.authorizationId = authorizationId
         val requestBody = ConfirmDenyRequestData(payloadData)
         val requestData = createAuthenticatedRequestData(
             requestMethod = REQUEST_METHOD_PUT,
@@ -65,10 +68,14 @@ internal class ConfirmOrDenyConnector(
     ) {
         val data = response.data
         if (data == null) onFailureResponse(call, createInvalidResponseError())
-        else resultCallback?.onConfirmDenySuccess(result = data)
+        else resultCallback?.onConfirmDenySuccess(result = data, connectionID = this.connectionId)
     }
 
     override fun onFailureResponse(call: Call<ConfirmDenyResponseData>, error: ApiErrorData) {
-        resultCallback?.onConfirmDenyFailure(error)
+        resultCallback?.onConfirmDenyFailure(
+            error = error,
+            connectionID = this.connectionId,
+            authorizationID = this.authorizationId
+        )
     }
 }

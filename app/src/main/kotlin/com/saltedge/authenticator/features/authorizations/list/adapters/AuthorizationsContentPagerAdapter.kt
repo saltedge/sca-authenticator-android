@@ -22,31 +22,37 @@ package com.saltedge.authenticator.features.authorizations.list.adapters
 
 import android.content.Context
 import android.view.View
-import android.widget.Button
-import android.widget.TextView
-import com.saltedge.authenticator.R
+import android.view.ViewGroup
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationContentView
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
-import com.saltedge.authenticator.tool.parseHTML
 
-class AuthorizationsContentPagerAdapter(context: Context) :
-    AuthorizationsPagerAdapter(context, R.layout.authorization_info), View.OnClickListener {
+class AuthorizationsContentPagerAdapter(val context: Context) :
+    AuthorizationsPagerAdapter(),
+    View.OnClickListener
+{
 
-    var listener: ListItemClickListener? = null
+    var listItemClickListener: ListItemClickListener? = null
 
     override fun onClick(view: View?) {
-        listener?.onListItemClick(
-            itemIndex = getItemPosition(data),
-            itemCode = (data[itemPosition]).authorizationId,
+        listItemClickListener?.onListItemClick(
+            itemIndex = itemPosition,
+            itemCode = (data[itemPosition]).authorizationID,
             itemViewId = view?.id ?: return
         )
     }
 
-    override fun updateViewContent(pageView: View, model: AuthorizationViewModel) {
-        pageView.findViewById<TextView>(R.id.titleTextView)?.text = model.title
-        pageView.findViewById<TextView>(R.id.descriptionTextView)?.text =
-            model.description.parseHTML()
-        pageView.findViewById<Button>(R.id.negativeActionView)?.setOnClickListener(this)
-        pageView.findViewById<Button>(R.id.positiveActionView)?.setOnClickListener(this)
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        val view = AuthorizationContentView(context = context)
+        updateViewContent(view, data[position])
+        return view.apply { container.addView(this, 0) }
+    }
+
+    private fun updateViewContent(pageView: View, model: AuthorizationViewModel) {
+        (pageView as AuthorizationContentView).also {
+            it.setTitle(model.title)
+            it.setDescription(model.description)
+            it.setActionClickListener(this)
+        }
     }
 }

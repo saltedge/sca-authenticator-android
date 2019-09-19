@@ -35,12 +35,12 @@ import org.robolectric.RobolectricTestRunner
 class AuthorizationViewModelTest {
 
     private val model = AuthorizationViewModel(
-        authorizationId = "444",
+        authorizationID = "444",
         authorizationCode = "111",
         title = "title",
         description = "description",
         expiresAt = DateTime(),
-        connectionId = "333",
+        connectionID = "333",
         connectionName = "Demobank",
         connectionLogoUrl = "url",
         validSeconds = 300,
@@ -108,12 +108,12 @@ class AuthorizationViewModelTest {
             data.toAuthorizationViewModel(connection = connection),
             equalTo(
                 AuthorizationViewModel(
-                    authorizationId = "444",
+                    authorizationID = "444",
                     authorizationCode = "111",
                     title = "title",
                     description = "description",
                     expiresAt = DateTime(300000L),
-                    connectionId = "333",
+                    connectionID = "333",
                     connectionName = "Demobank",
                     connectionLogoUrl = "url",
                     validSeconds = 300,

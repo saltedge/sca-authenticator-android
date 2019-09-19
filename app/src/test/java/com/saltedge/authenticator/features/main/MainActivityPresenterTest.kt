@@ -90,9 +90,7 @@ class MainActivityPresenterTest {
         )
 
         Mockito.verify(mockView).showAuthorizationDetailsView(
-            "connectionId1",
-            "authorizationId1",
-            true
+            connectionID = "connectionId1", authorizationID = "authorizationId1"
         )
     }
 
@@ -139,9 +137,8 @@ class MainActivityPresenterTest {
         )
 
         Mockito.verify(mockView).showAuthorizationDetailsView(
-            "connectionId1",
-            "authorizationId1",
-            true
+            connectionID = "connectionId1",
+            authorizationID = "authorizationId1"
         )
     }
 
