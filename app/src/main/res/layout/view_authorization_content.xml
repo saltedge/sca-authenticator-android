@@ -44,7 +44,7 @@
 
         <TextView
             android:id="@+id/titleTextView"
-            style="@style/Text16GrayDarkRegular"
+            style="@style/Text14GrayRegular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"

@@ -41,7 +41,7 @@ class AuthorizationHeaderView : LinearLayout, TimeUpdateListener {
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
     init {
-        inflateView()
+        inflate(context, R.layout.view_authorization_header,this)
     }
 
     fun setLogoUrl(urlString: String?) {
@@ -66,13 +66,7 @@ class AuthorizationHeaderView : LinearLayout, TimeUpdateListener {
     }
 
     override fun onTimeUpdate() {
-        post {
-            updateTimeViewsContent()
-        }
-    }
-
-    private fun inflateView() {
-        inflate(context, R.layout.view_authorization_header,this)
+        post { updateTimeViewsContent() }
     }
 
     private fun updateTimeViewsContent() {
