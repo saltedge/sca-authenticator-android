@@ -31,7 +31,6 @@ class AuthorizationsContentPagerAdapter(val context: Context) :
     AuthorizationsPagerAdapter(),
     View.OnClickListener
 {
-
     var listItemClickListener: ListItemClickListener? = null
 
     override fun onClick(view: View?) {
@@ -44,15 +43,15 @@ class AuthorizationsContentPagerAdapter(val context: Context) :
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val view = AuthorizationContentView(context = context)
+        view.setActionClickListener(this)
         updateViewContent(view, data[position])
         return view.apply { container.addView(this, 0) }
     }
 
     private fun updateViewContent(pageView: View, model: AuthorizationViewModel) {
         (pageView as AuthorizationContentView).also {
-            it.setTitle(model.title)
-            it.setDescription(model.description)
-            it.setActionClickListener(this)
+            it.setTitleAndDescription(model.title, model.description)
+            it.setViewMode(model.viewMode)
         }
     }
 }

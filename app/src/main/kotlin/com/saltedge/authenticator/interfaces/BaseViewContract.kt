@@ -21,5 +21,5 @@
 package com.saltedge.authenticator.interfaces
 
 interface BaseViewContract {
-    fun updateViewContent()
+    fun updateViewsContent()
 }

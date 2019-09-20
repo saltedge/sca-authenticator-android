@@ -44,29 +44,29 @@ class AuthorizationDetailsPresenter(
     FetchAuthorizationContract {
 
     var viewContract: AuthorizationDetailsContract.View? = null
-    val providerName: String
+    private val providerName: String
         get() = currentViewModel?.connectionName ?: ""
-    val providerLogo: String
+    private val providerLogo: String
         get() = currentViewModel?.connectionLogoUrl ?: ""
-    val startTime: DateTime?
+    private val startTime: DateTime?
         get() = currentViewModel?.createdAt
-    val endTime: DateTime?
+    private val endTime: DateTime?
         get() = currentViewModel?.expiresAt
-    val title: String
-        get() {
-            return if (confirmRequestIsInProgress) appContext.getString(R.string.authorizations_processing)
-            else currentViewModel?.title ?: appContext.getString(R.string.authorizations_fetching)
-        }
-    val description: String
-        get() = currentViewModel?.description ?: ""
-    val sessionIsNotExpired: Boolean
+    private val title: String
+        get() = currentViewModel?.title ?: appContext.getString(R.string.authorizations_loading)
+    private val description: String
+        get() = currentViewModel?.description ?: appContext.getString(R.string.authorizations_loading_description)
+    private val modelIsNotExpired: Boolean
         get() = currentViewModel?.isNotExpired() ?: false
     private var pollingService: SingleAuthorizationPollingService =
         apiManager.createSingleAuthorizationPollingService()
     private var authorizationId: String? = null
-    private var confirmRequestIsInProgress: Boolean = false
-    private val initialValuesValid: Boolean
-        get() = currentConnectionAndKey != null && authorizationId?.isNotEmpty() == true
+    private var authorizationUnavailable: Boolean = false
+    private val viewMode: AuthorizationContentView.Mode
+        get() {
+            return if (authorizationUnavailable) AuthorizationContentView.Mode.UNAVAILABLE
+            else currentViewModel?.viewMode ?: AuthorizationContentView.Mode.LOADING
+        }
 
     fun setInitialData(connectionId: String?, authorizationId: String?) {
         super.currentConnectionAndKey = createConnectionAndKey(
@@ -75,14 +75,15 @@ class AuthorizationDetailsPresenter(
             keyStoreManager = keyStoreManager
         )
         this.authorizationId = authorizationId
+        this.authorizationUnavailable = currentConnectionAndKey == null || authorizationId == null || authorizationId.isEmpty()
     }
 
     fun onFragmentResume() {
-        startPolling()
-        if (sessionIsNotExpired) {
+        if (modelIsNotExpired) {
+            startPolling()
             viewContract?.startTimer()
-            updateViewContent()
         }
+        updateViewContent()
     }
 
     fun onFragmentPause() {
@@ -92,21 +93,31 @@ class AuthorizationDetailsPresenter(
 
     fun onViewClick(viewId: Int) {
         when (viewId) {
-            R.id.positiveActionView, R.id.negativeActionView -> {
+            R.id.positiveActionView -> {
                 onAuthorizeActionSelected(
-                    confirmRequest = viewId == R.id.positiveActionView,
+                    requestType = ActionType.CONFIRM,
                     quickConfirmMode = true
                 )
             }
-            R.id.mainActionView -> viewContract?.closeView()
+            R.id.negativeActionView -> {
+                onAuthorizeActionSelected(
+                    requestType = ActionType.DENY,
+                    quickConfirmMode = true
+                )
+            }
         }
     }
 
     fun onTimerTick() {
-        if (currentViewModel?.isNotExpired() == true) {
-            viewContract?.updateTimeViews()
-        } else {
-            viewContract?.closeViewWithTimeOutResult()
+        currentViewModel?.let { model ->
+            if (model.isExpired() && !model.hasFinalMode()) {
+                model.viewMode = AuthorizationContentView.Mode.TIME_OUT
+                updateViewContent()
+            } else if (model.shouldBeDestroyed()) {
+                viewContract?.closeView()
+            } else {
+                viewContract?.updateTimeViews()
+            }
         }
     }
 
@@ -118,32 +129,40 @@ class AuthorizationDetailsPresenter(
         result: EncryptedAuthorizationData?,
         error: ApiErrorData?
     ) {
-        result?.let { processAuthorizationResult(it) }
-        error?.let { processAuthorizationError(it) }
+        result?.let { processFetchAuthorizationResult(it) } ?: error?.let { processFetchAuthorizationError(it) }
+    }
+
+    override fun onAuthorizeStart(connectionID: ConnectionID, authorizationID: AuthorizationID, type: ActionType) {
+        stopPolling()
+        currentViewModel?.viewMode = type.toViewMode()
+        updateViewContent()
     }
 
     override fun onConfirmDenySuccess(
-        authorizationId: String,
+        success: Boolean,
         connectionID: ConnectionID,
-        success: Boolean
+        authorizationID: String
     ) {
-        if (success) {
-            viewContract?.closeViewWithSuccessResult(authorizationId)
+        currentViewModel?.viewMode = if (success) {
+            if (viewMode == AuthorizationContentView.Mode.CONFIRM_PROCESSING) AuthorizationContentView.Mode.CONFIRM_SUCCESS
+            else AuthorizationContentView.Mode.DENY_SUCCESS
+        } else {
+            startPolling()
+            AuthorizationContentView.Mode.DEFAULT
         }
+        updateViewContent()
     }
 
-    override fun updateConfirmProgressState(
+    override fun onConfirmDenyFailure(
+        error: ApiErrorData,
         connectionID: ConnectionID,
-        authorizationID: AuthorizationID,
-        confirmRequestIsInProgress: Boolean
+        authorizationID: AuthorizationID
     ) {
-        if (confirmRequestIsInProgress) stopPolling() else startPolling()
-        this.confirmRequestIsInProgress = confirmRequestIsInProgress
-        viewContract?.updateViewContent()
+        processFetchAuthorizationError(error)
     }
 
     private fun startPolling() {
-        if (initialValuesValid) {
+        if (!authorizationUnavailable) {
             pollingService.contract = this
             pollingService.start(authorizationId = authorizationId ?: "")
         }
@@ -156,13 +175,19 @@ class AuthorizationDetailsPresenter(
 
     private fun updateViewContent() {
         viewContract?.setHeaderVisibility(show = currentViewModel != null)
-        viewContract?.setContentVisibility(show = currentViewModel != null)
+        viewContract?.setContentViewMode(viewMode)
         if (currentViewModel != null) {
-            viewContract?.updateViewContent()
-        }//TODO show progress or invalid IDs error
+            viewContract?.setHeaderValues(
+                logo = providerLogo,
+                title = providerName,
+                startTime = startTime,
+                endTime = endTime
+            )
+            viewContract?.setContentTitleAndDescription(title, description)
+        }
     }
 
-    private fun processAuthorizationResult(result: EncryptedAuthorizationData) {
+    private fun processFetchAuthorizationResult(result: EncryptedAuthorizationData) {
         cryptoTools.decryptAuthorizationData(
             encryptedData = result,
             rsaPrivateKey = currentConnectionAndKey?.key
@@ -171,26 +196,31 @@ class AuthorizationDetailsPresenter(
                 connection = currentConnectionAndKey?.connection ?: return
             )
             if (super.currentViewModel != newViewModel) {
-                val receivedFirstNotNullModel = super.currentViewModel == null
                 super.currentViewModel = newViewModel
-                if (receivedFirstNotNullModel && sessionIsNotExpired) {
+                if (viewMode == AuthorizationContentView.Mode.LOADING && modelIsNotExpired) {
                     viewContract?.startTimer()
                 }
-                viewContract?.updateViewContent()
+                updateViewContent()
             }
-        }
+        } ?: showUnavailableAuthorizationView()
     }
 
-    private fun processAuthorizationError(error: ApiErrorData) {
+    private fun showUnavailableAuthorizationView() {
+        authorizationUnavailable = true
+        updateViewContent()
+    }
+
+    private fun processFetchAuthorizationError(error: ApiErrorData) {
         if (error.isConnectionNotFound()) {
             currentConnectionAndKey?.connection?.accessToken?.let {
                 connectionsRepository.invalidateConnectionsByTokens(accessTokens = listOf(it))
             }
-        }
-        if (error.isConnectivityError()) {
-            viewContract?.showError(error.getErrorMessage(appContext))
+            currentViewModel?.viewMode = AuthorizationContentView.Mode.ERROR
+            updateViewContent()
         } else {
-            viewContract?.closeViewWithErrorResult(error.getErrorMessage(appContext))
+            currentViewModel?.viewMode = AuthorizationContentView.Mode.DEFAULT
+            startPolling()
+            viewContract?.showError(error.getErrorMessage(appContext))
         }
     }
 }

@@ -40,12 +40,32 @@ data class AuthorizationViewModel(
     val createdAt: DateTime,
     val connectionID: ConnectionID,
     val connectionName: String,
-    var connectionLogoUrl: String?,
-    var isProcessing: Boolean
-) : Serializable
+    val connectionLogoUrl: String?
+) : Serializable {
+    var viewMode: AuthorizationContentView.Mode = AuthorizationContentView.Mode.DEFAULT
+        set(value) {
+            field = value
+            destroyAt = DateTime.now().plusSeconds(5)
+        }
 
-val AuthorizationViewModel.isIdle: Boolean
-    get() = !isProcessing
+    var destroyAt: DateTime? = null
+}
+
+fun AuthorizationViewModel.hasFinalMode(): Boolean {
+    return viewMode == AuthorizationContentView.Mode.CONFIRM_SUCCESS
+        || viewMode == AuthorizationContentView.Mode.DENY_SUCCESS
+        || viewMode == AuthorizationContentView.Mode.ERROR
+        || viewMode == AuthorizationContentView.Mode.TIME_OUT
+        || viewMode == AuthorizationContentView.Mode.UNAVAILABLE
+}
+
+/**
+ * Check what authorization model should be destroyed
+ *
+ * @receiver authorization view model
+ * @return true if destroyAt time is before now
+ */
+fun AuthorizationViewModel.shouldBeDestroyed(): Boolean = destroyAt?.isBeforeNow == true
 
 /**
  * Check what authorization is expired
@@ -61,7 +81,7 @@ fun AuthorizationViewModel.isExpired(): Boolean = expiresAt.isBeforeNow
  * @receiver authorization view model
  * @return true if expiresAt time is after now
  */
-fun AuthorizationViewModel.isNotExpired(): Boolean = expiresAt.isAfterNow
+fun AuthorizationViewModel.isNotExpired(): Boolean = !isExpired()
 
 /**
  * Calculates interval (count of seconds) between current time and expiresAt time
@@ -98,8 +118,7 @@ fun AuthorizationData.toAuthorizationViewModel(connection: ConnectionAbs): Autho
         expiresAt = this.expiresAt,
         createdAt = this.createdAt ?: DateTime(0L),
         authorizationID = this.id,
-        authorizationCode = this.authorizationCode ?: "",
-        isProcessing = false
+        authorizationCode = this.authorizationCode ?: ""
     )
 }
 

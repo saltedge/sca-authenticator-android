@@ -203,7 +203,7 @@ class AuthorizationDetailsPresenterTest {
             resultCallback = presenter
         )
         Mockito.verify(mockPollingService).stop()
-        Mockito.verify(mockView).updateViewContent()
+        Mockito.verify(mockView).updateViewsContent()
     }
 
     @Test
@@ -250,7 +250,7 @@ class AuthorizationDetailsPresenterTest {
             resultCallback = presenter
         )
         Mockito.verify(mockPollingService).stop()
-        Mockito.verify(mockView).updateViewContent()
+        Mockito.verify(mockView).updateViewsContent()
     }
 
     @Test
@@ -361,7 +361,7 @@ class AuthorizationDetailsPresenterTest {
         Mockito.clearInvocations(mockView)
         presenter.onFetchAuthorizationResult(result = encryptedData1, error = null)
 
-        Mockito.verify(mockView).updateViewContent()
+        Mockito.verify(mockView).updateViewsContent()
         Mockito.verify(mockView).startTimer()
         assertThat(presenter.description, equalTo("desc1"))
 
@@ -384,7 +384,7 @@ class AuthorizationDetailsPresenterTest {
         Mockito.clearInvocations(mockView, mockConnectionsRepository)
         presenter.onFetchAuthorizationResult(result = encryptedData1, error = null)
 
-        Mockito.verify(mockView, Mockito.never()).updateViewContent()
+        Mockito.verify(mockView, Mockito.never()).updateViewsContent()
     }
 
     @Test
@@ -462,7 +462,7 @@ class AuthorizationDetailsPresenterTest {
         )
 
         Mockito.verifyNoMoreInteractions(mockPollingService)
-        Mockito.verify(mockView).updateViewContent()
+        Mockito.verify(mockView).updateViewsContent()
 
         presenter.setInitialData(connectionId = "1", authorizationId = "1")
         Mockito.clearInvocations(mockView, mockPollingService)
@@ -473,7 +473,7 @@ class AuthorizationDetailsPresenterTest {
         )
 
         Mockito.verify(mockPollingService).start("1")
-        Mockito.verify(mockView).updateViewContent()
+        Mockito.verify(mockView).updateViewsContent()
 
         presenter.viewContract = null
         Mockito.clearInvocations(mockView, mockPollingService)
@@ -484,7 +484,7 @@ class AuthorizationDetailsPresenterTest {
         )
 
         Mockito.verify(mockPollingService).start("1")
-        Mockito.verify(mockView, Mockito.never()).updateViewContent()
+        Mockito.verify(mockView, Mockito.never()).updateViewsContent()
     }
 
     @Test
@@ -531,7 +531,7 @@ class AuthorizationDetailsPresenterTest {
             authorizationCode = "111",
             resultCallback = presenter
         )
-        Mockito.verify(mockView).updateViewContent()
+        Mockito.verify(mockView).updateViewsContent()
     }
 
     @Test
@@ -593,7 +593,7 @@ class AuthorizationDetailsPresenterTest {
             resultCallback = presenter
         )
         Mockito.verify(mockPollingService).stop()
-        Mockito.verify(mockView).updateViewContent()
+        Mockito.verify(mockView).updateViewsContent()
     }
 
     @Test

@@ -244,7 +244,7 @@ class AuthorizationsListPresenterTest {
         )
 
         assertThat(presenter.viewModels, equalTo(listOf(viewModel2)))
-        Mockito.verify(mockView).updateViewContent()
+        Mockito.verify(mockView).updateViewsContent()
         Mockito.verifyNoMoreInteractions(mockApiManager, mockPollingService)
     }
 
@@ -316,14 +316,14 @@ class AuthorizationsListPresenterTest {
 //        )
 //
 //        assertThat(presenter.viewModels.count(), equalTo(2))
-//        Mockito.verify(mockView).updateViewContent()
+//        Mockito.verify(mockView).updateViewsContent()
 //
 //        presenter.onFetchAuthorizationsResult(
 //            errors = emptyList(),
 //            result = listOf(encryptedData1, encryptedData2)
 //        )
 //
-//        Mockito.verify(mockView).updateViewContent()
+//        Mockito.verify(mockView).updateViewsContent()
 //    }
 
     @Test
@@ -359,7 +359,7 @@ class AuthorizationsListPresenterTest {
         )
 
         assertThat(presenter.viewModels.count(), equalTo(1))
-        Mockito.verify(mockView).updateViewContent()
+        Mockito.verify(mockView).updateViewsContent()
         Mockito.verify(mockPollingService).start()
     }
 
@@ -367,20 +367,20 @@ class AuthorizationsListPresenterTest {
     @Throws(Exception::class)
     fun onConfirmDenySuccessTest_case2() {
         val presenter: AuthorizationsListPresenter = createPresenter(viewContract = mockView)
-        presenter.onConfirmDenySuccess(authorizationId = "1", connectionID = "1", success = false)
+        presenter.onConfirmDenySuccess(authorizationID = "1", connectionID = "1", success = false)
 
         Mockito.verify(mockPollingService).start()
         Mockito.verifyNoMoreInteractions(mockView)
 
         Mockito.clearInvocations(mockView, mockPollingService)
-        presenter.onConfirmDenySuccess(authorizationId = "1", connectionID = "1", success = true)
+        presenter.onConfirmDenySuccess(authorizationID = "1", connectionID = "1", success = true)
 
-        Mockito.verify(mockView).updateViewContent()
+        Mockito.verify(mockView).updateViewsContent()
         Mockito.verify(mockPollingService).start()
 
         Mockito.clearInvocations(mockView, mockPollingService)
         presenter.viewContract = null
-        presenter.onConfirmDenySuccess(authorizationId = "1", connectionID = "1", success = true)
+        presenter.onConfirmDenySuccess(authorizationID = "1", connectionID = "1", success = true)
 
         Mockito.verifyNoMoreInteractions(mockView)
         Mockito.verify(mockPollingService).start()

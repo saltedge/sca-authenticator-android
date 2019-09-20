@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.authorizations.common
 
-interface AuthorizationExpirationListener {
+interface AuthorizationStatusListener {
     fun onViewModelsExpired()
+    fun onViewModelsShouldBeDestroyed()
 }

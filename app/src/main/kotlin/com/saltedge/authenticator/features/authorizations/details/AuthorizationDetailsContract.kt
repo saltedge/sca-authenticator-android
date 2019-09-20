@@ -20,19 +20,20 @@
  */
 package com.saltedge.authenticator.features.authorizations.details
 
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationContentView
 import com.saltedge.authenticator.features.authorizations.common.BaseAuthorizationViewContract
+import org.joda.time.DateTime
 
 interface AuthorizationDetailsContract {
     interface View : BaseAuthorizationViewContract {
-        fun updateTimeViews()
         fun setHeaderVisibility(show: Boolean)
-        fun setContentVisibility(show: Boolean)
+        fun setHeaderValues(logo: String, title: String, startTime: DateTime?, endTime: DateTime?)
+        fun updateTimeViews()
+        fun setContentViewMode(mode: AuthorizationContentView.Mode)
+        fun setContentTitleAndDescription(title: String, description: String)
         fun showError(errorMessage: String)
         fun startTimer()
         fun stopTimer()
         fun closeView()
-        fun closeViewWithSuccessResult(authorizationId: String)
-        fun closeViewWithErrorResult(errorMessage: String)
-        fun closeViewWithTimeOutResult()
     }
 }

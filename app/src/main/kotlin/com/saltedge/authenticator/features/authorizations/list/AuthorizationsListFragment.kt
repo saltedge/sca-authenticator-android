@@ -20,9 +20,7 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
-import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -103,9 +101,9 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         super.onStop()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        presenter.processResultIntent(requestCode, resultCode, data)
+    override fun onDestroy() {
+        presenter.onFragmentDestroy()
+        super.onDestroy()
     }
 
     override fun showError(error: ApiErrorData) {
@@ -114,13 +112,14 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         }
     }
 
-    override fun updateViewContent() {
+    override fun updateViewsContent() {
         try {
             contentViewPager?.setVisible(presenter.showContentViews)
             headerViewPager?.setVisible(presenter.showContentViews)
             emptyView?.setVisible(presenter.showEmptyView)
 
             if (presenter.showContentViews) {
+                printToLogcat("TEST_TEST", "Fragment.updateViewsContent ${contentViewPager.visibility}")
                 headerAdapter?.data = presenter.viewModels
                 contentAdapter?.data = presenter.viewModels
             }

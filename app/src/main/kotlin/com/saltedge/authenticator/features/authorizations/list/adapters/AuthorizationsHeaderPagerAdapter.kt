@@ -30,7 +30,7 @@ import kotlin.collections.HashSet
 
 class AuthorizationsHeaderPagerAdapter(
     val context: Context,
-    val expirationListener: AuthorizationExpirationListener
+    val expirationListener: AuthorizationStatusListener
 ) : AuthorizationsPagerAdapter() {
 
     private val timeUpdateListeners: HashSet<TimeUpdateListener> = HashSet()
@@ -40,7 +40,8 @@ class AuthorizationsHeaderPagerAdapter(
         timeViewUpdateTimer = Timer()
         timeViewUpdateTimer.schedule(object : TimerTask() {
             override fun run() {
-                if (existExpiredSessions()) expirationListener.onViewModelsExpired()
+                if (existExpiredModels()) expirationListener.onViewModelsExpired()
+                if (existModelsShouldBeDestroyed()) expirationListener.onViewModelsShouldBeDestroyed()
                 timeUpdateListeners.iterator().forEach { it.onTimeUpdate() }
             }
         }, 0, TIME_VIEW_UPDATE_TIMEOUT)
@@ -64,7 +65,9 @@ class AuthorizationsHeaderPagerAdapter(
         timeUpdateListeners.remove(view as TimeUpdateListener)
     }
 
-    private fun existExpiredSessions(): Boolean = data.any { it.isExpired() }
+    private fun existExpiredModels(): Boolean = data.any { it.isExpired() }
+
+    private fun existModelsShouldBeDestroyed(): Boolean = data.any { it.shouldBeDestroyed() }
 
     private fun updateViewContent(pageView: View, model: AuthorizationViewModel) {
         (pageView as AuthorizationHeaderView).apply {

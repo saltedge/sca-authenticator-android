@@ -395,7 +395,7 @@ class ConnectionsListPresenterTestSet2 {
         )
         Mockito.verify(mockConnectionsRepository).deleteConnection("guid2")
         Mockito.verify(mockKeyStoreManager).deleteKeyPair("guid2")
-        Mockito.verify(mockView).updateViewContent()
+        Mockito.verify(mockView).updateViewsContent()
     }
 
     @Before
