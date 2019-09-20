@@ -77,48 +77,48 @@
         android:id="@+id/setupLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone">
+        android:layout_marginTop="@dimen/dp_72"
+        android:visibility="gone"
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/allowPermissions"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/dp_40"
             android:layout_weight="1"
-            android:gravity="center_vertical"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/headerTitleView2"
+                style="@style/Text20BlackMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_30"
+                android:layout_marginRight="@dimen/dp_30"
+                android:gravity="center_horizontal"
+                android:maxLines="2"
+                tools:text="Allow Fingerprint" />
+
+            <TextView
+                android:id="@+id/headerDescriptionView2"
+                style="@style/Text16GrayDarkRegular"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_32"
+                android:layout_marginTop="@dimen/dp_12"
+                android:layout_marginRight="@dimen/dp_32"
+                android:gravity="center_horizontal"
+                android:lines="4"
+                tools:text="Use Fingerprint to enter the App faster, but
+             don’t worry, you’ll still have your passcode as backup." />
+
             <ImageView
+                android:id="@+id/setupLogoImage"
                 android:layout_width="@dimen/dp_100"
                 android:layout_height="@dimen/dp_100"
                 android:layout_gravity="center_horizontal"
                 android:contentDescription="@string/onboarding_secure_app_touch_id_allow_android"
                 android:src="@drawable/ic_setup_fingerprint" />
-
-<!--            <TextView-->
-<!--                android:id="@+id/headerDescriptionView"-->
-<!--                style="@style/Text16GrayDarkRegular"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginLeft="@dimen/dp_32"-->
-<!--                android:layout_marginTop="@dimen/dp_12"-->
-<!--                android:layout_marginRight="@dimen/dp_32"-->
-<!--                android:gravity="center_horizontal"-->
-<!--                android:lines="4"-->
-<!--                tools:text="Use Fingerprint to enter the App faster, but-->
-<!--             don’t worry, you’ll still have your passcode as backup." />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/headerTitleView"-->
-<!--                style="@style/Text20BlackMedium"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginLeft="@dimen/dp_30"-->
-<!--                android:layout_marginRight="@dimen/dp_30"-->
-<!--                android:gravity="center_horizontal"-->
-<!--                android:maxLines="2"-->
-<!--                tools:text="Allow Fingerprint" />-->
         </LinearLayout>
 
         <LinearLayout
@@ -129,7 +129,7 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/allowTouchIdActionView"
+                android:id="@+id/actionView"
                 style="@style/BlueFullWidthButton"
                 android:layout_marginBottom="@dimen/dp_20"
                 android:text="@string/onboarding_secure_app_touch_id_allow_android" />
@@ -138,16 +138,6 @@
                 android:id="@+id/skipTouchIdActionView"
                 style="@style/SetupSkipAction" />
         </LinearLayout>
-
-
-<!--        <com.saltedge.authenticator.widget.StepProgressView-->
-<!--            android:id="@+id/stepProgressView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginLeft="@dimen/dp_16"-->
-<!--            android:layout_marginTop="@dimen/dp_30"-->
-<!--            android:layout_marginRight="@dimen/dp_16"-->
-<!--            tools:background="@color/blue" />-->
 
 
         <!--        <include-->

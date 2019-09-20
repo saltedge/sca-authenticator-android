@@ -35,7 +35,9 @@ interface OnboardingSetupContract {
             headerTitle: Int,
             headerDescription: Int,
             showPasscodeCancel: Boolean?,
-            passcodePositiveActionText: ResId?
+            passcodePositiveActionText: ResId?,
+            imageResId: Int,
+            actionText: Int
         )
         fun hidePasscodeInput()
 

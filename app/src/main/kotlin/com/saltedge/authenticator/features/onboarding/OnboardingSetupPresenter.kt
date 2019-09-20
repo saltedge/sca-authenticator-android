@@ -157,8 +157,28 @@ class OnboardingSetupPresenter(
             headerTitle = getSetupTitleResId(setupViewMode, inputMode),
             headerDescription = getSetupSubtitleResId(setupViewMode, inputMode),
             showPasscodeCancel = shouldShowPasscodeInputNegativeActionView(inputMode),
-            passcodePositiveActionText = getPositivePasscodeActionViewText(inputMode)
+            passcodePositiveActionText = getPositivePasscodeActionViewText(inputMode),
+            imageResId = getSetupImageResId(setupViewMode),
+            actionText = getActionTextResId(setupViewMode)
         )
+    }
+
+    private fun getActionTextResId(mode: SetupViewMode): Int {
+        return when (mode) {
+            SetupViewMode.INPUT_PASSCODE -> R.string.onboarding_secure_app_touch_id_allow_android //don't use
+            SetupViewMode.ALLOW_BIOMETRICS -> R.string.onboarding_secure_app_touch_id_allow_android
+            SetupViewMode.ALLOW_NOTIFICATIONS -> R.string.onboarding_allow_notifications_title
+            SetupViewMode.COMPLETE -> R.string.actions_proceed
+        }
+    }
+
+    private fun getSetupImageResId(mode: SetupViewMode): Int {
+        return when (mode) {
+            SetupViewMode.INPUT_PASSCODE -> 0 //don't use
+            SetupViewMode.ALLOW_BIOMETRICS -> R.drawable.ic_setup_fingerprint
+            SetupViewMode.ALLOW_NOTIFICATIONS -> R.drawable.ic_setup_notifications
+            SetupViewMode.COMPLETE -> R.drawable.ic_complete_ok_70
+        }
     }
 
     private fun getSetupTitleResId(
@@ -219,7 +239,6 @@ class OnboardingSetupPresenter(
     }
 
     private fun goToNextSetupView() {
-        Log.d("some", "goToNextSetupView")
         val index = setupModesList.indexOf(setupViewMode)
         if (index > -1) {
             setupViewMode = setupModesList.getOrNull(index + 1) ?: setupViewMode

@@ -36,7 +36,6 @@ import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 import kotlinx.android.synthetic.main.activity_onboarding.*
 import kotlinx.android.synthetic.main.view_complete_container.*
 import kotlinx.android.synthetic.main.view_notifications.*
-import kotlinx.android.synthetic.main.view_touch_id.*
 import javax.inject.Inject
 
 class OnboardingSetupActivity : AppCompatActivity(),
@@ -137,11 +136,19 @@ class OnboardingSetupActivity : AppCompatActivity(),
         headerTitle: Int,
         headerDescription: Int,
         showPasscodeCancel: Boolean?,
-        passcodePositiveActionText: Int?
+        passcodePositiveActionText: Int?,
+        imageResId: Int,
+        actionText: Int
     ) {
         stepProgressView?.setStepProgress(setupStepProgress)
         headerTitleView?.setText(headerTitle)
         headerDescriptionView?.setText(headerDescription)
+
+        headerTitleView2?.setText(headerTitle)
+        headerDescriptionView2?.setText(headerDescription)
+        setupLogoImage?.setImageResource(imageResId)
+        actionView?.setText(actionText)
+
         showPasscodeCancel?.let { passcodeInputView?.cancelActionIsAvailable = it }
         passcodePositiveActionText?.let { passcodeInputView?.setPositiveActionText(it) }
     }
@@ -190,9 +197,9 @@ class OnboardingSetupActivity : AppCompatActivity(),
     }
 
     private fun setupAllowTouchIdViewContent() {
-        //        allowTouchIdActionView?.setFont(R.font.roboto_regular)
-//        allowTouchIdActionView?.setOnClickListener(this)
-//        skipTouchIdActionView?.setOnClickListener(this)
+        actionView?.setFont(R.font.roboto_regular)
+        actionView?.setOnClickListener(this)
+        skipTouchIdActionView?.setOnClickListener(this)
     }
 
     private fun setupInputPasscodeViewContent() {
