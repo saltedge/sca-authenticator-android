@@ -37,6 +37,7 @@ interface OnboardingSetupContract {
             showPasscodeCancel: Boolean?,
             passcodePositiveActionText: ResId?
         )
+        fun hidePasscodeInput()
 
         fun hideOnboardingViewAndShowSetupView()
         fun setPasscodeInputMode(inputMode: PasscodeInputView.InputMode)

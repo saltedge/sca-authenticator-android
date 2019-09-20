@@ -22,6 +22,7 @@ package com.saltedge.authenticator.features.onboarding
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
@@ -110,7 +111,15 @@ class OnboardingSetupActivity : AppCompatActivity(),
 
     override fun hideOnboardingViewAndShowSetupView() {
         onboardingLayout?.setVisible(show = false)
-        setupLayout?.setVisible(show = true)
+        setupLayout?.setVisible(show = false)
+        stepProgressView?.setVisible(true)
+        passcodeScreen?.setVisible(true)
+    }
+
+    override fun hidePasscodeInput() {
+        Log.d("some", "hidePasscodeInput")
+        passcodeScreen?.setVisible(false)
+        setupLayout?.setVisible(true)
     }
 
     override fun showMainActivity() {
@@ -135,11 +144,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
         headerDescriptionView?.setText(headerDescription)
         showPasscodeCancel?.let { passcodeInputView?.cancelActionIsAvailable = it }
         passcodePositiveActionText?.let { passcodeInputView?.setPositiveActionText(it) }
-
-        val currentContainerId = presenter.setupViewMode.containerId
-        SetupViewMode.values().forEach {
-            findViewById<View?>(it.containerId)?.setVisible(show = it.containerId == currentContainerId)
-        }
     }
 
     override fun setPasscodeInputMode(inputMode: PasscodeInputView.InputMode) {
@@ -186,9 +190,9 @@ class OnboardingSetupActivity : AppCompatActivity(),
     }
 
     private fun setupAllowTouchIdViewContent() {
-        allowTouchIdActionView?.setFont(R.font.roboto_regular)
-        allowTouchIdActionView?.setOnClickListener(this)
-        skipTouchIdActionView?.setOnClickListener(this)
+        //        allowTouchIdActionView?.setFont(R.font.roboto_regular)
+//        allowTouchIdActionView?.setOnClickListener(this)
+//        skipTouchIdActionView?.setOnClickListener(this)
     }
 
     private fun setupInputPasscodeViewContent() {

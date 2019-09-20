@@ -22,6 +22,7 @@ package com.saltedge.authenticator.features.onboarding
 
 import android.content.Context
 import android.os.Handler
+import android.util.Log
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
@@ -218,10 +219,12 @@ class OnboardingSetupPresenter(
     }
 
     private fun goToNextSetupView() {
+        Log.d("some", "goToNextSetupView")
         val index = setupModesList.indexOf(setupViewMode)
         if (index > -1) {
             setupViewMode = setupModesList.getOrNull(index + 1) ?: setupViewMode
         }
         updateSetupViews(inputMode = null)
+        viewContract?.hidePasscodeInput()
     }
 }
