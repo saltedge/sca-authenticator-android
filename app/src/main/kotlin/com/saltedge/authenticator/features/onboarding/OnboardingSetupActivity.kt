@@ -141,8 +141,8 @@ class OnboardingSetupActivity : AppCompatActivity(),
         headerTitleView?.setText(headerTitle)
         headerDescriptionView?.setText(headerDescription)
 
-        headerTitleView2?.setText(headerTitle)
-        headerDescriptionView2?.setText(headerDescription)
+        titleView?.setText(headerTitle)
+        descriptionView?.setText(headerDescription)
         setupLogoImage?.setImageResource(imageResId)
         actionView?.setText(actionText)
 

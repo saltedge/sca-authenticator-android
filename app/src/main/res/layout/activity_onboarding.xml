@@ -89,7 +89,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/headerTitleView2"
+                android:id="@+id/titleView"
                 style="@style/Text20BlackMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -100,12 +100,12 @@
                 tools:text="Allow Fingerprint" />
 
             <TextView
-                android:id="@+id/headerDescriptionView2"
+                android:id="@+id/descriptionView"
                 style="@style/Text16GrayDarkRegular"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp_32"
-                android:layout_below="@id/headerTitleView2"
+                android:layout_below="@id/titleView"
                 android:layout_marginTop="@dimen/dp_12"
                 android:layout_marginRight="@dimen/dp_32"
                 android:gravity="center_horizontal"

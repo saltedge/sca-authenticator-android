@@ -22,7 +22,6 @@ package com.saltedge.authenticator.features.onboarding
 
 import android.content.Context
 import android.os.Handler
-import android.util.Log
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
@@ -105,15 +104,18 @@ class OnboardingSetupPresenter(
     fun onViewClick(viewId: Int) {
         when (viewId) {
             R.id.actionView -> {
-                if (setupViewMode == SetupViewMode.ALLOW_BIOMETRICS) onAllowTouchIdClick()
-                else if (setupViewMode == SetupViewMode.ALLOW_NOTIFICATIONS) {
-                    preferenceRepository.notificationsEnabled = true
-                    goToNextSetupView()
-                    startNextActivityWithDelay()
-                    viewContract?.hideSkipView()
-                } else if (setupViewMode == SetupViewMode.COMPLETE) {
-                    viewContract?.showMainActivity()
-                    stopDelayHandler()
+                when (setupViewMode) {
+                    SetupViewMode.ALLOW_BIOMETRICS -> onAllowTouchIdClick()
+                    SetupViewMode.ALLOW_NOTIFICATIONS -> {
+                        preferenceRepository.notificationsEnabled = true
+                        goToNextSetupView()
+                        startNextActivityWithDelay()
+                        viewContract?.hideSkipView()
+                    }
+                    SetupViewMode.COMPLETE -> {
+                        viewContract?.showMainActivity()
+                        stopDelayHandler()
+                    }
                 }
             }
             R.id.skipSetupActionView -> {
