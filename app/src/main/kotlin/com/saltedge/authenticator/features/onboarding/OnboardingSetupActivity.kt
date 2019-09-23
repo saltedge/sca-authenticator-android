@@ -158,7 +158,8 @@ class OnboardingSetupActivity : AppCompatActivity(),
         skipSetupActionView?.setVisible(show = false)
         val layoutParams = (actionView?.layoutParams as? MarginLayoutParams)
         val marginBottomHeight = convertDpToPx(40F)
-        layoutParams?.setMargins(0, 0, 0, marginBottomHeight)
+        val marginTopHeight = convertDpToPx(56F)
+        layoutParams?.setMargins(0, marginTopHeight, 0, marginBottomHeight)
         actionView?.layoutParams = layoutParams
     }
 

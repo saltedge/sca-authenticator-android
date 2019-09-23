@@ -78,10 +78,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/dp_72"
-        android:visibility="gone"
         android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/allowPermissions"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -105,6 +104,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp_32"
+                android:layout_below="@id/headerTitleView2"
                 android:layout_marginTop="@dimen/dp_12"
                 android:layout_marginRight="@dimen/dp_32"
                 android:gravity="center_horizontal"
@@ -116,10 +116,10 @@
                 android:id="@+id/setupLogoImage"
                 android:layout_width="@dimen/dp_100"
                 android:layout_height="@dimen/dp_100"
-                android:layout_gravity="center_horizontal"
+                android:layout_centerInParent="true"
                 android:contentDescription="@string/onboarding_secure_app_touch_id_allow_android"
                 android:src="@drawable/ic_setup_fingerprint" />
-        </LinearLayout>
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/actionsLayout"
