@@ -135,7 +135,7 @@
                 android:text="@string/onboarding_secure_app_touch_id_allow_android" />
 
             <TextView
-                android:id="@+id/skipTouchIdActionView"
+                android:id="@+id/skipSetupActionView"
                 style="@style/SetupSkipAction" />
         </LinearLayout>
 

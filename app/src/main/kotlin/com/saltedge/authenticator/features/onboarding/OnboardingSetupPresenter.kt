@@ -104,27 +104,30 @@ class OnboardingSetupPresenter(
 
     fun onViewClick(viewId: Int) {
         when (viewId) {
+            R.id.actionView -> {
+                if(setupViewMode == SetupViewMode.ALLOW_BIOMETRICS) onAllowTouchIdClick()
+                else if (setupViewMode == SetupViewMode.ALLOW_NOTIFICATIONS) {
+                    preferenceRepository.notificationsEnabled = true
+                    goToNextSetupView()
+                    startNextActivityWithDelay()
+                }
+                else if (setupViewMode == SetupViewMode.COMPLETE) {
+                    viewContract?.showMainActivity()
+                    stopDelayHandler()
+                }
+            }
+            R.id.skipSetupActionView -> {
+                if(setupViewMode == SetupViewMode.ALLOW_BIOMETRICS){
+                    preferenceRepository.fingerprintEnabled = false
+                    goToNextSetupView()
+                } else if(setupViewMode == SetupViewMode.ALLOW_NOTIFICATIONS) {
+                    preferenceRepository.notificationsEnabled = false
+                    goToNextSetupView()
+                    startNextActivityWithDelay()
+                }
+            }
             R.id.skipActionView, R.id.proceedToSetup -> {
                 showPasscodeInput()
-            }
-            R.id.allowTouchIdActionView -> onAllowTouchIdClick()
-            R.id.skipTouchIdActionView -> {
-                preferenceRepository.fingerprintEnabled = false
-                goToNextSetupView()
-            }
-            R.id.allowNotificationsActionView -> {
-                preferenceRepository.notificationsEnabled = true
-                goToNextSetupView()
-                startNextActivityWithDelay()
-            }
-            R.id.skipNotificationsActionView -> {
-                preferenceRepository.notificationsEnabled = false
-                goToNextSetupView()
-                startNextActivityWithDelay()
-            }
-            R.id.proceedToMainActivity -> {
-                viewContract?.showMainActivity()
-                stopDelayHandler()
             }
         }
     }

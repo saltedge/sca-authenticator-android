@@ -22,7 +22,6 @@ package com.saltedge.authenticator.features.onboarding
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
@@ -34,8 +33,6 @@ import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 import kotlinx.android.synthetic.main.activity_onboarding.*
-import kotlinx.android.synthetic.main.view_complete_container.*
-import kotlinx.android.synthetic.main.view_notifications.*
 import javax.inject.Inject
 
 class OnboardingSetupActivity : AppCompatActivity(),
@@ -116,7 +113,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
     }
 
     override fun hidePasscodeInput() {
-        Log.d("some", "hidePasscodeInput")
         passcodeScreen?.setVisible(false)
         setupLayout?.setVisible(true)
     }
@@ -186,20 +182,12 @@ class OnboardingSetupActivity : AppCompatActivity(),
         stepProgressView?.stepCount = presenter.setupStepCount
         setupInputPasscodeViewContent()
         setupAllowTouchIdViewContent()
-        setupAllowNotificationsViewContent()
-        proceedToMainActivity?.setOnClickListener(this)
-    }
-
-    private fun setupAllowNotificationsViewContent() {
-        allowNotificationsActionView?.setFont(R.font.roboto_regular)
-        allowNotificationsActionView?.setOnClickListener(this)
-        skipNotificationsActionView?.setOnClickListener(this)
     }
 
     private fun setupAllowTouchIdViewContent() {
         actionView?.setFont(R.font.roboto_regular)
         actionView?.setOnClickListener(this)
-        skipTouchIdActionView?.setOnClickListener(this)
+        skipSetupActionView?.setOnClickListener(this)
     }
 
     private fun setupInputPasscodeViewContent() {
