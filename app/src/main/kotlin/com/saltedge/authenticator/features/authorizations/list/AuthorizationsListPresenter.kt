@@ -78,7 +78,7 @@ class AuthorizationsListPresenter @Inject constructor(
 
     fun onFragmentPause() {
         stopPolling()
-//        job.cancel()
+        job.cancel()
     }
 
     /**
