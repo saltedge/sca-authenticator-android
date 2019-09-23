@@ -49,7 +49,8 @@ class MainActivity : LockableActivity(),
     ActivityComponentsContract,
     BottomNavigationView.OnNavigationItemSelectedListener,
     View.OnClickListener,
-    FragmentManager.OnBackStackChangedListener {
+    FragmentManager.OnBackStackChangedListener
+{
 
     private val presenter = MainActivityPresenter(
         viewContract = this,
@@ -155,7 +156,7 @@ class MainActivity : LockableActivity(),
     }
 
     override fun popBackStack() {
-        supportFragmentManager?.popBackStack()
+        supportFragmentManager.popBackStack()
     }
 
     override fun updateNavigationViewsContent() {
@@ -182,7 +183,7 @@ class MainActivity : LockableActivity(),
             setSupportActionBar(toolbarView)
             toolbarView?.setNavigationOnClickListener(this)
             bottomNavigationView?.setOnNavigationItemSelectedListener(this)
-            supportFragmentManager?.addOnBackStackChangedListener(this)
+            supportFragmentManager.addOnBackStackChangedListener(this)
             updateNavigationViewsContent()
         } catch (e: Exception) {
             e.log()

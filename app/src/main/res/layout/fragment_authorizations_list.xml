@@ -18,33 +18,39 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <com.saltedge.authenticator.features.authorizations.list.WrapContentViewPager
-        android:id="@+id/headerViewPager"
+    <RelativeLayout
+        android:id="@+id/authorizationsList"
         android:layout_width="match_parent"
-        android:layout_height="82dp"
-        tools:background="@color/red"/>
+        android:layout_height="match_parent">
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/contentViewPager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:background="@color/blue"
-        android:layout_below="@+id/headerViewPager" />
+        <com.saltedge.authenticator.features.authorizations.list.WrapContentViewPager
+            android:id="@+id/headerViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="82dp"
+            tools:background="@color/red"/>
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/contentViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:background="@color/blue"
+            android:layout_below="@+id/headerViewPager" />
+    </RelativeLayout>
 
     <com.saltedge.authenticator.widget.InfoView
-        android:id="@+id/emptyView"
+        android:visibility="gone"
+        android:id="@+id/authorizationsEmptyView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true"
         app:iconDimension="@dimen/info_view_big_icon"
         app:iconSrc="@drawable/ic_no_authorizations_80dp"
         app:subTitleText="@string/authorizations_nothing_confirm_description"
         app:titleText="@string/authorizations_nothing_confirm" />
-</RelativeLayout>
+</FrameLayout>
