@@ -40,6 +40,7 @@ interface OnboardingSetupContract {
             actionText: Int
         )
         fun hidePasscodeInput()
+        fun hideSkipView()
 
         fun hideOnboardingViewAndShowSetupView()
         fun setPasscodeInputMode(inputMode: PasscodeInputView.InputMode)

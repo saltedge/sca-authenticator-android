@@ -138,19 +138,6 @@
                 android:id="@+id/skipSetupActionView"
                 style="@style/SetupSkipAction" />
         </LinearLayout>
-
-
-        <!--        <include-->
-        <!--            android:id="@+id/allowTouchIdContainer"-->
-        <!--            layout="@layout/view_touch_id" />-->
-
-        <!--        <include-->
-        <!--            android:id="@+id/allowNotificationsContainer"-->
-        <!--            layout="@layout/view_notifications" />-->
-
-        <!--        <include-->
-        <!--            android:id="@+id/completeContainer"-->
-        <!--            layout="@layout/view_complete_container" />-->
     </LinearLayout>
 
     <RelativeLayout

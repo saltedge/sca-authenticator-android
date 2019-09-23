@@ -34,6 +34,7 @@ import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 import kotlinx.android.synthetic.main.activity_onboarding.*
 import javax.inject.Inject
+import android.view.ViewGroup.MarginLayoutParams
 
 class OnboardingSetupActivity : AppCompatActivity(),
     OnboardingSetupContract.View,
@@ -117,7 +118,7 @@ class OnboardingSetupActivity : AppCompatActivity(),
         setupLayout?.setVisible(true)
     }
 
-    override fun showMainActivity() {
+    override fun showMainActivity() { //when u back from fragment
         startActivity(Intent(this, MainActivity::class.java)
             .apply { putExtra(KEY_SKIP_PIN, true) }
             .apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK })
@@ -153,6 +154,14 @@ class OnboardingSetupActivity : AppCompatActivity(),
         passcodeInputView?.initInputMode(inputMode = inputMode)
     }
 
+    override fun hideSkipView() {
+        skipSetupActionView?.setVisible(show = false)
+        val layoutParams = (actionView?.layoutParams as? MarginLayoutParams)
+        val marginBottomHeight = convertDpToPx(40F)
+        layoutParams?.setMargins(0, 0, 0, marginBottomHeight)
+        actionView?.layoutParams = layoutParams
+    }
+
     private fun initViews() {
         try {
             initOnboardingViews()
@@ -180,20 +189,14 @@ class OnboardingSetupActivity : AppCompatActivity(),
 
     private fun initSetupViews() {
         stepProgressView?.stepCount = presenter.setupStepCount
-        setupInputPasscodeViewContent()
-        setupAllowTouchIdViewContent()
-    }
 
-    private fun setupAllowTouchIdViewContent() {
-        actionView?.setFont(R.font.roboto_regular)
-        actionView?.setOnClickListener(this)
-        skipSetupActionView?.setOnClickListener(this)
-    }
-
-    private fun setupInputPasscodeViewContent() {
         passcodeInputView?.biometricsActionIsAvailable = false
         passcodeInputView?.cancelActionIsAvailable = false
         passcodeInputView?.listener = this
+
+        actionView?.setFont(R.font.roboto_regular)
+        actionView?.setOnClickListener(this)
+        skipSetupActionView?.setOnClickListener(this)
     }
 
     private fun injectDependencies() {
