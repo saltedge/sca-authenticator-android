@@ -40,24 +40,22 @@ data class AuthorizationViewModel(
     val createdAt: DateTime,
     val connectionID: ConnectionID,
     val connectionName: String,
-    val connectionLogoUrl: String?
+    val connectionLogoUrl: String?,
+    var destroyAt: DateTime? = null
 ) : Serializable {
     var viewMode: AuthorizationContentView.Mode = AuthorizationContentView.Mode.DEFAULT
         set(value) {
             field = value
-            destroyAt = DateTime.now().plusSeconds(5)
+            this.destroyAt = if (value.isFinalMode()) DateTime.now().plusSeconds(5) else null
         }
-
-    var destroyAt: DateTime? = null
 }
 
-fun AuthorizationViewModel.hasFinalMode(): Boolean {
-    return viewMode == AuthorizationContentView.Mode.CONFIRM_SUCCESS
-        || viewMode == AuthorizationContentView.Mode.DENY_SUCCESS
-        || viewMode == AuthorizationContentView.Mode.ERROR
-        || viewMode == AuthorizationContentView.Mode.TIME_OUT
-        || viewMode == AuthorizationContentView.Mode.UNAVAILABLE
+fun List<AuthorizationViewModel>.joinFinalModels(listWithFinalModels: List<AuthorizationViewModel>): List<AuthorizationViewModel> {
+    val finalModels = listWithFinalModels.filter { it.hasFinalMode() }
+    return finalModels.union(this).toList().sortedBy { it.createdAt }
 }
+
+fun AuthorizationViewModel.hasFinalMode(): Boolean = viewMode.isFinalMode()
 
 /**
  * Check what authorization model should be destroyed
@@ -73,7 +71,7 @@ fun AuthorizationViewModel.shouldBeDestroyed(): Boolean = destroyAt?.isBeforeNow
  * @receiver authorization view model
  * @return true if expiresAt time is before now
  */
-fun AuthorizationViewModel.isExpired(): Boolean = expiresAt.isBeforeNow
+fun AuthorizationViewModel.isExpired(): Boolean = expiresAt.isEqualNow || expiresAt.isBeforeNow
 
 /**
  * Check what authorization is not expired

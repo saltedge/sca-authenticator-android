@@ -44,9 +44,177 @@ class AuthorizationViewModelTest {
         connectionName = "Demobank",
         connectionLogoUrl = "url",
         validSeconds = 300,
-        isProcessing = false,
         createdAt = DateTime()
     )
+
+    @Test
+    @Throws(Exception::class)
+    fun joinFinalModelsTestCase1() {
+        val newList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3)
+        )
+        val oldList = emptyList<AuthorizationViewModel>()
+
+        assertThat(newList.joinFinalModels(oldList), equalTo(newList))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun joinFinalModelsTestCase2() {
+        val newList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3)
+        )
+        val oldList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3)
+        )
+
+        assertThat(newList.joinFinalModels(oldList), equalTo(newList))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun joinFinalModelsTestCase3() {
+        val newList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3)
+        )
+        val oldList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3).apply { viewMode = AuthorizationContentView.Mode.UNAVAILABLE }
+        )
+        val resultList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3).apply { viewMode = AuthorizationContentView.Mode.UNAVAILABLE }
+        )
+
+        assertThat(newList.joinFinalModels(oldList),
+            equalTo(resultList))
+        assertThat(newList.joinFinalModels(oldList)[2].viewMode,
+            equalTo(AuthorizationContentView.Mode.UNAVAILABLE))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun joinFinalModelsTestCase4() {
+        val newList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2)
+        )
+        val oldList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3).apply { viewMode = AuthorizationContentView.Mode.UNAVAILABLE }
+        )
+        val resultList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3).apply { viewMode = AuthorizationContentView.Mode.UNAVAILABLE }
+        )
+
+        assertThat(newList.joinFinalModels(oldList), equalTo(resultList))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun joinFinalModelsTestCase5() {
+        val newList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(4)
+        )
+        val oldList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3).apply { viewMode = AuthorizationContentView.Mode.UNAVAILABLE }
+        )
+        val resultList = listOf(
+            createModelByIndex(1, now),
+            createModelByIndex(2, now),
+            createModelByIndex(4, now),
+            createModelByIndex(3, now).apply { viewMode = AuthorizationContentView.Mode.UNAVAILABLE }
+
+        )
+
+        assertThat(newList.joinFinalModels(oldList), equalTo(resultList))
+    }
+
+    private fun createModelByIndex(index: Int): AuthorizationViewModel {
+        return AuthorizationViewModel(
+            authorizationID = "$index",
+            authorizationCode = "$index",
+            title = "$index",
+            description = "$index",
+            expiresAt = DateTime(index),
+            connectionID = "$index",
+            connectionName = "$index",
+            connectionLogoUrl = "$index",
+            validSeconds = 100,
+            createdAt = DateTime(index)
+        )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun hasFinalModeTest() {
+        model.viewMode = AuthorizationContentView.Mode.DEFAULT
+
+        Assert.assertFalse(model.hasFinalMode())
+
+        model.viewMode = AuthorizationContentView.Mode.LOADING
+
+        Assert.assertFalse(model.hasFinalMode())
+
+        model.viewMode = AuthorizationContentView.Mode.CONFIRM_PROCESSING
+
+        Assert.assertFalse(model.hasFinalMode())
+
+        model.viewMode = AuthorizationContentView.Mode.DENY_PROCESSING
+
+        Assert.assertFalse(model.hasFinalMode())
+
+        model.viewMode = AuthorizationContentView.Mode.CONFIRM_SUCCESS
+
+        Assert.assertTrue(model.hasFinalMode())
+
+        model.viewMode = AuthorizationContentView.Mode.DENY_SUCCESS
+
+        Assert.assertTrue(model.hasFinalMode())
+
+        model.viewMode = AuthorizationContentView.Mode.ERROR
+
+        Assert.assertTrue(model.hasFinalMode())
+
+        model.viewMode = AuthorizationContentView.Mode.TIME_OUT
+
+        Assert.assertTrue(model.hasFinalMode())
+
+        model.viewMode = AuthorizationContentView.Mode.UNAVAILABLE
+
+        Assert.assertTrue(model.hasFinalMode())
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun shouldBeDestroyedTest() {
+        Assert.assertFalse(model.shouldBeDestroyed())
+
+        model.destroyAt = DateTime.now().minusSeconds(1)
+
+        Assert.assertTrue(model.shouldBeDestroyed())
+
+        model.destroyAt = DateTime.now().plusSeconds(1)
+
+        Assert.assertFalse(model.shouldBeDestroyed())
+    }
 
     @Test
     @Throws(Exception::class)
@@ -117,7 +285,6 @@ class AuthorizationViewModelTest {
                     connectionName = "Demobank",
                     connectionLogoUrl = "url",
                     validSeconds = 300,
-                    isProcessing = false,
                     createdAt = DateTime(0L)
                 )
             )

@@ -57,7 +57,7 @@ class AuthorizationDetailsPresenter(
     private val description: String
         get() = currentViewModel?.description ?: appContext.getString(R.string.authorizations_loading_description)
     private val modelIsNotExpired: Boolean
-        get() = currentViewModel?.isNotExpired() ?: false
+        get() = currentViewModel?.isNotExpired() ?: true
     private var pollingService: SingleAuthorizationPollingService =
         apiManager.createSingleAuthorizationPollingService()
     private var authorizationId: String? = null
@@ -79,7 +79,7 @@ class AuthorizationDetailsPresenter(
     }
 
     fun onFragmentResume() {
-        if (modelIsNotExpired) {
+        if (modelIsNotExpired && !authorizationUnavailable) {
             startPolling()
             viewContract?.startTimer()
         }
@@ -129,7 +129,9 @@ class AuthorizationDetailsPresenter(
         result: EncryptedAuthorizationData?,
         error: ApiErrorData?
     ) {
-        result?.let { processFetchAuthorizationResult(it) } ?: error?.let { processFetchAuthorizationError(it) }
+        result?.let { processFetchAuthorizationResult(it) }
+            ?: error?.let { processFetchAuthorizationError(it) }
+            ?: setUnavailableState()
     }
 
     override fun onAuthorizeStart(connectionID: ConnectionID, authorizationID: AuthorizationID, type: ActionType) {
@@ -202,10 +204,12 @@ class AuthorizationDetailsPresenter(
                 }
                 updateViewContent()
             }
-        } ?: showUnavailableAuthorizationView()
+        } ?: setUnavailableState()
     }
 
-    private fun showUnavailableAuthorizationView() {
+    private fun setUnavailableState() {
+        stopPolling()
+        currentViewModel?.viewMode = AuthorizationContentView.Mode.UNAVAILABLE
         authorizationUnavailable = true
         updateViewContent()
     }
@@ -217,10 +221,13 @@ class AuthorizationDetailsPresenter(
             }
             currentViewModel?.viewMode = AuthorizationContentView.Mode.ERROR
             updateViewContent()
+        } else if (error.isAuthorizationNotFound()) {
+            setUnavailableState()
         } else {
-            currentViewModel?.viewMode = AuthorizationContentView.Mode.DEFAULT
-            startPolling()
-            viewContract?.showError(error.getErrorMessage(appContext))
+            if (currentViewModel?.viewMode != AuthorizationContentView.Mode.ERROR) {
+                viewContract?.showError(error.getErrorMessage(appContext))
+                currentViewModel?.viewMode = AuthorizationContentView.Mode.ERROR
+            }
         }
     }
 }

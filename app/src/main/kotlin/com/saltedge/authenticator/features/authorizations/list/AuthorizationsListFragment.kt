@@ -113,18 +113,12 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     }
 
     override fun updateViewsContent() {
-        try {
-            contentViewPager?.setVisible(presenter.showContentViews)
-            headerViewPager?.setVisible(presenter.showContentViews)
-            emptyView?.setVisible(presenter.showEmptyView)
+        activity?.runOnUiThread {
+            authorizationsList?.setVisible(presenter.showContentViews)
+            authorizationsEmptyView?.setVisible(presenter.showEmptyView)
 
-            if (presenter.showContentViews) {
-                printToLogcat("TEST_TEST", "Fragment.updateViewsContent ${contentViewPager.visibility}")
-                headerAdapter?.data = presenter.viewModels
-                contentAdapter?.data = presenter.viewModels
-            }
-        } catch (e: Exception) {
-            e.log()
+            headerAdapter?.data = presenter.viewModels
+            contentAdapter?.data = presenter.viewModels
         }
     }
 

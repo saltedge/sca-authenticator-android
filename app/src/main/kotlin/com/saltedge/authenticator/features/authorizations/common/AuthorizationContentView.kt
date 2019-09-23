@@ -33,7 +33,23 @@ import kotlinx.android.synthetic.main.view_authorization_content.view.*
 class AuthorizationContentView : LinearLayout {
 
     enum class Mode {
-        LOADING, DEFAULT, CONFIRM_PROCESSING, DENY_PROCESSING, CONFIRM_SUCCESS, DENY_SUCCESS, ERROR, TIME_OUT, UNAVAILABLE
+        LOADING,
+        DEFAULT,
+        CONFIRM_PROCESSING,
+        DENY_PROCESSING,
+        CONFIRM_SUCCESS,
+        DENY_SUCCESS,
+        ERROR,
+        TIME_OUT,
+        UNAVAILABLE;
+
+        fun isFinalMode(): Boolean {
+            return this == CONFIRM_SUCCESS
+                || this == DENY_SUCCESS
+                || this == ERROR
+                || this == TIME_OUT
+                || this == UNAVAILABLE
+        }
     }
 
     constructor(context: Context) : super(context)

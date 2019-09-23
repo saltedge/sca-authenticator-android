@@ -22,10 +22,7 @@ package com.saltedge.authenticator.sdk.model
 
 import android.content.Context
 import com.saltedge.authenticator.sdk.R
-import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_API_RESPONSE
-import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_CONNECTION_NOT_FOUND
-import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_HOST_UNREACHABLE
-import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_SSL_HANDSHAKE
+import com.saltedge.authenticator.sdk.constants.*
 
 /**
  * Creates error description by known error class names or returns message field itself
@@ -53,6 +50,15 @@ fun ApiErrorData.getErrorMessage(context: Context): String {
  */
 fun ApiErrorData.isConnectionNotFound(): Boolean =
     errorClassName == ERROR_CLASS_CONNECTION_NOT_FOUND
+
+/**
+ * Checks if errorClassName is equal to ERROR_CLASS_AUTHORIZATION_NOT_FOUND
+ *
+ * @receiver api error
+ * @return boolean. true if errorClassName == ERROR_CLASS_AUTHORIZATION_NOT_FOUND
+ */
+fun ApiErrorData.isAuthorizationNotFound(): Boolean =
+    errorClassName == ERROR_CLASS_AUTHORIZATION_NOT_FOUND
 
 /**
  * Checks if errorClassName is equal to ERROR_CLASS_SSL_HANDSHAKE or ERROR_CLASS_HOST_UNREACHABLE

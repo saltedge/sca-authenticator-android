@@ -32,7 +32,6 @@ import com.saltedge.authenticator.sdk.contract.FetchAuthorizationsContract
 import com.saltedge.authenticator.sdk.model.*
 import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
-import com.saltedge.authenticator.tool.printToLogcat
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -72,6 +71,7 @@ class AuthorizationsListPresenter @Inject constructor(
 
     fun onFragmentResume() {
         startPolling()
+        viewContract?.updateViewsContent()
     }
 
     fun onFragmentPause() {
@@ -184,12 +184,10 @@ class AuthorizationsListPresenter @Inject constructor(
         val newAuthorizationsData = result
             .filter { it.isNotExpired() }
             .sortedBy { it.createdAt }
-        val newViewModels = createViewModels(newAuthorizationsData)
-        printToLogcat("TEST_TEST", "processDecryptedAuthorizationsResult.newViewModels:${newViewModels.size}")
+        val newViewModels = createViewModels(newAuthorizationsData).joinFinalModels(this.viewModels)
 
         if (this.viewModels != newViewModels) {
             this.viewModels = newViewModels
-            printToLogcat("TEST_TEST", "processDecryptedAuthorizationsResult.updateViewsContent.showContentViews:$showContentViews")
             viewContract?.updateViewsContent()
         }
     }
