@@ -22,7 +22,6 @@ package com.saltedge.authenticator.features.authorizations.list
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -115,17 +114,12 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     }
 
     override fun updateViewContent() {
-        try {
-            contentViewPager?.setVisible(presenter.showContentViews)
-            headerViewPager?.setVisible(presenter.showContentViews)
+        activity?.runOnUiThread {
+            listGroup?.setVisible(presenter.showContentViews)
             emptyView?.setVisible(presenter.showEmptyView)
 
-            if (presenter.showContentViews) {
-                headerAdapter?.data = presenter.viewModels
-                contentAdapter?.data = presenter.viewModels
-            }
-        } catch (e: Exception) {
-            e.log()
+            headerAdapter?.data = presenter.viewModels
+            contentAdapter?.data = presenter.viewModels
         }
     }
 

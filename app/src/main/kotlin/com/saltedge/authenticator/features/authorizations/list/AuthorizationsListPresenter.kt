@@ -52,7 +52,8 @@ class AuthorizationsListPresenter @Inject constructor(
     FetchAuthorizationsContract,
     ConfirmAuthorizationResult,
     AuthorizationExpirationListener,
-    CoroutineScope {
+    CoroutineScope
+{
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.IO
@@ -72,6 +73,7 @@ class AuthorizationsListPresenter @Inject constructor(
 
     fun onFragmentResume() {
         startPolling()
+        viewContract?.updateViewContent()
     }
 
     fun onFragmentPause() {
