@@ -104,18 +104,15 @@ class OnboardingSetupPresenter(
     fun onViewClick(viewId: Int) {
         when (viewId) {
             R.id.actionView -> {
-                when (setupViewMode) {
-                    SetupViewMode.ALLOW_BIOMETRICS -> onAllowTouchIdClick()
-                    SetupViewMode.ALLOW_NOTIFICATIONS -> {
-                        preferenceRepository.notificationsEnabled = true
-                        goToNextSetupView()
-                        startNextActivityWithDelay()
-                        viewContract?.hideSkipView()
-                    }
-                    SetupViewMode.COMPLETE -> {
-                        viewContract?.showMainActivity()
-                        stopDelayHandler()
-                    }
+                if (setupViewMode == SetupViewMode.ALLOW_BIOMETRICS) onAllowTouchIdClick()
+                else if (setupViewMode == SetupViewMode.ALLOW_NOTIFICATIONS) {
+                    preferenceRepository.notificationsEnabled = true
+                    goToNextSetupView()
+                    startNextActivityWithDelay()
+                    viewContract?.hideSkipView()
+                } else if (setupViewMode == SetupViewMode.COMPLETE) {
+                    viewContract?.showMainActivity()
+                    stopDelayHandler()
                 }
             }
             R.id.skipSetupActionView -> {
