@@ -19,10 +19,10 @@
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/white">
 
     <com.saltedge.authenticator.widget.StepProgressView
@@ -73,10 +73,10 @@
             android:layout_height="match_parent" />
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/setupLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:visibility="gone"
         android:layout_marginTop="@dimen/dp_72"
         android:orientation="vertical">
@@ -84,8 +84,8 @@
         <RelativeLayout
             android:id="@+id/allowPermissions"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/actionsLayout"
             android:orientation="vertical">
 
             <TextView
@@ -122,24 +122,28 @@
                 android:src="@drawable/ic_setup_fingerprint" />
         </RelativeLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/actionsLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
+            android:layout_alignParentBottom="true"
+            android:layout_height="wrap_content">
 
             <Button
                 android:id="@+id/actionView"
+                android:layout_centerHorizontal="true"
                 style="@style/BlueFullWidthButton"
                 android:layout_marginBottom="@dimen/dp_20"
                 android:text="@string/onboarding_secure_app_touch_id_allow_android" />
 
             <TextView
                 android:id="@+id/skipSetupActionView"
-                style="@style/SetupSkipAction" />
-        </LinearLayout>
-    </LinearLayout>
+                style="@style/WhiteLinkAction"
+                android:layout_marginBottom="@dimen/dp_40"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/actionView"
+                android:text="@string/actions_skip"/>
+        </RelativeLayout>
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/onboardingLayout"
