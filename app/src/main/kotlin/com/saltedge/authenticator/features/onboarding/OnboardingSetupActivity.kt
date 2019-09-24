@@ -115,6 +115,7 @@ class OnboardingSetupActivity : AppCompatActivity(),
 
     override fun hidePasscodeInput() {
         passcodeScreen?.setVisible(false)
+        setupLogoImage?.setVisible(true)
         setupLayout?.setVisible(true)
     }
 
@@ -186,6 +187,7 @@ class OnboardingSetupActivity : AppCompatActivity(),
         proceedToSetup?.setOnClickListener(this)
         skipActionView?.setVisible(show = true)
         proceedToSetup?.setVisible(show = false)
+        setupLogoImage?.setVisible(show = false)
     }
 
     private fun initSetupViews() {
