@@ -108,15 +108,14 @@ class OnboardingSetupActivity : AppCompatActivity(),
 
     override fun hideOnboardingViewAndShowSetupView() {
         onboardingLayout?.setVisible(show = false)
-        setupLayout?.setVisible(show = false)
-        stepProgressView?.setVisible(true)
-        passcodeScreen?.setVisible(true)
+        setupLayout?.setVisible(show = true)
+        stepProgressView?.setVisible(show = true)
     }
 
     override fun hidePasscodeInput() {
-        passcodeScreen?.setVisible(false)
-        setupLogoImage?.setVisible(true)
-        setupLayout?.setVisible(true)
+        passcodeInputView?.setVisible(show = false)
+        setupLogoImage?.setVisible(show = true)
+        setupActionsLayout?.setVisible(show = true)
     }
 
     override fun showMainActivity() {
@@ -139,9 +138,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
         actionText: Int
     ) {
         stepProgressView?.setStepProgress(setupStepProgress)
-        headerTitleView?.setText(headerTitle)
-        headerDescriptionView?.setText(headerDescription)
-
         titleView?.setText(headerTitle)
         descriptionView?.setText(headerDescription)
         setupLogoImage?.setImageResource(imageResId)
