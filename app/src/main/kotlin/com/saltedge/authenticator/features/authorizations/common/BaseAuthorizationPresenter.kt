@@ -37,17 +37,6 @@ abstract class BaseAuthorizationPresenter(
     internal val apiManager: AuthenticatorApiManagerAbs
 ) : BiometricPromptCallback, PasscodePromptCallback, ConfirmAuthorizationResult {
 
-    enum class ActionType {
-        CONFIRM, DENY;
-
-        fun toViewMode(): AuthorizationContentView.Mode {
-            return when(this) {
-                CONFIRM -> AuthorizationContentView.Mode.CONFIRM_PROCESSING
-                DENY -> AuthorizationContentView.Mode.CONFIRM_PROCESSING
-            }
-        }
-    }
-
     var currentViewModel: AuthorizationViewModel? = null
     var currentConnectionAndKey: ConnectionAndKey? = null
 
@@ -89,7 +78,7 @@ abstract class BaseAuthorizationPresenter(
 
     override fun onConfirmDenySuccess(result: ConfirmDenyResultData, connectionID: ConnectionID) {
         onConfirmDenySuccess(
-            success = result.success == true && result.authorizationId != null,
+            success = result.success == true && result.authorizationId?.isNotEmpty() == true,
             connectionID = connectionID,
             authorizationID = result.authorizationId ?: ""
         )

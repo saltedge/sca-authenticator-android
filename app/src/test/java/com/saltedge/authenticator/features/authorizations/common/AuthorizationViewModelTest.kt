@@ -63,6 +63,20 @@ class AuthorizationViewModelTest {
     @Test
     @Throws(Exception::class)
     fun joinFinalModelsTestCase2() {
+        val newList = emptyList<AuthorizationViewModel>()
+        val oldList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3).copy(viewMode = AuthorizationContentView.Mode.UNAVAILABLE)
+        )
+
+        assertThat(newList.joinFinalModels(oldList)[0].viewMode,
+            equalTo(AuthorizationContentView.Mode.UNAVAILABLE))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun joinFinalModelsTestCase3() {
         val newList = listOf(
             createModelByIndex(1),
             createModelByIndex(2),
@@ -79,7 +93,7 @@ class AuthorizationViewModelTest {
 
     @Test
     @Throws(Exception::class)
-    fun joinFinalModelsTestCase3() {
+    fun joinFinalModelsTestCase4() {
         val newList = listOf(
             createModelByIndex(1),
             createModelByIndex(2),
@@ -88,36 +102,12 @@ class AuthorizationViewModelTest {
         val oldList = listOf(
             createModelByIndex(1),
             createModelByIndex(2),
-            createModelByIndex(3).apply { viewMode = AuthorizationContentView.Mode.UNAVAILABLE }
+            createModelByIndex(3).copy(viewMode = AuthorizationContentView.Mode.DENY_SUCCESS)
         )
         val resultList = listOf(
             createModelByIndex(1),
             createModelByIndex(2),
-            createModelByIndex(3).apply { viewMode = AuthorizationContentView.Mode.UNAVAILABLE }
-        )
-
-        assertThat(newList.joinFinalModels(oldList),
-            equalTo(resultList))
-        assertThat(newList.joinFinalModels(oldList)[2].viewMode,
-            equalTo(AuthorizationContentView.Mode.UNAVAILABLE))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun joinFinalModelsTestCase4() {
-        val newList = listOf(
-            createModelByIndex(1),
-            createModelByIndex(2)
-        )
-        val oldList = listOf(
-            createModelByIndex(1),
-            createModelByIndex(2),
-            createModelByIndex(3).apply { viewMode = AuthorizationContentView.Mode.UNAVAILABLE }
-        )
-        val resultList = listOf(
-            createModelByIndex(1),
-            createModelByIndex(2),
-            createModelByIndex(3).apply { viewMode = AuthorizationContentView.Mode.UNAVAILABLE }
+            createModelByIndex(3).copy(viewMode = AuthorizationContentView.Mode.DENY_SUCCESS)
         )
 
         assertThat(newList.joinFinalModels(oldList), equalTo(resultList))
@@ -127,6 +117,51 @@ class AuthorizationViewModelTest {
     @Throws(Exception::class)
     fun joinFinalModelsTestCase5() {
         val newList = listOf(
+            createModelByIndex(1).copy(connectionID = "x"),
+            createModelByIndex(2).copy(connectionID = "x"),
+            createModelByIndex(3).copy(connectionID = "x")
+        )
+        val oldList = listOf(
+            createModelByIndex(1).copy(connectionID = "x"),
+            createModelByIndex(2).copy(connectionID = "x"),
+            createModelByIndex(3).copy(connectionID = "x", viewMode = AuthorizationContentView.Mode.DENY_SUCCESS)
+        )
+        val resultList = listOf(
+            createModelByIndex(1).copy(connectionID = "x"),
+            createModelByIndex(2).copy(connectionID = "x"),
+            createModelByIndex(3).copy(connectionID = "x", viewMode = AuthorizationContentView.Mode.DENY_SUCCESS)
+        )
+
+        assertThat(newList.joinFinalModels(oldList), equalTo(resultList))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun joinFinalModelsTestCase6() {
+        val newList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2)
+        )
+        val oldList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3).copy(viewMode = AuthorizationContentView.Mode.UNAVAILABLE)
+        )
+        val resultList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3).copy(viewMode = AuthorizationContentView.Mode.UNAVAILABLE)
+        )
+
+        assertThat(newList.joinFinalModels(oldList), equalTo(resultList))
+        assertThat(newList.joinFinalModels(oldList)[2].viewMode,
+            equalTo(AuthorizationContentView.Mode.UNAVAILABLE))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun joinFinalModelsTestCase7() {
+        val newList = listOf(
             createModelByIndex(1),
             createModelByIndex(2),
             createModelByIndex(4)
@@ -134,17 +169,18 @@ class AuthorizationViewModelTest {
         val oldList = listOf(
             createModelByIndex(1),
             createModelByIndex(2),
-            createModelByIndex(3).apply { viewMode = AuthorizationContentView.Mode.UNAVAILABLE }
+            createModelByIndex(3).copy(viewMode = AuthorizationContentView.Mode.UNAVAILABLE)
         )
         val resultList = listOf(
-            createModelByIndex(1, now),
-            createModelByIndex(2, now),
-            createModelByIndex(4, now),
-            createModelByIndex(3, now).apply { viewMode = AuthorizationContentView.Mode.UNAVAILABLE }
-
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3).copy(viewMode = AuthorizationContentView.Mode.UNAVAILABLE),
+            createModelByIndex(4)
         )
 
         assertThat(newList.joinFinalModels(oldList), equalTo(resultList))
+        assertThat(newList.joinFinalModels(oldList)[2].viewMode,
+            equalTo(AuthorizationContentView.Mode.UNAVAILABLE))
     }
 
     private fun createModelByIndex(index: Int): AuthorizationViewModel {
@@ -153,12 +189,12 @@ class AuthorizationViewModelTest {
             authorizationCode = "$index",
             title = "$index",
             description = "$index",
-            expiresAt = DateTime(index),
+            expiresAt = DateTime(index.toLong()),
             connectionID = "$index",
             connectionName = "$index",
             connectionLogoUrl = "$index",
             validSeconds = 100,
-            createdAt = DateTime(index)
+            createdAt = DateTime(index.toLong())
         )
     }
 

@@ -41,19 +41,27 @@ data class AuthorizationViewModel(
     val connectionID: ConnectionID,
     val connectionName: String,
     val connectionLogoUrl: String?,
-    var destroyAt: DateTime? = null
-) : Serializable {
     var viewMode: AuthorizationContentView.Mode = AuthorizationContentView.Mode.DEFAULT
-        set(value) {
-            field = value
-            this.destroyAt = if (value.isFinalMode()) DateTime.now().plusSeconds(5) else null
-        }
+) : Serializable {
+
+    var destroyAt: DateTime? = null
+
+    fun setNewViewMode(newViewMode: AuthorizationContentView.Mode) {
+        this.viewMode = newViewMode
+        this.destroyAt = if (newViewMode.isFinalMode()) DateTime.now().plusSeconds(3) else null
+    }
 }
 
 fun List<AuthorizationViewModel>.joinFinalModels(listWithFinalModels: List<AuthorizationViewModel>): List<AuthorizationViewModel> {
     val finalModels = listWithFinalModels.filter { it.hasFinalMode() }
-    return finalModels.union(this).toList().sortedBy { it.createdAt }
+    val finalAuthorizationIDs = finalModels.map { it.authorizationID }
+    val finalConnectionIDs = finalModels.map { it.connectionID }
+    return (this.filter {
+        !finalAuthorizationIDs.contains(it.authorizationID) || !finalConnectionIDs.contains(it.connectionID)
+    } + finalModels).sortedBy { it.createdAt }
 }
+
+fun AuthorizationViewModel.shouldBeSetTimeOutMode(): Boolean = this.isExpired() && !this.hasFinalMode()
 
 fun AuthorizationViewModel.hasFinalMode(): Boolean = viewMode.isFinalMode()
 
