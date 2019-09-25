@@ -21,14 +21,11 @@
 package com.saltedge.authenticator.features.onboarding
 
 import android.content.Context
-import android.os.Handler
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
-
-const val COMPLETE_SCREEN_DURATION = 3000L
 
 /**
  * Presenter of OnboardingSetupFragment
@@ -107,7 +104,6 @@ class OnboardingSetupPresenter(
                 else if (setupViewMode == SetupViewMode.ALLOW_NOTIFICATIONS) {
                     preferenceRepository.notificationsEnabled = true
                     goToNextSetupView()
-                    viewContract?.hideSkipView()
                 } else if (setupViewMode == SetupViewMode.COMPLETE) viewContract?.showMainActivity()
             }
             R.id.skipSetupActionView -> {
@@ -117,7 +113,6 @@ class OnboardingSetupPresenter(
                 } else if (setupViewMode == SetupViewMode.ALLOW_NOTIFICATIONS) {
                     preferenceRepository.notificationsEnabled = false
                     goToNextSetupView()
-                    viewContract?.hideSkipView()
                 }
             }
             R.id.skipActionView, R.id.proceedToSetup -> {
@@ -149,6 +144,7 @@ class OnboardingSetupPresenter(
             setupImageResId = getSetupImageResId(setupViewMode),
             actionText = getActionTextResId(setupViewMode)
         )
+        if (setupViewMode == SetupViewMode.COMPLETE) viewContract?.hideSkipView()
     }
 
     private fun getActionTextResId(mode: SetupViewMode): Int {

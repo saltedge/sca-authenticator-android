@@ -170,7 +170,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
         proceedToSetup?.setOnClickListener(this)
         skipActionView?.setVisible(show = true)
         proceedToSetup?.setVisible(show = false)
-        setupLogoImage?.setVisible(show = false)
     }
 
     private fun initSetupViews() {
