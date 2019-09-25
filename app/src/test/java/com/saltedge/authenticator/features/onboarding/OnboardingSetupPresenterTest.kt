@@ -97,14 +97,16 @@ class OnboardingSetupPresenterTest {
         val presenter = createPresenter(viewContract = mockView)
         presenter.onViewClick(R.id.skipActionView)
 
-        Mockito.verify(mockView).hideOnboardingViewAndShowSetupView()
+        Mockito.verify(mockView).hideOnboardingAndShowPasscodeSetupView()
         Mockito.verify(mockView).setPasscodeInputMode(PasscodeInputView.InputMode.NEW_PASSCODE)
         Mockito.verify(mockView).updateSetupViews(
             setupStepProgress = 0f,
             headerTitle = R.string.onboarding_secure_app_passcode_create,
             headerDescription = R.string.onboarding_secure_app_passcode_description,
             showPasscodeCancel = false,
-            passcodePositiveActionText = R.string.actions_next
+            passcodePositiveActionText = R.string.actions_next,
+            setupImageResId = 0,
+            actionText = R.string.actions_proceed
         )
         Mockito.verifyNoMoreInteractions(mockView)
     }
@@ -128,7 +130,9 @@ class OnboardingSetupPresenterTest {
             headerTitle = R.string.onboarding_secure_app_passcode_repeat,
             headerDescription = R.string.onboarding_secure_app_passcode_confirm,
             showPasscodeCancel = true,
-            passcodePositiveActionText = R.string.actions_ok
+            passcodePositiveActionText = R.string.actions_ok,
+            setupImageResId = 0,
+            actionText = R.string.actions_proceed
         )
         Mockito.verifyNoMoreInteractions(mockView)
     }
@@ -152,7 +156,9 @@ class OnboardingSetupPresenterTest {
             headerTitle = R.string.onboarding_secure_app_passcode_create,
             headerDescription = R.string.onboarding_secure_app_passcode_description,
             showPasscodeCancel = false,
-            passcodePositiveActionText = R.string.actions_next
+            passcodePositiveActionText = R.string.actions_next,
+            setupImageResId = 0,
+            actionText = R.string.actions_proceed
         )
         Mockito.verifyNoMoreInteractions(mockView)
     }
@@ -208,14 +214,16 @@ class OnboardingSetupPresenterTest {
     fun onViewClickTest_skipActionView() {
         createPresenter(viewContract = mockView).onViewClick(viewId = R.id.skipActionView)
 
-        Mockito.verify(mockView).hideOnboardingViewAndShowSetupView()
+        Mockito.verify(mockView).hideOnboardingAndShowPasscodeSetupView()
         Mockito.verify(mockView).setPasscodeInputMode(PasscodeInputView.InputMode.NEW_PASSCODE)
         Mockito.verify(mockView).updateSetupViews(
             setupStepProgress = 0f,
             headerTitle = R.string.onboarding_secure_app_passcode_create,
             headerDescription = R.string.onboarding_secure_app_passcode_description,
             showPasscodeCancel = false,
-            passcodePositiveActionText = R.string.actions_next
+            passcodePositiveActionText = R.string.actions_next,
+            setupImageResId = 0,
+            actionText = R.string.actions_proceed
         )
         Mockito.verifyNoMoreInteractions(mockView)
     }
@@ -233,14 +241,16 @@ class OnboardingSetupPresenterTest {
     fun onViewClickTest_proceedToSetup() {
         createPresenter(viewContract = mockView).onViewClick(viewId = R.id.proceedToSetup)
 
-        Mockito.verify(mockView).hideOnboardingViewAndShowSetupView()
+        Mockito.verify(mockView).hideOnboardingAndShowPasscodeSetupView()
         Mockito.verify(mockView).setPasscodeInputMode(PasscodeInputView.InputMode.NEW_PASSCODE)
         Mockito.verify(mockView).updateSetupViews(
             setupStepProgress = 0f,
             headerTitle = R.string.onboarding_secure_app_passcode_create,
             headerDescription = R.string.onboarding_secure_app_passcode_description,
             showPasscodeCancel = false,
-            passcodePositiveActionText = R.string.actions_next
+            passcodePositiveActionText = R.string.actions_next,
+            setupImageResId = 0,
+            actionText = R.string.actions_proceed
         )
         Mockito.verifyNoMoreInteractions(mockView)
     }
@@ -263,7 +273,7 @@ class OnboardingSetupPresenterTest {
             mockBiometricTools
         )
             .getCurrentFingerprintStateWarningMessage(context)
-        presenter.onViewClick(R.id.allowTouchIdActionView)
+        presenter.onViewClick(R.id.actionView)
 
         Mockito.verify(mockView).showWarningDialogWithMessage(context.getString(R.string.errors_internal_error))
         MatcherAssert.assertThat(presenter.setupViewMode, equalTo(SetupViewMode.ALLOW_BIOMETRICS))
@@ -272,7 +282,7 @@ class OnboardingSetupPresenterTest {
             .getCurrentFingerprintStateWarningMessage(TestAppTools.applicationContext)
         Mockito.doReturn(true).`when`(mockBiometricTools).activateFingerprint()
         Mockito.clearInvocations(mockView)
-        presenter.onViewClick(R.id.allowTouchIdActionView)
+        presenter.onViewClick(R.id.actionView)
 
         MatcherAssert.assertThat(
             presenter.setupViewMode,
@@ -281,12 +291,14 @@ class OnboardingSetupPresenterTest {
 
         Mockito.doReturn(false).`when`(mockBiometricTools).activateFingerprint()
         Mockito.clearInvocations(mockView)
-        presenter.onViewClick(R.id.allowTouchIdActionView)
+
+        presenter.setupViewMode = SetupViewMode.ALLOW_BIOMETRICS
+        presenter.onViewClick(R.id.actionView)
 
         Mockito.verify(mockView).showWarningDialogWithMessage(context.getString(R.string.errors_activate_touch_id))
         MatcherAssert.assertThat(
             presenter.setupViewMode,
-            equalTo(SetupViewMode.ALLOW_NOTIFICATIONS)
+            equalTo(SetupViewMode.ALLOW_BIOMETRICS)
         )
     }
 
@@ -299,7 +311,7 @@ class OnboardingSetupPresenterTest {
             mockBiometricTools
         )
             .getCurrentFingerprintStateWarningMessage(context)
-        presenter.onViewClick(R.id.allowTouchIdActionView)
+        presenter.onViewClick(R.id.actionView)
 
         Mockito.verifyNoMoreInteractions(mockView)
 
@@ -307,7 +319,7 @@ class OnboardingSetupPresenterTest {
             .getCurrentFingerprintStateWarningMessage(context)
         Mockito.doReturn(false).`when`(mockBiometricTools)
             .activateFingerprint()
-        presenter.onViewClick(R.id.allowTouchIdActionView)
+        presenter.onViewClick(R.id.actionView)
 
         Mockito.verifyNoMoreInteractions(mockView)
     }
@@ -317,7 +329,7 @@ class OnboardingSetupPresenterTest {
     fun onViewClickTest_skipTouchIdActionView() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setupViewMode = SetupViewMode.ALLOW_BIOMETRICS
-        presenter.onViewClick(viewId = R.id.skipTouchIdActionView)
+        presenter.onViewClick(viewId = R.id.skipSetupActionView)
 
         Mockito.verify(mockPreferenceRepository).fingerprintEnabled = false
         assertThat(presenter.setupViewMode, equalTo(SetupViewMode.ALLOW_NOTIFICATIONS))
@@ -326,8 +338,11 @@ class OnboardingSetupPresenterTest {
             headerTitle = R.string.onboarding_allow_notifications_title,
             headerDescription = R.string.onboarding_allow_notifications_description,
             showPasscodeCancel = null,
-            passcodePositiveActionText = null
+            passcodePositiveActionText = null,
+            setupImageResId = R.drawable.ic_setup_notifications,
+            actionText = R.string.onboarding_allow_notifications_title
         )
+        Mockito.verify(mockView).hidePasscodeInputAndShowSetupView()
         Mockito.verifyNoMoreInteractions(mockView)
     }
 
@@ -336,7 +351,7 @@ class OnboardingSetupPresenterTest {
     fun onViewClickTest_skipTouchIdActionView_noViewContract() {
         val presenter = createPresenter(viewContract = null)
         presenter.setupViewMode = SetupViewMode.ALLOW_BIOMETRICS
-        presenter.onViewClick(viewId = R.id.skipTouchIdActionView)
+        presenter.onViewClick(viewId = R.id.skipSetupActionView)
 
         Mockito.verify(mockPreferenceRepository).fingerprintEnabled = false
         assertThat(presenter.setupViewMode, equalTo(SetupViewMode.ALLOW_NOTIFICATIONS))
@@ -348,7 +363,7 @@ class OnboardingSetupPresenterTest {
     fun onViewClickTest_allowNotificationsActionView() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setupViewMode = SetupViewMode.ALLOW_NOTIFICATIONS
-        presenter.onViewClick(viewId = R.id.allowNotificationsActionView)
+        presenter.onViewClick(viewId = R.id.actionView)
 
         Mockito.verify(mockPreferenceRepository).notificationsEnabled = true
         assertThat(presenter.setupViewMode, equalTo(SetupViewMode.COMPLETE))
@@ -357,8 +372,16 @@ class OnboardingSetupPresenterTest {
             headerTitle = R.string.onboarding_well_done_title,
             headerDescription = R.string.onboarding_completed_description,
             showPasscodeCancel = null,
-            passcodePositiveActionText = null
+            passcodePositiveActionText = null,
+            setupImageResId = R.drawable.ic_complete_ok_70,
+            actionText = R.string.actions_proceed
         )
+        Mockito.verify(mockView).hidePasscodeInputAndShowSetupView()
+
+        presenter.onViewClick(viewId = R.id.actionView)
+
+        Mockito.verify(mockView).hideSkipView()
+        Mockito.verify(mockView).showMainActivity()
         Mockito.verifyNoMoreInteractions(mockView)
     }
 
@@ -367,7 +390,7 @@ class OnboardingSetupPresenterTest {
     fun onViewClickTest_allowNotificationsActionView_noViewContract() {
         val presenter = createPresenter(viewContract = null)
         presenter.setupViewMode = SetupViewMode.ALLOW_NOTIFICATIONS
-        presenter.onViewClick(viewId = R.id.allowNotificationsActionView)
+        presenter.onViewClick(viewId = R.id.actionView)
 
         Mockito.verify(mockPreferenceRepository).notificationsEnabled = true
         assertThat(presenter.setupViewMode, equalTo(SetupViewMode.COMPLETE))
@@ -379,7 +402,7 @@ class OnboardingSetupPresenterTest {
     fun onViewClickTest_skipNotificationsActionView() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setupViewMode = SetupViewMode.ALLOW_NOTIFICATIONS
-        presenter.onViewClick(viewId = R.id.skipNotificationsActionView)
+        presenter.onViewClick(viewId = R.id.skipSetupActionView)
 
         Mockito.verify(mockPreferenceRepository).notificationsEnabled = false
         assertThat(presenter.setupViewMode, equalTo(SetupViewMode.COMPLETE))
@@ -388,8 +411,16 @@ class OnboardingSetupPresenterTest {
             headerTitle = R.string.onboarding_well_done_title,
             headerDescription = R.string.onboarding_completed_description,
             showPasscodeCancel = null,
-            passcodePositiveActionText = null
+            passcodePositiveActionText = null,
+            setupImageResId = R.drawable.ic_complete_ok_70,
+            actionText = R.string.actions_proceed
         )
+        Mockito.verify(mockView).hidePasscodeInputAndShowSetupView()
+
+        presenter.onViewClick(viewId = R.id.actionView)
+
+        Mockito.verify(mockView).hideSkipView()
+        Mockito.verify(mockView).showMainActivity()
         Mockito.verifyNoMoreInteractions(mockView)
     }
 
@@ -398,7 +429,7 @@ class OnboardingSetupPresenterTest {
     fun onViewClickTest_skipNotificationsActionView_noViewContract() {
         val presenter = createPresenter(viewContract = null)
         presenter.setupViewMode = SetupViewMode.ALLOW_NOTIFICATIONS
-        presenter.onViewClick(viewId = R.id.skipNotificationsActionView)
+        presenter.onViewClick(viewId = R.id.skipSetupActionView)
 
         Mockito.verify(mockPreferenceRepository).notificationsEnabled = false
         assertThat(presenter.setupViewMode, equalTo(SetupViewMode.COMPLETE))
@@ -408,7 +439,9 @@ class OnboardingSetupPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onViewClickTest_proceedToMainActivity() {
-        createPresenter(viewContract = mockView).onViewClick(R.id.proceedToMainActivity)
+        val presenter = createPresenter(viewContract = mockView)
+        presenter.setupViewMode = SetupViewMode.COMPLETE
+        presenter.onViewClick(R.id.actionView)
 
         Mockito.verify(mockView).showMainActivity()
     }
@@ -442,8 +475,11 @@ class OnboardingSetupPresenterTest {
             headerTitle = R.string.onboarding_secure_app_touch_id_allow_android,
             headerDescription = R.string.onboarding_secure_app_touch_id_description_android,
             showPasscodeCancel = null,
-            passcodePositiveActionText = null
+            passcodePositiveActionText = null,
+            setupImageResId = R.drawable.ic_setup_fingerprint,
+            actionText = R.string.onboarding_secure_app_touch_id_allow_android
         )
+        Mockito.verify(mockView).hidePasscodeInputAndShowSetupView()
         Mockito.verifyNoMoreInteractions(mockView)
     }
 

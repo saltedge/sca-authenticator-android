@@ -20,13 +20,9 @@
  */
 package com.saltedge.authenticator.features.onboarding
 
-import androidx.annotation.IdRes
-import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tool.ResId
-
-enum class SetupViewMode(@IdRes val containerId: ResId) {
-    INPUT_PASSCODE(R.id.passcodeInputView),
-    ALLOW_BIOMETRICS(R.id.allowTouchIdContainer),
-    ALLOW_NOTIFICATIONS(R.id.allowNotificationsContainer),
-    COMPLETE(R.id.completeContainer);
+enum class SetupViewMode {
+    INPUT_PASSCODE,
+    ALLOW_BIOMETRICS,
+    ALLOW_NOTIFICATIONS,
+    COMPLETE;
 }

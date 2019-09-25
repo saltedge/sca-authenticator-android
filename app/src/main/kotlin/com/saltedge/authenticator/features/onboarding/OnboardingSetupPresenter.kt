@@ -21,14 +21,11 @@
 package com.saltedge.authenticator.features.onboarding
 
 import android.content.Context
-import android.os.Handler
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
-
-const val COMPLETE_SCREEN_DURATION = 3000L
 
 /**
  * Presenter of OnboardingSetupFragment
@@ -45,7 +42,6 @@ class OnboardingSetupPresenter(
     var setupViewMode: SetupViewMode = SetupViewMode.INPUT_PASSCODE
     val setupStepCount: Int
         get() = setupModesList.count()
-    private var handler: Handler? = null
 
     val onboardingViewModels: List<OnboardingPageViewModel> = listOf(
         OnboardingPageViewModel(
@@ -103,27 +99,24 @@ class OnboardingSetupPresenter(
 
     fun onViewClick(viewId: Int) {
         when (viewId) {
+            R.id.actionView -> {
+                if (setupViewMode == SetupViewMode.ALLOW_BIOMETRICS) onAllowTouchIdClick()
+                else if (setupViewMode == SetupViewMode.ALLOW_NOTIFICATIONS) {
+                    preferenceRepository.notificationsEnabled = true
+                    goToNextSetupView()
+                } else if (setupViewMode == SetupViewMode.COMPLETE) viewContract?.showMainActivity()
+            }
+            R.id.skipSetupActionView -> {
+                if (setupViewMode == SetupViewMode.ALLOW_BIOMETRICS) {
+                    preferenceRepository.fingerprintEnabled = false
+                    goToNextSetupView()
+                } else if (setupViewMode == SetupViewMode.ALLOW_NOTIFICATIONS) {
+                    preferenceRepository.notificationsEnabled = false
+                    goToNextSetupView()
+                }
+            }
             R.id.skipActionView, R.id.proceedToSetup -> {
                 showPasscodeInput()
-            }
-            R.id.allowTouchIdActionView -> onAllowTouchIdClick()
-            R.id.skipTouchIdActionView -> {
-                preferenceRepository.fingerprintEnabled = false
-                goToNextSetupView()
-            }
-            R.id.allowNotificationsActionView -> {
-                preferenceRepository.notificationsEnabled = true
-                goToNextSetupView()
-                startNextActivityWithDelay()
-            }
-            R.id.skipNotificationsActionView -> {
-                preferenceRepository.notificationsEnabled = false
-                goToNextSetupView()
-                startNextActivityWithDelay()
-            }
-            R.id.proceedToMainActivity -> {
-                viewContract?.showMainActivity()
-                stopDelayHandler()
             }
         }
     }
@@ -134,18 +127,9 @@ class OnboardingSetupPresenter(
         } else viewContract?.showWarningDialogWithMessage(appContext.getString(R.string.errors_internal_error))
     }
 
-    fun stopDelayHandler() {
-        handler?.removeCallbacksAndMessages(null)
-    }
-
-    private fun startNextActivityWithDelay() {
-        handler = Handler()
-        handler?.postDelayed({ viewContract?.showMainActivity() }, COMPLETE_SCREEN_DURATION)
-    }
-
     private fun showPasscodeInput() {
         val inputMode = PasscodeInputView.InputMode.NEW_PASSCODE
-        viewContract?.hideOnboardingViewAndShowSetupView()
+        viewContract?.hideOnboardingAndShowPasscodeSetupView()
         viewContract?.setPasscodeInputMode(inputMode)
         updateSetupViews(inputMode)
     }
@@ -156,8 +140,29 @@ class OnboardingSetupPresenter(
             headerTitle = getSetupTitleResId(setupViewMode, inputMode),
             headerDescription = getSetupSubtitleResId(setupViewMode, inputMode),
             showPasscodeCancel = shouldShowPasscodeInputNegativeActionView(inputMode),
-            passcodePositiveActionText = getPositivePasscodeActionViewText(inputMode)
+            passcodePositiveActionText = getPositivePasscodeActionViewText(inputMode),
+            setupImageResId = getSetupImageResId(setupViewMode),
+            actionText = getActionTextResId(setupViewMode)
         )
+        if (setupViewMode == SetupViewMode.COMPLETE) viewContract?.hideSkipView()
+    }
+
+    private fun getActionTextResId(mode: SetupViewMode): Int {
+        return when (mode) {
+            SetupViewMode.ALLOW_BIOMETRICS -> R.string.onboarding_secure_app_touch_id_allow_android
+            SetupViewMode.ALLOW_NOTIFICATIONS -> R.string.onboarding_allow_notifications_title
+            SetupViewMode.COMPLETE -> R.string.actions_proceed
+            else -> R.string.actions_proceed
+        }
+    }
+
+    private fun getSetupImageResId(mode: SetupViewMode): Int {
+        return when (mode) {
+            SetupViewMode.ALLOW_BIOMETRICS -> R.drawable.ic_setup_fingerprint
+            SetupViewMode.ALLOW_NOTIFICATIONS -> R.drawable.ic_setup_notifications
+            SetupViewMode.COMPLETE -> R.drawable.ic_complete_ok_70
+            else -> 0
+        }
     }
 
     private fun getSetupTitleResId(
@@ -223,5 +228,6 @@ class OnboardingSetupPresenter(
             setupViewMode = setupModesList.getOrNull(index + 1) ?: setupViewMode
         }
         updateSetupViews(inputMode = null)
+        viewContract?.hidePasscodeInputAndShowSetupView()
     }
 }
