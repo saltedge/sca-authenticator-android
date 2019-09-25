@@ -34,7 +34,6 @@ import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 import kotlinx.android.synthetic.main.activity_onboarding.*
 import javax.inject.Inject
-import android.view.ViewGroup.MarginLayoutParams
 
 class OnboardingSetupActivity : AppCompatActivity(),
     OnboardingSetupContract.View,
@@ -60,11 +59,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
     override fun onStop() {
         presenter.viewContract = null
         super.onStop()
-    }
-
-    override fun onDestroy() {
-        presenter.stopDelayHandler()
-        super.onDestroy()
     }
 
     override fun onPageScrollStateChanged(state: Int) {}
@@ -151,12 +145,7 @@ class OnboardingSetupActivity : AppCompatActivity(),
     }
 
     override fun hideSkipView() {
-        skipSetupActionView?.setVisible(show = false)
-        val layoutParams = (actionView?.layoutParams as? MarginLayoutParams)
-        val marginBottomHeight = convertDpToPx(40F)
-        val marginTopHeight = convertDpToPx(56F)
-        layoutParams?.setMargins(0, marginTopHeight, 0, marginBottomHeight)
-        actionView?.layoutParams = layoutParams
+        skipSetupActionView?.setInvisible(true)
     }
 
     private fun initViews() {

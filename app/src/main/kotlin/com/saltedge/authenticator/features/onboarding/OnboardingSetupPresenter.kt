@@ -45,7 +45,6 @@ class OnboardingSetupPresenter(
     var setupViewMode: SetupViewMode = SetupViewMode.INPUT_PASSCODE
     val setupStepCount: Int
         get() = setupModesList.count()
-    private var handler: Handler? = null
 
     val onboardingViewModels: List<OnboardingPageViewModel> = listOf(
         OnboardingPageViewModel(
@@ -108,12 +107,8 @@ class OnboardingSetupPresenter(
                 else if (setupViewMode == SetupViewMode.ALLOW_NOTIFICATIONS) {
                     preferenceRepository.notificationsEnabled = true
                     goToNextSetupView()
-                    startNextActivityWithDelay()
                     viewContract?.hideSkipView()
-                } else if (setupViewMode == SetupViewMode.COMPLETE) {
-                    viewContract?.showMainActivity()
-                    stopDelayHandler()
-                }
+                } else if (setupViewMode == SetupViewMode.COMPLETE) viewContract?.showMainActivity()
             }
             R.id.skipSetupActionView -> {
                 if (setupViewMode == SetupViewMode.ALLOW_BIOMETRICS) {
@@ -122,7 +117,6 @@ class OnboardingSetupPresenter(
                 } else if (setupViewMode == SetupViewMode.ALLOW_NOTIFICATIONS) {
                     preferenceRepository.notificationsEnabled = false
                     goToNextSetupView()
-                    startNextActivityWithDelay()
                     viewContract?.hideSkipView()
                 }
             }
@@ -136,15 +130,6 @@ class OnboardingSetupPresenter(
         if (passcodeTools.savePasscode(passcode)) {
             goToNextSetupView()
         } else viewContract?.showWarningDialogWithMessage(appContext.getString(R.string.errors_internal_error))
-    }
-
-    fun stopDelayHandler() {
-        handler?.removeCallbacksAndMessages(null)
-    }
-
-    private fun startNextActivityWithDelay() {
-        handler = Handler()
-        handler?.postDelayed({ viewContract?.showMainActivity() }, COMPLETE_SCREEN_DURATION)
     }
 
     private fun showPasscodeInput() {
