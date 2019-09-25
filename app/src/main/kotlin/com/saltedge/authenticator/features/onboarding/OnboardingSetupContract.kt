@@ -36,13 +36,12 @@ interface OnboardingSetupContract {
             headerDescription: Int,
             showPasscodeCancel: Boolean?,
             passcodePositiveActionText: ResId?,
-            imageResId: Int,
+            setupImageResId: Int,
             actionText: Int
         )
-        fun hidePasscodeInput()
+        fun hidePasscodeInputAndShowSetupView()
         fun hideSkipView()
-
-        fun hideOnboardingViewAndShowSetupView()
+        fun hideOnboardingAndShowPasscodeSetupView()
         fun setPasscodeInputMode(inputMode: PasscodeInputView.InputMode)
     }
 }

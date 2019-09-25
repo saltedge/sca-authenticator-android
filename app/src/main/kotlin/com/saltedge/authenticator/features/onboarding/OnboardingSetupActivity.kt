@@ -106,13 +106,12 @@ class OnboardingSetupActivity : AppCompatActivity(),
         proceedToSetup?.setVisible(show = true)
     }
 
-    override fun hideOnboardingViewAndShowSetupView() {
+    override fun hideOnboardingAndShowPasscodeSetupView() {
         onboardingLayout?.setVisible(show = false)
         setupLayout?.setVisible(show = true)
-        stepProgressView?.setVisible(show = true)
     }
 
-    override fun hidePasscodeInput() {
+    override fun hidePasscodeInputAndShowSetupView() {
         passcodeInputView?.setVisible(show = false)
         setupLogoImage?.setVisible(show = true)
         setupActionsLayout?.setVisible(show = true)
@@ -134,13 +133,13 @@ class OnboardingSetupActivity : AppCompatActivity(),
         headerDescription: Int,
         showPasscodeCancel: Boolean?,
         passcodePositiveActionText: Int?,
-        imageResId: Int,
+        setupImageResId: Int,
         actionText: Int
     ) {
         stepProgressView?.setStepProgress(setupStepProgress)
         titleView?.setText(headerTitle)
         descriptionView?.setText(headerDescription)
-        setupLogoImage?.setImageResource(imageResId)
+        setupLogoImage?.setImageResource(setupImageResId)
         actionView?.setText(actionText)
 
         showPasscodeCancel?.let { passcodeInputView?.cancelActionIsAvailable = it }
@@ -179,7 +178,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
             pageIndicatorView?.selection = 0
         }
         skipActionView?.setOnClickListener(this)
-        proceedToSetup?.setFont(R.font.roboto_regular)
         proceedToSetup?.setOnClickListener(this)
         skipActionView?.setVisible(show = true)
         proceedToSetup?.setVisible(show = false)
@@ -193,7 +191,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
         passcodeInputView?.cancelActionIsAvailable = false
         passcodeInputView?.listener = this
 
-        actionView?.setFont(R.font.roboto_regular)
         actionView?.setOnClickListener(this)
         skipSetupActionView?.setOnClickListener(this)
     }

@@ -25,29 +25,10 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <com.saltedge.authenticator.widget.StepProgressView
-        android:id="@+id/stepProgressView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/dp_16"
-        android:layout_marginTop="@dimen/dp_30"
-        android:layout_marginRight="@dimen/dp_16"
-        android:visibility="gone"
-        tools:background="@color/blue" />
-
-    <ImageView
-        android:id="@+id/setupLogoImage"
-        android:layout_width="@dimen/dp_100"
-        android:layout_height="@dimen/dp_100"
-        android:layout_gravity="center"
-        android:contentDescription="@string/onboarding_secure_app_touch_id_allow_android"
-        android:src="@drawable/ic_setup_fingerprint" />
-
     <RelativeLayout
         android:id="@+id/setupLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_72"
         android:orientation="vertical"
         android:visibility="gone">
 
@@ -63,6 +44,7 @@
                 style="@style/BlueFullWidthButton"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="@dimen/dp_20"
+                android:fontFamily="@font/roboto_regular"
                 android:text="@string/onboarding_secure_app_touch_id_allow_android" />
 
             <TextView
@@ -73,6 +55,18 @@
                 android:layout_marginBottom="@dimen/dp_40"
                 android:text="@string/actions_skip" />
         </RelativeLayout>
+
+        <TextView
+            android:id="@+id/titleView"
+            style="@style/Text20BlackMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_32"
+            android:layout_marginTop="@dimen/dp_72"
+            android:layout_marginRight="@dimen/dp_32"
+            android:gravity="center_horizontal"
+            android:maxLines="2"
+            tools:text="Allow Fingerprint" />
 
         <TextView
             android:id="@+id/descriptionView"
@@ -88,16 +82,22 @@
             tools:text="Use Fingerprint to enter the App faster, but
              don’t worry, you’ll still have your passcode as backup." />
 
-        <TextView
-            android:id="@+id/titleView"
-            style="@style/Text20BlackMedium"
+        <ImageView
+            android:id="@+id/setupLogoImage"
+            android:layout_width="@dimen/dp_100"
+            android:layout_height="@dimen/dp_100"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/onboarding_secure_app_touch_id_allow_android"
+            android:src="@drawable/ic_setup_fingerprint" />
+
+        <com.saltedge.authenticator.widget.StepProgressView
+            android:id="@+id/stepProgressView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_30"
-            android:layout_marginRight="@dimen/dp_30"
-            android:gravity="center_horizontal"
-            android:maxLines="2"
-            tools:text="Allow Fingerprint" />
+            android:layout_marginLeft="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_30"
+            android:layout_marginRight="@dimen/dp_16"
+            tools:background="@color/blue" />
 
         <com.saltedge.authenticator.widget.passcode.PasscodeInputView
             android:id="@+id/passcodeInputView"
@@ -117,6 +117,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/dp_40"
+            android:fontFamily="@font/roboto_regular"
             android:text="@string/actions_get_started"
             android:visibility="gone" />
 

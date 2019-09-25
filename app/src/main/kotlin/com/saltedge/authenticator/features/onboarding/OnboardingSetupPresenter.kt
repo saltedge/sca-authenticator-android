@@ -149,7 +149,7 @@ class OnboardingSetupPresenter(
 
     private fun showPasscodeInput() {
         val inputMode = PasscodeInputView.InputMode.NEW_PASSCODE
-        viewContract?.hideOnboardingViewAndShowSetupView()
+        viewContract?.hideOnboardingAndShowPasscodeSetupView()
         viewContract?.setPasscodeInputMode(inputMode)
         updateSetupViews(inputMode)
     }
@@ -161,7 +161,7 @@ class OnboardingSetupPresenter(
             headerDescription = getSetupSubtitleResId(setupViewMode, inputMode),
             showPasscodeCancel = shouldShowPasscodeInputNegativeActionView(inputMode),
             passcodePositiveActionText = getPositivePasscodeActionViewText(inputMode),
-            imageResId = getSetupImageResId(setupViewMode),
+            setupImageResId = getSetupImageResId(setupViewMode),
             actionText = getActionTextResId(setupViewMode)
         )
     }
@@ -247,6 +247,6 @@ class OnboardingSetupPresenter(
             setupViewMode = setupModesList.getOrNull(index + 1) ?: setupViewMode
         }
         updateSetupViews(inputMode = null)
-        viewContract?.hidePasscodeInput()
+        viewContract?.hidePasscodeInputAndShowSetupView()
     }
 }

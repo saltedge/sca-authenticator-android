@@ -97,7 +97,7 @@ class OnboardingSetupPresenterTest {
         val presenter = createPresenter(viewContract = mockView)
         presenter.onViewClick(R.id.skipActionView)
 
-        Mockito.verify(mockView).hideOnboardingViewAndShowSetupView()
+        Mockito.verify(mockView).hideOnboardingAndShowPasscodeSetupView()
         Mockito.verify(mockView).setPasscodeInputMode(PasscodeInputView.InputMode.NEW_PASSCODE)
         Mockito.verify(mockView).updateSetupViews(
             setupStepProgress = 0f,
@@ -105,7 +105,7 @@ class OnboardingSetupPresenterTest {
             headerDescription = R.string.onboarding_secure_app_passcode_description,
             showPasscodeCancel = false,
             passcodePositiveActionText = R.string.actions_next,
-            imageResId = 0,
+            setupImageResId = 0,
             actionText = R.string.actions_proceed
         )
         Mockito.verifyNoMoreInteractions(mockView)
@@ -131,7 +131,7 @@ class OnboardingSetupPresenterTest {
             headerDescription = R.string.onboarding_secure_app_passcode_confirm,
             showPasscodeCancel = true,
             passcodePositiveActionText = R.string.actions_ok,
-            imageResId = 0,
+            setupImageResId = 0,
             actionText = R.string.actions_proceed
         )
         Mockito.verifyNoMoreInteractions(mockView)
@@ -157,7 +157,7 @@ class OnboardingSetupPresenterTest {
             headerDescription = R.string.onboarding_secure_app_passcode_description,
             showPasscodeCancel = false,
             passcodePositiveActionText = R.string.actions_next,
-            imageResId = 0,
+            setupImageResId = 0,
             actionText = R.string.actions_proceed
         )
         Mockito.verifyNoMoreInteractions(mockView)
@@ -214,7 +214,7 @@ class OnboardingSetupPresenterTest {
     fun onViewClickTest_skipActionView() {
         createPresenter(viewContract = mockView).onViewClick(viewId = R.id.skipActionView)
 
-        Mockito.verify(mockView).hideOnboardingViewAndShowSetupView()
+        Mockito.verify(mockView).hideOnboardingAndShowPasscodeSetupView()
         Mockito.verify(mockView).setPasscodeInputMode(PasscodeInputView.InputMode.NEW_PASSCODE)
         Mockito.verify(mockView).updateSetupViews(
             setupStepProgress = 0f,
@@ -222,7 +222,7 @@ class OnboardingSetupPresenterTest {
             headerDescription = R.string.onboarding_secure_app_passcode_description,
             showPasscodeCancel = false,
             passcodePositiveActionText = R.string.actions_next,
-            imageResId = 0,
+            setupImageResId = 0,
             actionText = R.string.actions_proceed
         )
         Mockito.verifyNoMoreInteractions(mockView)
@@ -241,7 +241,7 @@ class OnboardingSetupPresenterTest {
     fun onViewClickTest_proceedToSetup() {
         createPresenter(viewContract = mockView).onViewClick(viewId = R.id.proceedToSetup)
 
-        Mockito.verify(mockView).hideOnboardingViewAndShowSetupView()
+        Mockito.verify(mockView).hideOnboardingAndShowPasscodeSetupView()
         Mockito.verify(mockView).setPasscodeInputMode(PasscodeInputView.InputMode.NEW_PASSCODE)
         Mockito.verify(mockView).updateSetupViews(
             setupStepProgress = 0f,
@@ -249,7 +249,7 @@ class OnboardingSetupPresenterTest {
             headerDescription = R.string.onboarding_secure_app_passcode_description,
             showPasscodeCancel = false,
             passcodePositiveActionText = R.string.actions_next,
-            imageResId = 0,
+            setupImageResId = 0,
             actionText = R.string.actions_proceed
         )
         Mockito.verifyNoMoreInteractions(mockView)
@@ -339,10 +339,10 @@ class OnboardingSetupPresenterTest {
             headerDescription = R.string.onboarding_allow_notifications_description,
             showPasscodeCancel = null,
             passcodePositiveActionText = null,
-            imageResId = R.drawable.ic_setup_notifications,
+            setupImageResId = R.drawable.ic_setup_notifications,
             actionText = R.string.onboarding_allow_notifications_title
         )
-        Mockito.verify(mockView).hidePasscodeInput()
+        Mockito.verify(mockView).hidePasscodeInputAndShowSetupView()
         Mockito.verifyNoMoreInteractions(mockView)
     }
 
@@ -373,10 +373,10 @@ class OnboardingSetupPresenterTest {
             headerDescription = R.string.onboarding_completed_description,
             showPasscodeCancel = null,
             passcodePositiveActionText = null,
-            imageResId = R.drawable.ic_complete_ok_70,
+            setupImageResId = R.drawable.ic_complete_ok_70,
             actionText = R.string.actions_proceed
         )
-        Mockito.verify(mockView).hidePasscodeInput()
+        Mockito.verify(mockView).hidePasscodeInputAndShowSetupView()
 
         presenter.onViewClick(viewId = R.id.actionView)
 
@@ -412,10 +412,10 @@ class OnboardingSetupPresenterTest {
             headerDescription = R.string.onboarding_completed_description,
             showPasscodeCancel = null,
             passcodePositiveActionText = null,
-            imageResId = R.drawable.ic_complete_ok_70,
+            setupImageResId = R.drawable.ic_complete_ok_70,
             actionText = R.string.actions_proceed
         )
-        Mockito.verify(mockView).hidePasscodeInput()
+        Mockito.verify(mockView).hidePasscodeInputAndShowSetupView()
 
         presenter.onViewClick(viewId = R.id.actionView)
 
@@ -476,10 +476,10 @@ class OnboardingSetupPresenterTest {
             headerDescription = R.string.onboarding_secure_app_touch_id_description_android,
             showPasscodeCancel = null,
             passcodePositiveActionText = null,
-            imageResId = R.drawable.ic_setup_fingerprint,
+            setupImageResId = R.drawable.ic_setup_fingerprint,
             actionText = R.string.onboarding_secure_app_touch_id_allow_android
         )
-        Mockito.verify(mockView).hidePasscodeInput()
+        Mockito.verify(mockView).hidePasscodeInputAndShowSetupView()
         Mockito.verifyNoMoreInteractions(mockView)
     }
 
