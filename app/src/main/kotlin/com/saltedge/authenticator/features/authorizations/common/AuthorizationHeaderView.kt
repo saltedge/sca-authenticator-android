@@ -73,11 +73,11 @@ class AuthorizationHeaderView : LinearLayout, TimeUpdateListener {
         startTime?.let { startTime ->
             endTime?.let { endTime ->
                 val maxProgress = secondsBetweenDates(startTime, endTime)
-                val remainedSeconds = startTime.remainedSeconds()
+                val remainedSeconds = endTime.remainedSeconds()
 
                 timeTextView?.text = endTime.remainedTimeDescription()
                 timeProgressView?.apply {
-                    max = maxProgress
+                    if (max != maxProgress) max = maxProgress
                     progress = remainedSeconds
                 }
             }
