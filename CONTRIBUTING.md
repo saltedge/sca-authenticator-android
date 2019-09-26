@@ -98,5 +98,5 @@ Most of the source code is written in Kotlin, so we expect you to write on it.
   
 [gist]: https://gist.github.com/
 [fork]: http://help.github.com/fork-a-repo/
-[branch]: http://learn.github.com/p/branching.html
-[pr]: http://help.github.com/send-pull-requests/
+[branch]: https://help.github.com/en/articles/creating-and-deleting-branches-within-your-repository#creating-a-branch
+[pr]: https://help.github.com/en/desktop/contributing-to-projects/creating-a-pull-request
