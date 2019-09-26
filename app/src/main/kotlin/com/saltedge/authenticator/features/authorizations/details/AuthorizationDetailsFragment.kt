@@ -33,10 +33,7 @@ import com.saltedge.authenticator.features.authorizations.details.di.Authorizati
 import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
-import com.saltedge.authenticator.tool.authenticatorApp
-import com.saltedge.authenticator.tool.finishFragment
-import com.saltedge.authenticator.tool.setInvisible
-import com.saltedge.authenticator.tool.showDialogFragment
+import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.showAuthorizationConfirm
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -111,10 +108,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
         presenterContract.onViewClick(view?.id ?: return)
     }
 
-    override fun getUpActionImage(): Int? = R.drawable.ic_close_white_24dp
-
-    override fun updateViewsContent() {
-    }
+    override fun getUpActionImageResId(): ResId? = R.drawable.ic_close_white_24dp
 
     override fun updateTimeViews() {
         headerView?.onTimeUpdate()
@@ -124,11 +118,9 @@ class AuthorizationDetailsFragment : BaseFragment(),
         headerView?.setInvisible(!show)
     }
 
-    override fun setHeaderValues(logoUrl: String, title: String, startTime: DateTime?, endTime: DateTime?) {
+    override fun setHeaderValues(logoUrl: String, title: String, startTime: DateTime, endTime: DateTime) {
         headerView?.setTitleAndLogo(title = title, logoUrl = logoUrl)
-        startTime?.let { start -> endTime?.let { end ->
-            headerView?.setProgressTime(startTime = start, endTime = end)
-        } }
+        headerView?.setProgressTime(startTime = startTime, endTime = endTime)
     }
 
     override fun setContentViewMode(mode: ViewMode, ignoreTimeUpdate: Boolean) {

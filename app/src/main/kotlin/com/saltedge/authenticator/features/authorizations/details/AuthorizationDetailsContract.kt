@@ -28,7 +28,7 @@ import org.joda.time.DateTime
 interface AuthorizationDetailsContract {
     interface View : BaseAuthorizationViewContract {
         fun setHeaderVisibility(show: Boolean)
-        fun setHeaderValues(logoUrl: String, title: String, startTime: DateTime?, endTime: DateTime?)
+        fun setHeaderValues(logoUrl: String, title: String, startTime: DateTime, endTime: DateTime)
         fun updateTimeViews()
         fun setContentViewMode(mode: ViewMode, ignoreTimeUpdate: Boolean)
         fun setContentTitleAndDescription(title: String, description: String)

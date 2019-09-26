@@ -46,43 +46,58 @@ data class AuthorizationViewModel(
 
     var destroyAt: DateTime? = null
 
+    /**
+     * Set new viewMode and if is final mode set destroyAt
+     */
     fun setNewViewMode(newViewMode: ViewMode) {
         this.viewMode = newViewMode
         this.destroyAt = if (newViewMode.isFinalMode()) DateTime.now().plusSeconds(3) else null
     }
 
+    /**
+     * Check that should be set viewMode == TIME_OUT
+     *
+     * @return Boolean, true if model is expired and does not have final viewMode
+     */
     val shouldBeSetTimeOutMode: Boolean
         get() = this.isExpired && !this.hasFinalMode
 
+    /**
+     * Check that model has final viewMode
+     *
+     * @return Boolean, true viewMode is final mode
+     */
     val hasFinalMode: Boolean
         get() = viewMode.isFinalMode()
 
+    /**
+     * Check that `time views` should ignore time changes
+     *
+     * @return Boolean, true if showProgress is true
+     */
     val ignoreTimeUpdate: Boolean
         get() = viewMode.showProgress
 
     /**
-     * Check what authorization model should be destroyed
+     * Check that authorization model should be destroyed
      *
-     * @receiver authorization view model
-     * @return true if destroyAt time is before now
+     * @return Boolean, true if destroyAt time is before now
      */
     val shouldBeDestroyed: Boolean
         get() = destroyAt?.isBeforeNow == true
 
     /**
-     * Check what authorization is expired
+     * Check that authorization is expired
      *
-     * @receiver authorization view model
-     * @return true if expiresAt time is before now
+     * @return Boolean, true if expiresAt time is before now
      */
     val isExpired: Boolean
         get() = expiresAt.isEqualNow || expiresAt.isBeforeNow
 
     /**
-     * Check what authorization is not expired
+     * Check that authorization is not expired
      *
-     * @receiver authorization view model
-     * @return true if expiresAt time is after now
+     * @return Boolean, true if expiresAt time is after now
      */
     val isNotExpired: Boolean
         get() = !isExpired
@@ -90,8 +105,7 @@ data class AuthorizationViewModel(
     /**
      * Calculates interval (count of seconds) between current time and expiresAt time
      *
-     * @receiver authorization view model
-     * @return integer, seconds
+     * @return Int, seconds
      */
     val remainedSecondsTillExpire: Int
         get() = expiresAt.remainedSeconds()
@@ -99,8 +113,7 @@ data class AuthorizationViewModel(
     /**
      * Calculates interval between current time and expiresAt time and prepare timestamp string result
      *
-     * @receiver authorization view model
-     * @return timestamp string in "minutes:seconds" format
+     * @return String, timestamp in "minutes:seconds" format
      */
     val remainedTimeStringTillExpire: String
         get() = expiresAt.remainedSeconds().remainedTimeDescription()
@@ -111,7 +124,7 @@ data class AuthorizationViewModel(
  *
  * @receiver Authorization
  * @param connection - Connection
- * @return Authorization view model
+ * @return AuthorizationViewModel
  */
 fun AuthorizationData.toAuthorizationViewModel(connection: ConnectionAbs): AuthorizationViewModel {
     return AuthorizationViewModel(
@@ -128,6 +141,13 @@ fun AuthorizationData.toAuthorizationViewModel(connection: ConnectionAbs): Autho
     )
 }
 
+/**
+ * Converts AuthorizationData in AuthorizationViewModel
+ *
+ * @receiver list of AuthorizationViewModel's received from server
+ * @param listWithFinalModels stored in presenter list of AuthorizationViewModel's
+ * @return List, result of merging
+ */
 fun List<AuthorizationViewModel>.joinFinalModels(listWithFinalModels: List<AuthorizationViewModel>): List<AuthorizationViewModel> {
     val finalModels = listWithFinalModels.filter { it.hasFinalMode }
     val finalAuthorizationIDs = finalModels.map { it.authorizationID }
@@ -137,12 +157,6 @@ fun List<AuthorizationViewModel>.joinFinalModels(listWithFinalModels: List<Autho
     } + finalModels).sortedBy { it.createdAt }
 }
 
-/**
- * Calculates period (seconds) between current time and expiresAt time
- *
- * @receiver authorization
- * @return integer, seconds
- */
 private fun authorizationExpirationPeriod(authorization: AuthorizationData): Int {
     return secondsBetweenDates(authorization.createdAt ?: return 0, authorization.expiresAt)
 }

@@ -252,7 +252,7 @@ class AuthorizationsListPresenterTest {
         Mockito.verify(mockConnectionsRepository).getAllActiveConnections()
     }
 
-    //TODO INVESTIGATE TEST OF COROUTINES
+    //TODO INVESTIGATE TEST OF COROUTINES (https://github.com/saltedge/sca-authenticator-android/issues/39)
 //    @Test
 //    @Throws(Exception::class)
 //    fun onFetchAuthorizationsResultTest_processEncryptedAuthorizationsResult() {
