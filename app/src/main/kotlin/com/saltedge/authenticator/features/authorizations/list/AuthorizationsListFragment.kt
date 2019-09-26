@@ -114,8 +114,8 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     override fun updateViewsContent() {
         activity?.runOnUiThread {
-            authorizationsList?.setVisible(presenter.showContentViews)
-            authorizationsEmptyView?.setVisible(presenter.showEmptyView)
+            listGroup?.setVisible(presenter.showContentViews)
+            emptyView?.setVisible(presenter.showEmptyView)
 
             headerAdapter?.data = presenter.viewModels
             contentAdapter?.data = presenter.viewModels

@@ -44,19 +44,19 @@ class AuthorizationDetailsPresenter(
 
     var viewContract: AuthorizationDetailsContract.View? = null
     private val modelIsNotExpired: Boolean
-        get() = currentViewModel?.isNotExpired() ?: true
+        get() = currentViewModel?.isNotExpired ?: true
     private val modelHasFinalMode: Boolean
-        get() = currentViewModel?.hasFinalMode() ?: false
+        get() = currentViewModel?.hasFinalMode ?: false
     private var pollingService: SingleAuthorizationPollingService =
         apiManager.createSingleAuthorizationPollingService()
     private var authorizationId: String? = null
     private var authorizationUnavailable: Boolean = false
     private val authorizationAvailable: Boolean
         get() = !authorizationUnavailable
-    private val viewMode: AuthorizationContentView.Mode
+    private val viewMode: ViewMode
         get() {
-            return if (authorizationUnavailable) AuthorizationContentView.Mode.UNAVAILABLE
-            else currentViewModel?.viewMode ?: AuthorizationContentView.Mode.LOADING
+            return if (authorizationUnavailable) ViewMode.UNAVAILABLE
+            else currentViewModel?.viewMode ?: ViewMode.LOADING
         }
 
     fun setInitialData(connectionId: String?, authorizationId: String?) {
@@ -100,12 +100,15 @@ class AuthorizationDetailsPresenter(
     fun onTimerTick() {
         currentViewModel?.let { model ->
             when {
-                model.shouldBeSetTimeOutMode() -> {
-                    model.setNewViewMode(AuthorizationContentView.Mode.TIME_OUT)
+                model.shouldBeSetTimeOutMode -> {
+                    stopPolling()
+                    model.setNewViewMode(ViewMode.TIME_OUT)
                     viewContract?.updateTimeViews()
-                    viewContract?.setContentViewMode(viewMode)
+                    viewContract?.setContentViewMode(viewMode, ignoreTimeUpdate = viewMode.showProgress)
                 }
-                model.shouldBeDestroyed() -> viewContract?.closeView()
+                model.shouldBeDestroyed -> {
+                    viewContract?.closeView()
+                }
                 else -> viewContract?.updateTimeViews()
             }
         }
@@ -127,7 +130,7 @@ class AuthorizationDetailsPresenter(
     override fun onAuthorizeStart(connectionID: ConnectionID, authorizationID: AuthorizationID, type: ActionType) {
         stopPolling()
         currentViewModel?.setNewViewMode(type.toViewMode())
-        viewContract?.setContentViewMode(viewMode)
+        viewContract?.setContentViewMode(viewMode, ignoreTimeUpdate = viewMode.showProgress)
     }
 
     override fun onConfirmDenySuccess(
@@ -137,16 +140,16 @@ class AuthorizationDetailsPresenter(
     ) {
         val newViewMode = if (success) {
             when (viewMode) {
-                AuthorizationContentView.Mode.CONFIRM_PROCESSING -> AuthorizationContentView.Mode.CONFIRM_SUCCESS
-                AuthorizationContentView.Mode.DENY_PROCESSING -> AuthorizationContentView.Mode.DENY_SUCCESS
-                else -> AuthorizationContentView.Mode.ERROR
+                ViewMode.CONFIRM_PROCESSING -> ViewMode.CONFIRM_SUCCESS
+                ViewMode.DENY_PROCESSING -> ViewMode.DENY_SUCCESS
+                else -> ViewMode.ERROR
             }
         } else {
             startPolling()
-            AuthorizationContentView.Mode.DEFAULT
+            ViewMode.DEFAULT
         }
         currentViewModel?.setNewViewMode(newViewMode)
-        viewContract?.setContentViewMode(newViewMode)
+        viewContract?.setContentViewMode(newViewMode, ignoreTimeUpdate = newViewMode.showProgress)
     }
 
     override fun onConfirmDenyFailure(
@@ -180,7 +183,7 @@ class AuthorizationDetailsPresenter(
                 connection = currentConnectionAndKey?.connection ?: return
             )
             if (!modelHasFinalMode && super.currentViewModel != newViewModel) {
-                if (viewMode == AuthorizationContentView.Mode.LOADING) {
+                if (viewMode == ViewMode.LOADING) {
                     viewContract?.startTimer()
                 }
                 super.currentViewModel = newViewModel
@@ -191,10 +194,10 @@ class AuthorizationDetailsPresenter(
 
     private fun updateViewContent() {
         viewContract?.setHeaderVisibility(show = currentViewModel != null)
-        viewContract?.setContentViewMode(viewMode)
+        viewContract?.setContentViewMode(viewMode, ignoreTimeUpdate = viewMode.showProgress)
         currentViewModel?.let {
             viewContract?.setHeaderValues(
-                logo = it.connectionLogoUrl ?: "",
+                logoUrl = it.connectionLogoUrl ?: "",
                 title = it.connectionName,
                 startTime = it.createdAt,
                 endTime = it.expiresAt
@@ -205,7 +208,7 @@ class AuthorizationDetailsPresenter(
 
     private fun setUnavailableState() {
         stopPolling()
-        currentViewModel?.setNewViewMode(AuthorizationContentView.Mode.UNAVAILABLE)
+        currentViewModel?.setNewViewMode(ViewMode.UNAVAILABLE)
         authorizationUnavailable = true
         updateViewContent()
     }
@@ -215,14 +218,14 @@ class AuthorizationDetailsPresenter(
             currentConnectionAndKey?.connection?.accessToken?.let {
                 connectionsRepository.invalidateConnectionsByTokens(accessTokens = listOf(it))
             }
-            currentViewModel?.setNewViewMode(AuthorizationContentView.Mode.ERROR)
-            viewContract?.setContentViewMode(AuthorizationContentView.Mode.ERROR)
+            currentViewModel?.setNewViewMode(ViewMode.ERROR)
+            viewContract?.setContentViewMode(ViewMode.ERROR, ignoreTimeUpdate = ViewMode.ERROR.showProgress)
         } else if (error.isAuthorizationNotFound()) {
-            setUnavailableState()
+            if (currentViewModel == null) setUnavailableState()
         } else {
-            if (currentViewModel?.viewMode != AuthorizationContentView.Mode.ERROR) {
+            if (currentViewModel?.viewMode != ViewMode.ERROR) {
                 viewContract?.showError(error.getErrorMessage(appContext))
-                currentViewModel?.setNewViewMode(AuthorizationContentView.Mode.ERROR)
+                currentViewModel?.setNewViewMode(ViewMode.ERROR)
             }
         }
     }

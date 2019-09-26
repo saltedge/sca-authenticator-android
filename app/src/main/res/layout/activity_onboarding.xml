@@ -26,9 +26,110 @@
     android:background="@android:color/white">
 
     <RelativeLayout
+        android:id="@+id/setupLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:id="@+id/setupActionsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/actionView"
+                style="@style/BlueFullWidthButton"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/dp_20"
+                android:fontFamily="@font/roboto_regular"
+                android:text="@string/onboarding_secure_app_touch_id_allow_android" />
+
+            <TextView
+                android:id="@+id/skipSetupActionView"
+                style="@style/WhiteLinkAction"
+                android:layout_below="@+id/actionView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/dp_40"
+                android:text="@string/actions_skip" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/titleView"
+            style="@style/Text20BlackMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_32"
+            android:layout_marginTop="@dimen/dp_72"
+            android:layout_marginRight="@dimen/dp_32"
+            android:gravity="center_horizontal"
+            android:maxLines="2"
+            tools:text="Allow Fingerprint" />
+
+        <TextView
+            android:id="@+id/descriptionView"
+            style="@style/Text16GrayDarkRegular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/titleView"
+            android:layout_marginLeft="@dimen/dp_32"
+            android:layout_marginTop="@dimen/dp_12"
+            android:layout_marginRight="@dimen/dp_32"
+            android:gravity="center_horizontal"
+            android:lines="4"
+            tools:text="Use Fingerprint to enter the App faster, but
+             don’t worry, you’ll still have your passcode as backup." />
+
+        <ImageView
+            android:id="@+id/setupLogoImage"
+            android:layout_width="@dimen/dp_100"
+            android:layout_height="@dimen/dp_100"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/onboarding_secure_app_touch_id_allow_android"
+            android:src="@drawable/ic_setup_fingerprint" />
+
+        <com.saltedge.authenticator.widget.StepProgressView
+            android:id="@+id/stepProgressView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_30"
+            android:layout_marginRight="@dimen/dp_16"
+            tools:background="@color/blue" />
+
+        <com.saltedge.authenticator.widget.passcode.PasscodeInputView
+            android:id="@+id/passcodeInputView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/descriptionView" />
+    </RelativeLayout>
+
+    <RelativeLayout
         android:id="@+id/onboardingLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/proceedToSetup"
+            style="@style/BlueFullWidthButton"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/dp_40"
+            android:fontFamily="@font/roboto_regular"
+            android:text="@string/actions_get_started"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/skipActionView"
+            style="@style/WhiteLinkAction"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/dp_40"
+            android:text="@string/actions_skip"
+            tools:background="@color/blue"
+            tools:textColor="@android:color/white" />
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/onboardingPager"
@@ -46,79 +147,5 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/dp_124"
             app:selectedColor="@color/blue" />
-
-        <TextView
-            android:id="@+id/skipActionView"
-            style="@style/WhiteLinkAction"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/dp_40"
-            android:text="@string/actions_skip"
-            tools:background="@color/blue"
-            tools:textColor="@android:color/white" />
-
-        <Button
-            android:id="@+id/proceedToSetup"
-            style="@style/BlueFullWidthButton"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/dp_40"
-            android:text="@string/actions_get_started"
-            android:visibility="gone" />
     </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/setupLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <com.saltedge.authenticator.widget.StepProgressView
-            android:id="@+id/stepProgressView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_16"
-            android:layout_marginTop="@dimen/dp_30"
-            android:layout_marginRight="@dimen/dp_16" />
-
-        <TextView
-            android:id="@+id/headerTitleView"
-            style="@style/Text20BlackMedium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_30"
-            android:layout_marginTop="@dimen/dp_40"
-            android:layout_marginRight="@dimen/dp_30"
-            android:gravity="center_horizontal"
-            android:maxLines="2" />
-
-        <TextView
-            android:id="@+id/headerDescriptionView"
-            style="@style/Text16GrayDarkRegular"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_32"
-            android:layout_marginTop="@dimen/dp_12"
-            android:layout_marginRight="@dimen/dp_32"
-            android:gravity="center_horizontal"
-            android:lines="4" />
-
-        <com.saltedge.authenticator.widget.passcode.PasscodeInputView
-            android:id="@+id/passcodeInputView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <include
-            android:id="@+id/allowTouchIdContainer"
-            layout="@layout/view_touch_id" />
-
-        <include
-            android:id="@+id/allowNotificationsContainer"
-            layout="@layout/view_notifications" />
-
-        <include
-            android:id="@+id/completeContainer"
-            layout="@layout/view_complete_container" />
-    </LinearLayout>
 </FrameLayout>

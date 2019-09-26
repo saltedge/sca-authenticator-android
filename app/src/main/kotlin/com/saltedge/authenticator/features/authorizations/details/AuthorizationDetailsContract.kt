@@ -22,14 +22,15 @@ package com.saltedge.authenticator.features.authorizations.details
 
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationContentView
 import com.saltedge.authenticator.features.authorizations.common.BaseAuthorizationViewContract
+import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import org.joda.time.DateTime
 
 interface AuthorizationDetailsContract {
     interface View : BaseAuthorizationViewContract {
         fun setHeaderVisibility(show: Boolean)
-        fun setHeaderValues(logo: String, title: String, startTime: DateTime?, endTime: DateTime?)
+        fun setHeaderValues(logoUrl: String, title: String, startTime: DateTime?, endTime: DateTime?)
         fun updateTimeViews()
-        fun setContentViewMode(mode: AuthorizationContentView.Mode)
+        fun setContentViewMode(mode: ViewMode, ignoreTimeUpdate: Boolean)
         fun setContentTitleAndDescription(title: String, description: String)
         fun showError(errorMessage: String)
         fun startTimer()

@@ -61,7 +61,7 @@ class ConnectProviderPresenter @Inject constructor(
     override val logoUrl: String
         get() = connection.logoUrl
     override val iconResId: Int
-        get() = if (viewMode.isCompleteWithSuccess) R.drawable.ic_auth_success_70 else R.drawable.ic_auth_error_70
+        get() = if (viewMode.isCompleteWithSuccess) R.drawable.ic_complete_ok_70 else R.drawable.ic_auth_error_70
     override val mainActionTextResId: Int
         get() = if (viewMode.isCompleteWithSuccess) R.string.actions_proceed else R.string.actions_try_again
     override val completeTitle: String

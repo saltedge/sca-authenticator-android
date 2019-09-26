@@ -24,33 +24,13 @@ import android.content.Context
 import android.text.method.ScrollingMovementMethod
 import android.util.AttributeSet
 import android.widget.LinearLayout
+import androidx.core.view.isVisible
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tool.ResId
 import com.saltedge.authenticator.tool.hasHTMLTags
 import com.saltedge.authenticator.tool.setVisible
 import kotlinx.android.synthetic.main.view_authorization_content.view.*
 
 class AuthorizationContentView : LinearLayout {
-
-    enum class Mode {
-        LOADING,
-        DEFAULT,
-        CONFIRM_PROCESSING,
-        DENY_PROCESSING,
-        CONFIRM_SUCCESS,
-        DENY_SUCCESS,
-        ERROR,
-        TIME_OUT,
-        UNAVAILABLE;
-
-        fun isFinalMode(): Boolean {
-            return this == CONFIRM_SUCCESS
-                || this == DENY_SUCCESS
-                || this == ERROR
-                || this == TIME_OUT
-                || this == UNAVAILABLE
-        }
-    }
 
     constructor(context: Context) : super(context)
 
@@ -60,16 +40,24 @@ class AuthorizationContentView : LinearLayout {
         inflate(context, R.layout.view_authorization_content,this)
     }
 
-    private val Mode.showProgress: Boolean
-        get() = this === Mode.LOADING || this === Mode.CONFIRM_PROCESSING || this === Mode.DENY_PROCESSING
+    fun setViewMode(viewMode: ViewMode) {
+        val showStatus = viewMode !== ViewMode.DEFAULT
 
-    fun setViewMode(viewMode: Mode) {
-        statusLayout?.setVisible(show = viewMode !== Mode.DEFAULT)
-        progressStatusView?.setVisible(show = viewMode.showProgress)
-        statusImageView?.setVisible(show = !viewMode.showProgress)
-        statusImageResId(viewMode)?.let { statusImageView.setImageResource(it) }
-        statusTitleTextView?.setText(statusTitleResId(viewMode))
-        statusDescriptionTextView?.setText(statusDescriptionResId(viewMode))
+        if (showStatus) {
+            if (!statusLayout.isVisible) {
+                statusLayout.alpha = 0.1f
+                statusLayout?.setVisible(show = showStatus)
+                statusLayout?.animate()?.setDuration(500)?.alpha(1.0f)?.start()
+            }
+
+            progressStatusView?.setVisible(show = viewMode.showProgress)
+            statusImageView?.setVisible(show = !viewMode.showProgress)
+            viewMode.statusImageResId?.let { statusImageView.setImageResource(it) }
+            statusTitleTextView?.setText(viewMode.statusTitleResId)
+            statusDescriptionTextView?.setText(viewMode.statusDescriptionResId)
+        } else {
+            statusLayout?.setVisible(show = showStatus)
+        }
     }
 
     fun setTitleAndDescription(title: String, description: String) {
@@ -90,40 +78,5 @@ class AuthorizationContentView : LinearLayout {
     fun setActionClickListener(actionViewClickListener: OnClickListener) {
         negativeActionView?.setOnClickListener(actionViewClickListener)
         positiveActionView?.setOnClickListener(actionViewClickListener)
-    }
-
-    private fun statusImageResId(viewMode: Mode): ResId? {
-        return when(viewMode) {
-            Mode.CONFIRM_SUCCESS -> R.drawable.ic_auth_success_70
-            Mode.DENY_SUCCESS -> R.drawable.ic_auth_denied_70
-            Mode.ERROR -> R.drawable.ic_auth_error_70
-            Mode.TIME_OUT -> R.drawable.ic_auth_timeout_70
-            Mode.UNAVAILABLE -> R.drawable.ic_auth_error_70
-            else -> null
-        }
-    }
-
-    private fun statusTitleResId(viewMode: Mode): ResId {
-        return when(viewMode) {
-            Mode.LOADING, Mode.DEFAULT -> R.string.authorizations_loading
-            Mode.CONFIRM_PROCESSING, Mode.DENY_PROCESSING -> R.string.authorizations_processing
-            Mode.CONFIRM_SUCCESS -> R.string.authorizations_confirmed
-            Mode.DENY_SUCCESS -> R.string.authorizations_denied
-            Mode.ERROR -> R.string.authorizations_error
-            Mode.TIME_OUT -> R.string.authorizations_time_out
-            Mode.UNAVAILABLE -> R.string.authorizations_unavailable
-        }
-    }
-
-    private fun statusDescriptionResId(viewMode: Mode): ResId {
-        return when(viewMode) {
-            Mode.LOADING, Mode.DEFAULT -> R.string.authorizations_loading_description
-            Mode.CONFIRM_PROCESSING, Mode.DENY_PROCESSING -> R.string.authorizations_processing_description
-            Mode.CONFIRM_SUCCESS -> R.string.authorizations_confirmed_description
-            Mode.DENY_SUCCESS -> R.string.authorizations_denied_description
-            Mode.ERROR -> R.string.authorizations_error_description
-            Mode.TIME_OUT -> R.string.authorizations_time_out_description
-            Mode.UNAVAILABLE -> R.string.authorizations_unavailable
-        }
     }
 }

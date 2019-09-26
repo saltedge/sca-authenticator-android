@@ -35,6 +35,7 @@ class AuthorizationHeaderView : LinearLayout, TimeUpdateListener {
 
     private var startTime: DateTime? = null
     private var endTime: DateTime? = null
+    var ignoreTimeUpdate: Boolean = false
 
     constructor(context: Context) : super(context)
 
@@ -44,19 +45,17 @@ class AuthorizationHeaderView : LinearLayout, TimeUpdateListener {
         inflate(context, R.layout.view_authorization_header,this)
     }
 
-    fun setLogoUrl(urlString: String?) {
-        if (urlString?.isEmpty() == true) {
+    fun setTitleAndLogo(title: String, logoUrl: String?) {
+        titleView?.text = title
+
+        if (logoUrl?.isEmpty() == true) {
             logoView?.setImageResource(R.drawable.ic_logo_bank_placeholder)
         } else {
             logoView?.loadImage(
-                imageUrl = urlString,
+                imageUrl = logoUrl,
                 placeholderId = R.drawable.ic_logo_bank_placeholder
             )
         }
-    }
-
-    fun setTitle(title: String) {
-        titleView?.text = title
     }
 
     fun setProgressTime(startTime: DateTime, endTime: DateTime) {
@@ -66,7 +65,7 @@ class AuthorizationHeaderView : LinearLayout, TimeUpdateListener {
     }
 
     override fun onTimeUpdate() {
-        post { updateTimeViewsContent() }
+        if (!ignoreTimeUpdate) post { updateTimeViewsContent() }
     }
 
     private fun updateTimeViewsContent() {

@@ -326,7 +326,7 @@ class ConnectProviderPresenterTest {
 
         presenter.webAuthFinishSuccess(id = "1", accessToken = "access_token")
 
-        assertThat(presenter.iconResId, equalTo(R.drawable.ic_auth_success_70))
+        assertThat(presenter.iconResId, equalTo(R.drawable.ic_complete_ok_70))
     }
 
     /**

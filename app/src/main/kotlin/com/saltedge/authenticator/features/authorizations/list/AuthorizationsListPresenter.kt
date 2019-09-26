@@ -23,7 +23,6 @@ package com.saltedge.authenticator.features.authorizations.list
 import android.content.Context
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.common.*
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationContentView.Mode
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
@@ -65,7 +64,7 @@ class AuthorizationsListPresenter @Inject constructor(
     private var connectionsAndKeys: Map<ConnectionID, ConnectionAndKey> =
         collectConnectionsAndKeys(connectionsRepository, keyStoreManager)
     private val authorizingInProgress: Boolean
-        get() = viewModels.any { it.viewMode == Mode.CONFIRM_PROCESSING || it.viewMode == Mode.DENY_PROCESSING }
+        get() = viewModels.any { it.viewMode == ViewMode.CONFIRM_PROCESSING || it.viewMode == ViewMode.DENY_PROCESSING }
 
     override fun baseViewContract(): BaseAuthorizationViewContract? = viewContract
 
@@ -83,15 +82,15 @@ class AuthorizationsListPresenter @Inject constructor(
     }
 
     override fun onViewModelsExpired() {
-        val expiredViewModels = viewModels.filter { it.shouldBeSetTimeOutMode() }
+        val expiredViewModels = viewModels.filter { it.shouldBeSetTimeOutMode }
         if (expiredViewModels.isNotEmpty()) {
-            expiredViewModels.forEach { it.setNewViewMode(Mode.TIME_OUT) }
+            expiredViewModels.forEach { it.setNewViewMode(ViewMode.TIME_OUT) }
             viewContract?.updateViewsContent()
         }
     }
 
     override fun onViewModelsShouldBeDestroyed() {
-        viewModels = viewModels.filter { !it.shouldBeDestroyed() }
+        viewModels = viewModels.filter { !it.shouldBeDestroyed }
         viewContract?.updateViewsContent()
     }
 
@@ -131,7 +130,7 @@ class AuthorizationsListPresenter @Inject constructor(
 
     override fun onConfirmDenySuccess(success: Boolean, connectionID: ConnectionID, authorizationID: AuthorizationID) {
         findViewModel(connectionID, authorizationID)?.let { viewModel ->
-            viewModel.setNewViewMode(if (viewModel.viewMode == Mode.DENY_PROCESSING) Mode.DENY_SUCCESS else Mode.CONFIRM_SUCCESS)
+            viewModel.setNewViewMode(if (viewModel.viewMode == ViewMode.DENY_PROCESSING) ViewMode.DENY_SUCCESS else ViewMode.CONFIRM_SUCCESS)
             viewContract?.updateItem(viewModel = viewModel, itemId = viewModels.indexOf(viewModel))
         }
         startPolling()
@@ -144,7 +143,7 @@ class AuthorizationsListPresenter @Inject constructor(
     ) {
         viewContract?.showError(error)
         findViewModel(connectionID, authorizationID)?.let { viewModel ->
-            viewModel.setNewViewMode(Mode.ERROR)
+            viewModel.setNewViewMode(ViewMode.ERROR)
             viewContract?.updateItem(viewModel = viewModel, itemId = viewModels.indexOf(viewModel))
         }
         startPolling()

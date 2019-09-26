@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.authorizations.list
 
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationContentView
+import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationViewModel
 import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
@@ -120,7 +120,7 @@ class AuthorizationsListPresenterTest {
         presenter.viewModels = listOf(viewModel1, viewModel2)
 
         Assert.assertNull(presenter.currentViewModel)
-        assertThat(presenter.viewModels[0].viewMode, equalTo(AuthorizationContentView.Mode.DEFAULT))
+        assertThat(presenter.viewModels[0].viewMode, equalTo(ViewMode.DEFAULT))
 
         presenter.onListItemClick(
             itemIndex = 0,
@@ -136,7 +136,7 @@ class AuthorizationsListPresenterTest {
         )
         Mockito.verify(mockPollingService).stop()
         assertThat(presenter.currentViewModel, equalTo(viewModel1))
-        assertThat(presenter.viewModels[0].viewMode, equalTo(AuthorizationContentView.Mode.DENY_PROCESSING))
+        assertThat(presenter.viewModels[0].viewMode, equalTo(ViewMode.DENY_PROCESSING))
         Mockito.verify(mockView).updateItem(presenter.viewModels[0], 0)
     }
 
@@ -311,11 +311,11 @@ class AuthorizationsListPresenterTest {
     @Throws(Exception::class)
     fun processDecryptedAuthorizationsResultTest_Case4() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.viewModels = listOf(viewModel1, viewModel2.copy(viewMode = AuthorizationContentView.Mode.DENY_SUCCESS))
+        presenter.viewModels = listOf(viewModel1, viewModel2.copy(viewMode = ViewMode.DENY_SUCCESS))
         presenter.processDecryptedAuthorizationsResult(result = listOf(authorizationData1, authorizationData2))
 
         assertThat(presenter.viewModels,
-            equalTo(listOf(viewModel1, viewModel2.copy(viewMode = AuthorizationContentView.Mode.DENY_SUCCESS))))
+            equalTo(listOf(viewModel1, viewModel2.copy(viewMode = ViewMode.DENY_SUCCESS))))
         Mockito.verifyNoMoreInteractions(mockView)
     }
 
@@ -341,13 +341,13 @@ class AuthorizationsListPresenterTest {
     @Throws(Exception::class)
     fun onConfirmDenySuccessTest_ConfirmSuccess() {
         val presenter: AuthorizationsListPresenter = createPresenter(viewContract = mockView)
-        presenter.viewModels = listOf(viewModel1.copy(), viewModel2.copy(viewMode = AuthorizationContentView.Mode.CONFIRM_PROCESSING))
+        presenter.viewModels = listOf(viewModel1.copy(), viewModel2.copy(viewMode = ViewMode.CONFIRM_PROCESSING))
 
         presenter.onConfirmDenySuccess(success = true, authorizationID = "2", connectionID = "1")
 
         assertThat(presenter.viewModels,
-            equalTo(listOf(viewModel1, viewModel2.copy(viewMode = AuthorizationContentView.Mode.CONFIRM_SUCCESS))))
-        Mockito.verify(mockView).updateItem(viewModel2.copy(viewMode = AuthorizationContentView.Mode.CONFIRM_SUCCESS), 1)
+            equalTo(listOf(viewModel1, viewModel2.copy(viewMode = ViewMode.CONFIRM_SUCCESS))))
+        Mockito.verify(mockView).updateItem(viewModel2.copy(viewMode = ViewMode.CONFIRM_SUCCESS), 1)
         Mockito.verify(mockPollingService).start()
     }
 
@@ -355,13 +355,13 @@ class AuthorizationsListPresenterTest {
     @Throws(Exception::class)
     fun onConfirmDenySuccessTest_DenySuccess() {
         val presenter: AuthorizationsListPresenter = createPresenter(viewContract = mockView)
-        presenter.viewModels = listOf(viewModel1.copy(), viewModel2.copy(viewMode = AuthorizationContentView.Mode.DENY_PROCESSING))
+        presenter.viewModels = listOf(viewModel1.copy(), viewModel2.copy(viewMode = ViewMode.DENY_PROCESSING))
 
         presenter.onConfirmDenySuccess(success = true, authorizationID = "2", connectionID = "1")
 
         assertThat(presenter.viewModels,
-            equalTo(listOf(viewModel1, viewModel2.copy(viewMode = AuthorizationContentView.Mode.DENY_SUCCESS))))
-        Mockito.verify(mockView).updateItem(viewModel2.copy(viewMode = AuthorizationContentView.Mode.DENY_SUCCESS), 1)
+            equalTo(listOf(viewModel1, viewModel2.copy(viewMode = ViewMode.DENY_SUCCESS))))
+        Mockito.verify(mockView).updateItem(viewModel2.copy(viewMode = ViewMode.DENY_SUCCESS), 1)
         Mockito.verify(mockPollingService).start()
     }
 
@@ -424,10 +424,10 @@ class AuthorizationsListPresenterTest {
         )
         Mockito.verify(mockPollingService).stop()
         Mockito.verify(mockView).updateItem(
-            viewModel = viewModel1.copy(viewMode = AuthorizationContentView.Mode.CONFIRM_PROCESSING),
+            viewModel = viewModel1.copy(viewMode = ViewMode.CONFIRM_PROCESSING),
             itemId = 0
         )
-        assertThat(presenter.viewModels[0].viewMode, equalTo(AuthorizationContentView.Mode.CONFIRM_PROCESSING))
+        assertThat(presenter.viewModels[0].viewMode, equalTo(ViewMode.CONFIRM_PROCESSING))
     }
 
     @Test

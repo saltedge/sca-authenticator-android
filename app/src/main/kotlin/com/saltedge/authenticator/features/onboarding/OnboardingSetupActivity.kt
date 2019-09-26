@@ -33,9 +33,6 @@ import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 import kotlinx.android.synthetic.main.activity_onboarding.*
-import kotlinx.android.synthetic.main.view_complete_container.*
-import kotlinx.android.synthetic.main.view_notifications.*
-import kotlinx.android.synthetic.main.view_touch_id.*
 import javax.inject.Inject
 
 class OnboardingSetupActivity : AppCompatActivity(),
@@ -62,11 +59,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
     override fun onStop() {
         presenter.viewContract = null
         super.onStop()
-    }
-
-    override fun onDestroy() {
-        presenter.stopDelayHandler()
-        super.onDestroy()
     }
 
     override fun onPageScrollStateChanged(state: Int) {}
@@ -108,9 +100,15 @@ class OnboardingSetupActivity : AppCompatActivity(),
         proceedToSetup?.setVisible(show = true)
     }
 
-    override fun hideOnboardingViewAndShowSetupView() {
+    override fun hideOnboardingAndShowPasscodeSetupView() {
         onboardingLayout?.setVisible(show = false)
         setupLayout?.setVisible(show = true)
+    }
+
+    override fun hidePasscodeInputAndShowSetupView() {
+        passcodeInputView?.setVisible(show = false)
+        setupLogoImage?.setVisible(show = true)
+        setupActionsLayout?.setVisible(show = true)
     }
 
     override fun showMainActivity() {
@@ -129,22 +127,26 @@ class OnboardingSetupActivity : AppCompatActivity(),
         headerTitle: Int,
         headerDescription: Int,
         showPasscodeCancel: Boolean?,
-        passcodePositiveActionText: Int?
+        passcodePositiveActionText: Int?,
+        setupImageResId: Int,
+        actionText: Int
     ) {
         stepProgressView?.setStepProgress(setupStepProgress)
-        headerTitleView?.setText(headerTitle)
-        headerDescriptionView?.setText(headerDescription)
+        titleView?.setText(headerTitle)
+        descriptionView?.setText(headerDescription)
+        setupLogoImage?.setImageResource(setupImageResId)
+        actionView?.setText(actionText)
+
         showPasscodeCancel?.let { passcodeInputView?.cancelActionIsAvailable = it }
         passcodePositiveActionText?.let { passcodeInputView?.setPositiveActionText(it) }
-
-        val currentContainerId = presenter.setupViewMode.containerId
-        SetupViewMode.values().forEach {
-            findViewById<View?>(it.containerId)?.setVisible(show = it.containerId == currentContainerId)
-        }
     }
 
     override fun setPasscodeInputMode(inputMode: PasscodeInputView.InputMode) {
         passcodeInputView?.initInputMode(inputMode = inputMode)
+    }
+
+    override fun hideSkipView() {
+        skipSetupActionView?.setInvisible(true)
     }
 
     private fun initViews() {
@@ -166,7 +168,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
             pageIndicatorView?.selection = 0
         }
         skipActionView?.setOnClickListener(this)
-        proceedToSetup?.setFont(R.font.roboto_regular)
         proceedToSetup?.setOnClickListener(this)
         skipActionView?.setVisible(show = true)
         proceedToSetup?.setVisible(show = false)
@@ -174,28 +175,13 @@ class OnboardingSetupActivity : AppCompatActivity(),
 
     private fun initSetupViews() {
         stepProgressView?.stepCount = presenter.setupStepCount
-        setupInputPasscodeViewContent()
-        setupAllowTouchIdViewContent()
-        setupAllowNotificationsViewContent()
-        proceedToMainActivity?.setOnClickListener(this)
-    }
 
-    private fun setupAllowNotificationsViewContent() {
-        allowNotificationsActionView?.setFont(R.font.roboto_regular)
-        allowNotificationsActionView?.setOnClickListener(this)
-        skipNotificationsActionView?.setOnClickListener(this)
-    }
-
-    private fun setupAllowTouchIdViewContent() {
-        allowTouchIdActionView?.setFont(R.font.roboto_regular)
-        allowTouchIdActionView?.setOnClickListener(this)
-        skipTouchIdActionView?.setOnClickListener(this)
-    }
-
-    private fun setupInputPasscodeViewContent() {
         passcodeInputView?.biometricsActionIsAvailable = false
         passcodeInputView?.cancelActionIsAvailable = false
         passcodeInputView?.listener = this
+
+        actionView?.setOnClickListener(this)
+        skipSetupActionView?.setOnClickListener(this)
     }
 
     private fun injectDependencies() {

@@ -41,70 +41,70 @@ data class AuthorizationViewModel(
     val connectionID: ConnectionID,
     val connectionName: String,
     val connectionLogoUrl: String?,
-    var viewMode: AuthorizationContentView.Mode = AuthorizationContentView.Mode.DEFAULT
+    var viewMode: ViewMode = ViewMode.DEFAULT
 ) : Serializable {
 
     var destroyAt: DateTime? = null
 
-    fun setNewViewMode(newViewMode: AuthorizationContentView.Mode) {
+    fun setNewViewMode(newViewMode: ViewMode) {
         this.viewMode = newViewMode
         this.destroyAt = if (newViewMode.isFinalMode()) DateTime.now().plusSeconds(3) else null
     }
+
+    val shouldBeSetTimeOutMode: Boolean
+        get() = this.isExpired && !this.hasFinalMode
+
+    val hasFinalMode: Boolean
+        get() = viewMode.isFinalMode()
+
+    val ignoreTimeUpdate: Boolean
+        get() = viewMode.showProgress
+
+    /**
+     * Check what authorization model should be destroyed
+     *
+     * @receiver authorization view model
+     * @return true if destroyAt time is before now
+     */
+    val shouldBeDestroyed: Boolean
+        get() = destroyAt?.isBeforeNow == true
+
+    /**
+     * Check what authorization is expired
+     *
+     * @receiver authorization view model
+     * @return true if expiresAt time is before now
+     */
+    val isExpired: Boolean
+        get() = expiresAt.isEqualNow || expiresAt.isBeforeNow
+
+    /**
+     * Check what authorization is not expired
+     *
+     * @receiver authorization view model
+     * @return true if expiresAt time is after now
+     */
+    val isNotExpired: Boolean
+        get() = !isExpired
+
+    /**
+     * Calculates interval (count of seconds) between current time and expiresAt time
+     *
+     * @receiver authorization view model
+     * @return integer, seconds
+     */
+    val remainedSecondsTillExpire: Int
+        get() = expiresAt.remainedSeconds()
+
+    /**
+     * Calculates interval between current time and expiresAt time and prepare timestamp string result
+     *
+     * @receiver authorization view model
+     * @return timestamp string in "minutes:seconds" format
+     */
+    val remainedTimeStringTillExpire: String
+        get() = expiresAt.remainedSeconds().remainedTimeDescription()
 }
-
-fun List<AuthorizationViewModel>.joinFinalModels(listWithFinalModels: List<AuthorizationViewModel>): List<AuthorizationViewModel> {
-    val finalModels = listWithFinalModels.filter { it.hasFinalMode() }
-    val finalAuthorizationIDs = finalModels.map { it.authorizationID }
-    val finalConnectionIDs = finalModels.map { it.connectionID }
-    return (this.filter {
-        !finalAuthorizationIDs.contains(it.authorizationID) || !finalConnectionIDs.contains(it.connectionID)
-    } + finalModels).sortedBy { it.createdAt }
-}
-
-fun AuthorizationViewModel.shouldBeSetTimeOutMode(): Boolean = this.isExpired() && !this.hasFinalMode()
-
-fun AuthorizationViewModel.hasFinalMode(): Boolean = viewMode.isFinalMode()
-
-/**
- * Check what authorization model should be destroyed
- *
- * @receiver authorization view model
- * @return true if destroyAt time is before now
- */
-fun AuthorizationViewModel.shouldBeDestroyed(): Boolean = destroyAt?.isBeforeNow == true
-
-/**
- * Check what authorization is expired
- *
- * @receiver authorization view model
- * @return true if expiresAt time is before now
- */
-fun AuthorizationViewModel.isExpired(): Boolean = expiresAt.isEqualNow || expiresAt.isBeforeNow
-
-/**
- * Check what authorization is not expired
- *
- * @receiver authorization view model
- * @return true if expiresAt time is after now
- */
-fun AuthorizationViewModel.isNotExpired(): Boolean = !isExpired()
-
-/**
- * Calculates interval (count of seconds) between current time and expiresAt time
- *
- * @receiver authorization view model
- * @return integer, seconds
- */
-fun AuthorizationViewModel.remainedSecondsTillExpire(): Int = expiresAt.remainedSeconds()
-
-/**
- * Calculates interval between current time and expiresAt time and prepare timestamp string result
- *
- * @receiver authorization view model
- * @return timestamp string in "minutes:seconds" format
- */
-fun AuthorizationViewModel.remainedTimeStringTillExpire(): String =
-        expiresAt.remainedSeconds().remainedTimeDescription()
 
 /**
  * Converts AuthorizationData in AuthorizationViewModel
@@ -126,6 +126,15 @@ fun AuthorizationData.toAuthorizationViewModel(connection: ConnectionAbs): Autho
         authorizationID = this.id,
         authorizationCode = this.authorizationCode ?: ""
     )
+}
+
+fun List<AuthorizationViewModel>.joinFinalModels(listWithFinalModels: List<AuthorizationViewModel>): List<AuthorizationViewModel> {
+    val finalModels = listWithFinalModels.filter { it.hasFinalMode }
+    val finalAuthorizationIDs = finalModels.map { it.authorizationID }
+    val finalConnectionIDs = finalModels.map { it.connectionID }
+    return (this.filter {
+        !finalAuthorizationIDs.contains(it.authorizationID) || !finalConnectionIDs.contains(it.connectionID)
+    } + finalModels).sortedBy { it.createdAt }
 }
 
 /**

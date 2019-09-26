@@ -27,7 +27,7 @@ import android.view.ViewGroup
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationContentView
+import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.confirmPasscode.ConfirmPasscodeDialog
 import com.saltedge.authenticator.features.authorizations.details.di.AuthorizationDetailsModule
 import com.saltedge.authenticator.interfaces.UpActionImageListener
@@ -41,7 +41,6 @@ import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.showAuthorizationConfirm
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_authorization_details.*
-import kotlinx.android.synthetic.main.view_authorization_content.*
 import org.joda.time.DateTime
 import java.util.*
 import javax.inject.Inject
@@ -115,7 +114,6 @@ class AuthorizationDetailsFragment : BaseFragment(),
     override fun getUpActionImage(): Int? = R.drawable.ic_close_white_24dp
 
     override fun updateViewsContent() {
-        //TODO
     }
 
     override fun updateTimeViews() {
@@ -126,16 +124,16 @@ class AuthorizationDetailsFragment : BaseFragment(),
         headerView?.setInvisible(!show)
     }
 
-    override fun setHeaderValues(logo: String, title: String, startTime: DateTime?, endTime: DateTime?) {
-        headerView?.setLogoUrl(logo)
-        headerView?.setTitle(title)
+    override fun setHeaderValues(logoUrl: String, title: String, startTime: DateTime?, endTime: DateTime?) {
+        headerView?.setTitleAndLogo(title = title, logoUrl = logoUrl)
         startTime?.let { start -> endTime?.let { end ->
-            headerView?.setProgressTime(start, end)
+            headerView?.setProgressTime(startTime = start, endTime = end)
         } }
     }
 
-    override fun setContentViewMode(mode: AuthorizationContentView.Mode) {
+    override fun setContentViewMode(mode: ViewMode, ignoreTimeUpdate: Boolean) {
         contentView?.setViewMode(mode)
+        headerView?.ignoreTimeUpdate = ignoreTimeUpdate
     }
 
     override fun setContentTitleAndDescription(title: String, description: String) {

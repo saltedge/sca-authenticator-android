@@ -23,10 +23,10 @@ package com.saltedge.authenticator.features.authorizations.common
 enum class ActionType {
     CONFIRM, DENY;
 
-    fun toViewMode(): AuthorizationContentView.Mode {
+    fun toViewMode(): ViewMode {
         return when(this) {
-            CONFIRM -> AuthorizationContentView.Mode.CONFIRM_PROCESSING
-            DENY -> AuthorizationContentView.Mode.DENY_PROCESSING
+            CONFIRM -> ViewMode.CONFIRM_PROCESSING
+            DENY -> ViewMode.DENY_PROCESSING
         }
     }
 }

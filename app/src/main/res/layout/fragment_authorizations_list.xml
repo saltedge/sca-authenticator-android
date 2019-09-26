@@ -23,13 +23,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@color/base_container_bg">
 
     <LinearLayout
-        android:id="@+id/authorizationsList"
+        android:id="@+id/listGroup"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@android:color/white">
 
         <com.saltedge.authenticator.features.authorizations.list.WrapContentViewPager
             android:id="@+id/headerViewPager"
@@ -45,7 +46,7 @@
     </LinearLayout>
 
     <com.saltedge.authenticator.widget.InfoView
-        android:id="@+id/authorizationsEmptyView"
+        android:id="@+id/emptyView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:iconDimension="@dimen/info_view_big_icon"

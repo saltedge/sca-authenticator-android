@@ -35,7 +35,7 @@ class ActionTypeTest {
     @Test
     @Throws(Exception::class)
     fun toViewModeTest() {
-        assertThat(ActionType.CONFIRM.toViewMode(), equalTo(AuthorizationContentView.Mode.CONFIRM_PROCESSING))
-        assertThat(ActionType.DENY.toViewMode(), equalTo(AuthorizationContentView.Mode.DENY_PROCESSING))
+        assertThat(ActionType.CONFIRM.toViewMode(), equalTo(ViewMode.CONFIRM_PROCESSING))
+        assertThat(ActionType.DENY.toViewMode(), equalTo(ViewMode.DENY_PROCESSING))
     }
 }
