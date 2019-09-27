@@ -20,23 +20,21 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.SHOW_REQUEST_CODE
 import com.saltedge.authenticator.features.authorizations.common.*
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.constants.KEY_ID
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationResult
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationsContract
 import com.saltedge.authenticator.sdk.model.*
 import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
+import kotlinx.coroutines.*
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 class AuthorizationsListPresenter @Inject constructor(
     appContext: Context,
@@ -48,60 +46,67 @@ class AuthorizationsListPresenter @Inject constructor(
 ) : BaseAuthorizationPresenter(appContext, biometricTools, apiManager),
     ListItemClickListener,
     FetchAuthorizationsContract,
-    ConfirmAuthorizationResult {
+    ConfirmAuthorizationResult,
+    AuthorizationStatusListener,
+    CoroutineScope
+{
+    private val job: Job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.IO
 
+    var viewModels: List<AuthorizationViewModel> = emptyList()
+    var viewContract: AuthorizationsListContract.View? = null
+    val showEmptyView: Boolean
+        get() = viewModels.isEmpty()
+    val showContentViews: Boolean
+        get() = !showEmptyView
     private var pollingService = apiManager.createAuthorizationsPollingService()
     private var connectionsAndKeys: Map<ConnectionID, ConnectionAndKey> =
         collectConnectionsAndKeys(connectionsRepository, keyStoreManager)
-    var viewModels: List<AuthorizationViewModel> = emptyList()
-    var viewContract: AuthorizationsListContract.View? = null
+    private val authorizingInProgress: Boolean
+        get() = viewModels.any { it.viewMode == ViewMode.CONFIRM_PROCESSING || it.viewMode == ViewMode.DENY_PROCESSING }
 
     override fun baseViewContract(): BaseAuthorizationViewContract? = viewContract
 
-    fun onFragmentStart() {
+    fun onFragmentResume() {
         startPolling()
+        viewContract?.updateViewsContent()
     }
 
-    fun onFragmentStop() {
+    fun onFragmentPause() {
         stopPolling()
     }
 
-    fun onTimerTick() {
-        if (existExpiredSessions()) {
-            cleanDataSet()
-            viewContract?.updateViewsContentInUiThread()
-        } else viewContract?.refreshListView()
+    fun onFragmentDestroy() {
+        job.cancel()
     }
 
-    /**
-     * Removing confirmed authorization from list
-     * data are received from AuthorizationDetails
-     */
-    fun processFragmentResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (data == null || resultCode != Activity.RESULT_OK) return
-        val authorizationId = data.getStringExtra(KEY_ID) ?: return
-        if (requestCode == SHOW_REQUEST_CODE) {
-            viewModels = viewModels.filter { it.authorizationId != authorizationId }
-            viewContract?.updateViewContent()
+    override fun onViewModelsExpired() {
+        val expiredViewModels = viewModels.filter { it.shouldBeSetTimeOutMode }
+        if (expiredViewModels.isNotEmpty()) {
+            expiredViewModels.forEach { it.setNewViewMode(ViewMode.TIME_OUT) }
+            viewContract?.updateViewsContent()
         }
+    }
+
+    override fun onViewModelsShouldBeDestroyed() {
+        viewModels = viewModels.filter { !it.shouldBeDestroyed }
+        viewContract?.updateViewsContent()
     }
 
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
-        val viewModel = findAuthorizationById(itemCode) ?: return
+        val viewModel = viewModels.getOrNull(itemIndex) ?: return
         when (itemViewId) {
-            R.id.positiveActionView, R.id.negativeActionView -> {
-                super.currentViewModel = viewModel
-                super.currentConnectionAndKey = connectionsAndKeys[viewModel.connectionId]
-                onAuthorizeActionSelected(isConfirmed = itemViewId == R.id.positiveActionView)
+            R.id.positiveActionView -> {
+                onListItemClick(viewModel, selectedActionType = ActionType.CONFIRM)
             }
-            R.id.detailsActionView -> {
-                viewContract?.showAuthorizationDetailsView(authorizationViewModel = viewModel)
+            R.id.negativeActionView -> {
+                onListItemClick(viewModel, selectedActionType = ActionType.DENY)
             }
         }
     }
 
-    override fun getConnectionsData(): List<ConnectionAndKey>? =
-        collectAuthorizationRequestData()
+    override fun getConnectionsData(): List<ConnectionAndKey>? = collectAuthorizationRequestData()
 
     override fun onFetchAuthorizationsResult(
         result: List<EncryptedAuthorizationData>,
@@ -111,26 +116,44 @@ class AuthorizationsListPresenter @Inject constructor(
         processEncryptedAuthorizationsResult(result)
     }
 
-    override fun onConfirmDenyFailure(error: ApiErrorData) {
-        onConfirmActionFail(error)
+    override fun onAuthorizeStart(
+        connectionID: ConnectionID,
+        authorizationID: AuthorizationID,
+        type: ActionType
+    ) {
+        stopPolling()
+        findViewModel(connectionID, authorizationID)?.let { viewModel ->
+            viewModel.setNewViewMode(type.toViewMode())
+            viewContract?.updateItem(viewModel = viewModel, itemId = viewModels.indexOf(viewModel))
+        }
     }
 
-    override fun onConfirmDenySuccess(authorizationId: String, success: Boolean) {
-        if (success) {
-            this.viewModels = viewModels.filter { it.authorizationId != authorizationId }
-            viewContract?.updateViewContent()
+    override fun onConfirmDenySuccess(success: Boolean, connectionID: ConnectionID, authorizationID: AuthorizationID) {
+        findViewModel(connectionID, authorizationID)?.let { viewModel ->
+            viewModel.setNewViewMode(if (viewModel.viewMode == ViewMode.DENY_PROCESSING) ViewMode.DENY_SUCCESS else ViewMode.CONFIRM_SUCCESS)
+            viewContract?.updateItem(viewModel = viewModel, itemId = viewModels.indexOf(viewModel))
         }
         startPolling()
     }
 
-    override fun updateConfirmProgressState(
-        authorizationId: String?,
-        confirmRequestIsInProgress: Boolean
+    override fun onConfirmDenyFailure(
+        error: ApiErrorData,
+        connectionID: ConnectionID,
+        authorizationID: AuthorizationID
     ) {
-        if (confirmRequestIsInProgress) stopPolling() else startPolling()
-        viewModels.find { it.authorizationId == authorizationId }?.let {
-            it.isProcessing = confirmRequestIsInProgress
-            viewContract?.updateItem(viewModel = it, itemId = viewModels.indexOf(it))
+        viewContract?.showError(error)
+        findViewModel(connectionID, authorizationID)?.let { viewModel ->
+            viewModel.setNewViewMode(ViewMode.ERROR)
+            viewContract?.updateItem(viewModel = viewModel, itemId = viewModels.indexOf(viewModel))
+        }
+        startPolling()
+    }
+
+    private fun onListItemClick(viewModel: AuthorizationViewModel, selectedActionType: ActionType) {
+        if (!authorizingInProgress) {
+            super.currentViewModel = viewModel
+            super.currentConnectionAndKey = connectionsAndKeys[viewModel.connectionID] ?: return
+            onAuthorizeActionSelected(selectedActionType)
         }
     }
 
@@ -139,11 +162,11 @@ class AuthorizationsListPresenter @Inject constructor(
     }
 
     private fun processEncryptedAuthorizationsResult(result: List<EncryptedAuthorizationData>) {
-        val newAuthorizationsData = decryptAuthorizations(result)
-        val newViewModels = createViewModels(newAuthorizationsData)
-        if (this.viewModels != newViewModels) {
-            this.viewModels = newViewModels
-            viewContract?.updateViewContent()
+        launch {
+            val data = decryptAuthorizations(result)
+            withContext(Dispatchers.Main) {
+                processDecryptedAuthorizationsResult(result = data)
+            }
         }
     }
 
@@ -153,9 +176,19 @@ class AuthorizationsListPresenter @Inject constructor(
                 encryptedData = it,
                 rsaPrivateKey = connectionsAndKeys[it.connectionId]?.key
             )
-        }.filter {
-            it.isNotExpired()
-        }.sortedBy { it.expiresAt }
+        }
+    }
+
+    //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
+    fun processDecryptedAuthorizationsResult(result: List<AuthorizationData>) {
+        val newAuthorizationsData = result
+            .filter { it.isNotExpired() }
+            .sortedBy { it.createdAt }
+        val joinedViewModels = createViewModels(newAuthorizationsData).joinFinalModels(this.viewModels)
+        if (this.viewModels != joinedViewModels) {
+            this.viewModels = joinedViewModels
+            viewContract?.updateViewsContent()
+        }
     }
 
     private fun createViewModels(authorizations: List<AuthorizationData>): List<AuthorizationViewModel> {
@@ -175,19 +208,9 @@ class AuthorizationsListPresenter @Inject constructor(
         }
     }
 
-    private fun cleanDataSet() {
-        viewModels = viewModels.filter { it.isNotExpired() }
+    private fun findViewModel(connectionID: ConnectionID, authorizationID: AuthorizationID): AuthorizationViewModel? {
+        return viewModels.find { it.authorizationID == authorizationID && it.connectionID == connectionID }
     }
-
-    private fun existExpiredSessions(): Boolean = viewModels.any { it.isExpired() }
-
-    private fun onConfirmActionFail(error: ApiErrorData) {
-        startPolling()
-        viewContract?.showError(error)
-        viewContract?.reinitAndUpdateViewsContent(null)
-    }
-
-    private fun findAuthorizationById(id: String?) = viewModels.find { it.authorizationId == id }
 
     private fun startPolling() {
         pollingService.contract = this

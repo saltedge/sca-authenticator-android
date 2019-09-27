@@ -40,7 +40,7 @@ fun Connection.initWithProviderData(providerData: ProviderData): Connection {
     this.code = providerData.code
     this.logoUrl = providerData.logoUrl
     this.connectUrl = providerData.connectUrl
-    this.status = ConnectionStatus.INACTIVE.toString()
+    this.status = "${ConnectionStatus.INACTIVE}"
     this.createdAt = DateTime.now().withZone(DateTimeZone.UTC).millis
     this.updatedAt = this.createdAt
     this.supportEmail = providerData.supportEmail

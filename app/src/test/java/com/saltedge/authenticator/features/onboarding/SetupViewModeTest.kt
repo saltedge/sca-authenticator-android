@@ -20,24 +20,11 @@
  */
 package com.saltedge.authenticator.features.onboarding
 
-import com.saltedge.authenticator.R
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 
 class SetupViewModeTest {
-
-    @Test
-    @Throws(Exception::class)
-    fun containerIdTest() {
-        assertThat(SetupViewMode.INPUT_PASSCODE.containerId, equalTo(R.id.passcodeInputView))
-        assertThat(SetupViewMode.ALLOW_BIOMETRICS.containerId, equalTo(R.id.allowTouchIdContainer))
-        assertThat(
-            SetupViewMode.ALLOW_NOTIFICATIONS.containerId,
-            equalTo(R.id.allowNotificationsContainer)
-        )
-        assertThat(SetupViewMode.COMPLETE.containerId, equalTo(R.id.completeContainer))
-    }
 
     @Test
     @Throws(Exception::class)

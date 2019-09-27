@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2019 Salt Edge Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:transitionGroup="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:transitionGroup="true">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/verticalCenter"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <Button
+            android:id="@+id/negativeActionView"
+            style="@style/WhiteButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/actions_deny"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/verticalCenter" />
+
+        <Button
+            android:id="@+id/positiveActionView"
+            style="@style/BlueButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/actions_allow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/verticalCenter" />
+
+        <TextView
+            android:id="@+id/titleTextView"
+            style="@style/Text14GrayRegular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"
+            android:maxLines="2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Create payment" />
+
+        <TextView
+            android:id="@+id/descriptionTextView"
+            style="@style/Text14GrayRegular"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="16dp"
+            android:gravity="start"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/titleTextView"
+            app:layout_constraintBottom_toTopOf="@+id/negativeActionView"
+            tools:text="Payment description\n300USD for ticket"/>
+
+        <WebView
+            android:id="@+id/descriptionWebView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="16dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/titleTextView"
+            app:layout_constraintBottom_toTopOf="@+id/negativeActionView" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/statusLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@color/authorization_info_view_bg">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/horizontalCenter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <FrameLayout
+            android:id="@+id/statusProgressOrImageContainer"
+            android:layout_width="@dimen/dp_70"
+            android:layout_height="@dimen/dp_70"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/statusTitleTextView"
+            android:layout_marginBottom="@dimen/dp_32">
+
+            <ProgressBar
+                android:id="@+id/progressStatusView"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:indeterminateTint="@color/blue"
+                android:indeterminateTintMode="src_in" />
+
+            <ImageView
+                android:id="@id/statusImageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/authorizations_processing"
+                android:src="@drawable/ic_auth_success_70"/>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/statusTitleTextView"
+            style="@style/Text20BlackMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:lines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/statusDescriptionTextView"
+            android:text="@string/authorizations_loading" />
+
+        <TextView
+            android:id="@+id/statusDescriptionTextView"
+            style="@style/Text16BlackRegular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/horizontalCenter"
+            tools:text="@string/authorizations_loading_description"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

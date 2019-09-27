@@ -301,7 +301,7 @@ class ConnectProviderPresenterTest {
     fun getIconResIdTestCase1() {
         val presenter = createPresenter(viewContract = mockView)
 
-        assertThat(presenter.iconResId, equalTo(R.drawable.ic_complete_error_70))
+        assertThat(presenter.iconResId, equalTo(R.drawable.ic_auth_error_70))
     }
 
     /**
@@ -681,6 +681,32 @@ class ConnectProviderPresenterTest {
         presenter.onViewCreated()
 
         Mockito.doReturn("").`when`(mockPreferenceRepository).cloudMessagingToken
+    }
+
+    /**
+     * Returns a title depending on the connection type
+     *
+     * @return titleResId as Int
+     */
+    @Test
+    @Throws(Exception::class)
+    fun getTitleResIdTest() {
+        val presenter = createPresenter(viewContract = mockView)
+
+        assertThat(presenter.getTitleResId(), equalTo(R.string.connections_new_connection))
+
+        val connection = Connection().apply {
+            guid = "guid1"
+            status = "${ConnectionStatus.ACTIVE}"
+            accessToken = "accessToken"
+            code = "demobank1"
+            name = "Demobank1"
+        }
+        Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
+
+        presenter.setInitialData(connectConfigurationLink = null, connectionGuid = "guid1")
+
+        assertThat(presenter.getTitleResId(), equalTo(R.string.actions_reconnect))
     }
 
     private val mockPreferenceRepository = Mockito.mock(PreferenceRepositoryAbs::class.java)

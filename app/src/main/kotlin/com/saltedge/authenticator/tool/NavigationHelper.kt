@@ -50,9 +50,11 @@ fun FragmentActivity?.isTopNavigationLevel(): Boolean =
  */
 fun FragmentActivity.addFragment(fragment: Fragment) {
     try {
-        supportFragmentManager?.beginTransaction()
-            ?.replace(R.id.container, fragment, fragment.createTagName())
-            ?.addToBackStack(null)?.commit()
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.container, fragment, fragment.createTagName())
+            .addToBackStack(null)
+            .commit()
     } catch (ignored: IllegalStateException) {
     } catch (e: Exception) {
         e.log()
@@ -72,8 +74,10 @@ fun FragmentActivity.replaceFragment(fragment: Fragment) {
                 FragmentManager.POP_BACK_STACK_INCLUSIVE
             )
         }
-        supportFragmentManager?.beginTransaction()
-            ?.replace(R.id.container, fragment, fragment.createTagName())?.commit()
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.container, fragment, fragment.createTagName())
+            .commit()
     } catch (ignored: IllegalStateException) {
     } catch (e: Exception) {
         e.log()
@@ -88,7 +92,7 @@ fun FragmentActivity.replaceFragment(fragment: Fragment) {
  */
 fun AppCompatActivity.currentFragmentInContainer(): Fragment? {
     try {
-        return supportFragmentManager?.findFragmentById(R.id.container)
+        return supportFragmentManager.findFragmentById(R.id.container)
     } catch (ignored: IllegalStateException) {
     } catch (e: Exception) {
         e.log()
@@ -118,7 +122,7 @@ fun FragmentActivity.showDialogFragment(dialog: DialogFragment) {
  */
 fun FragmentActivity.finishFragment() {
     try {
-        supportFragmentManager?.popBackStack()
+        supportFragmentManager.popBackStack()
     } catch (ignored: IllegalStateException) {
     } catch (e: Exception) {
         e.log()
@@ -130,10 +134,10 @@ fun FragmentActivity.finishFragment() {
  *
  * @receiver fragment activity
  */
-fun FragmentActivity.startMailApp(supportEmail: String? = DEFAULT_SUPPORT_EMAIL_LINK) {
+fun FragmentActivity.startMailApp(supportEmail: String? = null) {
     try {
         this.startActivityForResult(Intent(Intent.ACTION_SENDTO)
-            .apply { data = Uri.parse("mailto:$supportEmail") }, 0
+            .apply { data = Uri.parse("mailto:${supportEmail ?: DEFAULT_SUPPORT_EMAIL_LINK}") }, 0
         )
     } catch (ignored: IllegalStateException) {
     } catch (ignored: ActivityNotFoundException) {

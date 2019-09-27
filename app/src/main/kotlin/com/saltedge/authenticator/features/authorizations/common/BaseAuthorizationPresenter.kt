@@ -24,41 +24,41 @@ import android.content.Context
 import com.saltedge.authenticator.features.authorizations.confirmPasscode.PasscodePromptCallback
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationResult
-import com.saltedge.authenticator.sdk.model.ApiErrorData
+import com.saltedge.authenticator.sdk.model.AuthorizationID
 import com.saltedge.authenticator.sdk.model.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResultData
-import com.saltedge.authenticator.sdk.model.response.isValid
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
 
 abstract class BaseAuthorizationPresenter(
-    val appContext: Context,
-    val biometricTools: BiometricToolsAbs,
-    val apiManager: AuthenticatorApiManagerAbs
+    internal val appContext: Context,
+    internal val biometricTools: BiometricToolsAbs,
+    internal val apiManager: AuthenticatorApiManagerAbs
 ) : BiometricPromptCallback, PasscodePromptCallback, ConfirmAuthorizationResult {
 
     var currentViewModel: AuthorizationViewModel? = null
     var currentConnectionAndKey: ConnectionAndKey? = null
 
-    abstract fun updateConfirmProgressState(
-        authorizationId: String?,
-        confirmRequestIsInProgress: Boolean
-    )
-
-    abstract fun onConfirmDenySuccess(authorizationId: String, success: Boolean)
+    abstract fun onAuthorizeStart(connectionID: ConnectionID, authorizationID: AuthorizationID, type: ActionType)
+    abstract fun onConfirmDenySuccess(success: Boolean, connectionID: ConnectionID, authorizationID: AuthorizationID)
     abstract fun baseViewContract(): BaseAuthorizationViewContract?
 
-    fun onAuthorizeActionSelected(isConfirmed: Boolean, quickConfirmMode: Boolean = false) {
-        when {
-            isConfirmed && !quickConfirmMode -> {
-                if (biometricTools.isBiometricReady(appContext)) {
-                    baseViewContract()?.askUserBiometricConfirmation()
-                } else {
-                    baseViewContract()?.askUserPasscodeConfirmation()
+    fun onAuthorizeActionSelected(
+        requestType: ActionType,
+        quickConfirmMode: Boolean = false
+    ) {
+        when(requestType) {
+            ActionType.CONFIRM -> {
+                when {
+                    quickConfirmMode -> sendConfirmRequest()
+                    biometricTools.isBiometricReady(appContext) -> {
+                        baseViewContract()?.askUserBiometricConfirmation()
+                    }
+                    else -> baseViewContract()?.askUserPasscodeConfirmation()
                 }
             }
-            isConfirmed -> sendConfirmRequest()
-            else -> sendDenyRequest()
+            ActionType.DENY -> sendDenyRequest()
         }
     }
 
@@ -76,22 +76,12 @@ abstract class BaseAuthorizationPresenter(
 
     override fun passcodePromptCanceledByUser() {}
 
-    override fun onConfirmDenyFailure(error: ApiErrorData) {
-        updateConfirmProgressState(
-            authorizationId = currentViewModel?.authorizationId,
-            confirmRequestIsInProgress = false
+    override fun onConfirmDenySuccess(result: ConfirmDenyResultData, connectionID: ConnectionID) {
+        onConfirmDenySuccess(
+            success = result.success == true && result.authorizationId?.isNotEmpty() == true,
+            connectionID = connectionID,
+            authorizationID = result.authorizationId ?: ""
         )
-    }
-
-    override fun onConfirmDenySuccess(result: ConfirmDenyResultData) {
-        if (result.isValid()) {
-            result.authorizationId?.let { onConfirmDenySuccess(it, result.success == true) }
-        } else {
-            updateConfirmProgressState(
-                authorizationId = currentViewModel?.authorizationId,
-                confirmRequestIsInProgress = false
-            )
-        }
     }
 
     private fun onAuthorizationConfirmedByUser() {
@@ -99,28 +89,26 @@ abstract class BaseAuthorizationPresenter(
     }
 
     private fun sendConfirmRequest() {
+        val viewModel = currentViewModel ?: return
+        val connectionAndKey = currentConnectionAndKey ?: return
         apiManager.confirmAuthorization(
-            connectionAndKey = currentConnectionAndKey ?: return,
-            authorizationId = currentViewModel?.authorizationId ?: return,
-            authorizationCode = currentViewModel?.authorizationCode,
+            connectionAndKey = connectionAndKey,
+            authorizationId = viewModel.authorizationID,
+            authorizationCode = viewModel.authorizationCode,
             resultCallback = this
         )
-        updateConfirmProgressState(
-            authorizationId = currentViewModel?.authorizationId,
-            confirmRequestIsInProgress = true
-        )
+        onAuthorizeStart(connectionID = viewModel.connectionID, authorizationID = viewModel.authorizationID, type = ActionType.CONFIRM)
     }
 
     private fun sendDenyRequest() {
+        val viewModel = currentViewModel ?: return
+        val connectionAndKey = currentConnectionAndKey ?: return
         apiManager.denyAuthorization(
-            connectionAndKey = currentConnectionAndKey ?: return,
-            authorizationId = currentViewModel?.authorizationId ?: return,
-            authorizationCode = currentViewModel?.authorizationCode,
+            connectionAndKey = connectionAndKey,
+            authorizationId = viewModel.authorizationID,
+            authorizationCode = viewModel.authorizationCode,
             resultCallback = this
         )
-        updateConfirmProgressState(
-            authorizationId = currentViewModel?.authorizationId,
-            confirmRequestIsInProgress = true
-        )
+        onAuthorizeStart(connectionID = viewModel.connectionID, authorizationID = viewModel.authorizationID, type = ActionType.DENY)
     }
 }

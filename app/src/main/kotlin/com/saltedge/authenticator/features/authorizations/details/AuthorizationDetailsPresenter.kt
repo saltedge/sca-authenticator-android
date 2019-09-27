@@ -30,7 +30,6 @@ import com.saltedge.authenticator.sdk.model.*
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
 import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
-import com.saltedge.authenticator.tool.hasHTMLTags
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 
 class AuthorizationDetailsPresenter(
@@ -43,130 +42,130 @@ class AuthorizationDetailsPresenter(
 ) : BaseAuthorizationPresenter(appContext, biometricTools, apiManager),
     FetchAuthorizationContract {
 
+    var viewContract: AuthorizationDetailsContract.View? = null
+    private val modelIsNotExpired: Boolean
+        get() = currentViewModel?.isNotExpired ?: true
+    private val modelHasFinalMode: Boolean
+        get() = currentViewModel?.hasFinalMode ?: false
     private var pollingService: SingleAuthorizationPollingService =
         apiManager.createSingleAuthorizationPollingService()
-    private var quickConfirmMode: Boolean = false
     private var authorizationId: String? = null
-    private var confirmRequestIsInProgress: Boolean = false
-    var viewContract: AuthorizationDetailsContract.View? = null
-
-    override fun baseViewContract(): BaseAuthorizationViewContract? = viewContract
-
-    fun setInitialData(
-        connectionId: String,
-        authorizationId: String?,
-        viewModel: AuthorizationViewModel?,
-        quickConfirmMode: Boolean
-    ) {
-        this.quickConfirmMode = quickConfirmMode
-        super.currentConnectionAndKey = createConnectionAndKey(
-            connectionId,
-            connectionsRepository,
-            keyStoreManager
-        )
-        super.currentViewModel = viewModel
-        this.authorizationId = viewModel?.authorizationId ?: authorizationId
-        if (!initialValuesValid) viewContract?.closeView()
-    }
-
-    val remainedSecondsTillExpire: Int
-        get() = currentViewModel?.remainedSecondsTillExpire() ?: 0
-    val remainedTimeDescription: String
-        get() = currentViewModel?.remainedTimeStringTillExpire() ?: ""
-    val maxProgressSeconds: Int
-        get() = currentViewModel?.validSeconds ?: 0
-    val providerName: String
-        get() = currentViewModel?.connectionName ?: ""
-    val providerLogo: String
-        get() = currentViewModel?.connectionLogoUrl ?: ""
-    val title: String
+    private var authorizationUnavailable: Boolean = false
+    private val authorizationAvailable: Boolean
+        get() = !authorizationUnavailable
+    private val viewMode: ViewMode
         get() {
-            return if (confirmRequestIsInProgress) appContext.getString(R.string.authorizations_processing)
-            else currentViewModel?.title ?: appContext.getString(R.string.authorizations_fetching)
+            return if (authorizationUnavailable) ViewMode.UNAVAILABLE
+            else currentViewModel?.viewMode ?: ViewMode.LOADING
         }
-    val description: String
-        get() = currentViewModel?.description ?: ""
-    val shouldShowTimeView: Boolean
-        get() = currentViewModel != null && !confirmRequestIsInProgress
-    val shouldShowProgressView: Boolean
-        get() = confirmRequestIsInProgress
-    val shouldShowActionsLayout: Boolean
-        get() = !shouldShowProgressView && sessionIsNotExpired
-    val sessionIsNotExpired: Boolean
-        get() = remainedSecondsTillExpire > 0
-    val shouldShowProviderLogo: Boolean
-        get() = providerLogo.isNotEmpty()
-    val shouldShowDescriptionWebView: Boolean
-        get() = description.hasHTMLTags()
-    val shouldShowDescriptionTextView: Boolean
-        get() = !shouldShowDescriptionWebView
 
-    fun onViewResume() {
-        startPolling()
-        if (sessionIsNotExpired) {
-            viewContract?.startTimer()
-        }
+    fun setInitialData(connectionId: String?, authorizationId: String?) {
+        super.currentConnectionAndKey = createConnectionAndKey(
+            connectionID = connectionId ?: "",
+            repository = connectionsRepository,
+            keyStoreManager = keyStoreManager
+        )
+        this.authorizationId = authorizationId
+        this.authorizationUnavailable = currentConnectionAndKey == null || authorizationId == null || authorizationId.isEmpty()
     }
 
-    fun onViewPause() {
+    fun onFragmentResume() {
+        if (modelIsNotExpired && authorizationAvailable) startPolling()
+        viewContract?.startTimer()
+        updateViewContent()
+    }
+
+    fun onFragmentPause() {
         viewContract?.stopTimer()
         stopPolling()
     }
 
     fun onViewClick(viewId: Int) {
         when (viewId) {
-            R.id.positiveActionView, R.id.negativeActionView -> {
+            R.id.positiveActionView -> {
                 onAuthorizeActionSelected(
-                    isConfirmed = viewId == R.id.positiveActionView,
-                    quickConfirmMode = quickConfirmMode
+                    requestType = ActionType.CONFIRM,
+                    quickConfirmMode = true
                 )
             }
-            R.id.closeActionView -> viewContract?.closeView()
+            R.id.negativeActionView -> {
+                onAuthorizeActionSelected(
+                    requestType = ActionType.DENY,
+                    quickConfirmMode = true
+                )
+            }
         }
     }
 
     fun onTimerTick() {
-        if (currentViewModel?.isNotExpired() == true) {
-            currentViewModel?.let {
-                viewContract?.updateTimeView(
-                    remainedSecondsTillExpire = it.remainedSecondsTillExpire(),
-                    remainedTimeDescription = it.remainedTimeStringTillExpire()
-                )
+        currentViewModel?.let { model ->
+            when {
+                model.shouldBeSetTimeOutMode -> {
+                    stopPolling()
+                    model.setNewViewMode(ViewMode.TIME_OUT)
+                    viewContract?.updateTimeViews()
+                    viewContract?.setContentViewMode(viewMode, ignoreTimeUpdate = viewMode.showProgress)
+                }
+                model.shouldBeDestroyed -> {
+                    viewContract?.closeView()
+                }
+                else -> viewContract?.updateTimeViews()
             }
-        } else {
-            viewContract?.closeView()
         }
     }
+
+    override fun baseViewContract(): BaseAuthorizationViewContract? = viewContract
 
     override fun getConnectionData(): ConnectionAndKey? = currentConnectionAndKey
 
-    override fun fetchAuthorizationResult(
+    override fun onFetchAuthorizationResult(
         result: EncryptedAuthorizationData?,
         error: ApiErrorData?
     ) {
-        result?.let { processAuthorizationResult(it) }
-        error?.let { processAuthorizationError(it) }
+        result?.let { processEncryptedAuthorizationResult(it) }
+            ?: error?.let { processFetchAuthorizationError(it) }
+            ?: setUnavailableState()
     }
 
-    override fun onConfirmDenySuccess(authorizationId: String, success: Boolean) {
-        if (success) {
-            viewContract?.closeViewWithSuccessResult(authorizationId)
-        }
+    override fun onAuthorizeStart(connectionID: ConnectionID, authorizationID: AuthorizationID, type: ActionType) {
+        stopPolling()
+        currentViewModel?.setNewViewMode(type.toViewMode())
+        viewContract?.setContentViewMode(viewMode, ignoreTimeUpdate = viewMode.showProgress)
     }
 
-    override fun updateConfirmProgressState(
-        authorizationId: String?,
-        confirmRequestIsInProgress: Boolean
+    override fun onConfirmDenySuccess(
+        success: Boolean,
+        connectionID: ConnectionID,
+        authorizationID: String
     ) {
-        if (confirmRequestIsInProgress) stopPolling() else startPolling()
-        this.confirmRequestIsInProgress = confirmRequestIsInProgress
-        viewContract?.updateViewContent()
+        val newViewMode = if (success) {
+            when (viewMode) {
+                ViewMode.CONFIRM_PROCESSING -> ViewMode.CONFIRM_SUCCESS
+                ViewMode.DENY_PROCESSING -> ViewMode.DENY_SUCCESS
+                else -> ViewMode.ERROR
+            }
+        } else {
+            startPolling()
+            ViewMode.DEFAULT
+        }
+        currentViewModel?.setNewViewMode(newViewMode)
+        viewContract?.setContentViewMode(newViewMode, ignoreTimeUpdate = newViewMode.showProgress)
+    }
+
+    override fun onConfirmDenyFailure(
+        error: ApiErrorData,
+        connectionID: ConnectionID,
+        authorizationID: AuthorizationID
+    ) {
+        processFetchAuthorizationError(error)
     }
 
     private fun startPolling() {
-        if (initialValuesValid) {
-            pollingService.contract = this
-            pollingService.start(authorizationId = authorizationId ?: "")
+        if (authorizationAvailable) {
+            authorizationId?.let {
+                pollingService.contract = this
+                pollingService.start(authorizationId = it)
+            }
         }
     }
 
@@ -175,39 +174,59 @@ class AuthorizationDetailsPresenter(
         pollingService.stop()
     }
 
-    private val initialValuesValid: Boolean
-        get() = currentConnectionAndKey != null && authorizationId?.isNotEmpty() == true
-
-    private fun processAuthorizationResult(result: EncryptedAuthorizationData) {
+    private fun processEncryptedAuthorizationResult(result: EncryptedAuthorizationData) {
         cryptoTools.decryptAuthorizationData(
             encryptedData = result,
             rsaPrivateKey = currentConnectionAndKey?.key
         )?.let {
             val newViewModel = it.toAuthorizationViewModel(
-                currentConnectionAndKey?.connection
-                    ?: return
+                connection = currentConnectionAndKey?.connection ?: return
             )
-            if (super.currentViewModel != newViewModel) {
-                val receivedFirstNotNullModel = super.currentViewModel == null
-                super.currentViewModel = newViewModel
-                if (receivedFirstNotNullModel && sessionIsNotExpired) {
+            if (!modelHasFinalMode && super.currentViewModel != newViewModel) {
+                if (viewMode == ViewMode.LOADING) {
                     viewContract?.startTimer()
                 }
-                viewContract?.updateViewContent()
+                super.currentViewModel = newViewModel
+                updateViewContent()
             }
+        } ?: setUnavailableState()
+    }
+
+    private fun updateViewContent() {
+        viewContract?.setHeaderVisibility(show = currentViewModel != null)
+        viewContract?.setContentViewMode(viewMode, ignoreTimeUpdate = viewMode.showProgress)
+        currentViewModel?.let {
+            viewContract?.setHeaderValues(
+                logoUrl = it.connectionLogoUrl ?: "",
+                title = it.connectionName,
+                startTime = it.createdAt,
+                endTime = it.expiresAt
+            )
+            viewContract?.setContentTitleAndDescription(title = it.title, description = it.description)
         }
     }
 
-    private fun processAuthorizationError(error: ApiErrorData) {
+    private fun setUnavailableState() {
+        stopPolling()
+        currentViewModel?.setNewViewMode(ViewMode.UNAVAILABLE)
+        authorizationUnavailable = true
+        updateViewContent()
+    }
+
+    private fun processFetchAuthorizationError(error: ApiErrorData) {
         if (error.isConnectionNotFound()) {
             currentConnectionAndKey?.connection?.accessToken?.let {
                 connectionsRepository.invalidateConnectionsByTokens(accessTokens = listOf(it))
             }
-        }
-        if (error.isConnectivityError()) {
-            viewContract?.showError(error.getErrorMessage(appContext))
+            currentViewModel?.setNewViewMode(ViewMode.ERROR)
+            viewContract?.setContentViewMode(ViewMode.ERROR, ignoreTimeUpdate = ViewMode.ERROR.showProgress)
+        } else if (error.isAuthorizationNotFound()) {
+            if (currentViewModel == null) setUnavailableState()
         } else {
-            viewContract?.closeViewWithErrorResult(error.getErrorMessage(appContext))
+            if (currentViewModel?.viewMode != ViewMode.ERROR) {
+                viewContract?.showError(error.getErrorMessage(appContext))
+                currentViewModel?.setNewViewMode(ViewMode.ERROR)
+            }
         }
     }
 }

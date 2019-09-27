@@ -35,25 +35,230 @@ import org.robolectric.RobolectricTestRunner
 class AuthorizationViewModelTest {
 
     private val model = AuthorizationViewModel(
-        authorizationId = "444",
+        authorizationID = "444",
         authorizationCode = "111",
         title = "title",
         description = "description",
         expiresAt = DateTime(),
-        connectionId = "333",
+        connectionID = "333",
         connectionName = "Demobank",
         connectionLogoUrl = "url",
         validSeconds = 300,
-        isProcessing = false
+        createdAt = DateTime()
     )
+
+    @Test
+    @Throws(Exception::class)
+    fun joinFinalModelsTestCase1() {
+        val newList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3)
+        )
+        val oldList = emptyList<AuthorizationViewModel>()
+
+        assertThat(newList.joinFinalModels(oldList), equalTo(newList))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun joinFinalModelsTestCase2() {
+        val newList = emptyList<AuthorizationViewModel>()
+        val oldList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3).copy(viewMode = ViewMode.UNAVAILABLE)
+        )
+
+        assertThat(newList.joinFinalModels(oldList)[0].viewMode,
+            equalTo(ViewMode.UNAVAILABLE))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun joinFinalModelsTestCase3() {
+        val newList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3)
+        )
+        val oldList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3)
+        )
+
+        assertThat(newList.joinFinalModels(oldList), equalTo(newList))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun joinFinalModelsTestCase4() {
+        val newList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3)
+        )
+        val oldList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3).copy(viewMode = ViewMode.DENY_SUCCESS)
+        )
+        val resultList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3).copy(viewMode = ViewMode.DENY_SUCCESS)
+        )
+
+        assertThat(newList.joinFinalModels(oldList), equalTo(resultList))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun joinFinalModelsTestCase5() {
+        val newList = listOf(
+            createModelByIndex(1).copy(connectionID = "x"),
+            createModelByIndex(2).copy(connectionID = "x"),
+            createModelByIndex(3).copy(connectionID = "x")
+        )
+        val oldList = listOf(
+            createModelByIndex(1).copy(connectionID = "x"),
+            createModelByIndex(2).copy(connectionID = "x"),
+            createModelByIndex(3).copy(connectionID = "x", viewMode = ViewMode.DENY_SUCCESS)
+        )
+        val resultList = listOf(
+            createModelByIndex(1).copy(connectionID = "x"),
+            createModelByIndex(2).copy(connectionID = "x"),
+            createModelByIndex(3).copy(connectionID = "x", viewMode = ViewMode.DENY_SUCCESS)
+        )
+
+        assertThat(newList.joinFinalModels(oldList), equalTo(resultList))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun joinFinalModelsTestCase6() {
+        val newList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2)
+        )
+        val oldList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3).copy(viewMode = ViewMode.UNAVAILABLE)
+        )
+        val resultList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3).copy(viewMode = ViewMode.UNAVAILABLE)
+        )
+
+        assertThat(newList.joinFinalModels(oldList), equalTo(resultList))
+        assertThat(newList.joinFinalModels(oldList)[2].viewMode,
+            equalTo(ViewMode.UNAVAILABLE))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun joinFinalModelsTestCase7() {
+        val newList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(4)
+        )
+        val oldList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3).copy(viewMode = ViewMode.UNAVAILABLE)
+        )
+        val resultList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(2),
+            createModelByIndex(3).copy(viewMode = ViewMode.UNAVAILABLE),
+            createModelByIndex(4)
+        )
+
+        assertThat(newList.joinFinalModels(oldList), equalTo(resultList))
+        assertThat(newList.joinFinalModels(oldList)[2].viewMode,
+            equalTo(ViewMode.UNAVAILABLE))
+    }
+
+    private fun createModelByIndex(index: Int): AuthorizationViewModel {
+        return AuthorizationViewModel(
+            authorizationID = "$index",
+            authorizationCode = "$index",
+            title = "$index",
+            description = "$index",
+            expiresAt = DateTime(index.toLong()),
+            connectionID = "$index",
+            connectionName = "$index",
+            connectionLogoUrl = "$index",
+            validSeconds = 100,
+            createdAt = DateTime(index.toLong())
+        )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun hasFinalModeTest() {
+        model.viewMode = ViewMode.DEFAULT
+
+        Assert.assertFalse(model.hasFinalMode)
+
+        model.viewMode = ViewMode.LOADING
+
+        Assert.assertFalse(model.hasFinalMode)
+
+        model.viewMode = ViewMode.CONFIRM_PROCESSING
+
+        Assert.assertFalse(model.hasFinalMode)
+
+        model.viewMode = ViewMode.DENY_PROCESSING
+
+        Assert.assertFalse(model.hasFinalMode)
+
+        model.viewMode = ViewMode.CONFIRM_SUCCESS
+
+        Assert.assertTrue(model.hasFinalMode)
+
+        model.viewMode = ViewMode.DENY_SUCCESS
+
+        Assert.assertTrue(model.hasFinalMode)
+
+        model.viewMode = ViewMode.ERROR
+
+        Assert.assertTrue(model.hasFinalMode)
+
+        model.viewMode = ViewMode.TIME_OUT
+
+        Assert.assertTrue(model.hasFinalMode)
+
+        model.viewMode = ViewMode.UNAVAILABLE
+
+        Assert.assertTrue(model.hasFinalMode)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun shouldBeDestroyedTest() {
+        Assert.assertFalse(model.shouldBeDestroyed)
+
+        model.destroyAt = DateTime.now().minusSeconds(1)
+
+        Assert.assertTrue(model.shouldBeDestroyed)
+
+        model.destroyAt = DateTime.now().plusSeconds(1)
+
+        Assert.assertFalse(model.shouldBeDestroyed)
+    }
 
     @Test
     @Throws(Exception::class)
     fun isExpiredTest() {
         val now = DateTime.now()
 
-        Assert.assertFalse(model.copy(expiresAt = now.plusMinutes(1)).isExpired())
-        Assert.assertTrue(model.copy(expiresAt = now.minusMinutes(1)).isExpired())
+        Assert.assertFalse(model.copy(expiresAt = now.plusMinutes(1)).isExpired)
+        Assert.assertTrue(model.copy(expiresAt = now.minusMinutes(1)).isExpired)
     }
 
     @Test
@@ -61,8 +266,8 @@ class AuthorizationViewModelTest {
     fun isNotExpiredTest() {
         val now = DateTime.now()
 
-        Assert.assertTrue(model.copy(expiresAt = now.plusMinutes(1)).isNotExpired())
-        Assert.assertFalse(model.copy(expiresAt = now.minusMinutes(1)).isNotExpired())
+        Assert.assertTrue(model.copy(expiresAt = now.plusMinutes(1)).isNotExpired)
+        Assert.assertFalse(model.copy(expiresAt = now.minusMinutes(1)).isNotExpired)
     }
 
     @Test
@@ -70,7 +275,7 @@ class AuthorizationViewModelTest {
     fun remainedTimeTillExpireTest() {
         val now = DateTime.now()
 
-        assertThat(model.copy(expiresAt = now.plusMinutes(1)).remainedTimeStringTillExpire(),
+        assertThat(model.copy(expiresAt = now.plusMinutes(1)).remainedTimeStringTillExpire,
                 anyOf(equalTo("0:59"), equalTo("1:00")))
     }
 
@@ -80,7 +285,7 @@ class AuthorizationViewModelTest {
         val now = DateTime.now()
 
         assertThat(
-            model.copy(expiresAt = now.plusMinutes(1)).remainedSecondsTillExpire(),
+            model.copy(expiresAt = now.plusMinutes(1)).remainedSecondsTillExpire,
             anyOf(equalTo(59), equalTo(60))
         )
     }
@@ -107,16 +312,16 @@ class AuthorizationViewModelTest {
             data.toAuthorizationViewModel(connection = connection),
             equalTo(
                 AuthorizationViewModel(
-                    authorizationId = "444",
+                    authorizationID = "444",
                     authorizationCode = "111",
                     title = "title",
                     description = "description",
                     expiresAt = DateTime(300000L),
-                    connectionId = "333",
+                    connectionID = "333",
                     connectionName = "Demobank",
                     connectionLogoUrl = "url",
                     validSeconds = 300,
-                    isProcessing = false
+                    createdAt = DateTime(0L)
                 )
             )
         )

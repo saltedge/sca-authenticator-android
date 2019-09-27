@@ -20,11 +20,9 @@
  */
 package com.saltedge.authenticator.features.authorizations.details
 
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
-import com.saltedge.authenticator.sdk.constants.KEY_DATA
+import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
+import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
 import org.hamcrest.CoreMatchers.equalTo
-import org.joda.time.DateTime
-import org.joda.time.DateTimeZone
 import org.junit.Assert.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,22 +34,13 @@ class AuthorizationDetailsFragmentTest {
     @Test
     @Throws(Exception::class)
     fun newInstanceTest() {
-        val createdAt = DateTime.now(DateTimeZone.UTC)
-        val model = AuthorizationViewModel(
+        val fragment = AuthorizationDetailsFragment.newInstance(
             authorizationId = "1",
-            authorizationCode = "111",
-            expiresAt = createdAt.plusMinutes(3),
-            title = "title1",
-            description = "desc1",
-            validSeconds = 300,
-            connectionId = "1",
-            connectionName = "Demobank",
-            connectionLogoUrl = null,
-            isProcessing = false
+            connectionId = "2"
         )
-        val fragment = AuthorizationDetailsFragment.newInstance(model)
-        val data = fragment.arguments!!.getSerializable(KEY_DATA) as? AuthorizationViewModel
+        val arguments = fragment.arguments!!
 
-        assertThat(data, equalTo(model))
+        assertThat(arguments.getString(KEY_AUTHORIZATION_ID), equalTo("1"))
+        assertThat(arguments.getString(KEY_CONNECTION_ID), equalTo("2"))
     }
 }

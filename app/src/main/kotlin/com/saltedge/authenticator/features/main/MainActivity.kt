@@ -36,6 +36,7 @@ import com.saltedge.authenticator.features.security.UnlockAppInputView
 import com.saltedge.authenticator.features.settings.list.SettingsListFragment
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
 import com.saltedge.authenticator.interfaces.OnBackPressListener
+import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.realm.RealmManager
 import com.saltedge.authenticator.tool.*
@@ -48,7 +49,8 @@ class MainActivity : LockableActivity(),
     ActivityComponentsContract,
     BottomNavigationView.OnNavigationItemSelectedListener,
     View.OnClickListener,
-    FragmentManager.OnBackStackChangedListener {
+    FragmentManager.OnBackStackChangedListener
+{
 
     private val presenter = MainActivityPresenter(
         viewContract = this,
@@ -140,16 +142,11 @@ class MainActivity : LockableActivity(),
         replaceFragmentInContainer(SettingsListFragment())
     }
 
-    override fun showAuthorizationDetailsView(
-        connectionId: String,
-        authorizationId: String,
-        quickConfirmMode: Boolean
-    ) {
+    override fun showAuthorizationDetailsView(connectionID: String, authorizationID: String) {
         this.addFragment(
             AuthorizationDetailsFragment.newInstance(
-                connectionId = connectionId,
-                authorizationId = authorizationId,
-                quickConfirmMode = quickConfirmMode
+                connectionId = connectionID,
+                authorizationId = authorizationID
             )
         )
     }
@@ -159,13 +156,14 @@ class MainActivity : LockableActivity(),
     }
 
     override fun popBackStack() {
-        supportFragmentManager?.popBackStack()
+        supportFragmentManager.popBackStack()
     }
 
     override fun updateNavigationViewsContent() {
         isTopNavigationLevel().also { isOnTop ->
-            toolbarView?.navigationIcon = presenter.getNavigationIcon(isOnTop)?.let {
-                this.getDrawable(it)
+            toolbarView?.navigationIcon = ((currentFragmentInContainer() as? UpActionImageListener)?.getUpActionImageResId()
+                ?: presenter.getNavigationIcon(isOnTop))?.let { resId ->
+                this.getDrawable(resId)
             }
 
             bottomNavigationLayout?.setVisible(show = isOnTop)
@@ -185,7 +183,7 @@ class MainActivity : LockableActivity(),
             setSupportActionBar(toolbarView)
             toolbarView?.setNavigationOnClickListener(this)
             bottomNavigationView?.setOnNavigationItemSelectedListener(this)
-            supportFragmentManager?.addOnBackStackChangedListener(this)
+            supportFragmentManager.addOnBackStackChangedListener(this)
             updateNavigationViewsContent()
         } catch (e: Exception) {
             e.log()

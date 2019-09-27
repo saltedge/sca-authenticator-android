@@ -89,7 +89,7 @@ class AuthorizationConnectorTest {
         )
 
         verify {
-            mockCallback.fetchAuthorizationResult(
+            mockCallback.onFetchAuthorizationResult(
                 result = EncryptedAuthorizationData(
                     id = "444",
                     connectionId = "333",
@@ -125,7 +125,7 @@ class AuthorizationConnectorTest {
         connector.onResponse(mockCall, get404Response())
 
         verify {
-            mockCallback.fetchAuthorizationResult(
+            mockCallback.onFetchAuthorizationResult(
                 result = null,
                 error = ApiErrorData(
                     errorMessage = "Resource not found",
@@ -160,6 +160,6 @@ class AuthorizationConnectorTest {
             "accessToken"
         ).build()
         every { mockCallback.getConnectionData() } returns null
-        every { mockCallback.fetchAuthorizationResult(any(), any()) } returns Unit
+        every { mockCallback.onFetchAuthorizationResult(any(), any()) } returns Unit
     }
 }

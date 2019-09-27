@@ -45,7 +45,15 @@ fun String.parseToUtcDateTime(): DateTime? {
  * @receiver expiresAt datetime
  * @return seconds till expire time
  */
-fun DateTime.remainedSecondsTillExpire(): Int = secondsBetweenDates(DateTime.now(this.zone), this)
+fun DateTime.remainedSeconds(): Int = secondsBetweenDates(DateTime.now(this.zone), this)
+
+/**
+ * Calculates seconds between receiver's value and now
+ *
+ * @receiver expiresAt datetime
+ * @return seconds from date
+ */
+fun DateTime.secondsPassedFromDate(): Int = secondsBetweenDates(this, DateTime.now(this.zone))
 
 fun secondsBetweenDates(startDate: DateTime, endDate: DateTime): Int =
     (millisBetweenDates(startDate, endDate) / 1000).toInt()
@@ -56,10 +64,31 @@ fun secondsBetweenDates(startDate: DateTime, endDate: DateTime): Int =
  * @receiver period of remained seconds
  * @return String timestamp in "minutes:seconds" format
  */
-fun Int.remainedExpirationTime(): String {
+fun Int.remainedTimeDescription(): String {
     return if (this <= 0) return "-:--"
     else {
         val period = Period(this * 1000L)
+        PeriodFormatterBuilder()
+            .appendHours()
+            .appendSeparatorIfFieldsBefore(":")
+            .printZeroAlways().minimumPrintedDigits(if (period.hours > 0) 2 else 1).appendMinutes()
+            .appendSeparator(":")
+            .minimumPrintedDigits(2).appendSeconds()
+            .toFormatter().print(period)
+    }
+}
+
+/**
+ * Calculates seconds between now and receiver's value
+ *
+ * @receiver expiresAt datetime
+ * @return String timestamp in "minutes:seconds" format
+ */
+fun DateTime.remainedTimeDescription(): String {
+    val remainedSeconds = this.remainedSeconds()
+    return if (remainedSeconds <= 0) return "-:--"
+    else {
+        val period = Period(remainedSeconds * 1000L)
         PeriodFormatterBuilder()
             .appendHours()
             .appendSeparatorIfFieldsBefore(":")

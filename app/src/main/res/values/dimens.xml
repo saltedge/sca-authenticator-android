@@ -39,6 +39,7 @@
     <dimen name="dp_18">18dp</dimen>
     <dimen name="dp_19">19dp</dimen>
     <dimen name="dp_20">20dp</dimen>
+    <dimen name="dp_21">21dp</dimen>
     <dimen name="dp_22">22dp</dimen>
     <dimen name="dp_24">24dp</dimen>
     <dimen name="dp_25">25dp</dimen>
@@ -66,6 +67,7 @@
     <dimen name="dp_72">72dp</dimen>
     <dimen name="dp_75">75dp</dimen>
     <dimen name="dp_80">80dp</dimen>
+    <dimen name="dp_82">82dp</dimen>
     <dimen name="dp_85">85dp</dimen>
     <dimen name="dp_88">88dp</dimen>
     <dimen name="dp_90">90dp</dimen>
@@ -110,6 +112,6 @@
     <dimen name="splash_power_image_width">@dimen/dp_110</dimen>
     <dimen name="button_corner_radius">2dp</dimen>
     <dimen name="action_bar_size">@dimen/dp_56</dimen>
-    <dimen name="info_view_small_icon">@dimen/dp_64</dimen>
+    <dimen name="info_view_small_icon">@dimen/dp_70</dimen>
     <dimen name="info_view_big_icon">@dimen/dp_96</dimen>
 </resources>

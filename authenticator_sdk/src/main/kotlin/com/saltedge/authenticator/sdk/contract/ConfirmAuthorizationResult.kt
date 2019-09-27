@@ -21,9 +21,15 @@
 package com.saltedge.authenticator.sdk.contract
 
 import com.saltedge.authenticator.sdk.model.ApiErrorData
+import com.saltedge.authenticator.sdk.model.AuthorizationID
+import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResultData
 
 interface ConfirmAuthorizationResult {
-    fun onConfirmDenyFailure(error: ApiErrorData)
-    fun onConfirmDenySuccess(result: ConfirmDenyResultData)
+    fun onConfirmDenyFailure(
+        error: ApiErrorData,
+        connectionID: ConnectionID,
+        authorizationID: AuthorizationID
+    )
+    fun onConfirmDenySuccess(result: ConfirmDenyResultData, connectionID: ConnectionID)
 }

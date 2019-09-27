@@ -61,7 +61,7 @@ class ConnectProviderPresenter @Inject constructor(
     override val logoUrl: String
         get() = connection.logoUrl
     override val iconResId: Int
-        get() = if (viewMode.isCompleteWithSuccess) R.drawable.ic_complete_ok_70 else R.drawable.ic_complete_error_70
+        get() = if (viewMode.isCompleteWithSuccess) R.drawable.ic_complete_ok_70 else R.drawable.ic_auth_error_70
     override val mainActionTextResId: Int
         get() = if (viewMode.isCompleteWithSuccess) R.string.actions_proceed else R.string.actions_try_again
     override val completeTitle: String
@@ -94,7 +94,7 @@ class ConnectProviderPresenter @Inject constructor(
     override fun onViewCreated() {
         when (viewMode) {
             ViewMode.START -> startConnectFlow()
-            ViewMode.WEB_ENROLL -> loadWevRedirectUrl()
+            ViewMode.WEB_ENROLL -> loadWebRedirectUrl()
             ViewMode.COMPLETE_SUCCESS -> Unit
             ViewMode.COMPLETE_ERROR -> Unit
         }
@@ -123,7 +123,7 @@ class ConnectProviderPresenter @Inject constructor(
             connectUrlData = response
             viewMode = ViewMode.WEB_ENROLL
             viewContract?.updateViewsContent()
-            loadWevRedirectUrl()
+            loadWebRedirectUrl()
         }
     }
 
@@ -151,6 +151,11 @@ class ConnectProviderPresenter @Inject constructor(
         viewContract?.updateViewsContent()
     }
 
+    override fun getTitleResId(): Int {
+        return if (this.connection.guid.isEmpty()) R.string.connections_new_connection
+        else R.string.actions_reconnect
+    }
+
     private fun startConnectFlow() {
         if (connection.guid.isEmpty()) {
             apiManager.getProviderData(connectConfigurationLink, resultCallback = this)
@@ -170,7 +175,7 @@ class ConnectProviderPresenter @Inject constructor(
         }
     }
 
-    private fun loadWevRedirectUrl() {
+    private fun loadWebRedirectUrl() {
         viewContract?.loadUrlInWebView(url = connectUrlData?.redirectUrl ?: "")
     }
 }

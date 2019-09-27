@@ -44,4 +44,5 @@
     <color name="divider_color">@color/gray_light</color>
     <color name="switch_off">@color/gray_extra_light</color>
     <color name="switch_on">@color/cyan</color>
+    <color name="authorization_info_view_bg">#DDFFFFFF</color>
 </resources>

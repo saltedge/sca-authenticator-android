@@ -30,18 +30,13 @@ class DeleteConnectionPresenter(var viewContract: DeleteConnectionContract.View?
     var guid: String? = null
 
     fun viewTitle(requestCode: Int): Int {
-        return if (requestCode == DELETE_ALL_REQUEST_CODE) R.string.actions_delete_connections_query
-        else R.string.actions_delete_connection_query
-    }
-
-    fun viewPositiveActionText(requestCode: Int): Int {
-        return if (requestCode == DELETE_ALL_REQUEST_CODE) R.string.actions_delete_all
-        else R.string.actions_delete
+        return if (requestCode == DELETE_ALL_REQUEST_CODE) R.string.ui_dialog_clear_data_title
+        else R.string.ui_dialog_delete_title
     }
 
     fun viewMessage(requestCode: Int): Int {
-        return if (requestCode == DELETE_ALL_REQUEST_CODE) R.string.connections_list_delete_all_connections
-        else R.string.connections_list_delete_connection
+        return if (requestCode == DELETE_ALL_REQUEST_CODE) R.string.ui_dialog_clear_data_message
+        else R.string.ui_dialog_delete_message
     }
 
     fun onActionViewClick(dialogActionId: Int) {

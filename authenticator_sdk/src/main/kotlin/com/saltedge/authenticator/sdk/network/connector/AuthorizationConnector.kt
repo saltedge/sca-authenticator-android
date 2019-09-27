@@ -56,13 +56,13 @@ internal class AuthorizationConnector(
         call: Call<AuthorizationShowResponseData>,
         response: AuthorizationShowResponseData
     ) {
-        resultCallback?.fetchAuthorizationResult(result = response.data, error = null)
+        resultCallback?.onFetchAuthorizationResult(result = response.data, error = null)
     }
 
     override fun onFailureResponse(
         call: Call<AuthorizationShowResponseData>,
         error: ApiErrorData
     ) {
-        resultCallback?.fetchAuthorizationResult(result = null, error = error)
+        resultCallback?.onFetchAuthorizationResult(result = null, error = error)
     }
 }

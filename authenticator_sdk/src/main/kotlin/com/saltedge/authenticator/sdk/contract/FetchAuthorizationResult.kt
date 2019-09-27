@@ -24,5 +24,5 @@ import com.saltedge.authenticator.sdk.model.ApiErrorData
 import com.saltedge.authenticator.sdk.model.EncryptedAuthorizationData
 
 interface FetchAuthorizationResult {
-    fun fetchAuthorizationResult(result: EncryptedAuthorizationData?, error: ApiErrorData?)
+    fun onFetchAuthorizationResult(result: EncryptedAuthorizationData?, error: ApiErrorData?)
 }
