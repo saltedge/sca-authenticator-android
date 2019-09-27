@@ -112,10 +112,10 @@ class OnboardingSetupActivity : AppCompatActivity(),
     }
 
     override fun showMainActivity() {
+        finish()
         startActivity(Intent(this, MainActivity::class.java)
             .apply { putExtra(KEY_SKIP_PIN, true) }
             .apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK })
-        finish()
     }
 
     override fun showWarningDialogWithMessage(message: String) {

@@ -20,8 +20,6 @@
  */
 package com.saltedge.authenticator.features.authorizations.details
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,17 +27,18 @@ import android.view.ViewGroup
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
+import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.confirmPasscode.ConfirmPasscodeDialog
 import com.saltedge.authenticator.features.authorizations.details.di.AuthorizationDetailsModule
 import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
-import com.saltedge.authenticator.sdk.constants.KEY_ID
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.showAuthorizationConfirm
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_authorization_details.*
+import org.joda.time.DateTime
 import java.util.*
 import javax.inject.Inject
 
@@ -75,17 +74,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         contentView?.setActionClickListener(this)
-        completeView?.setOnClickListener(this)
         activityComponents?.hideNavigationBar()
-    }
-
-    override fun onDestroyView() {
-        activityComponents?.showNavigationBar()
-        super.onDestroyView()
-    }
-
-    override fun onClick(view: View?) {
-        presenterContract.onViewClick(view?.id ?: return)
     }
 
     override fun onStart() {
@@ -110,18 +99,16 @@ class AuthorizationDetailsFragment : BaseFragment(),
         super.onStop()
     }
 
-    override fun getUpActionImage(): Int? = R.drawable.ic_close_white_24dp
-
-    override fun updateViewContent() {
-        headerView?.setLogoUrl(presenterContract.providerLogo)
-        headerView?.setTitle(presenterContract.providerName)
-        presenterContract.startTime?.let { startTime -> presenterContract.endTime?.let { endTime ->
-            headerView?.setProgressTime(startTime, endTime)
-        } }
-
-        contentView?.setTitle(presenterContract.title)
-        contentView?.setDescription(presenterContract.description)
+    override fun onDestroyView() {
+        activityComponents?.showNavigationBar()
+        super.onDestroyView()
     }
+
+    override fun onClick(view: View?) {
+        presenterContract.onViewClick(view?.id ?: return)
+    }
+
+    override fun getUpActionImageResId(): ResId? = R.drawable.ic_close_white_24dp
 
     override fun updateTimeViews() {
         headerView?.onTimeUpdate()
@@ -131,47 +118,22 @@ class AuthorizationDetailsFragment : BaseFragment(),
         headerView?.setInvisible(!show)
     }
 
-    override fun setContentVisibility(show: Boolean) {
-        contentView?.setInvisible(!show)
+    override fun setHeaderValues(logoUrl: String, title: String, startTime: DateTime, endTime: DateTime) {
+        headerView?.setTitleAndLogo(title = title, logoUrl = logoUrl)
+        headerView?.setProgressTime(startTime = startTime, endTime = endTime)
+    }
+
+    override fun setContentViewMode(mode: ViewMode, ignoreTimeUpdate: Boolean) {
+        contentView?.setViewMode(mode)
+        headerView?.ignoreTimeUpdate = ignoreTimeUpdate
+    }
+
+    override fun setContentTitleAndDescription(title: String, description: String) {
+        contentView?.setTitleAndDescription(title, description)
     }
 
     override fun showError(errorMessage: String) {
         view?.let { Snackbar.make(it, errorMessage, Snackbar.LENGTH_LONG).show() }
-    }
-
-    override fun closeView() {
-        activity?.finishFragment()
-    }
-
-    override fun closeViewWithSuccessResult(authorizationId: String) {
-        targetFragment?.onActivityResult(
-            targetRequestCode,
-            Activity.RESULT_OK,
-            Intent().putExtra(KEY_ID, authorizationId)
-        )
-
-        setCompleteView(
-            drawableResId = R.drawable.ic_complete_ok_70,
-            titleText = getString(R.string.authorizations_finished_successfully)
-        )
-    }
-
-    override fun closeViewWithErrorResult(errorMessage: String) {
-        setCompleteView(
-            drawableResId = R.drawable.ic_complete_error_70,
-            titleText = getString(R.string.authorizations_finished_error),
-            subTitleText = errorMessage,
-            alpha = 0.75f
-        )
-    }
-
-    override fun closeViewWithTimeOutResult() {
-        setCompleteView(
-            drawableResId = R.drawable.ic_time_out_70,
-            titleText = getString(R.string.authorizations_time_out),
-            subTitleText = getString(R.string.authorizations_time_out_description),
-            actionResId = R.string.actions_ok
-        )
     }
 
     override fun askUserBiometricConfirmation() {
@@ -200,21 +162,8 @@ class AuthorizationDetailsFragment : BaseFragment(),
         timeViewUpdateTimer.purge()
     }
 
-    private fun setCompleteView(
-        drawableResId: Int,
-        titleText: String,
-        subTitleText: String? = null,
-        actionResId: Int? = null,
-        alpha: Float = 0.1f
-    ) {
-        completeView?.alpha = alpha
-        completeView?.setVisible(true)
-        completeView?.setTitleText(titleText)
-        subTitleText?.let { completeView?.setSubtitleText(it) }
-        actionResId?.let { completeView?.setMainActionText(it) }
-        completeView?.setIconResource(drawableResId)
-
-        completeView?.animate()?.alpha(1f)?.setDuration(1000)?.withEndAction { closeView() }
+    override fun closeView() {
+        activity?.finishFragment()
     }
 
     private fun injectDependencies() {

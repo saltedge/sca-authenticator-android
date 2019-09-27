@@ -24,13 +24,16 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
-import com.saltedge.authenticator.features.authorizations.common.*
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationHeaderView
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationStatusListener
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
+import com.saltedge.authenticator.features.authorizations.common.TimeUpdateListener
 import java.util.*
 import kotlin.collections.HashSet
 
 class AuthorizationsHeaderPagerAdapter(
     val context: Context,
-    val expirationListener: AuthorizationExpirationListener
+    val expirationListener: AuthorizationStatusListener
 ) : AuthorizationsPagerAdapter() {
 
     private val timeUpdateListeners: HashSet<TimeUpdateListener> = HashSet()
@@ -40,7 +43,8 @@ class AuthorizationsHeaderPagerAdapter(
         timeViewUpdateTimer = Timer()
         timeViewUpdateTimer.schedule(object : TimerTask() {
             override fun run() {
-                if (existExpiredSessions()) expirationListener.onViewModelsExpired()
+                if (existExpiredModels()) expirationListener.onViewModelsExpired()
+                if (existModelsShouldBeDestroyed()) expirationListener.onViewModelsShouldBeDestroyed()
                 timeUpdateListeners.iterator().forEach { it.onTimeUpdate() }
             }
         }, 0, TIME_VIEW_UPDATE_TIMEOUT)
@@ -54,8 +58,8 @@ class AuthorizationsHeaderPagerAdapter(
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val view = AuthorizationHeaderView(context = context)
         updateViewContent(view, data[position])
-        container.addView(view, 0)
         timeUpdateListeners.add(view as TimeUpdateListener)
+        container.addView(view, 0)
         return view
     }
 
@@ -64,13 +68,18 @@ class AuthorizationsHeaderPagerAdapter(
         timeUpdateListeners.remove(view as TimeUpdateListener)
     }
 
-    private fun existExpiredSessions(): Boolean = data.any { it.isExpired() }
+    private fun existExpiredModels(): Boolean = data.any { it.isExpired }
+
+    private fun existModelsShouldBeDestroyed(): Boolean = data.any { it.shouldBeDestroyed }
 
     private fun updateViewContent(pageView: View, model: AuthorizationViewModel) {
         (pageView as AuthorizationHeaderView).apply {
-            setLogoUrl(model.connectionLogoUrl)
-            setTitle(model.connectionName)
+            setTitleAndLogo(
+                title = model.connectionName,
+                logoUrl = model.connectionLogoUrl
+            )
             setProgressTime(startTime = model.createdAt, endTime = model.expiresAt)
+            ignoreTimeUpdate = model.ignoreTimeUpdate
         }
     }
 }

@@ -15,35 +15,24 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
     android:background="@android:color/white">
 
-    <LinearLayout
+    <com.saltedge.authenticator.features.authorizations.common.AuthorizationHeaderView
+        android:id="@+id/headerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_24"
+        android:layout_marginEnd="@dimen/dp_24"/>
 
-        <com.saltedge.authenticator.features.authorizations.common.AuthorizationHeaderView
-            android:id="@+id/headerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dp_24"
-            android:layout_marginEnd="@dimen/dp_24"/>
-
-        <com.saltedge.authenticator.features.authorizations.common.AuthorizationContentView
-            android:id="@+id/contentView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </LinearLayout>
-
-    <com.saltedge.authenticator.widget.InfoView
-        android:id="@+id/completeView"
+    <com.saltedge.authenticator.features.authorizations.common.AuthorizationContentView
+        android:id="@+id/contentView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white"
-        android:visibility="gone" />
-</FrameLayout>
+        android:layout_height="match_parent"/>
+</LinearLayout>

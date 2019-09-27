@@ -78,7 +78,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_2"
                 android:indeterminateTint="@color/blue"
+                android:progressBackgroundTint="@android:color/transparent"
+                android:progressTint="@color/blue"
                 android:indeterminateTintMode="src_in"
+                android:progressTintMode="src_in"
                 android:layout_alignParentBottom="true"
                 android:layout_marginStart="@dimen/dp_13"
                 android:layout_marginEnd="@dimen/dp_13" />

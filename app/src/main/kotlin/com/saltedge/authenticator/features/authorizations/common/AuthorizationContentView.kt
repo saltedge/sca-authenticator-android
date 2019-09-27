@@ -24,6 +24,7 @@ import android.content.Context
 import android.text.method.ScrollingMovementMethod
 import android.util.AttributeSet
 import android.widget.LinearLayout
+import androidx.core.view.isVisible
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.hasHTMLTags
 import com.saltedge.authenticator.tool.setVisible
@@ -39,11 +40,29 @@ class AuthorizationContentView : LinearLayout {
         inflate(context, R.layout.view_authorization_content,this)
     }
 
-    fun setTitle(title: String) {
-        titleTextView?.text = title
+    fun setViewMode(viewMode: ViewMode) {
+        val showStatus = viewMode !== ViewMode.DEFAULT
+
+        if (showStatus) {
+            if (!statusLayout.isVisible) {
+                statusLayout.alpha = 0.1f
+                statusLayout?.setVisible(show = showStatus)
+                statusLayout?.animate()?.setDuration(500)?.alpha(1.0f)?.start()
+            }
+
+            progressStatusView?.setVisible(show = viewMode.showProgress)
+            statusImageView?.setVisible(show = !viewMode.showProgress)
+            viewMode.statusImageResId?.let { statusImageView.setImageResource(it) }
+            statusTitleTextView?.setText(viewMode.statusTitleResId)
+            statusDescriptionTextView?.setText(viewMode.statusDescriptionResId)
+        } else {
+            statusLayout?.setVisible(show = showStatus)
+        }
     }
 
-    fun setDescription(description: String) {
+    fun setTitleAndDescription(title: String, description: String) {
+        titleTextView?.text = title
+
         description.hasHTMLTags().let { shouldShowDescriptionView ->
             descriptionTextView?.setVisible(show = !shouldShowDescriptionView)
             descriptionWebView?.setVisible(show = shouldShowDescriptionView)

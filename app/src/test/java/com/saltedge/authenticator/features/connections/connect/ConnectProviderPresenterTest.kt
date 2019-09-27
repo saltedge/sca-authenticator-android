@@ -301,7 +301,7 @@ class ConnectProviderPresenterTest {
     fun getIconResIdTestCase1() {
         val presenter = createPresenter(viewContract = mockView)
 
-        assertThat(presenter.iconResId, equalTo(R.drawable.ic_complete_error_70))
+        assertThat(presenter.iconResId, equalTo(R.drawable.ic_auth_error_70))
     }
 
     /**
