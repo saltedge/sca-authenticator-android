@@ -116,7 +116,7 @@
     <string name="authorizations_denied">Denied</string>
     <string name="authorizations_denied_description">Your action was denied</string>
     <string name="authorizations_error">Something went wrong</string>
-    <string name="authorizations_error_description">PLease try again</string>
+    <string name="authorizations_error_description">Please try again</string>
     <string name="authorizations_time_out">Time out</string>
     <string name="authorizations_time_out_description">Time to authorize your action is out.</string>
     <string name="authorizations_unavailable">Authorization unavailable</string>
