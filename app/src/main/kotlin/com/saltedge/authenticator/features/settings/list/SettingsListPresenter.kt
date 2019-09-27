@@ -128,7 +128,6 @@ class SettingsListPresenter @Inject constructor(
         val connectionGuids = connectionsRepository.getAllConnections().map { it.guid }
         keyStoreManager.deleteKeyPairs(connectionGuids)
         connectionsRepository.deleteAllConnections()
-        preferences.clearUserPreferences()
     }
 
 
