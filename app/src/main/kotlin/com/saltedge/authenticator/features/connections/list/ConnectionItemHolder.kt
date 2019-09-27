@@ -52,7 +52,6 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
             imageUrl = item.logoUrl,
             placeholderId = R.drawable.ic_logo_bank_placeholder
         )
-        logoImageView.setCircleBackgroundColor(getColor(itemView.context, R.color.gray_extra_light))
         titleView.text = item.name
         subTitleView.text = item.statusDescription
         subTitleView.setTextColorResId(item.statusColorResId)
