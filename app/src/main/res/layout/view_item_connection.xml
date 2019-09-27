@@ -35,10 +35,9 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <ImageView
+        <com.saltedge.authenticator.features.connections.common.RoundedImageView
             android:id="@+id/logoImageView"
             style="@style/ConnectionLogoImage"
-            android:background="@drawable/shape_gray_circle"
             android:contentDescription="@null" />
 
         <LinearLayout
