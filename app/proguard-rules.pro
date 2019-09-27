@@ -26,42 +26,9 @@
 -keepattributes *Annotation*
 -dontwarn javax.xml.bind.DatatypeConverter
 
-# Joda rules
+# JodaTime rules
 -keep class org.joda.** { *; }
 -dontwarn org.joda.time.tz.ZoneInfoCompiler
-
-# Jsonwebtoken rules
--keepattributes InnerClasses
-
--keep class org.bouncycastle.** { *; }
--keepnames class org.bouncycastle.** { *; }
--dontwarn org.bouncycastle.**
-
--keep class io.jsonwebtoken.** { *; }
--keepnames class io.jsonwebtoken.* { *; }
--keepnames interface io.jsonwebtoken.* { *; }
-
--dontwarn io.jsonwebtoken.impl.Base64Codec
-
-# Proguard configuration for Jackson
--keepattributes *Annotation*,EnclosingMethod
--keepattributes Signature
--keep class com.fasterxml.jackson.databind.ObjectMapper {
-    public <methods>;
-    protected <methods>;
-}
--keep class com.fasterxml.jackson.databind.ObjectWriter {
-    public ** writeValueAsString(**);
-}
--keepclassmembers public class * {
-     @com.fasterxml.jackson.annotation.JsonCreator *;
-}
--keepnames class com.fasterxml.jackson.** { *; }
--keepnames interface com.fasterxml.jackson.** { *; }
--keepnames class com.fasterxml.jackson.databind.** { *; }
--dontwarn com.fasterxml.jackson.databind.**
--dontwarn org.w3c.dom.bootstrap.DOMImplementationRegistry
--keep class com.saltedge.authenticator.api.model.request.CreateProviderTokenRequestData
 
 # Fabric rules
 -keepattributes SourceFile,LineNumberTable
@@ -87,3 +54,6 @@
 # Retain declared checked exceptions for use by a Proxy instance.
 -keepattributes Exceptions
 -dontwarn javax.annotation.**
+
+# Coroutines
+-dontwarn kotlinx.coroutines.flow.**inlined**
