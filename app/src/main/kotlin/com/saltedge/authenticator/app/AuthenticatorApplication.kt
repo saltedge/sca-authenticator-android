@@ -94,7 +94,9 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
 
     private fun patchSecurityProvider() {
         try {
-            ProviderInstaller.installIfNeeded(this)
+            if (BuildConfig.BUILD_TYPE == "release") {
+                ProviderInstaller.installIfNeeded(this)
+            }
         } catch (e: Exception) {
             e.log()
         }

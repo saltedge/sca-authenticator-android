@@ -135,7 +135,7 @@ class ConnectionsListPresenter @Inject constructor(
             sendRevokeRequestForConnections(listOf(connection))
         }
         deleteConnectionsAndKeys(connectionGuid)
-        viewContract?.updateViewContent()
+        viewContract?.updateViewsContent()
     }
 
     private fun sendRevokeRequestForConnections(connections: List<Connection>) {

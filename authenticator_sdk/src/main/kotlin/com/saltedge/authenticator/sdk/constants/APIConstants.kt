@@ -74,6 +74,7 @@ const val ERROR_CLASS_API_RESPONSE = "ApiResponseError"
 const val ERROR_CLASS_HOST_UNREACHABLE = "HostUnreachable"
 const val ERROR_CLASS_SSL_HANDSHAKE = "SSLHandshakeException"
 const val ERROR_CLASS_CONNECTION_NOT_FOUND = "ConnectionNotFound"
+const val ERROR_CLASS_AUTHORIZATION_NOT_FOUND = "AuthorizationNotFound"
 
 // REQUEST METHODS
 const val REQUEST_METHOD_GET = "GET"

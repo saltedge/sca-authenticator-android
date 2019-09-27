@@ -21,6 +21,10 @@
 package com.saltedge.authenticator.widget.passcode
 
 import android.content.Context
+import android.content.Context.VIBRATOR_SERVICE
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -34,6 +38,7 @@ class PinpadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
     View.OnClickListener {
 
     var inputHandler: PinpadInputHandler? = null
+    private var vibrator: Vibrator? = context.getSystemService(VIBRATOR_SERVICE) as? Vibrator?
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_pinpad, this)
@@ -41,18 +46,29 @@ class PinpadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
     }
 
     override fun onClick(view: View?) {
-        if (!isEnabled) return
-        val viewId = view?.id ?: return
-        when (viewId) {
+        if (view == null || !isEnabled) return
+        vibrateOnKeyClick()
+        when (view.id) {
             R.id.fingerView -> inputHandler?.onKeyClick(Control.FINGER)
-            R.id.deleteView -> inputHandler?.onKeyClick(Control.DELETE)
-            else -> (view as? TextView)?.text
-                ?.let { inputHandler?.onKeyClick(Control.NUMBER, it.toString()) }
+            R.id.deleteView -> {
+                inputHandler?.onKeyClick(Control.DELETE)
+            }
+            else -> {
+                (view as? TextView)?.text?.let {
+                    inputHandler?.onKeyClick(Control.NUMBER, it.toString())
+                }
+            }
         }
     }
 
     fun setupFingerAction(active: Boolean) {
         fingerView?.setVisible(active)
+    }
+
+    private fun vibrateOnKeyClick() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator?.vibrate(VibrationEffect.createOneShot(40, 32))
+        } else vibrator?.vibrate(10)
     }
 
     enum class Control {

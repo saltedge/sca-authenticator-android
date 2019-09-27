@@ -20,6 +20,8 @@
  */
 package com.saltedge.authenticator.interfaces
 
+import com.saltedge.authenticator.tool.ResId
+
 interface UpActionImageListener {
-    fun getUpActionImage(): Int?
+    fun getUpActionImageResId(): ResId?
 }

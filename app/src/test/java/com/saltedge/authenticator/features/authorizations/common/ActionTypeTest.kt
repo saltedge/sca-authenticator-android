@@ -20,6 +20,22 @@
  */
 package com.saltedge.authenticator.features.authorizations.common
 
-interface AuthorizationExpirationListener {
-    fun onViewModelsExpired()
+import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Test
+
+class ActionTypeTest {
+
+    @Test
+    @Throws(Exception::class)
+    fun valuesTest() {
+        assertThat(ActionType.values(), equalTo(arrayOf(ActionType.CONFIRM, ActionType.DENY)))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun toViewModeTest() {
+        assertThat(ActionType.CONFIRM.toViewMode(), equalTo(ViewMode.CONFIRM_PROCESSING))
+        assertThat(ActionType.DENY.toViewMode(), equalTo(ViewMode.DENY_PROCESSING))
+    }
 }
