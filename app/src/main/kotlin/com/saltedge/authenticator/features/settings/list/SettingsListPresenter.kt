@@ -25,6 +25,7 @@ import android.content.Context
 import android.content.Intent
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
+import com.saltedge.authenticator.features.settings.common.HeaderViewModel
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
@@ -48,8 +49,9 @@ class SettingsListPresenter @Inject constructor(
 
     override var viewContract: SettingsListContract.View? = null
 
-    override fun getListItems(): List<SettingsItemViewModel> {
+    override fun getListItems(): List<Any> {
         return listOf(
+            HeaderViewModel(),
             SettingsItemViewModel(
                 titleId = R.string.settings_passcode,
                 value = appContext.getString(R.string.settings_passcode_description),
@@ -65,6 +67,7 @@ class SettingsListPresenter @Inject constructor(
                 switchEnabled = true,
                 isChecked = preferences.screenshotLockEnabled
             ),
+            HeaderViewModel(),
             SettingsItemViewModel(
                 titleId = R.string.about_feature_title,
                 itemIsClickable = true

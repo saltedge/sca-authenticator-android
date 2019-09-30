@@ -18,28 +18,12 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.settings.list
+package com.saltedge.authenticator.features.settings.common
 
-import android.content.Intent
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.saltedge.authenticator.R
+import com.saltedge.authenticator.tool.inflateListItemView
 
-interface SettingsListContract {
-
-    interface View {
-        fun showLanguageSelector()
-        fun showPasscodeEditor()
-        fun showSystemSettings()
-        fun showAboutList()
-        fun openMailApp()
-        fun showInfo(message: Int)
-        fun showDeleteConnectionView(requestCode: Int)
-    }
-
-    interface Presenter {
-        var viewContract: View?
-        fun getListItems(): List<Any>
-        fun onListItemCheckedStateChanged(itemId: Int, checked: Boolean)
-        fun onListItemClick(itemId: Int)
-        fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
-        fun getPositionsOfDelimiters(): Array<Int>
-    }
-}
+class HeaderViewHolder(parent: ViewGroup) :
+    RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.list_item_header))
