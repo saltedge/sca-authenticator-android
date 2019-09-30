@@ -25,8 +25,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
@@ -123,11 +121,6 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View,
             val context = activity ?: return
             val layoutManager = LinearLayoutManager(context)
             recyclerView?.layoutManager = layoutManager
-            val dividerItemDecoration = DividerItemDecoration(context, layoutManager.orientation)
-            ContextCompat.getDrawable(context, R.drawable.shape_full_divider)?.let {
-                dividerItemDecoration.setDrawable(it)
-            }
-            recyclerView?.addItemDecoration(dividerItemDecoration)
             recyclerView?.adapter = SettingsAdapter(this).apply {
                 data = presenterContract.getListItems()
             }
