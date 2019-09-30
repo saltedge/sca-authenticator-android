@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.util.AttributeSet
-import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat.getColor
 import com.saltedge.authenticator.R
@@ -35,23 +34,6 @@ class RoundedImageView : AppCompatImageView {
             (height - roundBitmap.height) / 2f,
             null
         )
-    }
-
-    fun setCircleBackgroundColor(@ColorInt color: Int) {
-        circleBackgroundColor = color
-        invalidate()
-    }
-
-    fun setEnabledColor() {
-        opacity = 255
-        blackAndWhite = false
-        invalidate()
-    }
-
-    fun setDisabledColor() {
-        opacity = 170
-        blackAndWhite = true
-        invalidate()
     }
 
     private fun Bitmap.toCircleBitmap(diameter: Int): Bitmap =
