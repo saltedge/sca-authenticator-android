@@ -32,7 +32,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
 import com.saltedge.authenticator.features.settings.about.AboutListFragment
-import com.saltedge.authenticator.features.settings.common.HeaderItemDecoration
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
 import com.saltedge.authenticator.features.settings.list.di.SettingsListModule
@@ -128,12 +127,6 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View,
             ContextCompat.getDrawable(context, R.drawable.shape_full_divider)?.let {
                 dividerItemDecoration.setDrawable(it)
             }
-            recyclerView?.addItemDecoration(
-                HeaderItemDecoration(
-                    context = context,
-                    delimiterPositions = presenterContract.getPositionsOfDelimiters()
-                )
-            )
             recyclerView?.addItemDecoration(dividerItemDecoration)
             recyclerView?.adapter = SettingsAdapter(this).apply {
                 data = presenterContract.getListItems()
