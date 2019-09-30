@@ -47,9 +47,16 @@ class SettingsAdapter(
 
     override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
         when (holder) {
-            is SettingsItemViewHolder -> holder.bind(item as SettingsItemViewModel)
+            is SettingsItemViewHolder -> holder.bind((item as SettingsItemViewModel), bottomSeparator(position))
         }
     }
+
+    private fun bottomSeparator(position: Int)
+        = !isLastPosition(position) && data[position.next()] !is HeaderViewModel
+
+    private fun isLastPosition(position: Int) = position == itemCount - 1
+
+    fun Int.next() = this + 1
 }
 
 enum class ItemViewType {
