@@ -234,7 +234,7 @@ class SettingsListPresenterTest {
 
     @Test
     @Throws(Exception::class)
-    fun onActivityResultTest_OptionsReport() {
+    fun onActivityResultTest() {
         createPresenter(viewContract = mockView).onActivityResult(
             requestCode = DELETE_ALL_REQUEST_CODE,
             resultCode = Activity.RESULT_OK,
