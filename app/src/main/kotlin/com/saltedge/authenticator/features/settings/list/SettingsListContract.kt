@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.settings.list
 
 import android.content.Intent
+import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 
 interface SettingsListContract {
 
@@ -36,7 +37,7 @@ interface SettingsListContract {
 
     interface Presenter {
         var viewContract: View?
-        fun getListItems(): List<Any>
+        fun getListItems(): List<SettingsItemViewModel>
         fun onListItemCheckedStateChanged(itemId: Int, checked: Boolean)
         fun onListItemClick(itemId: Int)
         fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)

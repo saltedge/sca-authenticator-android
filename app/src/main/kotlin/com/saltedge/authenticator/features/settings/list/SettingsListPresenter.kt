@@ -48,7 +48,7 @@ class SettingsListPresenter @Inject constructor(
 
     override var viewContract: SettingsListContract.View? = null
 
-    override fun getListItems(): List<Any> {
+    override fun getListItems(): List<SettingsItemViewModel> {
         return listOf(
             SettingsItemViewModel(
                 titleId = R.string.settings_passcode,

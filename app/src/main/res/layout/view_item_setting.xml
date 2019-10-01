@@ -25,7 +25,6 @@
     android:layout_height="@dimen/dp_75"
     android:background="@android:color/white"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="0dp"
     app:cardElevation="@dimen/dp_2">
 
     <LinearLayout
