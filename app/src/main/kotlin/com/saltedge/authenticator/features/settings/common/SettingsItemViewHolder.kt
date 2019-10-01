@@ -42,7 +42,6 @@ class SettingsItemViewHolder(
     private val valueView = itemView.findViewById<TextView>(R.id.valueView)
     private var checkView = itemView.findViewById<Switch>(R.id.checkView)
     private var code = -1
-    private var bottomFullDivider = itemView.findViewById<View>(R.id.bottomFullDivider)
 
     override fun onClick(v: View?) {
         if (adapterPosition > RecyclerView.NO_POSITION) listener?.onListItemClick(itemViewId = code)
@@ -53,7 +52,7 @@ class SettingsItemViewHolder(
             listener?.onListItemCheckedStateChanged(itemId = code, checked = isChecked)
     }
 
-    fun bind(item: SettingsItemViewModel, bottomSeparator: Boolean) {
+    fun bind(item: SettingsItemViewModel) {
         code = item.titleId
         titleView.setText(item.titleId)
         titleView.setTextColor(ContextCompat.getColor(titleView.context, item.colorResId))
@@ -65,8 +64,6 @@ class SettingsItemViewHolder(
         if (item.switchEnabled != null) {
             checkView.isEnabled = item.switchEnabled
         }
-
-        bottomFullDivider?.setVisible(bottomSeparator)
 
         checkView.setOnCheckedChangeListener(null)
         checkView.isChecked = item.isChecked
