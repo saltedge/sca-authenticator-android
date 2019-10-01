@@ -23,9 +23,11 @@ package com.saltedge.authenticator.features.connections.list
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.common.RoundedImageView
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tool.inflateListItemView
 import com.saltedge.authenticator.tool.loadImage
@@ -34,7 +36,7 @@ import com.saltedge.authenticator.tool.setTextColorResId
 class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClickListener?) :
     RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_connection)) {
 
-    private val logoImageView = itemView.findViewById<ImageView>(R.id.logoImageView)
+    private val logoImageView = itemView.findViewById<RoundedImageView>(R.id.logoImageView)
     private val titleView = itemView.findViewById<TextView>(R.id.titleView)
     private val subTitleView = itemView.findViewById<TextView>(R.id.subTitleView)
 
