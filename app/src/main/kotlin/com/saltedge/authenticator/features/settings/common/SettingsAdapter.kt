@@ -24,42 +24,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.interfaces.CheckableListItemClickListener
 import com.saltedge.authenticator.widget.list.AbstractListAdapter
-import java.io.InvalidClassException
 
 class SettingsAdapter(
     private val clickListener: CheckableListItemClickListener?
 ) : AbstractListAdapter() {
 
-    override fun getItemViewType(position: Int): Int {
-        return when (getItem(position)) {
-            is SettingsItemViewModel -> ItemViewType.SETTINGS_TITLE_VALUE
-            is HeaderViewModel -> ItemViewType.HEADER
-            else -> throw InvalidClassException("class ${getItem(position)?.javaClass?.name} is not handled")
-        }.ordinal
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (ItemViewType.values()[viewType]) {
-            ItemViewType.SETTINGS_TITLE_VALUE -> SettingsItemViewHolder(parent, clickListener)
-            ItemViewType.HEADER -> HeaderViewHolder(parent)
-        }
+        return SettingsItemViewHolder(parent, clickListener)
     }
 
     override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
-        when (holder) {
-            is SettingsItemViewHolder -> holder.bind((item as SettingsItemViewModel), bottomSeparator(position))
-        }
+        (holder as SettingsItemViewHolder).bind(item as SettingsItemViewModel)
     }
-
-    private fun bottomSeparator(position: Int)
-        = !isLastPosition(position) && data[position.next()] !is HeaderViewModel
-
-    private fun isLastPosition(position: Int) = position == itemCount - 1
-
-    fun Int.next() = this + 1
-}
-
-enum class ItemViewType {
-    SETTINGS_TITLE_VALUE,
-    HEADER
 }
