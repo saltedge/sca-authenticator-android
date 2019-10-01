@@ -20,19 +20,14 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
-import android.app.Activity
-import android.content.Intent
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.DELETE_REQUEST_CODE
-import com.saltedge.authenticator.app.SHOW_REQUEST_CODE
+import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationViewModel
 import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_CONNECTION_NOT_FOUND
-import com.saltedge.authenticator.sdk.constants.KEY_ID
 import com.saltedge.authenticator.sdk.model.*
-import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResultData
 import com.saltedge.authenticator.sdk.polling.PollingServiceAbs
 import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
@@ -63,10 +58,35 @@ class AuthorizationsListPresenterTest {
 
     @Test
     @Throws(Exception::class)
+    fun showEmptyViewTest() {
+        val presenter = createPresenter(viewContract = mockView)
+
+        Assert.assertTrue(presenter.showEmptyView)
+
+        presenter.viewModels = listOf(viewModel1)
+
+        Assert.assertFalse(presenter.showEmptyView)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun showContentViewsTest() {
+        val presenter = createPresenter(viewContract = mockView)
+
+        Assert.assertFalse(presenter.showContentViews)
+
+        presenter.viewModels = listOf(viewModel1)
+
+        Assert.assertTrue(presenter.showContentViews)
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun onFragmentStartTest() {
         createPresenter(viewContract = mockView).onFragmentResume()
 
         Mockito.verify(mockPollingService).start()
+        Mockito.verify(mockView).updateViewsContent()
     }
 
     @Test
@@ -98,21 +118,26 @@ class AuthorizationsListPresenterTest {
     fun onListItemClickTest_negativeActionView() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.viewModels = listOf(viewModel1, viewModel2)
+
+        Assert.assertNull(presenter.currentViewModel)
+        assertThat(presenter.viewModels[0].viewMode, equalTo(ViewMode.DEFAULT))
+
         presenter.onListItemClick(
             itemIndex = 0,
             itemCode = "1",
             itemViewId = R.id.negativeActionView
         )
 
-        Mockito.verify(mockPollingService).stop()
         Mockito.verify(mockApiManager).denyAuthorization(
             connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
             authorizationId = viewModel1.authorizationID,
             authorizationCode = viewModel1.authorizationCode,
             resultCallback = presenter
         )
-        val viewModel = viewModel1.copy(isProcessing = true)
-        Mockito.verify(mockView).updateItem(viewModel, 0)
+        Mockito.verify(mockPollingService).stop()
+        assertThat(presenter.currentViewModel, equalTo(viewModel1))
+        assertThat(presenter.viewModels[0].viewMode, equalTo(ViewMode.DENY_PROCESSING))
+        Mockito.verify(mockView).updateItem(presenter.viewModels[0], 0)
     }
 
     @Test
@@ -174,80 +199,6 @@ class AuthorizationsListPresenterTest {
         Mockito.verify(mockView, Mockito.never()).askUserPasscodeConfirmation()
     }
 
-    /**
-     * test onActivityResult with invalid params
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onActivityResultTest_Case1() {
-        val presenter = createPresenter(viewContract = mockView)
-        presenter.processResultIntent(
-            requestCode = SHOW_REQUEST_CODE,
-            resultCode = Activity.RESULT_OK,
-            data = null
-        )
-
-        Mockito.never()
-
-        presenter.processResultIntent(
-            requestCode = SHOW_REQUEST_CODE,
-            resultCode = Activity.RESULT_CANCELED,
-            data = Intent()
-        )
-
-        Mockito.never()
-
-        presenter.processResultIntent(
-            requestCode = SHOW_REQUEST_CODE,
-            resultCode = Activity.RESULT_OK,
-            data = Intent()
-        )
-
-        Mockito.never()
-
-        presenter.processResultIntent(
-            requestCode = DELETE_REQUEST_CODE,
-            resultCode = Activity.RESULT_OK,
-            data = Intent().putExtra(KEY_ID, "1")
-        )
-
-        Mockito.never()
-
-        Mockito.clearInvocations(mockView, mockApiManager, mockPollingService)
-        presenter.viewContract = null
-        presenter.processResultIntent(
-            requestCode = SHOW_REQUEST_CODE,
-            resultCode = Activity.RESULT_OK,
-            data = Intent().putExtra(KEY_ID, viewModel1.authorizationID)
-        )
-
-        Mockito.verifyNoMoreInteractions(mockView, mockApiManager, mockPollingService)
-    }
-
-    /**
-     * test onActivityResult
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onActivityResultTest_Case2() {
-        val presenter = createPresenter(viewContract = mockView)
-        presenter.viewModels = listOf(viewModel1, viewModel2)
-
-        assertThat(presenter.viewModels, equalTo(listOf(viewModel1, viewModel2)))
-
-        Mockito.clearInvocations(mockView, mockApiManager, mockPollingService)
-
-        presenter.processResultIntent(
-            requestCode = SHOW_REQUEST_CODE,
-            resultCode = Activity.RESULT_OK,
-            data = Intent().putExtra(KEY_ID, viewModel1.authorizationID)
-        )
-
-        assertThat(presenter.viewModels, equalTo(listOf(viewModel2)))
-        Mockito.verify(mockView).updateViewContent()
-        Mockito.verifyNoMoreInteractions(mockApiManager, mockPollingService)
-    }
-
     @Test
     @Throws(Exception::class)
     fun getConnectionsDataTest_noConnections() {
@@ -301,30 +252,72 @@ class AuthorizationsListPresenterTest {
         Mockito.verify(mockConnectionsRepository).getAllActiveConnections()
     }
 
-    //TODO INVESTIGATE TEST OF COROUTINES
+    //TODO INVESTIGATE TEST OF COROUTINES (https://github.com/saltedge/sca-authenticator-android/issues/39)
 //    @Test
 //    @Throws(Exception::class)
 //    fun onFetchAuthorizationsResultTest_processEncryptedAuthorizationsResult() {
-//        val presenter = createPresenter(viewContract = mockView)
-//        Mockito.clearInvocations(mockConnectionsRepository)
 //
-//        assertThat(presenter.viewModels.count(), equalTo(0))
-//
-//        presenter.onFetchAuthorizationsResult(
-//            errors = emptyList(),
-//            result = listOf(encryptedData1, encryptedData2)
-//        )
-//
-//        assertThat(presenter.viewModels.count(), equalTo(2))
-//        Mockito.verify(mockView).updateViewContent()
-//
-//        presenter.onFetchAuthorizationsResult(
-//            errors = emptyList(),
-//            result = listOf(encryptedData1, encryptedData2)
-//        )
-//
-//        Mockito.verify(mockView).updateViewContent()
 //    }
+
+    /**
+     * Received list (empty) different than stored
+     */
+    @Test
+    @Throws(Exception::class)
+    fun processDecryptedAuthorizationsResultTest_Case1() {
+        val presenter = createPresenter(viewContract = mockView)
+        presenter.viewModels = listOf(viewModel1, viewModel2)
+
+        presenter.processDecryptedAuthorizationsResult(result = emptyList())
+
+        Mockito.verify(mockView).updateViewsContent()
+        Assert.assertTrue(presenter.viewModels.isEmpty())
+    }
+
+    /**
+     * Received list (not empty) different than stored
+     */
+    @Test
+    @Throws(Exception::class)
+    fun processDecryptedAuthorizationsResultTest_Case2() {
+        val presenter = createPresenter(viewContract = mockView)
+        presenter.viewModels = emptyList()
+
+        presenter.processDecryptedAuthorizationsResult(result = listOf(authorizationData1, authorizationData2))
+
+        Mockito.verify(mockView).updateViewsContent()
+        assertThat(presenter.viewModels, equalTo(listOf(viewModel1, viewModel2)))
+    }
+
+    /**
+     * Received the same list
+     */
+    @Test
+    @Throws(Exception::class)
+    fun processDecryptedAuthorizationsResultTest_Case3() {
+        val presenter = createPresenter(viewContract = mockView)
+        presenter.viewModels = listOf(viewModel1, viewModel2)
+
+        presenter.processDecryptedAuthorizationsResult(result = listOf(authorizationData1, authorizationData2))
+
+        Mockito.verifyNoMoreInteractions(mockView)
+        assertThat(presenter.viewModels, equalTo(listOf(viewModel1, viewModel2)))
+    }
+
+    /**
+     * Received the same list but one of the stored models has modified viewMode
+     */
+    @Test
+    @Throws(Exception::class)
+    fun processDecryptedAuthorizationsResultTest_Case4() {
+        val presenter = createPresenter(viewContract = mockView)
+        presenter.viewModels = listOf(viewModel1, viewModel2.copy(viewMode = ViewMode.DENY_SUCCESS))
+        presenter.processDecryptedAuthorizationsResult(result = listOf(authorizationData1, authorizationData2))
+
+        assertThat(presenter.viewModels,
+            equalTo(listOf(viewModel1, viewModel2.copy(viewMode = ViewMode.DENY_SUCCESS))))
+        Mockito.verifyNoMoreInteractions(mockView)
+    }
 
     @Test
     @Throws(Exception::class)
@@ -346,44 +339,53 @@ class AuthorizationsListPresenterTest {
 
     @Test
     @Throws(Exception::class)
-    fun onConfirmDenySuccessTest_case1() {
+    fun onConfirmDenySuccessTest_ConfirmSuccess() {
         val presenter: AuthorizationsListPresenter = createPresenter(viewContract = mockView)
-        presenter.viewModels = listOf(viewModel1, viewModel2)
+        presenter.viewModels = listOf(viewModel1.copy(), viewModel2.copy(viewMode = ViewMode.CONFIRM_PROCESSING))
 
-        presenter.onConfirmDenySuccess(
-            result = ConfirmDenyResultData(
-                authorizationId = "2",
-                success = true
-            ),
-            connectionID = "333"
-        )
+        presenter.onConfirmDenySuccess(success = true, authorizationID = "2", connectionID = "1")
 
-        assertThat(presenter.viewModels.count(), equalTo(1))
-        Mockito.verify(mockView).updateViewContent()
+        assertThat(presenter.viewModels,
+            equalTo(listOf(viewModel1, viewModel2.copy(viewMode = ViewMode.CONFIRM_SUCCESS))))
+        Mockito.verify(mockView).updateItem(viewModel2.copy(viewMode = ViewMode.CONFIRM_SUCCESS), 1)
         Mockito.verify(mockPollingService).start()
     }
 
     @Test
     @Throws(Exception::class)
-    fun onConfirmDenySuccessTest_case2() {
+    fun onConfirmDenySuccessTest_DenySuccess() {
         val presenter: AuthorizationsListPresenter = createPresenter(viewContract = mockView)
-        presenter.onConfirmDenySuccess(authorizationId = "1", connectionID = "1", success = false)
+        presenter.viewModels = listOf(viewModel1.copy(), viewModel2.copy(viewMode = ViewMode.DENY_PROCESSING))
+
+        presenter.onConfirmDenySuccess(success = true, authorizationID = "2", connectionID = "1")
+
+        assertThat(presenter.viewModels,
+            equalTo(listOf(viewModel1, viewModel2.copy(viewMode = ViewMode.DENY_SUCCESS))))
+        Mockito.verify(mockView).updateItem(viewModel2.copy(viewMode = ViewMode.DENY_SUCCESS), 1)
+        Mockito.verify(mockPollingService).start()
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onConfirmDenySuccessTest_invalidParams() {
+        val presenter: AuthorizationsListPresenter = createPresenter(viewContract = mockView)
+        presenter.onConfirmDenySuccess(authorizationID = "1", connectionID = "1", success = false)
 
         Mockito.verify(mockPollingService).start()
         Mockito.verifyNoMoreInteractions(mockView)
 
         Mockito.clearInvocations(mockView, mockPollingService)
-        presenter.onConfirmDenySuccess(authorizationId = "1", connectionID = "1", success = true)
+        presenter.onConfirmDenySuccess(authorizationID = "1", connectionID = "1", success = true)
 
-        Mockito.verify(mockView).updateViewContent()
         Mockito.verify(mockPollingService).start()
+        Mockito.verifyNoMoreInteractions(mockView)
 
         Mockito.clearInvocations(mockView, mockPollingService)
         presenter.viewContract = null
-        presenter.onConfirmDenySuccess(authorizationId = "1", connectionID = "1", success = true)
+        presenter.onConfirmDenySuccess(authorizationID = "1", connectionID = "1", success = true)
 
-        Mockito.verifyNoMoreInteractions(mockView)
         Mockito.verify(mockPollingService).start()
+        Mockito.verifyNoMoreInteractions(mockView)
     }
 
     @Test
@@ -422,9 +424,10 @@ class AuthorizationsListPresenterTest {
         )
         Mockito.verify(mockPollingService).stop()
         Mockito.verify(mockView).updateItem(
-            viewModel = viewModel1.copy(isProcessing = true),
+            viewModel = viewModel1.copy(viewMode = ViewMode.CONFIRM_PROCESSING),
             itemId = 0
         )
+        assertThat(presenter.viewModels[0].viewMode, equalTo(ViewMode.CONFIRM_PROCESSING))
     }
 
     @Test
@@ -461,7 +464,7 @@ class AuthorizationsListPresenterTest {
         )
         Mockito.verify(mockPollingService).stop()
         Mockito.verify(mockView).updateItem(
-            viewModel = viewModel1.copy(isProcessing = true),
+            viewModel = viewModel1,
             itemId = 0
         )
     }

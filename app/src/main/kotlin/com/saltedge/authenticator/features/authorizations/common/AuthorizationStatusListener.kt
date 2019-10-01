@@ -18,25 +18,9 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.app
+package com.saltedge.authenticator.features.authorizations.common
 
-const val QR_SCAN_REQUEST_CODE = 322
-const val ITEM_OPTIONS_REQUEST_CODE = 323
-const val RENAME_REQUEST_CODE = 324
-const val DELETE_REQUEST_CODE = 325
-const val DELETE_ALL_REQUEST_CODE = 327
-const val CAMERA_PERMISSION_REQUEST_CODE = 328
-
-const val KEY_ACCESS_TOKEN = "accessToken" // used for database queries
-const val KEY_CREATED_AT = "createdAt" // used for database queries
-const val KEY_ID = "id"
-const val KEY_CODE = "code"
-const val KEY_GUID = "guid"
-const val KEY_STATUS = "status"
-const val KEY_OPTION_ID = "option_id"
-const val KEY_ACTION = "action"
-const val KEY_MODE = "mode"
-const val KEY_DEEP_LINK = "KEY_DEEP_LINK"
-const val KEY_CONNECT_CONFIGURATION = "KEY_CONNECT_CONFIGURATION"
-
-const val TIME_VIEW_UPDATE_TIMEOUT = 1000L
+interface AuthorizationStatusListener {
+    fun onViewModelsExpired()
+    fun onViewModelsShouldBeDestroyed()
+}

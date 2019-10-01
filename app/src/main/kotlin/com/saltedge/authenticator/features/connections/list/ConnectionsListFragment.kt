@@ -79,7 +79,7 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
     override fun onStart() {
         super.onStart()
         presenterContract.viewContract = this
-        updateViewContent()
+        updateViewsContent()
     }
 
     override fun onStop() {
@@ -104,7 +104,7 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         adapter.updateListItemName(connectionGuid, name)
     }
 
-    override fun updateViewContent() {
+    override fun updateViewsContent() {
         adapter.data = presenterContract.getListItems()
         val viewIsEmpty = adapter.isEmpty
         emptyView?.setVisible(viewIsEmpty)

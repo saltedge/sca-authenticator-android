@@ -161,7 +161,7 @@ class MainActivity : LockableActivity(),
 
     override fun updateNavigationViewsContent() {
         isTopNavigationLevel().also { isOnTop ->
-            toolbarView?.navigationIcon = ((currentFragmentInContainer() as? UpActionImageListener)?.getUpActionImage()
+            toolbarView?.navigationIcon = ((currentFragmentInContainer() as? UpActionImageListener)?.getUpActionImageResId()
                 ?: presenter.getNavigationIcon(isOnTop))?.let { resId ->
                 this.getDrawable(resId)
             }

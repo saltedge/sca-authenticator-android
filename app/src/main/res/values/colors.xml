@@ -43,5 +43,6 @@
     <color name="button_blue_disabled">#884354B3</color>
     <color name="divider_color">@color/gray_light</color>
     <color name="switch_off">@color/gray_extra_light</color>
-    <color name="switch_on">@color/cyan</color>
+    <color name="switch_on">@color/blue</color>
+    <color name="authorization_info_view_bg">#DDFFFFFF</color>
 </resources>
