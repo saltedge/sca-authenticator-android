@@ -12,16 +12,12 @@ import com.saltedge.authenticator.R
 /**
  * Draw large delimiters between some of settings items
  */
-class HeaderItemDecoration(context: Context, private val delimiterPositions: Array<Int>) : RecyclerView.ItemDecoration() {
+class HeaderItemDecoration(context: Context, private val delimiterPositions: Array<Int>) :
+    RecyclerView.ItemDecoration() {
 
     private val spacePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = ContextCompat.getColor(context, R.color.gray_extra_light)
         style = Paint.Style.FILL
-    }
-    private val dividerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.divider_color)
-        style = Paint.Style.STROKE
-        strokeWidth = context.resources.getDimension(R.dimen.dp_1)
     }
 
     private val rectHeight = context.resources.getDimensionPixelSize(R.dimen.dp_20)
@@ -52,7 +48,6 @@ class HeaderItemDecoration(context: Context, private val delimiterPositions: Arr
                 val endX = dividerEnd.toFloat()
                 val bottomY = topOfCurrentView.toFloat()
                 canvas.drawRect(startX, topY, endX, bottomY, spacePaint)
-                canvas.drawLine(startX, bottomY, endX, bottomY, dividerPaint)
             }
         }
     }
