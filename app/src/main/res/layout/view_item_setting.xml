@@ -27,35 +27,43 @@
     android:foreground="?android:attr/selectableItemBackground"
     app:cardElevation="@dimen/dp_2">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:orientation="vertical"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:padding="@dimen/dp_16">
 
-        <TextView
-            android:id="@+id/titleView"
-            style="@style/Text16BlackRegular"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxLines="1"
-            tools:text="Title" />
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/checkView"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/valueView"
-            style="@style/Text14GrayDarkRegular"
-            android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/titleView"
+                style="@style/Text16BlackRegular"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                tools:text="Title" />
+
+            <TextView
+                android:id="@+id/valueView"
+                style="@style/Text14GrayDarkRegular"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                tools:text="Subtitle" />
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/checkView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLines="2"
-            tools:text="Subtitle" />
-    </LinearLayout>
-
-    <Switch
-        android:id="@+id/checkView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|end"
-        android:layout_marginEnd="@dimen/dp_16"
-        android:thumbTint="@color/switch_thumb_color_selector" />
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="@dimen/dp_16"
+            android:thumbTint="@color/switch_thumb_color_selector"
+            android:visibility="gone" />
+    </RelativeLayout>
 </androidx.cardview.widget.CardView>
