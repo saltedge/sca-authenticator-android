@@ -124,17 +124,16 @@ class SettingsListPresenter @Inject constructor(
         deleteAllConnectionsAndKeys()
     }
 
-    private fun deleteAllConnectionsAndKeys() {
-        val connectionGuids = connectionsRepository.getAllConnections().map { it.guid }
-        keyStoreManager.deleteKeyPairs(connectionGuids)
-        connectionsRepository.deleteAllConnections()
-    }
-
-
     private fun sendRevokeRequestForConnections(connections: List<Connection>) {
         val connectionsAndKeys: List<ConnectionAndKey> = connections.filter { it.isActive() }
             .mapNotNull { it.toConnectionAndKey(keyStoreManager) }
 
         apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = null)
+    }
+
+    private fun deleteAllConnectionsAndKeys() {
+        val connectionGuids = connectionsRepository.getAllConnections().map { it.guid }
+        keyStoreManager.deleteKeyPairs(connectionGuids)
+        connectionsRepository.deleteAllConnections()
     }
 }

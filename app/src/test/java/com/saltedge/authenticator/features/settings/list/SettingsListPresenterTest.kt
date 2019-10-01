@@ -20,7 +20,10 @@
  */
 package com.saltedge.authenticator.features.settings.list
 
+import android.app.Activity
+import android.content.Intent
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
@@ -229,6 +232,20 @@ class SettingsListPresenterTest {
         Mockito.verifyNoMoreInteractions(mockView)
     }
 
+    @Test
+    @Throws(Exception::class)
+    fun onActivityResultTest_OptionsReport() {
+        createPresenter(viewContract = mockView).onActivityResult(
+            requestCode = DELETE_ALL_REQUEST_CODE,
+            resultCode = Activity.RESULT_OK,
+            data = Intent()
+        )
+
+        Mockito.verify(mockConnectionsRepository).getAllActiveConnections()
+        Mockito.verify(mockConnectionsRepository).deleteAllConnections()
+        Mockito.verifyNoMoreInteractions(mockView)
+    }
+
     private val mockView = Mockito.mock(SettingsListContract.View::class.java)
     private val mockPreferences = Mockito.mock(PreferenceRepositoryAbs::class.java)
     private val mockBiometricTools = Mockito.mock(BiometricToolsAbs::class.java)
@@ -244,7 +261,6 @@ class SettingsListPresenterTest {
             mockConnectionsRepository,
             mockPreferences,
             mockBiometricTools
-        )
-            .apply { this.viewContract = viewContract }
+        ).apply { this.viewContract = viewContract }
     }
 }

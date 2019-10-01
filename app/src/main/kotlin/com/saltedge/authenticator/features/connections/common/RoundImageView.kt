@@ -5,14 +5,13 @@ import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.content.ContextCompat.getColor
+import androidx.core.content.ContextCompat
 import com.saltedge.authenticator.R
 
 class RoundedImageView : AppCompatImageView {
 
-    private var circleBackgroundColor = getColor(context, R.color.gray_extra_light)
-    private var blackAndWhite: Boolean = false
-    private var opacity: Int = 255
+    private var circleBackgroundColor = ContextCompat.getColor(context, R.color.gray_extra_light)
+    private val opacity: Int = 255
     private val bgPaint = createPaint()
 
     constructor(context: Context?) : super(context)
@@ -57,9 +56,6 @@ class RoundedImageView : AppCompatImageView {
             isDither = true
             alpha = opacity
             color = circleBackgroundColor
-            if (blackAndWhite) {
-                colorFilter = ColorMatrixColorFilter(ColorMatrix().apply { setSaturation(0f) })
-            }
         }
     }
 }
