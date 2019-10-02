@@ -114,12 +114,12 @@ class ConnectProviderPresenter @Inject constructor(
         } else if (result != null && result.isValid()) {
             val providerData = Connection().initWithProviderData(result)
             if (providerData == null) {
-                viewContract?.showErrorAndFinish("Something went wrong. Unable connect to Provider")
+                viewContract?.showErrorAndFinish(appContext.getString(R.string.errors_provider))
             } else {
                 this.connection = providerData
                 performNewConnectionRequest()
             }
-        } else viewContract?.showErrorAndFinish("Something went wrong. Unable connect to Provider")
+        } else viewContract?.showErrorAndFinish(appContext.getString(R.string.errors_provider))
     }
 
     override fun onConnectionInitSuccess(response: AuthenticateConnectionData) {
