@@ -107,23 +107,13 @@ class ConnectionExtensionsTest {
     @Test
     @Throws(Exception::class)
     fun connectionToConnectionAndKeyTest() {
-        val pair: ConnectionAndKey? =
-            Connection().apply { guid = "guid1" }.toConnectionAndKey(mockKeyStoreManager)
+        val pair: ConnectionAndKey? = Connection().apply { guid = "guid1" }.toConnectionAndKey(mockKeyStoreManager)
 
         Assert.assertNull(pair)
 
-        Mockito.`when`(mockKeyStoreManager.getKeyPair("guid1")).thenReturn(
-            KeyPair(
-                publicKey,
-                privateKey
-            )
-        )
+        Mockito.`when`(mockKeyStoreManager.getKeyPair("guid1")).thenReturn(KeyPair(publicKey, privateKey))
 
-        Assert.assertNotNull(
-            Connection().apply { guid = "guid1" }.toConnectionAndKey(
-                mockKeyStoreManager
-            )!!.key
-        )
+        Assert.assertNotNull(Connection().apply { guid = "guid1" }.toConnectionAndKey(mockKeyStoreManager)!!.key)
     }
 
     private val mockKeyStoreManager = Mockito.mock(KeyStoreManagerAbs::class.java)
