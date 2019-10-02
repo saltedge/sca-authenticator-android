@@ -34,7 +34,8 @@ fun ProviderData.isValid(): Boolean {
         name.isNotEmpty() &&
             code.isNotEmpty() &&
             connectUrl.isNotEmpty() &&
-            version == API_VERSION
+            version == API_VERSION &&
+            logoUrl.isNotEmpty()
     } catch (e: Exception) {
         e.printStackTrace()
         false

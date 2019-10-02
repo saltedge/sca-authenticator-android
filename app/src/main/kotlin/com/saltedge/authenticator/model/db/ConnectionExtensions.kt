@@ -34,11 +34,12 @@ import java.security.PrivateKey
  * @param providerData - ProviderData object parsed from QR code
  * @return connection - filled Connection
  */
-fun Connection.initWithProviderData(providerData: ProviderData): Connection {
+fun Connection.initWithProviderData(providerData: ProviderData): Connection? {
+    if (!providerData.isValid()) return null
     this.guid = createRandomBytesString()
     this.name = providerData.name
     this.code = providerData.code
-    this.logoUrl = providerData.logoUrl ?: ""
+    this.logoUrl = providerData.logoUrl
     this.connectUrl = providerData.connectUrl
     this.status = "${ConnectionStatus.INACTIVE}"
     this.createdAt = DateTime.now().withZone(DateTimeZone.UTC).millis
