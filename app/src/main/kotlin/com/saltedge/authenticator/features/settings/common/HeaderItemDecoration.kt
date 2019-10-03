@@ -34,7 +34,7 @@ import com.saltedge.authenticator.R
  */
 class HeaderItemDecoration(
     context: Context,
-    private val headerPositions: Array<Int>
+    var headerPositions: Array<Int>
 ) : RecyclerView.ItemDecoration() {
 
     private val spacePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
