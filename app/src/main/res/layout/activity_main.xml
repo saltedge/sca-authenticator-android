@@ -38,7 +38,7 @@
                 android:id="@+id/toolbarView"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/action_bar_size"
-                android:background="@color/colorPrimary"
+                android:background="@color/color_primary"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
         </FrameLayout>
     </com.google.android.material.appbar.AppBarLayout>
