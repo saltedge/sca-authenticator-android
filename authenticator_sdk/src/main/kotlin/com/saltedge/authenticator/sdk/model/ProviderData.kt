@@ -31,7 +31,7 @@ data class ProviderData(
     @SerializedName(KEY_CONNECT_URL) var connectUrl: String,
     @SerializedName(KEY_CODE) var code: String,
     @SerializedName(KEY_NAME) var name: String,
-    @SerializedName(KEY_LOGO_URL) var logoUrl: String,
+    @SerializedName(KEY_LOGO_URL) var logoUrl: String?,
     @SerializedName(KEY_VERSION) var version: String,
     @SerializedName(KEY_SUPPORT_EMAIL) var supportEmail: String?
 ) : Serializable

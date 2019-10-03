@@ -70,7 +70,7 @@
     <string name="errors_connection_failed_description">We tried connecting your Provider to the Authenticator App, but something went wrong. Please try again or contact our Support Team!</string>
     <string name="errors_permission_denied">Permission Denied</string>
     <string name="errors_invalid_qr">Invalid QR code, please try again</string>
-    <string name="errors_provider">Something went wrong. Unable connect to service provider.</string>
+    <string name="errors_unable_connect_provider">Something went wrong. Unable connect to service provider.</string>
 
     <string name="onboarding_allow_notifications_description">Enable notifications, to receive useful alerts and always be up to speed with your transactions.</string>
     <string name="onboarding_allow_notifications_title">Allow Notifications</string>
