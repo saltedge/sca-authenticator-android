@@ -32,6 +32,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
 import com.saltedge.authenticator.features.settings.about.AboutListFragment
+import com.saltedge.authenticator.features.settings.common.CustomDividerItemDecoration
 import com.saltedge.authenticator.features.settings.common.HeaderItemDecoration
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
@@ -124,17 +125,24 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View,
             val context = activity ?: return
             val layoutManager = LinearLayoutManager(context)
             recyclerView?.layoutManager = layoutManager
-            val dividerItemDecoration = DividerItemDecoration(context, layoutManager.orientation)
-            ContextCompat.getDrawable(context, R.drawable.shape_full_divider)?.let {
-                dividerItemDecoration.setDrawable(it)
-            }
+//            val dividerItemDecoration = DividerItemDecoration(context, layoutManager.orientation)
+//            ContextCompat.getDrawable(context, R.drawable.shape_full_divider)?.let {
+//                dividerItemDecoration.setDrawable(it)
+//            }
+//            recyclerView?.addItemDecoration(dividerItemDecoration)
+
+            recyclerView?.addItemDecoration(
+                CustomDividerItemDecoration(
+                    context = context
+
+                    )
+            )
             recyclerView?.addItemDecoration(
                 HeaderItemDecoration(
                     context = context,
                     delimiterPositions = presenterContract.getPositionsOfDelimiters()
                 )
             )
-            recyclerView?.addItemDecoration(dividerItemDecoration)
             recyclerView?.adapter = SettingsAdapter(this).apply {
                 data = presenterContract.getListItems()
             }
