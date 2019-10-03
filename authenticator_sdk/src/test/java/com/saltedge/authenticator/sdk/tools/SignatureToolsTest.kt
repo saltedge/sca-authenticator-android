@@ -57,6 +57,33 @@ class SignatureToolsTest {
         Assert.assertTrue(signature.verify(signatureHeaderBytes))
     }
 
+    /**
+     * Sign and verify
+     */
+    @Test
+    @Throws(Exception::class)
+    fun createSignatureHeaderTest_custom1() {
+        val expiresAt = "1569937995"
+        val method = "put"
+        val url = "https://57eb0921.ngrok.io/api/authenticator/v1/authorizations/13"
+        val body = "{\"data\":{\"authorization_code\":\"OTU4YjhiMTc0OGI3Zjk5NWE2NjYwNDJlZGUzNjljYmVmMTY4MWI4YjM2ODM2NGJjYzMzNzg2YWE2NTQxOWQzZA==\",\"confirm\":false}}"
+        val signatureHeader = createSignatureHeader(
+            requestMethod = method,
+            requestUrl = url,
+            expiresAt = expiresAt,
+            requestBody = body,
+            privateKey = privateKey
+        )
+
+        val signatureHeaderBytes = Base64.decode(signatureHeader, Base64.NO_WRAP)
+        val testPayload = "$method|$url|$expiresAt|$body"
+        val signature: Signature = Signature.getInstance("SHA256withRSA")
+        signature.initVerify(publicKey)
+        signature.update(testPayload.toByteArray(StandardCharsets.UTF_8))
+
+        Assert.assertTrue(signature.verify(signatureHeaderBytes))
+    }
+
     private var privateKey: PrivateKey = this.getTestPrivateKey()
     private var publicKey: PublicKey = this.getTestPublicKey()
 }

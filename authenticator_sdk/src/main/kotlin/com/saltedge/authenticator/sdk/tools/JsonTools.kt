@@ -34,6 +34,7 @@ import org.joda.time.LocalDate
  */
 fun createDefaultGson(): Gson {
     return GsonBuilder()
+        .disableHtmlEscaping()
         .registerTypeAdapter(DateTime::class.java, DateTimeAdapter())
         .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
         .create()

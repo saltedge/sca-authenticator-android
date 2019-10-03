@@ -107,7 +107,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     }
 
     override fun showError(error: ApiErrorData) {
-        view?.let {
+        listGroup?.let {
             Snackbar.make(it, error.getErrorMessage(it.context), Snackbar.LENGTH_LONG).show()
         }
     }
