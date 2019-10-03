@@ -131,7 +131,7 @@ class SettingsListPresenterTest {
     @Throws(Exception::class)
     fun getPositionsOfDelimitersTest() {
         val presenter = createPresenter(viewContract = mockView)
-        assertThat(presenter.getPositionsOfDelimiters(), equalTo(arrayOf(0, 3, 5)))
+        assertThat(presenter.getPositionsOfHeaders(), equalTo(arrayOf(0, 3, 5)))
     }
 
     @Test

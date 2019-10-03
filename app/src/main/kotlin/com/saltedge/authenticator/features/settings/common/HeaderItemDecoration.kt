@@ -30,10 +30,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
 
 /**
- * Draw large delimiters between some of settings items
+ * Draw large delimiters between of settings items
  */
-class HeaderItemDecoration(context: Context, private val delimiterPositions: Array<Int>) :
-    RecyclerView.ItemDecoration() {
+class HeaderItemDecoration(
+    context: Context,
+    private val headerPositions: Array<Int>
+) : RecyclerView.ItemDecoration() {
 
     private val spacePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = ContextCompat.getColor(context, R.color.gray_extra_light)
@@ -48,7 +50,7 @@ class HeaderItemDecoration(context: Context, private val delimiterPositions: Arr
         parent: RecyclerView,
         state: RecyclerView.State
     ) {
-        if (needDrawBottomDelimiter(parent, view)) {
+        if (needDrawHeader(parent, view)) {
             outRect.top = rectHeight
         } else {
             super.getItemOffsets(outRect, view, parent, state)
@@ -61,7 +63,7 @@ class HeaderItemDecoration(context: Context, private val delimiterPositions: Arr
         val endIndex = parent.adapter?.itemCount ?: 0
         for (index in 0 until endIndex) {
             val currentChild = parent.getChildAt(index)
-            if (needDrawBottomDelimiter(parent, currentChild)) {
+            if (needDrawHeader(parent, currentChild)) {
                 val topOfCurrentView = currentChild.top
                 val startX = dividerStart.toFloat()
                 val topY = topOfCurrentView.toFloat() - rectHeight
@@ -75,8 +77,8 @@ class HeaderItemDecoration(context: Context, private val delimiterPositions: Arr
     /**
      * Determines at which positions the header delimiters should be drawn
      */
-    private fun needDrawBottomDelimiter(parent: RecyclerView, view: View): Boolean {
+    private fun needDrawHeader(parent: RecyclerView, view: View): Boolean {
         val viewPosition = parent.getChildAdapterPosition(view)
-        return delimiterPositions.contains(viewPosition)
+        return headerPositions.contains(viewPosition)
     }
 }

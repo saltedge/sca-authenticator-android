@@ -30,7 +30,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
 
 class CustomDividerItemDecoration(
-    context: Context
+    context: Context,
+    private val delimiterPositions: Array<Int>
 ) : RecyclerView.ItemDecoration() {
 
     private val dividerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -47,7 +48,11 @@ class CustomDividerItemDecoration(
         parent: RecyclerView,
         state: RecyclerView.State
     ) {
-        outRect.bottom = dividerHeight
+        if (needDrawBottomDelimiter(parent, view)) {
+            outRect.bottom = dividerHeight
+        } else {
+            super.getItemOffsets(outRect, view, parent, state)
+        }
     }
 
     override fun onDraw(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State) {
@@ -56,11 +61,21 @@ class CustomDividerItemDecoration(
         val endIndex = parent.adapter?.itemCount ?: 0
         for (index in 0 until endIndex) {
             val currentChild = parent.getChildAt(index)
-            val topOfCurrentView = currentChild.top
-            val startX = dividerStart.toFloat()
-            val endX = dividerEnd.toFloat()
-            val bottomY = topOfCurrentView.toFloat()
-            canvas.drawLine(startX, bottomY, endX, bottomY, dividerPaint)
+            if (needDrawBottomDelimiter(parent, currentChild)) {
+                val topOfCurrentView = currentChild.top
+                val startX = dividerStart.toFloat()
+                val endX = dividerEnd.toFloat()
+                val bottomY = topOfCurrentView.toFloat()
+                canvas.drawLine(startX, bottomY, endX, bottomY, dividerPaint)
+            }
         }
+    }
+
+    /**
+     * Determines at which positions the header delimiters should be drawn
+     */
+    private fun needDrawBottomDelimiter(parent: RecyclerView, view: View): Boolean {
+        val viewPosition = parent.getChildAdapterPosition(view)
+        return delimiterPositions.contains(viewPosition)
     }
 }

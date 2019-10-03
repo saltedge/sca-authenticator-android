@@ -41,6 +41,7 @@ interface SettingsListContract {
         fun onListItemCheckedStateChanged(itemId: Int, checked: Boolean)
         fun onListItemClick(itemId: Int)
         fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
-        fun getPositionsOfDelimiters(): Array<Int>
+        fun getPositionsOfHeaders(): Array<Int>
+        fun getPositionsOfDividers(): Array<Int>
     }
 }
