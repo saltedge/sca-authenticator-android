@@ -70,7 +70,7 @@ class BiometricsInputPresenterTest {
 
         Mockito.verify(mockView).updateStatusView(
             imageResId = R.drawable.ic_fingerprint_confirmed,
-            textColorResId = R.color.colorPrimary,
+            textColorResId = R.color.color_primary,
             textResId = R.string.fingerprint_confirmed,
             animateText = false
         )
@@ -80,7 +80,7 @@ class BiometricsInputPresenterTest {
 
         Mockito.verify(mockView).updateStatusView(
             imageResId = R.drawable.ic_fingerprint_confirmed,
-            textColorResId = R.color.colorPrimary,
+            textColorResId = R.color.color_primary,
             textResId = R.string.fingerprint_confirmed,
             animateText = false
         )

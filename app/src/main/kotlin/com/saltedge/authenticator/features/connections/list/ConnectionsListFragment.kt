@@ -34,6 +34,7 @@ import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDi
 import com.saltedge.authenticator.features.connections.edit.name.EditConnectionNameDialog
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListModule
 import com.saltedge.authenticator.features.connections.options.ConnectionOptionsDialog
+import com.saltedge.authenticator.common.SpaceItemDecoration
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.tool.*
@@ -48,6 +49,7 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
     lateinit var presenterContract: ConnectionsListContract.Presenter
     private val adapter = ConnectionsListAdapter(clickListener = this)
     private var optionsDialog: ConnectionOptionsDialog? = null
+    private var headerDecorator: SpaceItemDecoration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +73,10 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
             connectionsListView?.adapter = adapter
             connectionsFabView?.setOnClickListener(this)
             emptyView?.setOnClickListener(this)
+            val context = activity ?: return
+            headerDecorator = SpaceItemDecoration(
+                context = context
+            ).apply { connectionsListView?.addItemDecoration(this) }
         } catch (e: Exception) {
             e.log()
         }
@@ -105,7 +111,10 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
     }
 
     override fun updateViewsContent() {
-        adapter.data = presenterContract.getListItems()
+        presenterContract.getListItems().let {
+            headerDecorator?.headerPositions = it.mapIndexed { index, _ -> index }.toTypedArray()
+            adapter.data = it
+        }
         val viewIsEmpty = adapter.isEmpty
         emptyView?.setVisible(viewIsEmpty)
         connectionsListView?.setVisible(!viewIsEmpty)

@@ -70,11 +70,11 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.13.1'
-    implementation 'net.danlew:android.joda:2.10.1.1'
+    implementation 'net.danlew:android.joda:2.10.2'
 
     androidTestUtil 'com.android.support.test:orchestrator:1.0.2'
     testImplementation 'junit:junit:4.12'

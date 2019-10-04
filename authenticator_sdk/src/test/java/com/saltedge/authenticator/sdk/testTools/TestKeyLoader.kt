@@ -39,8 +39,8 @@ fun Any.getTestPrivateKey(): PrivateKey {
     return kf.generatePrivate(keySpecPKCS8)
 }
 
-fun Any.getTestPublicKey(): PublicKey {
-    var publicKeyContent = this.loadFile("public_key.pem")
+fun Any.getTestPublicKey(keyString: String? = null): PublicKey {
+    var publicKeyContent = keyString ?: this.loadFile("public_key.pem")
     publicKeyContent = publicKeyContent.replace("\\n".toRegex(), "").replace("-----BEGIN PUBLIC KEY-----", "").replace("-----END PUBLIC KEY-----", "")
 
     val kf = KeyFactory.getInstance("RSA")

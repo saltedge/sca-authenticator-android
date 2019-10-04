@@ -44,16 +44,18 @@ class ConnectionExtensionsTest {
     @Test
     @Throws(Exception::class)
     fun connectionInitWithProviderDataTest() {
-        var connection = Connection().initWithProviderData(
-            ProviderData(
-                code = "demobank",
-                name = "Demobank",
-                connectUrl = "url",
-                logoUrl = "url",
-                version = "1",
-                supportEmail = "exampple1@saltedge.com"
+        var connection = Connection().apply {
+            initWithProviderData(
+                ProviderData(
+                    code = "demobank",
+                    name = "Demobank",
+                    connectUrl = "url",
+                    logoUrl = "url",
+                    version = "1",
+                    supportEmail = "exampple1@saltedge.com"
+                )
             )
-        )
+        }
 
         Assert.assertTrue(connection.guid.isNotEmpty())
         assertThat(connection.id, equalTo(""))
@@ -67,16 +69,18 @@ class ConnectionExtensionsTest {
         assertThat(connection.status, equalTo("${ConnectionStatus.INACTIVE}"))
         assertThat(connection.supportEmail, equalTo("exampple1@saltedge.com"))
 
-        connection = connection.initWithProviderData(
-            ProviderData(
-                connectUrl = "url1",
-                code = "code2",
-                name = "name3",
-                logoUrl = "url4",
-                version = "1",
-                supportEmail = "example2@saltedge.com"
+        connection = connection.apply {
+            initWithProviderData(
+                ProviderData(
+                    connectUrl = "url1",
+                    code = "code2",
+                    name = "name3",
+                    logoUrl = "url4",
+                    version = "1",
+                    supportEmail = "example2@saltedge.com"
+                )
             )
-        )
+        }
 
         Assert.assertTrue(connection.guid.isNotEmpty())
         assertThat(connection.id, equalTo(""))

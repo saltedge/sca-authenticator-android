@@ -29,6 +29,6 @@
         android:layout_height="@dimen/dp_80"
         android:layout_gravity="center"
         android:indeterminate="true"
-        android:indeterminateTint="@color/cyan"
+        android:indeterminateTint="@color/color_secondary"
         android:indeterminateTintMode="src_in" />
 </FrameLayout>

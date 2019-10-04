@@ -117,25 +117,23 @@ class SettingsListPresenter @Inject constructor(
         }
     }
 
-    override fun getPositionsOfDelimiters(): Array<Int> = arrayOf(0, 3, 5)
+    override fun getPositionsOfHeaders(): Array<Int> = arrayOf(0, 3, 5)
 
     private fun onUserConfirmedDeleteAllConnections() {
         sendRevokeRequestForConnections(connectionsRepository.getAllActiveConnections())
         deleteAllConnectionsAndKeys()
     }
 
-    private fun deleteAllConnectionsAndKeys() {
-        val connectionGuids = connectionsRepository.getAllConnections().map { it.guid }
-        keyStoreManager.deleteKeyPairs(connectionGuids)
-        connectionsRepository.deleteAllConnections()
-        preferences.clearUserPreferences()
-    }
-
-
     private fun sendRevokeRequestForConnections(connections: List<Connection>) {
         val connectionsAndKeys: List<ConnectionAndKey> = connections.filter { it.isActive() }
             .mapNotNull { it.toConnectionAndKey(keyStoreManager) }
 
         apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = null)
+    }
+
+    private fun deleteAllConnectionsAndKeys() {
+        val connectionGuids = connectionsRepository.getAllConnections().map { it.guid }
+        keyStoreManager.deleteKeyPairs(connectionGuids)
+        connectionsRepository.deleteAllConnections()
     }
 }

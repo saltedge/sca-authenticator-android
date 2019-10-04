@@ -85,7 +85,7 @@
     </style>
 
     <style name="Text14CyanMedium">
-        <item name="android:textColor">@color/cyan</item>
+        <item name="android:textColor">@color/color_secondary</item>
         <item name="android:textSize">@dimen/text_14</item>
         <item name="android:fontFamily">@font/roboto_medium</item>
     </style>
