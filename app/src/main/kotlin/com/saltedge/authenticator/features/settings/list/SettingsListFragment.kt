@@ -30,7 +30,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
 import com.saltedge.authenticator.features.settings.about.AboutListFragment
-import com.saltedge.authenticator.features.settings.common.HeaderItemDecoration
+import com.saltedge.authenticator.common.SpaceItemDecoration
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
 import com.saltedge.authenticator.features.settings.list.di.SettingsListModule
@@ -123,7 +123,7 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View,
             val layoutManager = LinearLayoutManager(context)
             recyclerView?.layoutManager = layoutManager
             recyclerView?.addItemDecoration(
-                HeaderItemDecoration(
+                SpaceItemDecoration(
                     context = context,
                     headerPositions = presenterContract.getPositionsOfHeaders()
                 )

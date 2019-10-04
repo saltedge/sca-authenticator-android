@@ -34,7 +34,7 @@ import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDi
 import com.saltedge.authenticator.features.connections.edit.name.EditConnectionNameDialog
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListModule
 import com.saltedge.authenticator.features.connections.options.ConnectionOptionsDialog
-import com.saltedge.authenticator.features.settings.common.HeaderItemDecoration
+import com.saltedge.authenticator.common.SpaceItemDecoration
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.tool.*
@@ -49,7 +49,7 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
     lateinit var presenterContract: ConnectionsListContract.Presenter
     private val adapter = ConnectionsListAdapter(clickListener = this)
     private var optionsDialog: ConnectionOptionsDialog? = null
-    private var headerDecorator: HeaderItemDecoration? = null
+    private var headerDecorator: SpaceItemDecoration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,9 +74,8 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
             connectionsFabView?.setOnClickListener(this)
             emptyView?.setOnClickListener(this)
             val context = activity ?: return
-            headerDecorator = HeaderItemDecoration(
-                context = context,
-                headerPositions = emptyArray()
+            headerDecorator = SpaceItemDecoration(
+                context = context
             ).apply { connectionsListView?.addItemDecoration(this) }
         } catch (e: Exception) {
             e.log()

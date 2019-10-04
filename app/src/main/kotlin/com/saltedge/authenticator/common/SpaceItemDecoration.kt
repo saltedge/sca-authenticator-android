@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.settings.common
+package com.saltedge.authenticator.common
 
 import android.content.Context
 import android.graphics.Canvas
@@ -30,17 +30,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
 
 /**
- * Draw large delimiters between of settings items
+ * Draw space between of list items
  */
-class HeaderItemDecoration(
+class SpaceItemDecoration(
     context: Context,
-    var headerPositions: Array<Int>
+    var headerPositions: Array<Int> = emptyArray()
 ) : RecyclerView.ItemDecoration() {
-
-    private val spacePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, android.R.color.transparent)
-        style = Paint.Style.FILL
-    }
 
     private val dividerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = ContextCompat.getColor(context, R.color.divider_color)
@@ -48,7 +43,7 @@ class HeaderItemDecoration(
         strokeWidth = context.resources.getDimension(R.dimen.dp_1)
     }
 
-    private val rectHeight = context.resources.getDimensionPixelSize(R.dimen.dp_20)
+    private val spaceHeight = context.resources.getDimensionPixelSize(R.dimen.dp_20)
     private val dividerHeight = context.resources.getDimensionPixelSize(R.dimen.dp_1)
 
     override fun getItemOffsets(
@@ -57,10 +52,10 @@ class HeaderItemDecoration(
         parent: RecyclerView,
         state: RecyclerView.State
     ) {
-        if (needDrawHeader(parent, view)) {
-            outRect.top = rectHeight
+        if (needToDrawSpace(parent, view)) {
+            outRect.top = spaceHeight
         }
-        if (needDrawDivider(parent, view)) {
+        if (needToDrawDivider(parent, view)) {
             outRect.bottom = dividerHeight
         }
     }
@@ -69,17 +64,12 @@ class HeaderItemDecoration(
         val dividerStart = parent.paddingStart
         val dividerEnd = parent.width - parent.paddingEnd
         val endIndex = parent.adapter?.itemCount ?: 0
-        for (index in 0 until endIndex) {
+        for (index in 0 until endIndex - 1) {
             val currentChild = parent.getChildAt(index)
-            val topOfCurrentView = currentChild.top
             val startX = dividerStart.toFloat()
-            val topY = topOfCurrentView.toFloat() - rectHeight
             val endX = dividerEnd.toFloat()
-            val bottomY = topOfCurrentView.toFloat()
-            if (needDrawHeader(parent, currentChild)) {
-                canvas.drawRect(startX, topY, endX, bottomY, spacePaint)
-            }
-            if (needDrawDivider(parent, currentChild)) {
+            val bottomY = currentChild.bottom.toFloat() + dividerHeight / 2
+            if (needToDrawDivider(parent, currentChild)) {
                 canvas.drawLine(startX, bottomY, endX, bottomY, dividerPaint)
             }
         }
@@ -88,7 +78,7 @@ class HeaderItemDecoration(
     /**
      * Determines at which positions the dividers should be drawn
      */
-    private fun needDrawDivider(parent: RecyclerView, view: View): Boolean {
+    private fun needToDrawDivider(parent: RecyclerView, view: View): Boolean {
         val viewPosition = parent.getChildAdapterPosition(view)
         return !headerPositions.contains(viewPosition + 1)
     }
@@ -96,7 +86,7 @@ class HeaderItemDecoration(
     /**
      * Determines at which positions the header delimiters should be drawn
      */
-    private fun needDrawHeader(parent: RecyclerView, view: View): Boolean {
+    private fun needToDrawSpace(parent: RecyclerView, view: View): Boolean {
         val viewPosition = parent.getChildAdapterPosition(view)
         return headerPositions.contains(viewPosition)
     }
