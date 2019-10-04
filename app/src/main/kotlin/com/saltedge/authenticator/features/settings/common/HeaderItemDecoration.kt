@@ -38,7 +38,7 @@ class HeaderItemDecoration(
 ) : RecyclerView.ItemDecoration() {
 
     private val spacePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.gray_extra_light)
+        color = ContextCompat.getColor(context, android.R.color.transparent)
         style = Paint.Style.FILL
     }
 
@@ -85,6 +85,9 @@ class HeaderItemDecoration(
         }
     }
 
+    /**
+     * Determines at which positions the dividers should be drawn
+     */
     private fun needDrawDivider(parent: RecyclerView, view: View): Boolean {
         val viewPosition = parent.getChildAdapterPosition(view)
         return !headerPositions.contains(viewPosition + 1)
