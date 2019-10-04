@@ -79,7 +79,6 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         presenter.viewContract = this
         biometricPrompt.resultCallback = presenter
         contentAdapter?.listItemClickListener = presenter
-        clearAllNotifications()
     }
 
     override fun onResume() {
@@ -113,6 +112,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     }
 
     override fun updateViewsContent() {
+        clearAllNotifications()
         activity?.runOnUiThread {
             listGroup?.setVisible(presenter.showContentViews)
             emptyView?.setVisible(presenter.showEmptyView)
