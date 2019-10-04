@@ -20,9 +20,9 @@
  */
 package com.saltedge.authenticator.sdk.tools
 
-import com.saltedge.authenticator.sdk.model.ProviderData
-import com.saltedge.authenticator.sdk.testTools.toJsonString
-import org.junit.Assert.assertEquals
+import com.saltedge.authenticator.sdk.model.AuthorizationData
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -30,18 +30,17 @@ class JsonToolsTest {
 
     @Test
     @Throws(Exception::class)
-    fun toJsonStringTest() {
-        assertEquals("\"test\"", "test".toJsonString())
-
-        val data = ProviderData(
-            connectUrl = "",
-            logoUrl = "",
-            name = "",
-            code = "",
-            version = "",
-            supportEmail = "example@example.com"
+    fun createDefaultGsonTest() {
+        val gson = createDefaultGson()
+        val data = AuthorizationData(
+            id = "",
+            title = "",
+            description = "",
+            authorizationCode = "Qwerty1+==",
+            connectionId = "",
+            expiresAt = DateTime(0).withZone(DateTimeZone.UTC)
         )
-
-        assertTrue(data.toJsonString().isNotEmpty())
+        assertTrue(gson.toJson(data).contains("Qwerty1+=="))
+        assertTrue(gson.toJson(data).contains("1970-01-01T00:00:00.000Z"))
     }
 }
