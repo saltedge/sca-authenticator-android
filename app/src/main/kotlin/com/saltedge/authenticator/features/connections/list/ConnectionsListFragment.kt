@@ -78,7 +78,6 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
                 context = context,
                 headerPositions = emptyArray()
             ).apply { connectionsListView?.addItemDecoration(this) }
-
         } catch (e: Exception) {
             e.log()
         }

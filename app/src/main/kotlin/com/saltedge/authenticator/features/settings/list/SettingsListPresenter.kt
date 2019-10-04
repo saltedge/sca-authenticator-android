@@ -119,8 +119,6 @@ class SettingsListPresenter @Inject constructor(
 
     override fun getPositionsOfHeaders(): Array<Int> = arrayOf(0, 3, 5)
 
-    override fun getPositionsOfDividers(): Array<Int> = arrayOf(0, 1, 3)
-
     private fun onUserConfirmedDeleteAllConnections() {
         sendRevokeRequestForConnections(connectionsRepository.getAllActiveConnections())
         deleteAllConnectionsAndKeys()

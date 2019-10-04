@@ -42,7 +42,14 @@ class HeaderItemDecoration(
         style = Paint.Style.FILL
     }
 
+    private val dividerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = ContextCompat.getColor(context, R.color.divider_color)
+        style = Paint.Style.STROKE
+        strokeWidth = context.resources.getDimension(R.dimen.dp_1)
+    }
+
     private val rectHeight = context.resources.getDimensionPixelSize(R.dimen.dp_20)
+    private val dividerHeight = context.resources.getDimensionPixelSize(R.dimen.dp_1)
 
     override fun getItemOffsets(
         outRect: Rect,
@@ -52,8 +59,9 @@ class HeaderItemDecoration(
     ) {
         if (needDrawHeader(parent, view)) {
             outRect.top = rectHeight
-        } else {
-            super.getItemOffsets(outRect, view, parent, state)
+        }
+        if (needDrawDivider(parent, view)) {
+            outRect.bottom = dividerHeight
         }
     }
 
@@ -63,15 +71,23 @@ class HeaderItemDecoration(
         val endIndex = parent.adapter?.itemCount ?: 0
         for (index in 0 until endIndex) {
             val currentChild = parent.getChildAt(index)
+            val topOfCurrentView = currentChild.top
+            val startX = dividerStart.toFloat()
+            val topY = topOfCurrentView.toFloat() - rectHeight
+            val endX = dividerEnd.toFloat()
+            val bottomY = topOfCurrentView.toFloat()
             if (needDrawHeader(parent, currentChild)) {
-                val topOfCurrentView = currentChild.top
-                val startX = dividerStart.toFloat()
-                val topY = topOfCurrentView.toFloat() - rectHeight
-                val endX = dividerEnd.toFloat()
-                val bottomY = topOfCurrentView.toFloat()
                 canvas.drawRect(startX, topY, endX, bottomY, spacePaint)
             }
+            if (needDrawDivider(parent, currentChild)) {
+                canvas.drawLine(startX, bottomY, endX, bottomY, dividerPaint)
+            }
         }
+    }
+
+    private fun needDrawDivider(parent: RecyclerView, view: View): Boolean {
+        val viewPosition = parent.getChildAdapterPosition(view)
+        return !headerPositions.contains(viewPosition + 1)
     }
 
     /**

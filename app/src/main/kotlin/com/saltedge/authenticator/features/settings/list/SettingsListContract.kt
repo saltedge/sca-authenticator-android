@@ -42,6 +42,5 @@ interface SettingsListContract {
         fun onListItemClick(itemId: Int)
         fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
         fun getPositionsOfHeaders(): Array<Int>
-        fun getPositionsOfDividers(): Array<Int>
     }
 }
