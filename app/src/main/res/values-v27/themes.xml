@@ -23,7 +23,7 @@
 
     <style name="MainScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/blue</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/blue</item>
         <item name="android:colorButtonNormal">@color/button_blue_default</item>
         <item name="android:colorControlHighlight">@color/button_blue_pressed</item>

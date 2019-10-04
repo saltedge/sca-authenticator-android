@@ -63,7 +63,7 @@ class StepProgressView : View, ValueAnimator.AnimatorUpdateListener {
     private val passedStepColor: Int
         get() = ContextCompat.getColor(context, R.color.blue)
     private val passedStepCenterPointColor: Int
-        get() = ContextCompat.getColor(context, R.color.cyan)
+        get() = ContextCompat.getColor(context, R.color.color_secondary)
     private var linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         strokeWidth = lineHeight

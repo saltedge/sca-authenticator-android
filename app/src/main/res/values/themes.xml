@@ -29,7 +29,7 @@
     </style>
 
     <style name="SetupScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowContentOverlay">@null</item>
@@ -46,7 +46,7 @@
 
     <style name="ConnectScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/blue</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/blue</item>
         <item name="colorControlNormal">@color/divider_color</item>
         <item name="colorControlActivated">@color/blue</item>
@@ -57,7 +57,7 @@
 
     <style name="MainScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/blue</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/blue</item>
         <item name="android:colorButtonNormal">@color/button_blue_default</item>
         <item name="android:colorControlHighlight">@color/button_blue_pressed</item>

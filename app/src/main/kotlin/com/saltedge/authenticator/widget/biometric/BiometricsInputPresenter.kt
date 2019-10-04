@@ -98,7 +98,7 @@ class BiometricsInputPresenter(
             } else {
                 R.drawable.ic_fingerprint_error
             }
-            val colorResId = if (success) R.color.colorPrimary else R.color.red
+            val colorResId = if (success) R.color.color_primary else R.color.red
             val text = if (success) {
                 R.string.fingerprint_confirmed
             } else {
