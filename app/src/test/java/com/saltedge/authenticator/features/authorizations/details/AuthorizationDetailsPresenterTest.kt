@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.authorizations.details
 
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationViewModel
 import com.saltedge.authenticator.model.db.Connection
@@ -715,6 +716,59 @@ class AuthorizationDetailsPresenterTest {
             ViewMode.CONFIRM_PROCESSING,
             ignoreTimeUpdate = ViewMode.CONFIRM_PROCESSING.showProgress
         )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun setInitialDataTest() {
+        val presenter = createPresenter(viewContract = mockView)
+        presenter.setInitialData("1", "1")
+
+        assertThat(presenter.currentViewModel, equalTo(AuthorizationViewModel(
+            authorizationID = "",
+            authorizationCode = "",
+            title = "",
+            description = "",
+            validSeconds = 0,
+            expiresAt = DateTime(0L),
+            createdAt = DateTime(0L),
+            connectionID = "",
+            connectionName = "",
+            connectionLogoUrl = "",
+            viewMode = ViewMode.LOADING
+        )))
+
+        presenter.setInitialData("1", "")
+
+        assertThat(presenter.currentViewModel, equalTo(AuthorizationViewModel(
+            authorizationID = "",
+            authorizationCode = "",
+            title = "",
+            description = "",
+            validSeconds = 0,
+            expiresAt = DateTime(0L),
+            createdAt = DateTime(0L),
+            connectionID = "",
+            connectionName = "",
+            connectionLogoUrl = "",
+            viewMode = ViewMode.UNAVAILABLE
+        )))
+
+        presenter.setInitialData("1", null)
+
+        assertThat(presenter.currentViewModel, equalTo(AuthorizationViewModel(
+            authorizationID = "",
+            authorizationCode = "",
+            title = "",
+            description = "",
+            validSeconds = 0,
+            expiresAt = DateTime(0L),
+            createdAt = DateTime(0L),
+            connectionID = "",
+            connectionName = "",
+            connectionLogoUrl = "",
+            viewMode = ViewMode.UNAVAILABLE
+        )))
     }
 
     @Test

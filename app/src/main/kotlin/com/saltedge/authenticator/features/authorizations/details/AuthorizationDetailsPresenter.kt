@@ -77,7 +77,7 @@ class AuthorizationDetailsPresenter(
     }
 
     fun onFragmentResume() {
-        if (modelCanBeRefreshed()) startPolling()
+        if (viewMode === ViewMode.LOADING || viewMode === ViewMode.DEFAULT) startPolling()
         viewContract?.startTimer()
         updateViewContent()
     }
@@ -204,10 +204,6 @@ class AuthorizationDetailsPresenter(
                 updateViewContent()
             }
         } ?: setUnavailableState()
-    }
-
-    private fun modelCanBeRefreshed(): Boolean {
-        return viewMode === ViewMode.LOADING || viewMode === ViewMode.DEFAULT
     }
 
     private fun updateViewContent() {
