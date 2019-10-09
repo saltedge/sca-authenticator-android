@@ -209,7 +209,7 @@ class AuthorizationDetailsPresenter(
     }
 
     private fun updateViewContent() {
-        viewContract?.setHeaderVisibility(show = currentViewModel != null)
+        viewContract?.setHeaderVisibility(show = authorizationAvailable)
         viewContract?.setContentViewMode(viewMode, ignoreTimeUpdate = viewMode.showProgress)
         currentViewModel?.let {
             viewContract?.setHeaderValues(

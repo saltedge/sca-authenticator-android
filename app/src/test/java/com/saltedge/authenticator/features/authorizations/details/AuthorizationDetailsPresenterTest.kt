@@ -67,7 +67,7 @@ class AuthorizationDetailsPresenterTest {
         presenter.onFragmentResume()
 
         Mockito.verify(mockView).startTimer()
-        Mockito.verify(mockView).setHeaderVisibility(true)
+        Mockito.verify(mockView).setHeaderVisibility(false)
         Mockito.verify(mockView).setContentViewMode(
             ViewMode.UNAVAILABLE,
             ignoreTimeUpdate = ViewMode.UNAVAILABLE.showProgress
