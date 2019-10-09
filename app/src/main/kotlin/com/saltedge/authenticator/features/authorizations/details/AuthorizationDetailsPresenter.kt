@@ -44,8 +44,6 @@ class AuthorizationDetailsPresenter(
     FetchAuthorizationContract {
 
     var viewContract: AuthorizationDetailsContract.View? = null
-    private val modelIsNotExpired: Boolean
-        get() = currentViewModel?.isNotExpired ?: true
     private val modelHasFinalMode: Boolean
         get() = currentViewModel?.hasFinalMode ?: false
     private var pollingService: SingleAuthorizationPollingService =
@@ -79,7 +77,7 @@ class AuthorizationDetailsPresenter(
     }
 
     fun onFragmentResume() {
-        if (authorizationAvailable && modelIsNotExpired) startPolling()
+        if (modelCanBeRefreshed()) startPolling()
         viewContract?.startTimer()
         updateViewContent()
     }
@@ -206,6 +204,10 @@ class AuthorizationDetailsPresenter(
                 updateViewContent()
             }
         } ?: setUnavailableState()
+    }
+
+    private fun modelCanBeRefreshed(): Boolean {
+        return viewMode === ViewMode.LOADING || viewMode === ViewMode.DEFAULT
     }
 
     private fun updateViewContent() {

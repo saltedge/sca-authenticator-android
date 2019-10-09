@@ -60,7 +60,7 @@ data class AuthorizationViewModel(
      * @return Boolean, true if model is expired and does not have final viewMode
      */
     val shouldBeSetTimeOutMode: Boolean
-        get() = this.isExpired && !this.hasFinalMode
+        get() = this.isExpired && !this.hasFinalMode && this.viewMode != ViewMode.LOADING
 
     /**
      * Check that model has final viewMode

@@ -21,9 +21,9 @@
 package com.saltedge.authenticator.unitTests.model.realm
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.saltedge.authenticator.instrumentationTestTools.TestTools
 import com.saltedge.authenticator.model.realm.DB_SCHEMA_VERSION
 import com.saltedge.authenticator.model.realm.RealmManager
-import com.saltedge.authenticator.instrumentationTestTools.TestTools
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert
