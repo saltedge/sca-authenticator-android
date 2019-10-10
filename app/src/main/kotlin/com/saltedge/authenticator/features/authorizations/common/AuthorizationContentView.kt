@@ -23,6 +23,7 @@ package com.saltedge.authenticator.features.authorizations.common
 import android.content.Context
 import android.text.method.ScrollingMovementMethod
 import android.util.AttributeSet
+import android.util.Log
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import com.saltedge.authenticator.R
@@ -38,12 +39,15 @@ class AuthorizationContentView : LinearLayout {
 
     init {
         inflate(context, R.layout.view_authorization_content,this)
+        blurringView.setBlurredView(blurredView)
+        blurringView.invalidate()
     }
 
     fun setViewMode(viewMode: ViewMode) {
         val showStatus = viewMode !== ViewMode.DEFAULT
-
+//        blurringView?.setVisible(show = showStatus)
         if (showStatus) {
+
             if (!statusLayout.isVisible) {
                 statusLayout.alpha = 0.1f
                 statusLayout?.setVisible(show = showStatus)
