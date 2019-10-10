@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.authorizations.details
 
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationContentView
 import com.saltedge.authenticator.features.authorizations.common.BaseAuthorizationViewContract
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import org.joda.time.DateTime

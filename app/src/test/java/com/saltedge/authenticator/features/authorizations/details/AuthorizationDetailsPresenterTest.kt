@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.authorizations.details
 
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationViewModel
 import com.saltedge.authenticator.model.db.Connection
@@ -68,7 +69,20 @@ class AuthorizationDetailsPresenterTest {
 
         Mockito.verify(mockView).startTimer()
         Mockito.verify(mockView).setHeaderVisibility(false)
-        Mockito.verify(mockView).setContentViewMode(ViewMode.UNAVAILABLE, ignoreTimeUpdate = ViewMode.UNAVAILABLE.showProgress)
+        Mockito.verify(mockView).setContentViewMode(
+            ViewMode.UNAVAILABLE,
+            ignoreTimeUpdate = ViewMode.UNAVAILABLE.showProgress
+        )
+        Mockito.verify(mockView).setHeaderValues(
+            logoUrl = "",
+            title = "",
+            startTime = DateTime(0L),
+            endTime = DateTime(0L)
+        )
+        Mockito.verify(mockView).setContentTitleAndDescription(
+            title = "",
+            description = ""
+        )
         Mockito.verifyNoMoreInteractions(mockPollingService, mockView)
     }
 
@@ -79,10 +93,22 @@ class AuthorizationDetailsPresenterTest {
         presenter.setInitialData(connectionId = "1", authorizationId = "1")
         presenter.onFragmentResume()
 
-        Mockito.verify(mockPollingService).start("1")
         Mockito.verify(mockView).startTimer()
-        Mockito.verify(mockView).setHeaderVisibility(false)
-        Mockito.verify(mockView).setContentViewMode(ViewMode.LOADING, ignoreTimeUpdate = ViewMode.LOADING.showProgress)
+        Mockito.verify(mockView).setHeaderVisibility(true)
+        Mockito.verify(mockView).setContentViewMode(
+            ViewMode.LOADING,
+            ignoreTimeUpdate = ViewMode.LOADING.showProgress
+        )
+        Mockito.verify(mockView).setHeaderValues(
+            logoUrl = "",
+            title = "",
+            startTime = DateTime(0L),
+            endTime = DateTime(0L)
+        )
+        Mockito.verify(mockView).setContentTitleAndDescription(
+            title = "",
+            description = ""
+        )
         Mockito.verifyNoMoreInteractions(mockView)
     }
 
@@ -100,7 +126,10 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onViewClickTest_negativeActionView() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.setInitialData(
+            connectionId = viewModel1.connectionID,
+            authorizationId = viewModel1.authorizationID
+        )
         presenter.currentViewModel = viewModel1
 
         presenter.onViewClick(R.id.negativeActionView)
@@ -113,14 +142,20 @@ class AuthorizationDetailsPresenterTest {
             resultCallback = presenter
         )
         Mockito.verify(mockPollingService).stop()
-        Mockito.verify(mockView).setContentViewMode(ViewMode.DENY_PROCESSING, ignoreTimeUpdate = ViewMode.DENY_PROCESSING.showProgress)
+        Mockito.verify(mockView).setContentViewMode(
+            ViewMode.DENY_PROCESSING,
+            ignoreTimeUpdate = ViewMode.DENY_PROCESSING.showProgress
+        )
     }
 
     @Test
     @Throws(Exception::class)
     fun onViewClickTest_negativeActionView_InvalidParams() {
         val presenter = createPresenter(viewContract = null)
-        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.setInitialData(
+            connectionId = viewModel1.connectionID,
+            authorizationId = viewModel1.authorizationID
+        )
         presenter.currentViewModel = viewModel1
 
         Mockito.clearInvocations(mockApiManager, mockPollingService, mockView)
@@ -147,7 +182,10 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onViewClickTest_positiveActionView() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.setInitialData(
+            connectionId = viewModel1.connectionID,
+            authorizationId = viewModel1.authorizationID
+        )
         presenter.currentViewModel = viewModel1
 
         Mockito.doReturn(true).`when`(mockBiometricTools).isBiometricReady(TestAppTools.applicationContext)
@@ -161,14 +199,20 @@ class AuthorizationDetailsPresenterTest {
             resultCallback = presenter
         )
         Mockito.verify(mockPollingService).stop()
-        Mockito.verify(mockView).setContentViewMode(ViewMode.CONFIRM_PROCESSING, ignoreTimeUpdate = ViewMode.CONFIRM_PROCESSING.showProgress)
+        Mockito.verify(mockView).setContentViewMode(
+            ViewMode.CONFIRM_PROCESSING,
+            ignoreTimeUpdate = ViewMode.CONFIRM_PROCESSING.showProgress
+        )
     }
 
     @Test
     @Throws(Exception::class)
     fun onViewClickTest_positiveActionView_InvalidParams() {
         val presenter = createPresenter(viewContract = null)
-        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.setInitialData(
+            connectionId = viewModel1.connectionID,
+            authorizationId = viewModel1.authorizationID
+        )
         presenter.currentViewModel = viewModel1
 
         Mockito.doReturn(true).`when`(mockBiometricTools).isBiometricReady(TestAppTools.applicationContext)
@@ -196,13 +240,20 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onTimerTickTest_shouldBeSetTimeOutMode() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
-        presenter.currentViewModel = viewModel1.copy(expiresAt = DateTime.now().minusMinutes(1), viewMode = ViewMode.DEFAULT)
+        presenter.setInitialData(
+            connectionId = viewModel1.connectionID,
+            authorizationId = viewModel1.authorizationID
+        )
+        presenter.currentViewModel =
+            viewModel1.copy(expiresAt = DateTime.now().minusMinutes(1), viewMode = ViewMode.DEFAULT)
 
         presenter.onTimerTick()
 
         Mockito.verify(mockView).updateTimeViews()
-        Mockito.verify(mockView).setContentViewMode(ViewMode.TIME_OUT, ignoreTimeUpdate = ViewMode.TIME_OUT.showProgress)
+        Mockito.verify(mockView).setContentViewMode(
+            ViewMode.TIME_OUT,
+            ignoreTimeUpdate = ViewMode.TIME_OUT.showProgress
+        )
         assertThat(presenter.currentViewModel!!.viewMode, equalTo(ViewMode.TIME_OUT))
     }
 
@@ -210,7 +261,10 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onTimerTickTest_shouldBeDestroyed() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.setInitialData(
+            connectionId = viewModel1.connectionID,
+            authorizationId = viewModel1.authorizationID
+        )
         presenter.currentViewModel = viewModel1.copy(viewMode = ViewMode.TIME_OUT).apply {
             destroyAt = DateTime.now().minusMinutes(1)
         }
@@ -224,7 +278,10 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onTimerTickTest_updateTimeViews() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.setInitialData(
+            connectionId = viewModel1.connectionID,
+            authorizationId = viewModel1.authorizationID
+        )
         presenter.currentViewModel = viewModel1
 
         presenter.onTimerTick()
@@ -236,7 +293,10 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun onTimerTickTest_remainedTime_invalidParams() {
         val presenter = createPresenter(viewContract = null)
-        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.setInitialData(
+            connectionId = viewModel1.connectionID,
+            authorizationId = viewModel1.authorizationID
+        )
         presenter.currentViewModel = viewModel1
 
         presenter.onTimerTick()
@@ -268,14 +328,14 @@ class AuthorizationDetailsPresenterTest {
     fun onFetchAuthorizationResultTest_processAuthorizationResult() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(connectionId = "1", authorizationId = "1")
-
-        Assert.assertNull(presenter.currentViewModel)
-
         presenter.onFetchAuthorizationResult(result = encryptedData1, error = null)
 
         assertThat(presenter.currentViewModel, equalTo(viewModel1))
         Mockito.verify(mockView).setHeaderVisibility(true)
-        Mockito.verify(mockView).setContentViewMode(ViewMode.DEFAULT, ignoreTimeUpdate = ViewMode.DEFAULT.showProgress)
+        Mockito.verify(mockView).setContentViewMode(
+            ViewMode.DEFAULT,
+            ignoreTimeUpdate = ViewMode.DEFAULT.showProgress
+        )
         Mockito.verify(mockView).setHeaderValues(
             logoUrl = viewModel1.connectionLogoUrl ?: "",
             title = viewModel1.connectionName,
@@ -345,7 +405,10 @@ class AuthorizationDetailsPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onFetchAuthorizationResultTest_processAuthorizationError_connectionNotFound() {
-        val error = ApiErrorData(errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND, errorMessage = "Not found")
+        val error = ApiErrorData(
+            errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND,
+            errorMessage = "Not found"
+        )
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(connectionId = "1", authorizationId = "")
         presenter.currentViewModel = viewModel1
@@ -356,14 +419,20 @@ class AuthorizationDetailsPresenterTest {
             accessTokens = listOf("token1")
         )
         assertThat(presenter.currentViewModel!!.viewMode, equalTo(ViewMode.ERROR))
-        Mockito.verify(mockView).setContentViewMode(ViewMode.ERROR, ignoreTimeUpdate = ViewMode.ERROR.showProgress)
+        Mockito.verify(mockView).setContentViewMode(
+            ViewMode.ERROR,
+            ignoreTimeUpdate = ViewMode.ERROR.showProgress
+        )
 
         presenter.setInitialData(connectionId = "X", authorizationId = "")
         Mockito.clearInvocations(mockView, mockConnectionsRepository)
         presenter.onFetchAuthorizationResult(result = null, error = error)
 
         assertThat(presenter.currentViewModel!!.viewMode, equalTo(ViewMode.ERROR))
-        Mockito.verify(mockView).setContentViewMode(ViewMode.ERROR, ignoreTimeUpdate = ViewMode.ERROR.showProgress)
+        Mockito.verify(mockView).setContentViewMode(
+            ViewMode.ERROR,
+            ignoreTimeUpdate = ViewMode.ERROR.showProgress
+        )
 
         Mockito.verifyNoMoreInteractions(mockConnectionsRepository)
     }
@@ -379,8 +448,10 @@ class AuthorizationDetailsPresenterTest {
             authorizationID = "444"
         )
 
-        Mockito.verifyNoMoreInteractions(mockPollingService)
         Mockito.verify(mockView).showError("Request Error (404)")
+        Mockito.verify(mockPollingService).contract = null
+        Mockito.verify(mockPollingService).stop()
+        Mockito.verifyNoMoreInteractions(mockPollingService)
 
         presenter.setInitialData(connectionId = "1", authorizationId = "1")
         Mockito.clearInvocations(mockView, mockPollingService)
@@ -390,8 +461,10 @@ class AuthorizationDetailsPresenterTest {
             authorizationID = "444"
         )
 
-        Mockito.verifyNoMoreInteractions(mockPollingService)
         Mockito.verify(mockView).showError("Request Error (404)")
+        Mockito.verify(mockPollingService).contract = null
+        Mockito.verify(mockPollingService).stop()
+        Mockito.verifyNoMoreInteractions(mockPollingService)
 
         presenter.viewContract = null
         Mockito.clearInvocations(mockView, mockPollingService)
@@ -418,7 +491,10 @@ class AuthorizationDetailsPresenterTest {
 
         Mockito.verifyNoMoreInteractions(mockPollingService)
         Mockito.verify(mockConnectionsRepository).invalidateConnectionsByTokens(listOf("token1"))
-        Mockito.verify(mockView).setContentViewMode(ViewMode.ERROR, ignoreTimeUpdate = ViewMode.ERROR.showProgress)
+        Mockito.verify(mockView).setContentViewMode(
+            ViewMode.ERROR,
+            ignoreTimeUpdate = ViewMode.ERROR.showProgress
+        )
     }
 
     @Test
@@ -433,7 +509,10 @@ class AuthorizationDetailsPresenterTest {
         )
 
         Mockito.verify(mockPollingService).stop()
-        Mockito.verify(mockView).setContentViewMode(ViewMode.UNAVAILABLE, ignoreTimeUpdate = ViewMode.UNAVAILABLE.showProgress)
+        Mockito.verify(mockView).setContentViewMode(
+            ViewMode.UNAVAILABLE,
+            ignoreTimeUpdate = ViewMode.UNAVAILABLE.showProgress
+        )
 
         presenter.currentViewModel = viewModel1
         Mockito.clearInvocations(mockView, mockPollingService)
@@ -444,7 +523,9 @@ class AuthorizationDetailsPresenterTest {
             authorizationID = "1"
         )
 
-        Mockito.verifyNoMoreInteractions(mockPollingService, mockView)
+        Mockito.verify(mockPollingService).contract = null
+        Mockito.verify(mockPollingService).stop()
+        Mockito.verifyNoMoreInteractions(mockPollingService)
     }
 
     @Test
@@ -456,7 +537,10 @@ class AuthorizationDetailsPresenterTest {
         presenter.onConfirmDenySuccess(result = ConfirmDenyResultData(), connectionID = "1")
 
         Mockito.verifyNoMoreInteractions(mockPollingService)
-        Mockito.verify(mockView).setContentViewMode(ViewMode.DEFAULT, ignoreTimeUpdate = ViewMode.DEFAULT.showProgress)
+        Mockito.verify(mockView).setContentViewMode(
+            ViewMode.DEFAULT,
+            ignoreTimeUpdate = ViewMode.DEFAULT.showProgress
+        )
 
         Mockito.clearInvocations(mockView, mockPollingService)
         presenter.onConfirmDenySuccess(
@@ -464,7 +548,10 @@ class AuthorizationDetailsPresenterTest {
             connectionID = "1"
         )
 
-        Mockito.verify(mockView).setContentViewMode(ViewMode.ERROR, ignoreTimeUpdate = ViewMode.ERROR.showProgress)
+        Mockito.verify(mockView).setContentViewMode(
+            ViewMode.ERROR,
+            ignoreTimeUpdate = ViewMode.ERROR.showProgress
+        )
     }
 
     @Test
@@ -477,7 +564,10 @@ class AuthorizationDetailsPresenterTest {
         presenter.onConfirmDenySuccess(success = true, connectionID = "1", authorizationID = "1")
 
         assertThat(presenter.currentViewModel!!.viewMode, equalTo(ViewMode.CONFIRM_SUCCESS))
-        Mockito.verify(mockView).setContentViewMode(ViewMode.CONFIRM_SUCCESS, ignoreTimeUpdate = ViewMode.CONFIRM_SUCCESS.showProgress)
+        Mockito.verify(mockView).setContentViewMode(
+            ViewMode.CONFIRM_SUCCESS,
+            ignoreTimeUpdate = ViewMode.CONFIRM_SUCCESS.showProgress
+        )
     }
 
     @Test
@@ -490,7 +580,10 @@ class AuthorizationDetailsPresenterTest {
         presenter.onConfirmDenySuccess(success = true, connectionID = "1", authorizationID = "1")
 
         assertThat(presenter.currentViewModel!!.viewMode, equalTo(ViewMode.DENY_SUCCESS))
-        Mockito.verify(mockView).setContentViewMode(ViewMode.DENY_SUCCESS, ignoreTimeUpdate = ViewMode.DENY_SUCCESS.showProgress)
+        Mockito.verify(mockView).setContentViewMode(
+            ViewMode.DENY_SUCCESS,
+            ignoreTimeUpdate = ViewMode.DENY_SUCCESS.showProgress
+        )
     }
 
     @Test
@@ -504,7 +597,10 @@ class AuthorizationDetailsPresenterTest {
 
         assertThat(presenter.currentViewModel!!.viewMode, equalTo(ViewMode.DEFAULT))
         Mockito.verify(mockPollingService).start(authorizationId = "1")
-        Mockito.verify(mockView).setContentViewMode(ViewMode.DEFAULT, ignoreTimeUpdate = ViewMode.DEFAULT.showProgress)
+        Mockito.verify(mockView).setContentViewMode(
+            ViewMode.DEFAULT,
+            ignoreTimeUpdate = ViewMode.DEFAULT.showProgress
+        )
     }
 
     @Test
@@ -518,14 +614,20 @@ class AuthorizationDetailsPresenterTest {
 
         assertThat(presenter.currentViewModel!!.viewMode, equalTo(ViewMode.DEFAULT))
         Mockito.verify(mockPollingService).start(authorizationId = "1")
-        Mockito.verify(mockView).setContentViewMode(ViewMode.DEFAULT, ignoreTimeUpdate = ViewMode.DEFAULT.showProgress)
+        Mockito.verify(mockView).setContentViewMode(
+            ViewMode.DEFAULT,
+            ignoreTimeUpdate = ViewMode.DEFAULT.showProgress
+        )
     }
 
     @Test
     @Throws(Exception::class)
     fun biometricAuthFinishedTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.setInitialData(
+            connectionId = viewModel1.connectionID,
+            authorizationId = viewModel1.authorizationID
+        )
         presenter.currentViewModel = viewModel1
         presenter.biometricAuthFinished()
 
@@ -536,14 +638,20 @@ class AuthorizationDetailsPresenterTest {
             authorizationCode = "111",
             resultCallback = presenter
         )
-        Mockito.verify(mockView).setContentViewMode(ViewMode.CONFIRM_PROCESSING, ignoreTimeUpdate = ViewMode.CONFIRM_PROCESSING.showProgress)
+        Mockito.verify(mockView).setContentViewMode(
+            ViewMode.CONFIRM_PROCESSING,
+            ignoreTimeUpdate = ViewMode.CONFIRM_PROCESSING.showProgress
+        )
     }
 
     @Test
     @Throws(Exception::class)
     fun biometricAuthFinishedTest_InvalidParams() {
         val presenter = createPresenter(viewContract = null)
-        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.setInitialData(
+            connectionId = viewModel1.connectionID,
+            authorizationId = viewModel1.authorizationID
+        )
         presenter.currentViewModel = viewModel1
 
         presenter.biometricAuthFinished()
@@ -569,7 +677,10 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun biometricsCanceledByUserTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.setInitialData(
+            connectionId = viewModel1.connectionID,
+            authorizationId = viewModel1.authorizationID
+        )
         presenter.currentViewModel = viewModel1
 
         presenter.biometricsCanceledByUser()
@@ -586,7 +697,10 @@ class AuthorizationDetailsPresenterTest {
     @Throws(Exception::class)
     fun successAuthWithPasscodeTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(connectionId = viewModel1.connectionID, authorizationId = viewModel1.authorizationID)
+        presenter.setInitialData(
+            connectionId = viewModel1.connectionID,
+            authorizationId = viewModel1.authorizationID
+        )
         presenter.currentViewModel = viewModel1
 
         presenter.successAuthWithPasscode()
@@ -598,7 +712,63 @@ class AuthorizationDetailsPresenterTest {
             resultCallback = presenter
         )
         Mockito.verify(mockPollingService).stop()
-        Mockito.verify(mockView).setContentViewMode(ViewMode.CONFIRM_PROCESSING, ignoreTimeUpdate = ViewMode.CONFIRM_PROCESSING.showProgress)
+        Mockito.verify(mockView).setContentViewMode(
+            ViewMode.CONFIRM_PROCESSING,
+            ignoreTimeUpdate = ViewMode.CONFIRM_PROCESSING.showProgress
+        )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun setInitialDataTest() {
+        val presenter = createPresenter(viewContract = mockView)
+        presenter.setInitialData("1", "1")
+
+        assertThat(presenter.currentViewModel, equalTo(AuthorizationViewModel(
+            authorizationID = "",
+            authorizationCode = "",
+            title = "",
+            description = "",
+            validSeconds = 0,
+            expiresAt = DateTime(0L),
+            createdAt = DateTime(0L),
+            connectionID = "",
+            connectionName = "",
+            connectionLogoUrl = "",
+            viewMode = ViewMode.LOADING
+        )))
+
+        presenter.setInitialData("1", "")
+
+        assertThat(presenter.currentViewModel, equalTo(AuthorizationViewModel(
+            authorizationID = "",
+            authorizationCode = "",
+            title = "",
+            description = "",
+            validSeconds = 0,
+            expiresAt = DateTime(0L),
+            createdAt = DateTime(0L),
+            connectionID = "",
+            connectionName = "",
+            connectionLogoUrl = "",
+            viewMode = ViewMode.UNAVAILABLE
+        )))
+
+        presenter.setInitialData("1", null)
+
+        assertThat(presenter.currentViewModel, equalTo(AuthorizationViewModel(
+            authorizationID = "",
+            authorizationCode = "",
+            title = "",
+            description = "",
+            validSeconds = 0,
+            expiresAt = DateTime(0L),
+            createdAt = DateTime(0L),
+            connectionID = "",
+            connectionName = "",
+            connectionLogoUrl = "",
+            viewMode = ViewMode.UNAVAILABLE
+        )))
     }
 
     @Test

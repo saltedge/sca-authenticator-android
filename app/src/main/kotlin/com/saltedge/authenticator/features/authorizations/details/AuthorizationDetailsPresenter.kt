@@ -31,6 +31,7 @@ import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
 import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
 import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
+import org.joda.time.DateTime
 
 class AuthorizationDetailsPresenter(
     appContext: Context,
@@ -43,21 +44,15 @@ class AuthorizationDetailsPresenter(
     FetchAuthorizationContract {
 
     var viewContract: AuthorizationDetailsContract.View? = null
-    private val modelIsNotExpired: Boolean
-        get() = currentViewModel?.isNotExpired ?: true
     private val modelHasFinalMode: Boolean
         get() = currentViewModel?.hasFinalMode ?: false
     private var pollingService: SingleAuthorizationPollingService =
         apiManager.createSingleAuthorizationPollingService()
     private var authorizationId: String? = null
-    private var authorizationUnavailable: Boolean = false
     private val authorizationAvailable: Boolean
-        get() = !authorizationUnavailable
+        get() = currentViewModel?.viewMode != ViewMode.UNAVAILABLE
     private val viewMode: ViewMode
-        get() {
-            return if (authorizationUnavailable) ViewMode.UNAVAILABLE
-            else currentViewModel?.viewMode ?: ViewMode.LOADING
-        }
+        get() = currentViewModel?.viewMode ?: ViewMode.LOADING
 
     fun setInitialData(connectionId: String?, authorizationId: String?) {
         super.currentConnectionAndKey = createConnectionAndKey(
@@ -66,11 +61,23 @@ class AuthorizationDetailsPresenter(
             keyStoreManager = keyStoreManager
         )
         this.authorizationId = authorizationId
-        this.authorizationUnavailable = currentConnectionAndKey == null || authorizationId == null || authorizationId.isEmpty()
+        this.currentViewModel = AuthorizationViewModel(
+            authorizationID = "",
+            authorizationCode = "",
+            title = "",
+            description = "",
+            validSeconds = 0,
+            expiresAt = DateTime(0L),
+            createdAt = DateTime(0L),
+            connectionID = "",
+            connectionName = "",
+            connectionLogoUrl = "",
+            viewMode = if (currentConnectionAndKey == null || authorizationId == null || authorizationId.isEmpty()) ViewMode.UNAVAILABLE else ViewMode.LOADING
+        )
     }
 
     fun onFragmentResume() {
-        if (modelIsNotExpired && authorizationAvailable) startPolling()
+        if (viewMode === ViewMode.LOADING || viewMode === ViewMode.DEFAULT) startPolling()
         viewContract?.startTimer()
         updateViewContent()
     }
@@ -104,7 +111,10 @@ class AuthorizationDetailsPresenter(
                     stopPolling()
                     model.setNewViewMode(ViewMode.TIME_OUT)
                     viewContract?.updateTimeViews()
-                    viewContract?.setContentViewMode(viewMode, ignoreTimeUpdate = viewMode.showProgress)
+                    viewContract?.setContentViewMode(
+                        viewMode,
+                        ignoreTimeUpdate = viewMode.showProgress
+                    )
                 }
                 model.shouldBeDestroyed -> {
                     viewContract?.closeView()
@@ -127,7 +137,11 @@ class AuthorizationDetailsPresenter(
             ?: setUnavailableState()
     }
 
-    override fun onAuthorizeStart(connectionID: ConnectionID, authorizationID: AuthorizationID, type: ActionType) {
+    override fun onAuthorizeStart(
+        connectionID: ConnectionID,
+        authorizationID: AuthorizationID,
+        type: ActionType
+    ) {
         stopPolling()
         currentViewModel?.setNewViewMode(type.toViewMode())
         viewContract?.setContentViewMode(viewMode, ignoreTimeUpdate = viewMode.showProgress)
@@ -193,7 +207,7 @@ class AuthorizationDetailsPresenter(
     }
 
     private fun updateViewContent() {
-        viewContract?.setHeaderVisibility(show = currentViewModel != null)
+        viewContract?.setHeaderVisibility(show = authorizationAvailable)
         viewContract?.setContentViewMode(viewMode, ignoreTimeUpdate = viewMode.showProgress)
         currentViewModel?.let {
             viewContract?.setHeaderValues(
@@ -202,15 +216,11 @@ class AuthorizationDetailsPresenter(
                 startTime = it.createdAt,
                 endTime = it.expiresAt
             )
-            viewContract?.setContentTitleAndDescription(title = it.title, description = it.description)
+            viewContract?.setContentTitleAndDescription(
+                title = it.title,
+                description = it.description
+            )
         }
-    }
-
-    private fun setUnavailableState() {
-        stopPolling()
-        currentViewModel?.setNewViewMode(ViewMode.UNAVAILABLE)
-        authorizationUnavailable = true
-        updateViewContent()
     }
 
     private fun processFetchAuthorizationError(error: ApiErrorData) {
@@ -219,14 +229,30 @@ class AuthorizationDetailsPresenter(
                 connectionsRepository.invalidateConnectionsByTokens(accessTokens = listOf(it))
             }
             currentViewModel?.setNewViewMode(ViewMode.ERROR)
-            viewContract?.setContentViewMode(ViewMode.ERROR, ignoreTimeUpdate = ViewMode.ERROR.showProgress)
-        } else if (error.isAuthorizationNotFound()) {
-            if (currentViewModel == null) setUnavailableState()
-        } else {
+            viewContract?.setContentViewMode(
+                ViewMode.ERROR,
+                ignoreTimeUpdate = ViewMode.ERROR.showProgress
+            )
+        } else if (shouldSetUnavailableState(error)) {
+            setUnavailableState()
+        } else if (!error.isConnectivityError()) {
             if (currentViewModel?.viewMode != ViewMode.ERROR) {
                 viewContract?.showError(error.getErrorMessage(appContext))
                 currentViewModel?.setNewViewMode(ViewMode.ERROR)
+                stopPolling()
             }
+        } else {
+            viewContract?.showError(error.getErrorMessage(appContext))
         }
+    }
+
+    private fun shouldSetUnavailableState(error: ApiErrorData): Boolean {
+        return error.isAuthorizationNotFound() && (viewMode === ViewMode.LOADING || viewMode === ViewMode.DEFAULT)
+    }
+
+    private fun setUnavailableState() {
+        stopPolling()
+        currentViewModel?.setNewViewMode(ViewMode.UNAVAILABLE)
+        updateViewContent()
     }
 }
