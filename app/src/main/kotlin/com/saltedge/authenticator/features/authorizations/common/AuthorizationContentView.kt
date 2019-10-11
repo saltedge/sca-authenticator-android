@@ -23,7 +23,6 @@ package com.saltedge.authenticator.features.authorizations.common
 import android.content.Context
 import android.text.method.ScrollingMovementMethod
 import android.util.AttributeSet
-import android.util.Log
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import com.saltedge.authenticator.R

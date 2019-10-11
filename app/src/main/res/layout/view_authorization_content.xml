@@ -124,9 +124,7 @@
             android:layout_width="match_parent"
             app:blurRadius="11"
             app:downsampleFactor="6"
-            android:layout_height="match_parent">
-
-        </com.fivehundredpx.android.blur.BlurringView>
+            android:layout_height="match_parent" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/horizontalCenter"
