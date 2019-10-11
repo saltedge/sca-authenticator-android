@@ -64,8 +64,8 @@ class MainActivityPresenter(
         when {
             intent.hasConnectionIdAndAuthorizationId -> {
                 viewContract.showAuthorizationDetailsView(
-                    intent.connectionId,
-                    intent.authorizationId
+                    connectionID = intent.connectionId,
+                    authorizationID = intent.authorizationId
                 )
             }
             intent.hasDeepLink -> {

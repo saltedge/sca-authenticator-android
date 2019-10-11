@@ -48,6 +48,8 @@ abstract class BaseAuthorizationPresenter(
         requestType: ActionType,
         quickConfirmMode: Boolean = false
     ) {
+        val viewModel = currentViewModel ?: return
+        if (!viewModel.canBeAuthorized) return
         when(requestType) {
             ActionType.CONFIRM -> {
                 when {
@@ -91,24 +93,24 @@ abstract class BaseAuthorizationPresenter(
     private fun sendConfirmRequest() {
         val viewModel = currentViewModel ?: return
         val connectionAndKey = currentConnectionAndKey ?: return
+        onAuthorizeStart(connectionID = viewModel.connectionID, authorizationID = viewModel.authorizationID, type = ActionType.CONFIRM)
         apiManager.confirmAuthorization(
             connectionAndKey = connectionAndKey,
             authorizationId = viewModel.authorizationID,
             authorizationCode = viewModel.authorizationCode,
             resultCallback = this
         )
-        onAuthorizeStart(connectionID = viewModel.connectionID, authorizationID = viewModel.authorizationID, type = ActionType.CONFIRM)
     }
 
     private fun sendDenyRequest() {
         val viewModel = currentViewModel ?: return
         val connectionAndKey = currentConnectionAndKey ?: return
+        onAuthorizeStart(connectionID = viewModel.connectionID, authorizationID = viewModel.authorizationID, type = ActionType.DENY)
         apiManager.denyAuthorization(
             connectionAndKey = connectionAndKey,
             authorizationId = viewModel.authorizationID,
             authorizationCode = viewModel.authorizationCode,
             resultCallback = this
         )
-        onAuthorizeStart(connectionID = viewModel.connectionID, authorizationID = viewModel.authorizationID, type = ActionType.DENY)
     }
 }
