@@ -38,11 +38,12 @@ class AuthorizationContentView : LinearLayout {
 
     init {
         inflate(context, R.layout.view_authorization_content,this)
+        blurringView?.setBlurredView(blurredView)
+        blurringView?.invalidate()
     }
 
     fun setViewMode(viewMode: ViewMode) {
         val showStatus = viewMode !== ViewMode.DEFAULT
-
         if (showStatus) {
             if (!statusLayout.isVisible) {
                 statusLayout.alpha = 0.1f

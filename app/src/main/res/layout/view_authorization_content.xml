@@ -28,6 +28,7 @@
     android:transitionGroup="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/blurredView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/white"
@@ -106,6 +107,7 @@
             app:layout_constraintBottom_toTopOf="@+id/negativeActionView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/statusLayout"
         android:layout_width="match_parent"
@@ -115,8 +117,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:clickable="true"
-        android:focusable="true"
-        android:background="@color/authorization_info_view_bg">
+        android:focusable="true">
+
+        <com.fivehundredpx.android.blur.BlurringView
+            android:id="@+id/blurringView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:blurRadius="11"
+            app:downsampleFactor="6" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/horizontalCenter"
