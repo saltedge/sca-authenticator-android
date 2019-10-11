@@ -58,6 +58,16 @@ class MainActivityPresenter(
     }
 
     /**
+     * Handles result from QR Scan Activity
+     * if result is correct then shows Connect Provider Fragment
+     */
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == QR_SCAN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            data?.let { onNewIntentReceived(intent = it) }
+        }
+    }
+
+    /**
      * On new intent with data received
      */
     fun onNewIntentReceived(intent: Intent) {
@@ -103,16 +113,6 @@ class MainActivityPresenter(
             else -> return false
         }
         return true
-    }
-
-    /**
-     * Handles result from QR Scan Activity
-     * if result is correct then shows Connect Provider Fragment
-     */
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == QR_SCAN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            data?.let { onNewIntentReceived(intent = it) }
-        }
     }
 
     /**

@@ -124,7 +124,7 @@ class AuthorizationDetailsPresenterTest {
 
     @Test
     @Throws(Exception::class)
-    fun onViewClickTest_negativeActionView() {
+    fun onViewClickTest_negativeActionView_case1() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(
             connectionId = viewModel1.connectionID,
@@ -148,9 +148,12 @@ class AuthorizationDetailsPresenterTest {
         )
     }
 
+    /**
+     * no view contract
+     */
     @Test
     @Throws(Exception::class)
-    fun onViewClickTest_negativeActionView_InvalidParams() {
+    fun onViewClickTest_negativeActionView_case2() {
         val presenter = createPresenter(viewContract = null)
         presenter.setInitialData(
             connectionId = viewModel1.connectionID,
@@ -162,13 +165,33 @@ class AuthorizationDetailsPresenterTest {
         presenter.onViewClick(R.id.negativeActionView)
 
         Mockito.verifyNoMoreInteractions(mockView)
+    }
 
-        presenter.viewContract = mockView
+    /**
+     * invalid view id
+     */
+    @Test
+    @Throws(Exception::class)
+    fun onViewClickTest_negativeActionView_case3() {
+        val presenter = createPresenter(viewContract = mockView)
+        presenter.setInitialData(
+            connectionId = viewModel1.connectionID,
+            authorizationId = viewModel1.authorizationID
+        )
+        presenter.currentViewModel = viewModel1
         Mockito.clearInvocations(mockApiManager, mockPollingService, mockView)
         presenter.onViewClick(-1)
 
         Mockito.verifyNoMoreInteractions(mockApiManager, mockPollingService, mockView)
+    }
 
+    /**
+     * no viewmodel
+     */
+    @Test
+    @Throws(Exception::class)
+    fun onViewClickTest_negativeActionView_case4() {
+        val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(connectionId = "", authorizationId = "")
         presenter.currentViewModel = null
 
@@ -178,9 +201,28 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verifyNoMoreInteractions(mockApiManager, mockPollingService, mockView)
     }
 
+    /**
+     * non DEFAULT viewMode
+     */
     @Test
     @Throws(Exception::class)
-    fun onViewClickTest_positiveActionView() {
+    fun onViewClickTest_negativeActionView_case5() {
+        val presenter = createPresenter(viewContract = mockView)
+        presenter.setInitialData(
+            connectionId = viewModel1.connectionID,
+            authorizationId = viewModel1.authorizationID
+        )
+        presenter.currentViewModel = viewModel1.copy(viewMode = ViewMode.DENY_PROCESSING)
+
+        Mockito.clearInvocations(mockApiManager, mockPollingService, mockView)
+        presenter.onViewClick(R.id.negativeActionView)
+
+        Mockito.verifyNoMoreInteractions(mockApiManager, mockPollingService, mockView)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onViewClickTest_positiveActionView_case1() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(
             connectionId = viewModel1.connectionID,
@@ -205,9 +247,12 @@ class AuthorizationDetailsPresenterTest {
         )
     }
 
+    /**
+     * Invalid Params
+     */
     @Test
     @Throws(Exception::class)
-    fun onViewClickTest_positiveActionView_InvalidParams() {
+    fun onViewClickTest_positiveActionView_case2() {
         val presenter = createPresenter(viewContract = null)
         presenter.setInitialData(
             connectionId = viewModel1.connectionID,
@@ -325,7 +370,7 @@ class AuthorizationDetailsPresenterTest {
 
     @Test
     @Throws(Exception::class)
-    fun onFetchAuthorizationResultTest_processAuthorizationResult() {
+    fun onFetchAuthorizationResultTest_processAuthorizationResult_case1() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(connectionId = "1", authorizationId = "1")
         presenter.onFetchAuthorizationResult(result = encryptedData1, error = null)
@@ -354,9 +399,12 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verifyNoMoreInteractions(mockView)
     }
 
+    /**
+     * no view contract
+     */
     @Test
     @Throws(Exception::class)
-    fun onFetchAuthorizationResultTest_processAuthorizationResult_InvalidParams() {
+    fun onFetchAuthorizationResultTest_processAuthorizationResult_case2() {
         val presenter = createPresenter(viewContract = null)
         presenter.onFetchAuthorizationResult(result = null, error = null)
 
@@ -374,9 +422,27 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verifyNoMoreInteractions(mockView, mockConnectionsRepository)
     }
 
+    /**
+     * current viewmodel has processing state
+     */
     @Test
     @Throws(Exception::class)
-    fun onFetchAuthorizationResultTest_processAuthorizationError_anyError() {
+    fun onFetchAuthorizationResultTest_processAuthorizationResult_case3() {
+        val presenter = createPresenter(viewContract = mockView)
+        presenter.setInitialData(connectionId = "1", authorizationId = "1")
+        presenter.currentViewModel = viewModel1.copy(viewMode = ViewMode.DENY_PROCESSING)
+        Mockito.clearInvocations(mockView, mockConnectionsRepository)
+        presenter.onFetchAuthorizationResult(result = encryptedData1, error = null)
+
+        Mockito.verifyNoMoreInteractions(mockView, mockConnectionsRepository)
+    }
+
+    /**
+     * 404 error
+     */
+    @Test
+    @Throws(Exception::class)
+    fun onFetchAuthorizationResultTest_processAuthorizationError_case1() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(connectionId = "1", authorizationId = "")
 
@@ -387,9 +453,12 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verifyNoMoreInteractions(mockConnectionsRepository)
     }
 
+    /**
+     * connectivity error
+     */
     @Test
     @Throws(Exception::class)
-    fun onFetchAuthorizationResultTest_processAuthorizationError_connectivityError() {
+    fun onFetchAuthorizationResultTest_processAuthorizationError_case2() {
         val error = ApiErrorData(errorClassName = ERROR_CLASS_SSL_HANDSHAKE, errorMessage = "ErrorMessage")
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(connectionId = "1", authorizationId = "")
@@ -402,9 +471,12 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verifyNoMoreInteractions(mockConnectionsRepository)
     }
 
+    /**
+     * ConnectionNotFound error
+     */
     @Test
     @Throws(Exception::class)
-    fun onFetchAuthorizationResultTest_processAuthorizationError_connectionNotFound() {
+    fun onFetchAuthorizationResultTest_processAuthorizationError_case3() {
         val error = ApiErrorData(
             errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND,
             errorMessage = "Not found"
@@ -437,9 +509,12 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verifyNoMoreInteractions(mockConnectionsRepository)
     }
 
+    /**
+     * 404 error
+     */
     @Test
     @Throws(Exception::class)
-    fun onConfirmDenyFailureTest_404() {
+    fun onConfirmDenyFailureTest_case1() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(connectionId = "1", authorizationId = "")
         presenter.onConfirmDenyFailure(
@@ -478,9 +553,12 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verifyNoMoreInteractions(mockView)
     }
 
+    /**
+     * ConnectionNotFound error
+     */
     @Test
     @Throws(Exception::class)
-    fun onConfirmDenyFailureTest_ConnectionNotFound() {
+    fun onConfirmDenyFailureTest_case2() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(connectionId = "1", authorizationId = "1")
         presenter.onConfirmDenyFailure(
@@ -497,9 +575,12 @@ class AuthorizationDetailsPresenterTest {
         )
     }
 
+    /**
+     * AuthorizationNotFound error
+     */
     @Test
     @Throws(Exception::class)
-    fun onConfirmDenyFailureTest_AuthorizationNotFound() {
+    fun onConfirmDenyFailureTest_case3() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(connectionId = "1", authorizationId = "1")
         presenter.onConfirmDenyFailure(

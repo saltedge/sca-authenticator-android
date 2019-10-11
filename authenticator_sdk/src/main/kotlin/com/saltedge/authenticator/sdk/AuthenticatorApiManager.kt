@@ -37,9 +37,9 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
 
     override var authenticationReturnUrl: String = DEFAULT_RETURN_URL
 
-    override fun getProviderData(
+    override fun getProviderConfigurationData(
         providerConfigurationUrl: String,
-        resultCallback: FetchProviderDataResult
+        resultCallback: FetchProviderConfigurationDataResult
     ) {
         ProviderDataConnector(RestClient.apiInterface, resultCallback)
             .fetchProviderData(providerConfigurationUrl)

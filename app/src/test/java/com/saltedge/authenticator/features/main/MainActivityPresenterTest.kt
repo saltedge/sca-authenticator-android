@@ -94,6 +94,51 @@ class MainActivityPresenterTest {
         )
     }
 
+    @Test
+    @Throws(Exception::class)
+    fun onActivityResultTest() {
+        val presenter = MainActivityPresenter(
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository
+        )
+        val intent = Intent().putExtra(
+            KEY_DEEP_LINK, "authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration"
+        )
+        presenter.onActivityResult(
+            requestCode = QR_SCAN_REQUEST_CODE,
+            resultCode = Activity.RESULT_OK,
+            data = intent
+        )
+
+
+        Assert.assertTrue(intent.getStringExtra(KEY_DEEP_LINK).isNotEmpty())
+        Mockito.verify(mockView).showConnectProvider(
+            connectConfigurationLink = "https://saltedge.com/configuration",
+            connectQuery = null
+        )
+
+        Mockito.clearInvocations(mockView)
+        presenter.onActivityResult(requestCode = 0, resultCode = Activity.RESULT_OK, data = intent)
+
+        Mockito.verifyNoMoreInteractions(mockView)
+
+        presenter.onActivityResult(
+            requestCode = 0,
+            resultCode = Activity.RESULT_CANCELED,
+            data = intent
+        )
+
+        Mockito.verifyNoMoreInteractions(mockView)
+
+        presenter.onActivityResult(
+            requestCode = 0,
+            resultCode = Activity.RESULT_CANCELED,
+            data = null
+        )
+
+        Mockito.verifyNoMoreInteractions(mockView)
+    }
+
     /**
      * test onNewIntentReceived with empty intent
      * nothing should happen
@@ -143,8 +188,7 @@ class MainActivityPresenterTest {
     }
 
     /**
-     * test onNewIntentReceived where intent deep-link
-     * should show AuthorizationDetails
+     * test onNewIntentReceived where intent has invalid deep-link
      */
     @Test
     @Throws(Exception::class)
@@ -154,16 +198,25 @@ class MainActivityPresenterTest {
             connectionsRepository = mockConnectionsRepository
         )
 
-        // Invalid Deep-link
         presenter.onNewIntentReceived(
-            Intent().putExtra(
-                KEY_DEEP_LINK, "authenticator://saltedge.com/connect"
-            )
+            Intent().putExtra(KEY_DEEP_LINK, "authenticator://saltedge.com/connect")
         )
         Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_connections)
         Mockito.verifyNoMoreInteractions(mockView, mockConnectionsRepository)
+    }
 
-        // Valid Deep-link
+    /**
+     * test onNewIntentReceived where intent has valid deep-link
+     * should show AuthorizationDetails
+     */
+    @Test
+    @Throws(Exception::class)
+    fun onNewIntentReceivedTest_case4() {
+        val presenter = MainActivityPresenter(
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository
+        )
+
         Mockito.clearInvocations(mockView)
         presenter.onNewIntentReceived(
             Intent().putExtra(
@@ -172,8 +225,23 @@ class MainActivityPresenterTest {
         )
 
         Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_connections)
-        Mockito.verify(mockView)
-            .showConnectProvider(connectConfigurationLink = "https://saltedge.com/configuration")
+        Mockito.verify(mockView).showConnectProvider(
+            connectConfigurationLink = "https://saltedge.com/configuration",
+            connectQuery = null
+        )
+
+        Mockito.clearInvocations(mockView)
+        presenter.onNewIntentReceived(
+            Intent().putExtra(
+                KEY_DEEP_LINK, "authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration&connect_query=1234567890"
+            )
+        )
+
+        Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_connections)
+        Mockito.verify(mockView).showConnectProvider(
+            connectConfigurationLink = "https://saltedge.com/configuration",
+            connectQuery = "1234567890"
+        )
     }
 
     @Test
@@ -200,44 +268,6 @@ class MainActivityPresenterTest {
 
         Mockito.clearInvocations(mockView)
         Assert.assertFalse(presenter.onNavigationItemSelected(-1))
-
-        Mockito.verifyNoMoreInteractions(mockView)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onActivityResultTest() {
-        val presenter = MainActivityPresenter(
-            viewContract = mockView,
-            connectionsRepository = mockConnectionsRepository
-        )
-        val intent = Intent().putExtra(KEY_CONNECT_CONFIGURATION, "configuration_link")
-        presenter.onActivityResult(
-            requestCode = QR_SCAN_REQUEST_CODE,
-            resultCode = Activity.RESULT_OK,
-            data = intent
-        )
-
-        Mockito.verify(mockView).showConnectProvider(connectConfigurationLink = "configuration_link")
-
-        Mockito.clearInvocations(mockView)
-        presenter.onActivityResult(requestCode = 0, resultCode = Activity.RESULT_OK, data = intent)
-
-        Mockito.verifyNoMoreInteractions(mockView)
-
-        presenter.onActivityResult(
-            requestCode = 0,
-            resultCode = Activity.RESULT_CANCELED,
-            data = intent
-        )
-
-        Mockito.verifyNoMoreInteractions(mockView)
-
-        presenter.onActivityResult(
-            requestCode = 0,
-            resultCode = Activity.RESULT_CANCELED,
-            data = null
-        )
 
         Mockito.verifyNoMoreInteractions(mockView)
     }

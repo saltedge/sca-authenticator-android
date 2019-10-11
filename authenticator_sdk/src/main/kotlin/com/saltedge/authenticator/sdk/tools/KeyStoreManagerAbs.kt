@@ -27,6 +27,7 @@ import javax.crypto.SecretKey
 
 interface KeyStoreManagerAbs {
     fun createOrReplaceRsaKeyPair(alias: String): KeyPair?
+    fun createRsaPublicKeyAsString(alias: String): String?
     fun keyEntryExist(alias: String): Boolean
     fun getKeyStoreAliases(): List<String>
     fun getKeyPair(alias: String?): KeyPair?

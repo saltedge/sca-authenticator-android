@@ -25,17 +25,16 @@ import android.webkit.URLUtil.isValidUrl
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.model.db.initWithProviderData
+import com.saltedge.authenticator.model.db.toConnection
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ConnectionInitResult
-import com.saltedge.authenticator.sdk.contract.FetchProviderDataResult
+import com.saltedge.authenticator.sdk.contract.FetchProviderConfigurationDataResult
 import com.saltedge.authenticator.sdk.model.*
 import com.saltedge.authenticator.sdk.model.response.AuthenticateConnectionData
 import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.tools.parseRedirect
-import com.saltedge.authenticator.sdk.tools.publicKeyToPemEncodedString
 import javax.inject.Inject
 
 class ConnectProviderPresenter @Inject constructor(
@@ -44,7 +43,7 @@ class ConnectProviderPresenter @Inject constructor(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyStoreManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs
-) : ConnectProviderContract.Presenter, ConnectionInitResult, FetchProviderDataResult {
+) : ConnectProviderContract.Presenter, ConnectionInitResult, FetchProviderConfigurationDataResult {
 
     override val reportProblemActionText: Int?
         get() = if (viewMode.isCompleteWithSuccess) null else R.string.actions_contact_support
@@ -110,18 +109,17 @@ class ConnectProviderPresenter @Inject constructor(
         if (viewId == R.id.mainActionView) viewContract?.closeView()
     }
 
-    override fun fetchProviderResult(result: ProviderData?, error: ApiErrorData?) {
-        if (error != null) {
-            viewContract?.showErrorAndFinish(error.getErrorMessage(appContext))
-        } else if (result != null && result.isValid()) {
-            val providerData = Connection().initWithProviderData(result)
-            if (providerData == null) {
-                viewContract?.showErrorAndFinish(appContext.getString(R.string.errors_unable_connect_provider))
-            } else {
-                this.connection = providerData
-                performNewConnectionRequest()
+    override fun fetchProviderConfigurationDataResult(result: ProviderData?, error: ApiErrorData?) {
+        when {
+            error != null -> viewContract?.showErrorAndFinish(error.getErrorMessage(appContext))
+            result != null && result.isValid() -> {
+                result.toConnection()?.let {
+                    this.connection = it
+                    performNewConnectionRequest()
+                } ?: viewContract?.showErrorAndFinish(appContext.getString(R.string.errors_unable_connect_provider))
             }
-        } else viewContract?.showErrorAndFinish(appContext.getString(R.string.errors_unable_connect_provider))
+            else -> viewContract?.showErrorAndFinish(appContext.getString(R.string.errors_unable_connect_provider))
+        }
     }
 
     override fun onConnectionInitFailure(error: ApiErrorData) {
@@ -183,14 +181,14 @@ class ConnectProviderPresenter @Inject constructor(
 
     private fun startConnectFlow() {
         if (connection.guid.isEmpty()) {
-            apiManager.getProviderData(connectConfigurationLink, resultCallback = this)
+            apiManager.getProviderConfigurationData(connectConfigurationLink, resultCallback = this)
         } else {
             performNewConnectionRequest()
         }
     }
 
     private fun performNewConnectionRequest() {
-        keyStoreManager.createOrReplaceRsaKeyPair(connection.guid)?.publicKeyToPemEncodedString()?.let {
+        keyStoreManager.createRsaPublicKeyAsString(connection.guid)?.let {
             apiManager.initConnectionRequest(
                 baseUrl = connection.connectUrl,
                 publicKey = it,

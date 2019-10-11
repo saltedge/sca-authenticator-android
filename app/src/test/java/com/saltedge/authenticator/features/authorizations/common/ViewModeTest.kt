@@ -60,6 +60,20 @@ class ViewModeTest {
 
     @Test
     @Throws(Exception::class)
+    fun isProcessingModeTest() {
+        Assert.assertFalse(ViewMode.LOADING.isProcessingMode())
+        Assert.assertFalse(ViewMode.DEFAULT.isProcessingMode())
+        Assert.assertTrue(ViewMode.CONFIRM_PROCESSING.isProcessingMode())
+        Assert.assertTrue(ViewMode.DENY_PROCESSING.isProcessingMode())
+        Assert.assertFalse(ViewMode.CONFIRM_SUCCESS.isProcessingMode())
+        Assert.assertFalse(ViewMode.DENY_SUCCESS.isProcessingMode())
+        Assert.assertFalse(ViewMode.ERROR.isProcessingMode())
+        Assert.assertFalse(ViewMode.TIME_OUT.isProcessingMode())
+        Assert.assertFalse(ViewMode.UNAVAILABLE.isProcessingMode())
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun statusImageResIdTest() {
         Assert.assertNull(ViewMode.LOADING.statusImageResId)
         Assert.assertNull(ViewMode.DEFAULT.statusImageResId)

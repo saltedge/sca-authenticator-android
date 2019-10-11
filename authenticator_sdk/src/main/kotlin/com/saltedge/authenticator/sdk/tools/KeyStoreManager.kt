@@ -54,6 +54,17 @@ object KeyStoreManager : KeyStoreManagerAbs {
     }
 
     /**
+     * Creates new or replace existing RSA key pairs with new one by the given alias,
+     * convert public key from asymmetric key pair to pem string
+     *
+     * @param alias - the alias name
+     * @return public key as String
+     */
+    override fun createRsaPublicKeyAsString(alias: String): String? {
+        return createOrReplaceRsaKeyPair(alias)?.publicKeyToPemEncodedString()
+    }
+
+    /**
      * Checks if key pair is exist by the given alias
      *
      * @param alias - the alias name

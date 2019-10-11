@@ -33,7 +33,7 @@ interface AuthenticatorApiManagerAbs {
 
     var authenticationReturnUrl: String
 
-    fun getProviderData(providerConfigurationUrl: String, resultCallback: FetchProviderDataResult)
+    fun getProviderConfigurationData(providerConfigurationUrl: String, resultCallback: FetchProviderConfigurationDataResult)
 
     fun initConnectionRequest(
         baseUrl: String,

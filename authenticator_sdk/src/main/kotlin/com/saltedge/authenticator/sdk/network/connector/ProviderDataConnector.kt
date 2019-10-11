@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.network.connector
 
-import com.saltedge.authenticator.sdk.contract.FetchProviderDataResult
+import com.saltedge.authenticator.sdk.contract.FetchProviderConfigurationDataResult
 import com.saltedge.authenticator.sdk.model.ApiErrorData
 import com.saltedge.authenticator.sdk.model.ProviderResponseData
 import com.saltedge.authenticator.sdk.network.ApiInterface
@@ -29,7 +29,7 @@ import retrofit2.Call
 
 internal class ProviderDataConnector(
     private val apiInterface: ApiInterface,
-    var resultCallback: FetchProviderDataResult?
+    var resultCallback: FetchProviderConfigurationDataResult?
 ) : ApiResponseInterceptor<ProviderResponseData>() {
 
     fun fetchProviderData(requestUrl: String) {
@@ -40,13 +40,13 @@ internal class ProviderDataConnector(
         call: Call<ProviderResponseData>,
         response: ProviderResponseData
     ) {
-        resultCallback?.fetchProviderResult(result = response.data, error = null)
+        resultCallback?.fetchProviderConfigurationDataResult(result = response.data, error = null)
     }
 
     override fun onFailureResponse(
         call: Call<ProviderResponseData>,
         error: ApiErrorData
     ) {
-        resultCallback?.fetchProviderResult(result = null, error = error)
+        resultCallback?.fetchProviderConfigurationDataResult(result = null, error = error)
     }
 }
