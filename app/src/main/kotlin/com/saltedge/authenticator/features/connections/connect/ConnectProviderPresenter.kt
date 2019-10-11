@@ -27,12 +27,14 @@ import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.model.db.initWithProviderData
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ConnectionInitResult
 import com.saltedge.authenticator.sdk.contract.FetchProviderDataResult
 import com.saltedge.authenticator.sdk.model.*
 import com.saltedge.authenticator.sdk.model.response.AuthenticateConnectionData
 import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.tools.parseRedirect
 import com.saltedge.authenticator.sdk.tools.publicKeyToPemEncodedString
 import javax.inject.Inject
 
@@ -48,6 +50,7 @@ class ConnectProviderPresenter @Inject constructor(
         get() = if (viewMode.isCompleteWithSuccess) null else R.string.actions_contact_support
     private var sessionFailMessage: String? = null
     private var connectConfigurationLink: String = ""
+    private var connectQueryParam: String? = null
     private var connectUrlData: AuthenticateConnectionData? = null
     private var connection = Connection()
     private var viewMode: ViewMode = ViewMode.START
@@ -81,13 +84,16 @@ class ConnectProviderPresenter @Inject constructor(
             }
         }
 
-    override fun setInitialData(connectConfigurationLink: String?, connectionGuid: GUID?) {
+    override fun setInitialData(connectConfigurationLink: String?,
+                                connectQueryParam: String?,
+                                connectionGuid: GUID?) {
         if (connectConfigurationLink == null && connectionGuid == null) {
             viewMode = ViewMode.COMPLETE_ERROR
         } else if (connectionGuid != null) {
             this.connection = connectionsRepository.getByGuid(connectionGuid) ?: Connection()
         } else {
             this.connectConfigurationLink = connectConfigurationLink ?: ""
+            this.connectQueryParam = connectQueryParam
         }
     }
 
@@ -104,10 +110,6 @@ class ConnectProviderPresenter @Inject constructor(
         if (viewId == R.id.mainActionView) viewContract?.closeView()
     }
 
-    override fun onConnectionInitFailure(error: ApiErrorData) {
-        viewContract?.showErrorAndFinish(error.getErrorMessage(appContext))
-    }
-
     override fun fetchProviderResult(result: ProviderData?, error: ApiErrorData?) {
         if (error != null) {
             viewContract?.showErrorAndFinish(error.getErrorMessage(appContext))
@@ -122,14 +124,31 @@ class ConnectProviderPresenter @Inject constructor(
         } else viewContract?.showErrorAndFinish(appContext.getString(R.string.errors_unable_connect_provider))
     }
 
+    override fun onConnectionInitFailure(error: ApiErrorData) {
+        viewContract?.showErrorAndFinish(error.getErrorMessage(appContext))
+    }
+
     override fun onConnectionInitSuccess(response: AuthenticateConnectionData) {
-        if (isValidUrl(response.redirectUrl ?: "")) {
-            connection.id = response.connectionId ?: ""
-            connectUrlData = response
-            viewMode = ViewMode.WEB_ENROLL
-            viewContract?.updateViewsContent()
-            loadWebRedirectUrl()
+        response.redirectUrl?.let { redirectUrl ->
+            if (redirectUrl.startsWith(AuthenticatorApiManager.authenticationReturnUrl)) {
+                parseRedirect(
+                    url = redirectUrl,
+                    success = { connectionID, accessToken ->
+                        webAuthFinishSuccess(connectionID, accessToken)
+                    },
+                    error = { errorClass, errorMessage ->
+                        webAuthFinishError(errorClass, errorMessage)
+                    }
+                )
+            } else if (isValidUrl(response.redirectUrl ?: "")) {
+                connection.id = response.connectionId ?: ""
+                connectUrlData = response
+                viewMode = ViewMode.WEB_ENROLL
+                viewContract?.updateViewsContent()
+                loadWebRedirectUrl()
+            }
         }
+
     }
 
     override fun onDestroyView() {
@@ -175,6 +194,7 @@ class ConnectProviderPresenter @Inject constructor(
                 baseUrl = connection.connectUrl,
                 publicKey = it,
                 pushToken = preferenceRepository.cloudMessagingToken,
+                connectQueryParam = connectQueryParam,
                 resultCallback = this
             )
         }

@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk
 
+import com.saltedge.authenticator.sdk.constants.DEFAULT_RETURN_URL
 import com.saltedge.authenticator.sdk.contract.*
 import com.saltedge.authenticator.sdk.model.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.request.ConfirmDenyData
@@ -34,6 +35,8 @@ import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
  */
 object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
 
+    override var authenticationReturnUrl: String = DEFAULT_RETURN_URL
+
     override fun getProviderData(
         providerConfigurationUrl: String,
         resultCallback: FetchProviderDataResult
@@ -46,10 +49,11 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
         baseUrl: String,
         publicKey: String,
         pushToken: String,
+        connectQueryParam: String?,
         resultCallback: ConnectionInitResult
     ) {
         ConnectionInitConnector(RestClient.apiInterface, resultCallback)
-            .postConnectionData(baseUrl, publicKey, pushToken)
+            .postConnectionData(baseUrl, publicKey, pushToken, connectQueryParam)
     }
 
     override fun revokeConnections(

@@ -44,7 +44,7 @@ interface ConnectProviderContract {
         val shouldShowProgressView: Boolean
         val shouldShowWebView: Boolean
         val shouldShowCompleteView: Boolean
-        fun setInitialData(connectConfigurationLink: String?, connectionGuid: GUID?)
+        fun setInitialData(connectConfigurationLink: String?, connectQueryParam: String?, connectionGuid: GUID?)
         fun onViewCreated()
         fun onDestroyView()
         fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token)

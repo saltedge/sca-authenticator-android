@@ -21,10 +21,10 @@
 package com.saltedge.authenticator.sdk.web
 
 import android.graphics.Bitmap
-import android.net.Uri
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import com.saltedge.authenticator.sdk.constants.*
+import com.saltedge.authenticator.sdk.AuthenticatorApiManager
+import com.saltedge.authenticator.sdk.tools.parseRedirect
 
 private const val WEB_PAGE_Y_CORRECTION_OFFSET = 20
 
@@ -32,19 +32,16 @@ private const val WEB_PAGE_Y_CORRECTION_OFFSET = 20
 class ConnectWebClient(val contract: ConnectWebClientContract) : WebViewClient() {
 
     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-        return if (url != null && url.startsWith(DEFAULT_RETURN_URL)) {
-            val uri = Uri.parse(url)
-            val connectionId = uri.getQueryParameter(KEY_ID)
-            val accessToken = uri.getQueryParameter(KEY_ACCESS_TOKEN)
-            if (connectionId != null && accessToken != null && accessToken.isNotEmpty()) {
-                contract.webAuthFinishSuccess(connectionId, accessToken)
-            } else {
-                val errorClass = uri.getQueryParameter(KEY_ERROR_CLASS)
-                contract.webAuthFinishError(
-                    errorClass = errorClass ?: ERROR_CLASS_AUTHENTICATION_RESPONSE,
-                    errorMessage = uri.getQueryParameter(KEY_ERROR_MESSAGE)
-                )
-            }
+        return if (url != null && url.startsWith(AuthenticatorApiManager.authenticationReturnUrl)) {
+            parseRedirect(
+                url = url,
+                success = { connectionID, accessToken ->
+                    contract.webAuthFinishSuccess(connectionID, accessToken)
+                },
+                error = { errorClass, errorMessage ->
+                    contract.webAuthFinishError(errorClass, errorMessage)
+                }
+            )
             true
         } else {
             super.shouldOverrideUrlLoading(view, url)

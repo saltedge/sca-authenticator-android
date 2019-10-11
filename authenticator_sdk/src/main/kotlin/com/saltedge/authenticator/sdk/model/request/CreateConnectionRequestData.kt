@@ -21,13 +21,15 @@
 package com.saltedge.authenticator.sdk.model.request
 
 import com.google.gson.annotations.SerializedName
+import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.constants.*
 
 data class CreateConnectionRequestData(@SerializedName(KEY_DATA) val data: CreateConnectionData)
 
 data class CreateConnectionData(
     @SerializedName(KEY_PUBLIC_KEY) val publicKey: String,
-    @SerializedName(KEY_RETURN_URL) val returnUrl: String = DEFAULT_RETURN_URL,
+    @SerializedName(KEY_RETURN_URL) val returnUrl: String = AuthenticatorApiManager.authenticationReturnUrl,
     @SerializedName(KEY_PLATFORM) val platform: String = DEFAULT_PLATFORM_NAME,
-    @SerializedName(KEY_PUSH_TOKEN) val pushToken: String
+    @SerializedName(KEY_PUSH_TOKEN) val pushToken: String,
+    @SerializedName(KEY_CONNECT_QUERY) val connectQueryParam: String?
 )

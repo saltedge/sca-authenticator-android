@@ -50,11 +50,16 @@ internal class ConnectionInitConnector(
      * @param baseUrl - provider base url
      * @param publicKey - new connection public key in pem format
      * @param pushToken - Firebase Cloud Messaging token of current app
+     * @param connectQueryParam: String? - connect_query string extracted from deep-link
      */
-    fun postConnectionData(baseUrl: String, publicKey: String, pushToken: String) {
+    fun postConnectionData(baseUrl: String, publicKey: String, pushToken: String, connectQueryParam: String?) {
         val url = createRequestUrl(baseUrl = baseUrl, routePath = API_CONNECTIONS)
         val requestData = CreateConnectionRequestData(
-            data = CreateConnectionData(publicKey = publicKey, pushToken = pushToken)
+            data = CreateConnectionData(
+                publicKey = publicKey,
+                pushToken = pushToken,
+                connectQueryParam = connectQueryParam
+            )
         )
         apiInterface.postNewConnectionData(url, requestData).enqueue(this)
     }
