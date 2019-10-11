@@ -36,8 +36,8 @@ import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
-import com.saltedge.authenticator.app.KEY_CONNECT_CONFIGURATION
-import com.saltedge.authenticator.sdk.tools.extractConnectConfigurationLink
+import com.saltedge.authenticator.app.KEY_DEEP_LINK
+import com.saltedge.authenticator.sdk.tools.isValidDeeplink
 import com.saltedge.authenticator.tool.AppTools.getDisplayHeight
 import com.saltedge.authenticator.tool.AppTools.getDisplayWidth
 import com.saltedge.authenticator.tool.log
@@ -61,7 +61,9 @@ class QrScannerActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE
+            && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
+        ) {
             startCameraSource()
         } else {
             showError(getString(R.string.errors_permission_denied))
@@ -131,11 +133,13 @@ class QrScannerActivity : AppCompatActivity() {
     }
 
     private fun onReceivedCodes(codes: SparseArray<Barcode>) {
-        val links = mutableListOf<String>()
+        val deeplinks = mutableListOf<String>()
         codes.forEach { _, value ->
-            value.displayValue.extractConnectConfigurationLink()?.let { links.add(it) }
+            if (value.displayValue.isValidDeeplink()) { deeplinks.add(value.displayValue) }
         }
-        links.firstOrNull()?.let { returnResultAndFinish(it) }
+        deeplinks.firstOrNull()?.let {
+            returnResultAndFinish(deeplink = it)
+        }
     }
 
     private fun startCameraSource() {
@@ -143,7 +147,8 @@ class QrScannerActivity : AppCompatActivity() {
             if (ActivityCompat.checkSelfPermission(
                     applicationContext,
                     permission.CAMERA
-                ) == PackageManager.PERMISSION_GRANTED) {
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
                 cameraSource?.start(surfaceView?.holder)
             } else {
                 ActivityCompat.requestPermissions(
@@ -158,10 +163,10 @@ class QrScannerActivity : AppCompatActivity() {
         }
     }
 
-    private fun returnResultAndFinish(connectConfigurationLink: String) {
+    private fun returnResultAndFinish(deeplink: String) {
         this.setResult(
             Activity.RESULT_OK,
-            intent.putExtra(KEY_CONNECT_CONFIGURATION, connectConfigurationLink)
+            intent.putExtra(KEY_DEEP_LINK, deeplink)
         )
         this.finish()
     }

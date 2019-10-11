@@ -23,6 +23,17 @@ package com.saltedge.authenticator.sdk.tools
 import android.net.Uri
 
 const val KEY_CONFIGURATION_PARAM = "configuration"
+const val KEY_CONNECT_QUERY_PARAM = "connect_query"
+
+/**
+ * Validates deep link
+ *
+ * @receiver deep link String (e.g. authenticator://saltedge.com/connect?configuration=https://example.com/configuration&connect_query=1234567890)
+ * @return true if deeplink contains configuration url
+ */
+fun String.isValidDeeplink(): Boolean {
+    return this.extractConnectConfigurationLink() != null
+}
 
 /**
  * Extract configuration link from deep link
@@ -32,4 +43,14 @@ const val KEY_CONFIGURATION_PARAM = "configuration"
  */
 fun String.extractConnectConfigurationLink(): String? {
     return Uri.parse(this).getQueryParameter(KEY_CONFIGURATION_PARAM)
+}
+
+/**
+ * Extract connect query data from deep link
+ *
+ * @receiver deep link String (e.g. authenticator://saltedge.com/connect?configuration=https://example.com/configuration&connect_query=1234567890)
+ * @return connect query string (e.g. 1234567890)
+ */
+fun String.extractConnectQuery(): String? {
+    return Uri.parse(this).getQueryParameter(KEY_CONNECT_QUERY_PARAM)
 }

@@ -189,6 +189,7 @@ class AuthorizationDetailsPresenter(
     }
 
     private fun processEncryptedAuthorizationResult(result: EncryptedAuthorizationData) {
+        if (viewMode.isProcessingMode()) return
         cryptoTools.decryptAuthorizationData(
             encryptedData = result,
             rsaPrivateKey = currentConnectionAndKey?.key
@@ -197,9 +198,7 @@ class AuthorizationDetailsPresenter(
                 connection = currentConnectionAndKey?.connection ?: return
             )
             if (!modelHasFinalMode && super.currentViewModel != newViewModel) {
-                if (viewMode == ViewMode.LOADING) {
-                    viewContract?.startTimer()
-                }
+                if (viewMode == ViewMode.LOADING) viewContract?.startTimer()
                 super.currentViewModel = newViewModel
                 updateViewContent()
             }
@@ -236,7 +235,7 @@ class AuthorizationDetailsPresenter(
         } else if (shouldSetUnavailableState(error)) {
             setUnavailableState()
         } else if (!error.isConnectivityError()) {
-            if (currentViewModel?.viewMode != ViewMode.ERROR) {
+            if (viewMode != ViewMode.ERROR) {
                 viewContract?.showError(error.getErrorMessage(appContext))
                 currentViewModel?.setNewViewMode(ViewMode.ERROR)
                 stopPolling()

@@ -64,7 +64,8 @@ class ConnectionInitConnectorTest {
         connector.postConnectionData(
             baseUrl = "https://localhost",
             publicKey = "key",
-            pushToken = "pushToken"
+            pushToken = "pushToken",
+            connectQueryParam = "1234567890"
         )
 
         verify { mockCall.enqueue(connector) }
@@ -95,7 +96,8 @@ class ConnectionInitConnectorTest {
         connector.postConnectionData(
             baseUrl = "https://localhost",
             publicKey = "key",
-            pushToken = "pushToken"
+            pushToken = "pushToken",
+            connectQueryParam = "1234567890"
         )
 
         verify { mockCall.enqueue(connector) }
@@ -113,7 +115,8 @@ class ConnectionInitConnectorTest {
         connector.postConnectionData(
             baseUrl = "https://localhost",
             publicKey = "key",
-            pushToken = "pushToken"
+            pushToken = "pushToken",
+            connectQueryParam = "1234567890"
         )
 
         verify { mockApi.postNewConnectionData(requestUrl = requestUrl, body = requestData) }
@@ -139,7 +142,8 @@ class ConnectionInitConnectorTest {
     private val requestData = CreateConnectionRequestData(
         data = CreateConnectionData(
             publicKey = "key",
-            pushToken = "pushToken"
+            pushToken = "pushToken",
+            connectQueryParam = "1234567890"
         )
     )
     private val requestUrl = "https://localhost/api/authenticator/v1/connections"

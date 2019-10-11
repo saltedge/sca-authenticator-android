@@ -98,8 +98,11 @@ class MainActivity : LockableActivity(),
         presenter.onNavigationItemClick(isTopNavigationLevel())
     }
 
-    override fun showConnectProvider(connectConfigurationLink: String) {
-        this.addFragment(ConnectProviderFragment.newInstance(connectConfigurationLink = connectConfigurationLink))
+    override fun showConnectProvider(connectConfigurationLink: String, connectQuery: String?) {
+        this.addFragment(ConnectProviderFragment.newInstance(
+            connectConfigurationLink = connectConfigurationLink,
+            connectQuery = connectQuery
+        ))
     }
 
     override fun restartActivity() {

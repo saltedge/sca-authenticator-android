@@ -18,21 +18,11 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.tools
+package com.saltedge.authenticator.sdk.contract
 
-import android.annotation.SuppressLint
-import java.security.Key
-import java.security.KeyPair
-import javax.crypto.SecretKey
+import com.saltedge.authenticator.sdk.model.ApiErrorData
+import com.saltedge.authenticator.sdk.model.ProviderData
 
-interface KeyStoreManagerAbs {
-    fun createOrReplaceRsaKeyPair(alias: String): KeyPair?
-    fun createRsaPublicKeyAsString(alias: String): String?
-    fun keyEntryExist(alias: String): Boolean
-    fun getKeyStoreAliases(): List<String>
-    fun getKeyPair(alias: String?): KeyPair?
-    fun deleteKeyPairs(guids: List<String>)
-    fun deleteKeyPair(alias: String)
-    fun getSecretKey(alias: String?): Key?
-    @SuppressLint("NewApi") fun createOrReplaceAesBiometricKey(alias: String): SecretKey?
+interface FetchProviderConfigurationDataResult {
+    fun fetchProviderConfigurationDataResult(result: ProviderData?, error: ApiErrorData?)
 }

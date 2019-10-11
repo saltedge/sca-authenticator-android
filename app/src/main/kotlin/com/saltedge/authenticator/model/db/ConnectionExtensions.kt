@@ -28,24 +28,24 @@ import org.joda.time.DateTimeZone
 import java.security.PrivateKey
 
 /**
- * Init Connection fields with data from Provider data
+ * Creates Connection object with data from Provider data
  *
- * @receiver initial Connection
- * @param providerData - ProviderData object parsed from QR code
+ * @receiver ProviderData object parsed from QR code
  * @return connection - filled Connection
  */
-fun Connection.initWithProviderData(providerData: ProviderData): Connection? {
-    if (!providerData.isValid()) return null
-    this.guid = createRandomBytesString()
-    this.name = providerData.name
-    this.code = providerData.code
-    this.logoUrl = providerData.logoUrl ?: ""
-    this.connectUrl = providerData.connectUrl
-    this.status = "${ConnectionStatus.INACTIVE}"
-    this.createdAt = DateTime.now().withZone(DateTimeZone.UTC).millis
-    this.updatedAt = this.createdAt
-    this.supportEmail = providerData.supportEmail
-    return this
+fun ProviderData.toConnection(): Connection? {
+    if (!this.isValid()) return null
+    val connection = Connection()
+    connection.guid = createRandomBytesString()
+    connection.name = this.name
+    connection.code = this.code
+    connection.logoUrl = this.logoUrl ?: ""
+    connection.connectUrl = this.connectUrl
+    connection.status = "${ConnectionStatus.INACTIVE}"
+    connection.createdAt = DateTime.now().withZone(DateTimeZone.UTC).millis
+    connection.updatedAt = connection.createdAt
+    connection.supportEmail = this.supportEmail
+    return connection
 }
 
 /**

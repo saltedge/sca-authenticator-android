@@ -18,11 +18,25 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.contract
+package com.saltedge.authenticator.sdk.tools
 
-import com.saltedge.authenticator.sdk.model.ApiErrorData
-import com.saltedge.authenticator.sdk.model.ProviderData
+import android.net.Uri
+import com.saltedge.authenticator.sdk.constants.*
+import com.saltedge.authenticator.sdk.model.ConnectionID
+import com.saltedge.authenticator.sdk.model.Token
 
-interface FetchProviderDataResult {
-    fun fetchProviderResult(result: ProviderData?, error: ApiErrorData?)
+fun parseRedirect(url: String,
+                  success: (connectionID: ConnectionID, accessToken: Token) -> Unit,
+                  error: (errorClass: String, errorMessage: String?) -> Unit) {
+    val uri = Uri.parse(url)
+    val connectionID = uri.getQueryParameter(KEY_ID)
+    val accessToken = uri.getQueryParameter(KEY_ACCESS_TOKEN)
+    val errorClass = uri.getQueryParameter(KEY_ERROR_CLASS)
+    val errorMessage = uri.getQueryParameter(KEY_ERROR_MESSAGE)
+
+    if (connectionID != null && accessToken?.isNotEmpty() == true) {
+        success(connectionID, accessToken)
+    } else {
+        error(errorClass ?: ERROR_CLASS_AUTHENTICATION_RESPONSE, errorMessage)
+    }
 }

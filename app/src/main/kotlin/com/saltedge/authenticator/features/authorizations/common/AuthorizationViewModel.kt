@@ -63,6 +63,14 @@ data class AuthorizationViewModel(
         get() = this.isExpired && !this.hasFinalMode && this.viewMode != ViewMode.LOADING
 
     /**
+     * Check that model can be authorized
+     *
+     * @return Boolean, true viewMode is default mode
+     */
+    val canBeAuthorized: Boolean
+        get() = viewMode === ViewMode.DEFAULT
+
+    /**
      * Check that model has final viewMode
      *
      * @return Boolean, true viewMode is final mode

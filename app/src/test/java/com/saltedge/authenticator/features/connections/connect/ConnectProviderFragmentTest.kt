@@ -24,6 +24,7 @@ import com.saltedge.authenticator.app.KEY_CONNECT_CONFIGURATION
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.sdk.constants.KEY_PROVIDER
 import com.saltedge.authenticator.sdk.model.ProviderData
+import com.saltedge.authenticator.sdk.tools.KEY_CONNECT_QUERY_PARAM
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThat
@@ -39,27 +40,31 @@ class ConnectProviderFragmentTest {
     fun newInstanceTestCase1() {
         val arguments = ConnectProviderFragment.newInstance(
             connectionGuid = "guid1",
-            connectConfigurationLink = "https://www.fentury.com"
+            connectConfigurationLink = "https://www.my_host.com/configuration",
+            connectQuery = "1234567890"
         ).arguments
 
         assertThat(arguments?.getString(KEY_GUID), equalTo("guid1"))
         assertThat(
             arguments?.getString(KEY_CONNECT_CONFIGURATION),
-            equalTo("https://www.fentury.com")
+            equalTo("https://www.my_host.com/configuration")
         )
+        assertThat(arguments?.getString(KEY_CONNECT_QUERY_PARAM), equalTo("1234567890"))
     }
 
     @Test
     @Throws(Exception::class)
     fun newInstanceTestCase2() {
-        val arguments =
-            ConnectProviderFragment.newInstance(connectConfigurationLink = "https://www.fentury.com").arguments
+        val arguments = ConnectProviderFragment.newInstance(
+            connectConfigurationLink = "https://www.my_host.com/configuration"
+        ).arguments
 
         assertNull(arguments?.getString(KEY_GUID))
         assertThat(
             arguments?.getString(KEY_CONNECT_CONFIGURATION),
-            equalTo("https://www.fentury.com")
+            equalTo("https://www.my_host.com/configuration")
         )
+        assertNull(arguments?.getString(KEY_CONNECT_QUERY_PARAM))
     }
 
     @Test
@@ -69,5 +74,6 @@ class ConnectProviderFragmentTest {
 
         assertThat(arguments?.getString(KEY_GUID), equalTo("guid1"))
         assertNull(arguments?.getSerializable(KEY_PROVIDER) as? ProviderData)
+        assertNull(arguments?.getString(KEY_CONNECT_QUERY_PARAM))
     }
 }

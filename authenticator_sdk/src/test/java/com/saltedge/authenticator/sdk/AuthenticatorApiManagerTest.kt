@@ -60,6 +60,7 @@ class AuthenticatorApiManagerTest {
             baseUrl = "",
             publicKey = "key",
             pushToken = "pushToken",
+            connectQueryParam = "1234567890",
             resultCallback = mockCallback
         )
 

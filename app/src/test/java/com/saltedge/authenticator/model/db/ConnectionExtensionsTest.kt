@@ -43,19 +43,15 @@ class ConnectionExtensionsTest {
 
     @Test
     @Throws(Exception::class)
-    fun connectionInitWithProviderDataTest() {
-        var connection = Connection().apply {
-            initWithProviderData(
-                ProviderData(
-                    code = "demobank",
-                    name = "Demobank",
-                    connectUrl = "url",
-                    logoUrl = "url",
-                    version = "1",
-                    supportEmail = "exampple1@saltedge.com"
-                )
-            )
-        }
+    fun providerDataToConnectionTest() {
+        var connection = ProviderData(
+                code = "demobank",
+                name = "Demobank",
+                connectUrl = "url",
+                logoUrl = "url",
+                version = "1",
+                supportEmail = "exampple1@saltedge.com"
+            ).toConnection()!!
 
         Assert.assertTrue(connection.guid.isNotEmpty())
         assertThat(connection.id, equalTo(""))
@@ -69,18 +65,14 @@ class ConnectionExtensionsTest {
         assertThat(connection.status, equalTo("${ConnectionStatus.INACTIVE}"))
         assertThat(connection.supportEmail, equalTo("exampple1@saltedge.com"))
 
-        connection = connection.apply {
-            initWithProviderData(
-                ProviderData(
-                    connectUrl = "url1",
-                    code = "code2",
-                    name = "name3",
-                    logoUrl = "url4",
-                    version = "1",
-                    supportEmail = "example2@saltedge.com"
-                )
-            )
-        }
+        connection = ProviderData(
+            connectUrl = "url1",
+            code = "code2",
+            name = "name3",
+            logoUrl = "url4",
+            version = "1",
+            supportEmail = "example2@saltedge.com"
+        ).toConnection()!!
 
         Assert.assertTrue(connection.guid.isNotEmpty())
         assertThat(connection.id, equalTo(""))
@@ -93,6 +85,17 @@ class ConnectionExtensionsTest {
         assertThat(connection.accessToken, equalTo(""))
         assertThat(connection.status, equalTo("${ConnectionStatus.INACTIVE}"))
         assertThat(connection.supportEmail, equalTo("example2@saltedge.com"))
+
+        Assert.assertNull(
+            ProviderData(
+                connectUrl = "",
+                code = "",
+                name = "",
+                logoUrl = "",
+                version = "0",
+                supportEmail = ""
+            ).toConnection()
+        )
     }
 
     @Test

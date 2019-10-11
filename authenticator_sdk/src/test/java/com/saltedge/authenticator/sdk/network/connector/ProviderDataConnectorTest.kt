@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.network.connector
 
-import com.saltedge.authenticator.sdk.contract.FetchProviderDataResult
+import com.saltedge.authenticator.sdk.contract.FetchProviderConfigurationDataResult
 import com.saltedge.authenticator.sdk.model.ApiErrorData
 import com.saltedge.authenticator.sdk.model.ProviderData
 import com.saltedge.authenticator.sdk.model.ProviderResponseData
@@ -79,7 +79,7 @@ class ProviderDataConnectorTest {
         )
 
         verify {
-            mockCallback.fetchProviderResult(
+            mockCallback.fetchProviderConfigurationDataResult(
                 result = ProviderData(
                     connectUrl = "connectUrl",
                     name = "name",
@@ -108,7 +108,7 @@ class ProviderDataConnectorTest {
         connector.onResponse(mockCall, get404Response())
 
         verify {
-            mockCallback.fetchProviderResult(
+            mockCallback.fetchProviderConfigurationDataResult(
                 result = null,
                 error = ApiErrorData(
                     errorMessage = "Resource not found",
@@ -121,7 +121,7 @@ class ProviderDataConnectorTest {
 
     private val requestUrl = "https://localhost/api/authenticator/v1/authorizations/authId"
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
-    private val mockCallback = mockkClass(FetchProviderDataResult::class)
+    private val mockCallback = mockkClass(FetchProviderConfigurationDataResult::class)
     private val mockCall: Call<ProviderResponseData> =
         mockkClass(Call::class) as Call<ProviderResponseData>
 
@@ -133,6 +133,6 @@ class ProviderDataConnectorTest {
         } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
         every { mockCall.request() } returns Request.Builder().url(requestUrl).build()
-        every { mockCallback.fetchProviderResult(any(), any()) } returns Unit
+        every { mockCallback.fetchProviderConfigurationDataResult(any(), any()) } returns Unit
     }
 }

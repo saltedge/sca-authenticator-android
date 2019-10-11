@@ -200,42 +200,48 @@ class AuthorizationViewModelTest {
 
     @Test
     @Throws(Exception::class)
+    fun canBeAuthorizedTest() {
+        val results = ViewMode.values().map {
+            model.viewMode = it
+            it to model.canBeAuthorized
+        }.toMap()
+
+        assertThat(results, equalTo(
+            mapOf(
+                ViewMode.LOADING to false,
+                ViewMode.DEFAULT to true,
+                ViewMode.CONFIRM_PROCESSING to false,
+                ViewMode.DENY_PROCESSING to false,
+                ViewMode.CONFIRM_SUCCESS to false,
+                ViewMode.DENY_SUCCESS to false,
+                ViewMode.ERROR to false,
+                ViewMode.TIME_OUT to false,
+                ViewMode.UNAVAILABLE to false
+            )
+        ))
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun hasFinalModeTest() {
-        model.viewMode = ViewMode.DEFAULT
+        val results = ViewMode.values().map {
+            model.viewMode = it
+            it to model.hasFinalMode
+        }.toMap()
 
-        Assert.assertFalse(model.hasFinalMode)
-
-        model.viewMode = ViewMode.LOADING
-
-        Assert.assertFalse(model.hasFinalMode)
-
-        model.viewMode = ViewMode.CONFIRM_PROCESSING
-
-        Assert.assertFalse(model.hasFinalMode)
-
-        model.viewMode = ViewMode.DENY_PROCESSING
-
-        Assert.assertFalse(model.hasFinalMode)
-
-        model.viewMode = ViewMode.CONFIRM_SUCCESS
-
-        Assert.assertTrue(model.hasFinalMode)
-
-        model.viewMode = ViewMode.DENY_SUCCESS
-
-        Assert.assertTrue(model.hasFinalMode)
-
-        model.viewMode = ViewMode.ERROR
-
-        Assert.assertTrue(model.hasFinalMode)
-
-        model.viewMode = ViewMode.TIME_OUT
-
-        Assert.assertTrue(model.hasFinalMode)
-
-        model.viewMode = ViewMode.UNAVAILABLE
-
-        Assert.assertTrue(model.hasFinalMode)
+        assertThat(results, equalTo(
+            mapOf(
+                ViewMode.LOADING to false,
+                ViewMode.DEFAULT to false,
+                ViewMode.CONFIRM_PROCESSING to false,
+                ViewMode.DENY_PROCESSING to false,
+                ViewMode.CONFIRM_SUCCESS to true,
+                ViewMode.DENY_SUCCESS to true,
+                ViewMode.ERROR to true,
+                ViewMode.TIME_OUT to true,
+                ViewMode.UNAVAILABLE to true
+            )
+        ))
     }
 
     @Test

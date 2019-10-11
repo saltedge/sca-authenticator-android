@@ -23,13 +23,13 @@ package com.saltedge.authenticator.features.main
 import android.app.Activity
 import android.content.Intent
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_CONNECT_CONFIGURATION
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
 import com.saltedge.authenticator.sdk.tools.extractConnectConfigurationLink
+import com.saltedge.authenticator.sdk.tools.extractConnectQuery
 import com.saltedge.authenticator.tool.ResId
 
 class MainActivityPresenter(
@@ -58,20 +58,33 @@ class MainActivityPresenter(
     }
 
     /**
+     * Handles result from QR Scan Activity
+     * if result is correct then shows Connect Provider Fragment
+     */
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == QR_SCAN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            data?.let { onNewIntentReceived(intent = it) }
+        }
+    }
+
+    /**
      * On new intent with data received
      */
     fun onNewIntentReceived(intent: Intent) {
         when {
             intent.hasConnectionIdAndAuthorizationId -> {
                 viewContract.showAuthorizationDetailsView(
-                    intent.connectionId,
-                    intent.authorizationId
+                    connectionID = intent.connectionId,
+                    authorizationID = intent.authorizationId
                 )
             }
             intent.hasDeepLink -> {
                 viewContract.setSelectedTabbarItemId(R.id.menu_connections)
                 intent.deepLink.extractConnectConfigurationLink()?.let {
-                    viewContract.showConnectProvider(connectConfigurationLink = it)
+                    viewContract.showConnectProvider(
+                        connectConfigurationLink = it,
+                        connectQuery = intent.deepLink.extractConnectQuery()
+                    )
                 }
             }
         }
@@ -100,18 +113,6 @@ class MainActivityPresenter(
             else -> return false
         }
         return true
-    }
-
-    /**
-     * Handles result from QR Scan Activity
-     * if result is correct then shows Connect Provider Fragment
-     */
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == QR_SCAN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            data?.getStringExtra(KEY_CONNECT_CONFIGURATION)?.let {
-                viewContract.showConnectProvider(it)
-            }
-        }
     }
 
     /**

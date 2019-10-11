@@ -35,6 +35,7 @@ import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.Token
+import com.saltedge.authenticator.sdk.tools.KEY_CONNECT_QUERY_PARAM
 import com.saltedge.authenticator.sdk.web.ConnectWebClient
 import com.saltedge.authenticator.sdk.web.ConnectWebClientContract
 import com.saltedge.authenticator.tool.*
@@ -58,6 +59,7 @@ class ConnectProviderFragment : BaseFragment(),
         injectDependencies()
         presenterContract.setInitialData(
             connectConfigurationLink = arguments?.getString(KEY_CONNECT_CONFIGURATION),
+            connectQueryParam = arguments?.getString(KEY_CONNECT_QUERY_PARAM),
             connectionGuid = arguments?.getString(KEY_GUID)
         )
     }
@@ -168,11 +170,13 @@ class ConnectProviderFragment : BaseFragment(),
     companion object {
         fun newInstance(
             connectConfigurationLink: String? = null,
+            connectQuery: String? = null,
             connectionGuid: GUID? = null
         ): ConnectProviderFragment {
             return ConnectProviderFragment().apply {
                 arguments = Bundle().apply {
                     putString(KEY_CONNECT_CONFIGURATION, connectConfigurationLink)
+                    putString(KEY_CONNECT_QUERY_PARAM, connectQuery)
                     putString(KEY_GUID, connectionGuid)
                 }
             }

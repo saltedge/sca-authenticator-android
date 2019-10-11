@@ -33,6 +33,8 @@ import com.saltedge.authenticator.features.authorizations.details.di.Authorizati
 import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
+import com.saltedge.authenticator.sdk.model.AuthorizationID
+import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.showAuthorizationConfirm
@@ -176,12 +178,12 @@ class AuthorizationDetailsFragment : BaseFragment(),
         /**
          * Creates new instance of AuthorizationDetailsFragment
          *
-         * @param authorizationId - id of Authorization
          * @param connectionId - id of Connection for Authorization
+         * @param authorizationId - id of Authorization
          *
          * @return AuthorizationDetailsFragment
          */
-        fun newInstance(authorizationId: String, connectionId: String): AuthorizationDetailsFragment {
+        fun newInstance(connectionId: ConnectionID,  authorizationId: AuthorizationID): AuthorizationDetailsFragment {
             return AuthorizationDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putString(KEY_CONNECTION_ID, connectionId)

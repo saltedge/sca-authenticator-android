@@ -42,6 +42,10 @@ enum class ViewMode {
             || this == UNAVAILABLE
     }
 
+    fun isProcessingMode(): Boolean {
+        return this == CONFIRM_PROCESSING || this == DENY_PROCESSING
+    }
+
     val statusImageResId: ResId?
         get() {
             return when(this) {

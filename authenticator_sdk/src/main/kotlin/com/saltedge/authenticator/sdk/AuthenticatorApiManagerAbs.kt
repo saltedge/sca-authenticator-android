@@ -31,12 +31,15 @@ import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
  */
 interface AuthenticatorApiManagerAbs {
 
-    fun getProviderData(providerConfigurationUrl: String, resultCallback: FetchProviderDataResult)
+    var authenticationReturnUrl: String
+
+    fun getProviderConfigurationData(providerConfigurationUrl: String, resultCallback: FetchProviderConfigurationDataResult)
 
     fun initConnectionRequest(
         baseUrl: String,
         publicKey: String,
         pushToken: String,
+        connectQueryParam: String?,
         resultCallback: ConnectionInitResult
     )
 

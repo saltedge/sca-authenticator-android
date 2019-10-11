@@ -35,8 +35,8 @@ class AuthorizationDetailsFragmentTest {
     @Throws(Exception::class)
     fun newInstanceTest() {
         val fragment = AuthorizationDetailsFragment.newInstance(
-            authorizationId = "1",
-            connectionId = "2"
+            connectionId = "2",
+            authorizationId = "1"
         )
         val arguments = fragment.arguments!!
 
