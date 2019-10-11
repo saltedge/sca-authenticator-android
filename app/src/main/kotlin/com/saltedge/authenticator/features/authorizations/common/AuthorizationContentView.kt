@@ -45,9 +45,7 @@ class AuthorizationContentView : LinearLayout {
 
     fun setViewMode(viewMode: ViewMode) {
         val showStatus = viewMode !== ViewMode.DEFAULT
-//        blurringView?.setVisible(show = showStatus)
         if (showStatus) {
-
             if (!statusLayout.isVisible) {
                 statusLayout.alpha = 0.1f
                 statusLayout?.setVisible(show = showStatus)
