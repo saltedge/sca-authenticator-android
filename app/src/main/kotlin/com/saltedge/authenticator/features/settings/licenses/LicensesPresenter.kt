@@ -45,8 +45,7 @@ class LicensesPresenter : ListItemClickListener {
         "MockK" to LINK_APACHE_2_LICENSE,
         "findbugs/jsr305" to "https://raw.githubusercontent.com/findbugsproject/findbugs/master/findbugs/licenses/LICENSE-jsr305.txt",
         "ktlint" to "https://raw.githubusercontent.com/pinterest/ktlint/master/LICENSE",
-        "jlleitschuh/ktlint-gradle" to "https://raw.githubusercontent.com/JLLeitschuh/ktlint-gradle/master/LICENSE.txt",
-        "500px-android-blur" to "https://raw.githubusercontent.com/500px/500px-android-blur/master/LICENSE.txt"
+        "jlleitschuh/ktlint-gradle" to "https://raw.githubusercontent.com/JLLeitschuh/ktlint-gradle/master/LICENSE.txt"
     )
 
     fun getListItems(): List<String> = listData.keys.toList()

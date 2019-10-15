@@ -20,7 +20,6 @@ If you modify this Program, or any covered work, by linking or combining it with
 * [Firebase (Commercial license)](https://firebase.google.com/terms)
 * [ktlint (MIT License)](https://raw.githubusercontent.com/pinterest/ktlint/master/LICENSE)
 * [jlleitschuh/ktlint-gradle (MIT License)](https://raw.githubusercontent.com/JLLeitschuh/ktlint-gradle/master/LICENSE.txt)
-* [500px-android-blur (MIT License)](https://raw.githubusercontent.com/500px/500px-android-blur/master/LICENSE.txt)
     
 ***NOTE***  
 In the event that we accidentally failed something, [please bring it to our attention](https://www.saltedge.com/pages/contact_support).
