@@ -42,7 +42,7 @@ class AuthorizationHeaderView : LinearLayout, TimeUpdateListener {
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
     init {
-        inflate(context, R.layout.view_authorization_header,this)
+        inflate(context, R.layout.view_authorization_header, this)
     }
 
     fun setTitleAndLogo(title: String, logoUrl: String?) {

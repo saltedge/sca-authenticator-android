@@ -29,5 +29,6 @@ interface AuthorizationsListContract {
     interface View : BaseAuthorizationViewContract {
         fun showError(error: ApiErrorData)
         fun updateItem(viewModel: AuthorizationViewModel, itemId: Int)
+        fun freezeTimer()
     }
 }

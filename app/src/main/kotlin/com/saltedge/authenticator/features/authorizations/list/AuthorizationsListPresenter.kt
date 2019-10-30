@@ -122,6 +122,7 @@ class AuthorizationsListPresenter @Inject constructor(
         type: ActionType
     ) {
         stopPolling()
+        viewContract?.freezeTimer()
         findViewModel(connectionID, authorizationID)?.let { viewModel ->
             viewModel.setNewViewMode(type.toViewMode())
             viewContract?.updateItem(viewModel = viewModel, itemId = viewModels.indexOf(viewModel))

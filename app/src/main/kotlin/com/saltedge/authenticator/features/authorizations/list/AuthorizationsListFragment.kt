@@ -46,7 +46,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     lateinit var presenter: AuthorizationsListPresenter
     @Inject
     lateinit var biometricPrompt: BiometricPromptAbs
-    private val pagersScrollSyncronizer = PagersScrollSyncronizer()
+    private val pagersScrollSynchronizer = PagersScrollSyncronizer()
     private var headerAdapter: AuthorizationsHeaderPagerAdapter? = null
     private var contentAdapter: AuthorizationsContentPagerAdapter? = null
 
@@ -91,6 +91,11 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         headerAdapter?.stopTimer()
         presenter.onFragmentPause()
         super.onPause()
+    }
+
+    override fun freezeTimer() {
+        headerAdapter?.stopTimer()
+        updateViewsContent()
     }
 
     override fun onStop() {
@@ -144,7 +149,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
                 headerViewPager?.adapter = this
             }
         }
-        pagersScrollSyncronizer.initViews(headerViewPager, contentViewPager)
+        pagersScrollSynchronizer.initViews(headerViewPager, contentViewPager)
     }
 
     // Clear all system notification
