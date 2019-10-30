@@ -38,8 +38,6 @@ class AuthorizationContentView : LinearLayout {
 
     init {
         inflate(context, R.layout.view_authorization_content,this)
-        blurringView?.setBlurredView(blurredView)
-        blurringView?.invalidate()
     }
 
     fun setViewMode(viewMode: ViewMode) {
