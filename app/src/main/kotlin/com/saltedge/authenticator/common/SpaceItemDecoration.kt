@@ -65,12 +65,13 @@ class SpaceItemDecoration(
         val dividerEnd = parent.width - parent.paddingEnd
         val endIndex = parent.adapter?.itemCount ?: 0
         for (index in 0 until endIndex - 1) {
-            val currentChild = parent.getChildAt(index)
-            val startX = dividerStart.toFloat()
-            val endX = dividerEnd.toFloat()
-            val bottomY = currentChild.bottom.toFloat() + dividerHeight / 2
-            if (needToDrawDivider(parent, currentChild)) {
-                canvas.drawLine(startX, bottomY, endX, bottomY, dividerPaint)
+            parent.getChildAt(index)?.let { currentChild ->
+                val startX = dividerStart.toFloat()
+                val endX = dividerEnd.toFloat()
+                val bottomY = currentChild.bottom.toFloat() + dividerHeight / 2
+                if (needToDrawDivider(parent, currentChild)) {
+                    canvas.drawLine(startX, bottomY, endX, bottomY, dividerPaint)
+                }
             }
         }
     }
