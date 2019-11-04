@@ -84,7 +84,7 @@ data class AuthorizationViewModel(
      * @return Boolean, true if showProgress is true
      */
     val ignoreTimeUpdate: Boolean
-        get() = viewMode.showProgress
+        get() = viewMode !== ViewMode.DEFAULT
 
     /**
      * Check that authorization model should be destroyed
