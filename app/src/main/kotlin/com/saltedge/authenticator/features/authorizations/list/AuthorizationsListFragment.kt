@@ -46,7 +46,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     lateinit var presenter: AuthorizationsListPresenter
     @Inject
     lateinit var biometricPrompt: BiometricPromptAbs
-    private val pagersScrollSyncronizer = PagersScrollSyncronizer()
+    private val pagersScrollSynchronizer = PagersScrollSynchronizer()
     private var headerAdapter: AuthorizationsHeaderPagerAdapter? = null
     private var contentAdapter: AuthorizationsContentPagerAdapter? = null
 
@@ -144,7 +144,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
                 headerViewPager?.adapter = this
             }
         }
-        pagersScrollSyncronizer.initViews(headerViewPager, contentViewPager)
+        pagersScrollSynchronizer.initViews(headerViewPager, contentViewPager)
     }
 
     // Clear all system notification

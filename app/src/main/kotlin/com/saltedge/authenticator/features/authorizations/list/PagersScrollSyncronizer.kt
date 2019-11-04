@@ -22,7 +22,7 @@ package com.saltedge.authenticator.features.authorizations.list
 
 import androidx.viewpager.widget.ViewPager
 
-class PagersScrollSyncronizer {
+class PagersScrollSynchronizer {
 
     var firstViewPager: ViewPager? = null
     var secondViewPager: ViewPager? = null
