@@ -269,6 +269,29 @@ class AuthorizationViewModelTest {
 
     @Test
     @Throws(Exception::class)
+    fun ignoreTimeUpdateTest() {
+        val results = ViewMode.values().map {
+            model.viewMode = it
+            it to model.ignoreTimeUpdate
+        }.toMap()
+
+        assertThat(results, equalTo(
+            mapOf(
+                ViewMode.LOADING to true,
+                ViewMode.DEFAULT to false,
+                ViewMode.CONFIRM_PROCESSING to true,
+                ViewMode.DENY_PROCESSING to true,
+                ViewMode.CONFIRM_SUCCESS to true,
+                ViewMode.DENY_SUCCESS to true,
+                ViewMode.ERROR to true,
+                ViewMode.TIME_OUT to true,
+                ViewMode.UNAVAILABLE to true
+            )
+        ))
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun isNotExpiredTest() {
         val now = DateTime.now()
 
