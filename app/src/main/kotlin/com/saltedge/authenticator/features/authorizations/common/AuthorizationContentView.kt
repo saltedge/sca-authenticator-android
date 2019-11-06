@@ -26,7 +26,7 @@ import android.util.AttributeSet
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tool.hasHTMLTags
+import com.saltedge.authenticator.sdk.tools.hasHTMLTags
 import com.saltedge.authenticator.tool.setVisible
 import kotlinx.android.synthetic.main.view_authorization_content.view.*
 

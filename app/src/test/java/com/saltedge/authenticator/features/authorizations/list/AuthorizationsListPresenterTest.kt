@@ -29,10 +29,10 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_CONNECTION_NOT_FOUND
 import com.saltedge.authenticator.sdk.model.*
 import com.saltedge.authenticator.sdk.polling.PollingServiceAbs
-import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
-import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.testTools.TestAppTools
-import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.joda.time.DateTime

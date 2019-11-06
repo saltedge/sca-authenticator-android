@@ -24,6 +24,7 @@ import android.util.Base64
 import com.saltedge.authenticator.sdk.network.connector.createExpiresAtTime
 import com.saltedge.authenticator.sdk.testTools.getTestPrivateKey
 import com.saltedge.authenticator.sdk.testTools.getTestPublicKey
+import com.saltedge.authenticator.sdk.tools.sign.createSignatureHeader
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith

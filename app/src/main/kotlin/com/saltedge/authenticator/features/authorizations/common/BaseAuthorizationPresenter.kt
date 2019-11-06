@@ -28,7 +28,7 @@ import com.saltedge.authenticator.sdk.model.AuthorizationID
 import com.saltedge.authenticator.sdk.model.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResultData
-import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
 
 abstract class BaseAuthorizationPresenter(

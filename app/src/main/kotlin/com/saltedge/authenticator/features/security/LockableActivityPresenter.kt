@@ -26,9 +26,9 @@ import android.os.SystemClock
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.tool.MILLIS_IN_MINUTE
+import com.saltedge.authenticator.sdk.tools.MILLIS_IN_MINUTE
+import com.saltedge.authenticator.sdk.tools.millisToRemainedMinutes
 import com.saltedge.authenticator.tool.log
-import com.saltedge.authenticator.tool.millisToRemainedMinutes
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
 
 class LockableActivityPresenter(

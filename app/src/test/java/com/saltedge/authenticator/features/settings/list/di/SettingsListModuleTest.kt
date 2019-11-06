@@ -22,9 +22,9 @@ package com.saltedge.authenticator.features.settings.list.di
 
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.testTools.TestAppTools
-import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith

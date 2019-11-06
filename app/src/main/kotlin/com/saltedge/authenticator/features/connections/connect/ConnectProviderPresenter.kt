@@ -25,7 +25,7 @@ import android.webkit.URLUtil.isValidUrl
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.model.db.toConnection
+import com.saltedge.authenticator.model.toConnection
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
@@ -33,7 +33,7 @@ import com.saltedge.authenticator.sdk.contract.ConnectionInitResult
 import com.saltedge.authenticator.sdk.contract.FetchProviderConfigurationDataResult
 import com.saltedge.authenticator.sdk.model.*
 import com.saltedge.authenticator.sdk.model.response.AuthenticateConnectionData
-import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.tools.parseRedirect
 import javax.inject.Inject
 

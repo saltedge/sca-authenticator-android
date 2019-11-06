@@ -47,11 +47,14 @@
     <string name="actions_confirm">Confirm</string>
     <string name="actions_enter_passcode_or_fingerprint">Enter Passcode or use Fingerprint</string>
 
+    <string name="errors_touch_id_not_enrolled">No Fingerprint was enrolled.</string>
+    <string name="errors_touch_id_not_supported">Fingerprint is not supported on your device</string>
+    <string name="error_fingerprint_not_recognized">Fingerprint not recognized. Please try again.</string>
+    <string name="errors_activate_touch_id">Fingerprint is not activated on your device, please proceed to settings.</string>
     <string name="errors_db_init">Database initialize error</string>
     <string name="errors_camera_init">Camera initialize error</string>
     <string name="errors_internal_error">Internal error</string>
     <string name="errors_account_reset">Your account was reset due to multiple failed attempts.</string>
-    <string name="errors_activate_touch_id">Fingerprint is not activated on your device, please proceed to settings.</string>
     <string name="errors_contact_support">Something went wrong. Please contact our Support team.</string>
     <string name="errors_empty_passcode">Passcode is empty</string>
     <string name="errors_no_internet_connection">No Internet connection.\nPlease try again later.</string>
@@ -60,9 +63,6 @@
     <string name="errors_passcode_try_again">Please try again in \%s minutes.</string>
     <string name="errors_passcode_try_again_short">Please try again in \%s minute. </string>
     <string name="errors_request_error">Request error</string>
-    <string name="errors_touch_id_not_enrolled">No Fingerprint was enrolled.</string>
-    <string name="errors_touch_id_not_supported">Fingerprint is not supported on your device</string>
-    <string name="error_fingerprint_not_recognized">Fingerprint not recognized. Please try again.</string>
     <string name="errors_warning">Warning</string>
     <string name="errors_wrong_passcode">You entered the wrong Passcode.</string>
     <string name="errors_wrong_passcode_long">You entered the wrong Passcode, please try again.</string>

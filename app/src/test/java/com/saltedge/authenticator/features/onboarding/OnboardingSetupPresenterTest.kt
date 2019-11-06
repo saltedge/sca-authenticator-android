@@ -22,9 +22,10 @@ package com.saltedge.authenticator.features.onboarding
 
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricState
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
-import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert
@@ -49,14 +50,14 @@ class OnboardingSetupPresenterTest {
         Assert.assertNotNull(presenter.viewContract)
         MatcherAssert.assertThat(presenter.setupViewMode, equalTo(SetupViewMode.INPUT_PASSCODE))
 
-        Mockito.doReturn(true).`when`(mockBiometricTools).isFingerprintSupported(TestAppTools.applicationContext)
+        Mockito.doReturn(true).`when`(mockBiometricTools).isBiometricSupported(TestAppTools.applicationContext)
 
         MatcherAssert.assertThat(
             createPresenter(viewContract = mockView).setupStepCount,
             equalTo(4)
         )
 
-        Mockito.doReturn(false).`when`(mockBiometricTools).isFingerprintSupported(TestAppTools.applicationContext)
+        Mockito.doReturn(false).`when`(mockBiometricTools).isBiometricSupported(TestAppTools.applicationContext)
 
         MatcherAssert.assertThat(
             createPresenter(viewContract = mockView).setupStepCount,
@@ -269,17 +270,13 @@ class OnboardingSetupPresenterTest {
         val context = TestAppTools.applicationContext
         val presenter = createPresenter(viewContract = mockView)
         presenter.setupViewMode = SetupViewMode.ALLOW_BIOMETRICS
-        Mockito.doReturn(context.getString(R.string.errors_internal_error)).`when`(
-            mockBiometricTools
-        )
-            .getCurrentFingerprintStateWarningMessage(context)
+        Mockito.doReturn(BiometricState.NOT_SUPPORTED).`when`(mockBiometricTools).getFingerprintState(context)
         presenter.onViewClick(R.id.actionView)
 
-        Mockito.verify(mockView).showWarningDialogWithMessage(context.getString(R.string.errors_internal_error))
+        Mockito.verify(mockView).showWarningDialogWithMessage(context.getString(R.string.errors_touch_id_not_supported))
         MatcherAssert.assertThat(presenter.setupViewMode, equalTo(SetupViewMode.ALLOW_BIOMETRICS))
 
-        Mockito.doReturn(null).`when`(mockBiometricTools)
-            .getCurrentFingerprintStateWarningMessage(TestAppTools.applicationContext)
+        Mockito.doReturn(BiometricState.READY).`when`(mockBiometricTools).getFingerprintState(context)
         Mockito.doReturn(true).`when`(mockBiometricTools).activateFingerprint()
         Mockito.clearInvocations(mockView)
         presenter.onViewClick(R.id.actionView)
@@ -307,16 +304,16 @@ class OnboardingSetupPresenterTest {
     fun onViewClickTest_allowTouchIdActionView_noViewContract() {
         val context = TestAppTools.applicationContext
         val presenter = createPresenter(viewContract = null)
-        Mockito.doReturn(context.getString(R.string.errors_internal_error)).`when`(
-            mockBiometricTools
-        )
-            .getCurrentFingerprintStateWarningMessage(context)
+//        Mockito.doReturn(context.getString(R.string.errors_internal_error)).`when`(
+//            mockBiometricTools
+//        )
+//            .getCurrentFingerprintStateWarningMessage(context)
         presenter.onViewClick(R.id.actionView)
 
         Mockito.verifyNoMoreInteractions(mockView)
 
-        Mockito.doReturn(null).`when`(mockBiometricTools)
-            .getCurrentFingerprintStateWarningMessage(context)
+//        Mockito.doReturn(null).`when`(mockBiometricTools)
+//            .getCurrentFingerprintStateWarningMessage(context)
         Mockito.doReturn(false).`when`(mockBiometricTools)
             .activateFingerprint()
         presenter.onViewClick(R.id.actionView)
@@ -506,7 +503,7 @@ class OnboardingSetupPresenterTest {
 
     @Before
     fun setUp() {
-        Mockito.doReturn(true).`when`(mockBiometricTools).isFingerprintSupported(TestAppTools.applicationContext)
+        Mockito.doReturn(true).`when`(mockBiometricTools).isBiometricSupported(TestAppTools.applicationContext)
         Mockito.doReturn(true).`when`(mockPasscodeTools).savePasscode(Mockito.anyString())
     }
 

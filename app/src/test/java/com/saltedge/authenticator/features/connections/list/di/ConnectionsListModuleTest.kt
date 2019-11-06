@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.connections.list.di
 
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.junit.Assert
 import org.junit.Test

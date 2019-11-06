@@ -64,3 +64,11 @@ internal fun String.splitToLines(lineLength: Int): String {
         result
     }
 }
+
+/**
+ * Checks if string is not null or empty
+ *
+ * @receiver String object
+ * @return boolean, true if string is not null or empty
+ */
+fun String?.isNotNullOrEmpty(): Boolean = !this.isNullOrEmpty()

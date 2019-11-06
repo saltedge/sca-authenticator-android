@@ -27,8 +27,8 @@ import com.saltedge.authenticator.features.settings.list.SettingsListPresenter
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
-import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
-import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import dagger.Module
 import dagger.Provides
 

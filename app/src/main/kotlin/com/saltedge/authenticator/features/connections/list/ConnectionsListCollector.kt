@@ -25,9 +25,10 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.model.db.getStatus
+import com.saltedge.authenticator.sdk.model.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.ConnectionStatus
-import com.saltedge.authenticator.tool.toDateTime
+import com.saltedge.authenticator.sdk.model.getStatus
+import com.saltedge.authenticator.sdk.tools.toDateTime
 import com.saltedge.authenticator.tool.toLongDateString
 
 fun collectAllConnectionsViewModels(
@@ -49,7 +50,7 @@ fun collectAllConnectionsViewModels(
     }
 }
 
-private fun getConnectionStateColorResId(connection: Connection): Int {
+private fun getConnectionStateColorResId(connection: ConnectionAbs): Int {
     return if (connection.getStatus() === ConnectionStatus.ACTIVE) R.color.gray_dark else R.color.red
 }
 

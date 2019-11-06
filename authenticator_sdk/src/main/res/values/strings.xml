@@ -21,8 +21,9 @@
 -->
 <resources>
     <string name="app_name">authenticator-sdk</string>
+    <string name="scan_qr_code">Scan QR Code</string>
+
     <string name="errors_no_internet_connection">No Internet connection.\nPlease try again later.</string>
     <string name="errors_request_error">Request error</string>
     <string name="errors_update_security">Security settings are expired. Please update the app to the latest version</string>
-    <string name="scan_qr_code">Scan QR Code</string>
 </resources>

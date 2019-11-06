@@ -24,6 +24,26 @@ In order to use Authenticator SDK it is necessary to install the following tools
 Don't forget that module requires Kotlin v.1.3.+ plugin installed 
 and minimal supported Android SDK is SDK23 (Android Marshmallow)
 
+or you can add SDK as dependency:
+
+1. Add maven repository to application build.gradle
+```groovy
+repositories {
+    maven {
+        url 'https://raw.github.com/saltedge/sca-authenticator-android/master/maven-repo/'
+    }
+}
+```
+1. Add SDK dependency to application build.gradle
+```groovy
+implementation ('com.saltedge.authenticator.sdk:authenticator_sdk:1.0.0@aar') {
+    transitive = true
+}
+``` 
+implementation ('com.saltedge.sdk:saltedge-library:3.2.0@aar') {
+       transitive = true
+   }
+
 ## How to use
 
 Authenticator SDK provide next main data models:    

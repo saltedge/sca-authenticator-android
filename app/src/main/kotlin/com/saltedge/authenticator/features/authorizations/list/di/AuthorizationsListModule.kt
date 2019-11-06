@@ -25,9 +25,9 @@ import com.saltedge.authenticator.app.di.FragmentScope
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListPresenter
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
-import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
-import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
+import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import dagger.Module
 import dagger.Provides
 import java.util.*

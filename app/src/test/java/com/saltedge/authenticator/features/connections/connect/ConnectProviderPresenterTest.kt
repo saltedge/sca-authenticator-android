@@ -31,7 +31,7 @@ import com.saltedge.authenticator.sdk.model.ApiErrorData
 import com.saltedge.authenticator.sdk.model.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.ProviderData
 import com.saltedge.authenticator.sdk.model.response.AuthenticateConnectionData
-import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*

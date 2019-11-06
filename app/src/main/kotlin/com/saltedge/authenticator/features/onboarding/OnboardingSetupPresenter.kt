@@ -23,8 +23,10 @@ package com.saltedge.authenticator.features.onboarding
 import android.content.Context
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricState
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.tool.log
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
-import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 
 /**
@@ -63,7 +65,7 @@ class OnboardingSetupPresenter(
     private val setupStepProgress: Float
         get() = setupViewMode.ordinal.toFloat()
     private var setupModesList: Array<SetupViewMode> =
-        if (biometricTools.isFingerprintSupported(appContext)) {
+        if (biometricTools.isBiometricSupported(appContext)) {
             arrayOf(
                 SetupViewMode.INPUT_PASSCODE,
                 SetupViewMode.ALLOW_BIOMETRICS,
@@ -100,19 +102,25 @@ class OnboardingSetupPresenter(
     fun onViewClick(viewId: Int) {
         when (viewId) {
             R.id.actionView -> {
-                if (setupViewMode == SetupViewMode.ALLOW_BIOMETRICS) onAllowTouchIdClick()
-                else if (setupViewMode == SetupViewMode.ALLOW_NOTIFICATIONS) {
-                    preferenceRepository.notificationsEnabled = true
-                    goToNextSetupView()
-                } else if (setupViewMode == SetupViewMode.COMPLETE) viewContract?.showMainActivity()
+                when (setupViewMode) {
+                    SetupViewMode.ALLOW_BIOMETRICS -> onAllowTouchIdClick()
+                    SetupViewMode.ALLOW_NOTIFICATIONS -> {
+                        preferenceRepository.notificationsEnabled = true
+                        goToNextSetupView()
+                    }
+                    SetupViewMode.COMPLETE -> viewContract?.showMainActivity()
+                }
             }
             R.id.skipSetupActionView -> {
-                if (setupViewMode == SetupViewMode.ALLOW_BIOMETRICS) {
-                    preferenceRepository.fingerprintEnabled = false
-                    goToNextSetupView()
-                } else if (setupViewMode == SetupViewMode.ALLOW_NOTIFICATIONS) {
-                    preferenceRepository.notificationsEnabled = false
-                    goToNextSetupView()
+                when (setupViewMode) {
+                    SetupViewMode.ALLOW_BIOMETRICS -> {
+                        preferenceRepository.fingerprintEnabled = false
+                        goToNextSetupView()
+                    }
+                    SetupViewMode.ALLOW_NOTIFICATIONS -> {
+                        preferenceRepository.notificationsEnabled = false
+                        goToNextSetupView()
+                    }
                 }
             }
             R.id.skipActionView, R.id.proceedToSetup -> {
@@ -212,13 +220,32 @@ class OnboardingSetupPresenter(
         position == onboardingViewModels.lastIndex
 
     private fun onAllowTouchIdClick() {
-        val warning = biometricTools.getCurrentFingerprintStateWarningMessage(appContext)
+        val warning = getCurrentFingerprintStateWarningMessage(appContext)
         when {
             warning != null -> viewContract?.showWarningDialogWithMessage(warning)
-            biometricTools.activateFingerprint() -> goToNextSetupView()
+            biometricTools.activateFingerprint() -> {
+                preferenceRepository.fingerprintEnabled = true
+                goToNextSetupView()
+            }
             else -> {
                 viewContract?.showWarningDialogWithMessage(appContext.getString(R.string.errors_activate_touch_id))
             }
+        }
+    }
+
+    private fun getCurrentFingerprintStateWarningMessage(context: Context): String? {
+        return try {
+            context.getString(
+                when (biometricTools.getFingerprintState(context)) {
+                    BiometricState.NOT_SUPPORTED -> R.string.errors_touch_id_not_supported
+                    BiometricState.NOT_BLOCKED_DEVICE -> R.string.errors_activate_touch_id
+                    BiometricState.NO_FINGERPRINTS -> R.string.errors_touch_id_not_enrolled
+                    else -> return null
+                }
+            )
+        } catch (e: Exception) {
+            e.log()
+            null
         }
     }
 

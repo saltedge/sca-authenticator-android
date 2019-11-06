@@ -22,12 +22,20 @@ package com.saltedge.authenticator.sdk.tools
 
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class TextToolsTest {
+
+    @Test
+    @Throws(Exception::class)
+    fun isNotNullOrEmptyTest() {
+        Assert.assertFalse("".isNotNullOrEmpty())
+        Assert.assertTrue("authenticator".isNotNullOrEmpty())
+    }
 
     @Test
     @Throws(Exception::class)

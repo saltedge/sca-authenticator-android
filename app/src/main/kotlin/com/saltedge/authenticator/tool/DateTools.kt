@@ -23,33 +23,6 @@ package com.saltedge.authenticator.tool
 import android.content.Context
 import org.joda.time.DateTime
 
-const val MILLIS_IN_MINUTE = 60000L
-
-/**
- * Convert milliseconds to DateTime object
- *
- * @receiver millis
- * @return date time object
- */
-fun Long.toDateTime(): DateTime = DateTime(this)
-
-/**
- * Checks whether specific conditions(isAfter or isEqual) are met
- *
- * @receiver millis
- * @return boolean, true if one of the conditions is true
- */
-fun DateTime.isAfterOrEqual(time: DateTime) = isAfter(time) || isEqual(time)
-
-/**
- * Convert remained milliseconds to remained minutes
- *
- * @param remainedMillis - number of minutes remaining in milliseconds
- * @return milliseconds
- */
-fun millisToRemainedMinutes(remainedMillis: Long): Int =
-    Math.ceil((remainedMillis.toDouble() / MILLIS_IN_MINUTE)).toInt()
-
 /**
  * Converts the current date time to a string presentation
  *

@@ -28,9 +28,9 @@ import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.testTools.TestAppTools
-import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert
@@ -173,23 +173,23 @@ class SettingsListPresenterTest {
     @Throws(Exception::class)
     fun onListItemClickTest_fingerprint() {
         val presenter = createPresenter(viewContract = null)
-        Mockito.doReturn(false).`when`(mockBiometricTools).isFingerprintNotConfigured(TestAppTools.applicationContext)
+        Mockito.doReturn(false).`when`(mockBiometricTools).isBiometricNotConfigured(TestAppTools.applicationContext)
         presenter.onListItemClick(itemId = R.string.settings_fingerprint)
 
         Mockito.verifyNoMoreInteractions(mockView)
 
-        Mockito.doReturn(true).`when`(mockBiometricTools).isFingerprintNotConfigured(TestAppTools.applicationContext)
+        Mockito.doReturn(true).`when`(mockBiometricTools).isBiometricNotConfigured(TestAppTools.applicationContext)
         presenter.onListItemClick(itemId = R.string.settings_fingerprint)
 
         Mockito.verifyNoMoreInteractions(mockView)
 
         presenter.viewContract = mockView
-        Mockito.doReturn(false).`when`(mockBiometricTools).isFingerprintNotConfigured(TestAppTools.applicationContext)
+        Mockito.doReturn(false).`when`(mockBiometricTools).isBiometricNotConfigured(TestAppTools.applicationContext)
         presenter.onListItemClick(itemId = R.string.settings_fingerprint)
 
         Mockito.verifyNoMoreInteractions(mockView)
 
-        Mockito.doReturn(true).`when`(mockBiometricTools).isFingerprintNotConfigured(TestAppTools.applicationContext)
+        Mockito.doReturn(true).`when`(mockBiometricTools).isBiometricNotConfigured(TestAppTools.applicationContext)
         presenter.onListItemClick(itemId = R.string.settings_fingerprint)
 
         Mockito.verify(mockView).showSystemSettings()
