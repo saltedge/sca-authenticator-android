@@ -36,15 +36,15 @@ import org.joda.time.DateTimeZone
  */
 fun ProviderData.toConnection(): Connection? {
     if (!this.isValid()) return null
-    val connection = Connection()
-    connection.guid = createRandomGuid()
-    connection.name = this.name
-    connection.code = this.code
-    connection.logoUrl = this.logoUrl ?: ""
-    connection.connectUrl = this.connectUrl
-    connection.status = "${ConnectionStatus.INACTIVE}"
-    connection.createdAt = DateTime.now().withZone(DateTimeZone.UTC).millis
-    connection.updatedAt = connection.createdAt
-    connection.supportEmail = this.supportEmail
-    return connection
+    return Connection().also {
+        it.guid = createRandomGuid()
+        it.name = this.name
+        it.code = this.code
+        it.logoUrl = this.logoUrl ?: ""
+        it.connectUrl = this.connectUrl
+        it.status = "${ConnectionStatus.INACTIVE}"
+        it.createdAt = DateTime.now().withZone(DateTimeZone.UTC).millis
+        it.updatedAt = it.createdAt
+        it.supportEmail = this.supportEmail
+    }
 }

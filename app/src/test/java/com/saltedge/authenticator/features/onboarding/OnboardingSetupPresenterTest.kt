@@ -302,18 +302,11 @@ class OnboardingSetupPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onViewClickTest_allowTouchIdActionView_noViewContract() {
-        val context = TestAppTools.applicationContext
         val presenter = createPresenter(viewContract = null)
-//        Mockito.doReturn(context.getString(R.string.errors_internal_error)).`when`(
-//            mockBiometricTools
-//        )
-//            .getCurrentFingerprintStateWarningMessage(context)
         presenter.onViewClick(R.id.actionView)
 
         Mockito.verifyNoMoreInteractions(mockView)
 
-//        Mockito.doReturn(null).`when`(mockBiometricTools)
-//            .getCurrentFingerprintStateWarningMessage(context)
         Mockito.doReturn(false).`when`(mockBiometricTools)
             .activateFingerprint()
         presenter.onViewClick(R.id.actionView)

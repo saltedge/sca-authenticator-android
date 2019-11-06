@@ -220,9 +220,9 @@ class OnboardingSetupPresenter(
         position == onboardingViewModels.lastIndex
 
     private fun onAllowTouchIdClick() {
-        val warning = getCurrentFingerprintStateWarningMessage(appContext)
+        val warningMessage = getCurrentFingerprintStateWarningMessage(appContext)
         when {
-            warning != null -> viewContract?.showWarningDialogWithMessage(warning)
+            warningMessage != null -> viewContract?.showWarningDialogWithMessage(warningMessage)
             biometricTools.activateFingerprint() -> {
                 preferenceRepository.fingerprintEnabled = true
                 goToNextSetupView()

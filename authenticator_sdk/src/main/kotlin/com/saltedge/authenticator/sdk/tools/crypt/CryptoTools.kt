@@ -42,9 +42,8 @@ object CryptoTools : CryptoToolsAbs {
 
     override fun rsaDecrypt(encryptedText: String, privateKey: PrivateKey): ByteArray? {
         try {
-            if (encryptedText.isBlank()) return null
             val decryptCipher = getRsaCipher()
-                ?: return null
+            if (decryptCipher == null || encryptedText.isBlank()) return null
             decryptCipher.init(Cipher.DECRYPT_MODE, privateKey)
             val decodedText = decodeFromPemBase64String(encryptedText)
             return decryptCipher.doFinal(decodedText)
@@ -105,10 +104,8 @@ object CryptoTools : CryptoToolsAbs {
             val encryptedKey = encryptedData.key ?: return null
             val encryptedIV = encryptedData.iv ?: return null
             val encryptedMessage = encryptedData.data ?: return null
-            val key = rsaDecrypt(encryptedKey, privateKey)
-                ?: return null
-            val iv = rsaDecrypt(encryptedIV, privateKey)
-                ?: return null
+            val key = rsaDecrypt(encryptedKey, privateKey) ?: return null
+            val iv = rsaDecrypt(encryptedIV, privateKey) ?: return null
             val jsonString = aesDecrypt(encryptedMessage, key = key, iv = iv)
             return createDefaultGson().fromJson(jsonString, AuthorizationData::class.java)
         } catch (e: Exception) {
