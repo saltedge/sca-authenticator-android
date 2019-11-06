@@ -21,6 +21,8 @@
 package com.saltedge.authenticator.sdk.tools
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
+import com.saltedge.authenticator.sdk.tools.keystore.publicKeyToPemEncodedString
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert

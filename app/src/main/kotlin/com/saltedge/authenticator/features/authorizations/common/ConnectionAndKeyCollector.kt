@@ -22,10 +22,10 @@ package com.saltedge.authenticator.features.authorizations.common
 
 import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.model.db.getRelatedPrivateKey
 import com.saltedge.authenticator.sdk.model.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.ConnectionID
-import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.model.getRelatedPrivateKey
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 
 /**
  * Collects all active Connections and related Private Keys

@@ -24,6 +24,34 @@ import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.Period
 import org.joda.time.format.PeriodFormatterBuilder
+import kotlin.math.ceil
+
+const val MILLIS_IN_MINUTE = 60000L
+
+/**
+ * Convert milliseconds to DateTime object
+ *
+ * @receiver millis
+ * @return date time object
+ */
+fun Long.toDateTime(): DateTime = DateTime(this)
+
+/**
+ * Checks whether specific conditions(isAfter or isEqual) are met
+ *
+ * @receiver millis
+ * @return boolean, true if one of the conditions is true
+ */
+fun DateTime.isAfterOrEqual(time: DateTime) = isAfter(time) || isEqual(time)
+
+/**
+ * Convert remained milliseconds to remained minutes
+ *
+ * @param remainedMillis - number of minutes remaining in milliseconds
+ * @return milliseconds
+ */
+fun millisToRemainedMinutes(remainedMillis: Long): Int =
+    ceil((remainedMillis.toDouble() / MILLIS_IN_MINUTE)).toInt()
 
 /**
  * Parse String to DateTime object in UTC time zone

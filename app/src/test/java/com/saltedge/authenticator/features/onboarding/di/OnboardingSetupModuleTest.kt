@@ -21,9 +21,9 @@
 package com.saltedge.authenticator.features.onboarding.di
 
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
-import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith

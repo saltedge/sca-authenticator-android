@@ -41,9 +41,9 @@ import com.saltedge.authenticator.features.settings.passcode.di.PasscodeEditComp
 import com.saltedge.authenticator.features.settings.passcode.di.PasscodeEditModule
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
-import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import dagger.Component
 import javax.inject.Singleton
 

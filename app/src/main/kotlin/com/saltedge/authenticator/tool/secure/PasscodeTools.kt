@@ -21,8 +21,8 @@
 package com.saltedge.authenticator.tool.secure
 
 import com.saltedge.authenticator.model.repository.PreferenceRepository
-import com.saltedge.authenticator.sdk.tools.CryptoTools
-import com.saltedge.authenticator.sdk.tools.KeyStoreManager
+import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
 import javax.crypto.SecretKey
 
 private const val PASSCODE_SECURE_KEY_ALIAS = "base_alias_for_pin"

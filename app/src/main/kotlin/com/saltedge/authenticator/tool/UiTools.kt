@@ -65,19 +65,3 @@ fun convertDpToPx(dp: Float): Int {
         Resources.getSystem().displayMetrics
     ).toInt()
 }
-
-/**
- * Cast current application to AuthenticatorApplication
- *
- * @receiver fragment activity
- */
-val FragmentActivity.authenticatorApp: AuthenticatorApplication?
-    get() = this.application as? AuthenticatorApplication
-
-/**
- * Cast current activity to AuthenticatorApplication
- *
- * @receiver Fragment object
- */
-val Fragment.authenticatorApp: AuthenticatorApplication?
-    get() = this.activity?.authenticatorApp

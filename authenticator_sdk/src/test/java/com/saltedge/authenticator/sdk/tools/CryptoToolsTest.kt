@@ -26,10 +26,10 @@ import com.saltedge.authenticator.sdk.testTools.TestTools
 import com.saltedge.authenticator.sdk.testTools.getTestPrivateKey
 import com.saltedge.authenticator.sdk.testTools.getTestPublicKey
 import com.saltedge.authenticator.sdk.testTools.toJsonString
-import com.saltedge.authenticator.sdk.tools.CryptoTools.aesDecrypt
-import com.saltedge.authenticator.sdk.tools.CryptoTools.aesEncrypt
-import com.saltedge.authenticator.sdk.tools.CryptoTools.decryptAuthorizationData
-import com.saltedge.authenticator.sdk.tools.CryptoTools.rsaDecrypt
+import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools.aesDecrypt
+import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools.aesEncrypt
+import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools.decryptAuthorizationData
+import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools.rsaDecrypt
 import net.danlew.android.joda.JodaTimeAndroid
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.not

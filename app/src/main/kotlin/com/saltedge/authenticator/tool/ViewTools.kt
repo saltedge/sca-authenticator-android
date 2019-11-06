@@ -88,17 +88,6 @@ fun TextView.isTextTruncated(): Boolean? {
 }
 
 /**
- * Set selectable background effect
- *
- * @receiver View object
- */
-fun View.setSelectableBackground() {
-    val outValue = TypedValue()
-    context.theme.resolveAttribute(android.R.attr.selectableItemBackground, outValue, true)
-    this.setBackgroundResource(outValue.resourceId)
-}
-
-/**
  * Inflate list item view
  *
  * @receiver view group

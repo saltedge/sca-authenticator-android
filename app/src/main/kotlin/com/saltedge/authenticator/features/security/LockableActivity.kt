@@ -32,11 +32,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.repository.PreferenceRepository
-import com.saltedge.authenticator.sdk.tools.KeyStoreManager
-import com.saltedge.authenticator.tool.AppTools
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricTools
+import com.saltedge.authenticator.sdk.tools.biometric.isBiometricPromptV28Enabled
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
 import com.saltedge.authenticator.tool.restartApp
 import com.saltedge.authenticator.tool.secure.PasscodeTools
-import com.saltedge.authenticator.tool.secure.fingerprint.BiometricTools
 import com.saltedge.authenticator.tool.setVisible
 import com.saltedge.authenticator.tool.showResetUserDialog
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
@@ -102,7 +102,7 @@ abstract class LockableActivity :
     )
     private var biometricPrompt: BiometricPromptAbs? = null
     private var vibrator: Vibrator? = null
-    private var biometricTools = BiometricTools(KeyStoreManager, PreferenceRepository)
+    private var biometricTools = BiometricTools(KeyStoreManager)
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
@@ -167,7 +167,7 @@ abstract class LockableActivity :
 
     @TargetApi(Build.VERSION_CODES.P)
     private fun displayBiometricPrompt() {
-        biometricPrompt = if (AppTools.isBiometricPromptV28Enabled()) {
+        biometricPrompt = if (isBiometricPromptV28Enabled()) {
             BiometricPromptManagerV28()
         } else {
             BiometricsInputDialog()

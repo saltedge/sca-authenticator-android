@@ -27,7 +27,7 @@ import com.saltedge.authenticator.sdk.network.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.network.HEADER_KEY_EXPIRES_AT
 import com.saltedge.authenticator.sdk.network.HEADER_KEY_SIGNATURE
 import com.saltedge.authenticator.sdk.network.RestClient
-import com.saltedge.authenticator.sdk.tools.createSignatureHeader
+import com.saltedge.authenticator.sdk.tools.sign.createSignatureHeader
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import java.security.PrivateKey

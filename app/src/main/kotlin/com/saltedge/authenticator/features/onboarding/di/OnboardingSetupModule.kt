@@ -24,8 +24,8 @@ import android.content.Context
 import com.saltedge.authenticator.app.di.FragmentScope
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupPresenter
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
-import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import dagger.Module
 import dagger.Provides
 

@@ -27,15 +27,15 @@ import com.saltedge.authenticator.model.repository.PreferenceRepository
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.tools.CryptoTools
-import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
-import com.saltedge.authenticator.sdk.tools.KeyStoreManager
-import com.saltedge.authenticator.sdk.tools.KeyStoreManagerAbs
-import com.saltedge.authenticator.tool.AppTools
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricTools
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.sdk.tools.biometric.isBiometricPromptV28Enabled
+import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools
+import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tool.secure.PasscodeTools
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
-import com.saltedge.authenticator.tool.secure.fingerprint.BiometricTools
-import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptManagerV28
 import com.saltedge.authenticator.widget.biometric.BiometricsInputDialog
@@ -55,11 +55,11 @@ class AppModule(context: Context) {
 
     @Provides
     @Singleton
-    fun provideBiometricTools(): BiometricToolsAbs = BiometricTools(provideKeyStoreManager(), providePreferenceRepository())
+    fun provideBiometricTools(): BiometricToolsAbs = BiometricTools(provideKeyStoreManager())
 
     @Provides
     fun provideBiometricPrompt(): BiometricPromptAbs {
-        return if (AppTools.isBiometricPromptV28Enabled()) BiometricPromptManagerV28()
+        return if (isBiometricPromptV28Enabled()) BiometricPromptManagerV28()
         else BiometricsInputDialog()
     }
 

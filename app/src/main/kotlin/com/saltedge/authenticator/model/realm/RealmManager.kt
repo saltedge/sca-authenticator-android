@@ -22,8 +22,8 @@ package com.saltedge.authenticator.model.realm
 
 import android.content.Context
 import com.saltedge.authenticator.model.repository.PreferenceRepository
+import com.saltedge.authenticator.sdk.tools.createRandomGuid
 import com.saltedge.authenticator.tool.AppTools
-import com.saltedge.authenticator.tool.secure.createRandomBytesString
 import io.realm.Realm
 import io.realm.RealmConfiguration
 
@@ -62,8 +62,7 @@ object RealmManager {
      * @return database key
      */
     private fun getOrCreateDatabaseKey(): ByteArray {
-        if (PreferenceRepository.dbKey.isEmpty()) PreferenceRepository.dbKey =
-            createRandomBytesString()
+        if (PreferenceRepository.dbKey.isEmpty()) PreferenceRepository.dbKey = createRandomGuid()
         return PreferenceRepository.dbKey.toByteArray()
     }
 

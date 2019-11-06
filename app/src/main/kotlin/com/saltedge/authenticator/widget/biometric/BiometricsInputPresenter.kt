@@ -28,9 +28,9 @@ import android.hardware.biometrics.BiometricPrompt.BIOMETRIC_ERROR_USER_CANCELED
 import android.hardware.fingerprint.FingerprintManager
 import android.os.CancellationSignal
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.sdk.tools.biometric.getFingerprintManager
 import com.saltedge.authenticator.tool.log
-import com.saltedge.authenticator.tool.secure.fingerprint.BiometricToolsAbs
-import com.saltedge.authenticator.tool.secure.fingerprint.getFingerprintManager
 
 class BiometricsInputPresenter(
     val biometricTools: BiometricToolsAbs,
@@ -80,7 +80,7 @@ class BiometricsInputPresenter(
                     null
                 )
             }
-        } catch (e: SecurityException) {
+        } catch (e: Exception) {
             e.log()
         }
     }
@@ -115,7 +115,12 @@ class BiometricsInputPresenter(
     }
 
     private fun createCryptoObject(): FingerprintManager.CryptoObject? {
-        return biometricTools.createFingerprintCipher()?.let { FingerprintManager.CryptoObject(it) }
+        return try {
+            biometricTools.createFingerprintCipher()?.let { FingerprintManager.CryptoObject(it) }
+        } catch (e: Exception) {
+            e.log()
+            null
+        }
     }
 
     private fun biometricPromptIsNotCanceled(errorCode: Int): Boolean =

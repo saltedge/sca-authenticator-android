@@ -23,9 +23,7 @@ package com.saltedge.authenticator.model.repository
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import com.saltedge.authenticator.tool.saveValue
 
-const val MAX_KEY_LENGTH = 64
 const val KEY_DATABASE_KEY = "KEY_DATABASE_KEY"
 const val KEY_LOCALE = "KEY_LOCALE"
 const val KEY_PASSCODE = "KEY_PASSCODE"
@@ -184,4 +182,49 @@ object PreferenceRepository : PreferenceRepositoryAbs {
             ?.apply()
         fingerprintEnabledValue = null
     }
+
+    /**
+     * Put a String value in the preferences editor
+     *
+     * @receiver shared preferences - data storage
+     * @param key - String value
+     * @param value - String value
+     */
+    private fun SharedPreferences.saveValue(key: String, value: String?) {
+        this.edit()?.putString(key, value)?.apply()
+    }
+
+    /**
+     * Put a Boolean value in the preferences editor
+     *
+     * @receiver shared preferences - data storage
+     * @param key - String value
+     * @param value - Boolean value
+     */
+    private fun SharedPreferences.saveValue(key: String, value: Boolean) {
+        this.edit()?.putBoolean(key, value)?.apply()
+    }
+
+    /**
+     * Put a Int value in the preferences editor
+     *
+     * @receiver shared preferences - data storage
+     * @param key - String value
+     * @param value - Int value
+     */
+    private fun SharedPreferences.saveValue(key: String, value: Int) {
+        this.edit()?.putInt(key, value)?.apply()
+    }
+
+    /**
+     * Put a Long value in the preferences editor
+     *
+     * @receiver shared preferences - data storage
+     * @param key - String value
+     * @param value - Long value
+     */
+    private fun SharedPreferences.saveValue(key: String, value: Long) {
+        this.edit()?.putLong(key, value)?.apply()
+    }
+
 }

@@ -26,6 +26,7 @@ import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.joda.time.DateTime
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -37,6 +38,30 @@ class DateToolsTest {
     @Before
     fun setUp() {
         JodaTimeAndroid.init(TestTools.applicationContext)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun constTest() {
+        assertThat(MILLIS_IN_MINUTE, equalTo(60000L))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun isAfterOrEqualTest() {
+        Assert.assertFalse(DateTime(100L).isAfterOrEqual(DateTime(101L)))
+        Assert.assertTrue(DateTime(100L).isAfterOrEqual(DateTime(100L)))
+        Assert.assertTrue(DateTime(100L).isAfterOrEqual(DateTime(99L)))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun remainedPinWaitTimeTest() {
+        assertThat(millisToRemainedMinutes(-MILLIS_IN_MINUTE), equalTo(-1))
+        assertThat(millisToRemainedMinutes(0L), equalTo(0))
+        assertThat(millisToRemainedMinutes(MILLIS_IN_MINUTE - 1L), equalTo(1))
+        assertThat(millisToRemainedMinutes(119998), equalTo(2))
+        assertThat(millisToRemainedMinutes(2 * MILLIS_IN_MINUTE), equalTo(2))
     }
 
     @Test

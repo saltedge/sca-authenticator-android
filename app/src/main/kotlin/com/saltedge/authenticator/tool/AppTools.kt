@@ -25,7 +25,10 @@ import android.content.pm.PackageManager
 import android.graphics.Point
 import android.os.Build
 import android.view.WindowManager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import com.crashlytics.android.Crashlytics
+import com.saltedge.authenticator.app.AuthenticatorApplication
 
 object AppTools : AppToolsAbs {
 
@@ -37,15 +40,6 @@ object AppTools : AppToolsAbs {
      */
     override fun isTestsSuite(appContext: Context): Boolean {
         return appContext.classLoader?.toString()?.contains("test") ?: false
-    }
-
-    /**
-     * Check if in the application can use new (from SDK28) biometric prompt
-     *
-     * @return boolean, true if version sdk is greater than or equal to VERSION_CODES.P (SDK28)
-     */
-    override fun isBiometricPromptV28Enabled(): Boolean {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
     }
 
     /**
@@ -93,3 +87,19 @@ object AppTools : AppToolsAbs {
         return "unknown"
     }
 }
+
+/**
+ * Cast current application to AuthenticatorApplication
+ *
+ * @receiver fragment activity
+ */
+val FragmentActivity.authenticatorApp: AuthenticatorApplication?
+    get() = this.application as? AuthenticatorApplication
+
+/**
+ * Cast current activity to AuthenticatorApplication
+ *
+ * @receiver Fragment object
+ */
+val Fragment.authenticatorApp: AuthenticatorApplication?
+    get() = this.activity?.authenticatorApp

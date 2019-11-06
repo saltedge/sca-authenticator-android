@@ -18,7 +18,7 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<com.saltedge.authenticator.widget.CustomWebView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.saltedge.authenticator.sdk.web.SEWebView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/customWebView"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
