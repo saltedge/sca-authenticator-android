@@ -339,7 +339,7 @@ class AuthorizationDetailsPresenterTest {
     }
 
     /**
-     * Update time views when ignoreTimeUpdate in AuthorizationViewModel is true
+     * Not update time views when ignoreTimeUpdate in AuthorizationViewModel is true
      */
     @Test
     @Throws(Exception::class)
