@@ -21,11 +21,16 @@
 package com.saltedge.authenticator.features.main
 
 import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.FrameLayout
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
+import com.saltedge.authenticator.common.ConnectivityReceiver
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
@@ -49,7 +54,7 @@ class MainActivity : LockableActivity(),
     ActivityComponentsContract,
     BottomNavigationView.OnNavigationItemSelectedListener,
     View.OnClickListener,
-    FragmentManager.OnBackStackChangedListener
+    FragmentManager.OnBackStackChangedListener, ConnectivityReceiver.ConnectivityReceiverListener
 {
 
     private val presenter = MainActivityPresenter(
@@ -62,6 +67,7 @@ class MainActivity : LockableActivity(),
         super.onCreate(savedInstanceState)
         this.updateScreenshotLocking()
         setContentView(R.layout.activity_main)
+        registerReceiver(ConnectivityReceiver(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         setupViews()
         if (savedInstanceState == null) {
             presenter.launchInitialFragment(intent)
@@ -81,6 +87,7 @@ class MainActivity : LockableActivity(),
     override fun onResume() {
         super.onResume()
         this.applyPreferenceLocale()
+        ConnectivityReceiver.connectivityReceiverListener = this
     }
 
     override fun onBackPressed() {
@@ -179,6 +186,23 @@ class MainActivity : LockableActivity(),
 
     override fun onBackStackChanged() {
         presenter.onFragmentBackStackChanged(isTopNavigationLevel(), intent)
+    }
+
+    override fun onNetworkConnectionChanged(isConnected: Boolean) {
+        showNetworkMessage(isConnected)
+    }
+
+    private fun showNetworkMessage(isConnected: Boolean) {
+        if (!isConnected) {
+            val snack = Snackbar.make(
+                findViewById(R.id.container),
+                this.getText(R.string.warning_no_internet_connection), Snackbar.LENGTH_LONG
+            )
+            val params = snack.view.layoutParams as FrameLayout.LayoutParams
+            params.setMargins(0, 0, 0, this.resources.getDimension(R.dimen.action_bar_size).toInt())
+            snack.view.layoutParams = params
+            snack.show()
+        }
     }
 
     private fun setupViews() {
