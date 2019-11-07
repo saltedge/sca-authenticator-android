@@ -330,7 +330,6 @@ class AuthorizationDetailsPresenterTest {
         )
         viewModel1.viewMode = ViewMode.DEFAULT
         presenter.currentViewModel = viewModel1
-
         presenter.onTimerTick()
 
         Mockito.verify(mockView).updateTimeViews()
@@ -346,56 +345,48 @@ class AuthorizationDetailsPresenterTest {
         )
         viewModel1.viewMode = ViewMode.LOADING
         presenter.currentViewModel = viewModel1
-
         presenter.onTimerTick()
 
         Mockito.verifyNoMoreInteractions(mockView)
 
         viewModel1.viewMode = ViewMode.CONFIRM_PROCESSING
         presenter.currentViewModel = viewModel1
-
         presenter.onTimerTick()
 
         Mockito.verifyNoMoreInteractions(mockView)
 
         viewModel1.viewMode = ViewMode.DENY_PROCESSING
         presenter.currentViewModel = viewModel1
-
         presenter.onTimerTick()
 
         Mockito.verifyNoMoreInteractions(mockView)
 
         viewModel1.viewMode = ViewMode.CONFIRM_SUCCESS
         presenter.currentViewModel = viewModel1
-
         presenter.onTimerTick()
 
         Mockito.verifyNoMoreInteractions(mockView)
 
         viewModel1.viewMode = ViewMode.DENY_SUCCESS
         presenter.currentViewModel = viewModel1
-
         presenter.onTimerTick()
 
         Mockito.verifyNoMoreInteractions(mockView)
 
         viewModel1.viewMode = ViewMode.ERROR
         presenter.currentViewModel = viewModel1
-
         presenter.onTimerTick()
 
         Mockito.verifyNoMoreInteractions(mockView)
 
         viewModel1.viewMode = ViewMode.TIME_OUT
         presenter.currentViewModel = viewModel1
-
         presenter.onTimerTick()
 
         Mockito.verifyNoMoreInteractions(mockView)
 
         viewModel1.viewMode = ViewMode.UNAVAILABLE
         presenter.currentViewModel = viewModel1
-
         presenter.onTimerTick()
 
         Mockito.verifyNoMoreInteractions(mockView)
