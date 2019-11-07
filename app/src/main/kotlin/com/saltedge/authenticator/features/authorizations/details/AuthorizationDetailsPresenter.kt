@@ -119,7 +119,9 @@ class AuthorizationDetailsPresenter(
                 model.shouldBeDestroyed -> {
                     viewContract?.closeView()
                 }
-                else -> viewContract?.updateTimeViews()
+                else -> {
+                    if (!model.ignoreTimeUpdate) viewContract?.updateTimeViews() else null
+                }
             }
         }
     }

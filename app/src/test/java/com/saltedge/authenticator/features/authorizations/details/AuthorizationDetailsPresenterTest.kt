@@ -322,17 +322,83 @@ class AuthorizationDetailsPresenterTest {
 
     @Test
     @Throws(Exception::class)
-    fun onTimerTickTest_updateTimeViews() {
+    fun onTimerTickTest_updateTimeViews_case1() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(
             connectionId = viewModel1.connectionID,
             authorizationId = viewModel1.authorizationID
         )
+        viewModel1.viewMode = ViewMode.DEFAULT
         presenter.currentViewModel = viewModel1
 
         presenter.onTimerTick()
 
         Mockito.verify(mockView).updateTimeViews()
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onTimerTickTest_updateTimeViews_case2() {
+        val presenter = createPresenter(viewContract = mockView)
+        presenter.setInitialData(
+            connectionId = viewModel1.connectionID,
+            authorizationId = viewModel1.authorizationID
+        )
+        viewModel1.viewMode = ViewMode.LOADING
+        presenter.currentViewModel = viewModel1
+
+        presenter.onTimerTick()
+
+        Mockito.verifyNoMoreInteractions(mockView)
+
+        viewModel1.viewMode = ViewMode.CONFIRM_PROCESSING
+        presenter.currentViewModel = viewModel1
+
+        presenter.onTimerTick()
+
+        Mockito.verifyNoMoreInteractions(mockView)
+
+        viewModel1.viewMode = ViewMode.DENY_PROCESSING
+        presenter.currentViewModel = viewModel1
+
+        presenter.onTimerTick()
+
+        Mockito.verifyNoMoreInteractions(mockView)
+
+        viewModel1.viewMode = ViewMode.CONFIRM_SUCCESS
+        presenter.currentViewModel = viewModel1
+
+        presenter.onTimerTick()
+
+        Mockito.verifyNoMoreInteractions(mockView)
+
+        viewModel1.viewMode = ViewMode.DENY_SUCCESS
+        presenter.currentViewModel = viewModel1
+
+        presenter.onTimerTick()
+
+        Mockito.verifyNoMoreInteractions(mockView)
+
+        viewModel1.viewMode = ViewMode.ERROR
+        presenter.currentViewModel = viewModel1
+
+        presenter.onTimerTick()
+
+        Mockito.verifyNoMoreInteractions(mockView)
+
+        viewModel1.viewMode = ViewMode.TIME_OUT
+        presenter.currentViewModel = viewModel1
+
+        presenter.onTimerTick()
+
+        Mockito.verifyNoMoreInteractions(mockView)
+
+        viewModel1.viewMode = ViewMode.UNAVAILABLE
+        presenter.currentViewModel = viewModel1
+
+        presenter.onTimerTick()
+
+        Mockito.verifyNoMoreInteractions(mockView)
     }
 
     @Test
