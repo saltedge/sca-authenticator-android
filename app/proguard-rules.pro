@@ -57,3 +57,6 @@
 
 # Coroutines
 -dontwarn kotlinx.coroutines.flow.**inlined**
+
+# Blur effect
+-keep class androidx.renderscript.** { *; }

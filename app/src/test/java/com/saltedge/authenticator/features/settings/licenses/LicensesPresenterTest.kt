@@ -60,7 +60,8 @@ class LicensesPresenterTest {
                 "MockK",
                 "findbugs/jsr305",
                 "ktlint",
-                "jlleitschuh/ktlint-gradle"
+                "jlleitschuh/ktlint-gradle",
+                "500px-android-blur"
             )
         )
         )
