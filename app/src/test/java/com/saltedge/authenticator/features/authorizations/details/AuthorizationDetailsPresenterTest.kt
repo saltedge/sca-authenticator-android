@@ -320,6 +320,9 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verify(mockView).closeView()
     }
 
+    /**
+     * Update time views when ignoreTimeUpdate in AuthorizationViewModel is false
+     */
     @Test
     @Throws(Exception::class)
     fun onTimerTickTest_updateTimeViews_case1() {
@@ -335,6 +338,9 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verify(mockView).updateTimeViews()
     }
 
+    /**
+     * Update time views when ignoreTimeUpdate in AuthorizationViewModel is true
+     */
     @Test
     @Throws(Exception::class)
     fun onTimerTickTest_updateTimeViews_case2() {
