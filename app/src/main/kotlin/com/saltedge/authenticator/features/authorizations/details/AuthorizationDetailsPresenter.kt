@@ -105,7 +105,7 @@ class AuthorizationDetailsPresenter(
     }
 
     fun onTimerTick() {
-        currentViewModel?.let { model ->
+        currentViewModel?.also { model ->
             when {
                 model.shouldBeSetTimeOutMode -> {
                     stopPolling()
@@ -119,9 +119,7 @@ class AuthorizationDetailsPresenter(
                 model.shouldBeDestroyed -> {
                     viewContract?.closeView()
                 }
-                else -> {
-                    if (!model.ignoreTimeUpdate) viewContract?.updateTimeViews() else null
-                }
+                !model.ignoreTimeUpdate -> viewContract?.updateTimeViews()
             }
         }
     }
