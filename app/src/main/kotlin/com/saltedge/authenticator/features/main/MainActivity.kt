@@ -48,13 +48,15 @@ import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import android.widget.LinearLayout
+import com.saltedge.authenticator.common.NetworkStateChangeListener
 
 class MainActivity : LockableActivity(),
     MainActivityContract.View,
     ActivityComponentsContract,
     BottomNavigationView.OnNavigationItemSelectedListener,
     View.OnClickListener,
-    FragmentManager.OnBackStackChangedListener, ConnectivityReceiver.ConnectivityReceiverListener
+    FragmentManager.OnBackStackChangedListener,
+    NetworkStateChangeListener
 {
 
     private val presenter = MainActivityPresenter(
@@ -68,7 +70,6 @@ class MainActivity : LockableActivity(),
         super.onCreate(savedInstanceState)
         this.updateScreenshotLocking()
         setContentView(R.layout.activity_main)
-        registerReceiver(ConnectivityReceiver(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         setupViews()
         if (savedInstanceState == null) {
             presenter.launchInitialFragment(intent)
@@ -88,7 +89,14 @@ class MainActivity : LockableActivity(),
     override fun onResume() {
         super.onResume()
         this.applyPreferenceLocale()
+        registerReceiver(ConnectivityReceiver(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         ConnectivityReceiver.connectivityReceiverListener = this
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unregisterReceiver(ConnectivityReceiver())
+        ConnectivityReceiver.connectivityReceiverListener = null
     }
 
     override fun onBackPressed() {
