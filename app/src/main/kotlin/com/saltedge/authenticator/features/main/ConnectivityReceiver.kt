@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.common
+package com.saltedge.authenticator.features.main
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -27,6 +27,8 @@ import android.net.ConnectivityManager
 
 class ConnectivityReceiver : BroadcastReceiver() {
 
+    var connectivityReceiverListener: NetworkStateChangeListener? = null
+
     override fun onReceive(context: Context, intent: Intent?) {
         connectivityReceiverListener?.onNetworkConnectionChanged(isConnectedOrConnecting(context))
     }
@@ -34,10 +36,6 @@ class ConnectivityReceiver : BroadcastReceiver() {
     private fun isConnectedOrConnecting(context: Context): Boolean =
         (context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager)
             ?.activeNetworkInfo != null
-
-    companion object {
-        var connectivityReceiverListener: NetworkStateChangeListener? = null
-    }
 }
 
 interface NetworkStateChangeListener {

@@ -29,7 +29,6 @@ import android.view.View
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
-import com.saltedge.authenticator.common.ConnectivityReceiver
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
@@ -48,7 +47,6 @@ import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import android.widget.LinearLayout
-import com.saltedge.authenticator.common.NetworkStateChangeListener
 
 class MainActivity : LockableActivity(),
     MainActivityContract.View,
@@ -64,6 +62,7 @@ class MainActivity : LockableActivity(),
         connectionsRepository = ConnectionsRepository
     )
     private var snackbar: Snackbar? = null
+    private val receiver = ConnectivityReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (!RealmManager.initialized) RealmManager.initRealm(context = this)
@@ -89,14 +88,14 @@ class MainActivity : LockableActivity(),
     override fun onResume() {
         super.onResume()
         this.applyPreferenceLocale()
-        registerReceiver(ConnectivityReceiver(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
-        ConnectivityReceiver.connectivityReceiverListener = this
+        registerReceiver(receiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+        receiver.connectivityReceiverListener = this
     }
 
     override fun onPause() {
         super.onPause()
-        unregisterReceiver(ConnectivityReceiver())
-        ConnectivityReceiver.connectivityReceiverListener = null
+        unregisterReceiver(receiver)
+        receiver.connectivityReceiverListener = null
     }
 
     override fun onBackPressed() {
