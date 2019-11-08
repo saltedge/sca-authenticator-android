@@ -25,6 +25,16 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/dp_56"
+        android:background="@android:color/transparent"
+        android:rotation="180">
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"

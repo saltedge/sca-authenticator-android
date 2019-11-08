@@ -26,7 +26,6 @@ import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.FrameLayout
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -48,6 +47,7 @@ import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import android.widget.LinearLayout
 
 class MainActivity : LockableActivity(),
     MainActivityContract.View,
@@ -61,6 +61,7 @@ class MainActivity : LockableActivity(),
         viewContract = this,
         connectionsRepository = ConnectionsRepository
     )
+    private var snackbar: Snackbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (!RealmManager.initialized) RealmManager.initRealm(context = this)
@@ -194,19 +195,39 @@ class MainActivity : LockableActivity(),
 
     private fun showNetworkMessage(isConnected: Boolean) {
         if (!isConnected) {
-            val snack = Snackbar.make(
-                findViewById(R.id.container),
-                this.getText(R.string.warning_no_internet_connection), Snackbar.LENGTH_LONG
-            )
-            val params = snack.view.layoutParams as FrameLayout.LayoutParams
-            params.setMargins(0, 0, 0, this.resources.getDimension(R.dimen.action_bar_size).toInt())
-            snack.view.layoutParams = params
-            snack.show()
+            showWarningNetworkMessage()
+        } else {
+            dismissWarningNetworkMessage()
         }
+    }
+
+    private fun showWarningNetworkMessage() {
+        snackbar = Snackbar.make(
+            findViewById(R.id.coordinatorLayout),
+            this.getText(R.string.warning_no_internet_connection), Snackbar.LENGTH_INDEFINITE
+        )
+        val snackBarLayout = snackbar?.view as Snackbar.SnackbarLayout
+        for (i in 0 until snackBarLayout.childCount) {
+            val parent = snackBarLayout.getChildAt(i)
+            if (parent is LinearLayout) {
+                parent.rotation = 180f
+                break
+            }
+        }
+        snackbar?.view?.setOnTouchListener { _, _ ->
+            snackbar?.dismiss()
+            true
+        }
+        snackbar?.show()
+    }
+
+    private fun dismissWarningNetworkMessage() {
+        snackbar?.dismiss()
     }
 
     private fun setupViews() {
         try {
+            coordinatorLayout.bringToFront()
             setSupportActionBar(toolbarView)
             toolbarView?.setNavigationOnClickListener(this)
             bottomNavigationView?.setOnNavigationItemSelectedListener(this)
