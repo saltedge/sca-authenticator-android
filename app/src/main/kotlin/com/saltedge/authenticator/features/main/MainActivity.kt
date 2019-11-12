@@ -46,7 +46,6 @@ import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.activity_main.*
-import android.widget.LinearLayout
 
 class MainActivity : LockableActivity(),
     MainActivityContract.View,
@@ -54,9 +53,9 @@ class MainActivity : LockableActivity(),
     BottomNavigationView.OnNavigationItemSelectedListener,
     View.OnClickListener,
     FragmentManager.OnBackStackChangedListener,
-    NetworkStateChangeListener
+    NetworkStateChangeListener,
+    SnackbarAnchorContainer
 {
-
     private val presenter = MainActivityPresenter(
         viewContract = this,
         connectionsRepository = ConnectionsRepository
@@ -196,6 +195,8 @@ class MainActivity : LockableActivity(),
         presenter.onFragmentBackStackChanged(isTopNavigationLevel(), intent)
     }
 
+    override fun getSnackbarAnchorView(): View? = snackBarCoordinator
+
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         showNetworkMessage(isConnected)
     }
@@ -209,23 +210,7 @@ class MainActivity : LockableActivity(),
     }
 
     private fun showWarningNetworkMessage() {
-        snackbar = Snackbar.make(
-            findViewById(R.id.coordinatorLayout),
-            this.getText(R.string.warning_no_internet_connection), Snackbar.LENGTH_INDEFINITE
-        )
-        val snackBarLayout = snackbar?.view as Snackbar.SnackbarLayout
-        for (i in 0 until snackBarLayout.childCount) {
-            val parent = snackBarLayout.getChildAt(i)
-            if (parent is LinearLayout) {
-                parent.rotation = 180f
-                break
-            }
-        }
-        snackbar?.view?.setOnTouchListener { _, _ ->
-            snackbar?.dismiss()
-            true
-        }
-        snackbar?.show()
+        this.showWarning("No internet connection")
     }
 
     private fun dismissWarningNetworkMessage() {
@@ -234,7 +219,6 @@ class MainActivity : LockableActivity(),
 
     private fun setupViews() {
         try {
-            coordinatorLayout.bringToFront()
             setSupportActionBar(toolbarView)
             toolbarView?.setNavigationOnClickListener(this)
             bottomNavigationView?.setOnNavigationItemSelectedListener(this)

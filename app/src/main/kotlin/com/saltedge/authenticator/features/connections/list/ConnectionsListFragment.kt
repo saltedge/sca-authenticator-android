@@ -71,7 +71,7 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         try {
             activity?.let { connectionsListView?.layoutManager = LinearLayoutManager(it) }
             connectionsListView?.adapter = adapter
-            connectionsFabView?.setOnClickListener(this)
+//            connectionsFabView?.setOnClickListener(this)
             emptyView?.setOnClickListener(this)
             val context = activity ?: return
             headerDecorator = SpaceItemDecoration(
@@ -118,7 +118,7 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         val viewIsEmpty = adapter.isEmpty
         emptyView?.setVisible(viewIsEmpty)
         connectionsListView?.setVisible(!viewIsEmpty)
-        connectionsFabView?.setVisible(!viewIsEmpty)
+//        connectionsFabView?.setVisible(!viewIsEmpty)
     }
 
     override fun showApiErrorView(message: String) {
