@@ -33,9 +33,11 @@ class ConnectivityReceiver : BroadcastReceiver() {
         connectivityReceiverListener?.onNetworkConnectionChanged(isConnectedOrConnecting(context))
     }
 
-    private fun isConnectedOrConnecting(context: Context): Boolean =
-        (context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager)
-            ?.activeNetworkInfo != null
+    private fun isConnectedOrConnecting(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val networkInfo = connectivityManager?.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnectedOrConnecting
+    }
 }
 
 interface NetworkStateChangeListener {

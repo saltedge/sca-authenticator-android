@@ -146,23 +146,7 @@ class ConnectionsListPresenterTestSet1 {
 
     @Test
     @Throws(Exception::class)
-    fun onViewClickTestCase1() {
-        createPresenter(viewContract = null).onViewClick(viewId = -1)
-
-        Mockito.never()
-
-        createPresenter(viewContract = null).onViewClick(viewId = R.id.connectionsFabView)
-
-        Mockito.never()
-
-        createPresenter(viewContract = mockView).onViewClick(viewId = R.id.connectionsFabView)
-
-        Mockito.verify(mockView).showQrScanView()
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onViewClickTestCase2() {
+    fun onViewClickTest() {
         createPresenter(viewContract = null).onViewClick(viewId = R.id.mainActionView)
 
         Mockito.never()
