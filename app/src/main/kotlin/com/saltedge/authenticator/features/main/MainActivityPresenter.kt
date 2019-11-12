@@ -137,7 +137,7 @@ class MainActivityPresenter(
     }
 
     fun onViewClick() {
-        viewContract?.showQrScanView()
+        viewContract.showQrScanView()
     }
 
     private val Intent?.connectionId: String

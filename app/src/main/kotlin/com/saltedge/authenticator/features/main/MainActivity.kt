@@ -34,7 +34,6 @@ import com.saltedge.authenticator.features.authorizations.details.AuthorizationD
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
 import com.saltedge.authenticator.features.connections.connect.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
-import com.saltedge.authenticator.features.connections.qr.QrScannerActivity
 import com.saltedge.authenticator.features.security.LockableActivity
 import com.saltedge.authenticator.features.security.UnlockAppInputView
 import com.saltedge.authenticator.features.settings.list.SettingsListFragment
@@ -208,7 +207,7 @@ class MainActivity : LockableActivity(),
     }
 
     override fun showQrScanView() {
-        startActivity(Intent(this, QrScannerActivity::class.java))
+        this.startQrScannerActivity()
     }
 
     override fun getSnackbarAnchorView(): View? = snackBarCoordinator
