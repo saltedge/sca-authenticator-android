@@ -38,6 +38,7 @@ import com.saltedge.authenticator.features.settings.passcode.PasscodeEditFragmen
 import com.saltedge.authenticator.interfaces.CheckableListItemClickListener
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
+import com.saltedge.authenticator.widget.fragment.FabState
 import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
 
@@ -59,6 +60,7 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        updateFabState(FabState.NO_ACTION)
         activityComponents?.updateAppbarTitle(getString(R.string.settings_feature_title))
         setupViews()
     }

@@ -230,6 +230,7 @@ class MainActivity : LockableActivity(),
     }
 
     private fun dismissWarningNetworkMessage() {
+        //init snackbar
         snackbar?.dismiss()
     }
 

@@ -40,6 +40,7 @@ import com.saltedge.authenticator.sdk.web.ConnectWebClient
 import com.saltedge.authenticator.sdk.web.ConnectWebClientContract
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
+import com.saltedge.authenticator.widget.fragment.FabState
 import kotlinx.android.synthetic.main.fragment_connect.*
 import javax.inject.Inject
 
@@ -75,6 +76,7 @@ class ConnectProviderFragment : BaseFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        updateFabState(FabState.NO_ACTION)
         connectWebView?.webViewClient = webViewClient
         completeView?.setOnClickListener(this)
         updateViewsContent()

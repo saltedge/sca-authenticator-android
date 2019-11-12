@@ -71,7 +71,7 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupFragment(FabState.ADD_CONNECTION)
+        updateFabState(FabState.ADD_CONNECTION)
         try {
             activity?.let { connectionsListView?.layoutManager = LinearLayoutManager(it) }
             connectionsListView?.adapter = adapter

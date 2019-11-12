@@ -20,42 +20,15 @@
  */
 package com.saltedge.authenticator.features.main
 
-import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.saltedge.authenticator.widget.fragment.FabState
 
 fun FloatingActionButton.updateState(newState: FabState) {
-    Log.d("some", "updateState")
     val currentState: FabState = tag as? FabState ?: FabState.NO_ACTION
     when {
-        (newState === currentState) -> {
-            Log.d("some", "refreshCurrentState")
-
-            refreshCurrentState(newState)
-        }
-        (newState === FabState.NO_ACTION) -> {
-            Log.d("some", "hideFabView")
-
-            hideFabView()
-        }
-        (currentState === FabState.NO_ACTION) -> {
-            Log.d("some", "showFabView")
-
-            showFabView()
-        }
-
+        (newState === currentState) -> if (newState !== FabState.NO_ACTION) show() else hide()
+        (newState === FabState.NO_ACTION) -> hide()
+        (currentState === FabState.NO_ACTION) -> show()
     }
     tag = newState
-}
-
-private fun FloatingActionButton.refreshCurrentState(newState: FabState) {
-    if (newState !== FabState.NO_ACTION) show() else hide()
-}
-
-private fun FloatingActionButton.hideFabView() {
-    hide()
-}
-
-private fun FloatingActionButton.showFabView() {
-    show()
 }

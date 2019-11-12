@@ -68,7 +68,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupFragment(FabState.NO_ACTION)
+        updateFabState(FabState.NO_ACTION)
         try {
             setupViews()
         } catch (e: Exception) {
