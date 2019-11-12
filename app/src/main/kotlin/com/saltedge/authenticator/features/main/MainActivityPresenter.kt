@@ -136,6 +136,10 @@ class MainActivityPresenter(
         if (stackIsClear) viewContract.closeView() else viewContract.popBackStack()
     }
 
+    fun onViewClick() {
+        viewContract?.showQrScanView()
+    }
+
     private val Intent?.connectionId: String
         get() = this?.getStringExtra(KEY_CONNECTION_ID) ?: ""
 

@@ -34,6 +34,7 @@ import com.saltedge.authenticator.features.authorizations.details.AuthorizationD
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
 import com.saltedge.authenticator.features.connections.connect.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
+import com.saltedge.authenticator.features.connections.qr.QrScannerActivity
 import com.saltedge.authenticator.features.security.LockableActivity
 import com.saltedge.authenticator.features.security.UnlockAppInputView
 import com.saltedge.authenticator.features.settings.list.SettingsListFragment
@@ -45,6 +46,7 @@ import com.saltedge.authenticator.model.realm.RealmManager
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
 import com.saltedge.authenticator.widget.fragment.BaseFragment
+import com.saltedge.authenticator.widget.fragment.FabState
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : LockableActivity(),
@@ -54,8 +56,8 @@ class MainActivity : LockableActivity(),
     View.OnClickListener,
     FragmentManager.OnBackStackChangedListener,
     NetworkStateChangeListener,
-    SnackbarAnchorContainer
-{
+    SnackbarAnchorContainer {
+
     private val presenter = MainActivityPresenter(
         viewContract = this,
         connectionsRepository = ConnectionsRepository
@@ -72,6 +74,10 @@ class MainActivity : LockableActivity(),
         if (savedInstanceState == null) {
             presenter.launchInitialFragment(intent)
         }
+    }
+
+    override fun updateActivityActionButtonState(action: FabState) {
+        actionButton?.updateState(action)
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -109,14 +115,19 @@ class MainActivity : LockableActivity(),
     }
 
     override fun onClick(v: View?) {
-        presenter.onNavigationItemClick(isTopNavigationLevel())
+        when (v?.id ?: return) {
+            R.id.actionButton -> presenter.onViewClick()
+            else -> presenter.onNavigationItemClick(isTopNavigationLevel())
+        }
     }
 
     override fun showConnectProvider(connectConfigurationLink: String, connectQuery: String?) {
-        this.addFragment(ConnectProviderFragment.newInstance(
-            connectConfigurationLink = connectConfigurationLink,
-            connectQuery = connectQuery
-        ))
+        this.addFragment(
+            ConnectProviderFragment.newInstance(
+                connectConfigurationLink = connectConfigurationLink,
+                connectQuery = connectQuery
+            )
+        )
     }
 
     override fun restartActivity() {
@@ -178,10 +189,11 @@ class MainActivity : LockableActivity(),
 
     override fun updateNavigationViewsContent() {
         isTopNavigationLevel().also { isOnTop ->
-            toolbarView?.navigationIcon = ((currentFragmentInContainer() as? UpActionImageListener)?.getUpActionImageResId()
-                ?: presenter.getNavigationIcon(isOnTop))?.let { resId ->
-                this.getDrawable(resId)
-            }
+            toolbarView?.navigationIcon =
+                ((currentFragmentInContainer() as? UpActionImageListener)?.getUpActionImageResId()
+                    ?: presenter.getNavigationIcon(isOnTop))?.let { resId ->
+                    this.getDrawable(resId)
+                }
 
             bottomNavigationLayout?.setVisible(show = isOnTop)
         }
@@ -193,6 +205,10 @@ class MainActivity : LockableActivity(),
 
     override fun onBackStackChanged() {
         presenter.onFragmentBackStackChanged(isTopNavigationLevel(), intent)
+    }
+
+    override fun showQrScanView() {
+        startActivity(Intent(this, QrScannerActivity::class.java))
     }
 
     override fun getSnackbarAnchorView(): View? = snackBarCoordinator
@@ -223,6 +239,7 @@ class MainActivity : LockableActivity(),
             toolbarView?.setNavigationOnClickListener(this)
             bottomNavigationView?.setOnNavigationItemSelectedListener(this)
             supportFragmentManager.addOnBackStackChangedListener(this)
+            actionButton?.setOnClickListener(this)
             updateNavigationViewsContent()
         } catch (e: Exception) {
             e.log()

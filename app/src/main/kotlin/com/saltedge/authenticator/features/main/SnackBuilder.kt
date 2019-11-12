@@ -47,8 +47,7 @@ private fun View.showSnackbar(
     messageText: String,
     @ColorRes bgColorResId: Int
 ) {
-    val snackbar = Snackbar
-        .make(this, messageText, Snackbar.LENGTH_INDEFINITE)
+    val snackbar = Snackbar.make(this, messageText, Snackbar.LENGTH_INDEFINITE)
     val textView = snackbar.view.findViewById<TextView>(R.id.snackbar_text)
     textView.minimumHeight = context.resources.getDimension(R.dimen.action_bar_size).toInt()
     textView.gravity = Gravity.CENTER_VERTICAL

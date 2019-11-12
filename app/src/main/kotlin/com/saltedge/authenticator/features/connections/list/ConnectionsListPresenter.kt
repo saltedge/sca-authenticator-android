@@ -85,7 +85,7 @@ class ConnectionsListPresenter @Inject constructor(
 
     override fun onViewClick(viewId: Int) {
         when (viewId) {
-//            R.id.connectionsFabView, R.id.mainActionView -> viewContract?.showQrScanView()
+            R.id.mainActionView -> viewContract?.showQrScanView()
         }
     }
 

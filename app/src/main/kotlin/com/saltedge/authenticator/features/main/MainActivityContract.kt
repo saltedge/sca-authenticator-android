@@ -37,5 +37,6 @@ interface MainActivityContract {
         fun closeView()
         fun updateNavigationViewsContent()
         fun popBackStack()
+        fun showQrScanView()
     }
 }

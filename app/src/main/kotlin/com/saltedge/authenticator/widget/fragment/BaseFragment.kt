@@ -38,6 +38,10 @@ abstract class BaseFragment : Fragment() {
         else activityComponents?.showActionBar()
     }
 
+    protected fun setupFragment(action: FabState) {
+        activityComponents?.updateActivityActionButtonState(action)
+    }
+
     override fun onDestroy() {
         progressDialog?.dismiss()
         progressDialog = null
@@ -64,4 +68,13 @@ abstract class BaseFragment : Fragment() {
     protected fun dismissLoadProgress() {
         progressDialog?.dismiss()
     }
+
+    protected fun updateFabState(action: FabState) {
+        activityComponents?.updateActivityActionButtonState(action)
+    }
+
+}
+
+enum class FabState {
+   ADD_CONNECTION, NO_ACTION
 }

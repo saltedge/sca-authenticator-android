@@ -37,6 +37,7 @@ import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.showAuthorizationConfirm
 import com.saltedge.authenticator.widget.fragment.BaseFragment
+import com.saltedge.authenticator.widget.fragment.FabState
 import kotlinx.android.synthetic.main.fragment_authorizations_list.*
 import javax.inject.Inject
 
@@ -67,6 +68,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupFragment(FabState.NO_ACTION)
         try {
             setupViews()
         } catch (e: Exception) {
