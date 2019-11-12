@@ -226,11 +226,11 @@ class MainActivity : LockableActivity(),
     }
 
     private fun showWarningNetworkMessage() {
-        this.showWarning("No internet connection")
+        snackbar = this.buildWarning(getString(R.string.warning_no_internet_connection))
+        snackbar?.show()
     }
 
     private fun dismissWarningNetworkMessage() {
-        //init snackbar
         snackbar?.dismiss()
     }
 
