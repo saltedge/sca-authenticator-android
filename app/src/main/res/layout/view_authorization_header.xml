@@ -70,8 +70,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/dp_13"
-                android:layout_marginEnd="@dimen/dp_13"
+                android:layout_marginStart="@dimen/dp_12"
+                android:layout_marginEnd="@dimen/dp_12"
                 android:maxLines="1"
                 tools:text="3:25" />
 
