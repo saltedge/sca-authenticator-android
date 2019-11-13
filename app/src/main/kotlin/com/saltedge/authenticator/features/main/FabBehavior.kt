@@ -35,12 +35,11 @@ class FabBehavior(context: Context, attrs: AttributeSet?): CoordinatorLayout.Beh
     constructor(context: Context) : this(context, null)
 
     override fun layoutDependsOn(parent: CoordinatorLayout, child: FloatingActionButton, dependency: View): Boolean {
-        return dependency != null && (dependency is Snackbar.SnackbarLayout || dependency.id == R.id.bottomDivider)
+        return dependency is Snackbar.SnackbarLayout || dependency.id == R.id.bottomDivider
     }
 
     override fun onDependentViewChanged(parent: CoordinatorLayout, child: FloatingActionButton, dependency: View): Boolean {
-        if (parent != null && child != null &&
-            dependency != null && (dependency is Snackbar.SnackbarLayout || dependency.id == R.id.bottomDivider))
+        if (dependency is Snackbar.SnackbarLayout || dependency.id == R.id.bottomDivider)
             updateFloatingActionButton(parent, child)
         return true
     }

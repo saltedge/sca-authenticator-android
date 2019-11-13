@@ -24,11 +24,5 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.saltedge.authenticator.widget.fragment.FabState
 
 fun FloatingActionButton.updateState(newState: FabState) {
-    val currentState: FabState = tag as? FabState ?: FabState.NO_ACTION
-    when {
-        (newState === currentState) -> if (newState !== FabState.NO_ACTION) show() else hide()
-        (newState === FabState.NO_ACTION) -> hide()
-        (currentState === FabState.NO_ACTION) -> show()
-    }
-    tag = newState
+    if (newState === FabState.NO_ACTION) hide() else show()
 }
