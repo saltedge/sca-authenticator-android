@@ -27,10 +27,10 @@ import android.net.ConnectivityManager
 
 class ConnectivityReceiver : BroadcastReceiver() {
 
-    var connectivityReceiverListener: NetworkStateChangeListener? = null
+    var networkStateListener: NetworkStateChangeListener? = null
 
     override fun onReceive(context: Context, intent: Intent?) {
-        connectivityReceiverListener?.onNetworkConnectionChanged(isConnectedOrConnecting(context))
+        networkStateListener?.onNetworkConnectionChanged(isConnectedOrConnecting(context))
     }
 
     private fun isConnectedOrConnecting(context: Context): Boolean {

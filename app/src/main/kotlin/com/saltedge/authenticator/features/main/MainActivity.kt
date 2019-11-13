@@ -45,7 +45,6 @@ import com.saltedge.authenticator.model.realm.RealmManager
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
 import com.saltedge.authenticator.widget.fragment.BaseFragment
-import com.saltedge.authenticator.widget.fragment.FabState
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : LockableActivity(),
@@ -62,7 +61,7 @@ class MainActivity : LockableActivity(),
         connectionsRepository = ConnectionsRepository
     )
     private var snackbar: Snackbar? = null
-    private val receiver = ConnectivityReceiver()
+    private val connectivityReceiver = ConnectivityReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (!RealmManager.initialized) RealmManager.initRealm(context = this)
@@ -75,8 +74,8 @@ class MainActivity : LockableActivity(),
         }
     }
 
-    override fun updateActivityActionButtonState(action: FabState) {
-        actionButton?.updateState(action)
+    override fun updateActionButtonState(action: FabState) {
+        if (action === FabState.NO_ACTION) actionButton?.hide() else actionButton?.show()
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -92,14 +91,14 @@ class MainActivity : LockableActivity(),
     override fun onResume() {
         super.onResume()
         this.applyPreferenceLocale()
-        registerReceiver(receiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
-        receiver.connectivityReceiverListener = this
+        registerReceiver(connectivityReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+        connectivityReceiver.networkStateListener = this
     }
 
     override fun onPause() {
         super.onPause()
-        unregisterReceiver(receiver)
-        receiver.connectivityReceiverListener = null
+        unregisterReceiver(connectivityReceiver)
+        connectivityReceiver.networkStateListener = null
     }
 
     override fun onBackPressed() {
@@ -115,7 +114,7 @@ class MainActivity : LockableActivity(),
 
     override fun onClick(v: View?) {
         when (v?.id ?: return) {
-            R.id.actionButton -> presenter.onViewClick()
+            R.id.actionButton -> this.startQrScannerActivity()
             else -> presenter.onNavigationItemClick(isTopNavigationLevel())
         }
     }
@@ -206,10 +205,6 @@ class MainActivity : LockableActivity(),
         presenter.onFragmentBackStackChanged(isTopNavigationLevel(), intent)
     }
 
-    override fun showQrScanView() {
-        this.startQrScannerActivity()
-    }
-
     override fun getSnackbarAnchorView(): View? = snackBarCoordinator
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
@@ -218,19 +213,11 @@ class MainActivity : LockableActivity(),
 
     private fun showNetworkMessage(isConnected: Boolean) {
         if (!isConnected) {
-            showWarningNetworkMessage()
+            snackbar = this.buildWarning(getString(R.string.warning_no_internet_connection))
+            snackbar?.show()
         } else {
-            dismissWarningNetworkMessage()
+            snackbar?.dismiss()
         }
-    }
-
-    private fun showWarningNetworkMessage() {
-        snackbar = this.buildWarning(getString(R.string.warning_no_internet_connection))
-        snackbar?.show()
-    }
-
-    private fun dismissWarningNetworkMessage() {
-        snackbar?.dismiss()
     }
 
     private fun setupViews() {

@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.interfaces
 
-import com.saltedge.authenticator.widget.fragment.FabState
+import com.saltedge.authenticator.features.main.FabState
 
 interface ActivityComponentsContract {
     fun updateAppbarTitle(title: String)
@@ -28,5 +28,5 @@ interface ActivityComponentsContract {
     fun showActionBar()
     fun hideNavigationBar()
     fun showNavigationBar()
-    fun updateActivityActionButtonState(action: FabState)
+    fun updateActionButtonState(action: FabState)
 }

@@ -30,6 +30,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.common.SpaceItemDecoration
 import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
+import com.saltedge.authenticator.features.main.FabState
 import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
@@ -38,7 +39,6 @@ import com.saltedge.authenticator.features.settings.passcode.PasscodeEditFragmen
 import com.saltedge.authenticator.interfaces.CheckableListItemClickListener
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
-import com.saltedge.authenticator.widget.fragment.FabState
 import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
 

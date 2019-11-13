@@ -20,9 +20,6 @@
  */
 package com.saltedge.authenticator.features.main
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.saltedge.authenticator.widget.fragment.FabState
-
-fun FloatingActionButton.updateState(newState: FabState) {
-    if (newState === FabState.NO_ACTION) hide() else show()
+enum class FabState {
+    ADD_CONNECTION, NO_ACTION
 }
