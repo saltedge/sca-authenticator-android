@@ -58,7 +58,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/timeTextView"
                 android:layout_toEndOf="@+id/logoView"
+                android:maxLines="1"
                 tools:text="HSBC Bank UK" />
 
             <TextView
@@ -68,7 +70,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/dp_13"
+                android:layout_marginStart="@dimen/dp_12"
+                android:layout_marginEnd="@dimen/dp_12"
                 android:maxLines="1"
                 tools:text="3:25" />
 
