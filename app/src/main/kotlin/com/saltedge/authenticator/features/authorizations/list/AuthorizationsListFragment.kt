@@ -31,7 +31,6 @@ import com.saltedge.authenticator.features.authorizations.confirmPasscode.Confir
 import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsContentPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsHeaderPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.di.AuthorizationsListModule
-import com.saltedge.authenticator.features.main.FabState
 import com.saltedge.authenticator.sdk.model.ApiErrorData
 import com.saltedge.authenticator.sdk.model.getErrorMessage
 import com.saltedge.authenticator.tool.*
@@ -62,13 +61,12 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activityComponents?.updateAppbarTitle(getString(R.string.authorizations_feature_title))
+        activityComponents?.updateAppbarTitleWithFabAction(getString(R.string.authorizations_feature_title))
         return inflater.inflate(R.layout.fragment_authorizations_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        updateFabState(FabState.NO_ACTION)
         try {
             setupViews()
         } catch (e: Exception) {

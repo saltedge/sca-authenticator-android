@@ -49,7 +49,7 @@ class LicensesFragment : BaseFragment(), LicensesContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activityComponents?.updateAppbarTitle(getString(R.string.about_open_source_licenses))
+        activityComponents?.updateAppbarTitleWithFabAction(getString(R.string.about_open_source_licenses))
         setupViews()
     }
 

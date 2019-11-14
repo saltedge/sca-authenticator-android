@@ -23,7 +23,6 @@ package com.saltedge.authenticator.widget.fragment
 import android.app.ProgressDialog
 import androidx.fragment.app.Fragment
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.main.FabState
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
 
 abstract class BaseFragment : Fragment() {
@@ -59,9 +58,5 @@ abstract class BaseFragment : Fragment() {
 
     protected fun dismissLoadProgress() {
         progressDialog?.dismiss()
-    }
-
-    protected fun updateFabState(action: FabState) {
-        activityComponents?.updateActionButtonState(action)
     }
 }

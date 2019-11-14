@@ -63,13 +63,15 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activityComponents?.updateAppbarTitle(getString(R.string.connections_feature_title))
+        activityComponents?.updateAppbarTitleWithFabAction(
+            title = getString(R.string.connections_feature_title),
+            action = FabState.ADD_CONNECTION
+        )
         return inflater.inflate(R.layout.fragment_connections_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        updateFabState(FabState.ADD_CONNECTION)
         try {
             activity?.let { connectionsListView?.layoutManager = LinearLayoutManager(it) }
             connectionsListView?.adapter = adapter

@@ -70,7 +70,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        activityComponents?.updateAppbarTitle(getString(R.string.authorization_feature_title))
+        activityComponents?.updateAppbarTitleWithFabAction(getString(R.string.authorization_feature_title))
         return inflater.inflate(R.layout.fragment_authorization_details, container, false)
     }
 

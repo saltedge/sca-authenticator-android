@@ -30,7 +30,6 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_CONNECT_CONFIGURATION
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.features.connections.connect.di.ConnectProviderModule
-import com.saltedge.authenticator.features.main.FabState
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.sdk.model.ConnectionID
@@ -70,13 +69,12 @@ class ConnectProviderFragment : BaseFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activityComponents?.updateAppbarTitle(getString(presenterContract.getTitleResId()))
+        activityComponents?.updateAppbarTitleWithFabAction(getString(presenterContract.getTitleResId()))
         return inflater.inflate(R.layout.fragment_connect, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        updateFabState(FabState.NO_ACTION)
         connectWebView?.webViewClient = webViewClient
         completeView?.setOnClickListener(this)
         updateViewsContent()

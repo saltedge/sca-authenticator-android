@@ -30,7 +30,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.common.SpaceItemDecoration
 import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
-import com.saltedge.authenticator.features.main.FabState
 import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
@@ -60,8 +59,7 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        updateFabState(FabState.NO_ACTION)
-        activityComponents?.updateAppbarTitle(getString(R.string.settings_feature_title))
+        activityComponents?.updateAppbarTitleWithFabAction(getString(R.string.settings_feature_title))
         setupViews()
     }
 

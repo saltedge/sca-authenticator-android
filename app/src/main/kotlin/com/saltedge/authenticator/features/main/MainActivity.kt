@@ -74,10 +74,6 @@ class MainActivity : LockableActivity(),
         }
     }
 
-    override fun updateActionButtonState(action: FabState) {
-        if (action === FabState.NO_ACTION) actionButton?.hide() else actionButton?.show()
-    }
-
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         intent?.let { presenter.onNewIntentReceived(it) }
@@ -132,8 +128,9 @@ class MainActivity : LockableActivity(),
         super.restartLockableActivity()
     }
 
-    override fun updateAppbarTitle(title: String) {
+    override fun updateAppbarTitleWithFabAction(title: String, action: FabState) {
         supportActionBar?.title = title
+        if (action === FabState.NO_ACTION) actionButton?.hide() else actionButton?.show()
     }
 
     override fun showActionBar() {
