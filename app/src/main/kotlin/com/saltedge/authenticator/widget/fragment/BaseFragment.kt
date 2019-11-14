@@ -44,11 +44,6 @@ abstract class BaseFragment : Fragment() {
         super.onDestroy()
     }
 
-    protected fun hideActionBar() {
-        actionBarIsHidden = true
-        if (isResumed) activityComponents?.hideActionBar()
-    }
-
     protected fun showLoadProgress() {
         if (progressDialog == null) progressDialog = createProgressDialog()
         progressDialog?.show()
