@@ -209,11 +209,11 @@ class MainActivity : LockableActivity(),
     }
 
     private fun showNetworkMessage(isConnected: Boolean) {
-        if (!isConnected) {
+        if (isConnected) {
+            snackbar?.dismiss()
+        } else {
             snackbar = this.buildWarning(getString(R.string.warning_no_internet_connection))
             snackbar?.show()
-        } else {
-            snackbar?.dismiss()
         }
     }
 
