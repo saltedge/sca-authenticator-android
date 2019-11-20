@@ -93,7 +93,7 @@ fun Context.showAuthNotification(
  * @receiver context - application context
  */
 fun Context.clearNotifications() {
-    this.applicationContext.getNotificationManager().cancel(NOTIFICATION_ID)
+    this.applicationContext.getNotificationManager().cancelAll()
 }
 
 /**
