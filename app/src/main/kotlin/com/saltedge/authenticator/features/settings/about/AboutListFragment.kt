@@ -56,7 +56,7 @@ class AboutListFragment : BaseFragment(), AboutListContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activityComponents?.updateAppbarTitle(getString(R.string.about_feature_title))
+        activityComponents?.updateAppbarTitleWithFabAction(getString(R.string.about_feature_title))
         setupViews()
     }
 

@@ -35,6 +35,7 @@ import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDi
 import com.saltedge.authenticator.features.connections.edit.name.EditConnectionNameDialog
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListModule
 import com.saltedge.authenticator.features.connections.options.ConnectionOptionsDialog
+import com.saltedge.authenticator.features.main.FabState
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.tool.*
@@ -62,7 +63,10 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activityComponents?.updateAppbarTitle(getString(R.string.connections_feature_title))
+        activityComponents?.updateAppbarTitleWithFabAction(
+            title = getString(R.string.connections_feature_title),
+            action = FabState.ADD_CONNECTION
+        )
         return inflater.inflate(R.layout.fragment_connections_list, container, false)
     }
 
@@ -71,7 +75,6 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         try {
             activity?.let { connectionsListView?.layoutManager = LinearLayoutManager(it) }
             connectionsListView?.adapter = adapter
-            connectionsFabView?.setOnClickListener(this)
             emptyView?.setOnClickListener(this)
             val context = activity ?: return
             headerDecorator = SpaceItemDecoration(
@@ -118,7 +121,6 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         val viewIsEmpty = adapter.isEmpty
         emptyView?.setVisible(viewIsEmpty)
         connectionsListView?.setVisible(!viewIsEmpty)
-        connectionsFabView?.setVisible(!viewIsEmpty)
     }
 
     override fun showApiErrorView(message: String) {

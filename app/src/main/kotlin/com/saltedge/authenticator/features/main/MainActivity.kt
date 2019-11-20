@@ -21,11 +21,14 @@
 package com.saltedge.authenticator.features.main
 
 import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
@@ -49,13 +52,16 @@ class MainActivity : LockableActivity(),
     ActivityComponentsContract,
     BottomNavigationView.OnNavigationItemSelectedListener,
     View.OnClickListener,
-    FragmentManager.OnBackStackChangedListener
-{
+    FragmentManager.OnBackStackChangedListener,
+    NetworkStateChangeListener,
+    SnackbarAnchorContainer {
 
     private val presenter = MainActivityPresenter(
         viewContract = this,
         connectionsRepository = ConnectionsRepository
     )
+    private var snackbar: Snackbar? = null
+    private val connectivityReceiver = ConnectivityReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (!RealmManager.initialized) RealmManager.initRealm(context = this)
@@ -81,6 +87,14 @@ class MainActivity : LockableActivity(),
     override fun onResume() {
         super.onResume()
         this.applyPreferenceLocale()
+        registerReceiver(connectivityReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+        connectivityReceiver.networkStateListener = this
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unregisterReceiver(connectivityReceiver)
+        connectivityReceiver.networkStateListener = null
     }
 
     override fun onBackPressed() {
@@ -95,22 +109,28 @@ class MainActivity : LockableActivity(),
     }
 
     override fun onClick(v: View?) {
-        presenter.onNavigationItemClick(isTopNavigationLevel())
+        when (v?.id ?: return) {
+            R.id.actionButton -> this.startQrScannerActivity()
+            else -> presenter.onNavigationItemClick(isTopNavigationLevel())
+        }
     }
 
     override fun showConnectProvider(connectConfigurationLink: String, connectQuery: String?) {
-        this.addFragment(ConnectProviderFragment.newInstance(
-            connectConfigurationLink = connectConfigurationLink,
-            connectQuery = connectQuery
-        ))
+        this.addFragment(
+            ConnectProviderFragment.newInstance(
+                connectConfigurationLink = connectConfigurationLink,
+                connectQuery = connectQuery
+            )
+        )
     }
 
     override fun restartActivity() {
         super.restartLockableActivity()
     }
 
-    override fun updateAppbarTitle(title: String) {
+    override fun updateAppbarTitleWithFabAction(title: String, action: FabState) {
         supportActionBar?.title = title
+        if (action === FabState.NO_ACTION) actionButton?.hide() else actionButton?.show()
     }
 
     override fun showActionBar() {
@@ -164,10 +184,11 @@ class MainActivity : LockableActivity(),
 
     override fun updateNavigationViewsContent() {
         isTopNavigationLevel().also { isOnTop ->
-            toolbarView?.navigationIcon = ((currentFragmentInContainer() as? UpActionImageListener)?.getUpActionImageResId()
-                ?: presenter.getNavigationIcon(isOnTop))?.let { resId ->
-                this.getDrawable(resId)
-            }
+            toolbarView?.navigationIcon =
+                ((currentFragmentInContainer() as? UpActionImageListener)?.getUpActionImageResId()
+                    ?: presenter.getNavigationIcon(isOnTop))?.let { resId ->
+                    this.getDrawable(resId)
+                }
 
             bottomNavigationLayout?.setVisible(show = isOnTop)
         }
@@ -181,12 +202,28 @@ class MainActivity : LockableActivity(),
         presenter.onFragmentBackStackChanged(isTopNavigationLevel(), intent)
     }
 
+    override fun getSnackbarAnchorView(): View? = snackBarCoordinator
+
+    override fun onNetworkConnectionChanged(isConnected: Boolean) {
+        showNetworkMessage(isConnected)
+    }
+
+    private fun showNetworkMessage(isConnected: Boolean) {
+        if (isConnected) {
+            snackbar?.dismiss()
+        } else {
+            snackbar = this.buildWarning(getString(R.string.warning_no_internet_connection))
+            snackbar?.show()
+        }
+    }
+
     private fun setupViews() {
         try {
             setSupportActionBar(toolbarView)
             toolbarView?.setNavigationOnClickListener(this)
             bottomNavigationView?.setOnNavigationItemSelectedListener(this)
             supportFragmentManager.addOnBackStackChangedListener(this)
+            actionButton?.setOnClickListener(this)
             updateNavigationViewsContent()
         } catch (e: Exception) {
             e.log()

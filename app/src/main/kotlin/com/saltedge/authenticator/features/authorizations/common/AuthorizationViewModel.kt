@@ -81,7 +81,7 @@ data class AuthorizationViewModel(
     /**
      * Check that `time views` should ignore time changes
      *
-     * @return Boolean, true if showProgress is true
+     * @return Boolean, true if view mode is not default
      */
     val ignoreTimeUpdate: Boolean
         get() = viewMode !== ViewMode.DEFAULT
