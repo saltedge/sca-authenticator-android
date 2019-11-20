@@ -22,7 +22,6 @@ package com.saltedge.authenticator.sdk.network
 
 import okhttp3.Interceptor
 import okhttp3.Response
-import java.io.IOException
 
 const val HEADER_CONTENT_TYPE = "Content-Type"
 const val HEADER_KEY_ACCEPT_LANGUAGE = "Accept-Language"
@@ -38,12 +37,16 @@ const val HEADER_VALUE_ACCEPT_LANGUAGE = "en"
  */
 internal class HeaderInterceptor : Interceptor {
 
-    @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
-        val originalRequest = chain.request()
-        val requestBuilder = originalRequest.newBuilder()
-            .header(HEADER_CONTENT_TYPE, HEADER_VALUE_JSON)
-            .header(HEADER_KEY_ACCEPT_LANGUAGE, HEADER_VALUE_ACCEPT_LANGUAGE)
-        return chain.proceed(requestBuilder.build())
+        return try {
+            val originalRequest = chain.request()
+            val requestBuilder = originalRequest.newBuilder()
+                .header(HEADER_CONTENT_TYPE, HEADER_VALUE_JSON)
+                .header(HEADER_KEY_ACCEPT_LANGUAGE, HEADER_VALUE_ACCEPT_LANGUAGE)
+            chain.proceed(requestBuilder.build())
+        } catch (e: Exception) {
+            e.printStackTrace()
+            chain.proceed(chain.request())
+        }
     }
 }
