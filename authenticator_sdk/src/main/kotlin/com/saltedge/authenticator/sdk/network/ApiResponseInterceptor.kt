@@ -80,7 +80,7 @@ internal abstract class ApiResponseInterceptor<T> : Callback<T> {
     }
 
     private fun extractAccessToken(call: Call<T>): Token? {
-        return call.request().headers()[HEADER_KEY_ACCESS_TOKEN]
+        return call.request().headers[HEADER_KEY_ACCESS_TOKEN]
     }
 }
 
