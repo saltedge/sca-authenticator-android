@@ -55,7 +55,7 @@ object KeyStoreManager : KeyStoreManagerAbs {
      * @param alias - the alias name
      * @return KeyPair object
      */
-    override fun createOrReplaceRsaKeyPair(context: Context, alias: String): KeyPair? {
+    override fun createOrReplaceRsaKeyPair(context: Context?, alias: String): KeyPair? {
         val store = androidKeyStore ?: return null
         if (store.containsAlias(alias)) deleteKeyPair(alias)
         return createNewRsaKeyPair(context, alias)
@@ -68,7 +68,7 @@ object KeyStoreManager : KeyStoreManagerAbs {
      * @param alias - the alias name
      * @return public key as String
      */
-    override fun createRsaPublicKeyAsString(context: Context, alias: String): String? {
+    override fun createRsaPublicKeyAsString(context: Context?, alias: String): String? {
         return createOrReplaceRsaKeyPair(context, alias)?.publicKeyToPemEncodedString()
     }
 
@@ -202,10 +202,10 @@ object KeyStoreManager : KeyStoreManagerAbs {
      * @param alias - the alias name
      * @return KeyPair object
      */
-    fun createNewRsaKeyPair(context: Context, alias: String): KeyPair? {
+    fun createNewRsaKeyPair(context: Context?, alias: String): KeyPair? {
         val generator = KeyPairGenerator.getInstance(KEY_ALGORITHM_RSA, STORE_TYPE)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            initGeneratorWithKeyPairGeneratorSpec(context, generator, alias)
+            initGeneratorWithKeyPairGeneratorSpec(context ?: return null, generator, alias)
         } else {
             initGeneratorWithKeyGenParameterSpec(generator, alias)
         }

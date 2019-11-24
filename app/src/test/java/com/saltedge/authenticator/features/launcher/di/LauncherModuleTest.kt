@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.features.launcher.di
 
-import com.saltedge.authenticator.features.security.di.LockableActivityModule
+import android.content.Context
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
@@ -33,10 +33,11 @@ class LauncherModuleTest {
     @Test
     @Throws(Exception::class)
     fun providePresenterTest() {
-        val module = LockableActivityModule()
+        val module = LauncherModule()
 
         Assert.assertNotNull(
             module.providePresenter(
+                mockContext,
                 mockPreferences,
                 mockBiometricTools,
                 mockPasscodeTools
@@ -44,6 +45,7 @@ class LauncherModuleTest {
         )
     }
 
+    private val mockContext = Mockito.mock(Context::class.java)
     private val mockPreferences = Mockito.mock(PreferenceRepositoryAbs::class.java)
     private val mockBiometricTools = Mockito.mock(BiometricToolsAbs::class.java)
     private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)

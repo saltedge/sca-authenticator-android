@@ -107,8 +107,11 @@ class ConnectProviderPresenterTest {
     @Test
     @Throws(Exception::class)
     fun fetchProviderConfigurationDataResultTest_case3() {
-        Mockito.doReturn("public_key").`when`(mockKeyStoreManager).createRsaPublicKeyAsString(Mockito.anyString())
-        Mockito.doReturn("push_token").`when`(mockPreferenceRepository).cloudMessagingToken
+        Mockito.`when`(mockKeyStoreManager.createRsaPublicKeyAsString(
+            Mockito.any(),
+            Mockito.anyString()
+        )).thenReturn("public_key")
+        Mockito.`when`(mockPreferenceRepository.cloudMessagingToken).thenReturn("push_token")
 
         val presenter = createPresenter(viewContract = mockView)
         presenter.fetchProviderConfigurationDataResult(
@@ -123,13 +126,17 @@ class ConnectProviderPresenterTest {
             error = null
         )
 
-        Mockito.verify(mockKeyStoreManager).createRsaPublicKeyAsString(Mockito.anyString())
+        Mockito.verify(mockKeyStoreManager).createRsaPublicKeyAsString(
+            Mockito.any(),
+            Mockito.anyString()
+        )
         Mockito.verify(mockApiManager).initConnectionRequest(
             baseUrl = "https://demo.saltedge.com",
             publicKey = "public_key",
             pushToken = "push_token",
             connectQueryParam = null,
-            resultCallback = presenter)
+            resultCallback = presenter
+        )
     }
 
     /**
