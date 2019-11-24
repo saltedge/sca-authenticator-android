@@ -132,7 +132,11 @@ class OnboardingSetupPresenter(
     fun newPasscodeConfirmed(passcode: String) {
         if (passcodeTools.savePasscode(passcode)) {
             goToNextSetupView()
-        } else viewContract?.showWarningDialogWithMessage(appContext.getString(R.string.errors_internal_error))
+        } else {
+            viewContract?.showWarningDialogWithMessage(
+                appContext.getString(R.string.errors_cant_save_passcode)
+            )
+        }
     }
 
     private fun showPasscodeInput() {

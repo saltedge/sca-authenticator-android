@@ -20,10 +20,11 @@
  */
 package com.saltedge.authenticator.tool.secure
 
+import android.content.Context
+import android.os.Build
 import com.saltedge.authenticator.model.repository.PreferenceRepository
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
-import javax.crypto.SecretKey
 
 private const val PASSCODE_SECURE_KEY_ALIAS = "base_alias_for_pin"
 
@@ -31,11 +32,14 @@ object PasscodeTools : PasscodeToolsAbs {
 
     /**
      * Replace KeyPair, destined for Passcode encryption, with new in KeyStoreManager
-     *
-     * @return key pair
      */
-    override fun replacePasscodeKey(): SecretKey? =
-        KeyStoreManager.createOrReplaceAesKey(PASSCODE_SECURE_KEY_ALIAS)
+    override fun replacePasscodeKey(context: Context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            KeyStoreManager.createOrReplaceRsaKeyPair(context, PASSCODE_SECURE_KEY_ALIAS)
+        } else {
+            KeyStoreManager.createOrReplaceAesKey(PASSCODE_SECURE_KEY_ALIAS)
+        }
+    }
 
     /**
      * Encrypts new passcode and save it in preferences
@@ -45,9 +49,16 @@ object PasscodeTools : PasscodeToolsAbs {
      * @return boolean, true if PreferenceRepository.encryptedPasscode is equal encryptedPasscode
      */
     override fun savePasscode(passcode: String): Boolean {
-        val key = KeyStoreManager.getSecretKey(PASSCODE_SECURE_KEY_ALIAS) ?: return false
-        val encryptedPasscode = CryptoTools.aesEncrypt(passcode, key) ?: return false
-        PreferenceRepository.encryptedPasscode = encryptedPasscode
+        val encryptedPasscode = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            KeyStoreManager.getKeyPair(PASSCODE_SECURE_KEY_ALIAS)?.public?.let { key ->
+                CryptoTools.rsaEncrypt(input = passcode, publicKey = key)
+            }
+        } else {
+            KeyStoreManager.getSecretKey(PASSCODE_SECURE_KEY_ALIAS)?.let { key ->
+                CryptoTools.aesEncrypt(input = passcode, key = key)
+            }
+        }
+        PreferenceRepository.encryptedPasscode = encryptedPasscode ?: return false
         return true
     }
 
@@ -60,7 +71,14 @@ object PasscodeTools : PasscodeToolsAbs {
     override fun getPasscode(): String {
         val encryptedPasscode = PreferenceRepository.encryptedPasscode
         if (encryptedPasscode.isBlank()) return ""
-        val key = KeyStoreManager.getSecretKey(PASSCODE_SECURE_KEY_ALIAS) ?: return ""
-        return CryptoTools.aesDecrypt(encryptedPasscode, key) ?: return ""
+        return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            KeyStoreManager.getKeyPair(PASSCODE_SECURE_KEY_ALIAS)?.private?.let { key ->
+                CryptoTools.rsaDecrypt(encryptedPasscode, key)?.let { String(it) }
+            }
+        } else {
+            KeyStoreManager.getSecretKey(PASSCODE_SECURE_KEY_ALIAS)?.let { key ->
+                CryptoTools.aesDecrypt(encryptedPasscode, key)
+            }
+        } ?: return ""
     }
 }

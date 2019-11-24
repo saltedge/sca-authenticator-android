@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.tool.secure
 
-import javax.crypto.SecretKey
+import android.content.Context
 
 /**
  * Abstraction of PasscodeTools
@@ -28,7 +28,7 @@ import javax.crypto.SecretKey
  * @see PasscodeTools
  */
 interface PasscodeToolsAbs {
-    fun replacePasscodeKey(): SecretKey?
+    fun replacePasscodeKey(context: Context)
     fun savePasscode(passcode: String): Boolean
     fun getPasscode(): String
 }

@@ -33,6 +33,7 @@ import com.saltedge.authenticator.features.launcher.di.LauncherComponent
 import com.saltedge.authenticator.features.launcher.di.LauncherModule
 import com.saltedge.authenticator.features.onboarding.di.OnboardingSetupComponent
 import com.saltedge.authenticator.features.onboarding.di.OnboardingSetupModule
+import com.saltedge.authenticator.features.security.LockableActivity
 import com.saltedge.authenticator.features.settings.language.di.LanguageSelectComponent
 import com.saltedge.authenticator.features.settings.language.di.LanguageSelectModule
 import com.saltedge.authenticator.features.settings.list.di.SettingsListComponent
@@ -41,9 +42,10 @@ import com.saltedge.authenticator.features.settings.passcode.di.PasscodeEditComp
 import com.saltedge.authenticator.features.settings.passcode.di.PasscodeEditModule
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
+import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import dagger.Component
 import javax.inject.Singleton
 
@@ -54,8 +56,9 @@ interface AppComponent {
     fun preferenceRepository(): PreferenceRepositoryAbs
     fun connectionsRepository(): ConnectionsRepositoryAbs
     fun keyStoreManager(): KeyStoreManagerAbs
-    fun biometricTools(): BiometricToolsAbs
     fun passcodeTools(): PasscodeToolsAbs
+    fun biometricTools(): BiometricToolsAbs
+    fun biometricPrompt(): BiometricPromptAbs?
 
     fun addLauncherModule(module: LauncherModule): LauncherComponent
     fun addOnboardingSetupModule(module: OnboardingSetupModule): OnboardingSetupComponent
@@ -66,4 +69,6 @@ interface AppComponent {
     fun addSettingsListModule(module: SettingsListModule): SettingsListComponent
     fun addLanguageSelectModule(module: LanguageSelectModule): LanguageSelectComponent
     fun addPasscodeEditModule(module: PasscodeEditModule): PasscodeEditComponent
+
+    fun inject(activity: LockableActivity)
 }

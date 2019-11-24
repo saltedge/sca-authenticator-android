@@ -32,7 +32,7 @@ android {
     compileSdkVersion 28
 
     defaultConfig {
-        minSdkVersion 23
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode libVersionCode
         versionName libVersionName

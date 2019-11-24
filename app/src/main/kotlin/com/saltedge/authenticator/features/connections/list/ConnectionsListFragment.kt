@@ -27,7 +27,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.widget.list.SpaceItemDecoration
 import com.saltedge.authenticator.features.connections.common.ConnectionOptions
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.connect.ConnectProviderFragment
@@ -40,6 +39,7 @@ import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
+import com.saltedge.authenticator.widget.list.SpaceItemDecoration
 import kotlinx.android.synthetic.main.fragment_connections_list.*
 import javax.inject.Inject
 
@@ -63,10 +63,6 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activityComponents?.updateAppbarTitleWithFabAction(
-            title = getString(R.string.connections_feature_title),
-            action = FabState.ADD_CONNECTION
-        )
         return inflater.inflate(R.layout.fragment_connections_list, container, false)
     }
 
@@ -121,6 +117,11 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         val viewIsEmpty = adapter.isEmpty
         emptyView?.setVisible(viewIsEmpty)
         connectionsListView?.setVisible(!viewIsEmpty)
+        val fastAction = if (viewIsEmpty) FabState.NO_ACTION else FabState.SCAN_QR
+        activityComponents?.updateAppbarTitleWithFabAction(
+            title = getString(R.string.connections_feature_title),
+            action = fastAction
+        )
     }
 
     override fun showApiErrorView(message: String) {

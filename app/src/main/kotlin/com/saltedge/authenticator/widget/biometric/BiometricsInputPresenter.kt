@@ -22,16 +22,20 @@
 
 package com.saltedge.authenticator.widget.biometric
 
+import android.annotation.TargetApi
 import android.content.Context
 import android.hardware.biometrics.BiometricPrompt.BIOMETRIC_ERROR_CANCELED
 import android.hardware.biometrics.BiometricPrompt.BIOMETRIC_ERROR_USER_CANCELED
 import android.hardware.fingerprint.FingerprintManager
+import android.os.Build
 import android.os.CancellationSignal
+import androidx.annotation.RequiresApi
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.biometric.getFingerprintManager
 import com.saltedge.authenticator.tool.log
 
+@TargetApi(Build.VERSION_CODES.M)
 class BiometricsInputPresenter(
     val biometricTools: BiometricToolsAbs,
     val contract: BiometricsInputContract.View?
@@ -69,7 +73,7 @@ class BiometricsInputPresenter(
     fun onDialogResume(context: Context) {
         isDialogVisible = true
         try {
-            if (biometricTools.isFingerprintAuthAvailable(context) && cryptoObject != null) {
+            if (biometricTools?.isFingerprintAuthAvailable(context) == true && cryptoObject != null) {
                 fingerprintManager = context.getFingerprintManager()
                 mCancellationSignal = CancellationSignal()
                 fingerprintManager?.authenticate(
@@ -116,7 +120,7 @@ class BiometricsInputPresenter(
 
     private fun createCryptoObject(): FingerprintManager.CryptoObject? {
         return try {
-            biometricTools.createFingerprintCipher()?.let { FingerprintManager.CryptoObject(it) }
+            biometricTools?.createFingerprintCipher()?.let { FingerprintManager.CryptoObject(it) }
         } catch (e: Exception) {
             e.log()
             null

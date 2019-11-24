@@ -28,9 +28,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 
-class FabBehavior(context: Context, attrs: AttributeSet?): CoordinatorLayout.Behavior<FloatingActionButton>(context, attrs) {
-
-    private val fabDefaultBottomMargin = context.resources?.getDimension(R.dimen.dp_16)?.toInt() ?: 0
+class FabBehavior(context: Context, attrs: AttributeSet?) : CoordinatorLayout.Behavior<FloatingActionButton>(context, attrs) {
 
     constructor(context: Context) : this(context, null)
 
@@ -45,8 +43,8 @@ class FabBehavior(context: Context, attrs: AttributeSet?): CoordinatorLayout.Beh
     }
 
     private fun updateFloatingActionButton(parent: CoordinatorLayout, child: FloatingActionButton) {
-        val y = parent.getDependencies(child).map { it.y }.sorted().firstOrNull()
-            ?: (parent.y + parent.height)
-        child.y = y - fabDefaultBottomMargin - child.height
+//        val fabDefaultBottomMargin = child.resources?.getDimension(R.dimen.dp_16)?.toInt() ?: 0
+//        val y = parent.getDependencies(child).map { it.y }.min() ?: (parent.y + parent.height)
+//        child.y = y - fabDefaultBottomMargin - child.height
     }
 }

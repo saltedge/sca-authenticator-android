@@ -40,7 +40,8 @@ const val LAUNCHER_SPLASH_DURATION = 1500L
 
 class LauncherActivity : AppCompatActivity() {
 
-    @Inject lateinit var presenter: LauncherPresenter
+    @Inject
+    lateinit var presenter: LauncherPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

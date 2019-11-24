@@ -57,7 +57,7 @@ android {
         vectorDrawables.useSupportLibrary = true
 
         buildToolsVersion '28.0.3'
-        minSdkVersion 23
+        minSdkVersion 21
         compileSdkVersion 28
         targetSdkVersion 28
 
@@ -132,7 +132,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
     implementation 'com.google.android.gms:play-services-vision:19.0.0'
     implementation 'com.google.firebase:firebase-core:17.2.1'
-    implementation 'com.google.firebase:firebase-messaging:20.0.0'
+    implementation 'com.google.firebase:firebase-messaging:20.0.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'net.danlew:android.joda:2.10.2'
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.9') {

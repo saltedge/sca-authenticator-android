@@ -18,17 +18,24 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
+@file:Suppress("DEPRECATION")
+
 package com.saltedge.authenticator.sdk.tools.keystore
 
+import android.annotation.TargetApi
+import android.content.Context
 import android.os.Build
+import android.security.KeyPairGeneratorSpec
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import androidx.annotation.RequiresApi
 import com.saltedge.authenticator.sdk.tools.encodeToPemBase64String
+import java.math.BigInteger
 import java.security.*
-import java.security.spec.AlgorithmParameterSpec
 import java.util.*
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
+import javax.security.auth.x500.X500Principal
 
 private const val STORE_TYPE = "AndroidKeyStore"
 private const val KEY_ALGORITHM_RSA = "RSA"
@@ -48,10 +55,10 @@ object KeyStoreManager : KeyStoreManagerAbs {
      * @param alias - the alias name
      * @return KeyPair object
      */
-    override fun createOrReplaceRsaKeyPair(alias: String): KeyPair? {
+    override fun createOrReplaceRsaKeyPair(context: Context, alias: String): KeyPair? {
         val store = androidKeyStore ?: return null
         if (store.containsAlias(alias)) deleteKeyPair(alias)
-        return createNewRsaKeyPair(alias)
+        return createNewRsaKeyPair(context, alias)
     }
 
     /**
@@ -61,8 +68,8 @@ object KeyStoreManager : KeyStoreManagerAbs {
      * @param alias - the alias name
      * @return public key as String
      */
-    override fun createRsaPublicKeyAsString(alias: String): String? {
-        return createOrReplaceRsaKeyPair(alias)?.publicKeyToPemEncodedString()
+    override fun createRsaPublicKeyAsString(context: Context, alias: String): String? {
+        return createOrReplaceRsaKeyPair(context, alias)?.publicKeyToPemEncodedString()
     }
 
     /**
@@ -135,6 +142,7 @@ object KeyStoreManager : KeyStoreManagerAbs {
      * @return AES SecretKey object
      */
     fun createOrReplaceAesKey(alias: String): SecretKey? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return null
         return try {
             val mKeyGenerator = KeyGenerator.getInstance(
                 KeyProperties.KEY_ALGORITHM_AES,
@@ -163,6 +171,7 @@ object KeyStoreManager : KeyStoreManagerAbs {
      * @param alias - the alias name
      * @return AES SecretKey object
      */
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun createOrReplaceAesBiometricKey(alias: String): SecretKey? {
         return try {
             val builder = KeyGenParameterSpec.Builder(
@@ -193,10 +202,48 @@ object KeyStoreManager : KeyStoreManagerAbs {
      * @param alias - the alias name
      * @return KeyPair object
      */
-    fun createNewRsaKeyPair(alias: String): KeyPair? {
-        val spec = getNewSdkKeyGenSpec(alias)
-        return KeyPairGenerator.getInstance(KEY_ALGORITHM_RSA, STORE_TYPE)
-            .apply { initialize(spec) }.generateKeyPair()
+    fun createNewRsaKeyPair(context: Context, alias: String): KeyPair? {
+        val generator = KeyPairGenerator.getInstance(KEY_ALGORITHM_RSA, STORE_TYPE)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            initGeneratorWithKeyPairGeneratorSpec(context, generator, alias)
+        } else {
+            initGeneratorWithKeyGenParameterSpec(generator, alias)
+        }
+        return generator.generateKeyPair()
+    }
+
+    @Suppress("DEPRECATION")
+    private fun initGeneratorWithKeyPairGeneratorSpec(
+        context: Context,
+        generator: KeyPairGenerator,
+        alias: String
+    ) {
+        val startDate = Calendar.getInstance()
+        val endDate = Calendar.getInstance()
+        endDate.add(Calendar.YEAR, 20)
+
+        val builder = KeyPairGeneratorSpec.Builder(context)
+            .setAlias(alias)
+            .setSerialNumber(BigInteger.ONE)
+            .setSubject(X500Principal("CN=${alias} CA Certificate"))
+            .setStartDate(startDate.time)
+            .setEndDate(endDate.time)
+        generator.initialize(builder.build())
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private fun initGeneratorWithKeyGenParameterSpec(generator: KeyPairGenerator, alias: String) {
+        val builder = KeyGenParameterSpec.Builder(
+            alias,
+            KeyProperties.PURPOSE_ENCRYPT
+                or KeyProperties.PURPOSE_DECRYPT
+                or KeyProperties.PURPOSE_SIGN
+        )
+            .setDigests(KeyProperties.DIGEST_SHA256)
+            .setKeySize(KEY_SIZE)
+            .setSignaturePaddings(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
+            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+        generator.initialize(builder.build())
     }
 
     /**
@@ -206,17 +253,17 @@ object KeyStoreManager : KeyStoreManagerAbs {
      * @param alias - the alias name
      * @return algorithm parameter spec
      */
-    private fun getNewSdkKeyGenSpec(alias: String): AlgorithmParameterSpec {
-        return KeyGenParameterSpec.Builder(
-            alias,
-            KeyProperties.PURPOSE_DECRYPT or KeyProperties.PURPOSE_SIGN
-        )
-            .setDigests(KeyProperties.DIGEST_SHA256)
-            .setKeySize(KEY_SIZE)
-            .setSignaturePaddings(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
-            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
-            .build()
-    }
+//    private fun getNewSdkKeyGenSpec(alias: String): AlgorithmParameterSpec {
+//        return KeyGenParameterSpec.Builder(
+//            alias,
+//            KeyProperties.PURPOSE_DECRYPT or KeyProperties.PURPOSE_SIGN
+//        )
+//            .setDigests(KeyProperties.DIGEST_SHA256)
+//            .setKeySize(KEY_SIZE)
+//            .setSignaturePaddings(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
+//            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+//            .build()
+//    }
 
     /**
      * Load/Init KeyStore

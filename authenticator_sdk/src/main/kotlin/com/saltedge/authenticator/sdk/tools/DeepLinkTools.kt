@@ -42,8 +42,9 @@ fun String.isValidDeeplink(): Boolean {
  * @return configuration url string (https://my_host.orj/configuration)
  */
 fun String.extractConnectConfigurationLink(): String? {
-    val link = Uri.parse(this).getQueryParameter(KEY_CONFIGURATION_PARAM)
-    return if (link.contains("//localhost")) null else link
+    return Uri.parse(this).getQueryParameter(KEY_CONFIGURATION_PARAM)?.let { link ->
+        if (link.contains("//localhost")) null else link
+    }
 }
 
 /**

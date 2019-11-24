@@ -31,17 +31,24 @@ import android.security.keystore.KeyProperties
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import java.security.KeyPair
 import javax.crypto.Cipher
 
 const val FINGERPRINT_ALIAS_FOR_PIN = "fingerprint_alias_for_pin"
 
 @Suppress("DEPRECATION")
-class BiometricTools(val keyStoreManager: KeyStoreManagerAbs) : BiometricToolsAbs {
+class BiometricTools(
+    val appContext: Context,
+    val keyStoreManager: KeyStoreManagerAbs
+) : BiometricToolsAbs {
 
-    override fun replaceFingerprintKey() =
-        keyStoreManager.createOrReplaceRsaKeyPair(FINGERPRINT_ALIAS_FOR_PIN)
+    override fun replaceFingerprintKey(): KeyPair? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return null
+        return keyStoreManager.createOrReplaceRsaKeyPair(appContext, FINGERPRINT_ALIAS_FOR_PIN)
+    }
 
     override fun activateFingerprint(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return false
         keyStoreManager.createOrReplaceAesBiometricKey(FINGERPRINT_ALIAS_FOR_PIN)
         return keyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN)
     }
@@ -60,6 +67,7 @@ class BiometricTools(val keyStoreManager: KeyStoreManagerAbs) : BiometricToolsAb
     @Throws(Exception::class)
     @SuppressLint("NewApi")
     override fun createFingerprintCipher(): Cipher? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return null
         val key = keyStoreManager.getSecretKey(FINGERPRINT_ALIAS_FOR_PIN) ?: return null
         val mCipher = Cipher.getInstance("AES/CBC/${KeyProperties.ENCRYPTION_PADDING_PKCS7}")
         mCipher?.init(Cipher.ENCRYPT_MODE, key)
@@ -68,6 +76,7 @@ class BiometricTools(val keyStoreManager: KeyStoreManagerAbs) : BiometricToolsAb
 
     @Throws(Exception::class)
     override fun isFingerprintAuthAvailable(context: Context): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return false
         return if (isFingerprintPermissionGranted(context)) {
             val manager = context.getFingerprintManager() ?: return false
             return manager.isHardwareDetected && manager.hasEnrolledFingerprints()
@@ -94,6 +103,7 @@ class BiometricTools(val keyStoreManager: KeyStoreManagerAbs) : BiometricToolsAb
 
     @Throws(Exception::class)
     private fun Context.isFingerprintHardwareNotAvailable(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true
         return !(this.getFingerprintManager()?.isHardwareDetected ?: false)
     }
 
@@ -104,6 +114,7 @@ class BiometricTools(val keyStoreManager: KeyStoreManagerAbs) : BiometricToolsAb
 
     @Throws(Exception::class)
     private fun Context.noEnrolledFingerprints(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true
         return !(this.getFingerprintManager()?.hasEnrolledFingerprints() ?: false)
     }
 
@@ -113,6 +124,7 @@ class BiometricTools(val keyStoreManager: KeyStoreManagerAbs) : BiometricToolsAb
 }
 
 fun Context.getFingerprintManager(): FingerprintManager? {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return null
     return this.getSystemService(Context.FINGERPRINT_SERVICE) as? FingerprintManager
 }
 

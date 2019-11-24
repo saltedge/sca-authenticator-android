@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.launcher.di
 
+import com.saltedge.authenticator.features.security.di.LockableActivityModule
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
@@ -32,7 +33,7 @@ class LauncherModuleTest {
     @Test
     @Throws(Exception::class)
     fun providePresenterTest() {
-        val module = LauncherModule()
+        val module = LockableActivityModule()
 
         Assert.assertNotNull(
             module.providePresenter(

@@ -21,10 +21,14 @@
 package com.saltedge.authenticator.features.authorizations.common
 
 import android.content.Context
+import android.os.Build
 import android.text.method.ScrollingMovementMethod
 import android.util.AttributeSet
+import android.view.View
 import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import com.fivehundredpx.android.blur.BlurringView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.sdk.tools.hasHTMLTags
 import com.saltedge.authenticator.tool.setVisible
@@ -32,14 +36,20 @@ import kotlinx.android.synthetic.main.view_authorization_content.view.*
 
 class AuthorizationContentView : LinearLayout {
 
+    private var blurringView: View? = null
+
     constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
     init {
         inflate(context, R.layout.view_authorization_content,this)
-        blurringView?.setBlurredView(blurredView)
-        blurringView?.invalidate()
+        initBlurringView()
+        statusLayout.addView(blurringView, 0)
+        (blurringView as? BlurringView)?.let {
+            it.setBlurredView(blurredView)
+            it.invalidate()
+        }
     }
 
     fun setViewMode(viewMode: ViewMode) {
@@ -79,5 +89,20 @@ class AuthorizationContentView : LinearLayout {
     fun setActionClickListener(actionViewClickListener: OnClickListener) {
         negativeActionView?.setOnClickListener(actionViewClickListener)
         positiveActionView?.setOnClickListener(actionViewClickListener)
+    }
+
+    private fun initBlurringView() {
+        blurringView = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            View(context).apply {
+                layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT)
+                setBackgroundColor(resources.getColor(R.color.gray_extra_light_50))
+            }
+        } else {
+            BlurringView(context).apply {
+                layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT)
+                setBlurRadius(11)
+                setDownsampleFactor(6)
+            }
+        }
     }
 }

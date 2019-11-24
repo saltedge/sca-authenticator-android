@@ -33,22 +33,19 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_ACTION
 import com.saltedge.authenticator.sdk.constants.KEY_DESCRIPTION
 import com.saltedge.authenticator.sdk.constants.KEY_TITLE
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricTools
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.tool.ResId
 import com.saltedge.authenticator.tool.setTextColorResId
 import com.saltedge.authenticator.tool.showDialogFragment
 import com.saltedge.authenticator.widget.fragment.BaseRoundedBottomDialogFragment
 
-class BiometricsInputDialog :
-    BaseRoundedBottomDialogFragment(),
+class BiometricsInputDialog(
+    val biometricTools: BiometricToolsAbs
+) : BaseRoundedBottomDialogFragment(),
     BiometricPromptAbs,
     BiometricsInputContract.View {
 
-    private val presenter = BiometricsInputPresenter(
-        biometricTools = BiometricTools(KeyStoreManager),
-        contract = this
-    )
+    private val presenter = BiometricsInputPresenter(contract = this, biometricTools = biometricTools)
     private val titleView: TextView? by lazy {
         dialog?.findViewById<TextView>(R.id.titleView)
     }
@@ -62,6 +59,7 @@ class BiometricsInputDialog :
         dialog?.findViewById<TextView>(R.id.cancelActionView)
     }
     override var resultCallback: BiometricPromptCallback? = null
+
     override fun showBiometricPrompt(
         context: FragmentActivity,
         @StringRes titleResId: ResId,

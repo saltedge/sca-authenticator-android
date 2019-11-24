@@ -188,7 +188,7 @@ class ConnectProviderPresenter @Inject constructor(
     }
 
     private fun performNewConnectionRequest() {
-        keyStoreManager.createRsaPublicKeyAsString(connection.guid)?.let {
+        keyStoreManager.createRsaPublicKeyAsString(appContext, connection.guid)?.let {
             apiManager.initConnectionRequest(
                 baseUrl = connection.connectUrl,
                 publicKey = it,
