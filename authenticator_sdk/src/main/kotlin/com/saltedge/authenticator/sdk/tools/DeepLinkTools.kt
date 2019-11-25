@@ -38,8 +38,8 @@ fun String.isValidDeeplink(): Boolean {
 /**
  * Extract configuration link from deep link
  *
- * @receiver deep link String (authenticator://saltedge.com/connect?configuration=https://my_host.orj/configuration)
- * @return configuration url string (https://my_host.orj/configuration)
+ * @receiver deep link String (authenticator://saltedge.com/connect?configuration=https://example.com/configuration)
+ * @return configuration url string (https://example.com/configuration)
  */
 fun String.extractConnectConfigurationLink(): String? {
     return Uri.parse(this).getQueryParameter(KEY_CONFIGURATION_PARAM)?.let { link ->

@@ -73,7 +73,7 @@ object PasscodeTools : PasscodeToolsAbs {
         if (encryptedPasscode.isBlank()) return ""
         return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             KeyStoreManager.getKeyPair(PASSCODE_SECURE_KEY_ALIAS)?.private?.let { key ->
-                CryptoTools.rsaDecrypt(encryptedPasscode, key)?.let { String(it) }
+                String(CryptoTools.rsaDecrypt(encryptedPasscode, key) ?: byteArrayOf())
             }
         } else {
             KeyStoreManager.getSecretKey(PASSCODE_SECURE_KEY_ALIAS)?.let { key ->

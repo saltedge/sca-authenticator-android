@@ -57,8 +57,8 @@ object KeyStoreManager : KeyStoreManagerAbs {
      */
     override fun createOrReplaceRsaKeyPair(context: Context?, alias: String): KeyPair? {
         val store = androidKeyStore ?: return null
-        if (store.containsAlias(alias)) deleteKeyPair(alias)
-        return createNewRsaKeyPair(context, alias)
+        if (store.containsAlias(alias)) deleteKeyPair(alias = alias)
+        return createNewRsaKeyPair(context = context, alias = alias)
     }
 
     /**
@@ -69,7 +69,7 @@ object KeyStoreManager : KeyStoreManagerAbs {
      * @return public key as String
      */
     override fun createRsaPublicKeyAsString(context: Context?, alias: String): String? {
-        return createOrReplaceRsaKeyPair(context, alias)?.publicKeyToPemEncodedString()
+        return createOrReplaceRsaKeyPair(context = context, alias = alias)?.publicKeyToPemEncodedString()
     }
 
     /**
@@ -148,16 +148,13 @@ object KeyStoreManager : KeyStoreManagerAbs {
                 KeyProperties.KEY_ALGORITHM_AES,
                 STORE_TYPE
             )
-            mKeyGenerator.init(
-                KeyGenParameterSpec.Builder(
-                    alias,
-                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
-                )
-                    .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                    .setRandomizedEncryptionRequired(false)
-                    .build()
-            )
+            val purposes = KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+            val spec = KeyGenParameterSpec.Builder(alias, purposes)
+                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .setRandomizedEncryptionRequired(false)
+                .build()
+            mKeyGenerator.init(spec)
             mKeyGenerator.generateKey()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -205,9 +202,13 @@ object KeyStoreManager : KeyStoreManagerAbs {
     fun createNewRsaKeyPair(context: Context?, alias: String): KeyPair? {
         val generator = KeyPairGenerator.getInstance(KEY_ALGORITHM_RSA, STORE_TYPE)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            initGeneratorWithKeyPairGeneratorSpec(context ?: return null, generator, alias)
+            initGeneratorWithKeyPairGeneratorSpec(
+                context = context ?: return null,
+                generator = generator,
+                alias = alias
+            )
         } else {
-            initGeneratorWithKeyGenParameterSpec(generator, alias)
+            initGeneratorWithKeyGenParameterSpec(generator = generator, alias = alias)
         }
         return generator.generateKeyPair()
     }

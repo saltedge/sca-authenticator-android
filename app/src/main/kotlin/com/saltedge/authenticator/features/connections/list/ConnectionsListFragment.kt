@@ -117,10 +117,9 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         val viewIsEmpty = adapter.isEmpty
         emptyView?.setVisible(viewIsEmpty)
         connectionsListView?.setVisible(!viewIsEmpty)
-        val fastAction = if (viewIsEmpty) FabState.NO_ACTION else FabState.SCAN_QR
         activityComponents?.updateAppbarTitleWithFabAction(
             title = getString(R.string.connections_feature_title),
-            action = fastAction
+            action = if (viewIsEmpty) FabState.NO_ACTION else FabState.SCAN_QR
         )
     }
 
