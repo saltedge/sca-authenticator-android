@@ -27,7 +27,7 @@ You can install app from
     <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Get_it_on_Google_play.svg/1000px-Get_it_on_Google_play.svg.png' alt='Get it on Google Play' height="64px"/>
 </a> 
 
-Minimal supported Android SDK is SDK23 (Android Marshmallow)   
+Minimal supported Android SDK is SDK21 (Android Lollipop)   
 
 You can find related source code: 
   * [Authenticator Identity Service](https://github.com/saltedge/sca-identity-service-example).

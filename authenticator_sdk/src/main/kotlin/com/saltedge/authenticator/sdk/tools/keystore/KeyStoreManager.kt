@@ -212,6 +212,15 @@ object KeyStoreManager : KeyStoreManagerAbs {
         return generator.generateKeyPair()
     }
 
+    /**
+     * Initialize KeyPairGenerator
+     * Designated for Android version less than SDK23
+     *
+     * @param context Application Context
+     * @param generator KeyPairGenerator
+     * @param alias the alias name
+     * @return algorithm parameter spec
+     */
     @Suppress("DEPRECATION")
     private fun initGeneratorWithKeyPairGeneratorSpec(
         context: Context,
@@ -231,6 +240,14 @@ object KeyStoreManager : KeyStoreManagerAbs {
         generator.initialize(builder.build())
     }
 
+    /**
+     * Initialize KeyPairGenerator
+     * Designated for Android version greater than or equal to SDK23
+     *
+     * @param generator KeyPairGenerator
+     * @param alias the alias name
+     * @return algorithm parameter spec
+     */
     @TargetApi(Build.VERSION_CODES.M)
     private fun initGeneratorWithKeyGenParameterSpec(generator: KeyPairGenerator, alias: String) {
         val builder = KeyGenParameterSpec.Builder(
@@ -245,25 +262,6 @@ object KeyStoreManager : KeyStoreManagerAbs {
             .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
         generator.initialize(builder.build())
     }
-
-    /**
-     * Return algorithm parameter spec
-     * Designated for Android version greater than or equal to SDK23
-     *
-     * @param alias - the alias name
-     * @return algorithm parameter spec
-     */
-//    private fun getNewSdkKeyGenSpec(alias: String): AlgorithmParameterSpec {
-//        return KeyGenParameterSpec.Builder(
-//            alias,
-//            KeyProperties.PURPOSE_DECRYPT or KeyProperties.PURPOSE_SIGN
-//        )
-//            .setDigests(KeyProperties.DIGEST_SHA256)
-//            .setKeySize(KEY_SIZE)
-//            .setSignaturePaddings(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
-//            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
-//            .build()
-//    }
 
     /**
      * Load/Init KeyStore

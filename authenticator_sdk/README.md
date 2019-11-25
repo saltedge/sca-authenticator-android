@@ -22,7 +22,7 @@ In order to use Authenticator SDK it is necessary to install the following tools
 1. Build and run application on target device or emulator
 
 Don't forget that module requires Kotlin v.1.3.+ plugin installed 
-and minimal supported Android SDK is SDK23 (Android Marshmallow)
+and minimal supported Android SDK is SDK21 (Android Lollipop)
 
 or you can add SDK as dependency:
 
