@@ -25,24 +25,24 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.repository.PreferenceRepository
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricTools
-import com.saltedge.authenticator.sdk.tools.biometric.isBiometricPromptV28Enabled
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.tool.authenticatorApp
 import com.saltedge.authenticator.tool.restartApp
 import com.saltedge.authenticator.tool.secure.PasscodeTools
 import com.saltedge.authenticator.tool.setVisible
 import com.saltedge.authenticator.tool.showResetUserDialog
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
-import com.saltedge.authenticator.widget.biometric.BiometricPromptManagerV28
-import com.saltedge.authenticator.widget.biometric.BiometricsInputDialog
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 
@@ -100,12 +100,17 @@ abstract class LockableActivity :
         preferenceRepository = PreferenceRepository,
         passcodeTools = PasscodeTools
     )
+
+    private var biometricTools: BiometricToolsAbs? = null
     private var biometricPrompt: BiometricPromptAbs? = null
     private var vibrator: Vibrator? = null
-    private var biometricTools = BiometricTools(KeyStoreManager)
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        authenticatorApp?.appComponent?.let {
+            biometricTools = authenticatorApp?.appComponent?.biometricTools()
+            biometricPrompt = authenticatorApp?.appComponent?.biometricPrompt()
+        }
         presenter.onActivityCreate()
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     }
@@ -163,15 +168,10 @@ abstract class LockableActivity :
         finish()
     }
 
-    private fun isBiometricInputReady(): Boolean = biometricTools.isBiometricReady(context = this)
+    private fun isBiometricInputReady(): Boolean = biometricTools?.isBiometricReady(context = this) == true
 
     @TargetApi(Build.VERSION_CODES.P)
     private fun displayBiometricPrompt() {
-        biometricPrompt = if (isBiometricPromptV28Enabled()) {
-            BiometricPromptManagerV28()
-        } else {
-            BiometricsInputDialog()
-        }
         biometricPrompt?.resultCallback = this
         biometricPrompt?.showBiometricPrompt(
             context = this,
@@ -230,8 +230,8 @@ abstract class LockableActivity :
     @Suppress("DEPRECATION")
     private fun successVibrate() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator?.vibrate(VibrationEffect.createOneShot(150, VibrationEffect.DEFAULT_AMPLITUDE))
-        } else vibrator?.vibrate(150)
+            vibrator?.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else vibrator?.vibrate(50)
     }
 
     @Suppress("DEPRECATION")

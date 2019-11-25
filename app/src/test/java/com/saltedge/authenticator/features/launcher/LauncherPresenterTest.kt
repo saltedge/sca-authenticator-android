@@ -24,11 +24,15 @@ import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.testTools.TestAppTools
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
 import org.junit.Assert
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mockito
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class LauncherPresenterTest {
 
     @Test
@@ -38,7 +42,7 @@ class LauncherPresenterTest {
         Mockito.doReturn(false).`when`(mockPreferenceRepository).passcodeExist()
         presenter.setupApplication()
 
-        Mockito.verify(mockPasscodeTools).replacePasscodeKey()
+        Mockito.verify(mockPasscodeTools).replacePasscodeKey(TestAppTools.applicationContext)
         Mockito.verify(mockBiometricTools).replaceFingerprintKey()
 
         Mockito.doReturn(true).`when`(mockPreferenceRepository).passcodeExist()
@@ -67,6 +71,7 @@ class LauncherPresenterTest {
 
     private fun createPresenter(): LauncherPresenter {
         return LauncherPresenter(
+            appContext = TestAppTools.applicationContext,
             preferenceRepository = mockPreferenceRepository,
             passcodeTools = mockPasscodeTools,
             biometricTools = mockBiometricTools

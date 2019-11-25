@@ -18,22 +18,25 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.tools.keystore
+package com.saltedge.authenticator.sdk.web
 
-import android.annotation.SuppressLint
 import android.content.Context
-import java.security.Key
-import java.security.KeyPair
-import javax.crypto.SecretKey
+import android.content.res.Configuration
+import android.os.Build
+import android.util.AttributeSet
+import android.webkit.WebView
 
-interface KeyStoreManagerAbs {
-    fun createOrReplaceRsaKeyPair(context: Context?, alias: String): KeyPair?
-    fun createRsaPublicKeyAsString(context: Context?, alias: String): String?
-    fun keyEntryExist(alias: String): Boolean
-    fun getKeyStoreAliases(): List<String>
-    fun getKeyPair(alias: String?): KeyPair?
-    fun deleteKeyPairs(guids: List<String>)
-    fun deleteKeyPair(alias: String)
-    fun getSecretKey(alias: String?): Key?
-    @SuppressLint("NewApi") fun createOrReplaceAesBiometricKey(alias: String): SecretKey?
+class LollipopFixedWebView : WebView {
+    constructor(context: Context) : super(getFixedContext(context))
+    constructor(context: Context, attrs: AttributeSet?) : super(getFixedContext(context), attrs)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(getFixedContext(context), attrs, defStyleAttr)
+
+    companion object {
+        // To fix Android Lollipop WebView problem create a new configuration on that Android version only
+        private fun getFixedContext(context: Context): Context {
+            return if (Build.VERSION.SDK_INT == 21 || Build.VERSION.SDK_INT == 22) {
+                context.createConfigurationContext(Configuration())
+            } else context
+        }
+    }
 }

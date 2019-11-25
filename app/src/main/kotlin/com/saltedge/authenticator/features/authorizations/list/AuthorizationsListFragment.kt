@@ -44,8 +44,8 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     @Inject
     lateinit var presenter: AuthorizationsListPresenter
-    @Inject
-    lateinit var biometricPrompt: BiometricPromptAbs
+    var biometricPrompt: BiometricPromptAbs? = null
+        @Inject set
     private val pagersScrollSynchronizer = PagersScrollSynchronizer()
     private var headerAdapter: AuthorizationsHeaderPagerAdapter? = null
     private var contentAdapter: AuthorizationsContentPagerAdapter? = null
@@ -77,7 +77,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     override fun onStart() {
         super.onStart()
         presenter.viewContract = this
-        biometricPrompt.resultCallback = presenter
+        biometricPrompt?.resultCallback = presenter
         contentAdapter?.listItemClickListener = presenter
     }
 
@@ -94,7 +94,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     }
 
     override fun onStop() {
-        biometricPrompt.resultCallback = null
+        biometricPrompt?.resultCallback = null
         presenter.viewContract = null
         contentAdapter?.listItemClickListener = null
         super.onStop()
@@ -128,7 +128,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     }
 
     override fun askUserBiometricConfirmation() {
-        activity?.let { biometricPrompt.showAuthorizationConfirm(it) }
+        activity?.let { biometricPrompt?.showAuthorizationConfirm(it) }
     }
 
     override fun askUserPasscodeConfirmation() {

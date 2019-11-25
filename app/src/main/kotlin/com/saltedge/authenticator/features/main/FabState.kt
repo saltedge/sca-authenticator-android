@@ -21,5 +21,5 @@
 package com.saltedge.authenticator.features.main
 
 enum class FabState {
-    ADD_CONNECTION, NO_ACTION
+    SCAN_QR, NO_ACTION
 }

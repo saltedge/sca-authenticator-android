@@ -30,19 +30,16 @@ import android.webkit.WebView
 
 class SEWebView : WebView {
 
-    constructor(context: Context) : super(context) {
+    constructor(context: Context) : super(context.applicationContext) {
         setupView()
     }
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
+    constructor(context: Context, attrs: AttributeSet) : super(context.applicationContext, attrs) {
         setupView()
     }
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) :
+        super(context.applicationContext, attrs, defStyleAttr) {
         setupView()
     }
 

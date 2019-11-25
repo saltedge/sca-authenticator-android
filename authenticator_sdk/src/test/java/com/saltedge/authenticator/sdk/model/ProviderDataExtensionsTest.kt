@@ -66,7 +66,7 @@ class ProviderDataExtensionsTest {
 
         model.code = "demobank"
         model.name = "Demobank"
-        model.connectUrl = "requestUrl"
+        model.connectUrl = "http://example.com"
         model.logoUrl = ""
         model.version = ""
         model.supportEmail = ""
@@ -75,8 +75,17 @@ class ProviderDataExtensionsTest {
 
         model.code = ""
         model.name = ""
-        model.connectUrl = "requestUrl"
+        model.connectUrl = "http://example.com"
         model.logoUrl = "requestUrl"
+
+        Assert.assertFalse(model.isValid())
+
+        model.code = "demobank"
+        model.name = "Demobank"
+        model.connectUrl = "http://localhost"
+        model.logoUrl = "requestUrl"
+        model.version = API_VERSION
+        model.supportEmail = ""
 
         Assert.assertFalse(model.isValid())
 

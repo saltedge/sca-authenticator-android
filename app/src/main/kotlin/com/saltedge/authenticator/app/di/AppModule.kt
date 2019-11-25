@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.app.di
 
 import android.content.Context
+import android.os.Build
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepository
@@ -55,12 +56,15 @@ class AppModule(context: Context) {
 
     @Provides
     @Singleton
-    fun provideBiometricTools(): BiometricToolsAbs = BiometricTools(provideKeyStoreManager())
+    fun provideBiometricTools(): BiometricToolsAbs = BiometricTools(_context, provideKeyStoreManager())
 
     @Provides
-    fun provideBiometricPrompt(): BiometricPromptAbs {
-        return if (isBiometricPromptV28Enabled()) BiometricPromptManagerV28()
-        else BiometricsInputDialog()
+    fun provideBiometricPrompt(biometricTools: BiometricToolsAbs): BiometricPromptAbs? {
+        return when {
+            isBiometricPromptV28Enabled() -> BiometricPromptManagerV28()
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> BiometricsInputDialog(biometricTools)
+            else -> null
+        }
     }
 
     @Provides

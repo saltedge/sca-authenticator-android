@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.app.di
 
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.biometric.isBiometricPromptV28Enabled
 import com.saltedge.authenticator.testTools.TestAppTools
 import com.saltedge.authenticator.widget.biometric.BiometricPromptManagerV28
@@ -27,6 +28,7 @@ import com.saltedge.authenticator.widget.biometric.BiometricsInputDialog
 import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
@@ -52,9 +54,11 @@ class AppModuleTest {
     fun provideBiometricPromptTest() {
         val module = AppModule(TestAppTools.applicationContext)
         if (isBiometricPromptV28Enabled()) {
-            assertNotNull(module.provideBiometricPrompt() is BiometricPromptManagerV28)
+            assertNotNull(module.provideBiometricPrompt(mockBiometricTools) is BiometricPromptManagerV28)
         } else {
-            assertNotNull(module.provideBiometricPrompt() is BiometricsInputDialog)
+            assertNotNull(module.provideBiometricPrompt(mockBiometricTools) is BiometricsInputDialog)
         }
     }
+
+    private val mockBiometricTools = Mockito.mock(BiometricToolsAbs::class.java)
 }

@@ -116,10 +116,10 @@ class BiometricToolsTest {
     @Test
     @Throws(Exception::class)
     fun replaceFingerprintKeyTest() {
-        every { mockKeyStoreManager.createOrReplaceRsaKeyPair(FINGERPRINT_ALIAS_FOR_PIN) } returns null
+        every { mockKeyStoreManager.createOrReplaceRsaKeyPair(mockContext, FINGERPRINT_ALIAS_FOR_PIN) } returns null
         biometricTools.replaceFingerprintKey()
 
-        verify { mockKeyStoreManager.createOrReplaceRsaKeyPair(FINGERPRINT_ALIAS_FOR_PIN) }
+        verify { mockKeyStoreManager.createOrReplaceRsaKeyPair(mockContext, FINGERPRINT_ALIAS_FOR_PIN) }
     }
 
     @Test
@@ -146,5 +146,5 @@ class BiometricToolsTest {
     private val mockContext: Context = mockkClass(Context::class)
     private var mockFingerprintManager: FingerprintManager? = null
     private val mockKeyStoreManager = mockkClass(KeyStoreManagerAbs::class)
-    private val biometricTools = BiometricTools(mockKeyStoreManager)
+    private val biometricTools = BiometricTools(mockContext, mockKeyStoreManager)
 }

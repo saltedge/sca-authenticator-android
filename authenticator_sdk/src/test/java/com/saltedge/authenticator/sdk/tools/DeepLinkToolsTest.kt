@@ -33,13 +33,36 @@ class DeepLinkToolsTest {
 
     @Test
     @Throws(Exception::class)
-    fun toJsonStringTest() {
+    fun isValidDeeplinkTest() {
+        Assert.assertFalse("".isValidDeeplink())
+        Assert.assertFalse("test".isValidDeeplink())
+        Assert.assertFalse("https://google.com".isValidDeeplink())
+        Assert.assertFalse("authenticator://saltedge.com/connect?configuration=https://localhost/configuration".isValidDeeplink())
+        Assert.assertTrue("authenticator://saltedge.com/connect?configuration=https://example.com/configuration".isValidDeeplink())
+        Assert.assertTrue("authenticator://saltedge.com/connect?configuration=https://example.com/configuration&connect_query=1234567890".isValidDeeplink())
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun extractConnectConfigurationLinkTest() {
         Assert.assertNull("".extractConnectConfigurationLink())
         Assert.assertNull("test".extractConnectConfigurationLink())
         Assert.assertNull("https://google.com".extractConnectConfigurationLink())
+        Assert.assertNull("authenticator://saltedge.com/connect?configuration=https://localhost/configuration".extractConnectConfigurationLink())
         assertThat(
-            "authenticator://saltedge.com/connect?configuration=https://localhost/configuration".extractConnectConfigurationLink(),
-            equalTo("https://localhost/configuration")
+            "authenticator://saltedge.com/connect?configuration=https://example.com/configuration".extractConnectConfigurationLink(),
+            equalTo("https://example.com/configuration")
+        )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun extractConnectQueryTest() {
+        Assert.assertNull("".extractConnectQuery())
+        Assert.assertNull("authenticator://saltedge.com/connect?configuration=https://example.com/configuration".extractConnectQuery())
+        assertThat(
+            "authenticator://saltedge.com/connect?configuration=https://example.com/configuration&connect_query=1234567890".extractConnectQuery(),
+            equalTo("1234567890")
         )
     }
 }

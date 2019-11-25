@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.launcher.di
 
+import android.content.Context
 import com.saltedge.authenticator.app.di.FragmentScope
 import com.saltedge.authenticator.features.launcher.LauncherPresenter
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
@@ -34,11 +35,13 @@ class LauncherModule {
     @FragmentScope
     @Provides
     fun providePresenter(
+        appContext: Context,
         preferences: PreferenceRepositoryAbs,
         biometricTools: BiometricToolsAbs,
         passcodeTools: PasscodeToolsAbs
     ): LauncherPresenter {
         return LauncherPresenter(
+            appContext = appContext,
             passcodeTools = passcodeTools,
             preferenceRepository = preferences,
             biometricTools = biometricTools

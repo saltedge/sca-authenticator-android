@@ -52,9 +52,9 @@ class AuthorizationDetailsFragment : BaseFragment(),
     @Inject
     lateinit var presenterContract: AuthorizationDetailsPresenter
     @Inject
-    lateinit var biometricPrompt: BiometricPromptAbs
-    @Inject
     lateinit var timeViewUpdateTimer: Timer
+    var biometricPrompt: BiometricPromptAbs? = null
+        @Inject set
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +82,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
     override fun onStart() {
         super.onStart()
         presenterContract.viewContract = this
-        biometricPrompt.resultCallback = presenterContract
+        biometricPrompt?.resultCallback = presenterContract
     }
 
     override fun onResume() {
@@ -96,7 +96,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
     }
 
     override fun onStop() {
-        biometricPrompt.resultCallback = null
+        biometricPrompt?.resultCallback = null
         presenterContract.viewContract = null
         super.onStop()
     }
@@ -139,7 +139,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
     }
 
     override fun askUserBiometricConfirmation() {
-        activity?.let { biometricPrompt.showAuthorizationConfirm(it) }
+        activity?.let { biometricPrompt?.showAuthorizationConfirm(it) }
     }
 
     override fun askUserPasscodeConfirmation() {

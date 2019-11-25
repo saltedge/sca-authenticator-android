@@ -28,6 +28,7 @@ import com.saltedge.authenticator.sdk.tools.createDefaultGson
 import com.saltedge.authenticator.sdk.tools.decodeFromPemBase64String
 import java.security.Key
 import java.security.PrivateKey
+import java.security.PublicKey
 import javax.crypto.Cipher
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.IvParameterSpec
@@ -40,17 +41,30 @@ object CryptoTools : CryptoToolsAbs {
     private const val AES_EXTERNAL_TRANSFORMATION = "AES/CBC/PKCS5Padding"
     private val encryptionIv = byteArrayOf(65, 1, 2, 23, 4, 5, 6, 7, 32, 21, 10, 11)
 
+    override fun rsaEncrypt(input: String, publicKey: PublicKey): String? {
+        return try {
+            val encryptCipher = getRsaCipher()
+            if (encryptCipher == null || input.isBlank()) return null
+            encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey)
+            val encryptedBytes = encryptCipher.doFinal(input.toByteArray())
+            Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
     override fun rsaDecrypt(encryptedText: String, privateKey: PrivateKey): ByteArray? {
-        try {
+        return try {
             val decryptCipher = getRsaCipher()
             if (decryptCipher == null || encryptedText.isBlank()) return null
             decryptCipher.init(Cipher.DECRYPT_MODE, privateKey)
             val decodedText = decodeFromPemBase64String(encryptedText)
-            return decryptCipher.doFinal(decodedText)
+            decryptCipher.doFinal(decodedText)
         } catch (e: Exception) {
             e.printStackTrace()
+            null
         }
-        return null
     }
 
     override fun aesEncrypt(input: String, key: Key): String? {
@@ -66,32 +80,32 @@ object CryptoTools : CryptoToolsAbs {
     }
 
     override fun aesDecrypt(encryptedText: String, key: Key): String? {
-        try {
+        return try {
             val encryptedBytes = Base64.decode(encryptedText, Base64.DEFAULT)
             val encryptCipher = Cipher.getInstance(AES_INTERNAL_TRANSFORMATION) ?: return null
             encryptCipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, encryptionIv))
             val decodedBytes = encryptCipher.doFinal(encryptedBytes)
-            return String(decodedBytes)
+            String(decodedBytes)
         } catch (e: Exception) {
             e.printStackTrace()
+            null
         }
-        return null
     }
 
     override fun aesDecrypt(encryptedText: String, key: ByteArray, iv: ByteArray): String? {
-        try {
+        return try {
             val decryptCipher = Cipher.getInstance(AES_EXTERNAL_TRANSFORMATION) ?: return null
             decryptCipher.init(
                 Cipher.DECRYPT_MODE,
-                SecretKeySpec(key, KeyProperties.KEY_ALGORITHM_AES),
+                SecretKeySpec(key, "AES"),
                 IvParameterSpec(iv)
             )
             val decryptedBytes = decryptCipher.doFinal(decodeFromPemBase64String(encryptedText))
-            return String(decryptedBytes)
+            String(decryptedBytes)
         } catch (e: Exception) {
             e.printStackTrace()
+            null
         }
-        return null
     }
 
     override fun decryptAuthorizationData(
@@ -99,7 +113,7 @@ object CryptoTools : CryptoToolsAbs {
         rsaPrivateKey: PrivateKey?
     ): AuthorizationData? {
         if (encryptedData.algorithm != supportedAlgorithm) return null
-        try {
+        return try {
             val privateKey = rsaPrivateKey ?: return null
             val encryptedKey = encryptedData.key ?: return null
             val encryptedIV = encryptedData.iv ?: return null
@@ -107,21 +121,21 @@ object CryptoTools : CryptoToolsAbs {
             val key = rsaDecrypt(encryptedKey, privateKey) ?: return null
             val iv = rsaDecrypt(encryptedIV, privateKey) ?: return null
             val jsonString = aesDecrypt(encryptedMessage, key = key, iv = iv)
-            return createDefaultGson().fromJson(jsonString, AuthorizationData::class.java)
+            createDefaultGson().fromJson(jsonString, AuthorizationData::class.java)
         } catch (e: Exception) {
             e.printStackTrace()
+            null
         }
-        return null
     }
 
     private fun getRsaCipher(): Cipher? {
-        try {
+        return try {
             // AndroidOpenSSL causes error in android 6: InvalidKeyException: Need RSA private or public key (AndroidKeyStoreBCWorkaround)
             // AndroidKeyStoreBCWorkaround causes error in android 5: NoSuchProviderException: Provider not available (AndroidOpenSSL)
-            return Cipher.getInstance("RSA/ECB/PKCS1Padding")
+            Cipher.getInstance("RSA/ECB/PKCS1Padding")
         } catch (e: Exception) {
             e.printStackTrace()
+            null
         }
-        return null
     }
 }

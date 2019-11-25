@@ -452,7 +452,7 @@ class OnboardingSetupPresenterTest {
         presenter.newPasscodeConfirmed(passcode = "1234")
 
         Mockito.verify(mockView)
-            .showWarningDialogWithMessage(TestAppTools.applicationContext.getString(R.string.errors_internal_error))
+            .showWarningDialogWithMessage(TestAppTools.applicationContext.getString(R.string.errors_cant_save_passcode))
         Mockito.verifyNoMoreInteractions(mockView)
 
         Mockito.clearInvocations(mockView)
