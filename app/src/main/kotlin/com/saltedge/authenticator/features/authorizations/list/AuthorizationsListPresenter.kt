@@ -21,6 +21,8 @@
 package com.saltedge.authenticator.features.authorizations.list
 
 import android.content.Context
+import androidx.databinding.ObservableArrayList
+import androidx.databinding.ObservableList
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.common.*
 import com.saltedge.authenticator.interfaces.ListItemClickListener
@@ -35,6 +37,7 @@ import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import kotlinx.coroutines.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
+import com.saltedge.authenticator.sdk.model.ConnectionAndKey
 
 class AuthorizationsListPresenter @Inject constructor(
     appContext: Context,
@@ -54,7 +57,9 @@ class AuthorizationsListPresenter @Inject constructor(
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.IO
 
-    var viewModels: List<AuthorizationViewModel> = emptyList()
+    var viewModels: ObservableList<AuthorizationViewModel> =
+        ObservableArrayList<AuthorizationViewModel>()
+    var showBiometricConfirmation: Boolean = false
     var viewContract: AuthorizationsListContract.View? = null
     val showEmptyView: Boolean
         get() = viewModels.isEmpty()
@@ -90,7 +95,8 @@ class AuthorizationsListPresenter @Inject constructor(
     }
 
     override fun onViewModelsShouldBeDestroyed() {
-        viewModels = viewModels.filter { !it.shouldBeDestroyed }
+        val filteredList = viewModels.filter { !it.shouldBeDestroyed }
+        viewModels.replaceWith(filteredList)
         viewContract?.updateViewsContent()
     }
 
@@ -128,7 +134,11 @@ class AuthorizationsListPresenter @Inject constructor(
         }
     }
 
-    override fun onConfirmDenySuccess(success: Boolean, connectionID: ConnectionID, authorizationID: AuthorizationID) {
+    override fun onConfirmDenySuccess(
+        success: Boolean,
+        connectionID: ConnectionID,
+        authorizationID: AuthorizationID
+    ) {
         findViewModel(connectionID, authorizationID)?.let { viewModel ->
             viewModel.setNewViewMode(if (viewModel.viewMode == ViewMode.DENY_PROCESSING) ViewMode.DENY_SUCCESS else ViewMode.CONFIRM_SUCCESS)
             viewContract?.updateItem(viewModel = viewModel, itemId = viewModels.indexOf(viewModel))
@@ -153,7 +163,10 @@ class AuthorizationsListPresenter @Inject constructor(
         if (!authorizingInProgress) {
             super.currentViewModel = viewModel
             super.currentConnectionAndKey = connectionsAndKeys[viewModel.connectionID] ?: return
-            onAuthorizeActionSelected(selectedActionType)
+            onAuthorizeActionSelected(
+                requestType = selectedActionType,
+                showBiometricConfirmation = showBiometricConfirmation
+            )
         }
     }
 
@@ -186,7 +199,7 @@ class AuthorizationsListPresenter @Inject constructor(
             .sortedBy { it.createdAt }
         val joinedViewModels = createViewModels(newAuthorizationsData).joinFinalModels(this.viewModels)
         if (this.viewModels != joinedViewModels) {
-            this.viewModels = joinedViewModels
+            this.viewModels.replaceWith(joinedViewModels)
             viewContract?.updateViewsContent()
         }
     }
@@ -208,7 +221,10 @@ class AuthorizationsListPresenter @Inject constructor(
         }
     }
 
-    private fun findViewModel(connectionID: ConnectionID, authorizationID: AuthorizationID): AuthorizationViewModel? {
+    private fun findViewModel(
+        connectionID: ConnectionID,
+        authorizationID: AuthorizationID
+    ): AuthorizationViewModel? {
         return viewModels.find { it.authorizationID == authorizationID && it.connectionID == connectionID }
     }
 
@@ -220,5 +236,45 @@ class AuthorizationsListPresenter @Inject constructor(
     private fun stopPolling() {
         pollingService.contract = null
         pollingService.stop()
+    }
+
+    fun setOnDataChange() {
+        viewModels.addOnListChangedCallback(object :
+            ObservableList.OnListChangedCallback<ObservableList<AuthorizationViewModel>>() {
+            override fun onChanged(sender: ObservableList<AuthorizationViewModel>?) {}
+
+            override fun onItemRangeRemoved(
+                sender: ObservableList<AuthorizationViewModel>?,
+                positionStart: Int,
+                itemCount: Int
+            ) {
+                showBiometricConfirmation = showConfirmation(itemCount)
+            }
+
+            override fun onItemRangeMoved(
+                sender: ObservableList<AuthorizationViewModel>?,
+                fromPosition: Int,
+                toPosition: Int,
+                itemCount: Int
+            ) {}
+
+            override fun onItemRangeInserted(
+                sender: ObservableList<AuthorizationViewModel>?,
+                positionStart: Int,
+                itemCount: Int
+            ) {
+                showBiometricConfirmation = showConfirmation(itemCount)
+            }
+
+            override fun onItemRangeChanged(
+                sender: ObservableList<AuthorizationViewModel>?,
+                positionStart: Int,
+                itemCount: Int
+            ) {}
+        })
+    }
+
+    private fun showConfirmation(itemCount: Int): Boolean {
+        return itemCount != 1
     }
 }

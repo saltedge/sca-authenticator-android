@@ -46,17 +46,18 @@ abstract class BaseAuthorizationPresenter(
 
     fun onAuthorizeActionSelected(
         requestType: ActionType,
-        quickConfirmMode: Boolean = false
+        quickConfirmMode: Boolean = false,
+        showBiometricConfirmation: Boolean = false
     ) {
         val viewModel = currentViewModel ?: return
         if (!viewModel.canBeAuthorized) return
         when(requestType) {
             ActionType.CONFIRM -> {
                 when {
+                    showBiometricConfirmation -> baseViewContract()?.askUserBiometricConfirmation()
+                    !showBiometricConfirmation -> sendConfirmRequest()
                     quickConfirmMode -> sendConfirmRequest()
-                    biometricTools.isBiometricReady(appContext) -> {
-                        baseViewContract()?.askUserBiometricConfirmation()
-                    }
+                    biometricTools.isBiometricReady(appContext) -> baseViewContract()?.askUserBiometricConfirmation()
                     else -> baseViewContract()?.askUserPasscodeConfirmation()
                 }
             }

@@ -226,5 +226,4 @@ object PreferenceRepository : PreferenceRepositoryAbs {
     private fun SharedPreferences.saveValue(key: String, value: Long) {
         this.edit()?.putLong(key, value)?.apply()
     }
-
 }

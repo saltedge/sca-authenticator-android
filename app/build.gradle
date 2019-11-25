@@ -30,6 +30,10 @@ apply from: "./common-methods.gradle"
 
 android {
 
+    dataBinding {
+        enabled = true
+    }
+
     signingConfigs {
         release
     }

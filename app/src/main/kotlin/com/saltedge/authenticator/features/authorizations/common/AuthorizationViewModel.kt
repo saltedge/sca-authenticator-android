@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.authorizations.common
 
+import androidx.databinding.ObservableList
 import com.saltedge.authenticator.sdk.model.AuthorizationData
 import com.saltedge.authenticator.sdk.model.AuthorizationID
 import com.saltedge.authenticator.sdk.model.ConnectionAbs
@@ -163,6 +164,17 @@ fun List<AuthorizationViewModel>.joinFinalModels(listWithFinalModels: List<Autho
     return (this.filter {
         !finalAuthorizationIDs.contains(it.authorizationID) || !finalConnectionIDs.contains(it.connectionID)
     } + finalModels).sortedBy { it.createdAt }
+}
+
+/**
+ * Recreate authorization view model
+ *
+ * @receiver observable list
+ * @param list of AuthorizationViewModel
+ */
+fun ObservableList<AuthorizationViewModel>.replaceWith(list: List<AuthorizationViewModel>) {
+    this.clear()
+    this.addAll(list)
 }
 
 private fun authorizationExpirationPeriod(authorization: AuthorizationData): Int {
