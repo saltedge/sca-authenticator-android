@@ -58,15 +58,6 @@ class AuthorizationsListPresenterTest {
 
     @Test
     @Throws(Exception::class)
-    fun getValuesTest() {
-        val presenter = createPresenter()
-
-        assertThat(presenter.biometricTools, equalTo(mockBiometricTools))
-        assertThat(presenter.apiManager, equalTo(mockApiManager))
-    }
-
-    @Test
-    @Throws(Exception::class)
     fun showEmptyViewTest() {
         val presenter = createPresenter(viewContract = mockView)
 
@@ -339,17 +330,28 @@ class AuthorizationsListPresenterTest {
     }
 
     /**
-     * Ask user passcode confirmation when view models are more than one
+     * Don't ask user any confirmations for authorization
      */
     @Test
     @Throws(Exception::class)
     fun testSettersForViewModelsCase2() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.viewModels = listOf(viewModel1, viewModel2)
+        presenter.viewModels = listOf(viewModel1)
+        presenter.viewModels = listOf(viewModel2)
 
         presenter.onListItemClick(itemViewId = R.id.positiveActionView, itemIndex = 0)
 
-        Mockito.verify(mockView).askUserPasscodeConfirmation()
+        Mockito.verify(mockApiManager).confirmAuthorization(
+            connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
+            authorizationId = "2",
+            authorizationCode = "222",
+            resultCallback = presenter
+        )
+        Mockito.verify(mockPollingService).stop()
+        Mockito.verify(mockView).updateItem(
+            viewModel = viewModel2.copy(viewMode = ViewMode.CONFIRM_PROCESSING),
+            itemId = 0
+        )
         Mockito.verifyNoMoreInteractions(mockView)
     }
 
