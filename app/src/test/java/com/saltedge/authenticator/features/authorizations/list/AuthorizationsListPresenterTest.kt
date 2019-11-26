@@ -58,6 +58,15 @@ class AuthorizationsListPresenterTest {
 
     @Test
     @Throws(Exception::class)
+    fun getValuesTest() {
+        val presenter = createPresenter()
+
+        assertThat(presenter.biometricTools, equalTo(mockBiometricTools))
+        assertThat(presenter.apiManager, equalTo(mockApiManager))
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun showEmptyViewTest() {
         val presenter = createPresenter(viewContract = mockView)
 
@@ -305,6 +314,62 @@ class AuthorizationsListPresenterTest {
     }
 
     /**
+     * Don't ask user any confirmations for authorization
+     */
+    @Test
+    @Throws(Exception::class)
+    fun testSettersForViewModelsCase1() {
+        val presenter = createPresenter(viewContract = mockView)
+        presenter.viewModels = listOf(viewModel1)
+
+        presenter.onListItemClick(itemViewId = R.id.positiveActionView, itemIndex = 0)
+
+        Mockito.verify(mockApiManager).confirmAuthorization(
+            connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
+            authorizationId = "1",
+            authorizationCode = "111",
+            resultCallback = presenter
+        )
+        Mockito.verify(mockPollingService).stop()
+        Mockito.verify(mockView).updateItem(
+            viewModel = viewModel1.copy(viewMode = ViewMode.CONFIRM_PROCESSING),
+            itemId = 0
+        )
+        Mockito.verifyNoMoreInteractions(mockView)
+    }
+
+    /**
+     * Ask user passcode confirmation when view models are more than one
+     */
+    @Test
+    @Throws(Exception::class)
+    fun testSettersForViewModelsCase2() {
+        val presenter = createPresenter(viewContract = mockView)
+        presenter.viewModels = listOf(viewModel1, viewModel2)
+
+        presenter.onListItemClick(itemViewId = R.id.positiveActionView, itemIndex = 0)
+
+        Mockito.verify(mockView).askUserPasscodeConfirmation()
+        Mockito.verifyNoMoreInteractions(mockView)
+    }
+
+    /**
+     * Ask user biometric confirmation when view models are more than one
+     */
+    @Test
+    @Throws(Exception::class)
+    fun testSettersForViewModelsCase3() {
+        Mockito.doReturn(true).`when`(mockBiometricTools).isBiometricReady(TestAppTools.applicationContext)
+        val presenter = createPresenter(viewContract = mockView)
+        presenter.viewModels = listOf(viewModel1, viewModel2)
+
+        presenter.onListItemClick(itemViewId = R.id.positiveActionView, itemIndex = 0)
+
+        Mockito.verify(mockView).askUserBiometricConfirmation()
+        Mockito.verifyNoMoreInteractions(mockView)
+    }
+
+    /**
      * Received the same list but one of the stored models has modified viewMode
      */
     @Test
@@ -509,15 +574,6 @@ class AuthorizationsListPresenterTest {
     private val mockPollingService = Mockito.mock(PollingServiceAbs::class.java)
     private val mockView = Mockito.mock(AuthorizationsListContract.View::class.java)
     private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
-
-    @Test
-    @Throws(Exception::class)
-    fun getValuesTest() {
-        val presenter = createPresenter()
-
-        assertThat(presenter.biometricTools, equalTo(mockBiometricTools))
-        assertThat(presenter.apiManager, equalTo(mockApiManager))
-    }
 
     private val connection1 = Connection().apply {
             guid = "guid1"
