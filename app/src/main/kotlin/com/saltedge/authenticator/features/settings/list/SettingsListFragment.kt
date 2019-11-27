@@ -42,7 +42,7 @@ import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
 
 class SettingsListFragment : BaseFragment(), SettingsListContract.View,
-    CheckableListItemClickListener, View.OnClickListener {
+    CheckableListItemClickListener {
 
     @Inject lateinit var presenterContract: SettingsListContract.Presenter
 
@@ -101,16 +101,12 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View,
         activity?.startMailApp()
     }
 
-    override fun showInfo(message: Int) {
+    override fun showRestartAppQuery() {
         view?.let {
-            Snackbar.make(it, message, Snackbar.LENGTH_LONG)
-                .setAction(getString(R.string.actions_ok), this)
+            Snackbar.make(it, getString(R.string.settings_restart_app), Snackbar.LENGTH_LONG)
+                .setAction(getString(android.R.string.ok)) { activity?.restartApp() }
                 .show()
         }
-    }
-
-    override fun onClick(v: View?) {
-        activity?.restartApp()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
