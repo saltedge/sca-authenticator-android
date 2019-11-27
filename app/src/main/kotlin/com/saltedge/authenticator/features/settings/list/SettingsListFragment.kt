@@ -42,7 +42,7 @@ import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
 
 class SettingsListFragment : BaseFragment(), SettingsListContract.View,
-    CheckableListItemClickListener {
+    CheckableListItemClickListener, View.OnClickListener {
 
     @Inject lateinit var presenterContract: SettingsListContract.Presenter
 
@@ -102,7 +102,15 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View,
     }
 
     override fun showInfo(message: Int) {
-        view?.let { Snackbar.make(it, message, Snackbar.LENGTH_LONG).show() }
+        view?.let {
+            Snackbar.make(it, message, Snackbar.LENGTH_LONG)
+                .setAction(getString(R.string.actions_ok), this)
+                .show()
+        }
+    }
+
+    override fun onClick(v: View?) {
+        activity?.restartApp()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
