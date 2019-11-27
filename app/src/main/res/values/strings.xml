@@ -24,7 +24,6 @@
     <string name="app_name_in_two_lines">Salt Edge\nAuthenticator</string>
 
     <string name="actions_cancel">Cancel</string>
-    <string name="actions_ok">Ok</string>
     <string name="actions_connect">Connect</string>
     <string name="actions_delete">Delete</string>
     <string name="actions_delete_all">Delete All</string>

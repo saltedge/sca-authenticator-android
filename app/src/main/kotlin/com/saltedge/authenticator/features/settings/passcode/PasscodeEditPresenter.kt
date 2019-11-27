@@ -91,7 +91,7 @@ class PasscodeEditPresenter @Inject constructor(
             PasscodeInputView.InputMode.CHECK_PASSCODE, PasscodeInputView.InputMode.NEW_PASSCODE -> {
                 R.string.actions_next
             }
-            PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE -> R.string.actions_ok
+            PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE -> android.R.string.ok
         }
     }
 }

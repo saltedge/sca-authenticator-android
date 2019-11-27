@@ -49,7 +49,7 @@ class LanguageSelectDialog : DialogFragment(), LanguageSelectContract.View {
             ) { _, which ->
                 presenterContract.currentItemIndex = which
             }
-            .setPositiveButton(R.string.actions_ok) { _, _ -> presenterContract.onOkClick() }
+            .setPositiveButton(android.R.string.ok) { _, _ -> presenterContract.onOkClick() }
             .setNegativeButton(R.string.actions_cancel) { _, _ -> closeView() }
             .create()
     }

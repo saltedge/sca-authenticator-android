@@ -215,7 +215,7 @@ class OnboardingSetupPresenter(
 
     private fun getPositivePasscodeActionViewText(passcodeInputMode: PasscodeInputView.InputMode?): Int? {
         return passcodeInputMode?.let {
-            if (it === PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE) R.string.actions_ok
+            if (it === PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE) android.R.string.ok
             else R.string.actions_next
         }
     }
