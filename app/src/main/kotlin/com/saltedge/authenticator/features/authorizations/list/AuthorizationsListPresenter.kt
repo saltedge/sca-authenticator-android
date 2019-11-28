@@ -23,6 +23,7 @@ package com.saltedge.authenticator.features.authorizations.list
 import android.content.Context
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.common.*
+import com.saltedge.authenticator.interfaces.BaseViewContract
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
@@ -66,7 +67,7 @@ class AuthorizationsListPresenter @Inject constructor(
     private val authorizingInProgress: Boolean
         get() = viewModels.any { it.viewMode == ViewMode.CONFIRM_PROCESSING || it.viewMode == ViewMode.DENY_PROCESSING }
 
-    override fun baseViewContract(): BaseAuthorizationViewContract? = viewContract
+    override fun baseViewContract(): BaseViewContract? = viewContract
 
     fun onFragmentResume() {
         startPolling()

@@ -21,12 +21,12 @@
 package com.saltedge.authenticator.features.authorizations.list
 
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
-import com.saltedge.authenticator.features.authorizations.common.BaseAuthorizationViewContract
+import com.saltedge.authenticator.interfaces.BaseViewContract
 import com.saltedge.authenticator.sdk.model.ApiErrorData
 
 interface AuthorizationsListContract {
 
-    interface View : BaseAuthorizationViewContract {
+    interface View : BaseViewContract {
         fun showError(error: ApiErrorData)
         fun updateItem(viewModel: AuthorizationViewModel, itemId: Int)
     }

@@ -27,15 +27,12 @@ import android.view.ViewGroup
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
-import com.saltedge.authenticator.features.authorizations.confirmPasscode.ConfirmPasscodeDialog
 import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsContentPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsHeaderPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.di.AuthorizationsListModule
 import com.saltedge.authenticator.sdk.model.ApiErrorData
 import com.saltedge.authenticator.sdk.model.getErrorMessage
 import com.saltedge.authenticator.tool.*
-import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
-import com.saltedge.authenticator.widget.biometric.showAuthorizationConfirm
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_authorizations_list.*
 import javax.inject.Inject
@@ -44,8 +41,6 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     @Inject
     lateinit var presenter: AuthorizationsListPresenter
-    var biometricPrompt: BiometricPromptAbs? = null
-        @Inject set
     private val pagersScrollSynchronizer = PagersScrollSynchronizer()
     private var headerAdapter: AuthorizationsHeaderPagerAdapter? = null
     private var contentAdapter: AuthorizationsContentPagerAdapter? = null
@@ -77,7 +72,6 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     override fun onStart() {
         super.onStart()
         presenter.viewContract = this
-        biometricPrompt?.resultCallback = presenter
         contentAdapter?.listItemClickListener = presenter
     }
 
@@ -94,7 +88,6 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     }
 
     override fun onStop() {
-        biometricPrompt?.resultCallback = null
         presenter.viewContract = null
         contentAdapter?.listItemClickListener = null
         super.onStop()
@@ -125,14 +118,6 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     override fun updateItem(viewModel: AuthorizationViewModel, itemId: Int) {
         contentAdapter?.updateItem(viewModel, itemId)
         headerAdapter?.updateItem(viewModel, itemId)
-    }
-
-    override fun askUserBiometricConfirmation() {
-        activity?.let { biometricPrompt?.showAuthorizationConfirm(it) }
-    }
-
-    override fun askUserPasscodeConfirmation() {
-        activity?.showDialogFragment(ConfirmPasscodeDialog.newInstance(resultCallback = presenter))
     }
 
     private fun setupViews() {

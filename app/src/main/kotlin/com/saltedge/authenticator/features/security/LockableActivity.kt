@@ -94,8 +94,7 @@ abstract class LockableActivity :
     }
 
     val handler = Handler(Looper.getMainLooper())
-    val timerDuration = TimeUnit.SECONDS.toMillis(20)
-//        MINUTES.toMillis(1)
+    val timerDuration = TimeUnit.MINUTES.toMillis(1)
     val timerAction = Runnable { viewContract.lockScreen() }
 
     fun startTimer() =  handler.postDelayed(timerAction, timerDuration)
@@ -103,7 +102,7 @@ abstract class LockableActivity :
     fun cancelTimer() = handler.removeCallbacks(timerAction)
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        startTimer()
+//        startTimer()
         return super.dispatchTouchEvent(ev)
     }
 
@@ -174,6 +173,7 @@ abstract class LockableActivity :
     }
 
     override fun biometricsCanceledByUser() {
+        // mb askUserPasscodeConfirmation?
     }
 
     fun restartLockableActivity() {

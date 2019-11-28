@@ -28,7 +28,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
-import com.saltedge.authenticator.features.authorizations.confirmPasscode.ConfirmPasscodeDialog
 import com.saltedge.authenticator.features.authorizations.details.di.AuthorizationDetailsModule
 import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
@@ -36,8 +35,6 @@ import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
 import com.saltedge.authenticator.sdk.model.AuthorizationID
 import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.tool.*
-import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
-import com.saltedge.authenticator.widget.biometric.showAuthorizationConfirm
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_authorization_details.*
 import org.joda.time.DateTime
@@ -53,8 +50,6 @@ class AuthorizationDetailsFragment : BaseFragment(),
     lateinit var presenterContract: AuthorizationDetailsPresenter
     @Inject
     lateinit var timeViewUpdateTimer: Timer
-    var biometricPrompt: BiometricPromptAbs? = null
-        @Inject set
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +77,6 @@ class AuthorizationDetailsFragment : BaseFragment(),
     override fun onStart() {
         super.onStart()
         presenterContract.viewContract = this
-        biometricPrompt?.resultCallback = presenterContract
     }
 
     override fun onResume() {
@@ -96,7 +90,6 @@ class AuthorizationDetailsFragment : BaseFragment(),
     }
 
     override fun onStop() {
-        biometricPrompt?.resultCallback = null
         presenterContract.viewContract = null
         super.onStop()
     }
@@ -136,16 +129,6 @@ class AuthorizationDetailsFragment : BaseFragment(),
 
     override fun showError(errorMessage: String) {
         view?.let { Snackbar.make(it, errorMessage, Snackbar.LENGTH_LONG).show() }
-    }
-
-    override fun askUserBiometricConfirmation() {
-        activity?.let { biometricPrompt?.showAuthorizationConfirm(it) }
-    }
-
-    override fun askUserPasscodeConfirmation() {
-        activity?.showDialogFragment(
-            ConfirmPasscodeDialog.newInstance(resultCallback = presenterContract)
-        )
     }
 
     override fun startTimer() {

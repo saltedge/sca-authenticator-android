@@ -20,12 +20,12 @@
  */
 package com.saltedge.authenticator.features.authorizations.details
 
-import com.saltedge.authenticator.features.authorizations.common.BaseAuthorizationViewContract
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
+import com.saltedge.authenticator.interfaces.BaseViewContract
 import org.joda.time.DateTime
 
 interface AuthorizationDetailsContract {
-    interface View : BaseAuthorizationViewContract {
+    interface View : BaseViewContract {
         fun setHeaderVisibility(show: Boolean)
         fun setHeaderValues(logoUrl: String, title: String, startTime: DateTime, endTime: DateTime)
         fun updateTimeViews()

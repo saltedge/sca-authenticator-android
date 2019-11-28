@@ -23,6 +23,7 @@ package com.saltedge.authenticator.features.authorizations.details
 import android.content.Context
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.common.*
+import com.saltedge.authenticator.interfaces.BaseViewContract
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
@@ -89,18 +90,8 @@ class AuthorizationDetailsPresenter(
 
     fun onViewClick(viewId: Int) {
         when (viewId) {
-            R.id.positiveActionView -> {
-                onAuthorizeActionSelected(
-                    requestType = ActionType.CONFIRM,
-                    quickConfirmMode = true
-                )
-            }
-            R.id.negativeActionView -> {
-                onAuthorizeActionSelected(
-                    requestType = ActionType.DENY,
-                    quickConfirmMode = true
-                )
-            }
+            R.id.positiveActionView -> onAuthorizeActionSelected(requestType = ActionType.CONFIRM)
+            R.id.negativeActionView -> onAuthorizeActionSelected(requestType = ActionType.DENY)
         }
     }
 
@@ -124,7 +115,7 @@ class AuthorizationDetailsPresenter(
         }
     }
 
-    override fun baseViewContract(): BaseAuthorizationViewContract? = viewContract
+    override fun baseViewContract(): BaseViewContract? = viewContract
 
     override fun getConnectionData(): ConnectionAndKey? = currentConnectionAndKey
 

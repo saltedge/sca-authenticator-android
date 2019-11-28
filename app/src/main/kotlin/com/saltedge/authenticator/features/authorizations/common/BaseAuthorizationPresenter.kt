@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.authorizations.common
 
 import android.content.Context
-import com.saltedge.authenticator.features.authorizations.confirmPasscode.PasscodePromptCallback
+import com.saltedge.authenticator.interfaces.BaseViewContract
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationResult
 import com.saltedge.authenticator.sdk.model.AuthorizationID
@@ -29,54 +29,30 @@ import com.saltedge.authenticator.sdk.model.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResultData
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
-import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
 
 abstract class BaseAuthorizationPresenter(
     internal val appContext: Context,
     internal val biometricTools: BiometricToolsAbs,
     internal val apiManager: AuthenticatorApiManagerAbs
-) : BiometricPromptCallback, PasscodePromptCallback, ConfirmAuthorizationResult {
+) : ConfirmAuthorizationResult {
 
     var currentViewModel: AuthorizationViewModel? = null
     var currentConnectionAndKey: ConnectionAndKey? = null
 
     abstract fun onAuthorizeStart(connectionID: ConnectionID, authorizationID: AuthorizationID, type: ActionType)
     abstract fun onConfirmDenySuccess(success: Boolean, connectionID: ConnectionID, authorizationID: AuthorizationID)
-    abstract fun baseViewContract(): BaseAuthorizationViewContract?
+    abstract fun baseViewContract(): BaseViewContract?
 
     fun onAuthorizeActionSelected(
-        requestType: ActionType,
-        quickConfirmMode: Boolean = false
+        requestType: ActionType
     ) {
         val viewModel = currentViewModel ?: return
         if (!viewModel.canBeAuthorized) return
         when(requestType) {
-            ActionType.CONFIRM -> {
-                when {
-                    quickConfirmMode -> sendConfirmRequest()
-                    biometricTools.isBiometricReady(appContext) -> {
-                        baseViewContract()?.askUserBiometricConfirmation()
-                    }
-                    else -> baseViewContract()?.askUserPasscodeConfirmation()
-                }
-            }
+            ActionType.CONFIRM -> sendConfirmRequest()
             ActionType.DENY -> sendDenyRequest()
         }
     }
-
-    override fun biometricAuthFinished() {
-        onAuthorizationConfirmedByUser()
-    }
-
-    override fun biometricsCanceledByUser() {
-        baseViewContract()?.askUserPasscodeConfirmation()
-    }
-
-    override fun successAuthWithPasscode() {
-        onAuthorizationConfirmedByUser()
-    }
-
-    override fun passcodePromptCanceledByUser() {}
 
     override fun onConfirmDenySuccess(result: ConfirmDenyResultData, connectionID: ConnectionID) {
         onConfirmDenySuccess(
@@ -84,10 +60,6 @@ abstract class BaseAuthorizationPresenter(
             connectionID = connectionID,
             authorizationID = result.authorizationId ?: ""
         )
-    }
-
-    private fun onAuthorizationConfirmedByUser() {
-        sendConfirmRequest()
     }
 
     private fun sendConfirmRequest() {
