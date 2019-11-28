@@ -93,19 +93,6 @@ abstract class LockableActivity :
         }
     }
 
-    val handler = Handler(Looper.getMainLooper())
-    val timerDuration = TimeUnit.MINUTES.toMillis(1)
-    val timerAction = Runnable { viewContract.lockScreen() }
-
-    fun startTimer() =  handler.postDelayed(timerAction, timerDuration)
-
-    fun cancelTimer() = handler.removeCallbacks(timerAction)
-
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-//        startTimer()
-        return super.dispatchTouchEvent(ev)
-    }
-
     private var presenter = LockableActivityPresenter(
         viewContract = viewContract,
         connectionsRepository = ConnectionsRepository,
@@ -116,6 +103,9 @@ abstract class LockableActivity :
     private var biometricTools: BiometricToolsAbs? = null
     private var biometricPrompt: BiometricPromptAbs? = null
     private var vibrator: Vibrator? = null
+    private val handler = Handler(Looper.getMainLooper())
+    private val timerDuration = TimeUnit.MINUTES.toMillis(1)
+    private val timerAction = Runnable { viewContract.lockScreen() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -172,13 +162,21 @@ abstract class LockableActivity :
         presenter.onSuccessAuthentication()
     }
 
-    override fun biometricsCanceledByUser() {
-        // mb askUserPasscodeConfirmation?
+    override fun biometricsCanceledByUser() {}
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        startTimer()
+        return super.dispatchTouchEvent(ev)
     }
 
     fun restartLockableActivity() {
         startActivity(Intent(this, this.javaClass).apply { putExtra(KEY_SKIP_PIN, true) })
         finish()
+    }
+
+    fun resetCurrentUser() {
+        clearPasscodeAndShowError(R.string.errors_wrong_passcode)
+        showResetUserDialog(DialogInterface.OnClickListener { _, _ -> this.restartApp() })
     }
 
     private fun isBiometricInputReady(): Boolean = biometricTools?.isBiometricReady(context = this) == true
@@ -217,18 +215,18 @@ abstract class LockableActivity :
         getAppBarLayout()?.setVisible(show = true)
     }
 
+    private fun startTimer() =  handler.postDelayed(timerAction, timerDuration)
+
+    private fun cancelTimer() = handler.removeCallbacks(timerAction)
+
     private fun setupViewsAndLockScreen() {
+        cancelTimer()
         getUnlockAppInputView()?.let {
             it.biometricsActionIsAvailable = isBiometricInputReady()
             it.setSavedPasscode(presenter.savedPasscode)
             it.setVisible(show = true)
         }
         getAppBarLayout()?.setVisible(show = false)
-    }
-
-    fun resetCurrentUser() {
-        clearPasscodeAndShowError(R.string.errors_wrong_passcode)
-        showResetUserDialog(DialogInterface.OnClickListener { _, _ -> this.restartApp() })
     }
 
     private fun clearPasscodeAndShowError(@StringRes messageResId: Int) {
