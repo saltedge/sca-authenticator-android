@@ -248,30 +248,6 @@ class AuthorizationDetailsPresenterTest {
         )
     }
 
-    /**
-     * Invalid Params
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onViewClickTest_positiveActionView_case2() {
-        val presenter = createPresenter(viewContract = null)
-        presenter.setInitialData(
-            connectionId = viewModel1.connectionID,
-            authorizationId = viewModel1.authorizationID
-        )
-        presenter.currentViewModel = viewModel1
-
-        Mockito.doReturn(true).`when`(mockBiometricTools).isBiometricReady(TestAppTools.applicationContext)
-        presenter.onViewClick(R.id.positiveActionView)
-
-        Mockito.verify(mockView, Mockito.never()).askUserBiometricConfirmation()
-
-        Mockito.doReturn(false).`when`(mockBiometricTools).isBiometricReady(TestAppTools.applicationContext)
-        presenter.onViewClick(R.id.positiveActionView)
-
-        Mockito.verify(mockView, Mockito.never()).askUserPasscodeConfirmation()
-    }
-
     @Test
     @Throws(Exception::class)
     fun onTimerTickTest_noModel() {
@@ -767,104 +743,6 @@ class AuthorizationDetailsPresenterTest {
 
     @Test
     @Throws(Exception::class)
-    fun biometricAuthFinishedTest() {
-        val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(
-            connectionId = viewModel1.connectionID,
-            authorizationId = viewModel1.authorizationID
-        )
-        presenter.currentViewModel = viewModel1
-        presenter.biometricAuthFinished()
-
-        Mockito.verify(mockPollingService).stop()
-        Mockito.verify(mockApiManager).confirmAuthorization(
-            connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
-            authorizationId = "1",
-            authorizationCode = "111",
-            resultCallback = presenter
-        )
-        Mockito.verify(mockView).setContentViewMode(
-            ViewMode.CONFIRM_PROCESSING,
-            ignoreTimeUpdate = ViewMode.CONFIRM_PROCESSING.showProgress
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun biometricAuthFinishedTest_InvalidParams() {
-        val presenter = createPresenter(viewContract = null)
-        presenter.setInitialData(
-            connectionId = viewModel1.connectionID,
-            authorizationId = viewModel1.authorizationID
-        )
-        presenter.currentViewModel = viewModel1
-
-        presenter.biometricAuthFinished()
-
-        Mockito.verify(mockApiManager).confirmAuthorization(
-            connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
-            authorizationId = "1",
-            authorizationCode = "111",
-            resultCallback = presenter
-        )
-        Mockito.verify(mockPollingService).stop()
-        Mockito.verifyNoMoreInteractions(mockView)
-
-        presenter.setInitialData(connectionId = "", authorizationId = null)
-        presenter.currentViewModel = null
-        Mockito.clearInvocations(mockView, mockPollingService, mockApiManager)
-        presenter.biometricAuthFinished()
-
-        Mockito.verifyNoMoreInteractions(mockView, mockPollingService, mockApiManager)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun biometricsCanceledByUserTest() {
-        val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(
-            connectionId = viewModel1.connectionID,
-            authorizationId = viewModel1.authorizationID
-        )
-        presenter.currentViewModel = viewModel1
-
-        presenter.biometricsCanceledByUser()
-
-        Mockito.verify(mockView).askUserPasscodeConfirmation()
-
-        presenter.viewContract = null
-        presenter.biometricsCanceledByUser()
-
-        Mockito.verifyNoMoreInteractions(mockView)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun successAuthWithPasscodeTest() {
-        val presenter = createPresenter(viewContract = mockView)
-        presenter.setInitialData(
-            connectionId = viewModel1.connectionID,
-            authorizationId = viewModel1.authorizationID
-        )
-        presenter.currentViewModel = viewModel1
-
-        presenter.successAuthWithPasscode()
-
-        Mockito.verify(mockApiManager).confirmAuthorization(
-            connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
-            authorizationId = "1",
-            authorizationCode = "111",
-            resultCallback = presenter
-        )
-        Mockito.verify(mockPollingService).stop()
-        Mockito.verify(mockView).setContentViewMode(
-            ViewMode.CONFIRM_PROCESSING,
-            ignoreTimeUpdate = ViewMode.CONFIRM_PROCESSING.showProgress
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
     fun setInitialDataTest() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData("1", "1")
@@ -914,14 +792,6 @@ class AuthorizationDetailsPresenterTest {
             connectionLogoUrl = "",
             viewMode = ViewMode.UNAVAILABLE
         )))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun passcodePromptCanceledByUserTest() {
-        createPresenter(viewContract = mockView).passcodePromptCanceledByUser()
-
-        Mockito.never()
     }
 
     @Before
