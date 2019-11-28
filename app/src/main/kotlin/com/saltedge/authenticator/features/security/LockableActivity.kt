@@ -25,10 +25,8 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.os.Build
-import android.os.Bundle
-import android.os.VibrationEffect
-import android.os.Vibrator
+import android.os.*
+import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
@@ -45,6 +43,7 @@ import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
+import java.util.concurrent.TimeUnit
 
 const val KEY_SKIP_PIN = "KEY_SKIP_PIN"
 
@@ -92,6 +91,20 @@ abstract class LockableActivity :
         override fun disableUnlockInput(inputAttempt: Int, remainedMinutes: Int) {
             showWrongPasscodeErrorAndDisablePasscodeInput(remainedMinutes = remainedMinutes)
         }
+    }
+
+    val handler = Handler(Looper.getMainLooper())
+    val timerDuration = TimeUnit.SECONDS.toMillis(20)
+//        MINUTES.toMillis(1)
+    val timerAction = Runnable { viewContract.lockScreen() }
+
+    fun startTimer() =  handler.postDelayed(timerAction, timerDuration)
+
+    fun cancelTimer() = handler.removeCallbacks(timerAction)
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        startTimer()
+        return super.dispatchTouchEvent(ev)
     }
 
     private var presenter = LockableActivityPresenter(
