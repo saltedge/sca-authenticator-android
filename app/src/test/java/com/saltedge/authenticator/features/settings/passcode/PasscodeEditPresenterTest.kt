@@ -101,7 +101,7 @@ class PasscodeEditPresenterTest {
 
         Mockito.verify(mockView).updateViewContent(
             titleTextResId = R.string.settings_passcode_repeat_new,
-            positiveActionTextResId = R.string.actions_ok
+            positiveActionTextResId = android.R.string.ok
         )
         Mockito.verifyNoMoreInteractions(mockView)
     }

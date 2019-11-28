@@ -101,8 +101,12 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View,
         activity?.startMailApp()
     }
 
-    override fun showInfo(message: Int) {
-        view?.let { Snackbar.make(it, message, Snackbar.LENGTH_LONG).show() }
+    override fun showRestartAppQuery() {
+        view?.let {
+            Snackbar.make(it, getString(R.string.settings_restart_app), Snackbar.LENGTH_LONG)
+                .setAction(getString(android.R.string.ok)) { activity?.restartApp() }
+                .show()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
