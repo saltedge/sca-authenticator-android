@@ -99,7 +99,7 @@ class SettingsListPresenter @Inject constructor(
                 preferences.notificationsEnabled = checked
             R.string.settings_screenshot_lock -> {
                 preferences.screenshotLockEnabled = checked
-                viewContract?.showInfo(R.string.settings_restart_app)
+                viewContract?.showRestartAppQuery()
             }
         }
     }

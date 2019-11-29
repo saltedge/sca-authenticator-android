@@ -131,7 +131,7 @@ class OnboardingSetupPresenterTest {
             headerTitle = R.string.onboarding_secure_app_passcode_repeat,
             headerDescription = R.string.onboarding_secure_app_passcode_confirm,
             showPasscodeCancel = true,
-            passcodePositiveActionText = R.string.actions_ok,
+            passcodePositiveActionText = android.R.string.ok,
             setupImageResId = 0,
             actionText = R.string.actions_proceed
         )

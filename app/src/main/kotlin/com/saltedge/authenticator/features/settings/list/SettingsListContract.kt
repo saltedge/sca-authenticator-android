@@ -31,7 +31,7 @@ interface SettingsListContract {
         fun showSystemSettings()
         fun showAboutList()
         fun openMailApp()
-        fun showInfo(message: Int)
+        fun showRestartAppQuery()
         fun showDeleteConnectionView(requestCode: Int)
     }
 
