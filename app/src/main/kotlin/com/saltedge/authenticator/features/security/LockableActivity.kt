@@ -179,7 +179,8 @@ abstract class LockableActivity :
         showResetUserDialog(DialogInterface.OnClickListener { _, _ -> this.restartApp() })
     }
 
-    private fun isBiometricInputReady(): Boolean = biometricTools?.isBiometricReady(context = this) == true
+    private fun isBiometricInputReady(): Boolean =
+        biometricTools?.isBiometricReady(context = this) == true
 
     @TargetApi(Build.VERSION_CODES.P)
     private fun displayBiometricPrompt() {
@@ -215,7 +216,10 @@ abstract class LockableActivity :
         getAppBarLayout()?.setVisible(show = true)
     }
 
-    private fun startTimer() =  handler.postDelayed(timerAction, timerDuration)
+    private fun startTimer() {
+        handler.removeCallbacks(timerAction)
+        handler.postDelayed(timerAction, timerDuration)
+    }
 
     private fun cancelTimer() = handler.removeCallbacks(timerAction)
 
