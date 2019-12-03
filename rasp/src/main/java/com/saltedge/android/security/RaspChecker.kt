@@ -21,11 +21,7 @@
 package com.saltedge.android.security
 
 import android.content.Context
-import android.content.pm.ApplicationInfo
-import com.saltedge.android.security.emu.isRunOnEmulator
-import com.saltedge.android.security.hooks.isHookingFrameworkDetected
-import com.saltedge.android.security.root.isDeviceRooted
-import com.saltedge.android.security.signature.isVerifiedAppSignature
+import com.saltedge.android.security.checker.*
 
 /**
  * Class for checking possible breaches in application environment or application tempering
@@ -39,80 +35,21 @@ import com.saltedge.android.security.signature.isVerifiedAppSignature
  * 6. OS has installed hooking framework
  */
 object RaspChecker {
-
     /**
      * checking possible breaches in application environment or application tempering
      *
-     * @param context - Application Context
-     * @return list of Fail Class names
+     * @param context of Application
+     * @return check report or empty string
      */
-    fun collectFailsResult(context: Context): List<String> {
-        val isDeviceRooted = isDeviceRooted(context)
-        val isDeviceEmulator = isDeviceEmulator()
-        val isAppDebuggable = isAppDebuggable(context)
-        val isAppInstalledByNotVerifiedInstaller = isAppInstalledByNotVerifiedInstaller(context)
-        val isAppSignatureInvalid = isAppSignatureInvalid(context)
-        val isHookingFrameworkInstalled = isHookingFrameworkInstalled(context)
-        return mapOf(
-                "DeviceRooted" to isDeviceRooted,
-                "DeviceEmulator" to isDeviceEmulator,
-                "AppDebuggable" to isAppDebuggable,
-                "AppInstalledByNotVerifiedInstaller" to isAppInstalledByNotVerifiedInstaller,
-                "AppSignatureInvalid" to isAppSignatureInvalid,
-                "HookingFrameworkInstalled" to isHookingFrameworkInstalled
-        ).filter { it.value }.keys.toList()
+    fun collectFailsReport(context: Context): String {
+        val checkList = listOfNotNull(
+            context.checkIfDeviceRooted(),
+            checkIfDeviceEmulator(),
+            context.checkIfAppDebuggable(),
+            context.checkAppInstaller(),
+            context.checkAppSignature(),
+            context.checkHookingFrameworks()
+        )
+        return if (checkList.isEmpty()) "" else checkList.joinToString(separator = ", ")
     }
-
-    /**
-     * A simple root checker that gives an *indication* if the device is rooted or not.
-     * Disclaimer: **root==god**, so there's no 100% way to check for root.
-     *
-     * @param context - Application Context
-     * @return true, we think there's a good *indication* of root | false good *indication* of no root (could still be cloaked)
-     */
-    private fun isDeviceRooted(context: Context): Boolean = context.isDeviceRooted()
-
-    /**
-     * Device emulator checker
-     *
-     * @return true, if app started on emulator
-     */
-    private fun isDeviceEmulator(): Boolean = isRunOnEmulator()
-
-    /**
-     * Attached debugger checker
-     *
-     * @param context - Application Context
-     * @return true, if DEBUG mode is true
-     */
-    private fun isAppDebuggable(context: Context): Boolean {
-        return context.applicationInfo.flags.and(ApplicationInfo.FLAG_DEBUGGABLE) != 0
-    }
-
-    /**
-     * Installer source checker
-     *
-     * @param context - Application Context
-     * @return true, if app installed from Play Market
-     */
-    private fun isAppInstalledByNotVerifiedInstaller(context: Context): Boolean {
-        val installer = context.packageManager.getInstallerPackageName(context.packageName)
-        return installer == null || !installer.startsWith("com.android.vending")
-    }
-
-    /**
-     * App Signature checker
-     *
-     * @param context - Application Context
-     * @return true, if app signed with release certificate
-     */
-    private fun isAppSignatureInvalid(context: Context): Boolean = !isVerifiedAppSignature(context)
-
-    /**
-     * Checker for installed hooking frameworks
-     *
-     * @param context - Application Context
-     * @return true, if detected installed hooking frameworks
-     */
-    private fun isHookingFrameworkInstalled(context: Context) = isHookingFrameworkDetected(context)
 }

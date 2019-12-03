@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.android.security.hooks
+package com.saltedge.android.security.checker
 
 import android.content.Context
 import android.content.pm.PackageManager
@@ -26,13 +26,17 @@ import java.io.BufferedReader
 import java.io.FileReader
 
 /**
- * Anti-Hooking checkers
+ * Hooking frameworks checker. Checks if detected installed hooking frameworks.
  * https://d3adend.org/blog/?p=589
+ *
+ * @receiver context of Application
+ * @return null if nothing to report or non-empty report string
  */
-internal fun isHookingFrameworkDetected(context: Context): Boolean {
-    return checkInstalledApps(context)
+internal fun Context.checkHookingFrameworks(): String? {
+    val result = checkInstalledApps(this)
             || checkStackTrace()
             || checkMemory()
+    return if (result) "HookingFrameworkInstalled" else null
 }
 
 private val hooksApps = listOf("de.robv.android.xposed.installer", "com.saurik.substrate")
@@ -42,7 +46,7 @@ private val hooksApps = listOf("de.robv.android.xposed.installer", "com.saurik.s
  */
 private fun checkInstalledApps(context: Context): Boolean {
     return context.packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
-            .map { it.packageName }
+        .map { it.packageName }
             .intersect(hooksApps)
             .isNotEmpty()
 }

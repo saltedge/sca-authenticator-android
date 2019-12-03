@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.android.security.root
+package com.saltedge.android.security.checker
 
 internal class Constants {
     companion object {

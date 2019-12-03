@@ -18,23 +18,20 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.android.security.emu
+package com.saltedge.android.security.checker
 
-import android.os.Build
+import android.content.Context
 
-private const val MIN_PROPERTIES_THRESHOLD = 2
-
-fun isRunOnEmulator(): Boolean {
-    val result: List<Boolean> = listOf(
-            Build.FINGERPRINT.startsWith("generic"),
-            Build.FINGERPRINT.startsWith("unknown"),
-            Build.BOOTLOADER.contains("unknown"),
-            Build.HARDWARE.contains("goldfish"),
-            Build.MANUFACTURER.contains("Genymotion"),
-            Build.MODEL.contains("Android SDK built for x86"),
-            Build.MODEL.contains("sdk"),
-            (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")),
-            Build.PRODUCT.contains("sdk")
-    )
-    return result.count { it } >= MIN_PROPERTIES_THRESHOLD
+/**
+ * Installer source checker. Checks if app installed from Play Market
+ *
+ * @receiver context of Application
+ * @return null if nothing to report or non-empty report string
+ */
+internal fun Context.checkAppInstaller(): String? {
+    val installer: String? = this.packageManager.getInstallerPackageName(this.packageName)
+    return if (installer?.startsWith("com.android.vending") == true) null
+    else {
+        "AppInstalledByNotVerifiedInstaller:[installer=$installer, packageName=${this.packageName}]"
+    }
 }
