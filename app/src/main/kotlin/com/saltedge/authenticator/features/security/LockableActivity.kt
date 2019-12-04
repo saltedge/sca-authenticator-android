@@ -105,7 +105,10 @@ abstract class LockableActivity :
     private var vibrator: Vibrator? = null
     private val handler = Handler(Looper.getMainLooper())
     private val timerDuration = TimeUnit.MINUTES.toMillis(1)
-    private val timerAction = Runnable { viewContract.lockScreen() }
+    private val timerAction = Runnable {
+        viewContract.lockScreen()
+        viewContract.displayBiometricPromptView()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,6 +120,11 @@ abstract class LockableActivity :
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     }
 
+    override fun onResume() {
+        super.onResume()
+        startTimer()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         presenter.onActivityResult()
@@ -124,6 +132,7 @@ abstract class LockableActivity :
 
     override fun onStart() {
         super.onStart()
+        cancelTimer()
         biometricPrompt?.resultCallback = this
         getUnlockAppInputView()?.listener = this
         presenter.onActivityStart(intent)
@@ -224,7 +233,6 @@ abstract class LockableActivity :
     private fun cancelTimer() = handler.removeCallbacks(timerAction)
 
     private fun setupViewsAndLockScreen() {
-        cancelTimer()
         getUnlockAppInputView()?.let {
             it.biometricsActionIsAvailable = isBiometricInputReady()
             it.setSavedPasscode(presenter.savedPasscode)
