@@ -68,13 +68,10 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
     override fun onActivityResumed(activity: Activity?) {
         currentActivityName = activity?.javaClass?.name ?: ""
 
-        val failResultList = RaspChecker.collectFailsResult(this)
-        if (BuildConfig.BUILD_TYPE == "release" && failResultList.isNotEmpty()) {
-            val errorClasses = failResultList.joinToString(separator = ", ")
-            val errorMessage = "App Is Tempered: $errorClasses"
-            val exception = Exception(errorMessage)
-            exception.log(errorMessage)
-            throw exception
+        val raspFailReport = RaspChecker.collectFailsReport(this)
+        if (BuildConfig.BUILD_TYPE == "release" && raspFailReport.isNotEmpty()) {
+            val errorMessage = "App Is Tempered:[$raspFailReport]"
+            throw Exception(errorMessage)
         }
     }
 

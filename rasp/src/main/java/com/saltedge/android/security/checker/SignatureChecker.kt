@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.android.security.signature
+package com.saltedge.android.security.checker
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -31,15 +31,26 @@ import com.saltedge.android.security.VERIFIED_SIGNATURES
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
-internal fun isVerifiedAppSignature(context: Context): Boolean {
-    try {
-        return getSignaturesHashes(context).intersect(VERIFIED_SIGNATURES).isNotEmpty()
+/**
+ * App Signature checker. Checks if app signed with release certificate
+ *
+ * @receiver context of Application
+ * @return null if nothing to report or non-empty report string
+ */
+internal fun Context.checkAppSignature(): String? {
+    var exceptionMessage = ""
+    val result = try {
+        getSignaturesHashes(this).intersect(VERIFIED_SIGNATURES).isEmpty()
     } catch (e: NameNotFoundException) {
         e.printStackTrace()
+        exceptionMessage = e.localizedMessage
+        true
     } catch (e: NoSuchAlgorithmException) {
         e.printStackTrace()
+        exceptionMessage = e.localizedMessage
+        true
     }
-    return false
+    return if (result) "AppSignatureInvalid:[$exceptionMessage]" else null
 }
 
 internal fun getSignaturesHashes(context: Context): List<String> {

@@ -18,20 +18,27 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.android.security.root
+package com.saltedge.android.security.checker
 
 import android.content.Context
 import android.content.pm.PackageManager
-import com.saltedge.android.security.root.Constants.Companion.BINARY_MAGISK
-import com.saltedge.android.security.root.Constants.Companion.BINARY_SU
+import com.saltedge.android.security.checker.Constants.Companion.BINARY_MAGISK
+import com.saltedge.android.security.checker.Constants.Companion.BINARY_SU
 import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
 import java.io.InputStreamReader
 import java.util.*
 
-internal fun Context.isDeviceRooted(): Boolean {
-    return this.detectRootManagementApps()
+/**
+ * A simple root checker that gives an *indication* if the device is rooted or not.
+ * Disclaimer: **root==god**, so there's no 100% way to check for root.
+ *
+ * @receiver context of Application
+ * @return null if nothing to report or non-empty report string
+ */
+internal fun Context.checkIfDeviceRooted(): String? {
+    val result = this.detectRootManagementApps()
             || this.detectPotentiallyDangerousApps()
             || checkForSuBinary()
             || checkForDangerousProps()
@@ -39,6 +46,7 @@ internal fun Context.isDeviceRooted(): Boolean {
             || detectTestKeys()
             || checkSuExists()
             || checkForMagiskBinary()
+    return if (result) "DeviceRooted" else null
 }
 
 /**
@@ -95,7 +103,8 @@ private fun checkForMagiskBinary(): Boolean = checkForBinary(BINARY_MAGISK)
  */
 private fun checkForDangerousProps(): Boolean {
     val dangerousProps = mapOf("ro.debuggable" to "1", "ro.secure" to "0")
-    return (propsReader() ?: return false).any { propertyLine ->
+    return (propsReader()
+        ?: return false).any { propertyLine ->
         dangerousProps.keys.any {
             propertyLine.contains(it) && propertyLine.contains("[${dangerousProps[it]}]")
         }
