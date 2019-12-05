@@ -31,6 +31,7 @@ import android.view.View
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.KEY_SKIP_PIN
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.repository.PreferenceRepository
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
@@ -44,8 +45,6 @@ import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 import java.util.concurrent.TimeUnit
-
-const val KEY_SKIP_PIN = "KEY_SKIP_PIN"
 
 @SuppressLint("Registered")
 abstract class LockableActivity :
