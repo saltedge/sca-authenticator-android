@@ -29,6 +29,7 @@ import com.saltedge.authenticator.features.authorizations.common.AuthorizationSt
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.features.authorizations.common.TimeUpdateListener
 import java.util.*
+import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 
 class AuthorizationsHeaderPagerAdapter(
@@ -38,6 +39,7 @@ class AuthorizationsHeaderPagerAdapter(
 
     private val timeUpdateListeners: HashSet<TimeUpdateListener> = HashSet()
     private var timeViewUpdateTimer: Timer = Timer()
+    private val map = HashMap<Int, View>()
 
     fun startTimer() {
         timeViewUpdateTimer = Timer()
@@ -56,7 +58,13 @@ class AuthorizationsHeaderPagerAdapter(
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val view = AuthorizationHeaderView(context = context)
+        val value: View? = map[position]
+        val view = if (value != null) value
+        else {
+            val view = AuthorizationHeaderView(context = context)
+            map.put(position, view)
+            view
+        }
         updateViewContent(view, data[position])
         timeUpdateListeners.add(view as TimeUpdateListener)
         container.addView(view, 0)
