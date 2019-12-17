@@ -58,12 +58,8 @@ class AuthorizationsHeaderPagerAdapter(
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val value: View? = map[position]
-        val view = if (value != null) value
-        else {
-            val view = AuthorizationHeaderView(context = context)
-            map.put(position, view)
-            view
+        val view = map.getOrPut(position) {
+            AuthorizationHeaderView(context = context)
         }
         updateViewContent(view, data[position])
         timeUpdateListeners.add(view as TimeUpdateListener)
