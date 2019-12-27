@@ -21,9 +21,7 @@
 package com.saltedge.authenticator.features.authorizations.list
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
@@ -118,6 +116,16 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     override fun updateItem(viewModel: AuthorizationViewModel, itemId: Int) {
         contentAdapter?.updateItem(viewModel, itemId)
         headerAdapter?.updateItem(viewModel, itemId)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_authorizations, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.qr_code) activity?.startQrScannerActivity()
+        return true
     }
 
     private fun setupViews() {
