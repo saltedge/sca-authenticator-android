@@ -23,7 +23,6 @@ package com.saltedge.authenticator.features.security
 import android.content.Intent
 import android.os.SystemClock
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_SKIP_PIN
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs

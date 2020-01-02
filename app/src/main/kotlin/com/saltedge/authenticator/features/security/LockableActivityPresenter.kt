@@ -22,15 +22,18 @@ package com.saltedge.authenticator.features.security
 
 import android.content.Intent
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_SKIP_PIN
+import com.saltedge.authenticator.app.LOCK_ON_CREATE
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.MILLIS_IN_MINUTE
 import com.saltedge.authenticator.sdk.tools.millisToRemainedMinutes
 import com.saltedge.authenticator.tool.log
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
+import java.util.concurrent.TimeUnit
 
 class LockableActivityPresenter(
     val viewContract: LockableActivityContract,
@@ -39,32 +42,33 @@ class LockableActivityPresenter(
     val passcodeTools: PasscodeToolsAbs
 ) {
 
-    private var returnFromOwnActivity = false
     val savedPasscode: String
         get() = passcodeTools.getPasscode()
     private var timer: CountDownTimer? = null
-
-    fun onActivityCreate() {
-        returnFromOwnActivity = false
-    }
-
-    fun onActivityResult() {
-        returnFromOwnActivity = true
-    }
+    private val handler = Handler(Looper.getMainLooper())
+    private val timerDuration = TimeUnit.SECONDS.toMillis(10)
+//        .MINUTES.toMillis(1)
+    private val timerAction = Runnable { lockScreen() }
 
     fun onActivityStart(intent: Intent?) {
         when {
-            returnFromOwnActivity -> {
-                returnFromOwnActivity = false
+            intent?.getBooleanExtra(LOCK_ON_CREATE, false) == true -> {
+                intent.removeExtra(LOCK_ON_CREATE)
+                viewContract.lockScreen()
+            }
+            else -> {
                 viewContract.closeLockView()
-            } // when app has result from started activity
-            intent?.getBooleanExtra(KEY_SKIP_PIN, false) == true -> {
-                intent.removeExtra(KEY_SKIP_PIN)
-                viewContract.closeLockView()
-            } // when we start with SKIP_PIN
-            else -> lockScreen()
+                startTimer()
+            }
         }
     }
+
+    fun startTimer() {
+        handler.removeCallbacks(timerAction)
+        handler.postDelayed(timerAction, timerDuration)
+    }
+
+    fun cancelTimer() = handler.removeCallbacks(timerAction)
 
     fun onSuccessAuthentication() {
         preferenceRepository.pinInputAttempts = 0

@@ -30,7 +30,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_SKIP_PIN
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.connections.qr.QrScannerActivity
 import com.saltedge.authenticator.sdk.constants.DEFAULT_SUPPORT_EMAIL_LINK
@@ -170,11 +169,7 @@ fun FragmentActivity.startSystemSettings() {
 fun FragmentActivity.startQrScannerActivity() {
     try {
         this.startActivityForResult(
-            Intent(this, QrScannerActivity::class.java).apply {
-                putExtra(KEY_SKIP_PIN, true)
-            },
-            QR_SCAN_REQUEST_CODE
-        )
+            Intent(this, QrScannerActivity::class.java), QR_SCAN_REQUEST_CODE)
     } catch (ignored: IllegalStateException) {
     } catch (ignored: ActivityNotFoundException) {
     } catch (e: Exception) {

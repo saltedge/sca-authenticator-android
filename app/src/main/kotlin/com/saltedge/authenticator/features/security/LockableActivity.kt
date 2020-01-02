@@ -31,7 +31,7 @@ import android.view.View
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_SKIP_PIN
+import com.saltedge.authenticator.app.LOCK_ON_CREATE
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.repository.PreferenceRepository
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
@@ -44,7 +44,6 @@ import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
-import java.util.concurrent.TimeUnit
 
 @SuppressLint("Registered")
 abstract class LockableActivity :
@@ -102,12 +101,6 @@ abstract class LockableActivity :
     private var biometricTools: BiometricToolsAbs? = null
     private var biometricPrompt: BiometricPromptAbs? = null
     private var vibrator: Vibrator? = null
-    private val handler = Handler(Looper.getMainLooper())
-    private val timerDuration = TimeUnit.MINUTES.toMillis(1)
-    private val timerAction = Runnable {
-        viewContract.lockScreen()
-        viewContract.displayBiometricPromptView()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -115,23 +108,12 @@ abstract class LockableActivity :
             biometricTools = authenticatorApp?.appComponent?.biometricTools()
             biometricPrompt = authenticatorApp?.appComponent?.biometricPrompt()
         }
-        presenter.onActivityCreate()
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-    }
-
-    override fun onResume() {
-        super.onResume()
-        startTimer()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        presenter.onActivityResult()
     }
 
     override fun onStart() {
         super.onStart()
-        cancelTimer()
+        presenter.cancelTimer()
         biometricPrompt?.resultCallback = this
         getUnlockAppInputView()?.listener = this
         presenter.onActivityStart(intent)
@@ -173,12 +155,12 @@ abstract class LockableActivity :
     override fun biometricsCanceledByUser() {}
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        startTimer()
+        presenter.startTimer()
         return super.dispatchTouchEvent(ev)
     }
 
     fun restartLockableActivity() {
-        startActivity(Intent(this, this.javaClass).apply { putExtra(KEY_SKIP_PIN, true) })
+        startActivity(Intent(this, this.javaClass).apply { putExtra(LOCK_ON_CREATE, true) })
         finish()
     }
 
@@ -222,14 +204,8 @@ abstract class LockableActivity :
     private fun unlockScreen() {
         getUnlockAppInputView()?.setVisible(show = false)
         getAppBarLayout()?.setVisible(show = true)
+        presenter.startTimer()
     }
-
-    private fun startTimer() {
-        handler.removeCallbacks(timerAction)
-        handler.postDelayed(timerAction, timerDuration)
-    }
-
-    private fun cancelTimer() = handler.removeCallbacks(timerAction)
 
     private fun setupViewsAndLockScreen() {
         getUnlockAppInputView()?.let {

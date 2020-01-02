@@ -26,7 +26,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_SKIP_PIN
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.onboarding.di.OnboardingSetupModule
 import com.saltedge.authenticator.tool.*
@@ -114,7 +113,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
     override fun showMainActivity() {
         finish()
         startActivity(Intent(this, MainActivity::class.java)
-            .apply { putExtra(KEY_SKIP_PIN, true) }
             .apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK })
     }
 
