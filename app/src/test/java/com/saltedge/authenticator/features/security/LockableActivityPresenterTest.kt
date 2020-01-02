@@ -23,6 +23,7 @@ package com.saltedge.authenticator.features.security
 import android.content.Intent
 import android.os.SystemClock
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.LOCK_ON_CREATE
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
@@ -66,92 +67,40 @@ class LockableActivityPresenterTest {
         assertThat(presenter.savedPasscode, equalTo("1234"))
     }
 
-    @Test
-    @Throws(Exception::class)
-    fun onActivityCreateTest() {
-        val presenter = createPresenter()
-        presenter.onActivityCreate()
-        presenter.onActivityStart(Intent())
-
-        Mockito.verify(mockView).lockScreen()
-    }
-
     /**
-     * test onActivityStart when returnFromOwnActivity is true
+     * test onActivityStart when Intent has not keys
      */
     @Test
     @Throws(Exception::class)
     fun onActivityStartTestCase1() {
         val presenter = createPresenter()
-        presenter.onActivityResult()
         presenter.onActivityStart(Intent())
 
         Mockito.verify(mockView).closeLockView()
     }
 
     /**
-     * test onActivityStart when returnFromOwnActivity is true
+     * test onActivityStart when getBooleanExtra LOCK_ON_CREATE true
      */
     @Test
     @Throws(Exception::class)
     fun onActivityStartTestCase2() {
         val presenter = createPresenter()
-        presenter.onActivityResult()
-        presenter.onActivityStart(Intent())
+        presenter.onActivityStart(Intent().putExtra(LOCK_ON_CREATE, true))
 
-        Mockito.verify(mockView).closeLockView()
+        Mockito.verify(mockView).lockScreen()
     }
 
     /**
-     * test onActivityStart when returnFromOwnActivity is false
+     * test onActivityStart when getBooleanExtra LOCK_ON_CREATE false
      */
     @Test
     @Throws(Exception::class)
     fun onActivityStartTestCase3() {
         val presenter = createPresenter()
-        presenter.onActivityStart(Intent())
-
-        Mockito.verify(mockView).lockScreen()
-    }
-
-    /**
-     * test onActivityStart when returnFromOwnActivity is false and getBooleanExtra true
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onActivityStartTestCase4() {
-        val presenter = createPresenter()
-        presenter.onActivityStart(Intent().putExtra(KEY_SKIP_PIN, true))
+        presenter.onActivityStart(Intent().putExtra(LOCK_ON_CREATE, false))
 
         Mockito.verify(mockView).closeLockView()
-    }
-
-    /**
-     * test onActivityStart when returnFromOwnActivity is false and getBooleanExtra false
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onActivityStartTestCase5() {
-        val presenter = createPresenter()
-        presenter.onActivityStart(Intent().putExtra(KEY_SKIP_PIN, false))
-
-        Mockito.verify(mockView).lockScreen()
-    }
-
-    /**
-     * test onActivityStart when returnFromOwnActivity
-     * and isBiometricReady in LockableActivityContract is true
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onActivityStartTestCase6() {
-        Mockito.doReturn(true).`when`(mockView).isBiometricReady()
-
-        val presenter = createPresenter()
-        presenter.onActivityStart(Intent())
-
-        Mockito.verify(mockView).isBiometricReady()
-        Mockito.verify(mockView).displayBiometricPromptView()
     }
 
     /**
@@ -159,8 +108,10 @@ class LockableActivityPresenterTest {
      */
     @Test
     @Throws(Exception::class)
-    fun onActivityStartTestCase7() {
+    fun onActivityStartTestCase4() {
         val presenter = createPresenter()
+
+        presenter.timerDuration = 0L
 
         Mockito.doReturn(6).`when`(mockPreferenceRepository).pinInputAttempts
         Mockito.doReturn(999L + SystemClock.elapsedRealtime()).`when`(mockPreferenceRepository).blockPinInputTillTime
@@ -171,11 +122,27 @@ class LockableActivityPresenterTest {
     }
 
     /**
+     * test onActivityStart when isBiometricReady in LockableActivityContract is true
+     */
+    @Test
+    @Throws(Exception::class)
+    fun onActivityStartTestCase5() {
+        Mockito.doReturn(true).`when`(mockView).isBiometricReady()
+
+        val presenter = createPresenter()
+        presenter.timerDuration = 0L
+        presenter.onActivityStart(Intent())
+
+        Mockito.verify(mockView).isBiometricReady()
+        Mockito.verify(mockView).displayBiometricPromptView()
+    }
+
+    /**
      * test onActivityStart when shouldBlockInput is true and blockTime <= 0
      */
     @Test
     @Throws(Exception::class)
-    fun onActivityStartTestCase8() {
+    fun onActivityStartTestCase6() {
         val presenter = createPresenter()
         mockPreferenceRepository.pinInputAttempts = 7
         mockPreferenceRepository.blockPinInputTillTime = 0L

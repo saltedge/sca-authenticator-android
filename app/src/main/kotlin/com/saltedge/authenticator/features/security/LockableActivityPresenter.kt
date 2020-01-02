@@ -46,8 +46,8 @@ class LockableActivityPresenter(
         get() = passcodeTools.getPasscode()
     private var timer: CountDownTimer? = null
     private val handler = Handler(Looper.getMainLooper())
-    private val timerDuration = TimeUnit.MINUTES.toMillis(1)
     private val timerAction = Runnable { lockScreen() }
+    var timerDuration = TimeUnit.MINUTES.toMillis(1)
 
     fun onActivityStart(intent: Intent?) {
         when {
