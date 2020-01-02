@@ -214,6 +214,7 @@ abstract class LockableActivity :
             it.setVisible(show = true)
         }
         getAppBarLayout()?.setVisible(show = false)
+        displayBiometricPrompt()
     }
 
     private fun clearPasscodeAndShowError(@StringRes messageResId: Int) {
