@@ -22,6 +22,8 @@ package com.saltedge.authenticator.features.security
 
 import android.content.Intent
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
@@ -30,6 +32,7 @@ import com.saltedge.authenticator.sdk.tools.MILLIS_IN_MINUTE
 import com.saltedge.authenticator.sdk.tools.millisToRemainedMinutes
 import com.saltedge.authenticator.tool.log
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
+import java.util.concurrent.TimeUnit
 
 class LockableActivityPresenter(
     val viewContract: LockableActivityContract,
@@ -42,6 +45,9 @@ class LockableActivityPresenter(
     val savedPasscode: String
         get() = passcodeTools.getPasscode()
     private var timer: CountDownTimer? = null
+    private val handler = Handler(Looper.getMainLooper())
+    private val timerAction = Runnable { lockScreen() }
+    var timerDuration = TimeUnit.MINUTES.toMillis(1)
 
     fun onActivityCreate() {
         returnFromOwnActivity = false
@@ -53,14 +59,14 @@ class LockableActivityPresenter(
 
     fun onActivityStart(intent: Intent?) {
         when {
-            returnFromOwnActivity -> {
+            returnFromOwnActivity -> {  // when app has result from started activity
                 returnFromOwnActivity = false
                 viewContract.closeLockView()
-            } // when app has result from started activity
-            intent?.getBooleanExtra(KEY_SKIP_PIN, false) == true -> {
+            }
+            intent?.getBooleanExtra(KEY_SKIP_PIN, false) == true -> { // when we start with SKIP_PIN
                 intent.removeExtra(KEY_SKIP_PIN)
                 viewContract.closeLockView()
-            } // when we start with SKIP_PIN
+            }
             else -> lockScreen()
         }
     }
@@ -87,6 +93,13 @@ class LockableActivityPresenter(
             else -> viewContract.clearOutputAndShowErrorWarning(R.string.errors_wrong_passcode_long)
         }
     }
+
+    fun startTimer() {
+        handler.removeCallbacks(timerAction)
+        handler.postDelayed(timerAction, timerDuration)
+    }
+
+    fun cancelTimer() = handler.removeCallbacks(timerAction)
 
     private fun lockScreen() {
         viewContract.lockScreen()

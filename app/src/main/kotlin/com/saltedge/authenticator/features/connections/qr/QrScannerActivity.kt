@@ -26,8 +26,8 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.SparseArray
 import android.view.SurfaceHolder
+import android.view.View
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.util.forEach
 import com.google.android.gms.vision.CameraSource
@@ -37,6 +37,8 @@ import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
+import com.saltedge.authenticator.features.security.LockableActivity
+import com.saltedge.authenticator.features.security.UnlockAppInputView
 import com.saltedge.authenticator.sdk.tools.isValidDeeplink
 import com.saltedge.authenticator.tool.AppTools.getDisplayHeight
 import com.saltedge.authenticator.tool.AppTools.getDisplayWidth
@@ -44,7 +46,7 @@ import com.saltedge.authenticator.tool.log
 import kotlinx.android.synthetic.main.activity_qr_scanner.*
 import java.io.IOException
 
-class QrScannerActivity : AppCompatActivity() {
+class QrScannerActivity : LockableActivity() {
 
     private var barcodeDetector: BarcodeDetector? = null
     private var cameraSource: CameraSource? = null
@@ -75,6 +77,10 @@ class QrScannerActivity : AppCompatActivity() {
         cameraSource?.release()
         super.onDestroy()
     }
+
+    override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView
+
+    override fun getAppBarLayout(): View? = toolbarView
 
     private fun setupViews() {
         setSupportActionBar(toolbarView)
@@ -135,7 +141,9 @@ class QrScannerActivity : AppCompatActivity() {
     private fun onReceivedCodes(codes: SparseArray<Barcode>) {
         val deeplinks = mutableListOf<String>()
         codes.forEach { _, value ->
-            if (value.displayValue.isValidDeeplink()) { deeplinks.add(value.displayValue) }
+            if (value.displayValue.isValidDeeplink()) {
+                deeplinks.add(value.displayValue)
+            }
         }
         deeplinks.firstOrNull()?.let {
             returnResultAndFinish(deeplink = it)

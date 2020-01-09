@@ -29,6 +29,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
@@ -122,6 +123,7 @@ abstract class LockableActivity :
 
     override fun onStart() {
         super.onStart()
+        presenter.cancelTimer()
         biometricPrompt?.resultCallback = this
         getUnlockAppInputView()?.listener = this
         presenter.onActivityStart(intent)
@@ -160,7 +162,16 @@ abstract class LockableActivity :
         presenter.onSuccessAuthentication()
     }
 
-    override fun biometricsCanceledByUser() {
+    override fun biometricsCanceledByUser() {}
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        presenter.startTimer()
+        return super.dispatchTouchEvent(ev)
+    }
+
+    fun resetCurrentUser() {
+        clearPasscodeAndShowError(R.string.errors_wrong_passcode)
+        showResetUserDialog(DialogInterface.OnClickListener { _, _ -> this.restartApp() })
     }
 
     fun restartLockableActivity() {
@@ -202,6 +213,7 @@ abstract class LockableActivity :
     private fun unlockScreen() {
         getUnlockAppInputView()?.setVisible(show = false)
         getAppBarLayout()?.setVisible(show = true)
+        presenter.startTimer()
     }
 
     private fun setupViewsAndLockScreen() {
@@ -211,11 +223,7 @@ abstract class LockableActivity :
             it.setVisible(show = true)
         }
         getAppBarLayout()?.setVisible(show = false)
-    }
-
-    fun resetCurrentUser() {
-        clearPasscodeAndShowError(R.string.errors_wrong_passcode)
-        showResetUserDialog(DialogInterface.OnClickListener { _, _ -> this.restartApp() })
+        displayBiometricPrompt()
     }
 
     private fun clearPasscodeAndShowError(@StringRes messageResId: Int) {
