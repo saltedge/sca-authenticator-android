@@ -154,19 +154,14 @@ class AuthorizationsListPresenterTest {
             itemViewId = R.id.positiveActionView
         )
 
-        Mockito.verify(mockView).askUserBiometricConfirmation()
-        Mockito.verifyNoMoreInteractions(mockApiManager, mockPollingService)
-
-        Mockito.doReturn(false).`when`(mockBiometricTools).isBiometricReady(TestAppTools.applicationContext)
-
-        Mockito.clearInvocations(mockView, mockApiManager, mockPollingService)
-        presenter.onListItemClick(
-            itemIndex = 0,
-            itemCode = viewModel1.authorizationID,
-            itemViewId = R.id.positiveActionView
+        Mockito.verify(mockView).updateItem(
+            viewModel = viewModel1,
+            itemId = 0
         )
 
-        Mockito.verify(mockView).askUserPasscodeConfirmation()
+        Mockito.clearInvocations(mockView, mockApiManager, mockPollingService)
+
+        Mockito.verifyNoMoreInteractions(mockApiManager, mockPollingService)
     }
 
     @Test
@@ -184,7 +179,6 @@ class AuthorizationsListPresenterTest {
             itemViewId = R.id.positiveActionView
         )
 
-        Mockito.verify(mockView, Mockito.never()).askUserBiometricConfirmation()
         Mockito.verifyNoMoreInteractions(mockApiManager, mockPollingService)
 
         Mockito.doReturn(false).`when`(mockBiometricTools).isBiometricReady(TestAppTools.applicationContext)

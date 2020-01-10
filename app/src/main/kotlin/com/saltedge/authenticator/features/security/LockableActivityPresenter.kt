@@ -44,7 +44,7 @@ class LockableActivityPresenter(
     val savedPasscode: String
         get() = passcodeTools.getPasscode()
     private var countDownTimer: CountDownTimer? = null
-    private var timerDuration = TimeUnit.SECONDS.toMillis(10)
+    private var timerDuration = TimeUnit.MINUTES.toMillis(1)
     private var timer: Timer? = null
 
     fun showSnackBarInfo() {
