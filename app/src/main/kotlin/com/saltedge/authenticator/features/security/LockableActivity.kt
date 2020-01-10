@@ -33,7 +33,9 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.features.main.buildInfoMessage
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.repository.PreferenceRepository
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
@@ -62,6 +64,17 @@ abstract class LockableActivity :
 
         override fun unBlockInput() {
             enablePasscodeInput()
+        }
+
+        override fun showInfoMessage() {
+            val snackbar = this@LockableActivity.buildInfoMessage(getString(R.string.warning_application_was_locked))
+            snackbar?.addCallback(object : Snackbar.Callback() {
+                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                    super.onDismissed(transientBottomBar, event)
+                    setupViewsAndLockScreen()
+                }
+            })
+            snackbar?.show()
         }
 
         override fun resetUser() {
@@ -123,13 +136,13 @@ abstract class LockableActivity :
 
     override fun onStart() {
         super.onStart()
-        presenter.cancelTimer()
         biometricPrompt?.resultCallback = this
         getUnlockAppInputView()?.listener = this
         presenter.onActivityStart(intent)
     }
 
     override fun onStop() {
+        presenter.cancelTimer()
         biometricPrompt?.resultCallback = null
         getUnlockAppInputView()?.listener = null
         super.onStop()
@@ -165,7 +178,7 @@ abstract class LockableActivity :
     override fun biometricsCanceledByUser() {}
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        presenter.startTimer()
+        if (ev?.action == MotionEvent.ACTION_DOWN) presenter.startTimer()
         return super.dispatchTouchEvent(ev)
     }
 

@@ -157,4 +157,5 @@
     <string name="ui_dialog_delete_message">You will stop receiving authorization requests from provider. Are you sure you want to delete this connection?</string>
 
     <string name="warning_no_internet_connection">No internet connection</string>
+    <string name="warning_application_was_locked">Application was locked due to inactivity</string>
 </resources>

@@ -37,6 +37,7 @@ import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
+import com.saltedge.authenticator.features.main.SnackbarAnchorContainer
 import com.saltedge.authenticator.features.security.LockableActivity
 import com.saltedge.authenticator.features.security.UnlockAppInputView
 import com.saltedge.authenticator.sdk.tools.isValidDeeplink
@@ -46,7 +47,7 @@ import com.saltedge.authenticator.tool.log
 import kotlinx.android.synthetic.main.activity_qr_scanner.*
 import java.io.IOException
 
-class QrScannerActivity : LockableActivity() {
+class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
 
     private var barcodeDetector: BarcodeDetector? = null
     private var cameraSource: CameraSource? = null
@@ -81,6 +82,8 @@ class QrScannerActivity : LockableActivity() {
     override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView
 
     override fun getAppBarLayout(): View? = toolbarView
+
+    override fun getSnackbarAnchorView(): View? = surfaceView
 
     private fun setupViews() {
         setSupportActionBar(toolbarView)

@@ -34,9 +34,17 @@ import com.saltedge.authenticator.tool.setFont
 
 fun AppCompatActivity.buildWarning(text: String) = getSnackbarAnchorView()?.buildWarning(text)
 
+fun AppCompatActivity.buildInfoMessage(text: String) = getSnackbarAnchorView()?.buildInfoMessage(text)
+
 fun View.buildWarning(text: String) = buildSnackbar(
     messageText = text,
     bgColorResId = android.R.color.holo_orange_dark
+)
+
+fun View.buildInfoMessage(text: String) = buildSnackbar(
+    messageText = text,
+    bgColorResId = android.R.color.holo_orange_dark,
+    snackBarDuration = Snackbar.LENGTH_LONG
 )
 
 private fun Activity.getSnackbarAnchorView(): View? {
@@ -45,9 +53,10 @@ private fun Activity.getSnackbarAnchorView(): View? {
 
 private fun View.buildSnackbar(
     messageText: String,
-    @ColorRes bgColorResId: Int
+    @ColorRes bgColorResId: Int,
+    snackBarDuration: Int? = null
 ): Snackbar {
-    val snackbar = Snackbar.make(this, messageText, Snackbar.LENGTH_INDEFINITE)
+    val snackbar = Snackbar.make(this, messageText, snackBarDuration ?: Snackbar.LENGTH_INDEFINITE)
     val textView = snackbar.view.findViewById<TextView>(R.id.snackbar_text)
     textView.minimumHeight = context.resources.getDimension(R.dimen.action_bar_size).toInt()
     textView.gravity = Gravity.CENTER_VERTICAL

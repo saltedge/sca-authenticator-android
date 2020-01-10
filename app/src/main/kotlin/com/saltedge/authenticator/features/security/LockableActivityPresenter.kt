@@ -22,8 +22,6 @@ package com.saltedge.authenticator.features.security
 
 import android.content.Intent
 import android.os.CountDownTimer
-import android.os.Handler
-import android.os.Looper
 import android.os.SystemClock
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
@@ -32,6 +30,7 @@ import com.saltedge.authenticator.sdk.tools.MILLIS_IN_MINUTE
 import com.saltedge.authenticator.sdk.tools.millisToRemainedMinutes
 import com.saltedge.authenticator.tool.log
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class LockableActivityPresenter(
@@ -44,10 +43,13 @@ class LockableActivityPresenter(
     private var returnFromOwnActivity = false
     val savedPasscode: String
         get() = passcodeTools.getPasscode()
-    private var timer: CountDownTimer? = null
-    private val handler = Handler(Looper.getMainLooper())
-    private val timerAction = Runnable { lockScreen() }
-    var timerDuration = TimeUnit.MINUTES.toMillis(1)
+    private var countDownTimer: CountDownTimer? = null
+    private var timerDuration = TimeUnit.SECONDS.toMillis(10)
+    private var timer: Timer? = null
+
+    fun showSnackBarInfo() {
+        viewContract.showInfoMessage()
+    }
 
     fun onActivityCreate() {
         returnFromOwnActivity = false
@@ -95,11 +97,21 @@ class LockableActivityPresenter(
     }
 
     fun startTimer() {
-        handler.removeCallbacks(timerAction)
-        handler.postDelayed(timerAction, timerDuration)
+        timer?.cancel()
+        timer = Timer().apply {
+            schedule(object : TimerTask() {
+                override fun run() {
+                    showSnackBarInfo()
+                }
+            }, timerDuration)
+        }
     }
 
-    fun cancelTimer() = handler.removeCallbacks(timerAction)
+    fun cancelTimer() {
+        timer?.cancel()
+        timer?.purge()
+        timer = null
+    }
 
     private fun lockScreen() {
         viewContract.lockScreen()
@@ -119,7 +131,7 @@ class LockableActivityPresenter(
     private fun startInactivityTimer(blockTime: Long) {
         try {
             resetTimer()
-            timer = object : CountDownTimer(blockTime, blockTime) {
+            countDownTimer = object : CountDownTimer(blockTime, blockTime) {
                 override fun onFinish() {
                     resetTimer()
                     viewContract.unBlockInput()
@@ -133,8 +145,8 @@ class LockableActivityPresenter(
     }
 
     private fun resetTimer() {
-        timer?.cancel()
-        timer = null
+        countDownTimer?.cancel()
+        countDownTimer = null
     }
 
     private fun shouldBlockInput(inputAttempt: Int): Boolean = inputAttempt in 6..10
