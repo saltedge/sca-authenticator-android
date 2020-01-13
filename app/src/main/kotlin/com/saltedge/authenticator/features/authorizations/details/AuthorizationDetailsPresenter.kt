@@ -89,18 +89,8 @@ class AuthorizationDetailsPresenter(
 
     fun onViewClick(viewId: Int) {
         when (viewId) {
-            R.id.positiveActionView -> {
-                onAuthorizeActionSelected(
-                    requestType = ActionType.CONFIRM,
-                    quickConfirmMode = true
-                )
-            }
-            R.id.negativeActionView -> {
-                onAuthorizeActionSelected(
-                    requestType = ActionType.DENY,
-                    quickConfirmMode = true
-                )
-            }
+            R.id.positiveActionView -> onAuthorizeActionSelected(requestType = ActionType.CONFIRM)
+            R.id.negativeActionView -> onAuthorizeActionSelected(requestType = ActionType.DENY)
         }
     }
 

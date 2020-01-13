@@ -30,6 +30,8 @@ import com.saltedge.authenticator.sdk.tools.MILLIS_IN_MINUTE
 import com.saltedge.authenticator.sdk.tools.millisToRemainedMinutes
 import com.saltedge.authenticator.tool.log
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class LockableActivityPresenter(
     val viewContract: LockableActivityContract,
@@ -41,7 +43,9 @@ class LockableActivityPresenter(
     private var returnFromOwnActivity = false
     val savedPasscode: String
         get() = passcodeTools.getPasscode()
-    private var timer: CountDownTimer? = null
+    private var countDownTimer: CountDownTimer? = null // enabled when user set passcode incorrect several times
+    private val timerDuration = TimeUnit.MINUTES.toMillis(1)
+    private var timer: Timer? = null // enabled when user does not interact with the app for 1 minute
 
     fun onActivityCreate() {
         returnFromOwnActivity = false
@@ -53,14 +57,14 @@ class LockableActivityPresenter(
 
     fun onActivityStart(intent: Intent?) {
         when {
-            returnFromOwnActivity -> {
+            returnFromOwnActivity -> {  // when app has result from started activity
                 returnFromOwnActivity = false
                 viewContract.closeLockView()
-            } // when app has result from started activity
-            intent?.getBooleanExtra(KEY_SKIP_PIN, false) == true -> {
+            }
+            intent?.getBooleanExtra(KEY_SKIP_PIN, false) == true -> { // when we start with SKIP_PIN
                 intent.removeExtra(KEY_SKIP_PIN)
                 viewContract.closeLockView()
-            } // when we start with SKIP_PIN
+            }
             else -> lockScreen()
         }
     }
@@ -88,6 +92,27 @@ class LockableActivityPresenter(
         }
     }
 
+    fun restartLockTimer() {
+        timer?.cancel()
+        timer = Timer().apply {
+            schedule(object : TimerTask() {
+                override fun run() {
+                    viewContract.showLockWarning()
+                }
+            }, timerDuration)
+        }
+    }
+
+    fun destroyTimer() {
+        timer?.cancel()
+        timer?.purge()
+        timer = null
+    }
+
+    fun onSnackbarDismissed() {
+        lockScreen()
+    }
+
     private fun lockScreen() {
         viewContract.lockScreen()
         val inputAttempt = preferenceRepository.pinInputAttempts
@@ -106,7 +131,7 @@ class LockableActivityPresenter(
     private fun startInactivityTimer(blockTime: Long) {
         try {
             resetTimer()
-            timer = object : CountDownTimer(blockTime, blockTime) {
+            countDownTimer = object : CountDownTimer(blockTime, blockTime) {
                 override fun onFinish() {
                     resetTimer()
                     viewContract.unBlockInput()
@@ -120,8 +145,8 @@ class LockableActivityPresenter(
     }
 
     private fun resetTimer() {
-        timer?.cancel()
-        timer = null
+        countDownTimer?.cancel()
+        countDownTimer = null
     }
 
     private fun shouldBlockInput(inputAttempt: Int): Boolean = inputAttempt in 6..10

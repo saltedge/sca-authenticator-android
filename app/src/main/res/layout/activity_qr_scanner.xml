@@ -40,4 +40,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbarView" />
+
+    <com.saltedge.authenticator.features.security.UnlockAppInputView
+        android:id="@+id/unlockAppInputView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true" />
 </RelativeLayout>

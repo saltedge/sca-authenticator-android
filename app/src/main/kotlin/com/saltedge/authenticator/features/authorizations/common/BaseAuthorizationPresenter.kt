@@ -44,22 +44,11 @@ abstract class BaseAuthorizationPresenter(
     abstract fun onConfirmDenySuccess(success: Boolean, connectionID: ConnectionID, authorizationID: AuthorizationID)
     abstract fun baseViewContract(): BaseAuthorizationViewContract?
 
-    fun onAuthorizeActionSelected(
-        requestType: ActionType,
-        quickConfirmMode: Boolean = false
-    ) {
+    fun onAuthorizeActionSelected(requestType: ActionType) {
         val viewModel = currentViewModel ?: return
         if (!viewModel.canBeAuthorized) return
         when(requestType) {
-            ActionType.CONFIRM -> {
-                when {
-                    quickConfirmMode -> sendConfirmRequest()
-                    biometricTools.isBiometricReady(appContext) -> {
-                        baseViewContract()?.askUserBiometricConfirmation()
-                    }
-                    else -> baseViewContract()?.askUserPasscodeConfirmation()
-                }
-            }
+            ActionType.CONFIRM -> sendConfirmRequest()
             ActionType.DENY -> sendDenyRequest()
         }
     }

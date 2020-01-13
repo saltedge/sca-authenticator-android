@@ -29,10 +29,13 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.features.main.buildWarning
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.repository.PreferenceRepository
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
@@ -57,10 +60,24 @@ abstract class LockableActivity :
     abstract fun getUnlockAppInputView(): UnlockAppInputView?
     abstract fun getAppBarLayout(): View?
 
-    private val viewContract = object : LockableActivityContract {
+    private val viewContract: LockableActivityContract = object : LockableActivityContract {
 
         override fun unBlockInput() {
             enablePasscodeInput()
+        }
+
+        override fun showLockWarning() {
+            val snackbar = this@LockableActivity.buildWarning(
+                getString(R.string.warning_application_was_locked),
+                snackBarDuration = Snackbar.LENGTH_LONG
+            )
+            snackbar?.addCallback(object : Snackbar.Callback() {
+                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                    super.onDismissed(transientBottomBar, event)
+                    presenter.onSnackbarDismissed()
+                }
+            })
+            snackbar?.show()
         }
 
         override fun resetUser() {
@@ -128,6 +145,7 @@ abstract class LockableActivity :
     }
 
     override fun onStop() {
+        presenter.destroyTimer()
         biometricPrompt?.resultCallback = null
         getUnlockAppInputView()?.listener = null
         super.onStop()
@@ -153,14 +171,25 @@ abstract class LockableActivity :
         // REDUNDANT
     }
 
-    override fun onNewPasscodeConfirmed(passcode: String) {
-    }
+    override fun onNewPasscodeConfirmed(passcode: String) {}
 
     override fun biometricAuthFinished() {
         presenter.onSuccessAuthentication()
     }
 
-    override fun biometricsCanceledByUser() {
+    override fun biometricsCanceledByUser() {}
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (ev?.action == MotionEvent.ACTION_DOWN
+            && getUnlockAppInputView()?.visibility != View.VISIBLE) {
+            presenter.restartLockTimer()
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
+    fun resetCurrentUser() {
+        clearPasscodeAndShowError(R.string.errors_wrong_passcode)
+        showResetUserDialog(DialogInterface.OnClickListener { _, _ -> this.restartApp() })
     }
 
     fun restartLockableActivity() {
@@ -202,6 +231,7 @@ abstract class LockableActivity :
     private fun unlockScreen() {
         getUnlockAppInputView()?.setVisible(show = false)
         getAppBarLayout()?.setVisible(show = true)
+        presenter.restartLockTimer()
     }
 
     private fun setupViewsAndLockScreen() {
@@ -211,11 +241,6 @@ abstract class LockableActivity :
             it.setVisible(show = true)
         }
         getAppBarLayout()?.setVisible(show = false)
-    }
-
-    fun resetCurrentUser() {
-        clearPasscodeAndShowError(R.string.errors_wrong_passcode)
-        showResetUserDialog(DialogInterface.OnClickListener { _, _ -> this.restartApp() })
     }
 
     private fun clearPasscodeAndShowError(@StringRes messageResId: Int) {

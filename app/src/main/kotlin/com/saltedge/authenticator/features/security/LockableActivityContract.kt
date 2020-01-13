@@ -30,4 +30,5 @@ interface LockableActivityContract {
     fun resetUser()
     fun clearOutputAndShowErrorWarning(errorTextResId: Int)
     fun unBlockInput()
+    fun showLockWarning()
 }
