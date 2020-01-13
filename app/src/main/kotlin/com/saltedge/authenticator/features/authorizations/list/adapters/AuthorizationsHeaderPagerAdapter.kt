@@ -69,6 +69,7 @@ class AuthorizationsHeaderPagerAdapter(
 
     override fun destroyItem(container: ViewGroup, position: Int, view: Any) {
         super.destroyItem(container, position, view)
+//        map.remove(position) //TODO: https://github.com/saltedge/sca-authenticator-android/issues/83
         timeUpdateListeners.remove(view as TimeUpdateListener)
     }
 
