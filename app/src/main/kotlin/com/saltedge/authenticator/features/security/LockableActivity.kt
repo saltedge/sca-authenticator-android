@@ -60,18 +60,21 @@ abstract class LockableActivity :
     abstract fun getUnlockAppInputView(): UnlockAppInputView?
     abstract fun getAppBarLayout(): View?
 
-    private val viewContract = object : LockableActivityContract {
+    private val viewContract: LockableActivityContract = object : LockableActivityContract {
 
         override fun unBlockInput() {
             enablePasscodeInput()
         }
 
-        override fun showInfoMessage() {
-            val snackbar = this@LockableActivity.buildWarning(getString(R.string.warning_application_was_locked), Snackbar.LENGTH_LONG)
+        override fun showLockWarning() {
+            val snackbar = this@LockableActivity.buildWarning(
+                getString(R.string.warning_application_was_locked),
+                Snackbar.LENGTH_LONG
+            )
             snackbar?.addCallback(object : Snackbar.Callback() {
                 override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                     super.onDismissed(transientBottomBar, event)
-                    setupViewsAndLockScreen()
+                    presenter.onSnackbarDismissed()
                 }
             })
             snackbar?.show()
@@ -168,8 +171,7 @@ abstract class LockableActivity :
         // REDUNDANT
     }
 
-    override fun onNewPasscodeConfirmed(passcode: String) {
-    }
+    override fun onNewPasscodeConfirmed(passcode: String) {}
 
     override fun biometricAuthFinished() {
         presenter.onSuccessAuthentication()
@@ -178,7 +180,10 @@ abstract class LockableActivity :
     override fun biometricsCanceledByUser() {}
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        if (ev?.action == MotionEvent.ACTION_DOWN) presenter.restartLockTimer()
+        if (ev?.action == MotionEvent.ACTION_DOWN
+            && getUnlockAppInputView()?.visibility != View.VISIBLE) {
+            presenter.restartLockTimer()
+        }
         return super.dispatchTouchEvent(ev)
     }
 
@@ -236,7 +241,6 @@ abstract class LockableActivity :
             it.setVisible(show = true)
         }
         getAppBarLayout()?.setVisible(show = false)
-        displayBiometricPrompt()
     }
 
     private fun clearPasscodeAndShowError(@StringRes messageResId: Int) {

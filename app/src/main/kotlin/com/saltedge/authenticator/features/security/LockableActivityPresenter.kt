@@ -43,9 +43,9 @@ class LockableActivityPresenter(
     private var returnFromOwnActivity = false
     val savedPasscode: String
         get() = passcodeTools.getPasscode()
-    private var countDownTimer: CountDownTimer? = null
+    private var countDownTimer: CountDownTimer? = null // enabled when user set passcode incorrect several times
     private var timerDuration = TimeUnit.MINUTES.toMillis(1)
-    private var timer: Timer? = null
+    private var timer: Timer? = null // enabled when user does not interact with the app for 1 minute
 
     fun onActivityCreate() {
         returnFromOwnActivity = false
@@ -97,8 +97,7 @@ class LockableActivityPresenter(
         timer = Timer().apply {
             schedule(object : TimerTask() {
                 override fun run() {
-                    viewContract.showInfoMessage()
-
+                    viewContract.showLockWarning()
                 }
             }, timerDuration)
         }
@@ -108,6 +107,10 @@ class LockableActivityPresenter(
         timer?.cancel()
         timer?.purge()
         timer = null
+    }
+
+    fun onSnackbarDismissed() {
+        lockScreen()
     }
 
     private fun lockScreen() {
