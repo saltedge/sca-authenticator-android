@@ -29,6 +29,7 @@ import com.saltedge.authenticator.features.authorizations.common.AuthorizationSt
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.features.authorizations.common.TimeUpdateListener
 import java.util.*
+import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 
 class AuthorizationsHeaderPagerAdapter(
@@ -38,6 +39,7 @@ class AuthorizationsHeaderPagerAdapter(
 
     private val timeUpdateListeners: HashSet<TimeUpdateListener> = HashSet()
     private var timeViewUpdateTimer: Timer = Timer()
+    private val map = HashMap<Int, View>()
 
     fun startTimer() {
         timeViewUpdateTimer = Timer()
@@ -56,7 +58,9 @@ class AuthorizationsHeaderPagerAdapter(
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val view = AuthorizationHeaderView(context = context)
+        val view = map.getOrPut(position) {
+            AuthorizationHeaderView(context = context)
+        }
         updateViewContent(view, data[position])
         timeUpdateListeners.add(view as TimeUpdateListener)
         container.addView(view, 0)
@@ -65,6 +69,7 @@ class AuthorizationsHeaderPagerAdapter(
 
     override fun destroyItem(container: ViewGroup, position: Int, view: Any) {
         super.destroyItem(container, position, view)
+//        map.remove(position) //TODO: https://github.com/saltedge/sca-authenticator-android/issues/83
         timeUpdateListeners.remove(view as TimeUpdateListener)
     }
 
