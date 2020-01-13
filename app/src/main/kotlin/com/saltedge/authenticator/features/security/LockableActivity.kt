@@ -69,7 +69,7 @@ abstract class LockableActivity :
         override fun showLockWarning() {
             val snackbar = this@LockableActivity.buildWarning(
                 getString(R.string.warning_application_was_locked),
-                Snackbar.LENGTH_LONG
+                snackBarDuration = Snackbar.LENGTH_LONG
             )
             snackbar?.addCallback(object : Snackbar.Callback() {
                 override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
