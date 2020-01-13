@@ -44,7 +44,7 @@ class LockableActivityPresenter(
     val savedPasscode: String
         get() = passcodeTools.getPasscode()
     private var countDownTimer: CountDownTimer? = null // enabled when user set passcode incorrect several times
-    private var timerDuration = TimeUnit.MINUTES.toMillis(1)
+    private val timerDuration = TimeUnit.MINUTES.toMillis(1)
     private var timer: Timer? = null // enabled when user does not interact with the app for 1 minute
 
     fun onActivityCreate() {
