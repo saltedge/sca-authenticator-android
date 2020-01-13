@@ -44,10 +44,7 @@ abstract class BaseAuthorizationPresenter(
     abstract fun onConfirmDenySuccess(success: Boolean, connectionID: ConnectionID, authorizationID: AuthorizationID)
     abstract fun baseViewContract(): BaseAuthorizationViewContract?
 
-    fun onAuthorizeActionSelected(
-        requestType: ActionType,
-        quickConfirmMode: Boolean = false
-    ) {
+    fun onAuthorizeActionSelected(requestType: ActionType) {
         val viewModel = currentViewModel ?: return
         if (!viewModel.canBeAuthorized) return
         when(requestType) {

@@ -32,19 +32,12 @@ import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.setFont
 
-fun AppCompatActivity.buildWarning(text: String) = getSnackbarAnchorView()?.buildWarning(text)
+fun AppCompatActivity.buildWarning(text: String, snackBarDuration: Int? = null) = getSnackbarAnchorView()?.buildWarning(text, snackBarDuration)
 
-fun AppCompatActivity.buildInfoMessage(text: String) = getSnackbarAnchorView()?.buildInfoMessage(text)
-
-fun View.buildWarning(text: String) = buildSnackbar(
-    messageText = text,
-    bgColorResId = android.R.color.holo_orange_dark
-)
-
-fun View.buildInfoMessage(text: String) = buildSnackbar(
+fun View.buildWarning(text: String, snackBarDuration: Int?) = buildSnackbar(
     messageText = text,
     bgColorResId = android.R.color.holo_orange_dark,
-    snackBarDuration = Snackbar.LENGTH_LONG
+    snackBarDuration = snackBarDuration
 )
 
 private fun Activity.getSnackbarAnchorView(): View? {

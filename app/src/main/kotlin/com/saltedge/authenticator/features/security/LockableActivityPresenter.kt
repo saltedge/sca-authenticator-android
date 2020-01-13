@@ -47,10 +47,6 @@ class LockableActivityPresenter(
     private var timerDuration = TimeUnit.MINUTES.toMillis(1)
     private var timer: Timer? = null
 
-    fun showSnackBarInfo() {
-        viewContract.showInfoMessage()
-    }
-
     fun onActivityCreate() {
         returnFromOwnActivity = false
     }
@@ -96,18 +92,19 @@ class LockableActivityPresenter(
         }
     }
 
-    fun startTimer() {
+    fun restartLockTimer() {
         timer?.cancel()
         timer = Timer().apply {
             schedule(object : TimerTask() {
                 override fun run() {
-                    showSnackBarInfo()
+                    viewContract.showInfoMessage()
+
                 }
             }, timerDuration)
         }
     }
 
-    fun cancelTimer() {
+    fun destroyTimer() {
         timer?.cancel()
         timer?.purge()
         timer = null
