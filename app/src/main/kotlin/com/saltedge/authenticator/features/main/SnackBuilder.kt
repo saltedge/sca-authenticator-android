@@ -32,13 +32,17 @@ import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.setFont
 
-fun AppCompatActivity.buildWarning(text: String, snackBarDuration: Int = Snackbar.LENGTH_INDEFINITE) =
-    getSnackbarAnchorView()?.buildWarning(text, snackBarDuration)
+fun AppCompatActivity.buildWarning(
+    text: String,
+    snackBarDuration: Int = Snackbar.LENGTH_INDEFINITE,
+    actionResId: Int? = null
+) = getSnackbarAnchorView()?.buildWarning(text, snackBarDuration, actionResId)
 
-fun View.buildWarning(text: String, snackBarDuration: Int) = buildSnackbar(
+fun View.buildWarning(text: String, snackBarDuration: Int, actionResId: Int?) = buildSnackbar(
     messageText = text,
     bgColorResId = android.R.color.holo_orange_dark,
-    snackBarDuration = snackBarDuration
+    snackBarDuration = snackBarDuration,
+    actionResId = actionResId
 )
 
 private fun Activity.getSnackbarAnchorView(): View? {
@@ -48,9 +52,12 @@ private fun Activity.getSnackbarAnchorView(): View? {
 private fun View.buildSnackbar(
     messageText: String,
     @ColorRes bgColorResId: Int,
-    snackBarDuration: Int
+    snackBarDuration: Int,
+    actionResId: Int? = null
 ): Snackbar {
     val snackbar = Snackbar.make(this, messageText, snackBarDuration)
+    if (actionResId != null) snackbar.setAction(actionResId) { snackbar.dismiss() }
+    snackbar.setActionTextColor(ContextCompat.getColor(context, android.R.color.white))
     val textView = snackbar.view.findViewById<TextView>(R.id.snackbar_text)
     textView.minimumHeight = context.resources.getDimension(R.dimen.action_bar_size).toInt()
     textView.gravity = Gravity.CENTER_VERTICAL
