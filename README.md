@@ -24,7 +24,7 @@ The purpose of Authenticator Android Client is to add possibility to authorize r
 
 You can install app from 
 <a href='https://play.google.com/store/apps/details?id=com.saltedge.authenticator'>
-    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Get_it_on_Google_play.svg/1000px-Get_it_on_Google_play.svg.png' alt='Get it on Google Play' height="64px"/>
+    <img src='https://raw.githubusercontent.com/saltedge/sca-identity-service-example/master/docs/images/google-play-badge.png' alt='Get it on Google Play' height="56px"/>
 </a> 
 
 Minimal supported Android SDK is SDK21 (Android Lollipop)   
