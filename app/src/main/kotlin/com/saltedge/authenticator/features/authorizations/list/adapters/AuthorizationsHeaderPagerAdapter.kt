@@ -26,6 +26,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
 import com.saltedge.authenticator.features.authorizations.common.*
+import com.saltedge.authenticator.tool.getOrPut
 import java.util.*
 import kotlin.collections.HashSet
 
