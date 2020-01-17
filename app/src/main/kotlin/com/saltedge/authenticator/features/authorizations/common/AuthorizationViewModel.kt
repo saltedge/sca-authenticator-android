@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.authorizations.common
 
+import android.util.SparseArray
 import com.saltedge.authenticator.sdk.model.AuthorizationData
 import com.saltedge.authenticator.sdk.model.AuthorizationID
 import com.saltedge.authenticator.sdk.model.ConnectionAbs
@@ -167,4 +168,20 @@ fun List<AuthorizationViewModel>.joinFinalModels(listWithFinalModels: List<Autho
 
 private fun authorizationExpirationPeriod(authorization: AuthorizationData): Int {
     return secondsBetweenDates(authorization.createdAt ?: return 0, authorization.expiresAt)
+}
+
+/**
+ * Returns the value for the given key. If the key is not found in the SparseArray,
+ * calls the [defaultValue] function, puts its result into the array under the given key
+ * and returns it.
+ */
+inline fun <V> SparseArray<V>.getOrPut(key: Int, defaultValue: () -> V): V {
+    val value = get(key)
+    return if (value == null) {
+        val answer = defaultValue()
+        put(key, answer)
+        answer
+    } else {
+        value
+    }
 }

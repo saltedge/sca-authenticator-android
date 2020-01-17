@@ -21,10 +21,12 @@
 package com.saltedge.authenticator.features.authorizations.list.adapters
 
 import android.content.Context
+import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationContentView
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
+import com.saltedge.authenticator.features.authorizations.common.getOrPut
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 
 class AuthorizationsContentPagerAdapter(val context: Context) :
@@ -32,6 +34,7 @@ class AuthorizationsContentPagerAdapter(val context: Context) :
     View.OnClickListener
 {
     var listItemClickListener: ListItemClickListener? = null
+    private val map = SparseArray<AuthorizationContentView>()
 
     override fun onClick(view: View?) {
         listItemClickListener?.onListItemClick(
@@ -42,7 +45,9 @@ class AuthorizationsContentPagerAdapter(val context: Context) :
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val view = AuthorizationContentView(context = context)
+        val view = map.getOrPut(position) {
+            AuthorizationContentView(context = context)
+        }
         view.setActionClickListener(this)
         updateViewContent(view, data[position])
         return view.apply { container.addView(this, 0) }
