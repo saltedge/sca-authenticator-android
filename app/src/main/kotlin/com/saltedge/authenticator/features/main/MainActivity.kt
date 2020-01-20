@@ -28,7 +28,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
@@ -208,7 +207,6 @@ class MainActivity : LockableActivity(),
     }
 
     private fun showNetworkMessage(isConnected: Boolean) {
-        var snackbar: Snackbar? = null
         if (isConnected) {
             snackbar?.dismiss()
         } else {
