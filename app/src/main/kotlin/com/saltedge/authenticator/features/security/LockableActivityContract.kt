@@ -31,4 +31,5 @@ interface LockableActivityContract {
     fun clearOutputAndShowErrorWarning(errorTextResId: Int)
     fun unBlockInput()
     fun showLockWarning()
+    fun dismissSnackbar()
 }

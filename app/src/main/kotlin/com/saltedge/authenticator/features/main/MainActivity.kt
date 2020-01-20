@@ -60,7 +60,6 @@ class MainActivity : LockableActivity(),
         viewContract = this,
         connectionsRepository = ConnectionsRepository
     )
-    private var snackbar: Snackbar? = null
     private val connectivityReceiver = ConnectivityReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -209,6 +208,7 @@ class MainActivity : LockableActivity(),
     }
 
     private fun showNetworkMessage(isConnected: Boolean) {
+        var snackbar: Snackbar? = null
         if (isConnected) {
             snackbar?.dismiss()
         } else {
