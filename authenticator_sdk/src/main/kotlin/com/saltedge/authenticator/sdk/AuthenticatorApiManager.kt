@@ -35,8 +35,15 @@ import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
  */
 object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
 
+    /**
+     * Url where WebView will be redirected on enrollment finish
+     */
     override var authenticationReturnUrl: String = DEFAULT_RETURN_URL
 
+    /**
+     * Request to get Service Provide configuration.
+     * Result is returned through callback.
+     */
     override fun getProviderConfigurationData(
         providerConfigurationUrl: String,
         resultCallback: FetchProviderConfigurationDataResult
@@ -45,13 +52,17 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
             .fetchProviderData(providerConfigurationUrl)
     }
 
-    override fun initConnectionRequest(
+    /**
+     * Request to create new SCA connection.
+     * Result is returned through callback.
+     */
+    override fun createConnectionRequest(
         baseUrl: String,
         publicKey: String,
         pushToken: String,
         providerCode: String,
         connectQueryParam: String?,
-        resultCallback: ConnectionInitResult
+        resultCallback: ConnectionCreateResult
     ) {
         ConnectionInitConnector(RestClient.apiInterface, resultCallback)
             .postConnectionData(
@@ -63,6 +74,10 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
             )
     }
 
+    /**
+     * Request to revoke SCA connection.
+     * Result is returned through callback.
+     */
     override fun revokeConnections(
         connectionsAndKeys: List<ConnectionAndKey>,
         resultCallback: ConnectionsRevokeResult?
@@ -71,6 +86,10 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
             .revokeTokensFor(connectionsAndKeys)
     }
 
+    /**
+     * Request to get active SCA Authorizations list.
+     * Result is returned through callback.
+     */
     override fun getAuthorizations(
         connectionsAndKeys: List<ConnectionAndKey>,
         resultCallback: FetchAuthorizationsResult
@@ -79,10 +98,17 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
             .fetchAuthorizations(connectionsAndKeys = connectionsAndKeys)
     }
 
+    /**
+     * Create Polling Service for an SCA Authorizations list status
+     */
     override fun createAuthorizationsPollingService(): PollingServiceAbs<FetchAuthorizationsContract> {
         return AuthorizationsPollingService()
     }
 
+    /**
+     * Request to get active SCA Authorization.
+     * Result is returned through callback.
+     */
     override fun getAuthorization(
         connectionAndKey: ConnectionAndKey,
         authorizationId: String,
@@ -92,9 +118,16 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
             .getAuthorization(connectionAndKey, authorizationId)
     }
 
+    /**
+     * Create Polling Service for an SCA Authorization status
+     */
     override fun createSingleAuthorizationPollingService(): SingleAuthorizationPollingService =
         SingleAuthorizationPollingService()
 
+    /**
+     * Request to confirm SCA Authorization.
+     * Result is returned through callback.
+     */
     override fun confirmAuthorization(
         connectionAndKey: ConnectionAndKey,
         authorizationId: String,
@@ -112,6 +145,10 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
             )
     }
 
+    /**
+     * Request to deny SCA Authorization.
+     * Result is returned through callback.
+     */
     override fun denyAuthorization(
         connectionAndKey: ConnectionAndKey,
         authorizationId: String,

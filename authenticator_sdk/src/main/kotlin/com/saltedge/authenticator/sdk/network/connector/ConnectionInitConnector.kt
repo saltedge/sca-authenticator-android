@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.sdk.network.connector
 
 import com.saltedge.authenticator.sdk.constants.API_CONNECTIONS
-import com.saltedge.authenticator.sdk.contract.ConnectionInitResult
+import com.saltedge.authenticator.sdk.contract.ConnectionCreateResult
 import com.saltedge.authenticator.sdk.model.ApiErrorData
 import com.saltedge.authenticator.sdk.model.createInvalidResponseError
 import com.saltedge.authenticator.sdk.model.request.CreateConnectionData
@@ -40,7 +40,7 @@ import retrofit2.Call
  */
 internal class ConnectionInitConnector(
     private val apiInterface: ApiInterface,
-    var resultCallback: ConnectionInitResult?
+    var resultCallback: ConnectionCreateResult?
 ) : ApiResponseInterceptor<CreateConnectionResponseData>() {
 
     /**
@@ -87,7 +87,7 @@ internal class ConnectionInitConnector(
         if (data == null) {
             onFailureResponse(call, createInvalidResponseError())
         } else {
-            resultCallback?.onConnectionInitSuccess(data)
+            resultCallback?.onConnectionCreateSuccess(data)
         }
     }
 
@@ -98,6 +98,6 @@ internal class ConnectionInitConnector(
      * @param error - ApiError
      */
     override fun onFailureResponse(call: Call<CreateConnectionResponseData>, error: ApiErrorData) {
-        resultCallback?.onConnectionInitFailure(error)
+        resultCallback?.onConnectionCreateFailure(error)
     }
 }

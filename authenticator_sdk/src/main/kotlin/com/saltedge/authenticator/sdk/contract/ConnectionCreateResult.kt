@@ -21,9 +21,12 @@
 package com.saltedge.authenticator.sdk.contract
 
 import com.saltedge.authenticator.sdk.model.ApiErrorData
-import com.saltedge.authenticator.sdk.model.response.AuthenticateConnectionData
+import com.saltedge.authenticator.sdk.model.response.CreateConnectionData
 
-interface ConnectionInitResult {
-    fun onConnectionInitFailure(error: ApiErrorData)
-    fun onConnectionInitSuccess(response: AuthenticateConnectionData)
+/**
+ * Create SCA Connection request result
+ */
+interface ConnectionCreateResult {
+    fun onConnectionCreateFailure(error: ApiErrorData)
+    fun onConnectionCreateSuccess(response: CreateConnectionData)
 }

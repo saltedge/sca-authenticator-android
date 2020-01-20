@@ -23,6 +23,9 @@ package com.saltedge.authenticator.sdk.contract
 import com.saltedge.authenticator.sdk.model.ApiErrorData
 import com.saltedge.authenticator.sdk.model.EncryptedAuthorizationData
 
+/**
+ * Get SCA Authorization request result
+ */
 interface FetchAuthorizationResult {
     fun onFetchAuthorizationResult(result: EncryptedAuthorizationData?, error: ApiErrorData?)
 }

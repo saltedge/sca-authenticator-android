@@ -30,7 +30,7 @@ import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_API_RESPONSE
 import com.saltedge.authenticator.sdk.model.ApiErrorData
 import com.saltedge.authenticator.sdk.model.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.ProviderData
-import com.saltedge.authenticator.sdk.model.response.AuthenticateConnectionData
+import com.saltedge.authenticator.sdk.model.response.CreateConnectionData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo
@@ -130,7 +130,7 @@ class ConnectProviderPresenterTest {
             Mockito.any(),
             Mockito.anyString()
         )
-        Mockito.verify(mockApiManager).initConnectionRequest(
+        Mockito.verify(mockApiManager).createConnectionRequest(
             baseUrl = "https://demo.saltedge.com",
             publicKey = "public_key",
             pushToken = "push_token",
@@ -147,7 +147,7 @@ class ConnectProviderPresenterTest {
     @Throws(Exception::class)
     fun onConnectionInitFailureTest() {
         val presenter = createPresenter(viewContract = mockView)
-        presenter.onConnectionInitFailure(
+        presenter.onConnectionCreateFailure(
             error = ApiErrorData(
                 errorMessage = "test error",
                 errorClassName = ERROR_CLASS_API_RESPONSE
@@ -161,11 +161,11 @@ class ConnectProviderPresenterTest {
     @Throws(Exception::class)
     fun onConnectionInitSuccessTestCase1() {
         val presenter = createPresenter(viewContract = mockView)
-        val connectUrlData = AuthenticateConnectionData(
+        val connectUrlData = CreateConnectionData(
             redirectUrl = "https://www.fentury.com",
             connectionId = "connectionId"
         )
-        presenter.onConnectionInitSuccess(response = connectUrlData)
+        presenter.onConnectionCreateSuccess(response = connectUrlData)
 
         Mockito.verify(mockView).loadUrlInWebView("https://www.fentury.com")
         Mockito.verify(mockView).updateViewsContent()
@@ -175,11 +175,11 @@ class ConnectProviderPresenterTest {
     @Throws(Exception::class)
     fun onConnectionInitSuccessTestCase2() {
         val presenter = createPresenter(viewContract = mockView)
-        val connectUrlData = AuthenticateConnectionData(
+        val connectUrlData = CreateConnectionData(
             redirectUrl = "invalidUrl",
             connectionId = "connectionId"
         )
-        presenter.onConnectionInitSuccess(response = connectUrlData)
+        presenter.onConnectionCreateSuccess(response = connectUrlData)
 
         Mockito.never()
     }
@@ -337,11 +337,11 @@ class ConnectProviderPresenterTest {
 
         assertFalse(presenter.shouldShowWebView)
 
-        val connectUrlData = AuthenticateConnectionData(
+        val connectUrlData = CreateConnectionData(
             redirectUrl = "https://www.fentury.com",
             connectionId = "connectionId"
         )
-        presenter.onConnectionInitSuccess(response = connectUrlData)
+        presenter.onConnectionCreateSuccess(response = connectUrlData)
 
         assertTrue(presenter.shouldShowWebView)
     }
@@ -565,11 +565,11 @@ class ConnectProviderPresenterTest {
     @Throws(Exception::class)
     fun onViewCreatedCase1() {
         val presenter = createPresenter(viewContract = mockView)
-        val connectUrlData = AuthenticateConnectionData(
+        val connectUrlData = CreateConnectionData(
             redirectUrl = "https://www.fentury.com",
             connectionId = "connectionId"
         )
-        presenter.onConnectionInitSuccess(response = connectUrlData)
+        presenter.onConnectionCreateSuccess(response = connectUrlData)
 
         Mockito.clearInvocations(mockView)
 
@@ -649,11 +649,11 @@ class ConnectProviderPresenterTest {
 
         assertTrue(presenter.shouldShowProgressView)
 
-        val connectUrlData = AuthenticateConnectionData(
+        val connectUrlData = CreateConnectionData(
             redirectUrl = "https://www.fentury.com",
             connectionId = "connectionId"
         )
-        presenter.onConnectionInitSuccess(response = connectUrlData)
+        presenter.onConnectionCreateSuccess(response = connectUrlData)
 
         assertFalse(presenter.shouldShowProgressView)
     }

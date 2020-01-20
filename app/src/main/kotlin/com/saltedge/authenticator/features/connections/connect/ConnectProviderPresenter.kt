@@ -29,10 +29,10 @@ import com.saltedge.authenticator.model.toConnection
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.contract.ConnectionInitResult
+import com.saltedge.authenticator.sdk.contract.ConnectionCreateResult
 import com.saltedge.authenticator.sdk.contract.FetchProviderConfigurationDataResult
 import com.saltedge.authenticator.sdk.model.*
-import com.saltedge.authenticator.sdk.model.response.AuthenticateConnectionData
+import com.saltedge.authenticator.sdk.model.response.CreateConnectionData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.tools.parseRedirect
 import javax.inject.Inject
@@ -43,14 +43,14 @@ class ConnectProviderPresenter @Inject constructor(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyStoreManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs
-) : ConnectProviderContract.Presenter, ConnectionInitResult, FetchProviderConfigurationDataResult {
+) : ConnectProviderContract.Presenter, ConnectionCreateResult, FetchProviderConfigurationDataResult {
 
     override val reportProblemActionText: Int?
         get() = if (viewMode.isCompleteWithSuccess) null else R.string.actions_contact_support
     private var sessionFailMessage: String? = null
     private var connectConfigurationLink: String = ""
     private var connectQueryParam: String? = null
-    private var connectUrlData: AuthenticateConnectionData? = null
+    private var connectUrlData: CreateConnectionData? = null
     private var connection = Connection()
     private var viewMode: ViewMode = ViewMode.START
     override var viewContract: ConnectProviderContract.View? = null
@@ -122,11 +122,11 @@ class ConnectProviderPresenter @Inject constructor(
         }
     }
 
-    override fun onConnectionInitFailure(error: ApiErrorData) {
+    override fun onConnectionCreateFailure(error: ApiErrorData) {
         viewContract?.showErrorAndFinish(error.getErrorMessage(appContext))
     }
 
-    override fun onConnectionInitSuccess(response: AuthenticateConnectionData) {
+    override fun onConnectionCreateSuccess(response: CreateConnectionData) {
         response.redirectUrl?.let { redirectUrl ->
             if (redirectUrl.startsWith(AuthenticatorApiManager.authenticationReturnUrl)) {
                 parseRedirect(
@@ -189,7 +189,7 @@ class ConnectProviderPresenter @Inject constructor(
 
     private fun performNewConnectionRequest() {
         keyStoreManager.createRsaPublicKeyAsString(appContext, connection.guid)?.let {
-            apiManager.initConnectionRequest(
+            apiManager.createConnectionRequest(
                 baseUrl = connection.connectUrl,
                 publicKey = it,
                 pushToken = preferenceRepository.cloudMessagingToken,

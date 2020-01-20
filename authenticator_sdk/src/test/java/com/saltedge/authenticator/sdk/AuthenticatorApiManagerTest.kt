@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.sdk
 
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationResult
-import com.saltedge.authenticator.sdk.contract.ConnectionInitResult
+import com.saltedge.authenticator.sdk.contract.ConnectionCreateResult
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeResult
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
 import com.saltedge.authenticator.sdk.model.ConnectionAbs
@@ -51,12 +51,12 @@ class AuthenticatorApiManagerTest {
     @Test
     @Throws(Exception::class)
     fun initConnectionRequestTest() {
-        val mockCallback = mockkClass(ConnectionInitResult::class)
+        val mockCallback = mockkClass(ConnectionCreateResult::class)
         val mockCall: Call<CreateConnectionResponseData> =
             mockkClass(Call::class) as Call<CreateConnectionResponseData>
         every { mockApi.postNewConnectionData(requestUrl = any(), body = any()) } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
-        AuthenticatorApiManager.initConnectionRequest(
+        AuthenticatorApiManager.createConnectionRequest(
             baseUrl = "",
             publicKey = "key",
             pushToken = "pushToken",
