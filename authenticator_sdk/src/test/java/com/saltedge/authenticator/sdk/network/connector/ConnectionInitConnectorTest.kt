@@ -65,6 +65,7 @@ class ConnectionInitConnectorTest {
             baseUrl = "https://localhost",
             publicKey = "key",
             pushToken = "pushToken",
+            providerCode = "demobank",
             connectQueryParam = "1234567890"
         )
 
@@ -97,6 +98,7 @@ class ConnectionInitConnectorTest {
             baseUrl = "https://localhost",
             publicKey = "key",
             pushToken = "pushToken",
+            providerCode = "demobank",
             connectQueryParam = "1234567890"
         )
 
@@ -116,6 +118,7 @@ class ConnectionInitConnectorTest {
             baseUrl = "https://localhost",
             publicKey = "key",
             pushToken = "pushToken",
+            providerCode = "demobank",
             connectQueryParam = "1234567890"
         )
 
@@ -143,6 +146,7 @@ class ConnectionInitConnectorTest {
         data = CreateConnectionData(
             publicKey = "key",
             pushToken = "pushToken",
+            providerCode = "demobank",
             connectQueryParam = "1234567890"
         )
     )

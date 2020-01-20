@@ -61,6 +61,7 @@ class AuthenticatorApiManagerTest {
             publicKey = "key",
             pushToken = "pushToken",
             connectQueryParam = "1234567890",
+            providerCode = "demobank",
             resultCallback = mockCallback
         )
 

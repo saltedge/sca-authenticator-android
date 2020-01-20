@@ -49,11 +49,18 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
         baseUrl: String,
         publicKey: String,
         pushToken: String,
+        providerCode: String,
         connectQueryParam: String?,
         resultCallback: ConnectionInitResult
     ) {
         ConnectionInitConnector(RestClient.apiInterface, resultCallback)
-            .postConnectionData(baseUrl, publicKey, pushToken, connectQueryParam)
+            .postConnectionData(
+                baseUrl = baseUrl,
+                publicKey = publicKey,
+                pushToken = pushToken,
+                providerCode = providerCode,
+                connectQueryParam = connectQueryParam
+            )
     }
 
     override fun revokeConnections(

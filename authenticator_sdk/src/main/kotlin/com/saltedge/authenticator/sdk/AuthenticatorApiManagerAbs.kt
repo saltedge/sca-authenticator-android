@@ -39,6 +39,7 @@ interface AuthenticatorApiManagerAbs {
         baseUrl: String,
         publicKey: String,
         pushToken: String,
+        providerCode: String,
         connectQueryParam: String?,
         resultCallback: ConnectionInitResult
     )

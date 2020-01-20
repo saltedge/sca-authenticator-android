@@ -31,5 +31,6 @@ data class CreateConnectionData(
     @SerializedName(KEY_RETURN_URL) val returnUrl: String = AuthenticatorApiManager.authenticationReturnUrl,
     @SerializedName(KEY_PLATFORM) val platform: String = DEFAULT_PLATFORM_NAME,
     @SerializedName(KEY_PUSH_TOKEN) val pushToken: String,
+    @SerializedName(KEY_PROVIDER_CODE) val providerCode: String,
     @SerializedName(KEY_CONNECT_QUERY) val connectQueryParam: String?
 )
