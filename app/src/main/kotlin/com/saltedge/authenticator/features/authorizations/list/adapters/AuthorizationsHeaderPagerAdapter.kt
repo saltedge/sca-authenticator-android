@@ -21,15 +21,13 @@
 package com.saltedge.authenticator.features.authorizations.list.adapters
 
 import android.content.Context
+import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
 import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationHeaderView
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationStatusListener
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
-import com.saltedge.authenticator.features.authorizations.common.TimeUpdateListener
+import com.saltedge.authenticator.features.authorizations.common.*
+import com.saltedge.authenticator.tool.getOrPut
 import java.util.*
-import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 
 class AuthorizationsHeaderPagerAdapter(
@@ -39,7 +37,7 @@ class AuthorizationsHeaderPagerAdapter(
 
     private val timeUpdateListeners: HashSet<TimeUpdateListener> = HashSet()
     private var timeViewUpdateTimer: Timer = Timer()
-    private val map = HashMap<Int, View>()
+    private val map = SparseArray<AuthorizationHeaderView>()
 
     fun startTimer() {
         timeViewUpdateTimer = Timer()
