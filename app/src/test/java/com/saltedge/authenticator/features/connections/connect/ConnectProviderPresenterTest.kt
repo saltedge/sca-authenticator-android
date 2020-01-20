@@ -134,6 +134,7 @@ class ConnectProviderPresenterTest {
             baseUrl = "https://demo.saltedge.com",
             publicKey = "public_key",
             pushToken = "push_token",
+            providerCode = "demobank",
             connectQueryParam = null,
             resultCallback = presenter
         )

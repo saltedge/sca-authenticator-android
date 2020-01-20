@@ -193,6 +193,7 @@ class ConnectProviderPresenter @Inject constructor(
                 baseUrl = connection.connectUrl,
                 publicKey = it,
                 pushToken = preferenceRepository.cloudMessagingToken,
+                providerCode = connection.code,
                 connectQueryParam = connectQueryParam,
                 resultCallback = this
             )
