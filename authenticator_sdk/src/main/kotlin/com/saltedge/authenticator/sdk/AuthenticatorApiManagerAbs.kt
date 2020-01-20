@@ -31,39 +31,75 @@ import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
  */
 interface AuthenticatorApiManagerAbs {
 
+    /**
+     * Url where WebView will be redirected on enrollment finish
+     */
     var authenticationReturnUrl: String
 
-    fun getProviderConfigurationData(providerConfigurationUrl: String, resultCallback: FetchProviderConfigurationDataResult)
+    /**
+     * Request to get Service Provide configuration.
+     * Result is returned through callback.
+     */
+    fun getProviderConfigurationData(
+        providerConfigurationUrl: String,
+        resultCallback: FetchProviderConfigurationDataResult
+    )
 
-    fun initConnectionRequest(
+    /**
+     * Request to create new SCA connection.
+     * Result is returned through callback.
+     */
+    fun createConnectionRequest(
         baseUrl: String,
         publicKey: String,
         pushToken: String,
         providerCode: String,
         connectQueryParam: String?,
-        resultCallback: ConnectionInitResult
+        resultCallback: ConnectionCreateResult
     )
 
+    /**
+     * Request to revoke SCA connection.
+     * Result is returned through callback.
+     */
     fun revokeConnections(
         connectionsAndKeys: List<ConnectionAndKey>,
         resultCallback: ConnectionsRevokeResult?
     )
 
+    /**
+     * Request to get active SCA Authorizations list.
+     * Result is returned through callback.
+     */
     fun getAuthorizations(
         connectionsAndKeys: List<ConnectionAndKey>,
         resultCallback: FetchAuthorizationsResult
     )
 
+    /**
+     * Create Polling Service for an SCA Authorizations list status
+     */
     fun createAuthorizationsPollingService(): PollingServiceAbs<FetchAuthorizationsContract>
 
+    /**
+     * Request to get active SCA Authorization.
+     * Result is returned through callback.
+     */
     fun getAuthorization(
         connectionAndKey: ConnectionAndKey,
         authorizationId: String,
         resultCallback: FetchAuthorizationResult
     )
 
+    /**
+     * Create Polling Service for an SCA Authorization status
+     */
     fun createSingleAuthorizationPollingService(): SingleAuthorizationPollingService
 
+    /**
+     * Request to confirm SCA Authorization.
+     * Result is returned through callback.
+     */
     fun confirmAuthorization(
         connectionAndKey: ConnectionAndKey,
         authorizationId: String,
@@ -71,6 +107,10 @@ interface AuthenticatorApiManagerAbs {
         resultCallback: ConfirmAuthorizationResult
     )
 
+    /**
+     * Request to deny SCA Authorization.
+     * Result is returned through callback.
+     */
     fun denyAuthorization(
         connectionAndKey: ConnectionAndKey,
         authorizationId: String,

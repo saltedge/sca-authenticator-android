@@ -23,6 +23,9 @@ package com.saltedge.authenticator.sdk.contract
 import com.saltedge.authenticator.sdk.model.ApiErrorData
 import com.saltedge.authenticator.sdk.model.Token
 
+/**
+ * Revoke SCA Connection request result
+ */
 interface ConnectionsRevokeResult {
     fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?)
 }

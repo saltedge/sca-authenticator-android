@@ -128,7 +128,7 @@ Use String extension from `DeepLinkTools.kt`
 
 1. Post `Connection` data and receive authorization url (`connect_url`)
     ```kotlin
-        AuthenticatorApiManager.initConnectionRequest(
+        AuthenticatorApiManager.createConnectionRequest(
                 baseUrl = connection.connectUrl,
                 publicKey = publicKeyAsPemEncodedString,
                 pushToken = firebaseCloudMessagingToken,

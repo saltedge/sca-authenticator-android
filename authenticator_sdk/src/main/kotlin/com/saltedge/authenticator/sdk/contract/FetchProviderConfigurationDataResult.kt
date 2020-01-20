@@ -23,6 +23,9 @@ package com.saltedge.authenticator.sdk.contract
 import com.saltedge.authenticator.sdk.model.ApiErrorData
 import com.saltedge.authenticator.sdk.model.ProviderData
 
+/**
+ * Get Service Provider configuration request result
+ */
 interface FetchProviderConfigurationDataResult {
     fun fetchProviderConfigurationDataResult(result: ProviderData?, error: ApiErrorData?)
 }

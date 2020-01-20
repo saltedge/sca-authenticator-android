@@ -25,6 +25,9 @@ import com.saltedge.authenticator.sdk.model.AuthorizationID
 import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResultData
 
+/**
+ * Confirm SCA Authorization request result
+ */
 interface ConfirmAuthorizationResult {
     fun onConfirmDenyFailure(
         error: ApiErrorData,

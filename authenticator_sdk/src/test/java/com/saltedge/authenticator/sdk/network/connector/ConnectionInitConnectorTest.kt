@@ -20,12 +20,10 @@
  */
 package com.saltedge.authenticator.sdk.network.connector
 
-import com.saltedge.authenticator.sdk.contract.ConnectionInitResult
+import com.saltedge.authenticator.sdk.contract.ConnectionCreateResult
 import com.saltedge.authenticator.sdk.model.ApiErrorData
 import com.saltedge.authenticator.sdk.model.createInvalidResponseError
-import com.saltedge.authenticator.sdk.model.request.CreateConnectionData
 import com.saltedge.authenticator.sdk.model.request.CreateConnectionRequestData
-import com.saltedge.authenticator.sdk.model.response.AuthenticateConnectionData
 import com.saltedge.authenticator.sdk.model.response.CreateConnectionResponseData
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.testTools.get404Response
@@ -74,14 +72,14 @@ class ConnectionInitConnectorTest {
         connector.onResponse(
             mockCall, Response.success(
             CreateConnectionResponseData(
-                AuthenticateConnectionData(connectionId = "333", redirectUrl = "url")
+                com.saltedge.authenticator.sdk.model.response.CreateConnectionData(connectionId = "333", redirectUrl = "url")
             )
         )
         )
 
         verify {
-            mockCallback.onConnectionInitSuccess(
-                AuthenticateConnectionData(
+            mockCallback.onConnectionCreateSuccess(
+                com.saltedge.authenticator.sdk.model.response.CreateConnectionData(
                     connectionId = "333",
                     redirectUrl = "url"
                 )
@@ -106,7 +104,7 @@ class ConnectionInitConnectorTest {
 
         connector.onResponse(mockCall, Response.success(CreateConnectionResponseData()))
 
-        verify { mockCallback.onConnectionInitFailure(createInvalidResponseError()) }
+        verify { mockCallback.onConnectionCreateFailure(createInvalidResponseError()) }
         confirmVerified(mockCallback)
     }
 
@@ -128,7 +126,7 @@ class ConnectionInitConnectorTest {
         connector.onResponse(mockCall, get404Response())
 
         verify {
-            mockCallback.onConnectionInitFailure(
+            mockCallback.onConnectionCreateFailure(
                 ApiErrorData(
                     errorMessage = "Resource not found",
                     errorClassName = "NotFound"
@@ -139,7 +137,7 @@ class ConnectionInitConnectorTest {
     }
 
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
-    private val mockCallback = mockkClass(ConnectionInitResult::class)
+    private val mockCallback = mockkClass(ConnectionCreateResult::class)
     private val mockCall: Call<CreateConnectionResponseData> =
         mockkClass(Call::class) as Call<CreateConnectionResponseData>
     private val requestData = CreateConnectionRequestData(
@@ -160,7 +158,7 @@ class ConnectionInitConnectorTest {
         } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
         every { mockCall.request() } returns Request.Builder().url(requestUrl).build()
-        every { mockCallback.onConnectionInitSuccess(any()) } returns Unit
-        every { mockCallback.onConnectionInitFailure(any()) } returns Unit
+        every { mockCallback.onConnectionCreateSuccess(any()) } returns Unit
+        every { mockCallback.onConnectionCreateFailure(any()) } returns Unit
     }
 }
