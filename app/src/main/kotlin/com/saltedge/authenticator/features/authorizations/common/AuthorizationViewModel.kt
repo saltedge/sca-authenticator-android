@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.authorizations.common
 
-import android.util.SparseArray
 import com.saltedge.authenticator.sdk.model.AuthorizationData
 import com.saltedge.authenticator.sdk.model.AuthorizationID
 import com.saltedge.authenticator.sdk.model.ConnectionAbs
