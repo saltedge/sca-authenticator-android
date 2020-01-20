@@ -59,6 +59,7 @@ abstract class LockableActivity :
 
     abstract fun getUnlockAppInputView(): UnlockAppInputView?
     abstract fun getAppBarLayout(): View?
+    var snackbar: Snackbar? = null
 
     private val viewContract: LockableActivityContract = object : LockableActivityContract {
 
@@ -67,18 +68,11 @@ abstract class LockableActivity :
         }
 
         override fun showLockWarning() {
-            val snackbar = this@LockableActivity.buildWarning(
-                getString(R.string.warning_application_was_locked),
-                snackBarDuration = 5000,
-                actionResId = R.string.actions_cancel
-            )
-            snackbar?.addCallback(object : Snackbar.Callback() {
-                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                    super.onDismissed(transientBottomBar, event)
-                    if (event == DISMISS_EVENT_TIMEOUT) presenter.onSnackbarDismissed()
-                }
-            })
-            snackbar?.show()
+            showLockWarningView()
+        }
+
+        override fun dismissSnackbar() {
+            dismissLockWarningView()
         }
 
         override fun resetUser() {
@@ -222,6 +216,26 @@ abstract class LockableActivity :
             it.setDescriptionText("$wrongPasscodeMessage\n$retryMessage")
             it.setInputViewVisibility(show = false)
         }
+    }
+
+    private fun showLockWarningView() {
+        snackbar = this@LockableActivity.buildWarning(
+            getString(R.string.warning_application_was_locked),
+            snackBarDuration = 5000,
+            actionResId = R.string.actions_cancel
+        )
+        snackbar?.addCallback(object : Snackbar.Callback() {
+            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                super.onDismissed(transientBottomBar, event)
+                if (event == DISMISS_EVENT_TIMEOUT) presenter.onSnackbarDismissed()
+            }
+        })
+        snackbar?.show()
+    }
+
+    private fun dismissLockWarningView() {
+        snackbar?.dismiss()
+        snackbar = null
     }
 
     private fun enablePasscodeInput() {

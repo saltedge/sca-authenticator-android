@@ -93,6 +93,7 @@ class LockableActivityPresenter(
     }
 
     fun restartLockTimer() {
+        viewContract.dismissSnackbar()
         timer?.cancel()
         timer = Timer().apply {
             schedule(object : TimerTask() {
