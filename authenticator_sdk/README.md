@@ -328,3 +328,7 @@ Each pending Authorization can be denyed. Application can ask user to identify b
         }
     )
 ```
+
+  
+___
+Copyright © 2019 Salt Edge. https://www.saltedge.com  
