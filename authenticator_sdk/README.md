@@ -5,19 +5,25 @@ Salt Edge Authenticator Android SDK - is a set of tools for implementing connect
 You can find source code of Authenticator Identity Service here: for [Authenticator Identity Service](identity_service_repo).   
 ## How Salt Edge Authenticator works
 
-Read Wiki docs about [Authenticator Identity Service](wiki) API and workflow.
+Read Wiki docs about [Authenticator Identity Service](wiki) API and workflow.  
+
+ * [Prerequisites](#prerequisites)
+ * [How to add SDK to project](#how-to-add-sdk-to-project)
+ * [Data models](#data-models)
+ * [Features](#how-to-use)
+
 
 ## Prerequisites
 In order to use Authenticator SDK it is necessary to install the following tools on the local machine:
 
-* JDK 8
-* Android SDK
+* [JDK 8](https://www.oracle.com/technetwork/java/javase/downloads/index.html)
+* [Android SDK](https://developer.android.com/studio/index.html)
 * IDE (e.g. Android Studio)
-
-## How to add SDK module to your project
-
-> Don't forget that module requires Kotlin v.1.3.+ plugin installed 
-and minimal supported Android SDK is SDK21 (Android 5 Lollipop)  
+* [Kotlin plugin installed](https://developer.android.com/kotlin/) v.1.3.+
+* Minimal supported Android SDK is SDK21 (Android 5 Lollipop)  
+   
+   
+## How to add SDK to project
 
 ### Add as project module
 
@@ -41,7 +47,8 @@ implementation ('com.saltedge.authenticator.sdk:authenticator_sdk:1.0.0@aar') {
     transitive = true
 }
 ```  
-    
+
+---
 ## Data models  
   
 Authenticator SDK provide next main data models:    
@@ -101,6 +108,7 @@ Fields:
  * `expires_at` **[datetime]** - time when the authorization should expire
   
   
+---
 ## How to use  
   
 Authenticator SDK provide next features:  
