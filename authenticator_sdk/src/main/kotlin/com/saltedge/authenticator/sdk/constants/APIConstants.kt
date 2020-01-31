@@ -59,6 +59,8 @@ const val KEY_CODE = "code"
 const val KEY_CREATED_AT = "created_at"
 const val KEY_UPDATED_AT = "updated_at"
 
+const val KEY_CONNECT_URL_PARAM = "connectUrl"
+
 const val KEY_TITLE = "title"
 const val KEY_DESCRIPTION = "description"
 const val KEY_EXPIRES_AT = "expires_at"

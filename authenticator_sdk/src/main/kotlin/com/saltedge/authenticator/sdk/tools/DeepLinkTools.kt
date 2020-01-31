@@ -21,9 +21,13 @@
 package com.saltedge.authenticator.sdk.tools
 
 import android.net.Uri
+import java.io.Serializable
 
 const val KEY_CONFIGURATION_PARAM = "configuration"
 const val KEY_CONNECT_QUERY_PARAM = "connect_query"
+const val KEY_ACTION_UUID_PARAM = "action_uuid"
+const val KEY_CONNECT_URL_PARAM = "connect_url"
+const val KEY_RETURN_TO_PARAM = "return_to"
 
 /**
  * Validates deep link
@@ -32,7 +36,7 @@ const val KEY_CONNECT_QUERY_PARAM = "connect_query"
  * @return true if deeplink contains configuration url
  */
 fun String.isValidDeeplink(): Boolean {
-    return this.extractConnectConfigurationLink() != null
+    return this.extractActionExtractDeepLinkData() != null || this.extractConnectConfigurationLink() != null
 }
 
 /**
@@ -56,3 +60,18 @@ fun String.extractConnectConfigurationLink(): String? {
 fun String.extractConnectQuery(): String? {
     return Uri.parse(this).getQueryParameter(KEY_CONNECT_QUERY_PARAM)
 }
+
+fun String.extractActionExtractDeepLinkData(): ActionDeepLinkData? {
+    val uri = Uri.parse(this)
+    return ActionDeepLinkData(
+        actionUuid = uri.getQueryParameter(KEY_ACTION_UUID_PARAM) ?: return null,
+        connectUrl = uri.getQueryParameter(KEY_CONNECT_URL_PARAM) ?: return null,
+        returnTo = uri.getQueryParameter(KEY_RETURN_TO_PARAM)
+    )
+}
+
+data class ActionDeepLinkData(
+    var actionUuid: String,
+    var connectUrl: String,
+    var returnTo: String?
+) : Serializable

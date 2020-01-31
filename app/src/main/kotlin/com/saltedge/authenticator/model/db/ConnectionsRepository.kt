@@ -22,6 +22,7 @@ package com.saltedge.authenticator.model.db
 
 import com.saltedge.authenticator.app.*
 import com.saltedge.authenticator.model.realm.RealmManager
+import com.saltedge.authenticator.sdk.constants.KEY_CONNECT_URL_PARAM
 import com.saltedge.authenticator.sdk.model.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.Token
@@ -98,6 +99,20 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
     override fun getAllActiveConnections(): List<Connection> {
         return RealmManager.getDefaultInstance().use {
             it.copyFromRealm(it.createActiveConnectionsQuery().findAll())
+        }
+    }
+
+    /**
+     * Get Connection by connection url
+     *
+     * @param connectionUrl - connection url of Connection
+     * @return Connection by url
+     */
+    override fun getByConnectUrl(connectionUrl: String): List<Connection> {
+        return RealmManager.getDefaultInstance().use { realmDb ->
+            realmDb.where(Connection::class.java).equalTo(KEY_CONNECT_URL_PARAM, connectionUrl).findAll().map {
+                realmDb.copyFromRealm(it)
+            }
         }
     }
 

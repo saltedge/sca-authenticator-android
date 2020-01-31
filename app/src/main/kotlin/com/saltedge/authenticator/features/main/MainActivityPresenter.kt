@@ -28,6 +28,7 @@ import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
+import com.saltedge.authenticator.sdk.tools.extractActionExtractDeepLinkData
 import com.saltedge.authenticator.sdk.tools.extractConnectConfigurationLink
 import com.saltedge.authenticator.sdk.tools.extractConnectQuery
 import com.saltedge.authenticator.tool.ResId
@@ -80,11 +81,31 @@ class MainActivityPresenter(
             }
             intent.hasDeepLink -> {
                 viewContract.setSelectedTabbarItemId(R.id.menu_connections)
-                intent.deepLink.extractConnectConfigurationLink()?.let {
-                    viewContract.showConnectProvider(
-                        connectConfigurationLink = it,
-                        connectQuery = intent.deepLink.extractConnectQuery()
-                    )
+                if (intent.deepLink.contains("configuration")) {
+                    intent.deepLink.extractConnectConfigurationLink()?.let { connectionDeepLinkData ->
+                        viewContract.showConnectProvider(
+                            connectConfigurationLink = connectionDeepLinkData,
+                            connectQuery = intent.deepLink.extractConnectQuery()
+                        )
+                    }
+                } else {
+                    intent.deepLink.extractActionExtractDeepLinkData()?.let { actionDeepLinkData ->
+                        val connections =
+                            connectionsRepository.getByConnectUrl(actionDeepLinkData.connectUrl)
+                        when {
+                            connections.isEmpty() -> {
+                                viewContract.showError()
+                            }
+                            connections.size == 1 -> {
+                                val connectionGuid = connections.first().guid
+                                viewContract.showActionFragment(connectionGuid, actionDeepLinkData)
+                                //this.connection = connections.first()
+                            }
+                            else -> {
+                                viewContract.showSelectorFragment()
+                            }
+                        }
+                    }
                 }
             }
         }

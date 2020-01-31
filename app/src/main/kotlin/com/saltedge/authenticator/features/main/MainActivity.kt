@@ -24,6 +24,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.FragmentManager
@@ -31,6 +32,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
+import com.saltedge.authenticator.features.connections.actions.ActionFragment
 import com.saltedge.authenticator.features.connections.connect.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
 import com.saltedge.authenticator.features.security.LockableActivity
@@ -41,6 +43,7 @@ import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.realm.RealmManager
+import com.saltedge.authenticator.sdk.tools.ActionDeepLinkData
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -85,7 +88,10 @@ class MainActivity : LockableActivity(),
     override fun onResume() {
         super.onResume()
         this.applyPreferenceLocale()
-        registerReceiver(connectivityReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+        registerReceiver(
+            connectivityReceiver,
+            IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        )
         connectivityReceiver.networkStateListener = this
     }
 
@@ -178,6 +184,31 @@ class MainActivity : LockableActivity(),
 
     override fun popBackStack() {
         supportFragmentManager.popBackStack()
+    }
+
+    override fun showError() {
+        val snackbar = this.buildWarning(
+            text = getString(R.string.connections_list_no_connections),
+            snackBarDuration = 5000
+        )
+        snackbar?.show()
+    }
+
+
+    override fun showActionFragment(
+        connectionGuid: String,
+        actionDeepLinkData: ActionDeepLinkData
+    ) {
+        this.addFragment(
+            ActionFragment.newInstance(
+                connectionGuid = connectionGuid,
+                actionDeepLinkData = actionDeepLinkData
+            )
+        )
+    }
+
+    override fun showSelectorFragment() {
+        Log.d("some", "showSelectorFragment")
     }
 
     override fun updateNavigationViewsContent() {
