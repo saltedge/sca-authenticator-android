@@ -31,6 +31,8 @@ import com.saltedge.authenticator.features.connections.connect.di.ConnectProvide
 import com.saltedge.authenticator.features.connections.connect.di.ConnectProviderModule
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListComponent
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListModule
+import com.saltedge.authenticator.features.connections.select.di.SelectorConnectionsComponent
+import com.saltedge.authenticator.features.connections.select.di.SelectorConnectionsModule
 import com.saltedge.authenticator.features.launcher.di.LauncherComponent
 import com.saltedge.authenticator.features.launcher.di.LauncherModule
 import com.saltedge.authenticator.features.onboarding.di.OnboardingSetupComponent
@@ -67,6 +69,7 @@ interface AppComponent {
     fun addConnectionsListModule(module: ConnectionsListModule): ConnectionsListComponent
     fun addConnectProviderModule(module: ConnectProviderModule): ConnectProviderComponent
     fun addActionModule(module: ActionModule): ActionComponent
+    fun addSelectorConnectionsModule(module: SelectorConnectionsModule): SelectorConnectionsComponent
     fun addAuthorizationsListModule(module: AuthorizationsListModule): AuthorizationsListComponent
     fun addAuthorizationDetailsModule(module: AuthorizationDetailsModule): AuthorizationDetailsComponent
     fun addSettingsListModule(module: SettingsListModule): SettingsListComponent

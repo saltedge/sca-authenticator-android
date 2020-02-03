@@ -13,12 +13,15 @@ import com.saltedge.authenticator.sdk.tools.ActionDeepLinkData
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_action.*
-import kotlinx.android.synthetic.main.fragment_action.completeView
 import javax.inject.Inject
 
 const val KEY_ACTION_DEEP_LINK_DATA = "ACTION_DEEP_LINK_DATA"
 
-class ActionFragment : BaseFragment(), ActionContract.View, UpActionImageListener {
+class ActionFragment : BaseFragment(),
+    ActionContract.View,
+    UpActionImageListener,
+    View.OnClickListener
+{
 
     @Inject
     lateinit var presenterContract: ActionContract.Presenter
@@ -44,6 +47,7 @@ class ActionFragment : BaseFragment(), ActionContract.View, UpActionImageListene
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        completeView?.setOnClickListener(this)
         updateViewsContent()
         presenterContract.viewContract = this
         presenterContract.onViewCreated()
@@ -81,6 +85,10 @@ class ActionFragment : BaseFragment(), ActionContract.View, UpActionImageListene
                 activity?.finishFragment()
             }
         )
+    }
+
+    override fun onClick(v: View?) {
+        presenterContract.onViewClick(view?.id ?: return)
     }
 
     private fun injectDependencies() {

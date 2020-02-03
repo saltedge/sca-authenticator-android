@@ -24,7 +24,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.FragmentManager
@@ -33,8 +32,11 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
 import com.saltedge.authenticator.features.connections.actions.ActionFragment
+import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.connect.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
+import com.saltedge.authenticator.features.connections.select.ConnectionSelectorResult
+import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment
 import com.saltedge.authenticator.features.security.LockableActivity
 import com.saltedge.authenticator.features.security.UnlockAppInputView
 import com.saltedge.authenticator.features.settings.list.SettingsListFragment
@@ -56,7 +58,8 @@ class MainActivity : LockableActivity(),
     View.OnClickListener,
     FragmentManager.OnBackStackChangedListener,
     NetworkStateChangeListener,
-    SnackbarAnchorContainer {
+    SnackbarAnchorContainer,
+    ConnectionSelectorResult {
 
     private val presenter = MainActivityPresenter(
         viewContract = this,
@@ -207,8 +210,8 @@ class MainActivity : LockableActivity(),
         )
     }
 
-    override fun showSelectorFragment() {
-        Log.d("some", "showSelectorFragment")
+    override fun showSelectorFragment(connections: List<ConnectionViewModel>) {
+        this.addFragment(SelectConnectionsFragment.newInstance(connections = connections))
     }
 
     override fun updateNavigationViewsContent() {
@@ -235,6 +238,11 @@ class MainActivity : LockableActivity(),
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         showNetworkMessage(isConnected)
+    }
+
+    override fun onConnectionSelected(connectionGuid: String) {
+        this.finishFragment()
+        presenter.onConnectionSelected(connectionGuid)
     }
 
     private fun showNetworkMessage(isConnected: Boolean) {

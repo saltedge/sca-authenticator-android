@@ -25,9 +25,11 @@ import android.content.Intent
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
+import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
+import com.saltedge.authenticator.sdk.tools.ActionDeepLinkData
 import com.saltedge.authenticator.sdk.tools.extractActionExtractDeepLinkData
 import com.saltedge.authenticator.sdk.tools.extractConnectConfigurationLink
 import com.saltedge.authenticator.sdk.tools.extractConnectQuery
@@ -37,6 +39,8 @@ class MainActivityPresenter(
     val viewContract: MainActivityContract.View,
     private val connectionsRepository: ConnectionsRepositoryAbs
 ) {
+
+    private var myActionDeepLinkData: ActionDeepLinkData? = null
 
     /**
      * Starts initial fragment
@@ -90,6 +94,7 @@ class MainActivityPresenter(
                     }
                 } else {
                     intent.deepLink.extractActionExtractDeepLinkData()?.let { actionDeepLinkData ->
+                        myActionDeepLinkData = actionDeepLinkData
                         val connections = connectionsRepository.getByConnectUrl(actionDeepLinkData.connectUrl)
                         when {
                             connections.isEmpty() -> {
@@ -100,7 +105,17 @@ class MainActivityPresenter(
                                 viewContract.showActionFragment(connectionGuid, actionDeepLinkData)
                             }
                             else -> {
-                                viewContract.showSelectorFragment()
+                                val resultMap = connections.map { connection ->
+                                    ConnectionViewModel(
+                                        guid = connection.guid,
+                                        code = connection.code,
+                                        name = connection.name,
+                                        logoUrl = connection.logoUrl,
+                                        statusDescription = connection.status,
+                                        statusColorResId = R.color.gray_dark
+                                    )
+                                }
+                                viewContract.showSelectorFragment(resultMap)
                             }
                         }
                     }
@@ -153,6 +168,10 @@ class MainActivityPresenter(
      */
     fun onNavigationItemClick(stackIsClear: Boolean) {
         if (stackIsClear) viewContract.closeView() else viewContract.popBackStack()
+    }
+
+    fun onConnectionSelected(connectionGuid: String) {
+        myActionDeepLinkData?.let { viewContract.showActionFragment(connectionGuid, it) }
     }
 
     private val Intent?.connectionId: String
