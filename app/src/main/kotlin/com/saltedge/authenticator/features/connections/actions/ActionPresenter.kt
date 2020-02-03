@@ -21,11 +21,16 @@
 package com.saltedge.authenticator.features.connections.actions
 
 import android.content.Context
-import android.util.Log
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.features.authorizations.common.createConnectionAndKey
 import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
+import com.saltedge.authenticator.sdk.contract.ActionInitResult
+import com.saltedge.authenticator.sdk.model.ApiErrorData
 import com.saltedge.authenticator.sdk.model.GUID
+import com.saltedge.authenticator.sdk.model.getErrorMessage
+import com.saltedge.authenticator.sdk.model.response.ActionData
 import com.saltedge.authenticator.sdk.tools.ActionDeepLinkData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import javax.inject.Inject
@@ -33,30 +38,29 @@ import javax.inject.Inject
 class ActionPresenter @Inject constructor(
     private val appContext: Context,
     private val keyStoreManager: KeyStoreManagerAbs,
-    private val connectionsRepository: ConnectionsRepositoryAbs
-) : ActionContract.Presenter {
-
-    private var connection = Connection()
+    private val connectionsRepository: ConnectionsRepositoryAbs,
+    private val apiManager: AuthenticatorApiManagerAbs
+) : ActionContract.Presenter, ActionInitResult {
 
     override var viewContract: ActionContract.View? = null
+    override val iconResId: Int
+        get() = if (showActionSuccess()) R.drawable.ic_complete_ok_70 else R.drawable.ic_auth_error_70
     override val completeTitle: String
-        get() = appContext.getString(R.string.action_feature_title)
+        get() = if (showActionSuccess()) appContext.getString(R.string.action_feature_title)
+        else appContext.getString(R.string.action_error_title)
+    override val completeMessage: String
+        get() = if (showActionSuccess()) appContext.getString(R.string.action_feature_description)
+        else appContext.getString(R.string.action_error_description)
+    override val mainActionTextResId: Int
+        get() = if (showActionSuccess()) R.string.actions_proceed else R.string.actions_try_again
+    override var showCompleteView: Boolean = false
+    private var actionDeepLinkData: ActionDeepLinkData? = null
+    private var connection = Connection()
+    private var showActionError = false
 
-    private var viewMode: ViewMode = ViewMode.PROCESSING
-    override val shouldShowProgressView: Boolean
-        get() = viewMode == ViewMode.PROCESSING
-    override val shouldShowCompleteView: Boolean
-        get() = viewMode == ViewMode.ACTION_SUCCESS || viewMode == ViewMode.ACTION_ERROR
-
-    override fun setInitialData(connectionGuid: GUID?, actionDeepLinkData: ActionDeepLinkData?) {
-        when {
-            connectionGuid != null -> {
-                this.connection = connectionsRepository.getByGuid(connectionGuid) ?: Connection()
-            }
-            actionDeepLinkData != null -> {
-                Log.d("some", "actionDeepLinkData != null")
-            }
-        }
+    override fun setInitialData(connectionGuid: GUID, actionDeepLinkData: ActionDeepLinkData) {
+        this.connection = connectionsRepository.getByGuid(connectionGuid) ?: Connection()
+        this.actionDeepLinkData = actionDeepLinkData
     }
 
     override fun onDestroyView() {
@@ -67,23 +71,34 @@ class ActionPresenter @Inject constructor(
 
     override fun getTitleResId(): Int = R.string.connections_new_connection
 
-    override fun onViewClick(viewId: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun onViewCreated() {
-        when (viewMode) {
-            ViewMode.PROCESSING -> startProcessingFlow()
-            ViewMode.ACTION_ERROR -> Unit
-            ViewMode.ACTION_SUCCESS -> Unit
-        }
+        val connectionAndKey = createConnectionAndKey(
+            connection = this.connection,
+            keyStoreManager = keyStoreManager
+        )
+        apiManager.sendAction(
+            actionUUID = actionDeepLinkData?.actionUuid ?: "",
+            connectionAndKey = connectionAndKey ?: return,
+            resultCallback = this
+        )
     }
 
-    private fun startProcessingFlow() {
-        Log.d("some", "PROCESSING")
+    override fun onActionInitFailure(error: ApiErrorData) {
+        showCompleteView = true
+        showActionError = true
+        viewContract?.showErrorAndFinish(error.getErrorMessage(appContext))
     }
-}
 
-enum class ViewMode {
-    PROCESSING, ACTION_SUCCESS, ACTION_ERROR
+    override fun onActionInitSuccess(response: ActionData) {
+        showCompleteView = true
+        if (response.success == true) viewContract?.updateViewsContent()
+    }
+
+    override fun onViewClick(viewId: Int) {
+        if (viewId == R.id.mainActionView) viewContract?.closeView()
+    }
+
+    private fun showActionSuccess(): Boolean {
+        return !showActionError
+    }
 }

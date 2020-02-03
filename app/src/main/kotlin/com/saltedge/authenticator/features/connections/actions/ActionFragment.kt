@@ -1,5 +1,6 @@
 package com.saltedge.authenticator.features.connections.actions
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,12 +10,10 @@ import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.features.connections.actions.di.ActionModule
 import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.sdk.tools.ActionDeepLinkData
-import com.saltedge.authenticator.tool.ResId
-import com.saltedge.authenticator.tool.authenticatorApp
-import com.saltedge.authenticator.tool.finishFragment
-import com.saltedge.authenticator.tool.setVisible
+import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_action.*
+import kotlinx.android.synthetic.main.fragment_action.completeView
 import javax.inject.Inject
 
 const val KEY_ACTION_DEEP_LINK_DATA = "ACTION_DEEP_LINK_DATA"
@@ -27,9 +26,11 @@ class ActionFragment : BaseFragment(), ActionContract.View, UpActionImageListene
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectDependencies()
-        presenterContract.setInitialData(
-            connectionGuid = arguments?.getString(KEY_GUID),
-            actionDeepLinkData = arguments?.getSerializable(KEY_ACTION_DEEP_LINK_DATA) as? ActionDeepLinkData)
+        arguments?.getString(KEY_GUID)?.let {
+            presenterContract.setInitialData(
+                connectionGuid = it,
+                actionDeepLinkData = arguments?.getSerializable(KEY_ACTION_DEEP_LINK_DATA) as ActionDeepLinkData)
+        }
     }
 
     override fun onCreateView(
@@ -59,7 +60,10 @@ class ActionFragment : BaseFragment(), ActionContract.View, UpActionImageListene
     }
 
     override fun updateViewsContent() {
+        completeView?.setIconResource(presenterContract.iconResId)
         completeView?.setTitleText(presenterContract.completeTitle)
+        completeView?.setSubtitleText(presenterContract.completeMessage)
+        completeView?.setMainActionText(presenterContract.mainActionTextResId)
 
         updateLayoutsVisibility()
     }
@@ -70,6 +74,15 @@ class ActionFragment : BaseFragment(), ActionContract.View, UpActionImageListene
         activity?.finishFragment()
     }
 
+    override fun showErrorAndFinish(message: String) {
+        activity?.showWarningDialog(
+            message = message,
+            listener = DialogInterface.OnClickListener { _: DialogInterface, _: Int ->
+                activity?.finishFragment()
+            }
+        )
+    }
+
     private fun injectDependencies() {
         authenticatorApp?.appComponent?.addActionModule(ActionModule())?.inject(
             this
@@ -77,8 +90,8 @@ class ActionFragment : BaseFragment(), ActionContract.View, UpActionImageListene
     }
 
     private fun updateLayoutsVisibility() {
-        fragmentActionProcessing?.setVisible(show = presenterContract.shouldShowProgressView)
-        completeView?.setVisible(show = presenterContract.shouldShowCompleteView)
+        fragmentActionProcessing?.setVisible(show = !presenterContract.showCompleteView)
+        completeView?.setVisible(show = presenterContract.showCompleteView)
     }
 
     companion object {

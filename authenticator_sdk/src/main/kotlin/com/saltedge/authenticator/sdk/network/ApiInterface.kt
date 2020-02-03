@@ -41,6 +41,12 @@ interface ApiInterface {
         @Body body: CreateConnectionRequestData
     ): Call<CreateConnectionResponseData>
 
+    @POST
+    fun postAction(
+        @Url requestUrl: String,
+        @HeaderMap headersMap: Map<String, String>
+    ): Call<ActionResponseData>
+
     @DELETE
     fun deleteAccessToken(
         @Url requestUrl: String,

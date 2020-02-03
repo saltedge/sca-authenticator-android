@@ -45,6 +45,12 @@ interface AuthenticatorApiManagerAbs {
         resultCallback: FetchProviderConfigurationDataResult
     )
 
+    fun sendAction(
+        connectionAndKey: ConnectionAndKey,
+        resultCallback: ActionInitResult,
+        actionUUID: String
+    )
+
     /**
      * Request to create new SCA connection.
      * Result is returned through callback.

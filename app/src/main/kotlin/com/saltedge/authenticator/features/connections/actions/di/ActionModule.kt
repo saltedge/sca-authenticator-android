@@ -25,6 +25,7 @@ import com.saltedge.authenticator.app.di.FragmentScope
 import com.saltedge.authenticator.features.connections.actions.ActionContract
 import com.saltedge.authenticator.features.connections.actions.ActionPresenter
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import dagger.Module
 import dagger.Provides
@@ -42,7 +43,8 @@ class ActionModule {
         return ActionPresenter(
             appContext = appContext,
             keyStoreManager = keyStoreManager,
-            connectionsRepository = connections
+            connectionsRepository = connections,
+            apiManager = AuthenticatorApiManager
         )
     }
 }

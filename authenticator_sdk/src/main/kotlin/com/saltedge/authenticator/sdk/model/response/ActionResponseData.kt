@@ -18,30 +18,20 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.actions
+package com.saltedge.authenticator.sdk.model.response
 
-import com.saltedge.authenticator.sdk.tools.ActionDeepLinkData
+import com.google.gson.annotations.SerializedName
+import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
+import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
+import com.saltedge.authenticator.sdk.constants.KEY_DATA
+import com.saltedge.authenticator.sdk.constants.KEY_SUCCESS
 
-interface ActionContract {
+data class ActionResponseData(
+    @SerializedName(KEY_DATA) var data: ActionData? = null
+)
 
-    interface View {
-        fun updateViewsContent()
-        fun closeView()
-        fun showErrorAndFinish(message: String)
-    }
-
-    interface Presenter {
-        var viewContract: View?
-        val iconResId: Int
-        val completeTitle: String
-        val completeMessage: String
-        val mainActionTextResId: Int
-        var showCompleteView: Boolean
-
-        fun setInitialData(connectionGuid: String, actionDeepLinkData: ActionDeepLinkData)
-        fun onDestroyView()
-        fun getTitleResId(): Int
-        fun onViewCreated()
-        fun onViewClick(viewId: Int)
-    }
-}
+data class ActionData(
+    @SerializedName(KEY_SUCCESS) var success: Boolean? = null,
+    @SerializedName(KEY_CONNECTION_ID) var connectionId: String? = null,
+    @SerializedName(KEY_AUTHORIZATION_ID) var authorizationId: String? = null
+)

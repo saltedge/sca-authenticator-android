@@ -90,8 +90,7 @@ class MainActivityPresenter(
                     }
                 } else {
                     intent.deepLink.extractActionExtractDeepLinkData()?.let { actionDeepLinkData ->
-                        val connections =
-                            connectionsRepository.getByConnectUrl(actionDeepLinkData.connectUrl)
+                        val connections = connectionsRepository.getByConnectUrl(actionDeepLinkData.connectUrl)
                         when {
                             connections.isEmpty() -> {
                                 viewContract.showError()
@@ -99,7 +98,6 @@ class MainActivityPresenter(
                             connections.size == 1 -> {
                                 val connectionGuid = connections.first().guid
                                 viewContract.showActionFragment(connectionGuid, actionDeepLinkData)
-                                //this.connection = connections.first()
                             }
                             else -> {
                                 viewContract.showSelectorFragment()
