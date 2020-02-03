@@ -102,6 +102,8 @@
     <string name="connect_status_provider_success">\%s was successfully connected!</string>
     <string name="connect_status_provider_success_description">Your Service Provider has been successfully connected to the Authenticator App. You will receive an authorization request every time you make an action.</string>
 
+    <string name="action_feature_title">Successful authentication</string>
+
     <string name="authorizations_feature_title">Authorizations</string>
     <string name="authorization_feature_title">Authorization</string>
     <string name="authorizations_nothing_confirm">Nothing to confirm</string>
