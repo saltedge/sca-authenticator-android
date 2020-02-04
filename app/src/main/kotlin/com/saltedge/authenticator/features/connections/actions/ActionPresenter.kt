@@ -32,6 +32,7 @@ import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.getErrorMessage
 import com.saltedge.authenticator.sdk.model.response.ActionData
 import com.saltedge.authenticator.sdk.tools.ActionDeepLinkData
+import com.saltedge.authenticator.sdk.tools.isNotNullOrEmpty
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import javax.inject.Inject
 
@@ -90,9 +91,20 @@ class ActionPresenter @Inject constructor(
     }
 
     override fun onActionInitSuccess(response: ActionData) {
-        if (response.success == true) {
+        val authorizationID = response.authorizationId
+        val connectionID = response.connectionId
+        if (response.success == true && authorizationID.isNullOrEmpty() && connectionID.isNullOrEmpty()) {
             showCompleteView = true
             viewContract?.updateViewsContent()
+        } else if (authorizationID.isNotNullOrEmpty() && connectionID.isNotNullOrEmpty()) {
+            authorizationID?.let { authorizationId ->
+                connectionID?.let { connectionId ->
+                    viewContract?.returnActionWithConnectionId(
+                        authorizationID = authorizationId,
+                        connectionID = connectionId
+                    )
+                }
+            }
         }
     }
 

@@ -20,28 +20,6 @@
  */
 package com.saltedge.authenticator.features.connections.actions
 
-import com.saltedge.authenticator.sdk.tools.ActionDeepLinkData
-
-interface ActionContract {
-
-    interface View {
-        fun updateViewsContent()
-        fun closeView()
-        fun showErrorAndFinish(message: String)
-        fun returnActionWithConnectionId(authorizationID: String, connectionID: String)
-    }
-
-    interface Presenter {
-        var viewContract: View?
-        val iconResId: Int
-        val completeTitle: String
-        val completeMessage: String
-        val mainActionTextResId: Int
-        var showCompleteView: Boolean
-        fun setInitialData(connectionGuid: String, actionDeepLinkData: ActionDeepLinkData)
-        fun onDestroyView()
-        fun getTitleResId(): Int
-        fun onViewCreated()
-        fun onViewClick(viewId: Int)
-    }
+interface ActionDataResult {
+    fun onNewAuthorizationResult(authorizationID: String, connectionID: String)
 }

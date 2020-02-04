@@ -18,30 +18,26 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.actions
+package com.saltedge.authenticator.features.connections.select.di
 
-import com.saltedge.authenticator.sdk.tools.ActionDeepLinkData
+import com.saltedge.authenticator.testTools.TestAppTools
+import junit.framework.Assert.assertNotNull
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
-interface ActionContract {
+@RunWith(RobolectricTestRunner::class)
+class SelectorConnectionsModuleTest {
 
-    interface View {
-        fun updateViewsContent()
-        fun closeView()
-        fun showErrorAndFinish(message: String)
-        fun returnActionWithConnectionId(authorizationID: String, connectionID: String)
-    }
+    @Test
+    @Throws(Exception::class)
+    fun providePresenterTest() {
+        val module = SelectorConnectionsModule()
 
-    interface Presenter {
-        var viewContract: View?
-        val iconResId: Int
-        val completeTitle: String
-        val completeMessage: String
-        val mainActionTextResId: Int
-        var showCompleteView: Boolean
-        fun setInitialData(connectionGuid: String, actionDeepLinkData: ActionDeepLinkData)
-        fun onDestroyView()
-        fun getTitleResId(): Int
-        fun onViewCreated()
-        fun onViewClick(viewId: Int)
+        assertNotNull(
+            module.providePresenter(
+                appContext = TestAppTools.applicationContext
+            )
+        )
     }
 }

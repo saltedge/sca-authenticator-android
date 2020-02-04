@@ -31,6 +31,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
+import com.saltedge.authenticator.features.connections.actions.ActionDataResult
 import com.saltedge.authenticator.features.connections.actions.ActionFragment
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.connect.ConnectProviderFragment
@@ -59,7 +60,8 @@ class MainActivity : LockableActivity(),
     FragmentManager.OnBackStackChangedListener,
     NetworkStateChangeListener,
     SnackbarAnchorContainer,
-    ConnectionSelectorResult {
+    ConnectionSelectorResult,
+    ActionDataResult {
 
     private val presenter = MainActivityPresenter(
         viewContract = this,
@@ -173,6 +175,16 @@ class MainActivity : LockableActivity(),
     }
 
     override fun showAuthorizationDetailsView(connectionID: String, authorizationID: String) {
+        this.addFragment(
+            AuthorizationDetailsFragment.newInstance(
+                connectionId = connectionID,
+                authorizationId = authorizationID
+            )
+        )
+    }
+
+    override fun onNewAuthorizationResult(authorizationID: String, connectionID: String) {
+        this.finishFragment()
         this.addFragment(
             AuthorizationDetailsFragment.newInstance(
                 connectionId = connectionID,

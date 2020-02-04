@@ -1,3 +1,23 @@
+/*
+ * This file is part of the Salt Edge Authenticator distribution
+ * (https://github.com/saltedge/sca-authenticator-android).
+ * Copyright (c) 2019 Salt Edge Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3 or later.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * For the additional permissions granted for Salt Edge Authenticator
+ * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+ */
 package com.saltedge.authenticator.features.connections.actions
 
 import android.content.DialogInterface
@@ -21,8 +41,7 @@ const val KEY_ACTION_DEEP_LINK_DATA = "ACTION_DEEP_LINK_DATA"
 class ActionFragment : BaseFragment(),
     ActionContract.View,
     UpActionImageListener,
-    View.OnClickListener
-{
+    View.OnClickListener {
 
     @Inject
     lateinit var presenterContract: ActionContract.Presenter
@@ -33,7 +52,8 @@ class ActionFragment : BaseFragment(),
         arguments?.getString(KEY_GUID)?.let {
             presenterContract.setInitialData(
                 connectionGuid = it,
-                actionDeepLinkData = arguments?.getSerializable(KEY_ACTION_DEEP_LINK_DATA) as ActionDeepLinkData)
+                actionDeepLinkData = arguments?.getSerializable(KEY_ACTION_DEEP_LINK_DATA) as ActionDeepLinkData
+            )
         }
     }
 
@@ -86,6 +106,13 @@ class ActionFragment : BaseFragment(),
             listener = DialogInterface.OnClickListener { _: DialogInterface, _: Int ->
                 activity?.finishFragment()
             }
+        )
+    }
+
+    override fun returnActionWithConnectionId(authorizationID: String, connectionID: String) {
+        (activity as? ActionDataResult)?.onNewAuthorizationResult(
+            authorizationID = authorizationID,
+            connectionID = connectionID
         )
     }
 
