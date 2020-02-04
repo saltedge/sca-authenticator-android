@@ -20,27 +20,32 @@
  */
 package com.saltedge.authenticator.features.connections.actions
 
+import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.sdk.tools.ActionDeepLinkData
+import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
-interface ActionContract {
+@RunWith(RobolectricTestRunner::class)
+class ActionFragmentTest {
 
-    interface View {
-        fun updateViewsContent()
-        fun closeView()
-        fun showErrorAndFinish(message: String)
-    }
+    @Test
+    @Throws(Exception::class)
+    fun newInstanceTestCase() {
+        val actionDeepLinkData = ActionDeepLinkData(
+            actionUuid = "actionUuid",
+            connectUrl = "connectUrl",
+            returnTo = "returnTo"
+        )
+        val arguments = ActionFragment.newInstance(
+            connectionGuid = "guid1",
+            actionDeepLinkData = actionDeepLinkData
+        ).arguments
 
-    interface Presenter {
-        var viewContract: View?
-        val iconResId: Int
-        val completeTitle: String
-        val completeMessage: String
-        val mainActionTextResId: Int
-        var showCompleteView: Boolean
-        fun setInitialData(connectionGuid: String, actionDeepLinkData: ActionDeepLinkData)
-        fun onDestroyView()
-        fun getTitleResId(): Int
-        fun onViewCreated()
-        fun onViewClick(viewId: Int)
+        assertThat(arguments?.getString(KEY_GUID), equalTo("guid1"))
+        assertThat(arguments?.getSerializable(KEY_ACTION_DEEP_LINK_DATA) as? ActionDeepLinkData,
+            equalTo(actionDeepLinkData))
     }
 }

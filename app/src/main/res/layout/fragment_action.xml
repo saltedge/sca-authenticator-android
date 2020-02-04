@@ -22,7 +22,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<!--    TODO: unify fragment_connect_processing, because we use in 2 places-->
     <include
         android:id="@+id/fragmentActionProcessing"
         layout="@layout/fragment_connect_processing" />

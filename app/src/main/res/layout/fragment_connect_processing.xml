@@ -39,6 +39,7 @@
         android:indeterminateTintMode="src_in" />
 
     <TextView
+        android:id="@+id/titleView"
         style="@style/Text20BlackMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

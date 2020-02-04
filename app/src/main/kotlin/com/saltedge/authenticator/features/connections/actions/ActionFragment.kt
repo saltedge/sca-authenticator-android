@@ -13,6 +13,7 @@ import com.saltedge.authenticator.sdk.tools.ActionDeepLinkData
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_action.*
+import kotlinx.android.synthetic.main.fragment_connect_processing.view.*
 import javax.inject.Inject
 
 const val KEY_ACTION_DEEP_LINK_DATA = "ACTION_DEEP_LINK_DATA"
@@ -68,6 +69,7 @@ class ActionFragment : BaseFragment(),
         completeView?.setTitleText(presenterContract.completeTitle)
         completeView?.setSubtitleText(presenterContract.completeMessage)
         completeView?.setMainActionText(presenterContract.mainActionTextResId)
+        fragmentActionProcessing.titleView.text = getString(R.string.action_status_in_progress)
 
         updateLayoutsVisibility()
     }

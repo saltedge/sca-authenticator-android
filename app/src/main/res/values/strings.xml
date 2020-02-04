@@ -67,7 +67,7 @@
     <string name="errors_wrong_passcode">You entered the wrong Passcode.</string>
     <string name="errors_wrong_passcode_long">You entered the wrong Passcode, please try again.</string>
     <string name="errors_connection_failed">Connection Failed</string>
-    <string name="errors_connection_failed_description">We tried connecting your Provider to the Authenticator App, but something went wrong. Please try again or contact our Support Team!</string>
+    <string name="errors_connection_failed_description">Provider not found. Please create connection to your service provider and try again.</string>
     <string name="errors_permission_denied">Permission Denied</string>
     <string name="errors_invalid_qr">Invalid QR code, please try again</string>
     <string name="errors_unable_connect_provider">Something went wrong. Unable connect to service provider.</string>
@@ -107,6 +107,7 @@
     <string name="action_feature_description">You were successfully authenticated</string>
     <string name="action_error_title">Authentication error</string>
     <string name="action_error_description">Please try again.</string>
+    <string name="action_status_in_progress">Authenticating for action</string>
 
     <string name="authorizations_feature_title">Authorizations</string>
     <string name="authorization_feature_title">Authorization</string>
