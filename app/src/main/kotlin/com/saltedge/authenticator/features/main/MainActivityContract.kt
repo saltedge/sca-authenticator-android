@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.main
 
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
-import com.saltedge.authenticator.sdk.tools.ActionDeepLinkData
+import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
 
 interface MainActivityContract {
 

@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.connections.actions
 
 import com.saltedge.authenticator.app.KEY_GUID
-import com.saltedge.authenticator.sdk.tools.ActionDeepLinkData
+import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test

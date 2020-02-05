@@ -23,12 +23,15 @@ package com.saltedge.authenticator.features.main
 import android.app.Activity
 import android.content.Intent
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_CONNECT_CONFIGURATION
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
+import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
+import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
+import com.saltedge.authenticator.sdk.model.ConnectionStatus
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert
@@ -102,7 +105,8 @@ class MainActivityPresenterTest {
             connectionsRepository = mockConnectionsRepository
         )
         val intent = Intent().putExtra(
-            KEY_DEEP_LINK, "authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration"
+            KEY_DEEP_LINK,
+            "authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration"
         )
         presenter.onActivityResult(
             requestCode = QR_SCAN_REQUEST_CODE,
@@ -220,7 +224,8 @@ class MainActivityPresenterTest {
         Mockito.clearInvocations(mockView)
         presenter.onNewIntentReceived(
             Intent().putExtra(
-                KEY_DEEP_LINK, "authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration"
+                KEY_DEEP_LINK,
+                "authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration"
             )
         )
 
@@ -233,7 +238,8 @@ class MainActivityPresenterTest {
         Mockito.clearInvocations(mockView)
         presenter.onNewIntentReceived(
             Intent().putExtra(
-                KEY_DEEP_LINK, "authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration&connect_query=1234567890"
+                KEY_DEEP_LINK,
+                "authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration&connect_query=1234567890"
             )
         )
 
@@ -242,6 +248,126 @@ class MainActivityPresenterTest {
             connectConfigurationLink = "https://saltedge.com/configuration",
             connectQuery = "1234567890"
         )
+    }
+
+    /**
+     * test onNewIntentReceived where intent has invalid deep-link for action and connections are empty
+     */
+    @Test
+    @Throws(Exception::class)
+    fun onNewIntentReceivedTest_case5() {
+        val presenter = MainActivityPresenter(
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository
+        )
+
+        presenter.onNewIntentReceived(
+            Intent().putExtra(
+                KEY_DEEP_LINK,
+                "authenticator://saltedge.com/action?action_uuid=123456&return_to=http://return.com&connect_url=http://someurl.com"
+            )
+        )
+
+        Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_connections)
+        Mockito.verify(mockView).showError()
+        Mockito.verify(mockConnectionsRepository).getByConnectUrl("http://someurl.com")
+        Mockito.verifyNoMoreInteractions(mockView, mockConnectionsRepository)
+    }
+
+    /**
+     * test onNewIntentReceived where intent has invalid deep-link for action and connections size == 1
+     */
+    @Test
+    @Throws(Exception::class)
+    fun onNewIntentReceivedTest_case6() {
+        val presenter = MainActivityPresenter(
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository
+        )
+        val connections = listOf(
+            Connection().apply {
+                guid = "guid1"
+                status = "${ConnectionStatus.ACTIVE}"
+                accessToken = "accessToken"
+                code = "demobank1"
+                name = "Demobank1"
+            }
+        )
+
+        Mockito.doReturn(connections).`when`(mockConnectionsRepository).getByConnectUrl("http://someurl.com")
+
+
+        presenter.onNewIntentReceived(
+            Intent().putExtra(
+                KEY_DEEP_LINK,
+                "authenticator://saltedge.com/action?action_uuid=123456&return_to=http://return.com&connect_url=http://someurl.com"
+            )
+        )
+
+        Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_connections)
+        Mockito.verify(mockView).showActionFragment(
+            connectionGuid = "guid1",
+            actionDeepLinkData = ActionDeepLinkData(
+                actionUuid = "123456",
+                connectUrl = "http://someurl.com",
+                returnTo = "http://return.com"
+            )
+        )
+        Mockito.verify(mockConnectionsRepository).getByConnectUrl("http://someurl.com")
+        Mockito.verifyNoMoreInteractions(mockView, mockConnectionsRepository)
+    }
+
+    /**
+     * test onNewIntentReceived where intent has invalid deep-link for action and connections size > 1
+     */
+    @Test
+    @Throws(Exception::class)
+    fun onNewIntentReceivedTest_case7() {
+        val presenter = MainActivityPresenter(
+            viewContract = mockView,
+            connectionsRepository = mockConnectionsRepository
+        )
+        val connections = listOf(
+            Connection().apply {
+                guid = "guid1"
+                status = "${ConnectionStatus.ACTIVE}"
+                accessToken = "accessToken"
+                code = "demobank1"
+                name = "Demobank1"
+            },
+            Connection().apply {
+                guid = "guid2"
+                status = "${ConnectionStatus.ACTIVE}"
+                accessToken = "accessToken"
+                code = "demobank2"
+                name = "Demobank2"
+            }
+        )
+        val resultMap = connections.map { connection ->
+            ConnectionViewModel(
+                guid = connection.guid,
+                code = connection.code,
+                name = connection.name,
+                logoUrl = connection.logoUrl,
+                statusDescription = connection.status,
+                statusColorResId = R.color.gray_dark
+            )
+        }
+
+        Mockito.doReturn(connections).`when`(mockConnectionsRepository).getByConnectUrl("http://someurl.com")
+
+
+        presenter.onNewIntentReceived(
+            Intent().putExtra(
+                KEY_DEEP_LINK,
+                "authenticator://saltedge.com/action?action_uuid=123456&return_to=http://return.com&connect_url=http://someurl.com"
+            )
+        )
+
+        Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_connections)
+        Mockito.verify(mockView).showSelectorFragment(resultMap)
+        Mockito.verify(mockConnectionsRepository).getByConnectUrl("http://someurl.com")
+        Mockito.verifyNoMoreInteractions(mockView, mockConnectionsRepository)
     }
 
     @Test

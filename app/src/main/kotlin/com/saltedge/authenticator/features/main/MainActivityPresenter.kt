@@ -29,7 +29,7 @@ import com.saltedge.authenticator.features.connections.common.ConnectionViewMode
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
-import com.saltedge.authenticator.sdk.tools.ActionDeepLinkData
+import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
 import com.saltedge.authenticator.sdk.tools.extractActionExtractDeepLinkData
 import com.saltedge.authenticator.sdk.tools.extractConnectConfigurationLink
 import com.saltedge.authenticator.sdk.tools.extractConnectQuery
@@ -40,7 +40,7 @@ class MainActivityPresenter(
     private val connectionsRepository: ConnectionsRepositoryAbs
 ) {
 
-    private var myActionDeepLinkData: ActionDeepLinkData? = null
+    private var actionDeepLinkData: ActionDeepLinkData? = null
 
     /**
      * Starts initial fragment
@@ -93,16 +93,16 @@ class MainActivityPresenter(
                         )
                     }
                 } else {
-                    intent.deepLink.extractActionExtractDeepLinkData()?.let { actionDeepLinkData ->
-                        myActionDeepLinkData = actionDeepLinkData
-                        val connections = connectionsRepository.getByConnectUrl(actionDeepLinkData.connectUrl)
+                    intent.deepLink.extractActionExtractDeepLinkData()?.let { deepLinkData ->
+                        actionDeepLinkData = deepLinkData
+                        val connections = connectionsRepository.getByConnectUrl(deepLinkData.connectUrl)
                         when {
                             connections.isEmpty() -> {
                                 viewContract.showError()
                             }
                             connections.size == 1 -> {
                                 val connectionGuid = connections.first().guid
-                                viewContract.showActionFragment(connectionGuid, actionDeepLinkData)
+                                viewContract.showActionFragment(connectionGuid, deepLinkData)
                             }
                             else -> {
                                 val resultMap = connections.map { connection ->
@@ -171,7 +171,7 @@ class MainActivityPresenter(
     }
 
     fun onConnectionSelected(connectionGuid: String) {
-        myActionDeepLinkData?.let { viewContract.showActionFragment(connectionGuid, it) }
+        actionDeepLinkData?.let { viewContract.showActionFragment(connectionGuid, it) }
     }
 
     private val Intent?.connectionId: String

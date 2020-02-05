@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.sdk.tools
 
 import android.net.Uri
-import java.io.Serializable
+import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
 
 const val KEY_CONFIGURATION_PARAM = "configuration"
 const val KEY_CONNECT_QUERY_PARAM = "connect_query"
@@ -61,7 +61,13 @@ fun String.extractConnectQuery(): String? {
     return Uri.parse(this).getQueryParameter(KEY_CONNECT_QUERY_PARAM)
 }
 
-fun String.extractActionExtractDeepLinkData(): ActionDeepLinkData? {
+/**
+ * Extract action data from deep link
+ *
+ * @receiver deep link String (e.g. authenticator://saltedge.com/action?action_uuid=123456&return_to=http://return.com&connect_url=http://someurl.com)
+ * @return ActionDeepLinkData object
+ */
+fun String.extractActionExtractDeepLinkData(): ActionDeepLinkData? { //extractActionDeepLinkData
     val uri = Uri.parse(this)
     return ActionDeepLinkData(
         actionUuid = uri.getQueryParameter(KEY_ACTION_UUID_PARAM) ?: return null,
@@ -69,9 +75,3 @@ fun String.extractActionExtractDeepLinkData(): ActionDeepLinkData? {
         returnTo = uri.getQueryParameter(KEY_RETURN_TO_PARAM)
     )
 }
-
-data class ActionDeepLinkData(
-    var actionUuid: String,
-    var connectUrl: String,
-    var returnTo: String?
-) : Serializable
