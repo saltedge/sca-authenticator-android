@@ -28,33 +28,27 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.list.ConnectionsListAdapter
-import com.saltedge.authenticator.features.connections.select.di.SelectorConnectionsModule
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.tool.ResId
-import com.saltedge.authenticator.tool.authenticatorApp
 import com.saltedge.authenticator.tool.log
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
 import kotlinx.android.synthetic.main.fragment_select_connections.*
-import javax.inject.Inject
 
 const val KEY_CONNECTIONS = "CONNECTIONS"
 
 class SelectConnectionsFragment : BaseFragment(), ListItemClickListener,
     SelectConnectionsContract.View, UpActionImageListener {
 
-    @Inject
-    lateinit var presenterContract: SelectConnectionsContract.Presenter
+    var presenterContract  = SelectConnectionsPresenter()
     private val adapter = ConnectionsListAdapter(clickListener = this)
     private var headerDecorator: SpaceItemDecoration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectDependencies()
         setHasOptionsMenu(false)
-        val data = arguments?.getSerializable(KEY_CONNECTIONS) as List<ConnectionViewModel>
-        adapter.data = data
+        adapter.data = arguments?.getSerializable(KEY_CONNECTIONS) as List<ConnectionViewModel>
     }
 
     override fun onCreateView(
@@ -99,12 +93,6 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener,
 
     override fun returnConnection(connectionGuid: String) {
         (activity as? ConnectionSelectorResult)?.onConnectionSelected(connectionGuid)
-    }
-
-    private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addSelectorConnectionsModule(SelectorConnectionsModule())?.inject(
-            fragment = this
-        )
     }
 
     companion object {

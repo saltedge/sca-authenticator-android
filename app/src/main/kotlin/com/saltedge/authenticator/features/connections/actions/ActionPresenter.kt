@@ -104,7 +104,9 @@ class ActionPresenter @Inject constructor(
     }
 
     override fun onViewClick(viewId: Int) {
-        if (viewId == R.id.mainActionView) viewContract?.closeView()
+        if (viewId == R.id.mainActionView) {
+            viewContract?.closeView()
+        }
     }
 
     private fun showActionSuccess(): Boolean {

@@ -20,13 +20,9 @@
  */
 package com.saltedge.authenticator.features.connections.select
 
-import android.content.Context
 import com.saltedge.authenticator.R
-import javax.inject.Inject
 
-class SelectConnectionsPresenter @Inject constructor(
-    private val appContext: Context
-) : SelectConnectionsContract.Presenter {
+class SelectConnectionsPresenter : SelectConnectionsContract.Presenter {
 
     override var viewContract: SelectConnectionsContract.View? = null
 

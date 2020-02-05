@@ -295,6 +295,8 @@ class ActionPresenterTest {
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
             apiManager = mockApiManager
-        ).apply { this.viewContract = viewContract }
+        ).apply {
+            this.viewContract = viewContract
+        }
     }
 }
