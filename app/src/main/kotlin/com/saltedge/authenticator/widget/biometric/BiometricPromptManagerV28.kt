@@ -30,6 +30,7 @@ import androidx.annotation.StringRes
 import androidx.fragment.app.FragmentActivity
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.ResId
+import com.saltedge.authenticator.tool.log
 
 /**
  * A handler class which start and manage callbacks from BiometricPrompt.
@@ -63,8 +64,21 @@ class BiometricPromptManagerV28 : BiometricPromptAbs, DialogInterface.OnClickLis
                 context.mainExecutor,
                 this
             )
-            val prompt: BiometricPrompt = builder.build()
-            prompt.authenticate(it, context.mainExecutor, authenticationCallBack)
+            try {
+                val prompt: BiometricPrompt = builder.build()
+                prompt.authenticate(it, context.mainExecutor, authenticationCallBack)
+            } catch (e: Exception) {
+                e.log()
+                cancelPrompt()
+            }
+        }
+    }
+
+    private fun cancelPrompt() {
+        try {
+            cancellationSignal?.cancel()
+        } catch (e: Exception) {
+            e.log()
         }
     }
 
