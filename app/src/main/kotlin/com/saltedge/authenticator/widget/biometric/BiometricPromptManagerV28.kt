@@ -28,9 +28,9 @@ import android.os.CancellationSignal
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.fragment.app.FragmentActivity
-import com.crashlytics.android.Crashlytics
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.ResId
+import com.saltedge.authenticator.tool.log
 
 /**
  * A handler class which start and manage callbacks from BiometricPrompt.
@@ -68,7 +68,7 @@ class BiometricPromptManagerV28 : BiometricPromptAbs, DialogInterface.OnClickLis
                 val prompt: BiometricPrompt = builder.build()
                 prompt.authenticate(it, context.mainExecutor, authenticationCallBack)
             } catch (e: Exception) {
-                Crashlytics.logException(e)
+                e.log()
                 cancelPrompt()
             }
         }
@@ -78,7 +78,7 @@ class BiometricPromptManagerV28 : BiometricPromptAbs, DialogInterface.OnClickLis
         try {
             cancellationSignal?.cancel()
         } catch (e: Exception) {
-            Crashlytics.logException(e)
+            e.log()
         }
     }
 
