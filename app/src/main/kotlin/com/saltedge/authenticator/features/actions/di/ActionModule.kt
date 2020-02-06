@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.actions.di
+package com.saltedge.authenticator.features.actions.di
 
 import android.content.Context
 import com.saltedge.authenticator.app.di.FragmentScope
-import com.saltedge.authenticator.features.connections.actions.ActionContract
-import com.saltedge.authenticator.features.connections.actions.ActionPresenter
+import com.saltedge.authenticator.features.actions.SubmitActionContract
+import com.saltedge.authenticator.features.actions.SubmitActionPresenter
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
@@ -39,8 +39,8 @@ class ActionModule {
         appContext: Context,
         keyStoreManager: KeyStoreManagerAbs,
         connections: ConnectionsRepositoryAbs
-        ): ActionContract.Presenter {
-        return ActionPresenter(
+        ): SubmitActionContract.Presenter {
+        return SubmitActionPresenter(
             appContext = appContext,
             keyStoreManager = keyStoreManager,
             connectionsRepository = connections,

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +18,31 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.select
+package com.saltedge.authenticator.features.actions
 
-import com.saltedge.authenticator.interfaces.BaseViewContract
+import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
+import com.saltedge.authenticator.sdk.model.AuthorizationIdentifier
 
-interface SelectConnectionsContract {
-    interface View : BaseViewContract {
-        fun returnConnection(connectionGuid: String)
+interface SubmitActionContract {
+
+    interface View {
+        fun closeView()
+        fun showErrorAndFinish(message: String)
+        fun returnActionWithConnectionId(authorizationIdentifier: AuthorizationIdentifier)
+        fun updateCompleteViewContent(
+            iconResId: Int,
+            completeTitle: String,
+            completeMessage: String,
+            mainActionTextResId: Int
+        )
+        fun showCompleteView(show: Boolean)
     }
 
-    /**
-     * Abstraction of SelectConnections Presenter
-     * @see SelectConnectionsPresenter
-     */
     interface Presenter {
         var viewContract: View?
-        fun onListItemClick(connectionGuid: String)
+        fun setInitialData(connectionGuid: String, actionDeepLinkData: ActionDeepLinkData)
         fun getTitleResId(): Int
+        fun onViewCreated()
+        fun onViewClick(viewId: Int)
     }
 }

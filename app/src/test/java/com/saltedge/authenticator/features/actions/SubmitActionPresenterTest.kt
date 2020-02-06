@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,12 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.actions
+package com.saltedge.authenticator.features.actions
 
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_API_RESPONSE
-import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
 import com.saltedge.authenticator.sdk.model.ApiErrorData
 import com.saltedge.authenticator.sdk.model.response.ActionData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
@@ -38,7 +36,7 @@ import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class ActionPresenterTest {
+class SubmitActionPresenterTest {
 
     @Test
     @Throws(Exception::class)
@@ -101,118 +99,6 @@ class ActionPresenterTest {
         presenter.onActionInitSuccess(response = connectUrlData)
 
         Assert.assertFalse(presenter.showCompleteView)
-    }
-
-    /**
-     * Test onDestroyView() when guid is not empty and accessToken is empty
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onDestroyViewTestCase1() {
-        val connection = Connection().apply {
-            guid = "guid2"
-            accessToken = ""
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        val actionDeepLinkData = ActionDeepLinkData(
-            actionUuid = "actionUuid",
-            connectUrl = "connectUrl",
-            returnTo = "returnTo"
-        )
-        Mockito.`when`(mockConnectionsRepository.getByGuid("guid2")).thenReturn(connection)
-        val presenter = createPresenter()
-        presenter.setInitialData(
-            connectionGuid = "guid2",
-            actionDeepLinkData = actionDeepLinkData
-        )
-        presenter.onDestroyView()
-
-        Mockito.verify(mockKeyStoreManager).deleteKeyPair("guid2")
-    }
-
-    /**
-     * Test onDestroyView() when guid and accessToken is not empty
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onDestroyViewTestCase2() {
-        val connection = Connection().apply {
-            guid = "guid2"
-            accessToken = "accessToken"
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        val actionDeepLinkData = ActionDeepLinkData(
-            actionUuid = "actionUuid",
-            connectUrl = "connectUrl",
-            returnTo = "returnTo"
-        )
-        Mockito.`when`(mockConnectionsRepository.getByGuid("guid2")).thenReturn(connection)
-        val presenter = createPresenter()
-        presenter.setInitialData(
-            connectionGuid = "",
-            actionDeepLinkData = actionDeepLinkData
-        )
-        presenter.onDestroyView()
-
-        Mockito.never()
-    }
-
-    /**
-     * Test onDestroyView() when guid and accessToken are empty
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onDestroyViewTestCase3() {
-        val connection = Connection().apply {
-            guid = "guid2"
-            accessToken = ""
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        val actionDeepLinkData = ActionDeepLinkData(
-            actionUuid = "actionUuid",
-            connectUrl = "connectUrl",
-            returnTo = "returnTo"
-        )
-        Mockito.`when`(mockConnectionsRepository.getByGuid("guid2")).thenReturn(connection)
-        val presenter = createPresenter()
-        presenter.setInitialData(
-            connectionGuid = "guid2",
-            actionDeepLinkData = actionDeepLinkData
-        )
-        presenter.onDestroyView()
-
-        Mockito.never()
-    }
-
-    /**
-     * Test onDestroyView() when accessToken is not empty and guid is empty
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onDestroyViewTestCase4() {
-        val connection = Connection().apply {
-            guid = "guid2"
-            accessToken = "accessToken"
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        val actionDeepLinkData = ActionDeepLinkData(
-            actionUuid = "actionUuid",
-            connectUrl = "connectUrl",
-            returnTo = "returnTo"
-        )
-        Mockito.`when`(mockConnectionsRepository.getByGuid("guid2")).thenReturn(connection)
-        val presenter = createPresenter()
-        presenter.setInitialData(
-            connectionGuid = "guid2",
-            actionDeepLinkData = actionDeepLinkData
-        )
-        presenter.onDestroyView()
-
-        Mockito.never()
     }
 
     /**
@@ -287,10 +173,10 @@ class ActionPresenterTest {
     private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
     private val mockKeyStoreManager = Mockito.mock(KeyStoreManagerAbs::class.java)
     private val mockApiManager = Mockito.mock(AuthenticatorApiManagerAbs::class.java)
-    private val mockView = Mockito.mock(ActionContract.View::class.java)
+    private val mockView = Mockito.mock(SubmitActionContract.View::class.java)
 
-    private fun createPresenter(viewContract: ActionContract.View? = null): ActionPresenter {
-        return ActionPresenter(
+    private fun createPresenter(viewContract: SubmitActionContract.View? = null): SubmitActionPresenter {
+        return SubmitActionPresenter(
             appContext = TestAppTools.applicationContext,
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,

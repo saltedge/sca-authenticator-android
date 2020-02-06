@@ -31,8 +31,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
-import com.saltedge.authenticator.features.connections.actions.ActionDataResult
-import com.saltedge.authenticator.features.connections.actions.ActionFragment
+import com.saltedge.authenticator.features.actions.NewAuthorizationListener
+import com.saltedge.authenticator.features.actions.ActionFragment
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.connect.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
@@ -47,6 +47,7 @@ import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.realm.RealmManager
 import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
+import com.saltedge.authenticator.sdk.model.AuthorizationIdentifier
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -61,7 +62,7 @@ class MainActivity : LockableActivity(),
     NetworkStateChangeListener,
     SnackbarAnchorContainer,
     ConnectionSelectorResult,
-    ActionDataResult {
+    NewAuthorizationListener {
 
     private val presenter = MainActivityPresenter(
         viewContract = this,
@@ -183,12 +184,12 @@ class MainActivity : LockableActivity(),
         )
     }
 
-    override fun onNewAuthorizationResult(authorizationID: String, connectionID: String) {
+    override fun onNewAuthorization(authorizationIdentifier: AuthorizationIdentifier) {
         this.finishFragment()
         this.addFragment(
             AuthorizationDetailsFragment.newInstance(
-                connectionId = connectionID,
-                authorizationId = authorizationID
+                connectionId = authorizationIdentifier.connectionID,
+                authorizationId = authorizationIdentifier.authorizationID
             )
         )
     }

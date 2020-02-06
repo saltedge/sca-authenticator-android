@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,30 +18,11 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.actions
+package com.saltedge.authenticator.features.actions
 
-import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
+import com.saltedge.authenticator.sdk.model.AuthorizationIdentifier
 
-interface ActionContract {
-
-    interface View {
-        fun updateViewsContent()
-        fun closeView()
-        fun showErrorAndFinish(message: String)
-        fun returnActionWithConnectionId(authorizationID: String, connectionID: String)
-    }
-
-    interface Presenter {
-        var viewContract: View?
-        val iconResId: Int
-        val completeTitle: String
-        val completeMessage: String
-        val mainActionTextResId: Int
-        var showCompleteView: Boolean
-        fun setInitialData(connectionGuid: String, actionDeepLinkData: ActionDeepLinkData)
-        fun onDestroyView()
-        fun getTitleResId(): Int
-        fun onViewCreated()
-        fun onViewClick(viewId: Int)
-    }
+interface NewAuthorizationListener {
+    fun onNewAuthorization(authorizationIdentifier: AuthorizationIdentifier)
 }
+

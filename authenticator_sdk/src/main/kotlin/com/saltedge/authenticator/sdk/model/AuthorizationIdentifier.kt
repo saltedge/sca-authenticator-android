@@ -18,8 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.actions
+package com.saltedge.authenticator.sdk.model
 
-interface ActionDataResult {
-    fun onNewAuthorizationResult(authorizationID: String, connectionID: String)
-}
+//TODO: Use where we use authorizationID with connectionID
+data class AuthorizationIdentifier(val authorizationID: String, val connectionID: String)

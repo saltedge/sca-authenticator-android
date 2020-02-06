@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +18,15 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.select
+package com.saltedge.authenticator.features.actions.di
 
-import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.di.FragmentScope
+import com.saltedge.authenticator.features.actions.ActionFragment
+import dagger.Subcomponent
 
-class SelectConnectionsPresenter : SelectConnectionsContract.Presenter {
+@FragmentScope
+@Subcomponent(modules = [ActionModule::class])
+interface ActionComponent {
 
-    override var viewContract: SelectConnectionsContract.View? = null
-
-    override fun onListItemClick(connectionGuid: String) {
-        viewContract?.returnConnection(connectionGuid)
-    }
-
-    override fun getTitleResId(): Int = R.string.choose_connections_feature_title
+    fun inject(fragment: ActionFragment)
 }

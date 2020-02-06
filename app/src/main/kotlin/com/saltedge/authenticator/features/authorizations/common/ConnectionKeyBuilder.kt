@@ -65,7 +65,11 @@ fun createConnectionAndKey(
 }
 
 /**
- * Create connection with private key for signature
+ *  Find Connections by related Private Key
+ *
+ *  @param connection Connection
+ *  @param keyStoreManager data source of keys
+ *  @return ConnectionAndKey
  */
 fun createConnectionAndKey(
     connection: ConnectionAbs,

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.actions
+package com.saltedge.authenticator.features.actions
 
 import android.content.DialogInterface
 import android.os.Bundle
@@ -27,34 +27,33 @@ import android.view.View
 import android.view.ViewGroup
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
-import com.saltedge.authenticator.features.connections.actions.di.ActionModule
+import com.saltedge.authenticator.features.actions.di.ActionModule
 import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
+import com.saltedge.authenticator.sdk.model.AuthorizationIdentifier
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_action.*
-import kotlinx.android.synthetic.main.fragment_connect_processing.view.*
 import javax.inject.Inject
 
 const val KEY_ACTION_DEEP_LINK_DATA = "ACTION_DEEP_LINK_DATA"
 
 class ActionFragment : BaseFragment(),
-    ActionContract.View,
+    SubmitActionContract.View,
     UpActionImageListener,
     View.OnClickListener {
 
     @Inject
-    lateinit var presenterContract: ActionContract.Presenter
+    lateinit var presenterContract: SubmitActionContract.Presenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectDependencies()
-        arguments?.getString(KEY_GUID)?.let {
-            presenterContract.setInitialData(
-                connectionGuid = it,
-                actionDeepLinkData = arguments?.getSerializable(KEY_ACTION_DEEP_LINK_DATA) as ActionDeepLinkData
-            )
-        }
+        presenterContract.setInitialData(
+            connectionGuid = arguments?.getString(KEY_GUID) ?: return,
+            actionDeepLinkData = arguments?.getSerializable(KEY_ACTION_DEEP_LINK_DATA) as? ActionDeepLinkData
+                ?: return
+        )
     }
 
     override fun onCreateView(
@@ -69,7 +68,6 @@ class ActionFragment : BaseFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         completeView?.setOnClickListener(this)
-        updateViewsContent()
         presenterContract.viewContract = this
         presenterContract.onViewCreated()
     }
@@ -77,21 +75,6 @@ class ActionFragment : BaseFragment(),
     override fun onDestroyView() {
         presenterContract.viewContract = null
         super.onDestroyView()
-    }
-
-    override fun onDestroy() {
-        presenterContract.onDestroyView()
-        super.onDestroy()
-    }
-
-    override fun updateViewsContent() {
-        completeView?.setIconResource(presenterContract.iconResId)
-        completeView?.setTitleText(presenterContract.completeTitle)
-        completeView?.setSubtitleText(presenterContract.completeMessage)
-        completeView?.setMainActionText(presenterContract.mainActionTextResId)
-        fragmentActionProcessing.titleView.text = getString(R.string.action_status_in_progress)
-
-        updateLayoutsVisibility()
     }
 
     override fun getUpActionImageResId(): ResId? = R.drawable.ic_close_white_24dp
@@ -104,16 +87,13 @@ class ActionFragment : BaseFragment(),
         activity?.showWarningDialog(
             message = message,
             listener = DialogInterface.OnClickListener { _: DialogInterface, _: Int ->
-                activity?.finishFragment()
+                closeView()
             }
         )
     }
 
-    override fun returnActionWithConnectionId(authorizationID: String, connectionID: String) {
-        (activity as? ActionDataResult)?.onNewAuthorizationResult(
-            authorizationID = authorizationID,
-            connectionID = connectionID
-        )
+    override fun returnActionWithConnectionId(authorizationIdentifier: AuthorizationIdentifier) {
+        (activity as? NewAuthorizationListener)?.onNewAuthorization(authorizationIdentifier)
     }
 
     override fun onClick(v: View?) {
@@ -126,15 +106,27 @@ class ActionFragment : BaseFragment(),
         )
     }
 
-    private fun updateLayoutsVisibility() {
-        fragmentActionProcessing?.setVisible(show = !presenterContract.showCompleteView)
-        completeView?.setVisible(show = presenterContract.showCompleteView)
+    override fun updateCompleteViewContent(
+        iconResId: Int,
+        completeTitle: String,
+        completeMessage: String,
+        mainActionTextResId: Int
+    ) {
+        completeView?.setIconResource(iconResId)
+        completeView?.setTitleText(completeTitle)
+        completeView?.setSubtitleText(completeMessage)
+        completeView?.setMainActionText(mainActionTextResId)
+    }
+
+    override fun showCompleteView(show: Boolean) {
+        completeView?.setVisible(show)
+        fragmentActionProcessingLayout?.setVisible(!show)
     }
 
     companion object {
         fun newInstance(
             connectionGuid: String,
-            actionDeepLinkData: ActionDeepLinkData? = null
+            actionDeepLinkData: ActionDeepLinkData
         ): ActionFragment {
             return ActionFragment().apply {
                 arguments = Bundle().apply {

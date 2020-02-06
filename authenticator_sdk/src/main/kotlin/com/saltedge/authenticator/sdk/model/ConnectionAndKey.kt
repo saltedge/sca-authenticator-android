@@ -22,6 +22,7 @@ package com.saltedge.authenticator.sdk.model
 
 import java.security.PrivateKey
 
+//TODO: Rename ConnectionAndKey
 /**
  * Container for Connection model and related PrivateKey
  */

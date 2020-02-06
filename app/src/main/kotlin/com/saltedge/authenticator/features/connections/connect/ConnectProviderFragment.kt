@@ -156,7 +156,7 @@ class ConnectProviderFragment : BaseFragment(),
     override fun getUpActionImageResId(): ResId? = R.drawable.ic_close_white_24dp
 
     private fun updateLayoutsVisibility() {
-        fragmentConnectProcessing?.setVisible(show = presenterContract.shouldShowProgressView)
+        fragmentConnectProcessingLayout?.setVisible(show = presenterContract.shouldShowProgressView)
         completeView?.setVisible(show = presenterContract.shouldShowCompleteView)
         connectWebView?.setVisible(show = presenterContract.shouldShowWebView)
     }

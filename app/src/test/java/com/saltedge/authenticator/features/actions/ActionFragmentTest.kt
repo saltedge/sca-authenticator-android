@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,34 +18,34 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.actions.di
+package com.saltedge.authenticator.features.actions
 
-import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.testTools.TestAppTools
-import org.junit.Assert.assertNotNull
+import com.saltedge.authenticator.app.KEY_GUID
+import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
+import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class ActionModuleTest {
+class ActionFragmentTest {
 
     @Test
     @Throws(Exception::class)
-    fun providePresenterTest() {
-        val module = ActionModule()
-
-        assertNotNull(
-            module.providePresenter(
-                appContext = TestAppTools.applicationContext,
-                connections = mockConnectionsRepository,
-                keyStoreManager = mockKeyStoreManager
-            )
+    fun newInstanceTestCase() {
+        val actionDeepLinkData = ActionDeepLinkData(
+            actionUuid = "actionUuid",
+            connectUrl = "connectUrl",
+            returnTo = "returnTo"
         )
-    }
+        val arguments = ActionFragment.newInstance(
+            connectionGuid = "guid1",
+            actionDeepLinkData = actionDeepLinkData
+        ).arguments
 
-    private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
-    private val mockKeyStoreManager = Mockito.mock(KeyStoreManagerAbs::class.java)
+        assertThat(arguments?.getString(KEY_GUID), equalTo("guid1"))
+        assertThat(arguments?.getSerializable(KEY_ACTION_DEEP_LINK_DATA) as? ActionDeepLinkData,
+            equalTo(actionDeepLinkData))
+    }
 }

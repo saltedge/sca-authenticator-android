@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
-    Copyright (c) 2019 Salt Edge Inc.
+    Copyright (c) 2020 Salt Edge Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
     android:layout_height="match_parent">
 
     <include
-        android:id="@+id/fragmentActionProcessing"
+        android:id="@+id/fragmentActionProcessingLayout"
         layout="@layout/fragment_connect_processing" />
 
     <com.saltedge.authenticator.widget.InfoView

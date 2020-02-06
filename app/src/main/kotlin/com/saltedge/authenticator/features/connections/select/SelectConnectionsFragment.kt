@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,10 +38,8 @@ import kotlinx.android.synthetic.main.fragment_select_connections.*
 
 const val KEY_CONNECTIONS = "CONNECTIONS"
 
-class SelectConnectionsFragment : BaseFragment(), ListItemClickListener,
-    SelectConnectionsContract.View, UpActionImageListener {
+class SelectConnectionsFragment : BaseFragment(), ListItemClickListener, UpActionImageListener {
 
-    var presenterContract  = SelectConnectionsPresenter()
     private val adapter = ConnectionsListAdapter(clickListener = this)
     private var headerDecorator: SpaceItemDecoration? = null
 
@@ -56,7 +54,7 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activityComponents?.updateAppbarTitleWithFabAction(getString(presenterContract.getTitleResId()))
+        activityComponents?.updateAppbarTitleWithFabAction(getString(R.string.choose_connections_feature_title))
         return inflater.inflate(R.layout.fragment_select_connections, container, false)
     }
 
@@ -75,25 +73,12 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener,
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        presenterContract.viewContract = this
-    }
-
-    override fun onStop() {
-        presenterContract.viewContract = null
-        super.onStop()
-    }
-
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
-        presenterContract.onListItemClick((adapter.getItem(itemIndex) as ConnectionViewModel).guid)
+        val connectionGuid = (adapter.getItem(itemIndex) as ConnectionViewModel).guid
+        (activity as? ConnectionSelectorResult)?.onConnectionSelected(connectionGuid)
     }
 
     override fun getUpActionImageResId(): ResId? = R.drawable.ic_close_white_24dp
-
-    override fun returnConnection(connectionGuid: String) {
-        (activity as? ConnectionSelectorResult)?.onConnectionSelected(connectionGuid)
-    }
 
     companion object {
         fun newInstance(connections: List<ConnectionViewModel>): SelectConnectionsFragment {
