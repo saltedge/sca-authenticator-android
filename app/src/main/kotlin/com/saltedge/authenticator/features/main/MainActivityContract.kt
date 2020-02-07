@@ -22,6 +22,7 @@ package com.saltedge.authenticator.features.main
 
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
+import com.saltedge.authenticator.sdk.model.GUID
 
 interface MainActivityContract {
 
@@ -40,8 +41,8 @@ interface MainActivityContract {
         fun closeView()
         fun updateNavigationViewsContent()
         fun popBackStack()
-        fun showError()
-        fun showSelectorFragment(connections: List<ConnectionViewModel>)
-        fun showActionFragment(connectionGuid: String, actionDeepLinkData: ActionDeepLinkData)
+        fun showNoConnectionsError()
+        fun showConnectionsSelectorFragment(connections: List<ConnectionViewModel>)
+        fun showSubmitActionFragment(connectionGuid: GUID, actionDeepLinkData: ActionDeepLinkData)
     }
 }

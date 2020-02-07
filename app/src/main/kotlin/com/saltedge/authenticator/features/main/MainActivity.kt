@@ -32,11 +32,11 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
-import com.saltedge.authenticator.features.actions.ActionFragment
+import com.saltedge.authenticator.features.actions.SubmitActionFragment
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.connect.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
-import com.saltedge.authenticator.features.connections.select.ConnectionSelectorResult
+import com.saltedge.authenticator.features.connections.select.ConnectionSelectorListener
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment
 import com.saltedge.authenticator.features.security.LockableActivity
 import com.saltedge.authenticator.features.security.UnlockAppInputView
@@ -48,6 +48,7 @@ import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.realm.RealmManager
 import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
 import com.saltedge.authenticator.sdk.model.AuthorizationIdentifier
+import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -61,12 +62,13 @@ class MainActivity : LockableActivity(),
     FragmentManager.OnBackStackChangedListener,
     NetworkStateChangeListener,
     SnackbarAnchorContainer,
-    ConnectionSelectorResult,
+    ConnectionSelectorListener,
     NewAuthorizationListener {
 
     private val presenter = MainActivityPresenter(
         viewContract = this,
-        connectionsRepository = ConnectionsRepository
+        connectionsRepository = ConnectionsRepository,
+        appContext = this
     )
     private val connectivityReceiver = ConnectivityReceiver()
 
@@ -185,7 +187,6 @@ class MainActivity : LockableActivity(),
     }
 
     override fun onNewAuthorization(authorizationIdentifier: AuthorizationIdentifier) {
-        this.finishFragment()
         this.addFragment(
             AuthorizationDetailsFragment.newInstance(
                 connectionId = authorizationIdentifier.connectionID,
@@ -202,7 +203,7 @@ class MainActivity : LockableActivity(),
         supportFragmentManager.popBackStack()
     }
 
-    override fun showError() {
+    override fun showNoConnectionsError() {
         val snackbar = this.buildWarning(
             text = getString(R.string.connections_list_no_connections),
             snackBarDuration = 5000
@@ -210,20 +211,19 @@ class MainActivity : LockableActivity(),
         snackbar?.show()
     }
 
-
-    override fun showActionFragment(
-        connectionGuid: String,
+    override fun showSubmitActionFragment(
+        connectionGuid: GUID,
         actionDeepLinkData: ActionDeepLinkData
     ) {
         this.addFragment(
-            ActionFragment.newInstance(
+            SubmitActionFragment.newInstance(
                 connectionGuid = connectionGuid,
                 actionDeepLinkData = actionDeepLinkData
             )
         )
     }
 
-    override fun showSelectorFragment(connections: List<ConnectionViewModel>) {
+    override fun showConnectionsSelectorFragment(connections: List<ConnectionViewModel>) {
         this.addFragment(SelectConnectionsFragment.newInstance(connections = connections))
     }
 
@@ -254,7 +254,6 @@ class MainActivity : LockableActivity(),
     }
 
     override fun onConnectionSelected(connectionGuid: String) {
-        this.finishFragment()
         presenter.onConnectionSelected(connectionGuid)
     }
 

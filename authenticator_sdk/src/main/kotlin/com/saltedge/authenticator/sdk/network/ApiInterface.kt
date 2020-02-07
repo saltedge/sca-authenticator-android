@@ -45,7 +45,7 @@ interface ApiInterface {
     fun postAction(
         @Url requestUrl: String,
         @HeaderMap headersMap: Map<String, String>
-    ): Call<ActionResponseData>
+    ): Call<SubmitActionResponseData>
 
     @DELETE
     fun deleteAccessToken(

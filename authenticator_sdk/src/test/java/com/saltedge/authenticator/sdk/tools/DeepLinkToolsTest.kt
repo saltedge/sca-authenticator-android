@@ -71,11 +71,11 @@ class DeepLinkToolsTest {
     @Test
     @Throws(Exception::class)
     fun extractActionExtractDeepLinkDataTest() {
-        assertNull("".extractActionExtractDeepLinkData())
-        assertNull("authenticator://saltedge.com/action?action_uuid=123456".extractActionExtractDeepLinkData())
+        assertNull("".extractActionDeepLinkData())
+        assertNull("authenticator://saltedge.com/action?action_uuid=123456".extractActionDeepLinkData())
         assertThat(
             ("authenticator://saltedge.com/action?action_uuid=123456" +
-                "&connect_url=https://www.saltedge.com/").extractActionExtractDeepLinkData(),
+                "&connect_url=https://www.saltedge.com/").extractActionDeepLinkData(),
             equalTo(
                 ActionDeepLinkData(
                     actionUuid = "123456",
@@ -86,7 +86,7 @@ class DeepLinkToolsTest {
         )
         assertThat(
             ("authenticator://saltedge.com/action?action_uuid=123456&return_to=https://www.saltedge.com/" +
-                "&connect_url=http://www.fentury.com/").extractActionExtractDeepLinkData(),
+                "&connect_url=http://www.fentury.com/").extractActionDeepLinkData(),
             equalTo(
                 ActionDeepLinkData(
                     actionUuid = "123456",

@@ -25,7 +25,8 @@ import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_API_RESPONSE
 import com.saltedge.authenticator.sdk.model.ApiErrorData
-import com.saltedge.authenticator.sdk.model.response.ActionData
+import com.saltedge.authenticator.sdk.model.AuthorizationIdentifier
+import com.saltedge.authenticator.sdk.model.response.SubmitActionData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.hamcrest.CoreMatchers
@@ -57,7 +58,7 @@ class SubmitActionPresenterTest {
 
         Assert.assertThat(
             presenter.getTitleResId(),
-            CoreMatchers.equalTo(R.string.connections_new_connection)
+            CoreMatchers.equalTo(R.string.action_authentication)
         )
     }
 
@@ -66,56 +67,23 @@ class SubmitActionPresenterTest {
      */
     @Test
     @Throws(Exception::class)
-    fun showProcessingViewTestCase1() {
+    fun onActionInitSuccessCase1() {
         val presenter = createPresenter(viewContract = mockView)
-
-        Assert.assertFalse(presenter.showCompleteView)
-
-        val connectUrlData = ActionData(
+        val connectUrlData = SubmitActionData(
             success = true,
             authorizationId = "",
             connectionId = ""
         )
         presenter.onActionInitSuccess(response = connectUrlData)
 
-        Assert.assertTrue(presenter.showCompleteView)
-    }
 
-    /**
-     * Show complete view when authorizationId and connectionId are not empty
-     */
-    @Test
-    @Throws(Exception::class)
-    fun showProcessingViewTestCase2() {
-        val presenter = createPresenter(viewContract = mockView)
-
-        Assert.assertFalse(presenter.showCompleteView)
-
-        val connectUrlData = ActionData(
-            success = true,
-            authorizationId = "authorizationId",
-            connectionId = "connectionId"
+        Mockito.verify(mockView).setProcessingVisibility(false)
+        Mockito.verify(mockView).updateCompleteViewContent(
+            iconResId = R.drawable.ic_complete_ok_70,
+            completeTitleResId = R.string.action_feature_title,
+            completeMessageResId = R.string.action_feature_description,
+            mainActionTextResId = R.string.actions_proceed
         )
-        presenter.onActionInitSuccess(response = connectUrlData)
-
-        Assert.assertFalse(presenter.showCompleteView)
-    }
-
-    /**
-     * Test onActionInitSuccess when success is true and connectionId with authorizationId are empty
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onConnectionInitSuccessTestCase1() {
-        val presenter = createPresenter(viewContract = mockView)
-        val actionData = ActionData(
-            success = true,
-            connectionId = "",
-            authorizationId = ""
-        )
-        presenter.onActionInitSuccess(response = actionData)
-
-        Mockito.verify(mockView).updateViewsContent()
     }
 
     /**
@@ -123,20 +91,23 @@ class SubmitActionPresenterTest {
      */
     @Test
     @Throws(Exception::class)
-    fun onConnectionInitSuccessTestCase2() {
+    fun onActionInitSuccessCase2() {
         val presenter = createPresenter(viewContract = mockView)
-        val actionData = ActionData(
-            success = true,
-            connectionId = "connectionId",
-            authorizationId = "authorizationId"
-        )
-        presenter.onActionInitSuccess(response = actionData)
 
-        Mockito.verify(mockView).returnActionWithConnectionId(
-            authorizationID = "authorizationId",
-            connectionID = "connectionId"
+        val connectUrlData = SubmitActionData(
+            success = true,
+            authorizationId = "authorizationId",
+            connectionId = "connectionId"
         )
-        Mockito.never()
+        presenter.onActionInitSuccess(response = connectUrlData)
+
+        Mockito.verify(mockView).closeView()
+        Mockito.verify(mockView).setResultAuthorizationIdentifier(
+            authorizationIdentifier = AuthorizationIdentifier(
+                authorizationID = "authorizationId",
+                connectionID = "connectionId"
+            )
+        )
     }
 
     /**
@@ -146,7 +117,7 @@ class SubmitActionPresenterTest {
     @Throws(Exception::class)
     fun onConnectionInitSuccessTestCase3() {
         val presenter = createPresenter(viewContract = mockView)
-        val actionData = ActionData(
+        val actionData = SubmitActionData(
             success = false,
             connectionId = "",
             authorizationId = ""
@@ -167,6 +138,13 @@ class SubmitActionPresenterTest {
             )
         )
 
+        Mockito.verify(mockView).setProcessingVisibility(false)
+        Mockito.verify(mockView).updateCompleteViewContent(
+            iconResId = R.drawable.ic_auth_error_70,
+            completeTitleResId = R.string.action_error_title,
+            completeMessageResId = R.string.action_error_description,
+            mainActionTextResId = R.string.actions_try_again
+        )
         Mockito.verify(mockView).showErrorAndFinish("test error")
     }
 

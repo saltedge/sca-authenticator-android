@@ -30,12 +30,12 @@ import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class ActionModuleTest {
+class SubmitActionModuleTest {
 
     @Test
     @Throws(Exception::class)
     fun providePresenterTest() {
-        val module = ActionModule()
+        val module = SubmitActionModule()
 
         assertNotNull(
             module.providePresenter(

@@ -18,8 +18,12 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.select
+package com.saltedge.authenticator.sdk.contract
 
-interface ConnectionSelectorResult {
-    fun onConnectionSelected(connectionGuid: String)
+import com.saltedge.authenticator.sdk.model.ApiErrorData
+import com.saltedge.authenticator.sdk.model.response.SubmitActionData
+
+interface ActionSubmitListener {
+    fun onActionInitFailure(error: ApiErrorData)
+    fun onActionInitSuccess(response: SubmitActionData)
 }

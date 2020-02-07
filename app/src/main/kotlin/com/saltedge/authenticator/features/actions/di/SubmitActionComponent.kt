@@ -20,31 +20,13 @@
  */
 package com.saltedge.authenticator.features.actions.di
 
-import android.content.Context
 import com.saltedge.authenticator.app.di.FragmentScope
-import com.saltedge.authenticator.features.actions.SubmitActionContract
-import com.saltedge.authenticator.features.actions.SubmitActionPresenter
-import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.sdk.AuthenticatorApiManager
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import dagger.Module
-import dagger.Provides
+import com.saltedge.authenticator.features.actions.SubmitActionFragment
+import dagger.Subcomponent
 
-@Module
-class ActionModule {
+@FragmentScope
+@Subcomponent(modules = [SubmitActionModule::class])
+interface SubmitActionComponent {
 
-    @FragmentScope
-    @Provides
-    fun providePresenter(
-        appContext: Context,
-        keyStoreManager: KeyStoreManagerAbs,
-        connections: ConnectionsRepositoryAbs
-        ): SubmitActionContract.Presenter {
-        return SubmitActionPresenter(
-            appContext = appContext,
-            keyStoreManager = keyStoreManager,
-            connectionsRepository = connections,
-            apiManager = AuthenticatorApiManager
-        )
-    }
+    fun inject(fragment: SubmitActionFragment)
 }

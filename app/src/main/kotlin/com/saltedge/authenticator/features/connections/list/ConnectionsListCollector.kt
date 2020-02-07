@@ -35,7 +35,13 @@ fun collectAllConnectionsViewModels(
     repository: ConnectionsRepositoryAbs,
     context: Context
 ): List<ConnectionViewModel> {
-    return repository.getAllConnections().sortedBy { it.createdAt }.map { connection ->
+    return repository.getAllConnections()
+        .sortedBy { it.createdAt }
+        .convertConnectionsToViewModels(context)
+}
+
+fun List<Connection>.convertConnectionsToViewModels(context: Context): List<ConnectionViewModel> {
+    return this.map { connection ->
         ConnectionViewModel(
             guid = connection.guid,
             code = connection.code,

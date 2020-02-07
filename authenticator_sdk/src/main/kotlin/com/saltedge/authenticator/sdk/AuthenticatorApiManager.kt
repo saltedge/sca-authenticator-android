@@ -166,8 +166,12 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
             )
     }
 
-    override fun sendAction(connectionAndKey: ConnectionAndKey, resultCallback: ActionInitResult, actionUUID: String) {
-        ActionConnector(RestClient.apiInterface, resultCallback)
+    override fun sendAction(
+        actionUUID: String,
+        connectionAndKey: ConnectionAndKey,
+        resultCallback: ActionSubmitListener
+    ) {
+        SubmitActionConnector(RestClient.apiInterface, resultCallback)
             .postActionData(
                 actionUUID = actionUUID,
                 connectionAndKey = connectionAndKey

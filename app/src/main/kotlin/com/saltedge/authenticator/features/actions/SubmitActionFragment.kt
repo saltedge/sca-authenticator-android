@@ -27,18 +27,16 @@ import android.view.View
 import android.view.ViewGroup
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
-import com.saltedge.authenticator.features.actions.di.ActionModule
+import com.saltedge.authenticator.features.actions.di.SubmitActionModule
 import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
 import com.saltedge.authenticator.sdk.model.AuthorizationIdentifier
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
-import kotlinx.android.synthetic.main.fragment_action.*
+import kotlinx.android.synthetic.main.fragment_submit_action.*
 import javax.inject.Inject
 
-const val KEY_ACTION_DEEP_LINK_DATA = "ACTION_DEEP_LINK_DATA"
-
-class ActionFragment : BaseFragment(),
+class SubmitActionFragment : BaseFragment(),
     SubmitActionContract.View,
     UpActionImageListener,
     View.OnClickListener {
@@ -62,7 +60,7 @@ class ActionFragment : BaseFragment(),
         savedInstanceState: Bundle?
     ): View? {
         activityComponents?.updateAppbarTitleWithFabAction(getString(presenterContract.getTitleResId()))
-        return inflater.inflate(R.layout.fragment_action, container, false)
+        return inflater.inflate(R.layout.fragment_submit_action, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -92,7 +90,7 @@ class ActionFragment : BaseFragment(),
         )
     }
 
-    override fun returnActionWithConnectionId(authorizationIdentifier: AuthorizationIdentifier) {
+    override fun setResultAuthorizationIdentifier(authorizationIdentifier: AuthorizationIdentifier) {
         (activity as? NewAuthorizationListener)?.onNewAuthorization(authorizationIdentifier)
     }
 
@@ -101,34 +99,36 @@ class ActionFragment : BaseFragment(),
     }
 
     private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addActionModule(ActionModule())?.inject(
+        authenticatorApp?.appComponent?.addActionModule(SubmitActionModule())?.inject(
             this
         )
     }
 
     override fun updateCompleteViewContent(
         iconResId: Int,
-        completeTitle: String,
-        completeMessage: String,
+        completeTitleResId: Int,
+        completeMessageResId: Int,
         mainActionTextResId: Int
     ) {
         completeView?.setIconResource(iconResId)
-        completeView?.setTitleText(completeTitle)
-        completeView?.setSubtitleText(completeMessage)
+        completeView?.setTitleText(completeTitleResId)
+        completeView?.setSubtitleText(completeMessageResId)
         completeView?.setMainActionText(mainActionTextResId)
     }
 
-    override fun showCompleteView(show: Boolean) {
-        completeView?.setVisible(show)
-        fragmentActionProcessingLayout?.setVisible(!show)
+    override fun setProcessingVisibility(show: Boolean) {
+        completeView?.setVisible(!show)
+        fragmentActionProcessingLayout?.setVisible(show)
     }
 
     companion object {
+        const val KEY_ACTION_DEEP_LINK_DATA = "ACTION_DEEP_LINK_DATA"
+
         fun newInstance(
             connectionGuid: String,
             actionDeepLinkData: ActionDeepLinkData
-        ): ActionFragment {
-            return ActionFragment().apply {
+        ): SubmitActionFragment {
+            return SubmitActionFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable(KEY_ACTION_DEEP_LINK_DATA, actionDeepLinkData)
                     putString(KEY_GUID, connectionGuid)

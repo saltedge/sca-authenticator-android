@@ -30,7 +30,7 @@ const val API_VERSION = "1"
 private const val API_VERSION_NAMESPACE = "api/authenticator/v$API_VERSION"
 const val API_CONNECTIONS = "$API_VERSION_NAMESPACE/connections"
 const val API_AUTHORIZATIONS = "$API_VERSION_NAMESPACE/authorizations"
-const val API_ACTIONS = "$API_VERSION_NAMESPACE/action"
+const val API_ACTION = "$API_VERSION_NAMESPACE/action"
 
 const val DEFAULT_RETURN_URL = "authenticator://oauth/redirect"
 const val DEFAULT_PLATFORM_NAME = "android"
@@ -59,8 +59,6 @@ const val KEY_AUTHORIZATION_CODE = "authorization_code"
 const val KEY_CODE = "code"
 const val KEY_CREATED_AT = "created_at"
 const val KEY_UPDATED_AT = "updated_at"
-
-const val KEY_CONNECT_URL_PARAM = "connectUrl"
 
 const val KEY_TITLE = "title"
 const val KEY_DESCRIPTION = "description"

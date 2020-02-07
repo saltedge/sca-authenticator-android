@@ -46,9 +46,9 @@ interface AuthenticatorApiManagerAbs {
     )
 
     fun sendAction(
+        actionUUID: String,
         connectionAndKey: ConnectionAndKey,
-        resultCallback: ActionInitResult,
-        actionUUID: String
+        resultCallback: ActionSubmitListener
     )
 
     /**

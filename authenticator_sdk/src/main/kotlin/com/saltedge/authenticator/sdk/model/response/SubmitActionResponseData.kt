@@ -26,11 +26,11 @@ import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.constants.KEY_SUCCESS
 
-data class ActionResponseData(
-    @SerializedName(KEY_DATA) var data: ActionData? = null
+data class SubmitActionResponseData(
+    @SerializedName(KEY_DATA) var data: SubmitActionData? = null
 )
 
-data class ActionData(
+data class SubmitActionData(
     @SerializedName(KEY_SUCCESS) var success: Boolean? = null,
     @SerializedName(KEY_CONNECTION_ID) var connectionId: String? = null,
     @SerializedName(KEY_AUTHORIZATION_ID) var authorizationId: String? = null

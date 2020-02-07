@@ -20,21 +20,21 @@
  */
 package com.saltedge.authenticator.sdk.network.connector
 
-import com.saltedge.authenticator.sdk.constants.API_ACTIONS
+import com.saltedge.authenticator.sdk.constants.API_ACTION
 import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_POST
-import com.saltedge.authenticator.sdk.contract.ActionInitResult
+import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
 import com.saltedge.authenticator.sdk.model.ApiErrorData
 import com.saltedge.authenticator.sdk.model.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.createInvalidResponseError
-import com.saltedge.authenticator.sdk.model.response.ActionResponseData
+import com.saltedge.authenticator.sdk.model.response.SubmitActionResponseData
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.ApiResponseInterceptor
 import retrofit2.Call
 
-internal class ActionConnector(
+internal class SubmitActionConnector(
     private val apiInterface: ApiInterface,
-    var resultCallback: ActionInitResult?
-): ApiResponseInterceptor<ActionResponseData>() {
+    var resultCallback: ActionSubmitListener?
+): ApiResponseInterceptor<SubmitActionResponseData>() {
 
     fun postActionData(
         actionUUID: String,
@@ -43,7 +43,7 @@ internal class ActionConnector(
         val requestData = createAuthenticatedRequestData<Nothing>(
             requestMethod = REQUEST_METHOD_POST,
             baseUrl = connectionAndKey.connection.connectUrl,
-            apiRoutePath = "$API_ACTIONS/${actionUUID}",
+            apiRoutePath = "$API_ACTION/${actionUUID}",
             accessToken = connectionAndKey.connection.accessToken,
             signPrivateKey = connectionAndKey.key
         )
@@ -55,7 +55,7 @@ internal class ActionConnector(
     }
 
 
-    override fun onSuccessResponse(call: Call<ActionResponseData>, response: ActionResponseData) {
+    override fun onSuccessResponse(call: Call<SubmitActionResponseData>, response: SubmitActionResponseData) {
         val data = response.data
         if (data == null) {
             onFailureResponse(call, createInvalidResponseError())
@@ -64,7 +64,7 @@ internal class ActionConnector(
         }
     }
 
-    override fun onFailureResponse(call: Call<ActionResponseData>, error: ApiErrorData) {
+    override fun onFailureResponse(call: Call<SubmitActionResponseData>, error: ApiErrorData) {
         resultCallback?.onActionInitFailure(error)
     }
 }

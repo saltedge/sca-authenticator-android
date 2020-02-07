@@ -28,14 +28,14 @@ interface SubmitActionContract {
     interface View {
         fun closeView()
         fun showErrorAndFinish(message: String)
-        fun returnActionWithConnectionId(authorizationIdentifier: AuthorizationIdentifier)
+        fun setResultAuthorizationIdentifier(authorizationIdentifier: AuthorizationIdentifier)
         fun updateCompleteViewContent(
             iconResId: Int,
-            completeTitle: String,
-            completeMessage: String,
+            completeTitleResId: Int,
+            completeMessageResId: Int,
             mainActionTextResId: Int
         )
-        fun showCompleteView(show: Boolean)
+        fun setProcessingVisibility(show: Boolean)
     }
 
     interface Presenter {

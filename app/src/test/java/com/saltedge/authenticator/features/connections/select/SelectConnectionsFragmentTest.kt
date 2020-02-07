@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.connections.select
 
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment.Companion.KEY_CONNECTIONS
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test

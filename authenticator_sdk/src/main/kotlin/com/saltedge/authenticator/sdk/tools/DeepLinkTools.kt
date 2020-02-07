@@ -36,7 +36,7 @@ const val KEY_RETURN_TO_PARAM = "return_to"
  * @return true if deeplink contains configuration url
  */
 fun String.isValidDeeplink(): Boolean {
-    return this.extractActionExtractDeepLinkData() != null || this.extractConnectConfigurationLink() != null
+    return this.extractActionDeepLinkData() != null || this.extractConnectConfigurationLink() != null
 }
 
 /**
@@ -67,7 +67,7 @@ fun String.extractConnectQuery(): String? {
  * @receiver deep link String (e.g. authenticator://saltedge.com/action?action_uuid=123456&return_to=http://return.com&connect_url=http://someurl.com)
  * @return ActionDeepLinkData object
  */
-fun String.extractActionExtractDeepLinkData(): ActionDeepLinkData? { //extractActionDeepLinkData
+fun String.extractActionDeepLinkData(): ActionDeepLinkData? { //extractActionDeepLinkData
     val uri = Uri.parse(this)
     return ActionDeepLinkData(
         actionUuid = uri.getQueryParameter(KEY_ACTION_UUID_PARAM) ?: return null,

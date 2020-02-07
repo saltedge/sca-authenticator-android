@@ -21,11 +21,13 @@
 package com.saltedge.authenticator.features.main
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import androidx.test.core.app.ApplicationProvider
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
-import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.list.convertConnectionsToViewModels
 import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
@@ -48,7 +50,8 @@ class MainActivityPresenterTest {
     fun getNavigationIconResourceIdTest() {
         val presenter = MainActivityPresenter(
             viewContract = mockView,
-            connectionsRepository = mockConnectionsRepository
+            connectionsRepository = mockConnectionsRepository,
+            appContext = context
         )
 
         Assert.assertNotNull(presenter.viewContract)
@@ -64,7 +67,8 @@ class MainActivityPresenterTest {
     fun launchInitialFragmentTest_normalMode() {
         val presenter = MainActivityPresenter(
             viewContract = mockView,
-            connectionsRepository = mockConnectionsRepository
+            connectionsRepository = mockConnectionsRepository,
+            appContext = context
         )
 
         Mockito.doReturn(false).`when`(mockConnectionsRepository).hasActiveConnections()
@@ -84,7 +88,8 @@ class MainActivityPresenterTest {
     fun launchInitialFragmentTest_quickConfirmMode() {
         val presenter = MainActivityPresenter(
             viewContract = mockView,
-            connectionsRepository = mockConnectionsRepository
+            connectionsRepository = mockConnectionsRepository,
+            appContext = context
         )
         presenter.launchInitialFragment(
             Intent()
@@ -102,7 +107,8 @@ class MainActivityPresenterTest {
     fun onActivityResultTest() {
         val presenter = MainActivityPresenter(
             viewContract = mockView,
-            connectionsRepository = mockConnectionsRepository
+            connectionsRepository = mockConnectionsRepository,
+            appContext = context
         )
         val intent = Intent().putExtra(
             KEY_DEEP_LINK,
@@ -152,7 +158,8 @@ class MainActivityPresenterTest {
     fun onNewIntentReceivedTest_case1() {
         val presenter = MainActivityPresenter(
             viewContract = mockView,
-            connectionsRepository = mockConnectionsRepository
+            connectionsRepository = mockConnectionsRepository,
+            appContext = context
         )
 
         presenter.onNewIntentReceived(Intent())
@@ -169,7 +176,8 @@ class MainActivityPresenterTest {
     fun onNewIntentReceivedTest_case2() {
         val presenter = MainActivityPresenter(
             viewContract = mockView,
-            connectionsRepository = mockConnectionsRepository
+            connectionsRepository = mockConnectionsRepository,
+            appContext = context
         )
 
         presenter.onNewIntentReceived(
@@ -199,7 +207,8 @@ class MainActivityPresenterTest {
     fun onNewIntentReceivedTest_case3() {
         val presenter = MainActivityPresenter(
             viewContract = mockView,
-            connectionsRepository = mockConnectionsRepository
+            connectionsRepository = mockConnectionsRepository,
+            appContext = context
         )
 
         presenter.onNewIntentReceived(
@@ -218,7 +227,8 @@ class MainActivityPresenterTest {
     fun onNewIntentReceivedTest_case4() {
         val presenter = MainActivityPresenter(
             viewContract = mockView,
-            connectionsRepository = mockConnectionsRepository
+            connectionsRepository = mockConnectionsRepository,
+            appContext = context
         )
 
         Mockito.clearInvocations(mockView)
@@ -258,7 +268,8 @@ class MainActivityPresenterTest {
     fun onNewIntentReceivedTest_case5() {
         val presenter = MainActivityPresenter(
             viewContract = mockView,
-            connectionsRepository = mockConnectionsRepository
+            connectionsRepository = mockConnectionsRepository,
+            appContext = context
         )
 
         presenter.onNewIntentReceived(
@@ -269,7 +280,7 @@ class MainActivityPresenterTest {
         )
 
         Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_connections)
-        Mockito.verify(mockView).showError()
+        Mockito.verify(mockView).showNoConnectionsError()
         Mockito.verify(mockConnectionsRepository).getByConnectUrl("http://someurl.com")
         Mockito.verifyNoMoreInteractions(mockView, mockConnectionsRepository)
     }
@@ -282,7 +293,8 @@ class MainActivityPresenterTest {
     fun onNewIntentReceivedTest_case6() {
         val presenter = MainActivityPresenter(
             viewContract = mockView,
-            connectionsRepository = mockConnectionsRepository
+            connectionsRepository = mockConnectionsRepository,
+            appContext = context
         )
         val connections = listOf(
             Connection().apply {
@@ -305,7 +317,7 @@ class MainActivityPresenterTest {
         )
 
         Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_connections)
-        Mockito.verify(mockView).showActionFragment(
+        Mockito.verify(mockView).showSubmitActionFragment(
             connectionGuid = "guid1",
             actionDeepLinkData = ActionDeepLinkData(
                 actionUuid = "123456",
@@ -325,7 +337,8 @@ class MainActivityPresenterTest {
     fun onNewIntentReceivedTest_case7() {
         val presenter = MainActivityPresenter(
             viewContract = mockView,
-            connectionsRepository = mockConnectionsRepository
+            connectionsRepository = mockConnectionsRepository,
+            appContext = context
         )
         val connections = listOf(
             Connection().apply {
@@ -343,19 +356,9 @@ class MainActivityPresenterTest {
                 name = "Demobank2"
             }
         )
-        val resultMap = connections.map { connection ->
-            ConnectionViewModel(
-                guid = connection.guid,
-                code = connection.code,
-                name = connection.name,
-                logoUrl = connection.logoUrl,
-                statusDescription = connection.status,
-                statusColorResId = R.color.gray_dark
-            )
-        }
+        val resultMap = connections.convertConnectionsToViewModels(context = context)
 
         Mockito.doReturn(connections).`when`(mockConnectionsRepository).getByConnectUrl("http://someurl.com")
-
 
         presenter.onNewIntentReceived(
             Intent().putExtra(
@@ -365,7 +368,7 @@ class MainActivityPresenterTest {
         )
 
         Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_connections)
-        Mockito.verify(mockView).showSelectorFragment(resultMap)
+        Mockito.verify(mockView).showConnectionsSelectorFragment(resultMap)
         Mockito.verify(mockConnectionsRepository).getByConnectUrl("http://someurl.com")
         Mockito.verifyNoMoreInteractions(mockView, mockConnectionsRepository)
     }
@@ -375,7 +378,8 @@ class MainActivityPresenterTest {
     fun onNavigationItemSelectedTest() {
         val presenter = MainActivityPresenter(
             viewContract = mockView,
-            connectionsRepository = mockConnectionsRepository
+            connectionsRepository = mockConnectionsRepository,
+            appContext = context
         )
 
         Assert.assertTrue(presenter.onNavigationItemSelected(R.id.menu_authorizations))
@@ -403,7 +407,8 @@ class MainActivityPresenterTest {
     fun onFragmentBackStackChangedTest() {
         val presenter = MainActivityPresenter(
             viewContract = mockView,
-            connectionsRepository = mockConnectionsRepository
+            connectionsRepository = mockConnectionsRepository,
+            appContext = context
         )
         presenter.onFragmentBackStackChanged(stackIsClear = false, intent = Intent())
 
@@ -442,7 +447,8 @@ class MainActivityPresenterTest {
     fun onNavigationItemClickTest() {
         val presenter = MainActivityPresenter(
             viewContract = mockView,
-            connectionsRepository = mockConnectionsRepository
+            connectionsRepository = mockConnectionsRepository,
+            appContext = context
         )
         presenter.onNavigationItemClick(stackIsClear = false)
 
@@ -456,4 +462,5 @@ class MainActivityPresenterTest {
 
     private val mockView = Mockito.mock(MainActivityContract.View::class.java)
     private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
+    private val context: Context = ApplicationProvider.getApplicationContext()
 }

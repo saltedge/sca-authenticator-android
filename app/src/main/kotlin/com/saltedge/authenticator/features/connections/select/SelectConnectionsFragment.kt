@@ -31,12 +31,11 @@ import com.saltedge.authenticator.features.connections.list.ConnectionsListAdapt
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.tool.ResId
-import com.saltedge.authenticator.tool.log
+import com.saltedge.authenticator.tool.finishFragment
+import com.saltedge.authenticator.tool.setVisible
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
-import kotlinx.android.synthetic.main.fragment_select_connections.*
-
-const val KEY_CONNECTIONS = "CONNECTIONS"
+import kotlinx.android.synthetic.main.fragment_connections_list.*
 
 class SelectConnectionsFragment : BaseFragment(), ListItemClickListener, UpActionImageListener {
 
@@ -46,7 +45,9 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener, UpActio
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(false)
-        adapter.data = arguments?.getSerializable(KEY_CONNECTIONS) as List<ConnectionViewModel>
+        (arguments?.getSerializable(KEY_CONNECTIONS) as? List<ConnectionViewModel>)?.let {
+            adapter.data = it
+        }
     }
 
     override fun onCreateView(
@@ -54,33 +55,36 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener, UpActio
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activityComponents?.updateAppbarTitleWithFabAction(getString(R.string.choose_connections_feature_title))
-        return inflater.inflate(R.layout.fragment_select_connections, container, false)
+        activityComponents?.updateAppbarTitleWithFabAction(getString(R.string.choose_connection_feature_title))
+        return inflater.inflate(R.layout.fragment_connections_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        try {
-            activity?.let { connectionsListView?.layoutManager = LinearLayoutManager(it) }
+        activity?.let {
+            emptyView?.setVisible(false)
+            connectionsListView?.setVisible(true)
+            connectionsListView?.layoutManager = LinearLayoutManager(it)
             connectionsListView?.adapter = adapter
-            val context = activity ?: return
             headerDecorator = SpaceItemDecoration(
-                context = context
+                context = it
             ).apply { connectionsListView?.addItemDecoration(this) }
-            headerDecorator?.headerPositions = adapter.data.mapIndexed { index, _ -> index }.toTypedArray()
-        } catch (e: Exception) {
-            e.log()
+            headerDecorator?.headerPositions =
+                adapter.data.mapIndexed { index, _ -> index }.toTypedArray()
         }
     }
 
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
         val connectionGuid = (adapter.getItem(itemIndex) as ConnectionViewModel).guid
-        (activity as? ConnectionSelectorResult)?.onConnectionSelected(connectionGuid)
+        activity?.finishFragment()
+        (activity as? ConnectionSelectorListener)?.onConnectionSelected(connectionGuid)
     }
 
     override fun getUpActionImageResId(): ResId? = R.drawable.ic_close_white_24dp
 
     companion object {
+        const val KEY_CONNECTIONS = "CONNECTIONS"
+
         fun newInstance(connections: List<ConnectionViewModel>): SelectConnectionsFragment {
             val arrayList = ArrayList<ConnectionViewModel>(connections)
             return SelectConnectionsFragment().apply {

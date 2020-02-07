@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.actions
 
 import com.saltedge.authenticator.app.KEY_GUID
+import com.saltedge.authenticator.features.actions.SubmitActionFragment.Companion.KEY_ACTION_DEEP_LINK_DATA
 import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -29,7 +30,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class ActionFragmentTest {
+class SubmitActionFragmentTest {
 
     @Test
     @Throws(Exception::class)
@@ -39,7 +40,7 @@ class ActionFragmentTest {
             connectUrl = "connectUrl",
             returnTo = "returnTo"
         )
-        val arguments = ActionFragment.newInstance(
+        val arguments = SubmitActionFragment.newInstance(
             connectionGuid = "guid1",
             actionDeepLinkData = actionDeepLinkData
         ).arguments

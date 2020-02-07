@@ -21,14 +21,13 @@
 package com.saltedge.authenticator.features.actions
 
 import android.content.Context
-import android.util.Log
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.common.createConnectionAndKey
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.contract.ActionInitResult
+import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
 import com.saltedge.authenticator.sdk.model.*
-import com.saltedge.authenticator.sdk.model.response.ActionData
+import com.saltedge.authenticator.sdk.model.response.SubmitActionData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import javax.inject.Inject
 
@@ -37,7 +36,7 @@ class SubmitActionPresenter @Inject constructor(
     private val keyStoreManager: KeyStoreManagerAbs,
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val apiManager: AuthenticatorApiManagerAbs
-) : SubmitActionContract.Presenter, ActionInitResult {
+) : SubmitActionContract.Presenter, ActionSubmitListener {
 
     override var viewContract: SubmitActionContract.View? = null
     private var viewMode: ViewMode = ViewMode.START
@@ -45,16 +44,17 @@ class SubmitActionPresenter @Inject constructor(
     private var connectionAndKey: ConnectionAndKey? = null
 
     override fun setInitialData(connectionGuid: GUID, actionDeepLinkData: ActionDeepLinkData) {
-        val connection = connectionsRepository.getByGuid(connectionGuid) ?: return
-        this.actionDeepLinkData = actionDeepLinkData
-        this.connectionAndKey = createConnectionAndKey(
-            connection = connection,
-            keyStoreManager = keyStoreManager
-        )
+        this.connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
+            this.actionDeepLinkData = actionDeepLinkData
+            createConnectionAndKey(
+                connection = it,
+                keyStoreManager = keyStoreManager
+            )
+        }
         if (connectionAndKey == null) viewMode = ViewMode.ACTION_ERROR
     }
 
-    override fun getTitleResId(): Int = R.string.connections_new_connection
+    override fun getTitleResId(): Int = R.string.action_authentication
 
     override fun onViewCreated() {
         if (viewMode == ViewMode.START) {
@@ -74,14 +74,16 @@ class SubmitActionPresenter @Inject constructor(
         viewContract?.showErrorAndFinish(error.getErrorMessage(appContext))
     }
 
-    override fun onActionInitSuccess(response: ActionData) {
+    override fun onActionInitSuccess(response: SubmitActionData) {
         val authorizationID = response.authorizationId ?: ""
         val connectionID = response.connectionId ?: ""
         if (response.success == true && authorizationID.isEmpty() && connectionID.isEmpty()) {
             viewMode = ViewMode.ACTION_SUCCESS
             setupViews()
         } else {
-            viewContract?.returnActionWithConnectionId(
+            viewMode = ViewMode.ACTION_SUCCESS
+            viewContract?.closeView()
+            viewContract?.setResultAuthorizationIdentifier(
                 authorizationIdentifier = AuthorizationIdentifier(
                     authorizationID = authorizationID,
                     connectionID = connectionID
@@ -91,37 +93,36 @@ class SubmitActionPresenter @Inject constructor(
     }
 
     override fun onViewClick(viewId: Int) {
-        if (viewId == R.id.mainActionView) {
-            viewContract?.closeView()
-        }
+        viewContract?.closeView()
+        //TODO: Open return to in browser also when confirm/deny in AuthorizationDetailsFragment
     }
 
     private fun setupViews() {
         when (viewMode) {
             ViewMode.ACTION_SUCCESS -> {
-                viewContract?.showCompleteView(true)
+                viewContract?.setProcessingVisibility(false)
                 viewContract?.updateCompleteViewContent(
                     iconResId = R.drawable.ic_complete_ok_70,
-                    completeTitle = appContext.getString(R.string.action_feature_title),
-                    completeMessage = appContext.getString(R.string.action_feature_description),
+                    completeTitleResId = R.string.action_feature_title,
+                    completeMessageResId = R.string.action_feature_description,
                     mainActionTextResId = R.string.actions_proceed
                 )
             }
             ViewMode.ACTION_ERROR -> {
-                viewContract?.showCompleteView(true)
+                viewContract?.setProcessingVisibility(false)
                 viewContract?.updateCompleteViewContent(
                     iconResId = R.drawable.ic_auth_error_70,
-                    completeTitle = appContext.getString(R.string.action_error_title),
-                    completeMessage = appContext.getString(R.string.action_error_description),
+                    completeTitleResId = R.string.action_error_title,
+                    completeMessageResId = R.string.action_error_description,
                     mainActionTextResId = R.string.actions_try_again
                 )
             }
-            ViewMode.PROCESSING -> viewContract?.showCompleteView(false)
+            ViewMode.PROCESSING -> viewContract?.setProcessingVisibility(true)
             ViewMode.START -> Unit
         }
     }
 }
 
-enum class ViewMode {
+private enum class ViewMode {
     START, PROCESSING, ACTION_SUCCESS, ACTION_ERROR
 }

@@ -65,7 +65,7 @@ fun createConnectionAndKey(
 }
 
 /**
- *  Find Connections by related Private Key
+ *  Get related private key for connection
  *
  *  @param connection Connection
  *  @param keyStoreManager data source of keys
