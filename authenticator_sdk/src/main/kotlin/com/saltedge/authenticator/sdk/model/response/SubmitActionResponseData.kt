@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,20 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model
+package com.saltedge.authenticator.sdk.model.response
 
-import java.security.PrivateKey
+import com.google.gson.annotations.SerializedName
+import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
+import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
+import com.saltedge.authenticator.sdk.constants.KEY_DATA
+import com.saltedge.authenticator.sdk.constants.KEY_SUCCESS
 
-//TODO: Rename ConnectionAndKey
-/**
- * Container for Connection model and related PrivateKey
- */
-data class ConnectionAndKey(val connection: ConnectionAbs, val key: PrivateKey)
+data class SubmitActionResponseData(
+    @SerializedName(KEY_DATA) var data: SubmitActionData? = null
+)
+
+data class SubmitActionData(
+    @SerializedName(KEY_SUCCESS) var success: Boolean? = null,
+    @SerializedName(KEY_CONNECTION_ID) var connectionId: String? = null,
+    @SerializedName(KEY_AUTHORIZATION_ID) var authorizationId: String? = null
+)

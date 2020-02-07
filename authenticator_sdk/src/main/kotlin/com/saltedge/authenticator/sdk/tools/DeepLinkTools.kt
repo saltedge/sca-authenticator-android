@@ -21,9 +21,13 @@
 package com.saltedge.authenticator.sdk.tools
 
 import android.net.Uri
+import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
 
 const val KEY_CONFIGURATION_PARAM = "configuration"
 const val KEY_CONNECT_QUERY_PARAM = "connect_query"
+const val KEY_ACTION_UUID_PARAM = "action_uuid"
+const val KEY_CONNECT_URL_PARAM = "connect_url"
+const val KEY_RETURN_TO_PARAM = "return_to"
 
 /**
  * Validates deep link
@@ -32,7 +36,7 @@ const val KEY_CONNECT_QUERY_PARAM = "connect_query"
  * @return true if deeplink contains configuration url
  */
 fun String.isValidDeeplink(): Boolean {
-    return this.extractConnectConfigurationLink() != null
+    return this.extractActionDeepLinkData() != null || this.extractConnectConfigurationLink() != null
 }
 
 /**
@@ -55,4 +59,19 @@ fun String.extractConnectConfigurationLink(): String? {
  */
 fun String.extractConnectQuery(): String? {
     return Uri.parse(this).getQueryParameter(KEY_CONNECT_QUERY_PARAM)
+}
+
+/**
+ * Extract action data from deep link
+ *
+ * @receiver deep link String (e.g. authenticator://saltedge.com/action?action_uuid=123456&return_to=http://return.com&connect_url=http://someurl.com)
+ * @return ActionDeepLinkData object
+ */
+fun String.extractActionDeepLinkData(): ActionDeepLinkData? { //extractActionDeepLinkData
+    val uri = Uri.parse(this)
+    return ActionDeepLinkData(
+        actionUuid = uri.getQueryParameter(KEY_ACTION_UUID_PARAM) ?: return null,
+        connectUrl = uri.getQueryParameter(KEY_CONNECT_URL_PARAM) ?: return null,
+        returnTo = uri.getQueryParameter(KEY_RETURN_TO_PARAM)
+    )
 }

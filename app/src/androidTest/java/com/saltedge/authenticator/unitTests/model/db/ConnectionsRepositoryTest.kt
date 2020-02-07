@@ -281,4 +281,20 @@ class ConnectionsRepositoryTest : DatabaseTestCase() {
             equalTo(listOf("Demo", "Test", "Demo (2)"))
         )
     }
+
+    @Test
+    @Throws(Exception::class)
+    fun getByConnectUrlTest() {
+        val connection1 = Connection().setGuid("guid1").setCode("demo1").setName("Demo1")
+            .apply { connectUrl = "https://www.saltedge.com/" }.save()
+        val connection2 = Connection().setGuid("guid2").setCode("demo2").setName("Demo2")
+            .apply { connectUrl = "https://www.saltedge.com/" }.save()
+        val connection3 = Connection().setGuid("guid3").setCode("demo3").setName("Demo3")
+            .apply { connectUrl = "https://www.fentury.com/" }.save()
+
+        assertThat(ConnectionsRepository.getByConnectUrl("https://www.saltedge.com/"),
+            equalTo(listOf(connection1, connection2)))
+        assertThat(ConnectionsRepository.getByConnectUrl("https://www.fentury.com/"),
+            equalTo(listOf(connection3)))
+    }
 }

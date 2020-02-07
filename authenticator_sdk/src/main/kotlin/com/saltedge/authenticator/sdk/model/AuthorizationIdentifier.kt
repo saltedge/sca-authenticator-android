@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,8 @@
  */
 package com.saltedge.authenticator.sdk.model
 
-import java.security.PrivateKey
-
-//TODO: Rename ConnectionAndKey
 /**
- * Container for Connection model and related PrivateKey
+ * Container for authorizationID and connectionID
  */
-data class ConnectionAndKey(val connection: ConnectionAbs, val key: PrivateKey)
+//TODO: Use where we use authorizationID with connectionID
+data class AuthorizationIdentifier(val authorizationID: String, val connectionID: String)

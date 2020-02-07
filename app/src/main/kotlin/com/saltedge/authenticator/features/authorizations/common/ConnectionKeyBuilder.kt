@@ -22,6 +22,7 @@ package com.saltedge.authenticator.features.authorizations.common
 
 import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.sdk.model.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.model.getRelatedPrivateKey
@@ -60,6 +61,22 @@ fun createConnectionAndKey(
         connection.getRelatedPrivateKey(keyStoreManager)?.let { key ->
             ConnectionAndKey(connection, key)
         }
+    }
+}
+
+/**
+ *  Get related private key for connection
+ *
+ *  @param connection Connection
+ *  @param keyStoreManager data source of keys
+ *  @return ConnectionAndKey
+ */
+fun createConnectionAndKey(
+    connection: ConnectionAbs,
+    keyStoreManager: KeyStoreManagerAbs
+): ConnectionAndKey? {
+    return connection.getRelatedPrivateKey(keyStoreManager)?.let { key ->
+        ConnectionAndKey(connection, key)
     }
 }
 

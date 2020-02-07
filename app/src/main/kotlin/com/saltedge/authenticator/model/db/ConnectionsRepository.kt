@@ -102,6 +102,23 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
     }
 
     /**
+     * Get Connections by connection url
+     *
+     * @param connectionUrl - connection url of Connection
+     * @return Connection by url
+     */
+    override fun getByConnectUrl(connectionUrl: String): List<Connection> {
+        return RealmManager.getDefaultInstance().use { realmDb ->
+            realmDb.where(Connection::class.java)
+                .equalTo(KEY_CONNECT_URL, connectionUrl)
+                .equalTo(KEY_STATUS, ConnectionStatus.ACTIVE.toString())
+                .findAll().map {
+                realmDb.copyFromRealm(it)
+            }
+        }
+    }
+
+    /**
      * Delete all connections from database
      */
     override fun deleteAllConnections() {

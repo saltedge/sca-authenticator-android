@@ -21,21 +21,29 @@
 package com.saltedge.authenticator.features.main
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
+import com.saltedge.authenticator.features.connections.list.convertConnectionsToViewModels
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
+import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
+import com.saltedge.authenticator.sdk.tools.extractActionDeepLinkData
 import com.saltedge.authenticator.sdk.tools.extractConnectConfigurationLink
 import com.saltedge.authenticator.sdk.tools.extractConnectQuery
 import com.saltedge.authenticator.tool.ResId
+import com.saltedge.authenticator.tool.log
 
 class MainActivityPresenter(
     val viewContract: MainActivityContract.View,
-    private val connectionsRepository: ConnectionsRepositoryAbs
+    private val connectionsRepository: ConnectionsRepositoryAbs,
+    val appContext: Context
 ) {
+
+    private var actionDeepLinkData: ActionDeepLinkData? = null
 
     /**
      * Starts initial fragment
@@ -80,12 +88,34 @@ class MainActivityPresenter(
             }
             intent.hasDeepLink -> {
                 viewContract.setSelectedTabbarItemId(R.id.menu_connections)
-                intent.deepLink.extractConnectConfigurationLink()?.let {
-                    viewContract.showConnectProvider(
-                        connectConfigurationLink = it,
-                        connectQuery = intent.deepLink.extractConnectQuery()
-                    )
-                }
+                    intent.deepLink.extractConnectConfigurationLink()?.let { connectionDeepLinkData ->
+                        viewContract.showConnectProvider(
+                            connectConfigurationLink = connectionDeepLinkData,
+                            connectQuery = intent.deepLink.extractConnectQuery()
+                        )
+                    } ?:
+                    intent.deepLink.extractActionDeepLinkData()?.let { deepLinkData ->
+                        actionDeepLinkData = deepLinkData
+                        val connections = connectionsRepository.getByConnectUrl(deepLinkData.connectUrl)
+                        when {
+                            connections.isEmpty() -> {
+                                viewContract.showNoConnectionsError()
+                            }
+                            connections.size == 1 -> {
+                                val connectionGuid = connections.first().guid
+                                viewContract.showSubmitActionFragment(
+                                    connectionGuid = connectionGuid,
+                                    actionDeepLinkData = deepLinkData
+                                )
+                            }
+                            else -> {
+                                val result = connections.convertConnectionsToViewModels(
+                                    context = appContext
+                                )
+                                viewContract.showConnectionsSelectorFragment(result)
+                            }
+                        }
+                    }
             }
         }
     }
@@ -134,6 +164,14 @@ class MainActivityPresenter(
      */
     fun onNavigationItemClick(stackIsClear: Boolean) {
         if (stackIsClear) viewContract.closeView() else viewContract.popBackStack()
+    }
+
+    fun onConnectionSelected(connectionGuid: String) {
+        try {
+            viewContract.showSubmitActionFragment(connectionGuid, actionDeepLinkData!!)
+        } catch (e:Exception) {
+            e.log()
+        }
     }
 
     private val Intent?.connectionId: String
