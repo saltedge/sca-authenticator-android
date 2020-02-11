@@ -23,6 +23,7 @@ package com.saltedge.authenticator.sdk.tools
 import android.net.Uri
 import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
 
+
 const val KEY_CONFIGURATION_PARAM = "configuration"
 const val KEY_CONNECT_QUERY_PARAM = "connect_query"
 const val KEY_ACTION_UUID_PARAM = "action_uuid"
@@ -39,6 +40,7 @@ fun String.isValidDeeplink(): Boolean {
     return this.extractActionDeepLinkData() != null || this.extractConnectConfigurationLink() != null
 }
 
+
 /**
  * Extract configuration link from deep link
  *
@@ -47,7 +49,7 @@ fun String.isValidDeeplink(): Boolean {
  */
 fun String.extractConnectConfigurationLink(): String? {
     return Uri.parse(this).getQueryParameter(KEY_CONFIGURATION_PARAM)?.let { link ->
-        if (link.contains("//localhost")) null else link
+        if (link.split(".").size == 1) null else link
     }
 }
 

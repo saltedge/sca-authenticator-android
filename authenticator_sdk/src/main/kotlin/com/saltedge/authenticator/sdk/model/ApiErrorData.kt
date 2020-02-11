@@ -31,13 +31,13 @@ import java.io.Serializable
  * contains accessToken field which is used for further connection invalidation
  */
 data class ApiErrorData(
-    @SerializedName(KEY_ERROR_MESSAGE) var errorMessage: String = "",
     @SerializedName(KEY_ERROR_CLASS) var errorClassName: String,
+    @SerializedName(KEY_ERROR_MESSAGE) var errorMessage: String = "",
     var accessToken: Token? = null
 ) : Serializable {
 
     init {
-        this.errorMessage = errorMessage.replace("""@\S+""".toRegex(), "")
         this.errorClassName = errorClassName.replace("""@\S+""".toRegex(), "")
+        this.errorMessage = errorMessage.replace("""@\S+""".toRegex(), "")
     }
 }

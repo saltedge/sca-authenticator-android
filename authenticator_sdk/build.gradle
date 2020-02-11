@@ -29,11 +29,11 @@ def libVersionCode = 1
 def libVersionName = "1.0.0"
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode libVersionCode
         versionName libVersionName
 
@@ -56,6 +56,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
@@ -74,15 +78,15 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     api 'androidx.appcompat:appcompat:1.1.0'
-    api 'com.squareup.retrofit2:retrofit:2.6.2'
-    api 'com.squareup.retrofit2:converter-gson:2.6.2'
-    api 'com.squareup.okhttp3:logging-interceptor:4.2.2'
+    api 'com.squareup.retrofit2:retrofit:2.7.1'
+    api 'com.squareup.retrofit2:converter-gson:2.7.1'
+    api 'com.squareup.okhttp3:logging-interceptor:4.3.1'
     api 'net.danlew:android.joda:2.10.2'
 
     androidTestUtil 'com.android.support.test:orchestrator:1.0.2'
     testImplementation 'junit:junit:4.12'
     testImplementation 'androidx.test:core:1.2.0'
-    testImplementation 'org.robolectric:robolectric:4.3'
+    testImplementation 'org.robolectric:robolectric:4.3.1'
     testImplementation "io.mockk:mockk:1.9.3"
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test:runner:1.2.0'

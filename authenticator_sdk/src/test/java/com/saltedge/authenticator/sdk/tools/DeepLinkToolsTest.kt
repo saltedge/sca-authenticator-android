@@ -49,8 +49,11 @@ class DeepLinkToolsTest {
     fun extractConnectConfigurationLinkTest() {
         assertNull("".extractConnectConfigurationLink())
         assertNull("test".extractConnectConfigurationLink())
+        assertNull("....".extractConnectConfigurationLink())
+        assertNull("////".extractConnectConfigurationLink())
         assertNull("https://google.com".extractConnectConfigurationLink())
         assertNull("authenticator://saltedge.com/connect?configuration=https://localhost/configuration".extractConnectConfigurationLink())
+        assertNull("authenticator://saltedge.com/connect?configuration=https://backend/api/authenticator/v1/configuration".extractConnectConfigurationLink())
         assertThat(
             "authenticator://saltedge.com/connect?configuration=https://example.com/configuration".extractConnectConfigurationLink(),
             equalTo("https://example.com/configuration")

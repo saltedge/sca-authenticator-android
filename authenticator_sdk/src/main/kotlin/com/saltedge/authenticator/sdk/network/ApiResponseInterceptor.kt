@@ -22,14 +22,10 @@ package com.saltedge.authenticator.sdk.network
 
 import com.google.gson.Gson
 import com.saltedge.authenticator.sdk.BuildConfig
-import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_API_RESPONSE
-import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_HOST_UNREACHABLE
-import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_SSL_HANDSHAKE
 import com.saltedge.authenticator.sdk.model.ApiErrorData
 import com.saltedge.authenticator.sdk.model.Token
 import com.saltedge.authenticator.sdk.model.createRequestError
-import com.saltedge.authenticator.sdk.tools.isNoConnectionException
-import com.saltedge.authenticator.sdk.tools.isSSLException
+import com.saltedge.authenticator.sdk.model.exceptionToApiError
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -81,21 +77,5 @@ internal abstract class ApiResponseInterceptor<T> : Callback<T> {
 
     private fun extractAccessToken(call: Call<T>): Token? {
         return call.request().headers[HEADER_KEY_ACCESS_TOKEN]
-    }
-}
-
-/**
- * Creates Api Error from exception while receiving network response.
- * for Connection Exceptions set errorClassName as ERROR_CLASS_HOST_UNREACHABLE
- * for SSL Exceptions set errorClassName as ERROR_CLASS_SSL_HANDSHAKE
- *
- * @receiver throwable exception
- * @return api error
- */
-fun Throwable.exceptionToApiError(): ApiErrorData {
-    return when {
-        this.isNoConnectionException() -> ApiErrorData(errorClassName = ERROR_CLASS_HOST_UNREACHABLE)
-        this.isSSLException() -> ApiErrorData(errorClassName = ERROR_CLASS_SSL_HANDSHAKE)
-        else -> ApiErrorData(errorClassName = ERROR_CLASS_API_RESPONSE)
     }
 }
