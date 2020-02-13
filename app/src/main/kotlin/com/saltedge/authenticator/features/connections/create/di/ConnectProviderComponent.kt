@@ -18,10 +18,10 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.connect.di
+package com.saltedge.authenticator.features.connections.create.di
 
 import com.saltedge.authenticator.app.di.FragmentScope
-import com.saltedge.authenticator.features.connections.connect.ConnectProviderFragment
+import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import dagger.Subcomponent
 
 @FragmentScope

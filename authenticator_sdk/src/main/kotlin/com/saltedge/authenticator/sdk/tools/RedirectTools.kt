@@ -25,9 +25,11 @@ import com.saltedge.authenticator.sdk.constants.*
 import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.model.Token
 
-fun parseRedirect(url: String,
-                  success: (connectionID: ConnectionID, accessToken: Token) -> Unit,
-                  error: (errorClass: String, errorMessage: String?) -> Unit) {
+fun parseRedirect(
+    url: String,
+    success: (connectionID: ConnectionID, accessToken: Token) -> Unit,
+    error: (errorClass: String, errorMessage: String?) -> Unit
+) {
     val uri = Uri.parse(url)
     val connectionID = uri.getQueryParameter(KEY_ID)
     val accessToken = uri.getQueryParameter(KEY_ACCESS_TOKEN)

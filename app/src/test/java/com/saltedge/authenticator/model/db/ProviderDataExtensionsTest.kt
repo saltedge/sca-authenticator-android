@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.model.db
 
 import com.saltedge.authenticator.model.toConnection
-import com.saltedge.authenticator.sdk.model.ConnectionStatus
+import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.ProviderData
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat

@@ -18,20 +18,24 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.connect
+package com.saltedge.authenticator.features.connections.create
 
 import android.content.Context
 import android.webkit.URLUtil.isValidUrl
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.model.toConnection
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.model.toConnection
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ConnectionCreateResult
 import com.saltedge.authenticator.sdk.contract.FetchProviderConfigurationDataResult
 import com.saltedge.authenticator.sdk.model.*
+import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
+import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.model.error.getErrorMessage
 import com.saltedge.authenticator.sdk.model.response.CreateConnectionData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.tools.parseRedirect
@@ -48,14 +52,14 @@ class ConnectProviderPresenter @Inject constructor(
     override val reportProblemActionText: Int?
         get() = if (viewMode.isCompleteWithSuccess) null else R.string.actions_contact_support
     private var sessionFailMessage: String? = null
-    private var connectConfigurationLink: String = ""
-    private var connectQueryParam: String? = null
-    private var connectUrlData: CreateConnectionData? = null
+    private var initialConnectData: ConnectAppLinkData? = null
+    private var authenticateData: CreateConnectionData? = null
     private var connection = Connection()
-    private var viewMode: ViewMode = ViewMode.START
+    private var viewMode: ViewMode = ViewMode.START_NEW_CONNECT
     override var viewContract: ConnectProviderContract.View? = null
+
     override val shouldShowProgressView: Boolean
-        get() = viewMode == ViewMode.START
+        get() = viewMode == ViewMode.START_NEW_CONNECT || viewMode == ViewMode.START_RECONNECT
     override val shouldShowWebView: Boolean
         get() = viewMode == ViewMode.WEB_ENROLL
     override val shouldShowCompleteView: Boolean
@@ -68,14 +72,16 @@ class ConnectProviderPresenter @Inject constructor(
         get() = if (viewMode.isCompleteWithSuccess) R.string.actions_proceed else R.string.actions_try_again
     override val completeTitle: String
         get() {
-            return if (viewMode.isCompleteWithSuccess)
+            return if (viewMode.isCompleteWithSuccess) {
                 appContext.getString(R.string.connect_status_provider_success).format(connection.name)
-            else appContext.getString(R.string.errors_connection_failed) ?: ""
+            } else {
+                appContext.getString(R.string.errors_connection_failed)
+            }
         }
     override val completeMessage: String
         get() {
             return if (viewMode.isCompleteWithSuccess) {
-                appContext.getString(R.string.connect_status_provider_success_description) ?: ""
+                appContext.getString(R.string.connect_status_provider_success_description)
             } else {
                 sessionFailMessage ?: appContext.getString(
                     R.string.errors_connection_failed_description
@@ -83,22 +89,22 @@ class ConnectProviderPresenter @Inject constructor(
             }
         }
 
-    override fun setInitialData(connectConfigurationLink: String?,
-                                connectQueryParam: String?,
-                                connectionGuid: GUID?) {
-        if (connectConfigurationLink == null && connectionGuid == null) {
+    override fun setInitialData(initialConnectData: ConnectAppLinkData?, connectionGuid: GUID?) {
+        if (initialConnectData == null && connectionGuid == null) {
             viewMode = ViewMode.COMPLETE_ERROR
         } else if (connectionGuid != null) {
             this.connection = connectionsRepository.getByGuid(connectionGuid) ?: Connection()
+            viewMode = ViewMode.START_RECONNECT
         } else {
-            this.connectConfigurationLink = connectConfigurationLink ?: ""
-            this.connectQueryParam = connectQueryParam
+            this.initialConnectData = initialConnectData
+            viewMode = ViewMode.START_NEW_CONNECT
         }
     }
 
     override fun onViewCreated() {
         when (viewMode) {
-            ViewMode.START -> startConnectFlow()
+            ViewMode.START_NEW_CONNECT -> performFetchConfigurationRequest()
+            ViewMode.START_RECONNECT -> performCreateConnectionRequest()
             ViewMode.WEB_ENROLL -> loadWebRedirectUrl()
             ViewMode.COMPLETE_SUCCESS -> Unit
             ViewMode.COMPLETE_ERROR -> Unit
@@ -115,7 +121,7 @@ class ConnectProviderPresenter @Inject constructor(
             result != null && result.isValid() -> {
                 result.toConnection()?.let {
                     this.connection = it
-                    performNewConnectionRequest()
+                    performCreateConnectionRequest()
                 } ?: viewContract?.showErrorAndFinish(appContext.getString(R.string.errors_unable_connect_provider))
             }
             else -> viewContract?.showErrorAndFinish(appContext.getString(R.string.errors_unable_connect_provider))
@@ -140,7 +146,7 @@ class ConnectProviderPresenter @Inject constructor(
                 )
             } else if (isValidUrl(response.redirectUrl ?: "")) {
                 connection.id = response.connectionId ?: ""
-                connectUrlData = response
+                authenticateData = response
                 viewMode = ViewMode.WEB_ENROLL
                 viewContract?.updateViewsContent()
                 loadWebRedirectUrl()
@@ -175,39 +181,41 @@ class ConnectProviderPresenter @Inject constructor(
     }
 
     override fun getTitleResId(): Int {
-        return if (this.connection.guid.isEmpty()) R.string.connections_new_connection
-        else R.string.actions_reconnect
+        return if (connection.guid.isNotEmpty()) R.string.actions_reconnect
+        else R.string.connections_new_connection
     }
 
-    private fun startConnectFlow() {
-        if (connection.guid.isEmpty()) {
-            apiManager.getProviderConfigurationData(connectConfigurationLink, resultCallback = this)
+    private fun performFetchConfigurationRequest() {
+        initialConnectData?.configurationUrl?.let {
+            apiManager.getProviderConfigurationData(it, resultCallback = this)
+        } ?: viewContract?.showErrorAndFinish(appContext.getString(R.string.errors_unable_connect_provider))
+    }
+
+    private fun performCreateConnectionRequest() {
+        if (connection.connectUrl.isNotEmpty()) {
+            keyStoreManager.createRsaPublicKeyAsString(appContext, connection.guid)?.let {
+                apiManager.createConnectionRequest(
+                    baseUrl = connection.connectUrl,
+                    publicKey = it,
+                    pushToken = preferenceRepository.cloudMessagingToken,
+                    providerCode = connection.code,
+                    connectQueryParam = initialConnectData?.connectQuery,
+                    resultCallback = this
+                )
+            }
         } else {
-            performNewConnectionRequest()
-        }
-    }
-
-    private fun performNewConnectionRequest() {
-        keyStoreManager.createRsaPublicKeyAsString(appContext, connection.guid)?.let {
-            apiManager.createConnectionRequest(
-                baseUrl = connection.connectUrl,
-                publicKey = it,
-                pushToken = preferenceRepository.cloudMessagingToken,
-                providerCode = connection.code,
-                connectQueryParam = connectQueryParam,
-                resultCallback = this
-            )
+            viewContract?.showErrorAndFinish(appContext.getString(R.string.errors_unable_connect_provider))
         }
     }
 
     private fun loadWebRedirectUrl() {
-        viewContract?.loadUrlInWebView(url = connectUrlData?.redirectUrl ?: "")
+        viewContract?.loadUrlInWebView(url = authenticateData?.redirectUrl ?: "")
     }
+
+    private val ViewMode.isCompleteWithSuccess: Boolean
+        get() = this == ViewMode.COMPLETE_SUCCESS
 }
 
 enum class ViewMode {
-    START, WEB_ENROLL, COMPLETE_SUCCESS, COMPLETE_ERROR;
-
-    val isCompleteWithSuccess: Boolean
-        get() = this == COMPLETE_SUCCESS
+    START_NEW_CONNECT, START_RECONNECT, WEB_ENROLL, COMPLETE_SUCCESS, COMPLETE_ERROR;
 }

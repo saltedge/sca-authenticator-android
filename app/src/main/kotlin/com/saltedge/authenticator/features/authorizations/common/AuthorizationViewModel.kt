@@ -20,9 +20,9 @@
  */
 package com.saltedge.authenticator.features.authorizations.common
 
-import com.saltedge.authenticator.sdk.model.AuthorizationData
+import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.model.AuthorizationID
-import com.saltedge.authenticator.sdk.model.ConnectionAbs
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.tools.remainedSeconds
 import com.saltedge.authenticator.sdk.tools.remainedTimeDescription

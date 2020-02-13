@@ -18,14 +18,32 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model
+package com.saltedge.authenticator.sdk.model.error
 
 import android.content.Context
 import com.saltedge.authenticator.sdk.R
 import com.saltedge.authenticator.sdk.constants.*
+import com.saltedge.authenticator.sdk.tools.isNetworkException
+import com.saltedge.authenticator.sdk.tools.isSSLException
 
 /**
- * Creates error description by known error class names or returns message field itself
+ * Creates Api Error from exception while receiving network response.
+ * for Connection Exceptions set errorClassName as ERROR_CLASS_HOST_UNREACHABLE
+ * for SSL Exceptions set errorClassName as ERROR_CLASS_SSL_HANDSHAKE
+ *
+ * @receiver throwable exception
+ * @return api error
+ */
+fun Throwable.exceptionToApiError(): ApiErrorData {
+    return when {
+        this.isNetworkException() -> ApiErrorData(errorClassName = ERROR_CLASS_HOST_UNREACHABLE)
+        this.isSSLException() -> ApiErrorData(errorClassName = ERROR_CLASS_SSL_HANDSHAKE)
+        else -> ApiErrorData(errorClassName = ERROR_CLASS_API_RESPONSE)
+    }
+}
+
+/**
+ * Creates localized description by known error class name or returns message field itself
  *
  * @receiver api error
  * @param context - application context
@@ -35,7 +53,7 @@ fun ApiErrorData.getErrorMessage(context: Context): String {
     return if (errorMessage.isBlank()) {
         when (errorClassName) {
             ERROR_CLASS_HOST_UNREACHABLE -> context.getString(R.string.errors_no_internet_connection)
-            ERROR_CLASS_SSL_HANDSHAKE -> context.getString(R.string.errors_update_security)
+            ERROR_CLASS_SSL_HANDSHAKE -> context.getString(R.string.errors_request_security_error)
             ERROR_CLASS_API_RESPONSE -> context.getString(R.string.errors_request_error)
             else -> errorMessage
         }

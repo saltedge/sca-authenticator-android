@@ -18,12 +18,14 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model
+package com.saltedge.authenticator.sdk.model.authorization
 
-import java.security.PrivateKey
+import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
 
-//TODO: Rename ConnectionAndKey
 /**
- * Container for Connection model and related PrivateKey
+ * Check that Authorization is not expired
+ *
+ * @receiver authorization
+ * @return boolean, true if expiresAt time is after current time
  */
-data class ConnectionAndKey(val connection: ConnectionAbs, val key: PrivateKey)
+fun AuthorizationData.isNotExpired(): Boolean = expiresAt.isAfterNow

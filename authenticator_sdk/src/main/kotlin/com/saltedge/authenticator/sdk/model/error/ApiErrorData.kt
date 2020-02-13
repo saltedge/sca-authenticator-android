@@ -18,26 +18,27 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model
+package com.saltedge.authenticator.sdk.model.error
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.constants.*
+import com.saltedge.authenticator.sdk.constants.KEY_ERROR_CLASS
+import com.saltedge.authenticator.sdk.constants.KEY_ERROR_MESSAGE
+import com.saltedge.authenticator.sdk.model.Token
 import java.io.Serializable
 
 /**
- * Encrypted authorization model
+ * API Error model
  * with annotation for GSON parsing
- * contains:
- * - encrypted data with symmetric algorithm,
- * - algorithm code (now is supported only AES-CBC-256),
- * - encryption key (KEY), encrypted with asymmetric RSA key attached to specific connection (connectionId)
- * - initialization vector (IV), encrypted with asymmetric RSA key attached to specific connection (connectionId)
+ * contains accessToken field which is used for further connection invalidation
  */
-data class EncryptedAuthorizationData(
-    @SerializedName(KEY_ID) var id: String? = null,
-    @SerializedName(KEY_CONNECTION_ID) var connectionId: String? = null,
-    @SerializedName(KEY_DATA) var data: String? = null,
-    @SerializedName(KEY_ALGORITHM) var algorithm: String? = null,
-    @SerializedName(KEY_IV) var iv: String? = null,
-    @SerializedName(KEY_KEY) var key: String? = null
-) : Serializable
+data class ApiErrorData(
+    @SerializedName(KEY_ERROR_CLASS) var errorClassName: String,
+    @SerializedName(KEY_ERROR_MESSAGE) var errorMessage: String = "",
+    var accessToken: Token? = null
+) : Serializable {
+
+    init {
+        this.errorClassName = errorClassName.replace("""@\S+""".toRegex(), "")
+        this.errorMessage = errorMessage.replace("""@\S+""".toRegex(), "")
+    }
+}

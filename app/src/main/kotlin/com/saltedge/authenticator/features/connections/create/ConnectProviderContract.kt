@@ -18,11 +18,12 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.connect
+package com.saltedge.authenticator.features.connections.create
 
 import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.Token
+import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 
 interface ConnectProviderContract {
 
@@ -44,7 +45,7 @@ interface ConnectProviderContract {
         val shouldShowProgressView: Boolean
         val shouldShowWebView: Boolean
         val shouldShowCompleteView: Boolean
-        fun setInitialData(connectConfigurationLink: String?, connectQueryParam: String?, connectionGuid: GUID?)
+        fun setInitialData(initialConnectData: ConnectAppLinkData?, connectionGuid: GUID?)
         fun onViewCreated()
         fun onDestroyView()
         fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token)

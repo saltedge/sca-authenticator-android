@@ -18,18 +18,24 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model
+package com.saltedge.authenticator.sdk.model.authorization
+
+import com.google.gson.annotations.SerializedName
+import com.saltedge.authenticator.sdk.constants.*
+import org.joda.time.DateTime
+import java.io.Serializable
 
 /**
- * Checks validity of Encrypted Authorization model
- *
- * @receiver Encrypted authorization
- * @return boolean. true if key, iv, algorithm, data, connection_id fields are present
+ * Plain (not encrypted) authorization model
+ * with annotation for GSON parsing
  */
-fun EncryptedAuthorizationData.isValid(): Boolean {
-    return !key.isNullOrEmpty() &&
-        !iv.isNullOrEmpty() &&
-        !algorithm.isNullOrEmpty() &&
-        !data.isNullOrEmpty() &&
-        !connectionId.isNullOrEmpty()
-}
+data class AuthorizationData(
+    @SerializedName(KEY_ID) var id: String,
+    @SerializedName(KEY_CREATED_AT) var createdAt: DateTime? = null,
+    @SerializedName(KEY_UPDATED_AT) var updatedAt: DateTime? = null,
+    @SerializedName(KEY_TITLE) var title: String,
+    @SerializedName(KEY_DESCRIPTION) var description: String,
+    @SerializedName(KEY_AUTHORIZATION_CODE) var authorizationCode: String? = null,
+    @SerializedName(KEY_CONNECTION_ID) var connectionId: String,
+    @SerializedName(KEY_EXPIRES_AT) var expiresAt: DateTime
+) : Serializable
