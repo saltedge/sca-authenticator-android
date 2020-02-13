@@ -32,8 +32,9 @@ import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
-import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
-import com.saltedge.authenticator.sdk.model.ConnectionStatus
+import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
+import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
+import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert
@@ -121,10 +122,9 @@ class MainActivityPresenterTest {
         )
 
 
-        Assert.assertTrue(intent.getStringExtra(KEY_DEEP_LINK).isNotEmpty())
+        Assert.assertTrue(intent.getStringExtra(KEY_DEEP_LINK)!!.isNotEmpty())
         Mockito.verify(mockView).showConnectProvider(
-            connectConfigurationLink = "https://saltedge.com/configuration",
-            connectQuery = null
+            connectAppLinkData = ConnectAppLinkData("https://saltedge.com/configuration")
         )
 
         Mockito.clearInvocations(mockView)
@@ -214,7 +214,6 @@ class MainActivityPresenterTest {
         presenter.onNewIntentReceived(
             Intent().putExtra(KEY_DEEP_LINK, "authenticator://saltedge.com/connect")
         )
-        Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_connections)
         Mockito.verifyNoMoreInteractions(mockView, mockConnectionsRepository)
     }
 
@@ -241,8 +240,7 @@ class MainActivityPresenterTest {
 
         Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_connections)
         Mockito.verify(mockView).showConnectProvider(
-            connectConfigurationLink = "https://saltedge.com/configuration",
-            connectQuery = null
+            connectAppLinkData = ConnectAppLinkData("https://saltedge.com/configuration")
         )
 
         Mockito.clearInvocations(mockView)
@@ -255,13 +253,12 @@ class MainActivityPresenterTest {
 
         Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_connections)
         Mockito.verify(mockView).showConnectProvider(
-            connectConfigurationLink = "https://saltedge.com/configuration",
-            connectQuery = "1234567890"
+            connectAppLinkData = ConnectAppLinkData("https://saltedge.com/configuration", "1234567890")
         )
     }
 
     /**
-     * test onNewIntentReceived where intent has invalid deep-link for action and connections are empty
+     * test onNewIntentReceived where intent has valid deep-link for action and connections are empty
      */
     @Test
     @Throws(Exception::class)
@@ -273,20 +270,16 @@ class MainActivityPresenterTest {
         )
 
         presenter.onNewIntentReceived(
-            Intent().putExtra(
-                KEY_DEEP_LINK,
-                "authenticator://saltedge.com/action?action_uuid=123456&return_to=http://return.com&connect_url=http://someurl.com"
-            )
+            Intent().putExtra(KEY_DEEP_LINK, "authenticator://saltedge.com/action?action_uuid=123456&return_to=http://return.com&connect_url=http://someurl.com")
         )
 
-        Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_connections)
         Mockito.verify(mockView).showNoConnectionsError()
         Mockito.verify(mockConnectionsRepository).getByConnectUrl("http://someurl.com")
         Mockito.verifyNoMoreInteractions(mockView, mockConnectionsRepository)
     }
 
     /**
-     * test onNewIntentReceived where intent has invalid deep-link for action and connections size == 1
+     * test onNewIntentReceived where intent has valid deep-link for action and connections size == 1
      */
     @Test
     @Throws(Exception::class)
@@ -316,10 +309,9 @@ class MainActivityPresenterTest {
             )
         )
 
-        Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_connections)
         Mockito.verify(mockView).showSubmitActionFragment(
             connectionGuid = "guid1",
-            actionDeepLinkData = ActionDeepLinkData(
+            actionAppLinkData = ActionAppLinkData(
                 actionUuid = "123456",
                 connectUrl = "http://someurl.com",
                 returnTo = "http://return.com"
@@ -330,7 +322,7 @@ class MainActivityPresenterTest {
     }
 
     /**
-     * test onNewIntentReceived where intent has invalid deep-link for action and connections size > 1
+     * test onNewIntentReceived where intent has valid deep-link for action and connections size > 1
      */
     @Test
     @Throws(Exception::class)
@@ -367,7 +359,6 @@ class MainActivityPresenterTest {
             )
         )
 
-        Mockito.verify(mockView).setSelectedTabbarItemId(R.id.menu_connections)
         Mockito.verify(mockView).showConnectionsSelectorFragment(resultMap)
         Mockito.verify(mockConnectionsRepository).getByConnectUrl("http://someurl.com")
         Mockito.verifyNoMoreInteractions(mockView, mockConnectionsRepository)

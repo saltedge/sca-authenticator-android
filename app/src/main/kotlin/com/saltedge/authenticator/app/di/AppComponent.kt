@@ -27,8 +27,8 @@ import com.saltedge.authenticator.features.authorizations.list.di.Authorizations
 import com.saltedge.authenticator.features.authorizations.list.di.AuthorizationsListModule
 import com.saltedge.authenticator.features.actions.di.SubmitActionComponent
 import com.saltedge.authenticator.features.actions.di.SubmitActionModule
-import com.saltedge.authenticator.features.connections.connect.di.ConnectProviderComponent
-import com.saltedge.authenticator.features.connections.connect.di.ConnectProviderModule
+import com.saltedge.authenticator.features.connections.create.di.ConnectProviderComponent
+import com.saltedge.authenticator.features.connections.create.di.ConnectProviderModule
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListComponent
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListModule
 import com.saltedge.authenticator.features.launcher.di.LauncherComponent

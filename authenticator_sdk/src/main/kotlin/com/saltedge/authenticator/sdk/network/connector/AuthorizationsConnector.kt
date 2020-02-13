@@ -23,10 +23,10 @@ package com.saltedge.authenticator.sdk.network.connector
 import com.saltedge.authenticator.sdk.constants.API_AUTHORIZATIONS
 import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_GET
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationsResult
-import com.saltedge.authenticator.sdk.model.ApiErrorData
-import com.saltedge.authenticator.sdk.model.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.EncryptedAuthorizationData
-import com.saltedge.authenticator.sdk.model.isValid
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
+import com.saltedge.authenticator.sdk.model.authorization.isValid
 import com.saltedge.authenticator.sdk.model.request.AuthenticatedRequestData
 import com.saltedge.authenticator.sdk.model.response.AuthorizationsResponseData
 import com.saltedge.authenticator.sdk.network.ApiInterface

@@ -22,7 +22,7 @@ package com.saltedge.authenticator.sdk
 
 import com.saltedge.authenticator.sdk.constants.DEFAULT_RETURN_URL
 import com.saltedge.authenticator.sdk.contract.*
-import com.saltedge.authenticator.sdk.model.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.request.ConfirmDenyData
 import com.saltedge.authenticator.sdk.network.RestClient
 import com.saltedge.authenticator.sdk.network.connector.*

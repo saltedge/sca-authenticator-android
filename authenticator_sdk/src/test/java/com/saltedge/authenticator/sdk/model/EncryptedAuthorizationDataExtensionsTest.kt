@@ -20,6 +20,8 @@
  */
 package com.saltedge.authenticator.sdk.model
 
+import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
+import com.saltedge.authenticator.sdk.model.authorization.isValid
 import org.junit.Assert
 import org.junit.Test
 

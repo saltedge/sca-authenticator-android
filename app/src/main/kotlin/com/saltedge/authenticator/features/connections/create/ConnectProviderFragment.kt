@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.connect
+package com.saltedge.authenticator.features.connections.create
 
 import android.content.DialogInterface
 import android.os.Bundle
@@ -27,15 +27,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.CookieManager
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_CONNECT_CONFIGURATION
 import com.saltedge.authenticator.app.KEY_GUID
-import com.saltedge.authenticator.features.connections.connect.di.ConnectProviderModule
+import com.saltedge.authenticator.features.connections.create.di.ConnectProviderModule
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.Token
-import com.saltedge.authenticator.sdk.tools.KEY_CONNECT_QUERY_PARAM
+import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import com.saltedge.authenticator.sdk.web.ConnectWebClient
 import com.saltedge.authenticator.sdk.web.ConnectWebClientContract
 import com.saltedge.authenticator.tool.*
@@ -58,8 +57,7 @@ class ConnectProviderFragment : BaseFragment(),
         super.onCreate(savedInstanceState)
         injectDependencies()
         presenterContract.setInitialData(
-            connectConfigurationLink = arguments?.getString(KEY_CONNECT_CONFIGURATION),
-            connectQueryParam = arguments?.getString(KEY_CONNECT_QUERY_PARAM),
+            initialConnectData = arguments?.getSerializable(KEY_CONNECT_DATA) as? ConnectAppLinkData,
             connectionGuid = arguments?.getString(KEY_GUID)
         )
     }
@@ -168,17 +166,17 @@ class ConnectProviderFragment : BaseFragment(),
     }
 
     companion object {
-        fun newInstance(
-            connectConfigurationLink: String? = null,
-            connectQuery: String? = null,
-            connectionGuid: GUID? = null
-        ): ConnectProviderFragment {
+        const val KEY_CONNECT_DATA = "KEY_CONNECT_DATA"
+
+        fun newInstance(connectAppLinkData: ConnectAppLinkData): ConnectProviderFragment {
             return ConnectProviderFragment().apply {
-                arguments = Bundle().apply {
-                    putString(KEY_CONNECT_CONFIGURATION, connectConfigurationLink)
-                    putString(KEY_CONNECT_QUERY_PARAM, connectQuery)
-                    putString(KEY_GUID, connectionGuid)
-                }
+                arguments = Bundle().apply { putSerializable(KEY_CONNECT_DATA, connectAppLinkData) }
+            }
+        }
+
+        fun newInstance(connectionGuid: GUID): ConnectProviderFragment {
+            return ConnectProviderFragment().apply {
+                arguments = Bundle().apply { putString(KEY_GUID, connectionGuid) }
             }
         }
     }

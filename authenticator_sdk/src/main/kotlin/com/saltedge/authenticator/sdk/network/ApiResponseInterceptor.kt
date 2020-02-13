@@ -22,10 +22,10 @@ package com.saltedge.authenticator.sdk.network
 
 import com.google.gson.Gson
 import com.saltedge.authenticator.sdk.BuildConfig
-import com.saltedge.authenticator.sdk.model.ApiErrorData
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.Token
-import com.saltedge.authenticator.sdk.model.createRequestError
-import com.saltedge.authenticator.sdk.model.exceptionToApiError
+import com.saltedge.authenticator.sdk.model.error.createRequestError
+import com.saltedge.authenticator.sdk.model.error.exceptionToApiError
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

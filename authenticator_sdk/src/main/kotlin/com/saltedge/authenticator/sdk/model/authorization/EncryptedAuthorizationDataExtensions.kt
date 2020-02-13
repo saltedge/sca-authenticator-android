@@ -18,26 +18,18 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model
-
-import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.constants.KEY_ERROR_CLASS
-import com.saltedge.authenticator.sdk.constants.KEY_ERROR_MESSAGE
-import java.io.Serializable
+package com.saltedge.authenticator.sdk.model.authorization
 
 /**
- * API Error model
- * with annotation for GSON parsing
- * contains accessToken field which is used for further connection invalidation
+ * Checks validity of Encrypted Authorization model
+ *
+ * @receiver Encrypted authorization
+ * @return boolean. true if key, iv, algorithm, data, connection_id fields are present
  */
-data class ApiErrorData(
-    @SerializedName(KEY_ERROR_CLASS) var errorClassName: String,
-    @SerializedName(KEY_ERROR_MESSAGE) var errorMessage: String = "",
-    var accessToken: Token? = null
-) : Serializable {
-
-    init {
-        this.errorClassName = errorClassName.replace("""@\S+""".toRegex(), "")
-        this.errorMessage = errorMessage.replace("""@\S+""".toRegex(), "")
-    }
+fun EncryptedAuthorizationData.isValid(): Boolean {
+    return !key.isNullOrEmpty() &&
+        !iv.isNullOrEmpty() &&
+        !algorithm.isNullOrEmpty() &&
+        !data.isNullOrEmpty() &&
+        !connectionId.isNullOrEmpty()
 }

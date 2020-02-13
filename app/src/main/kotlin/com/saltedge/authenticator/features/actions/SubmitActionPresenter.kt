@@ -27,6 +27,11 @@ import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
 import com.saltedge.authenticator.sdk.model.*
+import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
+import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.model.error.getErrorMessage
 import com.saltedge.authenticator.sdk.model.response.SubmitActionData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import javax.inject.Inject
@@ -40,12 +45,12 @@ class SubmitActionPresenter @Inject constructor(
 
     override var viewContract: SubmitActionContract.View? = null
     private var viewMode: ViewMode = ViewMode.START
-    private var actionDeepLinkData: ActionDeepLinkData? = null
+    private var actionAppLinkData: ActionAppLinkData? = null
     private var connectionAndKey: ConnectionAndKey? = null
 
-    override fun setInitialData(connectionGuid: GUID, actionDeepLinkData: ActionDeepLinkData) {
+    override fun setInitialData(connectionGuid: GUID, actionAppLinkData: ActionAppLinkData) {
         this.connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
-            this.actionDeepLinkData = actionDeepLinkData
+            this.actionAppLinkData = actionAppLinkData
             createConnectionAndKey(
                 connection = it,
                 keyStoreManager = keyStoreManager
@@ -59,7 +64,7 @@ class SubmitActionPresenter @Inject constructor(
     override fun onViewCreated() {
         if (viewMode == ViewMode.START) {
             apiManager.sendAction(
-                actionUUID = actionDeepLinkData?.actionUuid ?: "",
+                actionUUID = actionAppLinkData?.actionUuid ?: "",
                 connectionAndKey = connectionAndKey ?: return,
                 resultCallback = this
             )
@@ -77,10 +82,7 @@ class SubmitActionPresenter @Inject constructor(
     override fun onActionInitSuccess(response: SubmitActionData) {
         val authorizationID = response.authorizationId ?: ""
         val connectionID = response.connectionId ?: ""
-        if (response.success == true && authorizationID.isEmpty() && connectionID.isEmpty()) {
-            viewMode = ViewMode.ACTION_SUCCESS
-            setupViews()
-        } else {
+        if (response.success == true && authorizationID.isNotEmpty() && connectionID.isNotEmpty()) {
             viewMode = ViewMode.ACTION_SUCCESS
             viewContract?.closeView()
             viewContract?.setResultAuthorizationIdentifier(
@@ -89,6 +91,9 @@ class SubmitActionPresenter @Inject constructor(
                     connectionID = connectionID
                 )
             )
+        } else {
+            viewMode = if (response.success == true) ViewMode.ACTION_SUCCESS else ViewMode.ACTION_ERROR
+            setupViews()
         }
     }
 

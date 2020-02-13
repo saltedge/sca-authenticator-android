@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +18,12 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model
+package com.saltedge.authenticator.sdk.model.appLink
 
-enum class ConnectionStatus {
-    INACTIVE, ACTIVE
-}
+import java.io.Serializable
 
-/**
- * Convert status string to enum object or null if status unknown
- *
- * @receiver status string
- * @return ConnectionStatus, optional.
- */
-fun String.toConnectionStatus(): ConnectionStatus? {
-    return try {
-        ConnectionStatus.valueOf(this)
-    } catch (e: Exception) {
-        null
-    }
-}
+data class ActionAppLinkData(
+    var actionUuid: String,
+    var connectUrl: String,
+    var returnTo: String?
+) : Serializable

@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model
+package com.saltedge.authenticator.sdk.model.error
 
 import android.content.Context
 import com.saltedge.authenticator.sdk.R

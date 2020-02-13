@@ -18,12 +18,26 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model.response
+package com.saltedge.authenticator.sdk.model.authorization
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.constants.KEY_DATA
-import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
+import com.saltedge.authenticator.sdk.constants.*
+import java.io.Serializable
 
-data class AuthorizationShowResponseData(
-    @SerializedName(KEY_DATA) var data: EncryptedAuthorizationData? = null
-)
+/**
+ * Encrypted authorization model
+ * with annotation for GSON parsing
+ * contains:
+ * - encrypted data with symmetric algorithm,
+ * - algorithm code (now is supported only AES-CBC-256),
+ * - encryption key (KEY), encrypted with asymmetric RSA key attached to specific connection (connectionId)
+ * - initialization vector (IV), encrypted with asymmetric RSA key attached to specific connection (connectionId)
+ */
+data class EncryptedAuthorizationData(
+    @SerializedName(KEY_ID) var id: String? = null,
+    @SerializedName(KEY_CONNECTION_ID) var connectionId: String? = null,
+    @SerializedName(KEY_DATA) var data: String? = null,
+    @SerializedName(KEY_ALGORITHM) var algorithm: String? = null,
+    @SerializedName(KEY_IV) var iv: String? = null,
+    @SerializedName(KEY_KEY) var key: String? = null
+) : Serializable

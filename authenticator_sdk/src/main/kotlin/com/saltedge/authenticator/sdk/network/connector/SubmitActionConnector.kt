@@ -23,9 +23,9 @@ package com.saltedge.authenticator.sdk.network.connector
 import com.saltedge.authenticator.sdk.constants.API_ACTION
 import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_POST
 import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
-import com.saltedge.authenticator.sdk.model.ApiErrorData
-import com.saltedge.authenticator.sdk.model.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.createInvalidResponseError
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.error.createInvalidResponseError
 import com.saltedge.authenticator.sdk.model.response.SubmitActionResponseData
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.ApiResponseInterceptor

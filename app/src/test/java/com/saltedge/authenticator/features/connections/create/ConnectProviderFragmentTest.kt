@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2020 Salt Edge Inc.
+ * Copyright (c) 2019 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,35 +18,40 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.actions
+package com.saltedge.authenticator.features.connections.create
 
 import com.saltedge.authenticator.app.KEY_GUID
-import com.saltedge.authenticator.features.actions.SubmitActionFragment.Companion.KEY_ACTION_DEEP_LINK_DATA
-import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
-import org.hamcrest.CoreMatchers.equalTo
+import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
+import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class SubmitActionFragmentTest {
+class ConnectProviderFragmentTest {
 
     @Test
     @Throws(Exception::class)
-    fun newInstanceTestCase() {
-        val actionDeepLinkData = ActionAppLinkData(
-            actionUuid = "actionUuid",
-            connectUrl = "connectUrl",
-            returnTo = "returnTo"
-        )
-        val arguments = SubmitActionFragment.newInstance(
-            connectionGuid = "guid1",
-            actionAppLinkData = actionDeepLinkData
-        ).arguments
+    fun newInstanceTestCase1() {
+        val arguments = ConnectProviderFragment.newInstance(connectionGuid = "guid1").arguments!!
 
-        assertThat(arguments?.getString(KEY_GUID), equalTo("guid1"))
-        assertThat(arguments?.getSerializable(KEY_ACTION_DEEP_LINK_DATA) as? ActionAppLinkData,
-            equalTo(actionDeepLinkData))
+        assertThat(arguments.getString(KEY_GUID), equalTo("guid1"))
+        assertNull(arguments.getSerializable(ConnectProviderFragment.KEY_CONNECT_DATA))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun newInstanceTestCase2() {
+        val arguments = ConnectProviderFragment.newInstance(
+            connectAppLinkData = ConnectAppLinkData("https://www.my_host.com/configuration")
+        ).arguments!!
+
+        assertNull(arguments.getString(KEY_GUID))
+        assertThat(
+            arguments.getSerializable(ConnectProviderFragment.KEY_CONNECT_DATA) as ConnectAppLinkData,
+            equalTo(ConnectAppLinkData("https://www.my_host.com/configuration"))
+        )
     }
 }

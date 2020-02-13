@@ -27,8 +27,8 @@ import com.saltedge.authenticator.features.connections.common.ConnectionViewMode
 import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.model.ConnectionStatus
-import com.saltedge.authenticator.sdk.model.createInvalidResponseError
+import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
+import com.saltedge.authenticator.sdk.model.error.createInvalidResponseError
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.tools.toDateTime
 import com.saltedge.authenticator.testTools.TestAppTools

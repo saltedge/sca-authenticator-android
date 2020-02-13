@@ -18,33 +18,13 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model
+package com.saltedge.authenticator.sdk.model.connection
 
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
+import java.security.PrivateKey
+
+//TODO: Rename ConnectionAndKey
 /**
- * Connection model abstraction
- *
- * @property guid - Alias to RSA keypair in Keystore
- * @property id - Unique id received from Authenticator API
- * @property name - Provider's name from ProviderData
- * @property code - Provider's code
- * @property logoUrl - Provider's logo url. May be empty
- * @property connectUrl - Base url of Authenticator API
- * @property accessToken - Access token for accessing Authenticator API resources
- * @property status - Connection Status. ACTIVE or INACTIVE
- * @property supportEmail - Provider's support email
- *
- * @see ProviderData
+ * Container for Connection model and related PrivateKey
  */
-interface ConnectionAbs {
-    var guid: String
-    var id: String
-    var createdAt: Long
-    var updatedAt: Long
-    var name: String
-    var code: String
-    var logoUrl: String
-    var connectUrl: String
-    var accessToken: String
-    var status: String
-    var supportEmail: String?
-}
+data class ConnectionAndKey(val connection: ConnectionAbs, val key: PrivateKey)

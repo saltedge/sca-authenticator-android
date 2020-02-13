@@ -20,8 +20,8 @@
  */
 package com.saltedge.authenticator.features.actions
 
-import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
-import com.saltedge.authenticator.sdk.model.AuthorizationIdentifier
+import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
+import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 
 interface SubmitActionContract {
 
@@ -40,7 +40,7 @@ interface SubmitActionContract {
 
     interface Presenter {
         var viewContract: View?
-        fun setInitialData(connectionGuid: String, actionDeepLinkData: ActionDeepLinkData)
+        fun setInitialData(connectionGuid: String, actionAppLinkData: ActionAppLinkData)
         fun getTitleResId(): Int
         fun onViewCreated()
         fun onViewClick(viewId: Int)

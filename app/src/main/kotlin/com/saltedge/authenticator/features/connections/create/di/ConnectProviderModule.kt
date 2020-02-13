@@ -18,37 +18,36 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.connect.di
+package com.saltedge.authenticator.features.connections.create.di
 
+import android.content.Context
+import com.saltedge.authenticator.app.di.FragmentScope
+import com.saltedge.authenticator.features.connections.create.ConnectProviderContract
+import com.saltedge.authenticator.features.connections.create.ConnectProviderPresenter
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.testTools.TestAppTools
-import org.junit.Assert.assertNotNull
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.Mockito
-import org.robolectric.RobolectricTestRunner
+import dagger.Module
+import dagger.Provides
 
-@RunWith(RobolectricTestRunner::class)
-class ConnectProviderModuleTest {
+@Module
+class ConnectProviderModule {
 
-    @Test
-    @Throws(Exception::class)
-    fun providePresenterTest() {
-        val module = ConnectProviderModule()
-
-        assertNotNull(
-            module.providePresenter(
-                appContext = TestAppTools.applicationContext,
-                preferences = mockPreferences,
-                connections = mockConnectionsRepository,
-                keyStoreManager = mockKeyStoreManager
-            )
+    @FragmentScope
+    @Provides
+    fun providePresenter(
+        appContext: Context,
+        preferences: PreferenceRepositoryAbs,
+        connections: ConnectionsRepositoryAbs,
+        keyStoreManager: KeyStoreManagerAbs
+    ): ConnectProviderContract.Presenter {
+        return ConnectProviderPresenter(
+            appContext = appContext,
+            preferenceRepository = preferences,
+            connectionsRepository = connections,
+            keyStoreManager = keyStoreManager,
+            apiManager = AuthenticatorApiManager
         )
     }
-
-    private val mockPreferences = Mockito.mock(PreferenceRepositoryAbs::class.java)
-    private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
-    private val mockKeyStoreManager = Mockito.mock(KeyStoreManagerAbs::class.java)
 }
