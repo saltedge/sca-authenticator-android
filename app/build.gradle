@@ -60,10 +60,10 @@ android {
         multiDexEnabled = true
         vectorDrawables.useSupportLibrary = true
 
-        buildToolsVersion '29.0.0'
+        buildToolsVersion '28.0.3'
         minSdkVersion 21
-        compileSdkVersion 29
-        targetSdkVersion 29
+        compileSdkVersion 28
+        targetSdkVersion 28
 
         versionCode 40
         versionName '2.3.1'
@@ -122,8 +122,8 @@ androidExtensions {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    kapt 'com.google.dagger:dagger-compiler:2.24'//2.22.1
-    implementation 'com.google.dagger:dagger:2.24'//2.22.1
+    kapt 'com.google.dagger:dagger-compiler:2.22.1'
+    implementation 'com.google.dagger:dagger:2.22.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
