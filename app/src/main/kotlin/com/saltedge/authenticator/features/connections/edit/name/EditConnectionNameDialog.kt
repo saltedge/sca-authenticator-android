@@ -53,8 +53,8 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
             .setNegativeButton(R.string.actions_cancel, this)
         val view = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_name, null)
         val dialog = adb.setView(view).create()
-        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-        dialog?.show()
+        dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+        dialog.show()
         return dialog
     }
 

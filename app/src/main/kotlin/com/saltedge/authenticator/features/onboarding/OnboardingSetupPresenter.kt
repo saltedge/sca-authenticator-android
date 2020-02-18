@@ -109,6 +109,7 @@ class OnboardingSetupPresenter(
                         goToNextSetupView()
                     }
                     SetupViewMode.COMPLETE -> viewContract?.showMainActivity()
+                    SetupViewMode.INPUT_PASSCODE -> Unit
                 }
             }
             R.id.skipSetupActionView -> {
@@ -121,6 +122,7 @@ class OnboardingSetupPresenter(
                         preferenceRepository.notificationsEnabled = false
                         goToNextSetupView()
                     }
+                    else -> Unit
                 }
             }
             R.id.skipActionView, R.id.proceedToSetup -> {

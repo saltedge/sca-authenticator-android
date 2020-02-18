@@ -42,7 +42,8 @@ abstract class BaseBottomDialogFragment : BottomSheetDialogFragment() {
         dialog.setContentView(contentView)
         val params = (contentView.parent as View).layoutParams as CoordinatorLayout.LayoutParams
         (params.behavior as? BottomSheetBehavior)?.let {
-            it.setBottomSheetCallback(callback)
+            it.removeBottomSheetCallback(callback)
+            it.addBottomSheetCallback(callback)
             it.peekHeight = convertDpToPx(dp = 540f)
         }
     }
