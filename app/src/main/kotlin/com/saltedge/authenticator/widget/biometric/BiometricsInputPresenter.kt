@@ -73,7 +73,7 @@ class BiometricsInputPresenter(
     fun onDialogResume(context: Context) {
         isDialogVisible = true
         try {
-            if (biometricTools?.isFingerprintAuthAvailable(context) == true && cryptoObject != null) {
+            if (biometricTools.isFingerprintAuthAvailable(context) && cryptoObject != null) {
                 fingerprintManager = context.getFingerprintManager()
                 mCancellationSignal = CancellationSignal()
                 fingerprintManager?.authenticate(

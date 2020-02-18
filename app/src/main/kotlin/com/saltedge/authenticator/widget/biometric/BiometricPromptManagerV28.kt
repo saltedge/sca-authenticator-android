@@ -55,7 +55,9 @@ class BiometricPromptManagerV28 : BiometricPromptAbs, DialogInterface.OnClickLis
         descriptionResId: ResId,
         @StringRes negativeActionTextResId: ResId
     ) {
-        cancellationSignal = CancellationSignal().also {
+        try {
+            val signal = CancellationSignal()
+            cancellationSignal = signal
             val builder = BiometricPrompt.Builder(context)
             builder.setTitle(context.getString(titleResId))
             builder.setSubtitle(context.getString(descriptionResId))
@@ -64,13 +66,11 @@ class BiometricPromptManagerV28 : BiometricPromptAbs, DialogInterface.OnClickLis
                 context.mainExecutor,
                 this
             )
-            try {
-                val prompt: BiometricPrompt = builder.build()
-                prompt.authenticate(it, context.mainExecutor, authenticationCallBack)
-            } catch (e: Exception) {
-                e.log()
-                cancelPrompt()
-            }
+            val prompt: BiometricPrompt = builder.build()
+            prompt.authenticate(signal, context.mainExecutor, authenticationCallBack)
+        } catch (e: Exception) {
+            e.log()
+            cancelPrompt()
         }
     }
 

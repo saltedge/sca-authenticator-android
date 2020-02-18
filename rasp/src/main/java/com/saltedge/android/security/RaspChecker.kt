@@ -30,9 +30,8 @@ import com.saltedge.android.security.checker.*
  * 1. OS is working under Root privileges
  * 2. Current device is Emulator
  * 3. Application can be debugged
- * 4. Application installed from not verified installer (not from Google Play)
- * 5. Application signed with not verified signature
- * 6. OS has installed hooking framework
+ * 4. Application signed with not verified signature
+ * 5. OS has installed hooking framework
  */
 object RaspChecker {
     /**
@@ -46,7 +45,6 @@ object RaspChecker {
             context.checkIfDeviceRooted(),
             checkIfDeviceEmulator(),
             context.checkIfAppDebuggable(),
-            context.checkAppInstaller(),
             context.checkAppSignature(),
             context.checkHookingFrameworks()
         )

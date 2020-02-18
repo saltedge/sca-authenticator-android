@@ -70,12 +70,12 @@ class ConnectProviderPresenter @Inject constructor(
         get() {
             return if (viewMode.isCompleteWithSuccess)
                 appContext.getString(R.string.connect_status_provider_success).format(connection.name)
-            else appContext.getString(R.string.errors_connection_failed) ?: ""
+            else appContext.getString(R.string.errors_connection_failed)
         }
     override val completeMessage: String
         get() {
             return if (viewMode.isCompleteWithSuccess) {
-                appContext.getString(R.string.connect_status_provider_success_description) ?: ""
+                appContext.getString(R.string.connect_status_provider_success_description)
             } else {
                 sessionFailMessage ?: appContext.getString(
                     R.string.errors_connection_failed_description

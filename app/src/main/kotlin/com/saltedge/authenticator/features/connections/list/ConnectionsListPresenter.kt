@@ -62,7 +62,7 @@ class ConnectionsListPresenter @Inject constructor(
             RENAME_REQUEST_CODE -> {
                 onUserRenamedConnection(
                     connectionGuid = data.getStringExtra(KEY_GUID) ?: return,
-                    newConnectionName = data.getStringExtra(KEY_NAME)
+                    newConnectionName = data.getStringExtra(KEY_NAME) ?: return
                 )
             }
             DELETE_REQUEST_CODE -> onUserConfirmedDeleteConnection(
