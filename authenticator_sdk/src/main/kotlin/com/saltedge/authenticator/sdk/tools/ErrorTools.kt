@@ -34,7 +34,8 @@ private val CONNECTION_EXCEPTIONS = listOf(
 private val SSL_EXCEPTIONS = listOf(
     "SSLHandshakeException",
     "SSLException",
-    "SSLPeerUnverifiedException"
+    "SSLPeerUnverifiedException",
+    "UnknownServiceException"
 )
 
 /**
