@@ -63,14 +63,14 @@ class ApiErrorDataExtensionsTest {
                 errorClassName = ERROR_CLASS_HOST_UNREACHABLE,
                 errorMessage = ""
             ).getErrorMessage(TestTools.applicationContext),
-            equalTo(TestTools.getString(R.string.errors_no_internet_connection))
+            equalTo(TestTools.getString(R.string.errors_no_connection))
         )
         assertThat(
             ApiErrorData(
                 errorClassName = ERROR_CLASS_SSL_HANDSHAKE,
                 errorMessage = ""
             ).getErrorMessage(TestTools.applicationContext),
-            equalTo(TestTools.getString(R.string.errors_update_security))
+            equalTo(TestTools.getString(R.string.errors_secure_connection))
         )
         assertThat(
             ApiErrorData(
