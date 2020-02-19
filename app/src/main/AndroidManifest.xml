@@ -35,7 +35,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:usesCleartextTraffic="true"
         android:name=".app.AuthenticatorApplication"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
