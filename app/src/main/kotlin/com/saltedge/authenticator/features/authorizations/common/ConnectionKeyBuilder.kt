@@ -22,10 +22,10 @@ package com.saltedge.authenticator.features.authorizations.common
 
 import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.sdk.model.ConnectionAbs
-import com.saltedge.authenticator.sdk.model.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.ConnectionID
-import com.saltedge.authenticator.sdk.model.getRelatedPrivateKey
+import com.saltedge.authenticator.sdk.model.connection.getRelatedPrivateKey
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 
 /**

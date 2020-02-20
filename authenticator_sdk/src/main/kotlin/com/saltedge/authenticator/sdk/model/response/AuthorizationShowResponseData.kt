@@ -22,7 +22,7 @@ package com.saltedge.authenticator.sdk.model.response
 
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
-import com.saltedge.authenticator.sdk.model.EncryptedAuthorizationData
+import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
 
 data class AuthorizationShowResponseData(
     @SerializedName(KEY_DATA) var data: EncryptedAuthorizationData? = null

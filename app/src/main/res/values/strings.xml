@@ -107,7 +107,7 @@
     <string name="action_feature_title">Successful authentication</string>
     <string name="action_feature_description">You were successfully authenticated</string>
     <string name="action_error_title">Authentication error</string>
-    <string name="action_error_description">Please try again.</string>
+    <string name="action_error_description">Authentication cannot be performed. Please try again later.</string>
     <string name="action_status_in_progress">Authenticating for action</string>
 
     <string name="authorizations_feature_title">Authorizations</string>

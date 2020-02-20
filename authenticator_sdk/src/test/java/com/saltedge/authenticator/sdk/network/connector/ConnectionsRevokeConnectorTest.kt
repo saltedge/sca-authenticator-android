@@ -23,9 +23,9 @@ package com.saltedge.authenticator.sdk.network.connector
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_API_RESPONSE
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_HOST_UNREACHABLE
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeResult
-import com.saltedge.authenticator.sdk.model.ApiErrorData
-import com.saltedge.authenticator.sdk.model.ConnectionAbs
-import com.saltedge.authenticator.sdk.model.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.response.RevokeAccessTokenResponseData
 import com.saltedge.authenticator.sdk.model.response.RevokeAccessTokenResultData
 import com.saltedge.authenticator.sdk.network.ApiInterface

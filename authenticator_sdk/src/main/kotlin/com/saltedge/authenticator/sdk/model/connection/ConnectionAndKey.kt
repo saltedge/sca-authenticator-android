@@ -18,22 +18,13 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model
+package com.saltedge.authenticator.sdk.model.connection
 
-enum class ConnectionStatus {
-    INACTIVE, ACTIVE
-}
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
+import java.security.PrivateKey
 
+//TODO: Rename ConnectionAndKey
 /**
- * Convert status string to enum object or null if status unknown
- *
- * @receiver status string
- * @return ConnectionStatus, optional.
+ * Container for Connection model and related PrivateKey
  */
-fun String.toConnectionStatus(): ConnectionStatus? {
-    return try {
-        ConnectionStatus.valueOf(this)
-    } catch (e: Exception) {
-        null
-    }
-}
+data class ConnectionAndKey(val connection: ConnectionAbs, val key: PrivateKey)

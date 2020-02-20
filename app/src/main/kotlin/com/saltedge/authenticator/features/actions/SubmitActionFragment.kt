@@ -29,8 +29,8 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.features.actions.di.SubmitActionModule
 import com.saltedge.authenticator.interfaces.UpActionImageListener
-import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
-import com.saltedge.authenticator.sdk.model.AuthorizationIdentifier
+import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
+import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_submit_action.*
@@ -49,7 +49,7 @@ class SubmitActionFragment : BaseFragment(),
         injectDependencies()
         presenterContract.setInitialData(
             connectionGuid = arguments?.getString(KEY_GUID) ?: return,
-            actionDeepLinkData = arguments?.getSerializable(KEY_ACTION_DEEP_LINK_DATA) as? ActionDeepLinkData
+            actionAppLinkData = arguments?.getSerializable(KEY_ACTION_DEEP_LINK_DATA) as? ActionAppLinkData
                 ?: return
         )
     }
@@ -91,7 +91,7 @@ class SubmitActionFragment : BaseFragment(),
     }
 
     override fun setResultAuthorizationIdentifier(authorizationIdentifier: AuthorizationIdentifier) {
-        (activity as? NewAuthorizationListener)?.onNewAuthorization(authorizationIdentifier)
+        (activity as? AuthorizationListener)?.onNewAuthorization(authorizationIdentifier)
     }
 
     override fun onClick(v: View?) {
@@ -126,11 +126,11 @@ class SubmitActionFragment : BaseFragment(),
 
         fun newInstance(
             connectionGuid: String,
-            actionDeepLinkData: ActionDeepLinkData
+            actionAppLinkData: ActionAppLinkData
         ): SubmitActionFragment {
             return SubmitActionFragment().apply {
                 arguments = Bundle().apply {
-                    putSerializable(KEY_ACTION_DEEP_LINK_DATA, actionDeepLinkData)
+                    putSerializable(KEY_ACTION_DEEP_LINK_DATA, actionAppLinkData)
                     putString(KEY_GUID, connectionGuid)
                 }
             }

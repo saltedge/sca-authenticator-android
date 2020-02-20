@@ -31,10 +31,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
-import com.saltedge.authenticator.features.actions.NewAuthorizationListener
+import com.saltedge.authenticator.features.actions.AuthorizationListener
 import com.saltedge.authenticator.features.actions.SubmitActionFragment
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
-import com.saltedge.authenticator.features.connections.connect.ConnectProviderFragment
+import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
 import com.saltedge.authenticator.features.connections.select.ConnectionSelectorListener
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment
@@ -46,9 +46,10 @@ import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.realm.RealmManager
-import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
-import com.saltedge.authenticator.sdk.model.AuthorizationIdentifier
+import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
+import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.model.GUID
+import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -63,7 +64,7 @@ class MainActivity : LockableActivity(),
     NetworkStateChangeListener,
     SnackbarAnchorContainer,
     ConnectionSelectorListener,
-    NewAuthorizationListener {
+    AuthorizationListener {
 
     private val presenter = MainActivityPresenter(
         viewContract = this,
@@ -127,15 +128,6 @@ class MainActivity : LockableActivity(),
         }
     }
 
-    override fun showConnectProvider(connectConfigurationLink: String, connectQuery: String?) {
-        this.addFragment(
-            ConnectProviderFragment.newInstance(
-                connectConfigurationLink = connectConfigurationLink,
-                connectQuery = connectQuery
-            )
-        )
-    }
-
     override fun restartActivity() {
         super.restartLockableActivity()
     }
@@ -163,6 +155,10 @@ class MainActivity : LockableActivity(),
 
     override fun setSelectedTabbarItemId(menuId: Int) {
         bottomNavigationView?.selectedItemId = menuId
+    }
+
+    override fun showConnectProvider(connectAppLinkData: ConnectAppLinkData) {
+        this.addFragment(ConnectProviderFragment.newInstance(connectAppLinkData = connectAppLinkData))
     }
 
     override fun showAuthorizationsList() {
@@ -213,12 +209,12 @@ class MainActivity : LockableActivity(),
 
     override fun showSubmitActionFragment(
         connectionGuid: GUID,
-        actionDeepLinkData: ActionDeepLinkData
+        actionAppLinkData: ActionAppLinkData
     ) {
         this.addFragment(
             SubmitActionFragment.newInstance(
                 connectionGuid = connectionGuid,
-                actionDeepLinkData = actionDeepLinkData
+                actionAppLinkData = actionAppLinkData
             )
         )
     }

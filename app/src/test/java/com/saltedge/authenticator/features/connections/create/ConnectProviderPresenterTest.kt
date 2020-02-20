@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.connect
+package com.saltedge.authenticator.features.connections.create
 
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.db.Connection
@@ -27,9 +27,10 @@ import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.API_VERSION
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_API_RESPONSE
-import com.saltedge.authenticator.sdk.model.ApiErrorData
-import com.saltedge.authenticator.sdk.model.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.ProviderData
+import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
+import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.response.CreateConnectionData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.testTools.TestAppTools
@@ -60,8 +61,7 @@ class ConnectProviderPresenterTest {
     fun onViewClickTest() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(
-            connectConfigurationLink = "connectConfigurationLink",
-            connectQueryParam = null,
+            initialConnectData = ConnectAppLinkData("connectConfigurationLink", null),
             connectionGuid = "guid1"
         )
 
@@ -198,7 +198,7 @@ class ConnectProviderPresenterTest {
         }
         Mockito.`when`(mockConnectionsRepository.getByGuid("guid2")).thenReturn(connection)
         val presenter = createPresenter()
-        presenter.setInitialData(connectConfigurationLink = null, connectQueryParam = null, connectionGuid = "guid2")
+        presenter.setInitialData(initialConnectData = null, connectionGuid = "guid2")
         presenter.onDestroyView()
 
         Mockito.verify(mockKeyStoreManager).deleteKeyPair("guid2")
@@ -218,7 +218,7 @@ class ConnectProviderPresenterTest {
         }
         Mockito.`when`(mockConnectionsRepository.getByGuid("guid2")).thenReturn(connection)
         val presenter = createPresenter()
-        presenter.setInitialData(connectConfigurationLink = null, connectQueryParam = null, connectionGuid = "")
+        presenter.setInitialData(initialConnectData = null, connectionGuid = "")
         presenter.onDestroyView()
 
         Mockito.never()
@@ -238,7 +238,7 @@ class ConnectProviderPresenterTest {
         }
         Mockito.`when`(mockConnectionsRepository.getByGuid("guid2")).thenReturn(connection)
         val presenter = createPresenter()
-        presenter.setInitialData(connectConfigurationLink = null, connectQueryParam = null, connectionGuid = "guid2")
+        presenter.setInitialData(initialConnectData = null, connectionGuid = "guid2")
         presenter.onDestroyView()
 
         Mockito.never()
@@ -258,7 +258,7 @@ class ConnectProviderPresenterTest {
         }
         Mockito.`when`(mockConnectionsRepository.getByGuid("guid2")).thenReturn(connection)
         val presenter = createPresenter()
-        presenter.setInitialData(connectConfigurationLink = null, connectQueryParam = null, connectionGuid = "guid2")
+        presenter.setInitialData(initialConnectData = null, connectionGuid = "guid2")
         presenter.onDestroyView()
 
         Mockito.never()
@@ -272,8 +272,7 @@ class ConnectProviderPresenterTest {
         assertTrue(presenter.logoUrl.isEmpty())
 
         presenter.setInitialData(
-            connectConfigurationLink = "connectConfigurationLink",
-            connectQueryParam = null,
+            initialConnectData = ConnectAppLinkData("connectConfigurationLink", null),
             connectionGuid = "guid1"
         )
 
@@ -319,7 +318,7 @@ class ConnectProviderPresenterTest {
         }
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
-        presenter.setInitialData(connectConfigurationLink = null, connectQueryParam = null, connectionGuid = "guid1")
+        presenter.setInitialData(initialConnectData = null, connectionGuid = "guid1")
 
         Mockito.doReturn(1L).`when`(mockConnectionsRepository).getConnectionsCount("demobank1")
         Mockito.clearInvocations(mockView, mockConnectionsRepository)
@@ -373,7 +372,7 @@ class ConnectProviderPresenterTest {
         }
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
-        presenter.setInitialData(connectConfigurationLink = null, connectQueryParam = null, connectionGuid = "guid1")
+        presenter.setInitialData(initialConnectData = null, connectionGuid = "guid1")
 
         Mockito.doReturn(1L).`when`(mockConnectionsRepository).getConnectionsCount("demobank1")
 
@@ -409,7 +408,7 @@ class ConnectProviderPresenterTest {
         }
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
-        presenter.setInitialData(connectConfigurationLink = null, connectQueryParam = null, connectionGuid = "guid1")
+        presenter.setInitialData(initialConnectData = null, connectionGuid = "guid1")
 
         Mockito.doReturn(1L).`when`(mockConnectionsRepository).getConnectionsCount("demobank1")
 
@@ -445,7 +444,7 @@ class ConnectProviderPresenterTest {
         }
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
-        presenter.setInitialData(connectConfigurationLink = null, connectQueryParam = null, connectionGuid = "guid1")
+        presenter.setInitialData(initialConnectData = null, connectionGuid = "guid1")
 
         Mockito.doReturn(1L).`when`(mockConnectionsRepository).getConnectionsCount("demobank1")
 
@@ -484,7 +483,7 @@ class ConnectProviderPresenterTest {
         }
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
-        presenter.setInitialData(connectConfigurationLink = null, connectQueryParam = null, connectionGuid = "guid1")
+        presenter.setInitialData(initialConnectData = null, connectionGuid = "guid1")
 
         Mockito.doReturn(1L).`when`(mockConnectionsRepository).getConnectionsCount("demobank1")
 
@@ -518,7 +517,7 @@ class ConnectProviderPresenterTest {
         }
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
-        presenter.setInitialData(connectConfigurationLink = null, connectQueryParam = null, connectionGuid = "guid1")
+        presenter.setInitialData(initialConnectData = null, connectionGuid = "guid1")
 
         Mockito.doReturn(1L).`when`(mockConnectionsRepository).getConnectionsCount("demobank1")
 
@@ -546,7 +545,7 @@ class ConnectProviderPresenterTest {
         }
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
-        presenter.setInitialData(connectConfigurationLink = null, connectQueryParam = null, connectionGuid = "guid1")
+        presenter.setInitialData(initialConnectData = null, connectionGuid = "guid1")
 
         Mockito.doReturn(1L).`when`(mockConnectionsRepository).getConnectionsCount("demobank1")
 
@@ -585,9 +584,10 @@ class ConnectProviderPresenterTest {
     @Throws(Exception::class)
     fun onViewCreatedCase2() {
         val presenter = createPresenter(viewContract = mockView)
+        presenter.setInitialData(ConnectAppLinkData("url"), null)
         presenter.onViewCreated()
 
-        Mockito.verify(mockApiManager).getProviderConfigurationData("", presenter)
+        Mockito.verify(mockApiManager).getProviderConfigurationData("url", presenter)
     }
 
     /**
@@ -606,7 +606,7 @@ class ConnectProviderPresenterTest {
         }
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
-        presenter.setInitialData(connectConfigurationLink = null, connectQueryParam = null, connectionGuid = "guid1")
+        presenter.setInitialData(initialConnectData = null, connectionGuid = "guid1")
 
         Mockito.doReturn(1L).`when`(mockConnectionsRepository).getConnectionsCount("demobank1")
 
@@ -632,7 +632,7 @@ class ConnectProviderPresenterTest {
         }
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
-        presenter.setInitialData(connectConfigurationLink = null, connectQueryParam = null, connectionGuid = "guid1")
+        presenter.setInitialData(initialConnectData = null, connectionGuid = "guid1")
 
         Mockito.doReturn(1L).`when`(mockConnectionsRepository).getConnectionsCount("demobank1")
 
@@ -677,7 +677,7 @@ class ConnectProviderPresenterTest {
         }
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
-        presenter.setInitialData(connectConfigurationLink = null, connectQueryParam = null, connectionGuid = "guid1")
+        presenter.setInitialData(initialConnectData = null, connectionGuid = "guid1")
 
         Mockito.doReturn(1L).`when`(mockConnectionsRepository).getConnectionsCount("demobank1")
 
@@ -706,7 +706,7 @@ class ConnectProviderPresenterTest {
         }
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
-        presenter.setInitialData(connectConfigurationLink = null, connectQueryParam = null, connectionGuid = "guid1")
+        presenter.setInitialData(initialConnectData = null, connectionGuid = "guid1")
 
         Mockito.doReturn(1L).`when`(mockConnectionsRepository).getConnectionsCount("demobank1")
 
@@ -730,7 +730,7 @@ class ConnectProviderPresenterTest {
         }
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
-        presenter.setInitialData(connectConfigurationLink = null, connectQueryParam = null, connectionGuid = "guid1")
+        presenter.setInitialData(initialConnectData = null, connectionGuid = "guid1")
         presenter.onViewCreated()
 
         Mockito.doReturn("").`when`(mockPreferenceRepository).cloudMessagingToken
@@ -757,7 +757,7 @@ class ConnectProviderPresenterTest {
         }
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid1")
 
-        presenter.setInitialData(connectConfigurationLink = null, connectQueryParam = null, connectionGuid = "guid1")
+        presenter.setInitialData(initialConnectData = null, connectionGuid = "guid1")
 
         assertThat(presenter.getTitleResId(), equalTo(R.string.actions_reconnect))
     }
@@ -766,19 +766,18 @@ class ConnectProviderPresenterTest {
     @Throws(Exception::class)
     fun viewModeClassTest() {
         val targetArray = arrayOf(
-            ViewMode.START,
+            ViewMode.START_NEW_CONNECT,
+            ViewMode.START_RECONNECT,
             ViewMode.WEB_ENROLL,
             ViewMode.COMPLETE_SUCCESS,
             ViewMode.COMPLETE_ERROR
         )
         assertThat(ViewMode.values(), equalTo(targetArray))
-        assertThat(ViewMode.valueOf("START"), equalTo(ViewMode.START))
+        assertThat(ViewMode.valueOf("START_NEW_CONNECT"), equalTo(ViewMode.START_NEW_CONNECT))
+        assertThat(ViewMode.valueOf("START_RECONNECT"), equalTo(ViewMode.START_RECONNECT))
         assertThat(ViewMode.valueOf("WEB_ENROLL"), equalTo(ViewMode.WEB_ENROLL))
         assertThat(ViewMode.valueOf("COMPLETE_SUCCESS"), equalTo(ViewMode.COMPLETE_SUCCESS))
-        assertThat(
-            ViewMode.valueOf("COMPLETE_ERROR"),
-            equalTo(ViewMode.COMPLETE_ERROR)
-        )
+        assertThat(ViewMode.valueOf("COMPLETE_ERROR"), equalTo(ViewMode.COMPLETE_ERROR))
     }
 
     private val mockPreferenceRepository = Mockito.mock(PreferenceRepositoryAbs::class.java)

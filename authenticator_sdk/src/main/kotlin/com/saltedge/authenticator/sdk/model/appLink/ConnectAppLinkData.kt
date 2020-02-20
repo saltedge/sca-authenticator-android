@@ -18,11 +18,11 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.actions
+package com.saltedge.authenticator.sdk.model.appLink
 
-import com.saltedge.authenticator.sdk.model.AuthorizationIdentifier
+import java.io.Serializable
 
-interface NewAuthorizationListener {
-    fun onNewAuthorization(authorizationIdentifier: AuthorizationIdentifier)
-}
-
+data class ConnectAppLinkData(
+    var configurationUrl: String,
+    var connectQuery: String? = null
+) : Serializable
