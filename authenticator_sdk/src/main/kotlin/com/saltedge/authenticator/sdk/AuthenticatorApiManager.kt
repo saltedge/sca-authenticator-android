@@ -168,7 +168,7 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
     }
 
     /**
-     * Request to use up-to-date information about the app and the user's device
+     * Request to use up-to-date information about the Application and the user's device
      */
     override fun initializeSdk(userAgent: String) {
         userAgentInfo = userAgent

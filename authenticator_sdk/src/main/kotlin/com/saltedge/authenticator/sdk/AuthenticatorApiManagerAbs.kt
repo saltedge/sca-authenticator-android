@@ -118,5 +118,8 @@ interface AuthenticatorApiManagerAbs {
         resultCallback: ConfirmAuthorizationResult
     )
 
+    /**
+     * Request to use up-to-date information about the Application and the user's device
+     */
     fun initializeSdk(userAgent: String)
 }
