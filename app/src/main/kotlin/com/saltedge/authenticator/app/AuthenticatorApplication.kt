@@ -30,6 +30,8 @@ import com.saltedge.authenticator.app.di.AppComponent
 import com.saltedge.authenticator.app.di.AppModule
 import com.saltedge.authenticator.app.di.DaggerAppComponent
 import com.saltedge.authenticator.model.realm.RealmManager
+import com.saltedge.authenticator.sdk.AuthenticatorApiManager
+import com.saltedge.authenticator.sdk.tools.buildUserAgent
 import com.saltedge.authenticator.tool.AppTools
 import com.saltedge.authenticator.tool.createCrashlyticsKit
 import com.saltedge.authenticator.tool.log
@@ -60,7 +62,7 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
 
         registerActivityLifecycleCallbacks(this)
 
-        initUserAgentInfo()
+        AuthenticatorApiManager.initializeSDK(buildUserAgent(applicationContext))
     }
 
     override fun onActivityPaused(activity: Activity?) {
@@ -99,9 +101,5 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
         } catch (e: Exception) {
             e.log()
         }
-    }
-
-    private fun initUserAgentInfo() {
-        UserAgentInfo.initializeSdk(applicationContext)
     }
 }

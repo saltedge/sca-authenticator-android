@@ -40,6 +40,7 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
      */
     override var authenticationReturnUrl: String = DEFAULT_RETURN_URL
     var userAgentInfo = ""
+        private set
 
     /**
      * Request to get Service Provide configuration.
@@ -168,9 +169,11 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
     }
 
     /**
-     * Request to use up-to-date information about the Application and the user's device
+     * Initialize SDK
+     *
+     * @param userAgent contain up-to-date information about the Application and the user's device
      */
-    override fun initializeSdk(userAgent: String) {
+    override fun initializeSDK(userAgent: String) {
         userAgentInfo = userAgent
     }
 }

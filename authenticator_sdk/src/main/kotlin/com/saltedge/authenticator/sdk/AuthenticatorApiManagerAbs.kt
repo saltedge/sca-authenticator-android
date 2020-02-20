@@ -119,7 +119,9 @@ interface AuthenticatorApiManagerAbs {
     )
 
     /**
-     * Request to use up-to-date information about the Application and the user's device
+     * Initialize SDK
+     *
+     * @param userAgent contain up-to-date information about the Application and the user's device
      */
-    fun initializeSdk(userAgent: String)
+    fun initializeSDK(userAgent: String)
 }
