@@ -117,4 +117,6 @@ interface AuthenticatorApiManagerAbs {
         authorizationCode: String?,
         resultCallback: ConfirmAuthorizationResult
     )
+
+    fun initializeSdk(userAgent: String)
 }

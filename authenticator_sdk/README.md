@@ -120,6 +120,7 @@ Authenticator SDK provide next features:
 * [Poll authorization by id](#poll-authorization-by-id)
 * [Confirm authorization](#confirm-authorization)
 * [Deny authorization](#deny-authorization)
+* [Initialize Sdk](#initialize-sdk)
 
 ### Link to Identity Service
 
@@ -335,6 +336,12 @@ Each pending Authorization can be denyed. Application can ask user to identify b
             }
         }
     )
+```
+
+### Initialize Sdk
+Each request must contain User-Agent header.
+```kotlin
+    AuthenticatorApiManager.initializeSdk(userAgentInfo)
 ```
 
   

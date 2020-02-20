@@ -59,6 +59,8 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
             .build()
 
         registerActivityLifecycleCallbacks(this)
+
+        initUserAgentInfo()
     }
 
     override fun onActivityPaused(activity: Activity?) {
@@ -97,5 +99,9 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
         } catch (e: Exception) {
             e.log()
         }
+    }
+
+    private fun initUserAgentInfo() {
+        UserAgentInfo.initializeSdk(applicationContext)
     }
 }

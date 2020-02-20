@@ -39,6 +39,7 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
      * Url where WebView will be redirected on enrollment finish
      */
     override var authenticationReturnUrl: String = DEFAULT_RETURN_URL
+    var userAgentInfo = ""
 
     /**
      * Request to get Service Provide configuration.
@@ -164,5 +165,12 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
                     confirm = false
                 )
             )
+    }
+
+    /**
+     * Request to use up-to-date information about the app and the user's device
+     */
+    override fun initializeSdk(userAgent: String) {
+        userAgentInfo = userAgent
     }
 }
