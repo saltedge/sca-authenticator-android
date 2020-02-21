@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk
 
+import android.content.Context
 import com.saltedge.authenticator.sdk.contract.*
 import com.saltedge.authenticator.sdk.model.ConnectionAndKey
 import com.saltedge.authenticator.sdk.polling.PollingServiceAbs
@@ -123,5 +124,5 @@ interface AuthenticatorApiManagerAbs {
      *
      * @param userAgent contain up-to-date information about the Application and the user's device
      */
-    fun initializeSDK(userAgent: String)
+    fun initializeSDK(context: Context): String
 }

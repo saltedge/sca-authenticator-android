@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk
 
+import android.content.Context
 import com.saltedge.authenticator.sdk.constants.DEFAULT_RETURN_URL
 import com.saltedge.authenticator.sdk.contract.*
 import com.saltedge.authenticator.sdk.model.ConnectionAndKey
@@ -29,6 +30,7 @@ import com.saltedge.authenticator.sdk.network.connector.*
 import com.saltedge.authenticator.sdk.polling.AuthorizationsPollingService
 import com.saltedge.authenticator.sdk.polling.PollingServiceAbs
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
+import com.saltedge.authenticator.sdk.tools.buildUserAgent
 
 /**
  * Wrap network communication with Identity Service
@@ -173,7 +175,8 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
      *
      * @param userAgent contain up-to-date information about the Application and the user's device
      */
-    override fun initializeSDK(userAgent: String) {
-        userAgentInfo = userAgent
+    override fun initializeSDK(context: Context): String {
+        userAgentInfo = buildUserAgent(context)
+        return userAgentInfo
     }
 }
