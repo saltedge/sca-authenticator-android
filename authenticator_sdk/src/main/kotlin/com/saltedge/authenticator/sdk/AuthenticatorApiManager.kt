@@ -173,10 +173,9 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
     /**
      * Initialize SDK
      *
-     * @param userAgent contain up-to-date information about the Application and the user's device
+     * @param context of Application
      */
-    override fun initializeSDK(context: Context): String {
+    override fun initializeSDK(context: Context) {
         userAgentInfo = buildUserAgent(context)
-        return userAgentInfo
     }
 }

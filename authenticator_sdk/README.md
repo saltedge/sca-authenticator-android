@@ -125,7 +125,7 @@ Authenticator SDK provide next features:
 ### Initialize SDK
 Authenticator requires User-Agent header.
 ```kotlin
-    AuthenticatorApiManager.initializeSdk(userAgentInfo)
+    AuthenticatorApiManager.initializeSdk(applicationContext)
 ```
 
 ### Link to Identity Service

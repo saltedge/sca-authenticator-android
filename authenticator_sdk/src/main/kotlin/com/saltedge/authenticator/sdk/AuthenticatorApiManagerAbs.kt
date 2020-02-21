@@ -122,7 +122,7 @@ interface AuthenticatorApiManagerAbs {
     /**
      * Initialize SDK
      *
-     * @param userAgent contain up-to-date information about the Application and the user's device
+     * @param context of Application
      */
-    fun initializeSDK(context: Context): String
+    fun initializeSDK(context: Context)
 }
