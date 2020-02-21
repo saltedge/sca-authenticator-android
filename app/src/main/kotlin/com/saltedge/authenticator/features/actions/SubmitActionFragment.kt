@@ -91,7 +91,7 @@ class SubmitActionFragment : BaseFragment(),
     }
 
     override fun setResultAuthorizationIdentifier(authorizationIdentifier: AuthorizationIdentifier) {
-        (activity as? NewAuthorizationListener)?.onNewAuthorization(authorizationIdentifier)
+        (activity as? AuthorizationListener)?.onNewAuthorization(authorizationIdentifier)
     }
 
     override fun onClick(v: View?) {

@@ -31,7 +31,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
-import com.saltedge.authenticator.features.actions.NewAuthorizationListener
+import com.saltedge.authenticator.features.actions.AuthorizationListener
 import com.saltedge.authenticator.features.actions.SubmitActionFragment
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
@@ -64,7 +64,7 @@ class MainActivity : LockableActivity(),
     NetworkStateChangeListener,
     SnackbarAnchorContainer,
     ConnectionSelectorListener,
-    NewAuthorizationListener {
+    AuthorizationListener {
 
     private val presenter = MainActivityPresenter(
         viewContract = this,

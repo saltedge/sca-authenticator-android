@@ -24,7 +24,6 @@ import android.net.Uri
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 
-
 const val KEY_CONFIGURATION_PARAM = "configuration"
 const val KEY_CONNECT_QUERY_PARAM = "connect_query"
 const val KEY_ACTION_UUID_PARAM = "action_uuid"
@@ -63,7 +62,7 @@ fun String.extractConnectAppLinkData(): ConnectAppLinkData? {
  * Extract action data from App Link
  *
  * @receiver deep link String (e.g. authenticator://saltedge.com/action?action_uuid=123456&return_to=http://return.com&connect_url=http://someurl.com)
- * @return ActionDeepLinkData object
+ * @return ActionAppLinkData object
  */
 fun String.extractActionAppLinkData(): ActionAppLinkData? {
     val uri = Uri.parse(this)

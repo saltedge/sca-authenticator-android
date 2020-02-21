@@ -22,7 +22,7 @@ package com.saltedge.authenticator.features.actions
 
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 
-interface NewAuthorizationListener {
+interface AuthorizationListener {
     fun onNewAuthorization(authorizationIdentifier: AuthorizationIdentifier)
 }
 

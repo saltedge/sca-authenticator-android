@@ -358,11 +358,11 @@ class MainActivityPresenterTest {
                 "authenticator://saltedge.com/action?action_uuid=123456&return_to=http://return.com&connect_url=http://someurl.com"
             )
         )
-
         Mockito.verify(mockView).showConnectionsSelectorFragment(resultMap)
         Mockito.verify(mockConnectionsRepository).getByConnectUrl("http://someurl.com")
         Mockito.verifyNoMoreInteractions(mockView, mockConnectionsRepository)
     }
+
 
     @Test
     @Throws(Exception::class)
