@@ -21,7 +21,6 @@
 package com.saltedge.authenticator.sdk.tools
 
 import android.net.Uri
-import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 
@@ -63,26 +62,11 @@ fun String.extractConnectAppLinkData(): ConnectAppLinkData? {
  * Extract action data from App Link
  *
  * @receiver deep link String (e.g. authenticator://saltedge.com/action?action_uuid=123456&return_to=http://return.com&connect_url=http://someurl.com)
- * @return ActionDeepLinkData object
+ * @return ActionAppLinkData object
  */
 fun String.extractActionAppLinkData(): ActionAppLinkData? {
     val uri = Uri.parse(this)
     return ActionAppLinkData(
-        actionUuid = uri.getQueryParameter(KEY_ACTION_UUID_PARAM) ?: return null,
-        connectUrl = uri.getQueryParameter(KEY_CONNECT_URL_PARAM) ?: return null,
-        returnTo = uri.getQueryParameter(KEY_RETURN_TO_PARAM)
-    )
-}
-
-/**
- * Extract action data from deep link
- *
- * @receiver deep link String (e.g. authenticator://saltedge.com/action?action_uuid=123456&return_to=http://return.com&connect_url=http://someurl.com)
- * @return ActionDeepLinkData object
- */
-fun String.extractActionDeepLinkData(): ActionDeepLinkData? { //extractActionDeepLinkData
-    val uri = Uri.parse(this)
-    return ActionDeepLinkData(
         actionUuid = uri.getQueryParameter(KEY_ACTION_UUID_PARAM) ?: return null,
         connectUrl = uri.getQueryParameter(KEY_CONNECT_URL_PARAM) ?: return null,
         returnTo = uri.getQueryParameter(KEY_RETURN_TO_PARAM)

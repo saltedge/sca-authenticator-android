@@ -21,7 +21,7 @@
 
 package com.saltedge.authenticator.sdk.tools
 
-import com.saltedge.authenticator.sdk.model.ActionDeepLinkData
+import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert
@@ -68,13 +68,13 @@ class DeepLinkToolsTest {
     @Test
     @Throws(Exception::class)
     fun extractActionExtractDeepLinkDataTest() {
-        assertNull("".extractActionDeepLinkData())
-        assertNull("authenticator://saltedge.com/action?action_uuid=123456".extractActionDeepLinkData())
+        assertNull("".extractActionAppLinkData())
+        assertNull("authenticator://saltedge.com/action?action_uuid=123456".extractActionAppLinkData())
         assertThat(
             ("authenticator://saltedge.com/action?action_uuid=123456" +
-                "&connect_url=https://www.saltedge.com/").extractActionDeepLinkData(),
+                "&connect_url=https://www.saltedge.com/").extractActionAppLinkData(),
             equalTo(
-                ActionDeepLinkData(
+                ActionAppLinkData(
                     actionUuid = "123456",
                     connectUrl = "https://www.saltedge.com/",
                     returnTo = null
@@ -83,9 +83,9 @@ class DeepLinkToolsTest {
         )
         assertThat(
             ("authenticator://saltedge.com/action?action_uuid=123456&return_to=https://www.saltedge.com/" +
-                "&connect_url=http://www.fentury.com/").extractActionDeepLinkData(),
+                "&connect_url=http://www.fentury.com/").extractActionAppLinkData(),
             equalTo(
-                ActionDeepLinkData(
+                ActionAppLinkData(
                     actionUuid = "123456",
                     connectUrl = "http://www.fentury.com/",
                     returnTo = "https://www.saltedge.com/"
