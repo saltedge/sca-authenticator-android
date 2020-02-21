@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk
 
+import android.content.Context
 import com.saltedge.authenticator.sdk.constants.DEFAULT_RETURN_URL
 import com.saltedge.authenticator.sdk.contract.*
 import com.saltedge.authenticator.sdk.model.ConnectionAndKey
@@ -29,6 +30,7 @@ import com.saltedge.authenticator.sdk.network.connector.*
 import com.saltedge.authenticator.sdk.polling.AuthorizationsPollingService
 import com.saltedge.authenticator.sdk.polling.PollingServiceAbs
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
+import com.saltedge.authenticator.sdk.tools.buildUserAgent
 
 /**
  * Wrap network communication with Identity Service
@@ -39,6 +41,8 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
      * Url where WebView will be redirected on enrollment finish
      */
     override var authenticationReturnUrl: String = DEFAULT_RETURN_URL
+    var userAgentInfo = ""
+        private set
 
     /**
      * Request to get Service Provide configuration.
@@ -164,5 +168,14 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
                     confirm = false
                 )
             )
+    }
+
+    /**
+     * Initialize SDK
+     *
+     * @param context of Application
+     */
+    override fun initializeSDK(context: Context) {
+        userAgentInfo = buildUserAgent(context)
     }
 }

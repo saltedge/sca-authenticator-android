@@ -112,7 +112,8 @@ Fields:
 ## How to use  
   
 Authenticator SDK provide next features:  
-* [Create connection (Link Bank flow)](#create-connection)
+* [Initialize SDK](#initialize-sdk)
+* [Link to Identity Service](#link-to-identity-service)
 * [Remove connection (Remove Bank)](#remove-connection)
 * [Fetch authorizations list](#get-authorizations-list)
 * [Poll authorizations list](#poll-authorizations-list)
@@ -120,6 +121,12 @@ Authenticator SDK provide next features:
 * [Poll authorization by id](#poll-authorization-by-id)
 * [Confirm authorization](#confirm-authorization)
 * [Deny authorization](#deny-authorization)
+
+### Initialize SDK
+Authenticator requires User-Agent header.
+```kotlin
+    AuthenticatorApiManager.initializeSdk(applicationContext)
+```
 
 ### Link to Identity Service
 
