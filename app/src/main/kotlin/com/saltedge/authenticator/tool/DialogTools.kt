@@ -51,12 +51,13 @@ fun FragmentActivity.showWarningDialog(@StringRes messageId: Int) {
  */
 fun FragmentActivity.showWarningDialog(
     message: String?,
-    listener: DialogInterface.OnClickListener? = null
+    listener: DialogInterface.OnClickListener? = null,
+    title: Int = R.string.errors_warning
 ) {
     if (message?.isBlank() != false) return
     try {
         AlertDialog.Builder(this)
-            .setTitle(R.string.errors_warning)
+            .setTitle(title)
             .setMessage(message)
             .setPositiveButton(android.R.string.ok, listener)
             .show()

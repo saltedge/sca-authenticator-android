@@ -149,7 +149,8 @@ class ConnectProviderFragment : BaseFragment(),
             message = message,
             listener = DialogInterface.OnClickListener { _: DialogInterface, _: Int ->
                 activity?.finishFragment()
-            }
+            },
+            title = R.string.errors_error
         )
     }
 
