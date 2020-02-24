@@ -124,7 +124,7 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
     }
 
     override fun showApiErrorView(message: String) {
-        activity?.showWarningDialog(message)
+        activity?.showWarningDialog(message = message)
     }
 
     override fun showSupportView(supportEmail: String?) {
