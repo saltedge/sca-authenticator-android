@@ -43,21 +43,22 @@ fun FragmentActivity.showWarningDialog(@StringRes messageId: Int) {
 }
 
 /**
- * Show warning dialog with given message
+ * Show dialog with given title and message
  *
  * @receiver FragmentActivity
+ * @param titleResId - the title that appears in the dialog
  * @param message - the message that appears in the dialog
  * @param listener - on dialog action click listener
  */
-fun FragmentActivity.showWarningDialog(
-    title: Int = R.string.errors_warning,
+fun FragmentActivity.showDialogWithTitleAndMessage(
+    titleResId: Int,
     message: String?,
     listener: DialogInterface.OnClickListener? = null
 ) {
     if (message?.isBlank() != false) return
     try {
         AlertDialog.Builder(this)
-            .setTitle(title)
+            .setTitle(titleResId)
             .setMessage(message)
             .setPositiveButton(android.R.string.ok, listener)
             .show()
@@ -73,11 +74,25 @@ fun FragmentActivity.showWarningDialog(
  * @param message - the message that appears in the dialog
  * @param listener - on dialog action click listener
  */
+fun FragmentActivity.showWarningDialog(
+    message: String?,
+    listener: DialogInterface.OnClickListener? = null
+) {
+    showDialogWithTitleAndMessage(titleResId = R.string.errors_warning, message = message, listener = listener)
+}
+
+/**
+ * Show error dialog with given message
+ *
+ * @receiver FragmentActivity
+ * @param message - the message that appears in the dialog
+ * @param listener - on dialog action click listener
+ */
 fun FragmentActivity.showErrorDialog(
     message: String?,
     listener: DialogInterface.OnClickListener? = null
 ) {
-    showWarningDialog(title = R.string.errors_error, message = message, listener = listener)
+    showDialogWithTitleAndMessage(titleResId = R.string.errors_error, message = message, listener = listener)
 }
 
 /**
