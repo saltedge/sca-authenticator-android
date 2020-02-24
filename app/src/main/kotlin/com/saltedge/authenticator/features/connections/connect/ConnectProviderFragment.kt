@@ -145,12 +145,11 @@ class ConnectProviderFragment : BaseFragment(),
     }
 
     override fun showErrorAndFinish(message: String) {
-        activity?.showWarningDialog(
+        activity?.showErrorDialog(
             message = message,
             listener = DialogInterface.OnClickListener { _: DialogInterface, _: Int ->
                 activity?.finishFragment()
-            },
-            title = R.string.errors_error
+            }
         )
     }
 

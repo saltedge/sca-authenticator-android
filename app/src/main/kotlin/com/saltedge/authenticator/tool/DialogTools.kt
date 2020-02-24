@@ -36,7 +36,7 @@ import com.saltedge.authenticator.R
  */
 fun FragmentActivity.showWarningDialog(@StringRes messageId: Int) {
     try {
-        showWarningDialog(getString(messageId))
+        showWarningDialog(message = getString(messageId))
     } catch (e: Exception) {
         e.log()
     }
@@ -50,9 +50,9 @@ fun FragmentActivity.showWarningDialog(@StringRes messageId: Int) {
  * @param listener - on dialog action click listener
  */
 fun FragmentActivity.showWarningDialog(
+    title: Int = R.string.errors_warning,
     message: String?,
-    listener: DialogInterface.OnClickListener? = null,
-    title: Int = R.string.errors_warning
+    listener: DialogInterface.OnClickListener? = null
 ) {
     if (message?.isBlank() != false) return
     try {
@@ -64,6 +64,20 @@ fun FragmentActivity.showWarningDialog(
     } catch (e: Exception) {
         e.log()
     }
+}
+
+/**
+ * Show error dialog with given message
+ *
+ * @receiver FragmentActivity
+ * @param message - the message that appears in the dialog
+ * @param listener - on dialog action click listener
+ */
+fun FragmentActivity.showErrorDialog(
+    message: String?,
+    listener: DialogInterface.OnClickListener? = null
+) {
+    showWarningDialog(title = R.string.errors_error, message = message, listener = listener)
 }
 
 /**
