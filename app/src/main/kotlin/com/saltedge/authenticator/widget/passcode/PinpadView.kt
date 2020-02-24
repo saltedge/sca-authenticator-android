@@ -65,6 +65,7 @@ class PinpadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         fingerView?.setVisible(active)
     }
 
+    @Suppress("DEPRECATION")
     private fun vibrateOnKeyClick() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator?.vibrate(VibrationEffect.createOneShot(40, 32))

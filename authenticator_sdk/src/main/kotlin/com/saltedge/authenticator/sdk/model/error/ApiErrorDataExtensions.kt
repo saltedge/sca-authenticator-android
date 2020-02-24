@@ -52,8 +52,8 @@ fun Throwable.exceptionToApiError(): ApiErrorData {
 fun ApiErrorData.getErrorMessage(context: Context): String {
     return if (errorMessage.isBlank()) {
         when (errorClassName) {
-            ERROR_CLASS_HOST_UNREACHABLE -> context.getString(R.string.errors_no_internet_connection)
-            ERROR_CLASS_SSL_HANDSHAKE -> context.getString(R.string.errors_request_security_error)
+            ERROR_CLASS_HOST_UNREACHABLE -> context.getString(R.string.errors_no_connection)
+            ERROR_CLASS_SSL_HANDSHAKE -> context.getString(R.string.errors_secure_connection)
             ERROR_CLASS_API_RESPONSE -> context.getString(R.string.errors_request_error)
             else -> errorMessage
         }

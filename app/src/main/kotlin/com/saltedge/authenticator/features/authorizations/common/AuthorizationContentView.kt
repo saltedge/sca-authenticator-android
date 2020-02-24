@@ -27,6 +27,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.fivehundredpx.android.blur.BlurringView
 import com.saltedge.authenticator.R
@@ -95,7 +96,7 @@ class AuthorizationContentView : LinearLayout {
         blurringView = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             View(context).apply {
                 layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT)
-                setBackgroundColor(resources.getColor(R.color.gray_extra_light_50))
+                setBackgroundColor(ContextCompat.getColor(context, R.color.gray_extra_light_50))
             }
         } else {
             BlurringView(context).apply {

@@ -29,11 +29,10 @@ def libVersionCode = 1
 def libVersionName = "1.0.0"
 
 android {
-    compileSdkVersion 29
-
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 28
+        compileSdkVersion 28
         versionCode libVersionCode
         versionName libVersionName
 
@@ -75,7 +74,6 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     api 'androidx.appcompat:appcompat:1.1.0'
     api 'com.squareup.retrofit2:retrofit:2.7.1'

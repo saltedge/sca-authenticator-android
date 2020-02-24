@@ -21,18 +21,26 @@
 package com.saltedge.authenticator.features.authorizations.common
 
 import com.saltedge.authenticator.model.db.Connection
+import com.saltedge.authenticator.testTools.TestAppTools
+import net.danlew.android.joda.JodaTimeAndroid
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
 import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.joda.time.DateTime
 import org.junit.Assert
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class AuthorizationViewModelTest {
+
+    @Before
+    fun setUp() {
+        JodaTimeAndroid.init(TestAppTools.applicationContext)
+    }
 
     private val model = AuthorizationViewModel(
         authorizationID = "444",

@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.network
 
+import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -28,6 +29,7 @@ const val HEADER_KEY_ACCEPT_LANGUAGE = "Accept-Language"
 const val HEADER_KEY_ACCESS_TOKEN = "Access-Token"
 const val HEADER_KEY_EXPIRES_AT = "Expires-at"
 const val HEADER_KEY_SIGNATURE = "Signature"
+const val HEADER_KEY_USER_AGENT = "User-Agent"
 
 const val HEADER_VALUE_JSON = "application/json"
 const val HEADER_VALUE_ACCEPT_LANGUAGE = "en"
@@ -43,6 +45,7 @@ internal class HeaderInterceptor : Interceptor {
             val requestBuilder = originalRequest.newBuilder()
                 .header(HEADER_CONTENT_TYPE, HEADER_VALUE_JSON)
                 .header(HEADER_KEY_ACCEPT_LANGUAGE, HEADER_VALUE_ACCEPT_LANGUAGE)
+                .header(HEADER_KEY_USER_AGENT, AuthenticatorApiManager.userAgentInfo)
             chain.proceed(requestBuilder.build())
         } catch (e: Exception) {
             e.printStackTrace()

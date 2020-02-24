@@ -26,7 +26,7 @@ apply plugin: 'io.fabric'
 apply plugin: 'idea'
 apply plugin: 'realm-android'
 apply from: './jacoco.gradle'
-apply from: "./common-methods.gradle"
+apply from: './common-methods.gradle'
 
 android {
 
@@ -55,7 +55,7 @@ android {
 
     defaultConfig {
         applicationId 'com.saltedge.authenticator'
-        testApplicationId "com.saltedge.authenticator.tests"
+        testApplicationId 'com.saltedge.authenticator.tests'
 
         multiDexEnabled = true
         vectorDrawables.useSupportLibrary = true
@@ -65,8 +65,8 @@ android {
         compileSdkVersion 29
         targetSdkVersion 29
 
-        versionCode 39
-        versionName '2.3.0'
+        versionCode 40
+        versionName '2.3.1'
 
         renderscriptTargetApi 21
         renderscriptSupportModeEnabled true
