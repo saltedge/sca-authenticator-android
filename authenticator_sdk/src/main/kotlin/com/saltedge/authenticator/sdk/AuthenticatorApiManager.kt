@@ -45,6 +45,15 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
         private set
 
     /**
+     * Initialize SDK
+     *
+     * @param context of Application
+     */
+    override fun initializeSDK(context: Context) {
+        userAgentInfo = buildUserAgent(context)
+    }
+
+    /**
      * Request to get Service Provide configuration.
      * Result is returned through callback.
      */
@@ -168,15 +177,6 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
                     confirm = false
                 )
             )
-    }
-
-    /**
-     * Initialize SDK
-     *
-     * @param context of Application
-     */
-    override fun initializeSDK(context: Context) {
-        userAgentInfo = buildUserAgent(context)
     }
 
     override fun sendAction(
