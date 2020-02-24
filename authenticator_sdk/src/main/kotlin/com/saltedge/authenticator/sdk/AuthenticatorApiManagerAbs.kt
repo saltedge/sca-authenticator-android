@@ -22,7 +22,7 @@ package com.saltedge.authenticator.sdk
 
 import android.content.Context
 import com.saltedge.authenticator.sdk.contract.*
-import com.saltedge.authenticator.sdk.model.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.polling.PollingServiceAbs
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
 
@@ -44,6 +44,12 @@ interface AuthenticatorApiManagerAbs {
     fun getProviderConfigurationData(
         providerConfigurationUrl: String,
         resultCallback: FetchProviderConfigurationDataResult
+    )
+
+    fun sendAction(
+        actionUUID: String,
+        connectionAndKey: ConnectionAndKey,
+        resultCallback: ActionSubmitListener
     )
 
     /**

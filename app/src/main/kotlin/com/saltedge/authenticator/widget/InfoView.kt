@@ -47,8 +47,16 @@ class InfoView(context: Context, attrs: AttributeSet) : LinearLayout(context, at
         titleView?.text = text
     }
 
+    fun setTitleText(textResId: Int) {
+        titleView?.text = context.getString(textResId)
+    }
+
     fun setSubtitleText(text: String) {
         subTitleView?.text = text
+    }
+
+    fun setSubtitleText(textResId: Int) {
+        subTitleView?.text = context.getString(textResId)
     }
 
     fun setMainActionText(@StringRes textId: Int) = setMainActionText(context.getString(textId))

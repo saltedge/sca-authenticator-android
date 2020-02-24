@@ -25,7 +25,7 @@ import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_API_RESPONSE
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_CONNECTION_NOT_FOUND
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_HOST_UNREACHABLE
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_SSL_HANDSHAKE
-import com.saltedge.authenticator.sdk.network.exceptionToApiError
+import com.saltedge.authenticator.sdk.model.error.*
 import com.saltedge.authenticator.sdk.testTools.TestTools
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat

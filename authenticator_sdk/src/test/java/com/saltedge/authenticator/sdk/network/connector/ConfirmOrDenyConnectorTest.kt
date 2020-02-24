@@ -21,10 +21,10 @@
 package com.saltedge.authenticator.sdk.network.connector
 
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationResult
-import com.saltedge.authenticator.sdk.model.ApiErrorData
-import com.saltedge.authenticator.sdk.model.ConnectionAbs
-import com.saltedge.authenticator.sdk.model.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.createInvalidResponseError
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.error.createInvalidResponseError
 import com.saltedge.authenticator.sdk.model.request.ConfirmDenyData
 import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResultData

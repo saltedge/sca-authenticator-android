@@ -20,6 +20,11 @@
  */
 package com.saltedge.authenticator.features.main
 
+import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.sdk.model.GUID
+import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
+import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
+
 interface MainActivityContract {
 
     interface View {
@@ -27,15 +32,14 @@ interface MainActivityContract {
         fun showConnectionsList()
         fun showSettingsList()
         fun setSelectedTabbarItemId(menuId: Int)
-        fun showConnectProvider(
-            connectConfigurationLink: String,
-            connectQuery: String?
-        )
+        fun showConnectProvider(connectAppLinkData: ConnectAppLinkData)
         fun showAuthorizationDetailsView(connectionID: String, authorizationID: String)
-
         fun restartActivity()
         fun closeView()
         fun updateNavigationViewsContent()
         fun popBackStack()
+        fun showNoConnectionsError()
+        fun showConnectionsSelectorFragment(connections: List<ConnectionViewModel>)
+        fun showSubmitActionFragment(connectionGuid: GUID, actionAppLinkData: ActionAppLinkData)
     }
 }

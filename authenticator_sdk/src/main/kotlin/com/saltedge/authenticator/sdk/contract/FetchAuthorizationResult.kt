@@ -20,8 +20,8 @@
  */
 package com.saltedge.authenticator.sdk.contract
 
-import com.saltedge.authenticator.sdk.model.ApiErrorData
-import com.saltedge.authenticator.sdk.model.EncryptedAuthorizationData
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
 
 /**
  * Get SCA Authorization request result

@@ -23,7 +23,7 @@ package com.saltedge.authenticator.sdk.testTools
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.google.gson.Gson
-import com.saltedge.authenticator.sdk.model.ConnectionAbs
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import okhttp3.ResponseBody
 import retrofit2.Response
 

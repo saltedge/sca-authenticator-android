@@ -21,8 +21,11 @@
 
 package com.saltedge.authenticator.sdk.tools
 
+import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
+import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -44,25 +47,50 @@ class DeepLinkToolsTest {
 
     @Test
     @Throws(Exception::class)
-    fun extractConnectConfigurationLinkTest() {
-        Assert.assertNull("".extractConnectConfigurationLink())
-        Assert.assertNull("test".extractConnectConfigurationLink())
-        Assert.assertNull("https://google.com".extractConnectConfigurationLink())
-        Assert.assertNull("authenticator://saltedge.com/connect?configuration=https://localhost/configuration".extractConnectConfigurationLink())
+    fun extractConnectAppLinkDataTest() {
+        assertNull("".extractConnectAppLinkData())
+        assertNull("test".extractConnectAppLinkData())
+        assertNull("....".extractConnectAppLinkData())
+        assertNull("////".extractConnectAppLinkData())
+        assertNull("https://google.com".extractConnectAppLinkData())
+        assertNull("authenticator://saltedge.com/connect?configuration=https://localhost/configuration".extractConnectAppLinkData())
+        assertNull("authenticator://saltedge.com/connect?configuration=https://backend/api/authenticator/v1/configuration".extractConnectAppLinkData())
         assertThat(
-            "authenticator://saltedge.com/connect?configuration=https://example.com/configuration".extractConnectConfigurationLink(),
-            equalTo("https://example.com/configuration")
+            "authenticator://saltedge.com/connect?configuration=https://example.com/configuration".extractConnectAppLinkData(),
+            equalTo(ConnectAppLinkData(configurationUrl = "https://example.com/configuration", connectQuery = null))
+        )
+        assertThat(
+            "authenticator://saltedge.com/connect?configuration=https://example.com/configuration&connect_query=1234567890".extractConnectAppLinkData(),
+            equalTo(ConnectAppLinkData(configurationUrl = "https://example.com/configuration", connectQuery = "1234567890"))
         )
     }
 
     @Test
     @Throws(Exception::class)
-    fun extractConnectQueryTest() {
-        Assert.assertNull("".extractConnectQuery())
-        Assert.assertNull("authenticator://saltedge.com/connect?configuration=https://example.com/configuration".extractConnectQuery())
+    fun extractActionExtractDeepLinkDataTest() {
+        assertNull("".extractActionAppLinkData())
+        assertNull("authenticator://saltedge.com/action?action_uuid=123456".extractActionAppLinkData())
         assertThat(
-            "authenticator://saltedge.com/connect?configuration=https://example.com/configuration&connect_query=1234567890".extractConnectQuery(),
-            equalTo("1234567890")
+            ("authenticator://saltedge.com/action?action_uuid=123456" +
+                "&connect_url=https://www.saltedge.com/").extractActionAppLinkData(),
+            equalTo(
+                ActionAppLinkData(
+                    actionUuid = "123456",
+                    connectUrl = "https://www.saltedge.com/",
+                    returnTo = null
+                )
+            )
+        )
+        assertThat(
+            ("authenticator://saltedge.com/action?action_uuid=123456&return_to=https://www.saltedge.com/" +
+                "&connect_url=http://www.fentury.com/").extractActionAppLinkData(),
+            equalTo(
+                ActionAppLinkData(
+                    actionUuid = "123456",
+                    connectUrl = "http://www.fentury.com/",
+                    returnTo = "https://www.saltedge.com/"
+                )
+            )
         )
     }
 }

@@ -36,6 +36,6 @@ const val KEY_STATUS = "status"
 const val KEY_OPTION_ID = "option_id"
 const val KEY_ACTION = "action"
 const val KEY_DEEP_LINK = "KEY_DEEP_LINK"
-const val KEY_CONNECT_CONFIGURATION = "KEY_CONNECT_CONFIGURATION"
+const val DB_KEY_CONNECT_URL = "connectUrl"
 
 const val TIME_VIEW_UPDATE_TIMEOUT = 1000L

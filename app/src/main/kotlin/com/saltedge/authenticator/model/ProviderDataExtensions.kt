@@ -21,18 +21,18 @@
 package com.saltedge.authenticator.model
 
 import com.saltedge.authenticator.model.db.Connection
-import com.saltedge.authenticator.sdk.model.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.ProviderData
+import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.isValid
 import com.saltedge.authenticator.sdk.tools.createRandomGuid
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 
 /**
- * Creates Connection object with data from Provider data
+ * Creates Connection object prefilled with data from Service Provider configuration
  *
- * @receiver ProviderData object parsed from QR code
- * @return connection - filled Connection
+ * @receiver ProviderData from Service Provider configuration
+ * @return Connection object
  */
 fun ProviderData.toConnection(): Connection? {
     if (!this.isValid()) return null
