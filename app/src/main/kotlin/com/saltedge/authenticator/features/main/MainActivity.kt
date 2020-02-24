@@ -31,8 +31,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
-import com.saltedge.authenticator.features.connections.connect.ConnectProviderFragment
+import com.saltedge.authenticator.features.actions.AuthorizationListener
+import com.saltedge.authenticator.features.actions.SubmitActionFragment
+import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
+import com.saltedge.authenticator.features.connections.select.ConnectionSelectorListener
+import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment
 import com.saltedge.authenticator.features.security.LockableActivity
 import com.saltedge.authenticator.features.security.UnlockAppInputView
 import com.saltedge.authenticator.features.settings.list.SettingsListFragment
@@ -41,6 +46,10 @@ import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.realm.RealmManager
+import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
+import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
+import com.saltedge.authenticator.sdk.model.GUID
+import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -53,11 +62,14 @@ class MainActivity : LockableActivity(),
     View.OnClickListener,
     FragmentManager.OnBackStackChangedListener,
     NetworkStateChangeListener,
-    SnackbarAnchorContainer {
+    SnackbarAnchorContainer,
+    ConnectionSelectorListener,
+    AuthorizationListener {
 
     private val presenter = MainActivityPresenter(
         viewContract = this,
-        connectionsRepository = ConnectionsRepository
+        connectionsRepository = ConnectionsRepository,
+        appContext = this
     )
     private val connectivityReceiver = ConnectivityReceiver()
 
@@ -85,7 +97,10 @@ class MainActivity : LockableActivity(),
     override fun onResume() {
         super.onResume()
         this.applyPreferenceLocale()
-        registerReceiver(connectivityReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+        registerReceiver(
+            connectivityReceiver,
+            IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        )
         connectivityReceiver.networkStateListener = this
     }
 
@@ -111,15 +126,6 @@ class MainActivity : LockableActivity(),
             R.id.actionButton -> this.startQrScannerActivity()
             else -> presenter.onNavigationItemClick(isTopNavigationLevel())
         }
-    }
-
-    override fun showConnectProvider(connectConfigurationLink: String, connectQuery: String?) {
-        this.addFragment(
-            ConnectProviderFragment.newInstance(
-                connectConfigurationLink = connectConfigurationLink,
-                connectQuery = connectQuery
-            )
-        )
     }
 
     override fun restartActivity() {
@@ -151,6 +157,10 @@ class MainActivity : LockableActivity(),
         bottomNavigationView?.selectedItemId = menuId
     }
 
+    override fun showConnectProvider(connectAppLinkData: ConnectAppLinkData) {
+        this.addFragment(ConnectProviderFragment.newInstance(connectAppLinkData = connectAppLinkData))
+    }
+
     override fun showAuthorizationsList() {
         replaceFragmentInContainer(AuthorizationsListFragment())
     }
@@ -172,12 +182,45 @@ class MainActivity : LockableActivity(),
         )
     }
 
+    override fun onNewAuthorization(authorizationIdentifier: AuthorizationIdentifier) {
+        this.addFragment(
+            AuthorizationDetailsFragment.newInstance(
+                connectionId = authorizationIdentifier.connectionID,
+                authorizationId = authorizationIdentifier.authorizationID
+            )
+        )
+    }
+
     override fun closeView() {
         finish()
     }
 
     override fun popBackStack() {
         supportFragmentManager.popBackStack()
+    }
+
+    override fun showNoConnectionsError() {
+        val snackbar = this.buildWarning(
+            text = getString(R.string.connections_list_no_connections),
+            snackBarDuration = 5000
+        )
+        snackbar?.show()
+    }
+
+    override fun showSubmitActionFragment(
+        connectionGuid: GUID,
+        actionAppLinkData: ActionAppLinkData
+    ) {
+        this.addFragment(
+            SubmitActionFragment.newInstance(
+                connectionGuid = connectionGuid,
+                actionAppLinkData = actionAppLinkData
+            )
+        )
+    }
+
+    override fun showConnectionsSelectorFragment(connections: List<ConnectionViewModel>) {
+        this.addFragment(SelectConnectionsFragment.newInstance(connections = connections))
     }
 
     override fun updateNavigationViewsContent() {
@@ -204,6 +247,10 @@ class MainActivity : LockableActivity(),
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         showNetworkMessage(isConnected)
+    }
+
+    override fun onConnectionSelected(connectionGuid: String) {
+        presenter.onConnectionSelected(connectionGuid)
     }
 
     private fun showNetworkMessage(isConnected: Boolean) {

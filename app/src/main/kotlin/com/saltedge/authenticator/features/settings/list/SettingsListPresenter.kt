@@ -30,9 +30,9 @@ import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.model.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.isActive
-import com.saltedge.authenticator.sdk.model.toConnectionAndKey
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.connection.isActive
+import com.saltedge.authenticator.sdk.model.connection.toConnectionAndKey
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import javax.inject.Inject

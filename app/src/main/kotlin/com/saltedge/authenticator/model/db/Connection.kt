@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.model.db
 
 import androidx.annotation.Keep
-import com.saltedge.authenticator.sdk.model.ConnectionAbs
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.Required

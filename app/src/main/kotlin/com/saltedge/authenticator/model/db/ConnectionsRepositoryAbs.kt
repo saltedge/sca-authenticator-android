@@ -38,6 +38,7 @@ interface ConnectionsRepositoryAbs {
     fun getAllActiveConnections(): List<Connection>
     fun getByGuid(connectionGuid: GUID?): Connection?
     fun getById(connectionId: String): Connection?
+    fun getByConnectUrl(connectionUrl: String): List<Connection>
     fun deleteAllConnections()
     fun deleteConnection(connectionGuid: GUID): Boolean
     fun invalidateConnectionsByTokens(accessTokens: List<Token>)

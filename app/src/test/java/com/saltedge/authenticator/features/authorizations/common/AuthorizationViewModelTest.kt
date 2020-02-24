@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.authorizations.common
 
 import com.saltedge.authenticator.model.db.Connection
-import com.saltedge.authenticator.sdk.model.AuthorizationData
+import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
 import com.saltedge.authenticator.testTools.TestAppTools
 import net.danlew.android.joda.JodaTimeAndroid
 import org.hamcrest.CoreMatchers.anyOf

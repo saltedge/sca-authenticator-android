@@ -33,6 +33,8 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.KEY_NAME
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeResult
 import com.saltedge.authenticator.sdk.model.*
+import com.saltedge.authenticator.sdk.model.connection.*
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import javax.inject.Inject
 

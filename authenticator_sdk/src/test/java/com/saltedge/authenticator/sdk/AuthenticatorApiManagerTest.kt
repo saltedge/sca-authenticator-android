@@ -24,8 +24,8 @@ import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationResult
 import com.saltedge.authenticator.sdk.contract.ConnectionCreateResult
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeResult
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
-import com.saltedge.authenticator.sdk.model.ConnectionAbs
-import com.saltedge.authenticator.sdk.model.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.response.AuthorizationShowResponseData
 import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.model.response.CreateConnectionResponseData
