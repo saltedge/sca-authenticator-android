@@ -28,9 +28,9 @@ import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.KEY_NAME
-import com.saltedge.authenticator.sdk.model.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.ConnectionStatus
-import com.saltedge.authenticator.sdk.model.isActive
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
+import com.saltedge.authenticator.sdk.model.connection.isActive
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.junit.Before

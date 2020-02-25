@@ -22,7 +22,7 @@ package com.saltedge.authenticator.features.authorizations.list
 
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.features.authorizations.common.BaseAuthorizationViewContract
-import com.saltedge.authenticator.sdk.model.ApiErrorData
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 
 interface AuthorizationsListContract {
 

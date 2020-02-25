@@ -28,7 +28,7 @@
         android:layout_height="match_parent" />
 
     <include
-        android:id="@+id/fragmentConnectProcessing"
+        android:id="@+id/fragmentConnectProcessingLayout"
         layout="@layout/fragment_connect_processing" />
 
     <com.saltedge.authenticator.widget.InfoView

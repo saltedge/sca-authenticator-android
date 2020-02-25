@@ -64,10 +64,11 @@
     <string name="errors_passcode_try_again_short">Please try again in \%s minute. </string>
     <string name="errors_request_error">Request error</string>
     <string name="errors_warning">Warning</string>
+    <string name="errors_error">Error</string>
     <string name="errors_wrong_passcode">You entered the wrong Passcode.</string>
     <string name="errors_wrong_passcode_long">You entered the wrong Passcode, please try again.</string>
     <string name="errors_connection_failed">Connection Failed</string>
-    <string name="errors_connection_failed_description">We tried connecting your Provider to the Authenticator App, but something went wrong. Please try again or contact our Support Team!</string>
+    <string name="errors_connection_failed_description">Provider not found. Please create connection to your service provider and try again.</string>
     <string name="errors_permission_denied">Permission Denied</string>
     <string name="errors_invalid_qr">Invalid QR code, please try again</string>
     <string name="errors_unable_connect_provider">Something went wrong. Unable connect to service provider.</string>
@@ -91,6 +92,7 @@
 
     <string name="connections_new_connection">New connection</string>
     <string name="connections_feature_title">Connections</string>
+    <string name="choose_connection_feature_title">Choose connections</string>
     <string name="connections_list_no_connections">No Connections</string>
     <string name="connections_list_no_connections_description">You have no currently connected service providers. Connect one to start receiving authorizations for your actions (e.g. payments).</string>
     <string name="connections_list_delete_all_connections">Delete all connections and stop receiving confirmations until another Provider is connected.</string>
@@ -101,6 +103,13 @@
     <string name="connect_status_in_progress_description">This may take some time. Please wait.</string>
     <string name="connect_status_provider_success">\%s was successfully connected!</string>
     <string name="connect_status_provider_success_description">Your Service Provider has been successfully connected to the Authenticator App. You will receive an authorization request every time you make an action.</string>
+
+    <string name="action_authentication">Authentication</string>
+    <string name="action_feature_title">Successful authentication</string>
+    <string name="action_feature_description">You were successfully authenticated</string>
+    <string name="action_error_title">Authentication error</string>
+    <string name="action_error_description">Authentication cannot be performed. Please try again later.</string>
+    <string name="action_status_in_progress">Authenticating for action</string>
 
     <string name="authorizations_feature_title">Authorizations</string>
     <string name="authorization_feature_title">Authorization</string>

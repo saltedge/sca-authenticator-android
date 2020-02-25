@@ -119,7 +119,7 @@ class OnboardingSetupActivity : AppCompatActivity(),
     }
 
     override fun showWarningDialogWithMessage(message: String) {
-        this.showWarningDialog(message)
+        this.showWarningDialog(message = message)
     }
 
     override fun updateSetupViews(

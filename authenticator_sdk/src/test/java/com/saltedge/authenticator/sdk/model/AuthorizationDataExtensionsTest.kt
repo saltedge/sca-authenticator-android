@@ -20,6 +20,8 @@
  */
 package com.saltedge.authenticator.sdk.model
 
+import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
+import com.saltedge.authenticator.sdk.model.authorization.isNotExpired
 import com.saltedge.authenticator.sdk.testTools.TestTools
 import net.danlew.android.joda.JodaTimeAndroid
 import org.joda.time.DateTime

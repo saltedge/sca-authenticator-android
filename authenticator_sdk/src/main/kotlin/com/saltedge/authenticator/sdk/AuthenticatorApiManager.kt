@@ -23,7 +23,7 @@ package com.saltedge.authenticator.sdk
 import android.content.Context
 import com.saltedge.authenticator.sdk.constants.DEFAULT_RETURN_URL
 import com.saltedge.authenticator.sdk.contract.*
-import com.saltedge.authenticator.sdk.model.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.request.ConfirmDenyData
 import com.saltedge.authenticator.sdk.network.RestClient
 import com.saltedge.authenticator.sdk.network.connector.*
@@ -43,6 +43,15 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
     override var authenticationReturnUrl: String = DEFAULT_RETURN_URL
     var userAgentInfo = ""
         private set
+
+    /**
+     * Initialize SDK
+     *
+     * @param context of Application
+     */
+    override fun initializeSDK(context: Context) {
+        userAgentInfo = buildUserAgent(context)
+    }
 
     /**
      * Request to get Service Provide configuration.
@@ -170,12 +179,15 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
             )
     }
 
-    /**
-     * Initialize SDK
-     *
-     * @param context of Application
-     */
-    override fun initializeSDK(context: Context) {
-        userAgentInfo = buildUserAgent(context)
+    override fun sendAction(
+        actionUUID: String,
+        connectionAndKey: ConnectionAndKey,
+        resultCallback: ActionSubmitListener
+    ) {
+        SubmitActionConnector(RestClient.apiInterface, resultCallback)
+            .postActionData(
+                actionUUID = actionUUID,
+                connectionAndKey = connectionAndKey
+            )
     }
 }
