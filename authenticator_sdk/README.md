@@ -132,7 +132,7 @@ Authenticator requires User-Agent header.
 
 1. Fetch [Service Provider info](#provider-data-model) from configuration url (provides all required for linking information). 
     ```kotlin
-        authenticatorApiManager.getProviderData(configurationUrl, resultCallback = object : FetchProviderDataResult {
+        authenticatorApiManager.getProviderConfigurationData(providerConfigurationUrl, resultCallback = object : FetchProviderDataResult {
           override fun fetchProviderResult(result: ProviderData?, error: ApiErrorData?) {
             // process result or error
           }
