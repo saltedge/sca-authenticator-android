@@ -19,7 +19,7 @@ In order to use Authenticator SDK it is necessary to install the following tools
 * [JDK 8](https://www.oracle.com/technetwork/java/javase/downloads/index.html)
 * [Android SDK](https://developer.android.com/studio/index.html)
 * IDE (e.g. Android Studio)
-* [Kotlin plugin installed](https://developer.android.com/kotlin/) v.1.3.+
+* [Kotlin plugin installed](https://developer.android.com/kotlin/) v.1.3.+ [**optional**]
 * Minimal supported Android SDK is SDK21 (Android 5 Lollipop)  
    
    
@@ -123,17 +123,23 @@ Authenticator SDK provide next features:
 * [Deny authorization](#deny-authorization)
 
 ### Initialize SDK
-Authenticator requires User-Agent header.
+Authenticator requires initialization.  
+Application on Kotlin language:
 ```kotlin
     AuthenticatorApiManager.initializeSdk(applicationContext)
 ```
-
+  
+Application on Java language:
+```java
+    AuthenticatorApiManager.INSTANCE.initializeSdk(applicationContext)
+```
+  
 ### Link to Identity Service
 
 1. Fetch [Service Provider info](#provider-data-model) from configuration url (provides all required for linking information). 
     ```kotlin
-        authenticatorApiManager.getProviderConfigurationData(providerConfigurationUrl, resultCallback = object : FetchProviderDataResult {
-          override fun fetchProviderResult(result: ProviderData?, error: ApiErrorData?) {
+        authenticatorApiManager.getProviderConfigurationData(providerConfigurationUrl, resultCallback = object : FetchProviderConfigurationDataResult {
+          override fun fetchProviderConfigurationDataResult(providerData: ProviderData?, error: ApiErrorData?) {
             // process result or error
           }
         })
@@ -156,13 +162,15 @@ Authenticator requires User-Agent header.
                 baseUrl = connection.connectUrl,
                 publicKey = publicKeyAsPemEncodedString,
                 pushToken = firebaseCloudMessagingToken,
-                resultCallback = object : ConnectionInitResult() {
-                    override fun onConnectionInitSuccess(response: ConnectionCreateResult) {
+                providerCode = providerCode,
+                connectQueryParam = connectQueryParam,
+                resultCallback = object : ConnectionCreateResult() {
+                    override fun onConnectionCreateSuccess(response: CreateConnectionData) {
                         // process success response
                         // open response.connect_url on WebView if required
                     }
     
-                    override fun onConnectionInitFailure(error: ApiErrorData) {
+                    override fun onConnectionCreateFailure(apiErrorData: ApiErrorData) {
                         // handle error response
                     }
                 }
@@ -205,7 +213,8 @@ In some cases application may want to destroy current linking.
             resultCallback = object : ConnectionsRevokeResult { }
         )
     ```
-    Where  `connectionsAndKeysToRevoke` - List<ConnectionAndKey>
+    Where  `connectionsAndKeysToRevoke` - List<ConnectionAndKey>. 
+    ConnectionAndKey - it is a model with pair of params: Connection and related PrivateKey
 
 1. Delete connections from persistent storage
 
