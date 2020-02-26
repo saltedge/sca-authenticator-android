@@ -179,6 +179,10 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
             )
     }
 
+    /**
+     * Request to send action.
+     * Result is returned through callback.
+     */
     override fun sendAction(
         actionUUID: String,
         connectionAndKey: ConnectionAndKey,
