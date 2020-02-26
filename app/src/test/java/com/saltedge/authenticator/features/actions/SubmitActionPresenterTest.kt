@@ -150,6 +150,11 @@ class SubmitActionPresenterTest {
         Mockito.verify(mockView).showErrorAndFinish("test error")
     }
 
+    /**
+     * Test onViewClick when we have returnTo in ActionAppLinkData
+     *
+     * @see ActionAppLinkData
+     */
     @Test
     @Throws(Exception::class)
     fun onViewClickTestCase1() {
@@ -176,6 +181,11 @@ class SubmitActionPresenterTest {
         Mockito.verifyNoMoreInteractions(mockView)
     }
 
+    /**
+     * Test onViewClick when we haven't returnTo
+     *
+     * @see ActionAppLinkData
+     */
     @Test
     @Throws(Exception::class)
     fun onViewClickTestCase2() {
@@ -218,11 +228,11 @@ class SubmitActionPresenterTest {
     }
 
     /**
-     * test onViewCreated when ViewMode is ACTION_ERROR
+     * Test onViewCreated when ViewMode is ACTION_ERROR
      */
     @Test
     @Throws(Exception::class)
-    fun onViewCreateTestCase1() {
+    fun onViewCreatedTestCase1() {
         val presenter = createPresenter(viewContract = mockView)
         val connection = Connection().apply {
             guid = "guid1"
@@ -252,11 +262,11 @@ class SubmitActionPresenterTest {
     }
 
     /**
-     * test onViewCreated when ViewMode is PROCESSING
+     * Test onViewCreated when ViewMode is PROCESSING
      */
     @Test
     @Throws(Exception::class)
-    fun onViewCreateTestCase2() {
+    fun onViewCreatedTestCase2() {
         val presenter = createPresenter(viewContract = mockView)
         val connection = Connection().apply {
             guid = "guid1"
@@ -283,11 +293,11 @@ class SubmitActionPresenterTest {
     }
 
     /**
-     * test onViewCreated when ViewMode is ACTION_SUCCESS
+     * Test onViewCreated when ViewMode is ACTION_SUCCESS
      */
     @Test
     @Throws(Exception::class)
-    fun onViewCreateTestCase3() {
+    fun onViewCreatedTestCase3() {
         val presenter = createPresenter(viewContract = mockView)
         val connectUrlData = SubmitActionData(
             success = true,
@@ -317,11 +327,11 @@ class SubmitActionPresenterTest {
     }
 
     /**
-     * test onViewCreated when ViewMode is START
+     * Test onViewCreated when ViewMode is START
      */
     @Test
     @Throws(Exception::class)
-    fun onViewCreateTestCase4() {
+    fun onViewCreatedTestCase4() {
         val presenter = createPresenter(viewContract = mockView)
         val connection = Connection().apply {
             guid = "guid1"
