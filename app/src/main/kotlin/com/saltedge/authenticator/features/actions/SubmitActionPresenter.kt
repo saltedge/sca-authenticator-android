@@ -101,7 +101,7 @@ class SubmitActionPresenter @Inject constructor(
         viewContract?.closeView()
         val returnToUrl: String? = actionAppLinkData?.returnTo
         if (returnToUrl.isNullOrEmpty()) return
-        viewContract?.openBrowser(returnToUrl)
+        viewContract?.openLink(returnToUrl)
     }
 
     private fun setupViews() {

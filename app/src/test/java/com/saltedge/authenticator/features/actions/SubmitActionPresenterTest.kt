@@ -172,7 +172,7 @@ class SubmitActionPresenterTest {
         presenter.onViewClick(R.id.mainActionView)
 
         Mockito.verify(mockView).closeView()
-        Mockito.verify(mockView).openBrowser("https://www.saltedge.com/")
+        Mockito.verify(mockView).openLink("https://www.saltedge.com/")
         Mockito.verifyNoMoreInteractions(mockView)
     }
 

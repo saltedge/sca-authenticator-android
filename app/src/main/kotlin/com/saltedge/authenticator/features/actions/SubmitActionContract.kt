@@ -36,7 +36,7 @@ interface SubmitActionContract {
             mainActionTextResId: Int
         )
         fun setProcessingVisibility(show: Boolean)
-        fun openBrowser(url: String)
+        fun openLink(url: String)
     }
 
     interface Presenter {

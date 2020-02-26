@@ -123,7 +123,7 @@ class SubmitActionFragment : BaseFragment(),
         fragmentActionProcessingLayout?.setVisible(show)
     }
 
-    override fun openBrowser(url: String) {
+    override fun openLink(url: String) {
         context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     }
 
