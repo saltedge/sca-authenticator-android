@@ -22,6 +22,7 @@ package com.saltedge.android.security.checker
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.util.Log
 import com.saltedge.android.security.checker.Constants.Companion.BINARY_MAGISK
 import com.saltedge.android.security.checker.Constants.Companion.BINARY_SU
 import java.io.BufferedReader
@@ -103,12 +104,14 @@ private fun checkForMagiskBinary(): Boolean = checkForBinary(BINARY_MAGISK)
  */
 private fun checkForDangerousProps(): Boolean {
     val dangerousProps = mapOf("ro.debuggable" to "1", "ro.secure" to "0")
-    return (propsReader()
-        ?: return false).any { propertyLine ->
+    val currentProperties = propsReader() ?: return false
+    val result = currentProperties.any { propertyLine ->
         dangerousProps.keys.any {
             propertyLine.contains(it) && propertyLine.contains("[${dangerousProps[it]}]")
         }
     }
+    if (result) Log.e("RootChecker", "Detected Dangerous Props: [${currentProperties.joinToString(", ")}]")
+    return result
 }
 
 /**
@@ -118,7 +121,7 @@ private fun checkForDangerousProps(): Boolean {
  * @return true if one of the dir is writable
  */
 private fun checkForRWPaths(): Boolean {
-    return mountReader()
+    val result = mountReader()
             ?.map { line -> line.split(" ".toRegex()).dropLastWhile { it.isEmpty() } }
             ?.filter { args ->
                 (args.size > 3) && Constants.pathsThatShouldNotBeWritable.any { path ->
@@ -129,6 +132,8 @@ private fun checkForRWPaths(): Boolean {
             }?.any {
                 it.equals("rw", ignoreCase = true)
             } ?: return false
+    if (result) Log.e("RootChecker", "Detected writeable path")
+    return result
 }
 
 /**
@@ -139,7 +144,9 @@ private fun checkForRWPaths(): Boolean {
  */
 private fun detectTestKeys(): Boolean {
     val buildTags = android.os.Build.TAGS
-    return buildTags != null && buildTags.contains("test-keys")
+    val result = buildTags != null && buildTags.contains("test-keys")
+    if (result) Log.e("RootChecker", "Detected test Build.TAG")
+    return result
 }
 
 /**
@@ -150,7 +157,9 @@ private fun checkSuExists(): Boolean {
     var process: Process? = null
     return try {
         process = Runtime.getRuntime().exec(arrayOf("which", BINARY_SU))
-        BufferedReader(InputStreamReader(process.inputStream)).readLine() != null
+        var line = BufferedReader(InputStreamReader(process.inputStream)).readLine()
+        if (line != null) Log.e("RootChecker", "Detected SU: $line ")
+        line != null
     } catch (t: Throwable) {
         false
     } finally {
@@ -168,7 +177,9 @@ private fun checkSuExists(): Boolean {
  */
 private fun Context.isAnyPackageFromListInstalled(packages: Array<String>): Boolean {
     val manager = this.packageManager
-    return packages.any { manager.packageInstalled(packageName = it) }
+    val result = packages.any { manager.packageInstalled(packageName = it) }
+    if (result) Log.e("RootChecker", "Detected harmful packages: [${packages.filter { manager.packageInstalled(packageName = it) }.joinToString(separator = ", ")}]")
+    return result
 }
 
 /**
@@ -195,7 +206,9 @@ private fun PackageManager.packageInstalled(packageName: String): Boolean {
  */
 private fun checkForBinary(filename: String): Boolean {
     return try {
-        Constants.suPaths.any { File(it, filename).exists() }
+        val r = Constants.suPaths.filter { File(it, filename).exists() }
+        if (r.isNotEmpty()) Log.e("RootChecker", "Detected harmful binary: [$filename] in: [${r.joinToString(", ")}]")
+        r.isNotEmpty()
     } catch (e: Exception) {
         false
     }
