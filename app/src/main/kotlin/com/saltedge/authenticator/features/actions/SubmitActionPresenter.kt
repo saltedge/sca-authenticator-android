@@ -99,7 +99,9 @@ class SubmitActionPresenter @Inject constructor(
 
     override fun onViewClick(viewId: Int) {
         viewContract?.closeView()
-        //TODO: Open return to in browser also when confirm/deny in AuthorizationDetailsFragment
+        val returnToUrl: String? = actionAppLinkData?.returnTo
+        if (returnToUrl.isNullOrEmpty()) return
+        viewContract?.openBrowser(returnToUrl)
     }
 
     private fun setupViews() {
@@ -128,6 +130,6 @@ class SubmitActionPresenter @Inject constructor(
     }
 }
 
-private enum class ViewMode {
+enum class ViewMode {
     START, PROCESSING, ACTION_SUCCESS, ACTION_ERROR
 }
