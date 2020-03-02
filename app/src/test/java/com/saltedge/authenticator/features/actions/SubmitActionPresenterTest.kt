@@ -151,7 +151,7 @@ class SubmitActionPresenterTest {
     }
 
     /**
-     * Test onViewClick when we have returnTo in ActionAppLinkData
+     * Test onViewClick when ActionAppLinkData has returnTo
      *
      * @see ActionAppLinkData
      */
@@ -182,7 +182,7 @@ class SubmitActionPresenterTest {
     }
 
     /**
-     * Test onViewClick when we haven't returnTo
+     * Test onViewClick when ActionAppLinkData hasn't returnTo
      *
      * @see ActionAppLinkData
      */
