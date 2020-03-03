@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.unitTests.tool.secure
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.saltedge.authenticator.instrumentationTestTools.TestTools.applicationContext
 import com.saltedge.authenticator.model.repository.PreferenceRepository
 import com.saltedge.authenticator.tool.secure.PasscodeTools
 import org.hamcrest.CoreMatchers.equalTo
@@ -36,7 +37,7 @@ class PasscodeToolsTest {
     @Test
     @Throws(Exception::class)
     fun saveNewPasscodeTest() {
-        PasscodeTools.replacePasscodeKey()
+        PasscodeTools.replacePasscodeKey(applicationContext)
         PreferenceRepository.encryptedPasscode = ""
 
         Assert.assertTrue(PreferenceRepository.encryptedPasscode.isEmpty())
@@ -52,7 +53,7 @@ class PasscodeToolsTest {
     @Test
     @Throws(Exception::class)
     fun getSavedPasscodeTest() {
-        PasscodeTools.replacePasscodeKey()
+        PasscodeTools.replacePasscodeKey(applicationContext)
 
         Assert.assertTrue(PasscodeTools.savePasscode("1234"))
         assertThat(PreferenceRepository.encryptedPasscode, not(equalTo("1234")))
