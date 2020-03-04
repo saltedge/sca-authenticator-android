@@ -11,8 +11,7 @@ Read Wiki docs about [Authenticator Identity Service](wiki) API and workflow.
  * [How to add SDK to project](#how-to-add-sdk-to-project)
  * [Data models](#data-models)
  * [Features](#how-to-use)
-
-
+  
 ## Prerequisites
 In order to use Authenticator SDK it is necessary to install the following tools on the local machine:
 
@@ -136,8 +135,8 @@ Application on Java language:
   
 ### Link to SCA Service
 
-1. Fetch [Service Provider info](#provider-data-model) from configuration url (provides all required for linking information).
-This step can be skipped if application already knows service configuration. 
+1. Fetch [Service Provider info](#provider-data-model) from configuration url (provides all required for linking information).  
+_This step can be skipped if application already knows service configuration._ 
 
     ```kotlin
         authenticatorApiManager.getProviderConfigurationData(providerConfigurationUrl, resultCallback = object : FetchProviderConfigurationDataResult {
@@ -169,7 +168,7 @@ This step can be skipped if application already knows service configuration.
                 resultCallback = object : ConnectionCreateResult() {
                     override fun onConnectionCreateSuccess(response: CreateConnectionData) {
                         // process success response
-                        // open response.connect_url on WebView if required
+                        // open response.connectUrl in WebView or get response.accessToken if present
                     }
     
                     override fun onConnectionCreateFailure(apiErrorData: ApiErrorData) {
@@ -201,9 +200,9 @@ This step can be skipped if Customer is already authenticated.
             }
         })
     ```      
-or if authentication is not required extract access token from `connect_url`.
+or if authentication is not required get access token from response (or extract from `connect_url` if you have received `return to` link).
    
-5. Set `accessToken` to `Connection` and save `Connection` to persistent storage (e.g. Realm, SQLite).  
+5. Set `accessToken` to `Connection` entity and save `Connection` entity to persistent storage (e.g. Realm, SQLite).  
   
 That's all, you have connection to Service Provider.
 

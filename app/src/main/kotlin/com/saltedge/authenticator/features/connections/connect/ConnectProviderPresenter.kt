@@ -25,8 +25,8 @@ import android.webkit.URLUtil.isValidUrl
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.model.toConnection
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.model.toConnection
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ConnectionCreateResult
@@ -96,6 +96,11 @@ class ConnectProviderPresenter @Inject constructor(
         }
     }
 
+    override fun getTitleResId(): Int {
+        return if (this.connection.guid.isEmpty()) R.string.connections_new_connection
+        else R.string.actions_reconnect
+    }
+
     override fun onViewCreated() {
         when (viewMode) {
             ViewMode.START -> startConnectFlow()
@@ -127,7 +132,14 @@ class ConnectProviderPresenter @Inject constructor(
     }
 
     override fun onConnectionCreateSuccess(response: CreateConnectionData) {
-        response.redirectUrl?.let { redirectUrl ->
+        val accessToken = response.accessToken
+        val redirectUrl = response.redirectUrl
+        if (accessToken?.isNotEmpty() == true) {
+            authFinishedWithSuccess(
+                connectionId = response.connectionId ?: "",
+                accessToken = accessToken
+            )
+        } else if (redirectUrl?.isNotEmpty() == true) {
             if (redirectUrl.startsWith(AuthenticatorApiManager.authenticationReturnUrl)) {
                 parseRedirect(
                     url = redirectUrl,
@@ -146,7 +158,6 @@ class ConnectProviderPresenter @Inject constructor(
                 loadWebRedirectUrl()
             }
         }
-
     }
 
     override fun onDestroyView() {
@@ -162,8 +173,12 @@ class ConnectProviderPresenter @Inject constructor(
     }
 
     override fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token) {
+        authFinishedWithSuccess(connectionId = id, accessToken = accessToken)
+    }
+
+    private fun authFinishedWithSuccess(connectionId: ConnectionID, accessToken: Token) {
         viewMode = ViewMode.COMPLETE_SUCCESS
-        connection.id = id
+        connection.id = connectionId
         connection.accessToken = accessToken
         connection.status = "${ConnectionStatus.ACTIVE}"
         if (connectionsRepository.connectionExists(connection)) {
@@ -172,11 +187,6 @@ class ConnectProviderPresenter @Inject constructor(
             connectionsRepository.fixNameAndSave(connection)
         }
         viewContract?.updateViewsContent()
-    }
-
-    override fun getTitleResId(): Int {
-        return if (this.connection.guid.isEmpty()) R.string.connections_new_connection
-        else R.string.actions_reconnect
     }
 
     private fun startConnectFlow() {
