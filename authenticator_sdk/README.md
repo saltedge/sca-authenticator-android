@@ -113,7 +113,7 @@ Fields:
   
 Authenticator SDK provide next features:  
 * [Initialize SDK](#initialize-sdk)
-* [Link to Identity Service](#link-to-identity-service)
+* [Link to SCA Service](#link-to-sca-service)
 * [Remove connection (Remove Bank)](#remove-connection)
 * [Fetch authorizations list](#get-authorizations-list)
 * [Poll authorizations list](#poll-authorizations-list)
@@ -134,9 +134,11 @@ Application on Java language:
     AuthenticatorApiManager.INSTANCE.initializeSdk(applicationContext)
 ```
   
-### Link to Identity Service
+### Link to SCA Service
 
-1. Fetch [Service Provider info](#provider-data-model) from configuration url (provides all required for linking information). 
+1. Fetch [Service Provider info](#provider-data-model) from configuration url (provides all required for linking information).
+This step can be skipped if application already knows service configuration. 
+
     ```kotlin
         authenticatorApiManager.getProviderConfigurationData(providerConfigurationUrl, resultCallback = object : FetchProviderConfigurationDataResult {
           override fun fetchProviderConfigurationDataResult(providerData: ProviderData?, error: ApiErrorData?) {
@@ -177,7 +179,10 @@ Application on Java language:
         )
     ```  
     If it is required authentication on Service Provider side then response will contains `connect_url` which should be used for opening authentication page in WebView.  
-4. Processing success result
+    
+4. Processing success result.  
+This step can be skipped if Customer is already authenticated.  
+
   Open url: 
     ```kotlin
         val webViewClient = ConnectWebClient(contract = object : ConnectWebClientContract { })
