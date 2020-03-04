@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.sdk.model.connection
 
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import java.security.PrivateKey
 
 //TODO: Rename ConnectionAndKey

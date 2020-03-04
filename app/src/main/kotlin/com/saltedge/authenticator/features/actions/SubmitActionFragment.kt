@@ -21,6 +21,8 @@
 package com.saltedge.authenticator.features.actions
 
 import android.content.DialogInterface
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -119,6 +121,10 @@ class SubmitActionFragment : BaseFragment(),
     override fun setProcessingVisibility(show: Boolean) {
         completeView?.setVisible(!show)
         fragmentActionProcessingLayout?.setVisible(show)
+    }
+
+    override fun openLink(url: String) {
+        context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     }
 
     companion object {
