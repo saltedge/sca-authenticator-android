@@ -74,6 +74,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     override fun onStart() {
         super.onStart()
+        lifecycle.addObserver(presenter)
         presenter.viewContract = this
         biometricPrompt?.resultCallback = presenter
         contentAdapter?.listItemClickListener = presenter
@@ -81,13 +82,11 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     override fun onResume() {
         super.onResume()
-        presenter.onFragmentResume()
         headerAdapter?.startTimer()
     }
 
     override fun onPause() {
         headerAdapter?.stopTimer()
-        presenter.onFragmentPause()
         super.onPause()
     }
 

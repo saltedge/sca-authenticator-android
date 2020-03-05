@@ -21,6 +21,9 @@
 package com.saltedge.authenticator.features.authorizations.list
 
 import android.content.Context
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.common.*
 import com.saltedge.authenticator.interfaces.ListItemClickListener
@@ -54,7 +57,8 @@ class AuthorizationsListPresenter @Inject constructor(
     FetchAuthorizationsContract,
     ConfirmAuthorizationResult,
     AuthorizationStatusListener,
-    CoroutineScope
+    CoroutineScope,
+    LifecycleObserver
 {
     private val job: Job = Job()
     override val coroutineContext: CoroutineContext
@@ -218,11 +222,13 @@ class AuthorizationsListPresenter @Inject constructor(
         return viewModels.find { it.authorizationID == authorizationID && it.connectionID == connectionID }
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private fun startPolling() {
         pollingService.contract = this
         pollingService.start()
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     private fun stopPolling() {
         pollingService.contract = null
         pollingService.stop()
