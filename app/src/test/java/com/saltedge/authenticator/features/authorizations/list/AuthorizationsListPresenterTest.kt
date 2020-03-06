@@ -91,7 +91,6 @@ class AuthorizationsListPresenterTest {
     fun onFragmentStartTest() {
         createPresenter(viewContract = mockView).onFragmentResume()
 
-        Mockito.verify(mockPollingService).start()
         Mockito.verify(mockView).updateViewsContent()
     }
 
