@@ -97,14 +97,6 @@ class AuthorizationsListPresenterTest {
 
     @Test
     @Throws(Exception::class)
-    fun onFragmentStopTest() {
-        createPresenter(viewContract = mockView).onFragmentPause()
-
-        Mockito.verify(mockPollingService).stop()
-    }
-
-    @Test
-    @Throws(Exception::class)
     fun onListItemClickTest_invalidParams() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.viewModels = listOf(viewModel1, viewModel2)

@@ -79,12 +79,7 @@ class AuthorizationsListPresenter @Inject constructor(
     override fun baseViewContract(): BaseAuthorizationViewContract? = viewContract
 
     fun onFragmentResume() {
-        startPolling()
         viewContract?.updateViewsContent()
-    }
-
-    fun onFragmentPause() {
-        stopPolling()
     }
 
     fun onFragmentDestroy() {

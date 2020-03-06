@@ -82,6 +82,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     override fun onResume() {
         super.onResume()
+        presenter.onFragmentResume()
         headerAdapter?.startTimer()
     }
 
