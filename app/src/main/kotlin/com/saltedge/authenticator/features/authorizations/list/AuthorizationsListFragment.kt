@@ -52,6 +52,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         super.onCreate(savedInstanceState)
         injectDependencies()
         setHasOptionsMenu(true)
+        presenter.onCreate(lifecycle)
     }
 
     override fun onCreateView(
@@ -74,7 +75,6 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     override fun onStart() {
         super.onStart()
-        lifecycle.addObserver(presenter)
         presenter.viewContract = this
         biometricPrompt?.resultCallback = presenter
         contentAdapter?.listItemClickListener = presenter
