@@ -52,6 +52,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         super.onCreate(savedInstanceState)
         injectDependencies()
         setHasOptionsMenu(true)
+        presenter.onCreate(lifecycle = lifecycle)
     }
 
     override fun onCreateView(
@@ -87,7 +88,6 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     override fun onPause() {
         headerAdapter?.stopTimer()
-        presenter.onFragmentPause()
         super.onPause()
     }
 

@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.authorizations.list
 
 import android.content.Context
+import androidx.lifecycle.Lifecycle
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.common.*
 import com.saltedge.authenticator.interfaces.ListItemClickListener
@@ -75,12 +76,12 @@ class AuthorizationsListPresenter @Inject constructor(
     override fun baseViewContract(): BaseAuthorizationViewContract? = viewContract
 
     fun onFragmentResume() {
-        startPolling()
         viewContract?.updateViewsContent()
     }
 
-    fun onFragmentPause() {
-        stopPolling()
+    fun onCreate(lifecycle: Lifecycle) {
+        pollingService.contract = this
+        pollingService.register(lifecycle)
     }
 
     fun onFragmentDestroy() {
