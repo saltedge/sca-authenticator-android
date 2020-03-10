@@ -52,7 +52,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         super.onCreate(savedInstanceState)
         injectDependencies()
         setHasOptionsMenu(true)
-        presenter.onCreate(lifecycle)
+        presenter.onCreate(lifecycle = lifecycle)
     }
 
     override fun onCreateView(
