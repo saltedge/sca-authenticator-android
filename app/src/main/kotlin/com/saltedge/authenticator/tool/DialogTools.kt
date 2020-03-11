@@ -36,7 +36,32 @@ import com.saltedge.authenticator.R
  */
 fun FragmentActivity.showWarningDialog(@StringRes messageId: Int) {
     try {
-        showWarningDialog(getString(messageId))
+        showWarningDialog(message = getString(messageId))
+    } catch (e: Exception) {
+        e.log()
+    }
+}
+
+/**
+ * Show dialog with given title and message
+ *
+ * @receiver FragmentActivity
+ * @param titleResId - the title that appears in the dialog
+ * @param message - the message that appears in the dialog
+ * @param listener - on dialog action click listener
+ */
+fun FragmentActivity.showDialogWithTitleAndMessage(
+    titleResId: Int,
+    message: String?,
+    listener: DialogInterface.OnClickListener? = null
+) {
+    if (message?.isBlank() != false) return
+    try {
+        AlertDialog.Builder(this)
+            .setTitle(titleResId)
+            .setMessage(message)
+            .setPositiveButton(android.R.string.ok, listener)
+            .show()
     } catch (e: Exception) {
         e.log()
     }
@@ -53,16 +78,21 @@ fun FragmentActivity.showWarningDialog(
     message: String?,
     listener: DialogInterface.OnClickListener? = null
 ) {
-    if (message?.isBlank() != false) return
-    try {
-        AlertDialog.Builder(this)
-            .setTitle(R.string.errors_warning)
-            .setMessage(message)
-            .setPositiveButton(android.R.string.ok, listener)
-            .show()
-    } catch (e: Exception) {
-        e.log()
-    }
+    showDialogWithTitleAndMessage(titleResId = R.string.errors_warning, message = message, listener = listener)
+}
+
+/**
+ * Show error dialog with given message
+ *
+ * @receiver FragmentActivity
+ * @param message - the message that appears in the dialog
+ * @param listener - on dialog action click listener
+ */
+fun FragmentActivity.showErrorDialog(
+    message: String?,
+    listener: DialogInterface.OnClickListener? = null
+) {
+    showDialogWithTitleAndMessage(titleResId = R.string.errors_error, message = message, listener = listener)
 }
 
 /**

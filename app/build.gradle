@@ -62,8 +62,8 @@ android {
 
         buildToolsVersion '29.0.0'
         minSdkVersion 21
-        compileSdkVersion 28
-        targetSdkVersion 28
+        compileSdkVersion 29
+        targetSdkVersion 29
 
         versionCode 40
         versionName '2.3.1'
@@ -100,7 +100,6 @@ android {
     }
 
     testOptions {
-        execution 'ANDROID_TEST_ORCHESTRATOR'
         animationsDisabled true
 
         unitTests {
@@ -111,7 +110,7 @@ android {
 
 configurations.all {
     resolutionStrategy {
-        force 'com.android.support:support-annotations:28.0.0'
+        force 'com.android.support:support-annotations:29.0.0'
     }
 }
 
@@ -122,14 +121,14 @@ androidExtensions {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    kapt 'com.google.dagger:dagger-compiler:2.22.1'
-    implementation 'com.google.dagger:dagger:2.22.1'
+    kapt 'com.google.dagger:dagger-compiler:2.24'
+    implementation 'com.google.dagger:dagger:2.24'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
-    implementation 'androidx.core:core-ktx:1.1.0'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.core:core-ktx:1.2.0'
+    implementation 'com.google.android.material:material:1.1.0'
     implementation 'com.google.android.gms:play-services-base:17.1.0'
     implementation 'com.google.android.gms:play-services-identity:17.0.0'
     implementation 'com.google.android.gms:play-services-analytics:17.0.0'
@@ -139,10 +138,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:20.1.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.7.1'
     implementation 'net.danlew:android.joda:2.10.2'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.9.9') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.10.1') {
         transitive = true
     }
-    implementation('com.github.bumptech.glide:glide:4.9.0') {
+    implementation('com.github.bumptech.glide:glide:4.11.0') {
         exclude group: "com.android.support"
     }
     implementation 'com.fivehundredpx:blurringview:1.0.0'

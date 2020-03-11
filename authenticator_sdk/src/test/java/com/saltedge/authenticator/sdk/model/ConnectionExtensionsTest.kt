@@ -20,6 +20,9 @@
  */
 package com.saltedge.authenticator.sdk.model
 
+import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
+import com.saltedge.authenticator.sdk.model.connection.getStatus
+import com.saltedge.authenticator.sdk.model.connection.toConnectionAndKey
 import com.saltedge.authenticator.sdk.testTools.TestConnection
 import com.saltedge.authenticator.sdk.testTools.getTestPrivateKey
 import com.saltedge.authenticator.sdk.testTools.getTestPublicKey

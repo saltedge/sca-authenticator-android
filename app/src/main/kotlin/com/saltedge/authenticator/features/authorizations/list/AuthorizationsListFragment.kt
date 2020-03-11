@@ -29,8 +29,8 @@ import com.saltedge.authenticator.features.authorizations.confirmPasscode.Confir
 import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsContentPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsHeaderPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.di.AuthorizationsListModule
-import com.saltedge.authenticator.sdk.model.ApiErrorData
-import com.saltedge.authenticator.sdk.model.getErrorMessage
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.model.error.getErrorMessage
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.showAuthorizationConfirm
@@ -52,6 +52,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         super.onCreate(savedInstanceState)
         injectDependencies()
         setHasOptionsMenu(true)
+        presenter.onCreate(lifecycle = lifecycle)
     }
 
     override fun onCreateView(
@@ -87,7 +88,6 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     override fun onPause() {
         headerAdapter?.stopTimer()
-        presenter.onFragmentPause()
         super.onPause()
     }
 

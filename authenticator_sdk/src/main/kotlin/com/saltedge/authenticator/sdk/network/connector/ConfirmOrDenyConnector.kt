@@ -24,6 +24,9 @@ import com.saltedge.authenticator.sdk.constants.API_AUTHORIZATIONS
 import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_PUT
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationResult
 import com.saltedge.authenticator.sdk.model.*
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.model.error.createInvalidResponseError
 import com.saltedge.authenticator.sdk.model.request.ConfirmDenyData
 import com.saltedge.authenticator.sdk.model.request.ConfirmDenyRequestData
 import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData

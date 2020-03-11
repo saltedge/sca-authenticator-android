@@ -29,7 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.common.ConnectionOptions
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
-import com.saltedge.authenticator.features.connections.connect.ConnectProviderFragment
+import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
 import com.saltedge.authenticator.features.connections.edit.name.EditConnectionNameDialog
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListModule
@@ -124,7 +124,7 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
     }
 
     override fun showApiErrorView(message: String) {
-        activity?.showWarningDialog(message)
+        activity?.showWarningDialog(message = message)
     }
 
     override fun showSupportView(supportEmail: String?) {

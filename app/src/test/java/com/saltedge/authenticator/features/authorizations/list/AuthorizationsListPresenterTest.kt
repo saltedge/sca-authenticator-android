@@ -20,6 +20,9 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationViewModel
@@ -27,12 +30,19 @@ import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_CONNECTION_NOT_FOUND
-import com.saltedge.authenticator.sdk.model.*
+import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
+import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.model.error.createRequestError
 import com.saltedge.authenticator.sdk.polling.PollingServiceAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.testTools.TestAppTools
+import junit.framework.Assert.assertNotNull
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.joda.time.DateTime
@@ -42,9 +52,11 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
+import org.mockito.Mockito.mock
 import org.robolectric.RobolectricTestRunner
 import java.security.KeyPair
 import java.security.PrivateKey
+
 
 @RunWith(RobolectricTestRunner::class)
 class AuthorizationsListPresenterTest {
@@ -85,16 +97,22 @@ class AuthorizationsListPresenterTest {
     fun onFragmentStartTest() {
         createPresenter(viewContract = mockView).onFragmentResume()
 
-        Mockito.verify(mockPollingService).start()
         Mockito.verify(mockView).updateViewsContent()
     }
 
     @Test
     @Throws(Exception::class)
-    fun onFragmentStopTest() {
-        createPresenter(viewContract = mockView).onFragmentPause()
+    fun onCreateTest() {
+        val lifecycleOwner: LifecycleOwner = mock(LifecycleOwner::class.java)
+        val lifecycle = LifecycleRegistry(mock(LifecycleOwner::class.java))
+        lifecycle.markState(Lifecycle.State.RESUMED)
 
-        Mockito.verify(mockPollingService).stop()
+        Mockito.`when`(lifecycleOwner.lifecycle).thenReturn(lifecycle)
+
+        createPresenter(viewContract = mockView).onCreate(lifecycle)
+
+        assertNotNull(mockView)
+        Mockito.verify(mockPollingService).start()
     }
 
     @Test
