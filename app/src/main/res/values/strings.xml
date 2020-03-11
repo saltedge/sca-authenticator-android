@@ -92,7 +92,7 @@
 
     <string name="connections_new_connection">New connection</string>
     <string name="connections_feature_title">Connections</string>
-    <string name="choose_connection_feature_title">Choose connections</string>
+    <string name="choose_connection_feature_title">Choose connection</string>
     <string name="connections_list_no_connections">No Connections</string>
     <string name="connections_list_no_connections_description">You have no currently connected service providers. Connect one to start receiving authorizations for your actions (e.g. payments).</string>
     <string name="connections_list_delete_all_connections">Delete all connections and stop receiving confirmations until another Provider is connected.</string>
@@ -104,7 +104,7 @@
     <string name="connect_status_provider_success">\%s was successfully connected!</string>
     <string name="connect_status_provider_success_description">Your Service Provider has been successfully connected to the Authenticator App. You will receive an authorization request every time you make an action.</string>
 
-    <string name="action_authentication">Authentication</string>
+    <string name="action_new_action">New action</string>
     <string name="action_feature_title">Successful authentication</string>
     <string name="action_feature_description">You were successfully authenticated</string>
     <string name="action_error_title">Authentication error</string>

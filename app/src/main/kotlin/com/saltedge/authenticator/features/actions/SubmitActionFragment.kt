@@ -61,7 +61,7 @@ class SubmitActionFragment : BaseFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        activityComponents?.updateAppbarTitleWithFabAction(getString(presenterContract.getTitleResId()))
+        activityComponents?.updateAppbarTitleWithFabAction(getString(R.string.action_new_action))
         return inflater.inflate(R.layout.fragment_submit_action, container, false)
     }
 

@@ -57,14 +57,6 @@ class SubmitActionPresenterTest {
         Assert.assertNotNull(presenter.viewContract)
     }
 
-    @Test
-    @Throws(Exception::class)
-    fun getTitleResIdTest() {
-        val presenter = createPresenter(viewContract = mockView)
-
-        assertThat(presenter.getTitleResId(), equalTo(R.string.action_authentication))
-    }
-
     /**
      * Show complete view when authorizationId and connectionId are empty
      */
@@ -81,7 +73,7 @@ class SubmitActionPresenterTest {
 
         Mockito.verify(mockView).setProcessingVisibility(false)
         Mockito.verify(mockView).updateCompleteViewContent(
-            iconResId = R.drawable.ic_complete_ok_70,
+            iconResId = R.drawable.ic_success_70,
             completeTitleResId = R.string.action_feature_title,
             completeMessageResId = R.string.action_feature_description,
             mainActionTextResId = R.string.actions_proceed
@@ -318,7 +310,7 @@ class SubmitActionPresenterTest {
 
         Mockito.verify(mockView).setProcessingVisibility(false)
         Mockito.verify(mockView).updateCompleteViewContent(
-            iconResId = R.drawable.ic_complete_ok_70,
+            iconResId = R.drawable.ic_success_70,
             completeTitleResId = R.string.action_feature_title,
             completeMessageResId = R.string.action_feature_description,
             mainActionTextResId = R.string.actions_proceed
