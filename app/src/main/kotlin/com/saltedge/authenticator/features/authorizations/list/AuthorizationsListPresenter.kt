@@ -29,9 +29,9 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationResult
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationsContract
 import com.saltedge.authenticator.sdk.model.*
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import kotlinx.coroutines.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext

@@ -75,10 +75,10 @@ class AuthorizationContentView : LinearLayout {
     fun setTitleAndDescription(title: String, description: String) {
         titleTextView?.text = title
 
-        description.hasHTMLTags().let { shouldShowDescriptionView ->
-            descriptionTextView?.setVisible(show = !shouldShowDescriptionView)
-            descriptionWebView?.setVisible(show = shouldShowDescriptionView)
-            if (shouldShowDescriptionView) {
+        description.hasHTMLTags().let { showWebView ->
+            descriptionTextView?.setVisible(show = !showWebView)
+            descriptionWebView?.setVisible(show = showWebView)
+            if (showWebView) {
                 descriptionWebView?.loadData(description, "text/html; charset=utf-8", "UTF-8")
             } else {
                 descriptionTextView?.movementMethod = ScrollingMovementMethod()

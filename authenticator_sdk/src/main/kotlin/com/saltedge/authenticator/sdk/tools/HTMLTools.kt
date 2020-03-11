@@ -27,7 +27,7 @@ import android.text.SpannedString
 import androidx.core.text.HtmlCompat
 
 @Suppress("DEPRECATION")
-fun String.parseHTML(): Spanned {
+fun String.parseHTML(): Spanned {//TODO remove
     val result = parseHTMLToSpanned()
     return if (result.getSpans(0, result.length - 1, Any::class.java).isEmpty()) SpannedString(this)
     else result
