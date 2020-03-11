@@ -147,7 +147,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/authorizations_processing"
-                android:src="@drawable/ic_auth_success_70"/>
+                android:src="@drawable/ic_success_70"/>
         </FrameLayout>
 
         <TextView

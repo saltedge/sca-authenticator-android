@@ -59,8 +59,6 @@ class SubmitActionPresenter @Inject constructor(
         if (connectionAndKey == null) viewMode = ViewMode.ACTION_ERROR
     }
 
-    override fun getTitleResId(): Int = R.string.action_authentication
-
     override fun onViewCreated() {
         if (viewMode == ViewMode.START) {
             apiManager.sendAction(
@@ -109,7 +107,7 @@ class SubmitActionPresenter @Inject constructor(
             ViewMode.ACTION_SUCCESS -> {
                 viewContract?.setProcessingVisibility(false)
                 viewContract?.updateCompleteViewContent(
-                    iconResId = R.drawable.ic_complete_ok_70,
+                    iconResId = R.drawable.ic_success_70,
                     completeTitleResId = R.string.action_feature_title,
                     completeMessageResId = R.string.action_feature_description,
                     mainActionTextResId = R.string.actions_proceed

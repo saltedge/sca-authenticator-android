@@ -35,7 +35,7 @@
         android:layout_height="@dimen/dp_70"
         android:layout_marginTop="@dimen/dp_72"
         android:indeterminate="true"
-        android:indeterminateTint="@color/color_secondary"
+        android:indeterminateTint="@color/color_primary"
         android:indeterminateTintMode="src_in" />
 
     <TextView
