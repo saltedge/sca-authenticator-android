@@ -22,6 +22,8 @@ package com.saltedge.authenticator.sdk.tools.keystore
 
 import android.annotation.SuppressLint
 import android.content.Context
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import java.security.Key
 import java.security.KeyPair
 import javax.crypto.SecretKey
@@ -36,4 +38,5 @@ interface KeyStoreManagerAbs {
     fun deleteKeyPair(alias: String)
     fun getSecretKey(alias: String?): Key?
     @SuppressLint("NewApi") fun createOrReplaceAesBiometricKey(alias: String): SecretKey?
+    fun createConnectionAndKeyModel(connection: ConnectionAbs): ConnectionAndKey?
 }

@@ -43,25 +43,25 @@ fun ConnectionAbs.getStatus(): ConnectionStatus {
     return this.status.toConnectionStatus() ?: ConnectionStatus.INACTIVE
 }
 
-/**
- * Return pair of connection and private key from keystore
- *
- * @param keyStoreManager - key store manager
- * @see KeyStoreManagerAbs.getKeyPair
- * @receiver connection
- * @return ConnectionAndKey?
- */
-fun ConnectionAbs.toConnectionAndKey(keyStoreManager: KeyStoreManagerAbs): ConnectionAndKey? {
-    return getRelatedPrivateKey(keyStoreManager)?.let { ConnectionAndKey(connection = this, key = it) }
-}
+///**
+// * Return pair of connection and private key from keystore
+// *
+// * @param keyStoreManager - key store manager
+// * @see KeyStoreManagerAbs.getKeyPair
+// * @receiver connection
+// * @return ConnectionAndKey?
+// */
+//fun ConnectionAbs.toConnectionAndKey(keyStoreManager: KeyStoreManagerAbs): ConnectionAndKey? {
+//    return getRelatedPrivateKey(keyStoreManager)?.let { ConnectionAndKey(connection = this, key = it) }
+//}
 
-/**
- * Get from KeyStore PrivateKey related to connection by it guid.
- *
- * @param keyStoreManager - Android key store
- * @receiver connection
- * @return private key
- */
-fun ConnectionAbs.getRelatedPrivateKey(keyStoreManager: KeyStoreManagerAbs): PrivateKey? {
-    return keyStoreManager.getKeyPair(this.guid)?.private
-}
+///**
+// * Get from KeyStore PrivateKey related to connection by it guid.
+// *
+// * @param keyStoreManager - Android key store
+// * @receiver connection
+// * @return private key
+// */
+//fun ConnectionAbs.getRelatedPrivateKey(keyStoreManager: KeyStoreManagerAbs): PrivateKey? {
+//    return keyStoreManager.getKeyPair(this.guid)?.private
+//}
