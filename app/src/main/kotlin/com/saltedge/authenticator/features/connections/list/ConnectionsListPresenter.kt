@@ -71,9 +71,7 @@ class ConnectionsListPresenter @Inject constructor(
                 )
             }
             DELETE_REQUEST_CODE -> onUserConfirmedDeleteConnection(
-                connectionGuid = data.getStringExtra(
-                    KEY_GUID
-                ) ?: return
+                connectionGuid = data.getStringExtra(KEY_GUID) ?: return
             )
         }
     }

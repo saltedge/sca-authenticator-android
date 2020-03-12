@@ -134,8 +134,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-analytics:17.0.0'
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
     implementation 'com.google.android.gms:play-services-vision:19.0.0'
-    implementation 'com.google.firebase:firebase-core:17.2.2'
-    implementation 'com.google.firebase:firebase-messaging:20.1.0'
+    implementation 'com.google.firebase:firebase-core:17.2.3'
+    implementation 'com.google.firebase:firebase-messaging:20.1.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.7.1'
     implementation 'net.danlew:android.joda:2.10.2'
     implementation('com.crashlytics.sdk.android:crashlytics:2.10.1') {
@@ -156,6 +156,7 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:4.3.1'
     testImplementation 'org.robolectric:shadows-playservices:4.3'
     testImplementation 'org.mockito:mockito-core:3.2.4'
+    testImplementation "io.mockk:mockk:1.9.3"
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test:runner:1.2.0'
