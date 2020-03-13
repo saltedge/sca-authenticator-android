@@ -32,7 +32,6 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_CONNECTION_NOT_FOUND
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
@@ -134,6 +133,7 @@ class AuthorizationsListPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onListItemClickTest_negativeActionView() {
+        Mockito.`when`(mockKeyStoreManager.createConnectionAndKeyModel(connection1)).thenReturn(ConnectionAndKey(connection1, mockPrivateKey))
         val presenter = createPresenter(viewContract = mockView)
         presenter.viewModels = listOf(viewModel1, viewModel2)
 
@@ -161,6 +161,7 @@ class AuthorizationsListPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onListItemClickTest_positiveActionView() {
+        Mockito.`when`(mockKeyStoreManager.createConnectionAndKeyModel(connection1)).thenReturn(ConnectionAndKey(connection1, mockPrivateKey))
         Mockito.doReturn(true).`when`(mockBiometricTools).isBiometricReady(TestAppTools.applicationContext)
         val presenter = createPresenter(viewContract = mockView)
         presenter.viewModels = listOf(viewModel1, viewModel2)
@@ -223,11 +224,12 @@ class AuthorizationsListPresenterTest {
     @Test
     @Throws(Exception::class)
     fun getConnectionsDataTest() {
+        Mockito.`when`(mockKeyStoreManager.createConnectionAndKeyModel(connection1)).thenReturn(ConnectionAndKey(connection1, mockPrivateKey))
         val presenter = createPresenter(viewContract = mockView)
 
         assertThat(
             presenter.getConnectionsData(),
-            equalTo(listOf(ConnectionAndKey(connection1 as ConnectionAbs, mockPrivateKey)))
+            equalTo(listOf(ConnectionAndKey(connection1, mockPrivateKey)))
         )
     }
 
@@ -292,6 +294,7 @@ class AuthorizationsListPresenterTest {
     @Test
     @Throws(Exception::class)
     fun processDecryptedAuthorizationsResultTest_Case2() {
+        Mockito.`when`(mockKeyStoreManager.createConnectionAndKeyModel(connection1)).thenReturn(ConnectionAndKey(connection1, mockPrivateKey))
         val presenter = createPresenter(viewContract = mockView)
         presenter.viewModels = emptyList()
 
@@ -307,6 +310,7 @@ class AuthorizationsListPresenterTest {
     @Test
     @Throws(Exception::class)
     fun processDecryptedAuthorizationsResultTest_Case3() {
+        Mockito.`when`(mockKeyStoreManager.createConnectionAndKeyModel(connection1)).thenReturn(ConnectionAndKey(connection1, mockPrivateKey))
         val presenter = createPresenter(viewContract = mockView)
         presenter.viewModels = listOf(viewModel1, viewModel2)
 
@@ -322,6 +326,7 @@ class AuthorizationsListPresenterTest {
     @Test
     @Throws(Exception::class)
     fun processDecryptedAuthorizationsResultTest_Case4() {
+        Mockito.`when`(mockKeyStoreManager.createConnectionAndKeyModel(connection1)).thenReturn(ConnectionAndKey(connection1, mockPrivateKey))
         val presenter = createPresenter(viewContract = mockView)
         presenter.viewModels = listOf(viewModel1, viewModel2.copy(viewMode = ViewMode.DENY_SUCCESS))
         presenter.processDecryptedAuthorizationsResult(result = listOf(authorizationData1, authorizationData2))

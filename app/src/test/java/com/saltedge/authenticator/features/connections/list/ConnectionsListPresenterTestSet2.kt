@@ -349,8 +349,9 @@ class ConnectionsListPresenterTestSet2 {
     @Test
     @Throws(Exception::class)
     fun onActivityResultTest_DeleteSingleConnection_InvalidParams_Case1() {
-        val presenter = createPresenter(viewContract = null)
         Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid2")
+        Mockito.doReturn(ConnectionAndKey(allConnections[1], mockPrivateKey)).`when`(mockKeyStoreManager).createConnectionAndKeyModel(allConnections[1])
+        val presenter = createPresenter(viewContract = null)
         presenter.onActivityResult(
             resultCode = Activity.RESULT_OK, requestCode = DELETE_REQUEST_CODE,
             data = Intent().putExtra(KEY_GUID, "guid2")
@@ -378,6 +379,7 @@ class ConnectionsListPresenterTestSet2 {
     @Throws(Exception::class)
     fun onActivityResultTest_DeleteSingleConnection() {
         Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid2")
+        Mockito.doReturn(ConnectionAndKey(allConnections[1], mockPrivateKey)).`when`(mockKeyStoreManager).createConnectionAndKeyModel(allConnections[1])
         val presenter = createPresenter(viewContract = mockView)
         presenter.onActivityResult(
             resultCode = Activity.RESULT_OK,
@@ -386,12 +388,8 @@ class ConnectionsListPresenterTestSet2 {
         )
 
         Mockito.verify(mockApiManager).revokeConnections(
-            listOf(
-                ConnectionAndKey(
-                    allConnections[1],
-                    mockPrivateKey
-                )
-            ), presenter
+            listOf(ConnectionAndKey(allConnections[1], mockPrivateKey)),
+            presenter
         )
         Mockito.verify(mockConnectionsRepository).deleteConnection("guid2")
         Mockito.verify(mockKeyStoreManager).deleteKeyPair("guid2")

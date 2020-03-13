@@ -22,11 +22,10 @@ package com.saltedge.authenticator.features.actions
 
 import android.content.Context
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.authorizations.common.createConnectionAndKey
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
-import com.saltedge.authenticator.sdk.model.*
+import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
@@ -51,10 +50,7 @@ class SubmitActionPresenter @Inject constructor(
     override fun setInitialData(connectionGuid: GUID, actionAppLinkData: ActionAppLinkData) {
         this.connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
             this.actionAppLinkData = actionAppLinkData
-            createConnectionAndKey(
-                connection = it,
-                keyStoreManager = keyStoreManager
-            )
+            keyStoreManager.createConnectionAndKeyModel(it)
         }
         if (connectionAndKey == null) viewMode = ViewMode.ACTION_ERROR
     }

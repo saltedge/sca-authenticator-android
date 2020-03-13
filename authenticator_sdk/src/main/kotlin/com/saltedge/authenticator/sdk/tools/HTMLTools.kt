@@ -23,15 +23,7 @@ package com.saltedge.authenticator.sdk.tools
 import android.os.Build
 import android.text.Html
 import android.text.Spanned
-import android.text.SpannedString
 import androidx.core.text.HtmlCompat
-
-@Suppress("DEPRECATION")
-fun String.parseHTML(): Spanned {
-    val result = parseHTMLToSpanned()
-    return if (result.getSpans(0, result.length - 1, Any::class.java).isEmpty()) SpannedString(this)
-    else result
-}
 
 @Suppress("DEPRECATION")
 fun String.hasHTMLTags(): Boolean {

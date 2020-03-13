@@ -160,12 +160,11 @@ _This step can be skipped if application already knows service configuration._
 3. Post connection data and receive ConnectionCreateResult  
     ```kotlin
         AuthenticatorApiManager.createConnectionRequest(
-                baseUrl = connection.connectUrl,
-                publicKey = publicKeyAsPemEncodedString,
-                pushToken = firebaseCloudMessagingToken,
-                providerCode = providerCode,
-                connectQueryParam = connectQueryParam,
-                resultCallback = object : ConnectionCreateResult() {
+                appContext,
+                conenction,
+                firebaseCloudMessagingToken,
+                connectQueryParam,
+                object : ConnectionCreateResult() {
                     override fun onConnectionCreateSuccess(response: CreateConnectionData) {
                         // process success response
                         // open response.connectUrl in WebView or get response.accessToken if present

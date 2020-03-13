@@ -31,9 +31,9 @@ import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorization
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.error.*
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import org.joda.time.DateTime
 
 class AuthorizationDetailsPresenter(

@@ -203,16 +203,13 @@ class ConnectProviderPresenter @Inject constructor(
 
     private fun performCreateConnectionRequest() {
         if (connection.connectUrl.isNotEmpty()) {
-            keyStoreManager.createRsaPublicKeyAsString(appContext, connection.guid)?.let {
-                apiManager.createConnectionRequest(
-                    baseUrl = connection.connectUrl,
-                    publicKey = it,
-                    pushToken = preferenceRepository.cloudMessagingToken,
-                    providerCode = connection.code,
-                    connectQueryParam = initialConnectData?.connectQuery,
-                    resultCallback = this
-                )
-            }
+            apiManager.createConnectionRequest(
+                appContext = appContext,
+                connection = connection,
+                pushToken = preferenceRepository.cloudMessagingToken,
+                connectQueryParam = initialConnectData?.connectQuery,
+                resultCallback = this
+            )
         } else {
             viewContract?.showErrorAndFinish(appContext.getString(R.string.errors_unable_connect_provider))
         }

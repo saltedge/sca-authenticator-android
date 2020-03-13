@@ -20,9 +20,8 @@
  */
 package com.saltedge.authenticator.sdk.tools
 
-import android.text.style.URLSpan
-import org.hamcrest.CoreMatchers.equalTo
-import org.junit.Assert.assertThat
+import junit.framework.Assert.assertFalse
+import junit.framework.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -32,17 +31,8 @@ class HTMLToolsTest {
 
     @Test
     @Throws(Exception::class)
-    fun parseHTMLTest() {
-        var spannedMessage = "<a href='https://www.fentury.com/'>Fentury</a>".parseHTML()
-
-        assertThat(spannedMessage.toString(), equalTo("Fentury"))
-        assertThat(
-            spannedMessage.getSpans(0, 7, URLSpan::class.java).first().url,
-            equalTo("https://www.fentury.com/")
-        )
-
-        spannedMessage = "Fentury.com".parseHTML()
-
-        assertThat(spannedMessage.toString(), equalTo("Fentury.com"))
+    fun hasHTMLTagsTest() {
+        assertTrue("<a href='https://www.fentury.com/'>Fentury</a>".hasHTMLTags())
+        assertFalse("Fentury.com".hasHTMLTags())
     }
 }
