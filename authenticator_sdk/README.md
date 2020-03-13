@@ -272,7 +272,7 @@ Poll period is set to 2 seconds. For preventing memory leak application should s
         pollingService.stop()
     ```
 
-### get authorization by ID
+### Get authorization by ID
 
 1. Send request
     ```kotlin
