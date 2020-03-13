@@ -22,20 +22,16 @@ package com.saltedge.authenticator.sdk.model
 
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.connection.getStatus
-import com.saltedge.authenticator.sdk.model.connection.toConnectionAndKey
 import com.saltedge.authenticator.sdk.testTools.TestConnection
 import com.saltedge.authenticator.sdk.testTools.getTestPrivateKey
 import com.saltedge.authenticator.sdk.testTools.getTestPublicKey
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import io.mockk.every
 import io.mockk.mockkClass
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.security.KeyPair
 import java.security.PrivateKey
 import java.security.PublicKey
 
@@ -49,18 +45,6 @@ class ConnectionExtensionsTest {
 
         assertThat(connection.status, equalTo("${ConnectionStatus.INACTIVE}"))
         assertThat(connection.getStatus(), equalTo(ConnectionStatus.INACTIVE))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun connectionToConnectionAndKeyTest() {
-        every { mockKeyStoreManager.getKeyPair("guid1") } returns null
-
-        Assert.assertNull(TestConnection().apply { guid = "guid1" }.toConnectionAndKey(mockKeyStoreManager))
-
-        every { mockKeyStoreManager.getKeyPair("guid1") } returns KeyPair(publicKey, privateKey)
-
-        Assert.assertNotNull(TestConnection().apply { guid = "guid1" }.toConnectionAndKey(mockKeyStoreManager)!!.key)
     }
 
     private val mockKeyStoreManager = mockkClass(KeyStoreManagerAbs::class)

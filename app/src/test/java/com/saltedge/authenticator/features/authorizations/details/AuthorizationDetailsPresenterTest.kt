@@ -52,9 +52,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
-
 import org.robolectric.RobolectricTestRunner
-import java.security.KeyPair
 import java.security.PrivateKey
 
 @RunWith(RobolectricTestRunner::class)
@@ -936,8 +934,8 @@ class AuthorizationDetailsPresenterTest {
         Mockito.doReturn(connection2).`when`(mockConnectionsRepository).getById("2_noKey")
         Mockito.doReturn(mockPollingService).`when`(mockApiManager)
             .createSingleAuthorizationPollingService()
-        Mockito.doReturn(KeyPair(null, mockPrivateKey))
-            .`when`(mockKeyStoreManager).getKeyPair("guid1")
+        Mockito.doReturn(ConnectionAndKey(connection1, mockPrivateKey))
+            .`when`(mockKeyStoreManager).createConnectionAndKeyModel(connection1)
         Mockito.doReturn(null).`when`(mockKeyStoreManager).getKeyPair("guid2")
         Mockito.doReturn(authorizationData1).`when`(mockCryptoTools)
             .decryptAuthorizationData(

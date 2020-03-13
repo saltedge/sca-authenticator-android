@@ -1,18 +1,18 @@
-/* 
- * This file is part of the Salt Edge Authenticator distribution 
+/*
+ * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2019 Salt Edge Inc.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3 or later.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * For the additional permissions granted for Salt Edge Authenticator
@@ -22,6 +22,7 @@ package com.saltedge.authenticator.sdk
 
 import android.content.Context
 import com.saltedge.authenticator.sdk.contract.*
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.polling.PollingServiceAbs
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
@@ -61,6 +62,18 @@ interface AuthenticatorApiManagerAbs {
         publicKey: String,
         pushToken: String,
         providerCode: String,
+        connectQueryParam: String?,
+        resultCallback: ConnectionCreateResult
+    )
+
+    /**
+     * Request to create new SCA connection.
+     * Result is returned through callback.
+     */
+    fun createConnectionRequest(
+        appContext: Context,
+        connection: ConnectionAbs,
+        pushToken: String,
         connectQueryParam: String?,
         resultCallback: ConnectionCreateResult
     )

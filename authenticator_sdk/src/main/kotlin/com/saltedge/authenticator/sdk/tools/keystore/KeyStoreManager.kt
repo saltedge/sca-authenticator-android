@@ -29,6 +29,8 @@ import android.security.KeyPairGeneratorSpec
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import androidx.annotation.RequiresApi
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.tools.encodeToPemBase64String
 import java.math.BigInteger
 import java.security.*
@@ -211,6 +213,18 @@ object KeyStoreManager : KeyStoreManagerAbs {
             initGeneratorWithKeyGenParameterSpec(generator = generator, alias = alias)
         }
         return generator.generateKeyPair()
+    }
+
+    /**
+     *  Get related private key for connection
+     *
+     *  @param connection Connection
+     *  @return ConnectionAndKey
+     */
+    override fun createConnectionAndKeyModel(connection: ConnectionAbs): ConnectionAndKey? {
+        return getKeyPair(connection.guid)?.private?.let { key ->
+            ConnectionAndKey(connection, key)
+        }
     }
 
     /**

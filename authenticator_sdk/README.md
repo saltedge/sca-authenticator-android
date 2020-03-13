@@ -58,7 +58,7 @@ Authenticator SDK provide next main data models:
  * [Decrypted Authorization model](#decrypted-authorization-model)
 
 ### Provider Data model
-`Provider Data` it is an entity which contains Provider's info.  
+`ProviderData` class it is an entity which contains Provider's info.  
 
 Fields:  
  * `connect_url`   **[string]** - base URL of the Identity Service. Required to build Authenticator API requests.
@@ -69,7 +69,7 @@ Fields:
  * `version`       **[string]** - version number of Authenticator API.
   
 ### Connection model
-`Connection` it is an entity which stores Provider's info and Link to API info. Should be stored in the persistent storage (e.g. database).  SDK provides `ConnectionAbs` interface and application should have class which implements `ConnectionAbs`.
+Application should create a class which implements `ConnectionAbs` interface for storing data required to access API. Should be stored in the persistent storage (e.g. database).  
 
 Fields:  
  * `guid`        **[string]** - alias to RSA keypair in Keystore
@@ -85,9 +85,9 @@ Fields:
 `ConnectionAndKey` it is often used wrapper for Connection and related PrivateKey.
  
  ### Encrypted Authorization model
-`Authorization` it is an entity which describes pending event which require user confirmation.
 `Encrypted Authorization` contains encrypted `Authorization` fields.  
-
+`Authorization` it is an entity which describes pending action which require user confirmation.
+  
  - `id` **[string]** - an unique code of authorization action  
  - `connection_id` **[string]** - an unique ID of Mobile Client (Service Connection). Used to decrypt models in the mobile application
  - `iv` **[string]** - an initialization vector of encryption algorithm, this string is encrypted with public key linked to mobile client
@@ -96,7 +96,7 @@ Fields:
  - `data` **[string]** - an encrypted authorization payload with algorithm mentioned above
  
  ### Decrypted Authorization model
- `Authorization` it is an entity which describes pending event which require user confirmation.  
+ `Authorization` it is an entity which describes pending action which require user confirmation.  
  
  * `id` **[string]** - a unique id of authorization action
  * `connection_id` **[string]** - a unique ID of Connection. Used to decrypt models in the mobile application
@@ -112,7 +112,7 @@ Fields:
   
 Authenticator SDK provide next features:  
 * [Initialize SDK](#initialize-sdk)
-* [Link to SCA Service](#link-to-sca-service)
+* [Enrollment](#link-to-sca-service)
 * [Remove connection (Remove Bank)](#remove-connection)
 * [Fetch authorizations list](#get-authorizations-list)
 * [Poll authorizations list](#poll-authorizations-list)
@@ -120,6 +120,7 @@ Authenticator SDK provide next features:
 * [Poll authorization by id](#poll-authorization-by-id)
 * [Confirm authorization](#confirm-authorization)
 * [Deny authorization](#deny-authorization)
+* [Send Instant Action](#send-instant-action)
 
 ### Initialize SDK
 Authenticator requires initialization.  
@@ -160,12 +161,11 @@ _This step can be skipped if application already knows service configuration._
 3. Post connection data and receive ConnectionCreateResult  
     ```kotlin
         AuthenticatorApiManager.createConnectionRequest(
-                baseUrl = connection.connectUrl,
-                publicKey = publicKeyAsPemEncodedString,
-                pushToken = firebaseCloudMessagingToken,
-                providerCode = providerCode,
-                connectQueryParam = connectQueryParam,
-                resultCallback = object : ConnectionCreateResult() {
+                appContext,
+                conenction,
+                firebaseCloudMessagingToken,
+                connectQueryParam,
+                object : ConnectionCreateResult() {
                     override fun onConnectionCreateSuccess(response: CreateConnectionData) {
                         // process success response
                         // open response.connectUrl in WebView or get response.accessToken if present
@@ -228,6 +228,7 @@ In some cases application may want to destroy current linking.
     ```
 
 ### Get Authorizations list
+To show pending Authorizations app should request them and decrypt the result.  
 
 1. Send request
     ```kotlin
@@ -272,7 +273,7 @@ Poll period is set to 2 seconds. For preventing memory leak application should s
         pollingService.stop()
     ```
 
-### get authorization by ID
+### Get authorization by ID
 
 1. Send request
     ```kotlin
@@ -356,7 +357,24 @@ Each pending Authorization can be denyed. Application can ask user to identify b
         }
     )
 ```
-
+### Send Instant Action  
+Instant Action feature is designated to authenticate an action of Service Provider (e.g. Sign-In, Payment Order). 
+Each Instant Action has unique code `actionUUID`. After receiving of `actionUUID`, Authenticator app should submit to selected by user Connection:
+```kotlin
+    AuthenticatorApiManager.sendAction(
+        actionUUID,
+        connectionAndKey,
+        resultCallback = object : ActionSubmitListener {
+            override fun onActionInitSuccess(response: SubmitActionData) {
+                //process success result
+            }
+            override fun onActionInitFailure(error: ApiErrorData) {
+                //process request error
+            }
+        }
+    )
+```
+On success Authenticator app receives `SubmitActionData` which has optional fields `connectionId` and `authorizationId` (if is reqiored additional confirmation).  
   
 ___
 Copyright © 2019 Salt Edge. https://www.saltedge.com  

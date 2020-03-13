@@ -259,7 +259,6 @@ class SubmitActionPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onViewCreatedTestCase2() {
-        val presenter = createPresenter(viewContract = mockView)
         val connection = Connection().apply {
             guid = "guid1"
             accessToken = "accessToken"
@@ -267,9 +266,11 @@ class SubmitActionPresenterTest {
             name = "Demobank1"
         }
         Mockito.`when`(mockConnectionsRepository.getByGuid("guid1")).thenReturn(connection)
+        Mockito.`when`(mockKeyStoreManager.createConnectionAndKeyModel(connection)).thenReturn(ConnectionAndKey(connection, mockPrivateKey))
         Mockito.doReturn(KeyPair(null, mockPrivateKey)).`when`(mockKeyStoreManager).getKeyPair(
             Mockito.anyString()
         )
+        val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(
             connectionGuid = "guid1",
             actionAppLinkData = ActionAppLinkData(
@@ -278,6 +279,7 @@ class SubmitActionPresenterTest {
                 returnTo = "https://www.saltedge.com/"
             )
         )
+
         presenter.onViewCreated()
 
         Mockito.verify(mockView).setProcessingVisibility(true)
@@ -332,9 +334,7 @@ class SubmitActionPresenterTest {
             name = "Demobank1"
         }
         Mockito.`when`(mockConnectionsRepository.getByGuid("guid1")).thenReturn(connection)
-        Mockito.doReturn(KeyPair(null, mockPrivateKey)).`when`(mockKeyStoreManager).getKeyPair(
-            Mockito.anyString()
-        )
+        Mockito.`when`(mockKeyStoreManager.createConnectionAndKeyModel(connection)).thenReturn(ConnectionAndKey(connection, mockPrivateKey))
         presenter.setInitialData(
             connectionGuid = "guid1",
             actionAppLinkData = ActionAppLinkData(
@@ -343,6 +343,7 @@ class SubmitActionPresenterTest {
                 returnTo = "https://www.saltedge.com/"
             )
         )
+
         presenter.onViewCreated()
 
         Mockito.verify(mockApiManager).sendAction(
