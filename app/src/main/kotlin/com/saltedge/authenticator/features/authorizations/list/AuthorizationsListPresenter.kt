@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.authorizations.list
 
 import android.content.Context
+import androidx.lifecycle.Lifecycle
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.common.*
 import com.saltedge.authenticator.interfaces.ListItemClickListener
@@ -28,10 +29,17 @@ import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationResult
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationsContract
-import com.saltedge.authenticator.sdk.model.*
+import com.saltedge.authenticator.sdk.model.AuthorizationID
+import com.saltedge.authenticator.sdk.model.ConnectionID
+import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
+import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
+import com.saltedge.authenticator.sdk.model.authorization.isNotExpired
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.model.error.isConnectionNotFound
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import kotlinx.coroutines.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -69,12 +77,12 @@ class AuthorizationsListPresenter @Inject constructor(
     override fun baseViewContract(): BaseAuthorizationViewContract? = viewContract
 
     fun onFragmentResume() {
-        startPolling()
         viewContract?.updateViewsContent()
     }
 
-    fun onFragmentPause() {
-        stopPolling()
+    fun onCreate(lifecycle: Lifecycle) {
+        pollingService.contract = this
+        pollingService.register(lifecycle)
     }
 
     fun onFragmentDestroy() {

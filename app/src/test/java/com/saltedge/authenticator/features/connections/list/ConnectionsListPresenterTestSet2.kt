@@ -28,9 +28,9 @@ import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.KEY_NAME
-import com.saltedge.authenticator.sdk.model.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.ConnectionStatus
-import com.saltedge.authenticator.sdk.model.isActive
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
+import com.saltedge.authenticator.sdk.model.connection.isActive
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.junit.Before
@@ -349,8 +349,9 @@ class ConnectionsListPresenterTestSet2 {
     @Test
     @Throws(Exception::class)
     fun onActivityResultTest_DeleteSingleConnection_InvalidParams_Case1() {
-        val presenter = createPresenter(viewContract = null)
         Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid2")
+        Mockito.doReturn(ConnectionAndKey(allConnections[1], mockPrivateKey)).`when`(mockKeyStoreManager).createConnectionAndKeyModel(allConnections[1])
+        val presenter = createPresenter(viewContract = null)
         presenter.onActivityResult(
             resultCode = Activity.RESULT_OK, requestCode = DELETE_REQUEST_CODE,
             data = Intent().putExtra(KEY_GUID, "guid2")
@@ -378,6 +379,7 @@ class ConnectionsListPresenterTestSet2 {
     @Throws(Exception::class)
     fun onActivityResultTest_DeleteSingleConnection() {
         Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid2")
+        Mockito.doReturn(ConnectionAndKey(allConnections[1], mockPrivateKey)).`when`(mockKeyStoreManager).createConnectionAndKeyModel(allConnections[1])
         val presenter = createPresenter(viewContract = mockView)
         presenter.onActivityResult(
             resultCode = Activity.RESULT_OK,
@@ -386,12 +388,8 @@ class ConnectionsListPresenterTestSet2 {
         )
 
         Mockito.verify(mockApiManager).revokeConnections(
-            listOf(
-                ConnectionAndKey(
-                    allConnections[1],
-                    mockPrivateKey
-                )
-            ), presenter
+            listOf(ConnectionAndKey(allConnections[1], mockPrivateKey)),
+            presenter
         )
         Mockito.verify(mockConnectionsRepository).deleteConnection("guid2")
         Mockito.verify(mockKeyStoreManager).deleteKeyPair("guid2")

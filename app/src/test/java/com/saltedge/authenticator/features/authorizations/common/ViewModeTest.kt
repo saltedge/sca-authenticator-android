@@ -79,7 +79,7 @@ class ViewModeTest {
         Assert.assertNull(ViewMode.DEFAULT.statusImageResId)
         Assert.assertNull(ViewMode.CONFIRM_PROCESSING.statusImageResId)
         Assert.assertNull(ViewMode.DENY_PROCESSING.statusImageResId)
-        assertThat(ViewMode.CONFIRM_SUCCESS.statusImageResId, equalTo(R.drawable.ic_auth_success_70))
+        assertThat(ViewMode.CONFIRM_SUCCESS.statusImageResId, equalTo(R.drawable.ic_success_70))
         assertThat(ViewMode.DENY_SUCCESS.statusImageResId, equalTo(R.drawable.ic_auth_denied_70))
         assertThat(ViewMode.ERROR.statusImageResId, equalTo(R.drawable.ic_auth_error_70))
         assertThat(ViewMode.TIME_OUT.statusImageResId, equalTo(R.drawable.ic_auth_timeout_70))

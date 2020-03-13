@@ -30,7 +30,13 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_AUTHORIZATION_NOT_FOUND
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_CONNECTION_NOT_FOUND
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_SSL_HANDSHAKE
-import com.saltedge.authenticator.sdk.model.*
+import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
+import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.model.error.createRequestError
 import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResultData
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
@@ -46,9 +52,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
-
 import org.robolectric.RobolectricTestRunner
-import java.security.KeyPair
 import java.security.PrivateKey
 
 @RunWith(RobolectricTestRunner::class)
@@ -930,8 +934,8 @@ class AuthorizationDetailsPresenterTest {
         Mockito.doReturn(connection2).`when`(mockConnectionsRepository).getById("2_noKey")
         Mockito.doReturn(mockPollingService).`when`(mockApiManager)
             .createSingleAuthorizationPollingService()
-        Mockito.doReturn(KeyPair(null, mockPrivateKey))
-            .`when`(mockKeyStoreManager).getKeyPair("guid1")
+        Mockito.doReturn(ConnectionAndKey(connection1, mockPrivateKey))
+            .`when`(mockKeyStoreManager).createConnectionAndKeyModel(connection1)
         Mockito.doReturn(null).`when`(mockKeyStoreManager).getKeyPair("guid2")
         Mockito.doReturn(authorizationData1).`when`(mockCryptoTools)
             .decryptAuthorizationData(

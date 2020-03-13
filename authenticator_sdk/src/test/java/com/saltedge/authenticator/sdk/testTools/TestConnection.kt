@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.testTools
 
-import com.saltedge.authenticator.sdk.model.ConnectionAbs
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 
 data class TestConnection(
     override var guid: String = "",

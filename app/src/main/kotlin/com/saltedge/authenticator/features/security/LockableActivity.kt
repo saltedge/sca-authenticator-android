@@ -239,8 +239,8 @@ abstract class LockableActivity :
     }
 
     private fun enablePasscodeInput() {
-        getAppBarLayout()?.setVisible(show = true)
         getUnlockAppInputView()?.biometricsActionIsAvailable = isBiometricInputReady()
+        getUnlockAppInputView()?.setInputViewVisibility(show = true)
     }
 
     private fun unlockScreen() {

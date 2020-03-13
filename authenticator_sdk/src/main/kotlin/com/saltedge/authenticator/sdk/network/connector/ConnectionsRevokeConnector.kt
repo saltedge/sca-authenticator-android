@@ -23,8 +23,8 @@ package com.saltedge.authenticator.sdk.network.connector
 import com.saltedge.authenticator.sdk.constants.API_CONNECTIONS
 import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_DELETE
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeResult
-import com.saltedge.authenticator.sdk.model.ApiErrorData
-import com.saltedge.authenticator.sdk.model.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.Token
 import com.saltedge.authenticator.sdk.model.request.AuthenticatedRequestData
 import com.saltedge.authenticator.sdk.model.response.RevokeAccessTokenResponseData

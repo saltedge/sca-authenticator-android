@@ -1,18 +1,18 @@
-/* 
- * This file is part of the Salt Edge Authenticator distribution 
+/*
+ * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2019 Salt Edge Inc.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3 or later.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * For the additional permissions granted for Salt Edge Authenticator
@@ -32,7 +32,12 @@ import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.KEY_NAME
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeResult
-import com.saltedge.authenticator.sdk.model.*
+import com.saltedge.authenticator.sdk.model.GUID
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
+import com.saltedge.authenticator.sdk.model.connection.getStatus
+import com.saltedge.authenticator.sdk.model.connection.isActive
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import javax.inject.Inject
 
@@ -66,9 +71,7 @@ class ConnectionsListPresenter @Inject constructor(
                 )
             }
             DELETE_REQUEST_CODE -> onUserConfirmedDeleteConnection(
-                connectionGuid = data.getStringExtra(
-                    KEY_GUID
-                ) ?: return
+                connectionGuid = data.getStringExtra(KEY_GUID) ?: return
             )
         }
     }
@@ -136,7 +139,7 @@ class ConnectionsListPresenter @Inject constructor(
 
     private fun sendRevokeRequestForConnections(connections: List<Connection>) {
         val connectionsAndKeys: List<ConnectionAndKey> = connections.filter { it.isActive() }
-            .mapNotNull { it.toConnectionAndKey(keyStoreManager) }
+            .mapNotNull { keyStoreManager.createConnectionAndKeyModel(it) }
 
         apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = this)
     }

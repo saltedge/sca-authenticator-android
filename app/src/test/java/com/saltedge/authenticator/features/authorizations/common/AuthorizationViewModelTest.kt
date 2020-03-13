@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.authorizations.common
 
 import com.saltedge.authenticator.model.db.Connection
-import com.saltedge.authenticator.sdk.model.AuthorizationData
+import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
 import com.saltedge.authenticator.testTools.TestAppTools
 import net.danlew.android.joda.JodaTimeAndroid
 import org.hamcrest.CoreMatchers.anyOf
@@ -37,23 +37,24 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class AuthorizationViewModelTest {
 
+    private lateinit var model: AuthorizationViewModel
+
     @Before
     fun setUp() {
         JodaTimeAndroid.init(TestAppTools.applicationContext)
+        model = AuthorizationViewModel(
+            authorizationID = "444",
+            authorizationCode = "111",
+            title = "title",
+            description = "description",
+            expiresAt = DateTime(),
+            connectionID = "333",
+            connectionName = "Demobank",
+            connectionLogoUrl = "url",
+            validSeconds = 300,
+            createdAt = DateTime()
+        )
     }
-
-    private val model = AuthorizationViewModel(
-        authorizationID = "444",
-        authorizationCode = "111",
-        title = "title",
-        description = "description",
-        expiresAt = DateTime(),
-        connectionID = "333",
-        connectionName = "Demobank",
-        connectionLogoUrl = "url",
-        validSeconds = 300,
-        createdAt = DateTime()
-    )
 
     @Test
     @Throws(Exception::class)

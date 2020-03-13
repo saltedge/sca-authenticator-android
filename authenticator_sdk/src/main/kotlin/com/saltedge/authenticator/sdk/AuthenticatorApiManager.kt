@@ -22,8 +22,11 @@ package com.saltedge.authenticator.sdk
 
 import android.content.Context
 import com.saltedge.authenticator.sdk.constants.DEFAULT_RETURN_URL
+import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_API_REQUEST
 import com.saltedge.authenticator.sdk.contract.*
-import com.saltedge.authenticator.sdk.model.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.request.ConfirmDenyData
 import com.saltedge.authenticator.sdk.network.RestClient
 import com.saltedge.authenticator.sdk.network.connector.*
@@ -31,6 +34,7 @@ import com.saltedge.authenticator.sdk.polling.AuthorizationsPollingService
 import com.saltedge.authenticator.sdk.polling.PollingServiceAbs
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
 import com.saltedge.authenticator.sdk.tools.buildUserAgent
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
 
 /**
  * Wrap network communication with Identity Service
@@ -43,6 +47,15 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
     override var authenticationReturnUrl: String = DEFAULT_RETURN_URL
     var userAgentInfo = ""
         private set
+
+    /**
+     * Initialize SDK
+     *
+     * @param context of Application
+     */
+    override fun initializeSDK(context: Context) {
+        userAgentInfo = buildUserAgent(context)
+    }
 
     /**
      * Request to get Service Provide configuration.
@@ -76,6 +89,34 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
                 providerCode = providerCode,
                 connectQueryParam = connectQueryParam
             )
+    }
+
+    /**
+     * Request to create new SCA connection.
+     * Result is returned through callback.
+     */
+    override fun createConnectionRequest(
+        appContext: Context,
+        connection: ConnectionAbs,
+        pushToken: String,
+        connectQueryParam: String?,
+        resultCallback: ConnectionCreateResult
+    ) {
+        val publicKey = KeyStoreManager.createRsaPublicKeyAsString(appContext, connection.guid)
+        if (publicKey == null) {
+            resultCallback.onConnectionCreateFailure(
+                ApiErrorData(errorClassName = ERROR_CLASS_API_REQUEST, errorMessage = "Secure material is unavailable")
+            )
+        } else {
+            createConnectionRequest(
+                baseUrl = connection.connectUrl,
+                publicKey = publicKey,
+                pushToken = pushToken,
+                providerCode = connection.code,
+                connectQueryParam = connectQueryParam,
+                resultCallback = resultCallback
+            )
+        }
     }
 
     /**
@@ -171,11 +212,18 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
     }
 
     /**
-     * Initialize SDK
-     *
-     * @param context of Application
+     * Request to send action.
+     * Result is returned through callback.
      */
-    override fun initializeSDK(context: Context) {
-        userAgentInfo = buildUserAgent(context)
+    override fun sendAction(
+        actionUUID: String,
+        connectionAndKey: ConnectionAndKey,
+        resultCallback: ActionSubmitListener
+    ) {
+        SubmitActionConnector(RestClient.apiInterface, resultCallback)
+            .postActionData(
+                actionUUID = actionUUID,
+                connectionAndKey = connectionAndKey
+            )
     }
 }

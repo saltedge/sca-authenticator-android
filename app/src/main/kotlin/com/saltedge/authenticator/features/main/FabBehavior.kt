@@ -24,11 +24,9 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.view.isVisible
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tool.printToLogcat
 
 class FabBehavior : CoordinatorLayout.Behavior<FloatingActionButton> {
 

@@ -49,7 +49,7 @@ enum class ViewMode {
     val statusImageResId: ResId?
         get() {
             return when(this) {
-                CONFIRM_SUCCESS -> R.drawable.ic_auth_success_70
+                CONFIRM_SUCCESS -> R.drawable.ic_success_70
                 DENY_SUCCESS -> R.drawable.ic_auth_denied_70
                 ERROR -> R.drawable.ic_auth_error_70
                 TIME_OUT -> R.drawable.ic_auth_timeout_70
