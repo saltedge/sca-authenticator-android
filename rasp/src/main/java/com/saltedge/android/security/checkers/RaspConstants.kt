@@ -18,9 +18,9 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.android.security.checker
+package com.saltedge.android.security.checkers
 
-internal class Constants {
+internal class RaspConstants {
     companion object {
 
         const val BINARY_SU = "su"

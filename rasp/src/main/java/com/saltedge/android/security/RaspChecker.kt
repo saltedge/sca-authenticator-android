@@ -21,7 +21,7 @@
 package com.saltedge.android.security
 
 import android.content.Context
-import com.saltedge.android.security.checker.*
+import com.saltedge.android.security.checkers.*
 
 /**
  * Class for checking possible breaches in application environment or application tempering
@@ -34,8 +34,19 @@ import com.saltedge.android.security.checker.*
  * 5. OS has installed hooking framework
  */
 object RaspChecker {
+    private var appSignatures: List<String> = emptyList()
+
     /**
-     * checking possible breaches in application environment or application tempering
+     * Setup RASP module
+     *
+     * @param appSignatures collection of application SHA-256 signatures
+     */
+    fun setup(appSignatures: List<String>) {
+        this.appSignatures = appSignatures
+    }
+
+    /**
+     * check possible breaches in application environment or harmful applications
      *
      * @param context of Application
      * @return check report or empty string
@@ -45,7 +56,7 @@ object RaspChecker {
             context.checkIfDeviceRooted(),
             checkIfDeviceEmulator(),
             context.checkIfAppDebuggable(),
-            context.checkAppSignature(),
+            context.checkAppSignatures(appSignatures),
             context.checkHookingFrameworks()
         )
         return if (checkList.isEmpty()) "" else checkList.joinToString(separator = ", ")

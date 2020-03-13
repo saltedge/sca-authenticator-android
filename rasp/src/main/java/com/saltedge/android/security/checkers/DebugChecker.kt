@@ -18,10 +18,18 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.android.security
+package com.saltedge.android.security.checkers
 
-// SHA-256
-internal val VERIFIED_SIGNATURES = listOf(
-        "UuSAKRUmYb4aPtLxa0kEZOJ+3sCIVqHiWYE64cXpf34=",
-        "AWkFB6q1Mdzr40129VKjmUXI4OpEqpepcuf4+CxFVTs="
-)
+import android.content.Context
+import android.content.pm.ApplicationInfo
+
+/**
+ * Attached debugger checker. Checks if DEBUG mode is true
+ *
+ * @receiver context of Application
+ * @return null if nothing to report or non-empty report string
+ */
+internal fun Context.checkIfAppDebuggable(): String? {
+    val result = this.applicationInfo.flags.and(ApplicationInfo.FLAG_DEBUGGABLE) != 0
+    return if (result) "AppIsDebuggable" else null
+}

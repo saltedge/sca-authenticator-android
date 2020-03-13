@@ -18,18 +18,28 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.android.security.checker
+package com.saltedge.android.security.checkers
 
-import android.content.Context
-import android.content.pm.ApplicationInfo
+import android.os.Build
+
+private const val MIN_PROPERTIES_THRESHOLD = 2
 
 /**
- * Attached debugger checker. Checks if DEBUG mode is true
+ * Device emulator checker. Checks if app started on emulator.
  *
- * @receiver context of Application
  * @return null if nothing to report or non-empty report string
  */
-internal fun Context.checkIfAppDebuggable(): String? {
-    val result = this.applicationInfo.flags.and(ApplicationInfo.FLAG_DEBUGGABLE) != 0
-    return if (result) "AppIsDebuggable" else null
+internal fun checkIfDeviceEmulator(): String? {
+    val result = listOf(
+            Build.FINGERPRINT.startsWith("generic"),
+            Build.FINGERPRINT.startsWith("unknown"),
+            Build.BOOTLOADER.contains("unknown"),
+            Build.HARDWARE.contains("goldfish"),
+            Build.MANUFACTURER.contains("Genymotion"),
+            Build.MODEL.contains("Android SDK built for x86"),
+            Build.MODEL.contains("sdk"),
+            (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")),
+            Build.PRODUCT.contains("sdk")
+    ).count { it } >= MIN_PROPERTIES_THRESHOLD
+    return if (result) "DeviceIsEmulator" else null
 }
