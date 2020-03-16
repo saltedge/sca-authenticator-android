@@ -61,7 +61,7 @@ class SubmitActionConnectorTest {
     @Throws(Exception::class)
     fun setUp() {
         every {
-            mockApi.postAction(requestUrl = requestUrl, headersMap = any())
+            mockApi.submitAction(requestUrl = requestUrl, headersMap = any())
         } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
         every { mockCall.request() } returns Request.Builder().url(requestUrl).build()
@@ -107,7 +107,7 @@ class SubmitActionConnectorTest {
             connectionAndKey = ConnectionAndKey(requestConnection, privateKey)
         )
 
-        verify { mockApi.postAction(requestUrl = requestUrl, headersMap = any()) }
+        verify { mockApi.submitAction(requestUrl = requestUrl, headersMap = any()) }
         verify { mockCall.enqueue(connector) }
 
         connector.onResponse(mockCall, get404Response())
