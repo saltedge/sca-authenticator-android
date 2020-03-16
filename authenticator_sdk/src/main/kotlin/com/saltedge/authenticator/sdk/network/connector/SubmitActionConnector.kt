@@ -48,7 +48,7 @@ internal class SubmitActionConnector(
             signPrivateKey = connectionAndKey.key
         )
 
-        apiInterface.postAction(
+        apiInterface.submitAction(
             requestData.requestUrl,
             requestData.headersMap
         ).enqueue(this)
