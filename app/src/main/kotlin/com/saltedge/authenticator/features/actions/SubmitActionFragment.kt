@@ -43,22 +43,6 @@ class SubmitActionFragment : BaseFragment(),
     UpActionImageListener,
     View.OnClickListener {
 
-    companion object {
-        const val KEY_ACTION_DEEP_LINK_DATA = "ACTION_DEEP_LINK_DATA"
-
-        fun newInstance(
-            connectionGuid: String,
-            actionAppLinkData: ActionAppLinkData
-        ): SubmitActionFragment {
-            return SubmitActionFragment().apply {
-                arguments = Bundle().apply {
-                    putSerializable(KEY_ACTION_DEEP_LINK_DATA, actionAppLinkData)
-                    putString(KEY_GUID, connectionGuid)
-                }
-            }
-        }
-    }
-
     @Inject
     lateinit var presenterContract: SubmitActionContract.Presenter
 
@@ -134,7 +118,6 @@ class SubmitActionFragment : BaseFragment(),
     }
 
     override fun openLink(url: String) {
-
         context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     }
 
@@ -142,5 +125,21 @@ class SubmitActionFragment : BaseFragment(),
         authenticatorApp?.appComponent?.addActionModule(SubmitActionModule())?.inject(
             this
         )
+    }
+
+    companion object {
+        const val KEY_ACTION_DEEP_LINK_DATA = "ACTION_DEEP_LINK_DATA"
+
+        fun newInstance(
+            connectionGuid: String,
+            actionAppLinkData: ActionAppLinkData
+        ): SubmitActionFragment {
+            return SubmitActionFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable(KEY_ACTION_DEEP_LINK_DATA, actionAppLinkData)
+                    putString(KEY_GUID, connectionGuid)
+                }
+            }
+        }
     }
 }
