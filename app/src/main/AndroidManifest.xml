@@ -71,7 +71,11 @@
                 <data
                     android:scheme="@string/link_scheme"
                     android:host="@string/link_host"
-                    android:pathPattern="@string/link_action"/>
+                    android:pathPattern="@string/app_link_connect_path"/>
+                <data
+                    android:scheme="@string/link_scheme"
+                    android:host="@string/link_host"
+                    android:pathPattern="@string/app_link_instant_action_path"/>
             </intent-filter>
         </activity>
 

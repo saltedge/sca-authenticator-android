@@ -22,5 +22,6 @@
 <resources>
     <string name="link_scheme" class="text">authenticator</string>
     <string name="link_host" class="text">saltedge.com</string>
-    <string name="link_action" class="text">/connect</string>
+    <string name="app_link_connect_path" class="text">/connect</string>
+    <string name="app_link_instant_action_path" class="text">/action</string>
 </resources>
