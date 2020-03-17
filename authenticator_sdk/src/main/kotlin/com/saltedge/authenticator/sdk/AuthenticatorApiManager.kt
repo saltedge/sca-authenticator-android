@@ -221,7 +221,7 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
         resultCallback: ActionSubmitListener
     ) {
         SubmitActionConnector(RestClient.apiInterface, resultCallback)
-            .postActionData(
+            .updateAction(
                 actionUUID = actionUUID,
                 connectionAndKey = connectionAndKey
             )

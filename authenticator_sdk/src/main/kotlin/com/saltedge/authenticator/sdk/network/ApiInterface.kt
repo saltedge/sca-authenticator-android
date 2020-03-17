@@ -67,7 +67,7 @@ interface ApiInterface {
     ): Call<ConfirmDenyResponseData>
 
     @PUT
-    fun submitAction(
+    fun updateAction(
         @Url requestUrl: String,
         @HeaderMap headersMap: Map<String, String>
     ): Call<SubmitActionResponseData>

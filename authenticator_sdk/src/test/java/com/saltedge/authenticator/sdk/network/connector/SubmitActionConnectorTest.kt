@@ -52,7 +52,7 @@ class SubmitActionConnectorTest {
     private val mockCallback = mockkClass(ActionSubmitListener::class)
     private val mockCall: Call<SubmitActionResponseData> =
         mockkClass(Call::class) as Call<SubmitActionResponseData>
-    private val requestUrl = "https://localhost/api/authenticator/v1/action/actionUUID"
+    private val requestUrl = "https://localhost/api/authenticator/v1/actions/uuid-1234"
     private val requestConnection: ConnectionAbs = getDefaultTestConnection()
     private var privateKey: PrivateKey = this.getTestPrivateKey()
 
@@ -61,7 +61,7 @@ class SubmitActionConnectorTest {
     @Throws(Exception::class)
     fun setUp() {
         every {
-            mockApi.submitAction(requestUrl = requestUrl, headersMap = any())
+            mockApi.updateAction(requestUrl = requestUrl, headersMap = any())
         } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
         every { mockCall.request() } returns Request.Builder().url(requestUrl).build()
@@ -83,10 +83,10 @@ class SubmitActionConnectorTest {
 
     @Test
     @Throws(Exception::class)
-    fun postConnectionDataTest_emptyResponse() {
+    fun updateActionTest_emptyResponse() {
         val connector = SubmitActionConnector(mockApi, mockCallback)
-        connector.postActionData(
-            actionUUID = "actionUUID",
+        connector.updateAction(
+            actionUUID = "uuid-1234",
             connectionAndKey = ConnectionAndKey(requestConnection, privateKey)
         )
 
@@ -102,12 +102,12 @@ class SubmitActionConnectorTest {
     @Throws(Exception::class)
     fun postConnectionDataTest_withError() {
         val connector = SubmitActionConnector(mockApi, mockCallback)
-        connector.postActionData(
-            actionUUID = "actionUUID",
+        connector.updateAction(
+            actionUUID = "uuid-1234",
             connectionAndKey = ConnectionAndKey(requestConnection, privateKey)
         )
 
-        verify { mockApi.submitAction(requestUrl = requestUrl, headersMap = any()) }
+        verify { mockApi.updateAction(requestUrl = requestUrl, headersMap = any()) }
         verify { mockCall.enqueue(connector) }
 
         connector.onResponse(mockCall, get404Response())
@@ -127,8 +127,8 @@ class SubmitActionConnectorTest {
     @Throws(Exception::class)
     fun postConnectionDataTest_allSuccess() {
         val connector = SubmitActionConnector(mockApi, mockCallback)
-        connector.postActionData(
-            actionUUID = "actionUUID",
+        connector.updateAction(
+            actionUUID = "uuid-1234",
             connectionAndKey = ConnectionAndKey(requestConnection, privateKey)
         )
 
