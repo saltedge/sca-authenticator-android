@@ -29,10 +29,10 @@ import android.view.View
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
-import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
 import com.saltedge.authenticator.features.actions.AuthorizationListener
 import com.saltedge.authenticator.features.actions.SubmitActionFragment
+import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
+import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
@@ -46,10 +46,10 @@ import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.realm.RealmManager
-import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
-import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.model.GUID
+import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
+import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
 import com.saltedge.authenticator.widget.fragment.BaseFragment

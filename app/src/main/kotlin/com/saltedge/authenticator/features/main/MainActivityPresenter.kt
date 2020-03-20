@@ -129,10 +129,10 @@ class MainActivityPresenter(
      * @param stackIsClear Boolean state of fragments stack
      */
     fun onFragmentBackStackChanged(stackIsClear: Boolean, intent: Intent?) {
-        if (intent != null && stackIsClear
-            && (intent.hasPendingAuthorizationData || intent.hasDeepLinkData)) {
-                viewContract.closeView()
-            } else viewContract.updateNavigationViewsContent()
+        viewContract.updateNavigationViewsContent()
+        intent?.let {
+            if (stackIsClear && isInstantActionIntent(it)) viewContract.closeView()
+        }
     }
 
     /**
@@ -198,5 +198,9 @@ class MainActivityPresenter(
                 viewContract.showConnectionsSelectorFragment(result)
             }
         }
+    }
+
+    private fun isInstantActionIntent(intent: Intent): Boolean {
+        return intent.hasPendingAuthorizationData || intent.deepLink.extractActionAppLinkData() != null
     }
 }
