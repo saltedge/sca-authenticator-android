@@ -52,7 +52,7 @@ class AboutListPresenterTest {
             listOf(
                 SettingsItemViewModel(
                     titleId = R.string.about_app_version,
-                    value = "2.3.1"
+                    value = "2.3.2"
                 ),
                 SettingsItemViewModel(
                     titleId = R.string.about_copyright,
