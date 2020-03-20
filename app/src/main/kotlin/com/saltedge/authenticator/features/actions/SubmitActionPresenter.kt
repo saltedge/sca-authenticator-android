@@ -106,7 +106,7 @@ class SubmitActionPresenter @Inject constructor(
                     iconResId = R.drawable.ic_success_70,
                     completeTitleResId = R.string.action_feature_title,
                     completeMessageResId = R.string.action_feature_description,
-                    mainActionTextResId = R.string.actions_proceed
+                    mainActionTextResId = android.R.string.ok
                 )
             }
             ViewMode.ACTION_ERROR -> {

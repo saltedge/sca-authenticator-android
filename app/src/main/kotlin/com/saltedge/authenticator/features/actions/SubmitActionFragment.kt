@@ -100,12 +100,6 @@ class SubmitActionFragment : BaseFragment(),
         presenterContract.onViewClick(view?.id ?: return)
     }
 
-    private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addActionModule(SubmitActionModule())?.inject(
-            this
-        )
-    }
-
     override fun updateCompleteViewContent(
         iconResId: Int,
         completeTitleResId: Int,
@@ -125,6 +119,12 @@ class SubmitActionFragment : BaseFragment(),
 
     override fun openLink(url: String) {
         context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+    }
+
+    private fun injectDependencies() {
+        authenticatorApp?.appComponent?.addActionModule(SubmitActionModule())?.inject(
+            this
+        )
     }
 
     companion object {

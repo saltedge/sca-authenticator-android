@@ -20,11 +20,11 @@
  */
 package com.saltedge.authenticator.sdk.network.connector
 
-import com.saltedge.authenticator.sdk.constants.API_ACTION
-import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_POST
+import com.saltedge.authenticator.sdk.constants.API_ACTIONS
+import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_PUT
 import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
-import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.error.createInvalidResponseError
 import com.saltedge.authenticator.sdk.model.response.SubmitActionResponseData
 import com.saltedge.authenticator.sdk.network.ApiInterface
@@ -36,19 +36,19 @@ internal class SubmitActionConnector(
     var resultCallback: ActionSubmitListener?
 ): ApiResponseInterceptor<SubmitActionResponseData>() {
 
-    fun postActionData(
+    fun updateAction(
         actionUUID: String,
         connectionAndKey: ConnectionAndKey
     ) {
         val requestData = createAuthenticatedRequestData<Nothing>(
-            requestMethod = REQUEST_METHOD_POST,
+            requestMethod = REQUEST_METHOD_PUT,
             baseUrl = connectionAndKey.connection.connectUrl,
-            apiRoutePath = "$API_ACTION/${actionUUID}",
+            apiRoutePath = "$API_ACTIONS/${actionUUID}",
             accessToken = connectionAndKey.connection.accessToken,
             signPrivateKey = connectionAndKey.key
         )
 
-        apiInterface.postAction(
+        apiInterface.updateAction(
             requestData.requestUrl,
             requestData.headersMap
         ).enqueue(this)

@@ -52,7 +52,7 @@ class MainActivityPresenter(
      * else shows ConnectionsList
      */
     fun launchInitialFragment(intent: Intent?) {
-        if (intent != null && (intent.hasConnectionIdAndAuthorizationId || intent.hasDeepLink)) {
+        if (intent != null && (intent.hasPendingAuthorizationData || intent.hasDeepLinkData)) {
             onNewIntentReceived(intent)
         } else {
             viewContract.setSelectedTabbarItemId(
@@ -80,13 +80,13 @@ class MainActivityPresenter(
      */
     fun onNewIntentReceived(intent: Intent) {
         when {
-            intent.hasConnectionIdAndAuthorizationId -> {
+            intent.hasPendingAuthorizationData -> {
                 viewContract.showAuthorizationDetailsView(
                     connectionID = intent.connectionId,
                     authorizationID = intent.authorizationId
                 )
             }
-            intent.hasDeepLink -> {
+            intent.hasDeepLinkData -> {
                 intent.deepLink.extractConnectAppLinkData()?.let { connectionAppLinkData ->
                     onConnectAppLinkDataReceived(connectionAppLinkData)
                 } ?: intent.deepLink.extractActionAppLinkData()?.let { actionAppLinkData ->
@@ -129,8 +129,10 @@ class MainActivityPresenter(
      * @param stackIsClear Boolean state of fragments stack
      */
     fun onFragmentBackStackChanged(stackIsClear: Boolean, intent: Intent?) {
-        if (intent?.hasConnectionIdAndAuthorizationId == true && stackIsClear) viewContract.closeView()
-        else viewContract.updateNavigationViewsContent()
+        viewContract.updateNavigationViewsContent()
+        intent?.let {
+            if (stackIsClear && isInstantActionIntent(it)) viewContract.closeView()
+        }
     }
 
     /**
@@ -163,11 +165,11 @@ class MainActivityPresenter(
         get() = this?.getStringExtra(KEY_DEEP_LINK) ?: ""
 
     // Show Authorization Details Fragment
-    private val Intent?.hasConnectionIdAndAuthorizationId: Boolean
+    private val Intent?.hasPendingAuthorizationData: Boolean
         get() = this != null && this.connectionId.isNotEmpty() && this.authorizationId.isNotEmpty()
 
     // Show Connect Activity
-    private val Intent?.hasDeepLink: Boolean
+    private val Intent?.hasDeepLinkData: Boolean
         get() = deepLink.isNotEmpty()
 
     private fun onConnectAppLinkDataReceived(connectionAppLinkData: ConnectAppLinkData) {
@@ -196,5 +198,9 @@ class MainActivityPresenter(
                 viewContract.showConnectionsSelectorFragment(result)
             }
         }
+    }
+
+    private fun isInstantActionIntent(intent: Intent): Boolean {
+        return intent.hasPendingAuthorizationData || intent.deepLink.extractActionAppLinkData() != null
     }
 }
