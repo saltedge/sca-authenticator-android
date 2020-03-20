@@ -105,10 +105,10 @@
     <string name="connect_status_provider_success_description">Your Service Provider has been successfully connected to the Authenticator App. You will receive an authorization request every time you make an action.</string>
 
     <string name="action_new_action">New action</string>
-    <string name="action_feature_title">Successful authentication</string>
-    <string name="action_feature_description">You were successfully authenticated</string>
-    <string name="action_error_title">Authentication error</string>
-    <string name="action_error_description">Authentication cannot be performed. Please try again later.</string>
+    <string name="action_feature_title">Successful action</string>
+    <string name="action_feature_description">Action was successfully processed</string>
+    <string name="action_error_title">Action error</string>
+    <string name="action_error_description">Please try again</string>
     <string name="action_status_in_progress">Authenticating for action</string>
 
     <string name="authorizations_feature_title">Authorizations</string>
