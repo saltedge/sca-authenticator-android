@@ -1,3 +1,23 @@
+/*
+ * This file is part of the Salt Edge Authenticator distribution
+ * (https://github.com/saltedge/sca-authenticator-android).
+ * Copyright (c) 2020 Salt Edge Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3 or later.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * For the additional permissions granted for Salt Edge Authenticator
+ * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+ */
 package com.saltedge.authenticator.features.settings.mvvm.about
 
 import android.os.Bundle
@@ -17,20 +37,10 @@ import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.fragment.WebViewFragment
 import kotlinx.android.synthetic.main.fragment_base_list.*
 
-class AboutFragment : BaseFragment() {
+class AboutFragment : BaseFragment(), OnItemClickListener {
 
     private lateinit var viewModel: AboutViewModel
     private lateinit var viewModelFactory: AboutViewModelFactory
-    private var onItemClickListener: OnItemClickListener = object : OnItemClickListener {
-        override fun onItemClick(titleName: Int) {
-            when (titleName) {
-                R.string.about_terms_service -> {
-                    activity?.addFragment(WebViewFragment.newInstance(TERMS_LINK, getString(R.string.about_terms_service)))
-                }
-                R.string.about_open_source_licenses -> activity?.addFragment(LicensesFragment())
-            }
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,7 +48,7 @@ class AboutFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        viewModelFactory = AboutViewModelFactory(requireContext(), onItemClickListener)
+        viewModelFactory = AboutViewModelFactory(requireContext())
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(AboutViewModel::class.java)
 
@@ -51,6 +61,16 @@ class AboutFragment : BaseFragment() {
         setupViews()
     }
 
+    //TODO: Move logic in AboutViewModel
+    override fun onItemClick(titleName: Int) {
+        when (titleName) {
+            R.string.about_terms_service -> {
+                activity?.addFragment(WebViewFragment.newInstance(TERMS_LINK, getString(R.string.about_terms_service)))
+            }
+            R.string.about_open_source_licenses -> activity?.addFragment(LicensesFragment())
+        }
+    }
+
     private fun setupViews() {
         try {
             val layoutManager = LinearLayoutManager(activity)
@@ -60,7 +80,7 @@ class AboutFragment : BaseFragment() {
                 dividerItemDecoration.setDrawable(it)
             }
             recyclerView?.addItemDecoration(dividerItemDecoration)
-            recyclerView?.adapter = AboutAdapter(viewModel.onItemClickListener).apply {
+            recyclerView?.adapter = AboutAdapter(this).apply {
                 data = viewModel.getListItems()
             }
         } catch (e: Exception) {

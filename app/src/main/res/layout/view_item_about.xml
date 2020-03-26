@@ -18,16 +18,14 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-
-
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data class="AboutBinding">
         <import type="android.view.View" />
 
         <variable
-            name="about"
-            type="com.saltedge.authenticator.features.settings.mvvm.about.AboutListItemViewModel" />
+            name="aboutListItem"
+            type="com.saltedge.authenticator.features.settings.mvvm.about.AboutListItem" />
 
         <variable
             name="onItemClickListener"
@@ -40,7 +38,7 @@
         android:layout_height="@dimen/dp_75"
         android:background="@android:color/white"
         android:foreground="?android:attr/selectableItemBackground"
-        android:onClick="@{()->onItemClickListener.onItemClick(about.titleName)}"
+        android:onClick="@{()->onItemClickListener.onItemClick(aboutListItem.titleName)}"
         app:cardElevation="@dimen/dp_2">
 
         <RelativeLayout
@@ -60,7 +58,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
-                    android:text="@{about.titleName}"
+                    android:text="@{aboutListItem.titleName}"
                     tools:text="Title" />
 
                 <TextView
@@ -69,8 +67,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="2"
-                    android:visibility="@{about.isVisible ? View.VISIBLE : View.GONE}"
-                    android:text="@{about.subTitleName}"
+                    android:visibility="@{aboutListItem.isVisible ? View.VISIBLE : View.GONE}"
+                    android:text="@{aboutListItem.subTitleName}"
                     tools:text="Subtitle" />
             </LinearLayout>
         </RelativeLayout>

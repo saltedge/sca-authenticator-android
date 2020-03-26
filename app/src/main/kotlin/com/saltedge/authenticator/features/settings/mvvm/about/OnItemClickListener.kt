@@ -20,15 +20,6 @@
  */
 package com.saltedge.authenticator.features.settings.mvvm.about
 
-import android.content.Context
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-
-class AboutViewModelFactory(val appContext: Context) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(AboutViewModel::class.java)) {
-            return AboutViewModel(appContext) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
+interface OnItemClickListener {
+    fun onItemClick(titleName: Int)
 }
