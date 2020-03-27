@@ -23,8 +23,9 @@ package com.saltedge.authenticator.features.settings.mvvm.about
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import javax.inject.Inject
 
-class AboutViewModelFactory(val appContext: Context) : ViewModelProvider.Factory {
+class AboutViewModelFactory @Inject constructor(val appContext: Context) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AboutViewModel::class.java)) {
             return AboutViewModel(appContext) as T

@@ -30,30 +30,35 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.settings.licenses.LicensesFragment
+import com.saltedge.authenticator.features.settings.mvvm.about.di.AboutModule
+import com.saltedge.authenticator.features.settings.mvvm.about.di.DaggerAboutComponent
 import com.saltedge.authenticator.sdk.constants.TERMS_LINK
 import com.saltedge.authenticator.tool.addFragment
 import com.saltedge.authenticator.tool.log
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.fragment.WebViewFragment
 import kotlinx.android.synthetic.main.fragment_base_list.*
+import javax.inject.Inject
 
 class AboutFragment : BaseFragment(), OnItemClickListener {
 
-    private lateinit var viewModel: AboutViewModel
-    private lateinit var viewModelFactory: AboutViewModelFactory
+    lateinit var viewModel: AboutViewModel
+    @Inject lateinit var viewModelFactory: AboutViewModelFactory
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        injectDependencies()
+
+        viewModel = ViewModelProviders
+            .of(this, viewModelFactory)
+            .get(AboutViewModel::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-
-        viewModelFactory = AboutViewModelFactory(requireContext())
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-            .get(AboutViewModel::class.java)
-
-        return inflater.inflate(R.layout.fragment_base_list, container, false)
-    }
+    ): View = inflater.inflate(R.layout.fragment_base_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -65,7 +70,12 @@ class AboutFragment : BaseFragment(), OnItemClickListener {
     override fun onItemClick(titleName: Int) {
         when (titleName) {
             R.string.about_terms_service -> {
-                activity?.addFragment(WebViewFragment.newInstance(TERMS_LINK, getString(R.string.about_terms_service)))
+                activity?.addFragment(
+                    WebViewFragment.newInstance(
+                        TERMS_LINK,
+                        getString(R.string.about_terms_service)
+                    )
+                )
             }
             R.string.about_open_source_licenses -> activity?.addFragment(LicensesFragment())
         }
@@ -85,6 +95,12 @@ class AboutFragment : BaseFragment(), OnItemClickListener {
             }
         } catch (e: Exception) {
             e.log()
+        }
+    }
+
+    private fun injectDependencies() {
+        activity?.let {
+            DaggerAboutComponent.builder().aboutModule(AboutModule(it)).build().inject(this)
         }
     }
 }
