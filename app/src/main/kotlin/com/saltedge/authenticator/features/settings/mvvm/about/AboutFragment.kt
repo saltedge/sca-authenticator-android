@@ -66,7 +66,6 @@ class AboutFragment : BaseFragment(), OnItemClickListener {
         setupViews()
     }
 
-    //TODO: Move logic in AboutViewModel
     override fun onItemClick(titleName: Int) {
         when (titleName) {
             R.string.about_terms_service -> {

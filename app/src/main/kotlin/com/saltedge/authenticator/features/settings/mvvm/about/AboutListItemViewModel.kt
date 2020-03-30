@@ -20,8 +20,9 @@
  */
 package com.saltedge.authenticator.features.settings.mvvm.about
 
-class AboutListItemViewModel {
+import androidx.annotation.StringRes
 
-    var titleId: Int? = null
-    var value: String? = null
-}
+data class AboutListItemViewModel(
+    @StringRes val titleId: Int,
+    val value: String? = null
+)

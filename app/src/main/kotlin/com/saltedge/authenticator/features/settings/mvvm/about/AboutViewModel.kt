@@ -29,21 +29,20 @@ class AboutViewModel(val appContext: Context) : ViewModel() {
 
     fun getListItems(): List<AboutListItemViewModel> {
         return listOf(
-            AboutListItemViewModel().apply {
-                titleId = R.string.about_app_version
+            AboutListItemViewModel(
+                titleId = R.string.about_app_version,
                 value = AppTools.getAppVersionName(appContext)
-            },
-            AboutListItemViewModel().apply {
-                titleId = R.string.about_copyright
+            ),
+            AboutListItemViewModel(
+                titleId = R.string.about_copyright,
                 value = appContext.getString(R.string.about_copyright_description)
-            },
-            AboutListItemViewModel().apply {
+            ),
+            AboutListItemViewModel(
                 titleId = R.string.about_terms_service
-
-            },
-            AboutListItemViewModel().apply {
+            ),
+            AboutListItemViewModel(
                 titleId = R.string.about_open_source_licenses
-            }
+            )
         )
     }
 }
