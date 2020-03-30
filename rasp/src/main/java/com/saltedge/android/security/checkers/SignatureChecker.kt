@@ -1,24 +1,24 @@
-/* 
- * This file is part of the Salt Edge Authenticator distribution 
+/*
+ * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2019 Salt Edge Inc.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3 or later.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.android.security.checker
+package com.saltedge.android.security.checkers
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -27,7 +27,6 @@ import android.content.pm.PackageManager.NameNotFoundException
 import android.content.pm.Signature
 import android.os.Build
 import android.util.Base64
-import com.saltedge.android.security.VERIFIED_SIGNATURES
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -37,10 +36,10 @@ import java.security.NoSuchAlgorithmException
  * @receiver context of Application
  * @return null if nothing to report or non-empty report string
  */
-internal fun Context.checkAppSignature(): String? {
+internal fun Context.checkAppSignatures(appSignatures: List<String>): String? {
     var exceptionMessage = ""
     val result = try {
-        getSignaturesHashes(this).intersect(VERIFIED_SIGNATURES).isEmpty()
+        getSignaturesHashes(this).intersect(appSignatures).isEmpty()
     } catch (e: NameNotFoundException) {
         e.printStackTrace()
         exceptionMessage = e.localizedMessage

@@ -22,14 +22,18 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'idea'
+apply plugin: 'maven'
+
+def libVersionCode = 1
+def libVersionName = "1.0.0"
 
 android {
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 28
-        compileSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion 29
+        compileSdkVersion 29
+        versionCode libVersionCode
+        versionName libVersionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -55,7 +59,20 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test:runner:1.2.0'
+}
+
+group 'com.saltedge.authenticator.security'
+version libVersionName
+
+sourceCompatibility = 1.8
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri("${rootProject.projectDir}/maven-repo"))
+        }
+    }
 }

@@ -18,13 +18,13 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.android.security.checker
+package com.saltedge.android.security.checkers
 
 import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
-import com.saltedge.android.security.checker.Constants.Companion.BINARY_MAGISK
-import com.saltedge.android.security.checker.Constants.Companion.BINARY_SU
+import com.saltedge.android.security.checkers.RaspConstants.Companion.BINARY_MAGISK
+import com.saltedge.android.security.checkers.RaspConstants.Companion.BINARY_SU
 import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
@@ -58,7 +58,7 @@ internal fun Context.checkIfDeviceRooted(): String? {
  * @return true if one of the apps it's installed
  */
 private fun Context.detectRootManagementApps(): Boolean {
-    return this.isAnyPackageFromListInstalled(Constants.knownRootAppsPackages)
+    return this.isAnyPackageFromListInstalled(RaspConstants.knownRootAppsPackages)
 }
 
 /**
@@ -69,7 +69,7 @@ private fun Context.detectRootManagementApps(): Boolean {
  * @return true if one of the apps it's installed
  */
 private fun Context.detectPotentiallyDangerousApps(): Boolean {
-    return this.isAnyPackageFromListInstalled(Constants.knownDangerousAppsPackages)
+    return this.isAnyPackageFromListInstalled(RaspConstants.knownDangerousAppsPackages)
 }
 
 /**
@@ -80,7 +80,7 @@ private fun Context.detectPotentiallyDangerousApps(): Boolean {
  * @return true if one of the apps it's installed
  */
 private fun Context.detectRootCloakingApps(): Boolean {
-    return this.isAnyPackageFromListInstalled(Constants.knownRootCloakingPackages)
+    return this.isAnyPackageFromListInstalled(RaspConstants.knownRootCloakingPackages)
 }
 
 /**
@@ -124,7 +124,7 @@ private fun checkForRWPaths(): Boolean {
     val result = mountReader()
             ?.map { line -> line.split(" ".toRegex()).dropLastWhile { it.isEmpty() } }
             ?.filter { args ->
-                (args.size > 3) && Constants.pathsThatShouldNotBeWritable.any { path ->
+                (args.size > 3) && RaspConstants.pathsThatShouldNotBeWritable.any { path ->
                     path.equals(args[1], ignoreCase = true)
                 }
             }?.flatMap { args ->
@@ -206,7 +206,7 @@ private fun PackageManager.packageInstalled(packageName: String): Boolean {
  */
 private fun checkForBinary(filename: String): Boolean {
     return try {
-        val r = Constants.suPaths.filter { File(it, filename).exists() }
+        val r = RaspConstants.suPaths.filter { File(it, filename).exists() }
         if (r.isNotEmpty()) Log.e("RootChecker", "Detected harmful binary: [$filename] in: [${r.joinToString(", ")}]")
         r.isNotEmpty()
     } catch (e: Exception) {

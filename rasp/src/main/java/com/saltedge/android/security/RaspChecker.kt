@@ -21,7 +21,11 @@
 package com.saltedge.android.security
 
 import android.content.Context
-import com.saltedge.android.security.checker.*
+import com.saltedge.android.security.checkers.*
+import com.saltedge.android.security.checkers.checkAppSignatures
+import com.saltedge.android.security.checkers.checkIfAppDebuggable
+import com.saltedge.android.security.checkers.checkIfDeviceEmulator
+import com.saltedge.android.security.checkers.checkIfDeviceRooted
 
 /**
  * Class for checking possible breaches in application environment or application tempering
@@ -35,17 +39,18 @@ import com.saltedge.android.security.checker.*
  */
 object RaspChecker {
     /**
-     * checking possible breaches in application environment or application tempering
+     * check possible breaches in application environment or harmful applications
      *
      * @param context of Application
      * @return check report or empty string
      */
     fun collectFailsReport(context: Context): String {
+        val appSignatures = context.resources.getStringArray(R.array.signatures)
         val checkList = listOfNotNull(
             context.checkIfDeviceRooted(),
             checkIfDeviceEmulator(),
             context.checkIfAppDebuggable(),
-            context.checkAppSignature(),
+            context.checkAppSignatures(appSignatures.toList()),
             context.checkHookingFrameworks()
         )
         return if (checkList.isEmpty()) "" else checkList.joinToString(separator = ", ")
