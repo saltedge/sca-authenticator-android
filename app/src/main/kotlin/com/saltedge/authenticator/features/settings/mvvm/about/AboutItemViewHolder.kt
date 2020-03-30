@@ -22,7 +22,6 @@ package com.saltedge.authenticator.features.settings.mvvm.about
 
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.databinding.AboutBinding
-import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 
 class AboutItemViewHolder(
     binding: AboutBinding
@@ -34,8 +33,8 @@ class AboutItemViewHolder(
         this.aboutBinding = binding
     }
 
-    fun bind(item: SettingsItemViewModel, listener: OnItemClickListener?) {
-        aboutBinding?.aboutListItem = AboutListItem(item)
+    fun bind(item: AboutListItemViewModel, listener: OnItemClickListener?) {
+        aboutBinding?.aboutListItem = item
         aboutBinding?.onItemClickListener = listener
         aboutBinding?.executePendingBindings()
     }

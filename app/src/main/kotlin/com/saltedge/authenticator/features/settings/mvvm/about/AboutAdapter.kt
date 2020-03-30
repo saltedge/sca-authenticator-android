@@ -26,7 +26,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.databinding.AboutBinding
-import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.widget.list.AbstractListAdapter
 
 class AboutAdapter(private val clickListener: OnItemClickListener?) : AbstractListAdapter() {
@@ -41,6 +40,6 @@ class AboutAdapter(private val clickListener: OnItemClickListener?) : AbstractLi
     }
 
     override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
-        (holder as AboutItemViewHolder).bind(item as SettingsItemViewModel, listener = clickListener)
+        (holder as AboutItemViewHolder).bind(item as AboutListItemViewModel, listener = clickListener)
     }
 }
