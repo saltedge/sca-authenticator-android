@@ -21,11 +21,17 @@
 package com.saltedge.authenticator.features.settings.mvvm.about
 
 import android.content.Context
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.AppTools
 
 class AboutViewModel(val appContext: Context) : ViewModel() {
+
+    private val observableEvents = MutableLiveData<ViewModelEvent>()
+
+    fun observeViewModelEvents(): LiveData<ViewModelEvent> = observableEvents
 
     fun getListItems(): List<AboutListItemViewModel> {
         return listOf(
@@ -44,5 +50,16 @@ class AboutViewModel(val appContext: Context) : ViewModel() {
                 titleId = R.string.about_open_source_licenses
             )
         )
+    }
+
+    fun onTitleClick(titleName: Int) {
+        when (titleName) {
+            R.string.about_terms_service -> postViewModelEvent(WebViewFragmentEvent())
+            R.string.about_open_source_licenses -> postViewModelEvent(LicensesFragmentEvent())
+        }
+    }
+
+    private fun postViewModelEvent(event: ViewModelEvent) {
+        observableEvents.postValue(event)
     }
 }

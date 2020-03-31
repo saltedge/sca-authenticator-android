@@ -25,18 +25,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.settings.licenses.LicensesFragment
 import com.saltedge.authenticator.features.settings.mvvm.about.di.AboutModule
 import com.saltedge.authenticator.features.settings.mvvm.about.di.DaggerAboutComponent
-import com.saltedge.authenticator.sdk.constants.TERMS_LINK
-import com.saltedge.authenticator.tool.addFragment
 import com.saltedge.authenticator.tool.log
 import com.saltedge.authenticator.widget.fragment.BaseFragment
-import com.saltedge.authenticator.widget.fragment.WebViewFragment
 import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
 
@@ -52,6 +49,11 @@ class AboutFragment : BaseFragment(), OnItemClickListener {
         viewModel = ViewModelProviders
             .of(this, viewModelFactory)
             .get(AboutViewModel::class.java)
+
+        viewModel.observeViewModelEvents().observe(this, Observer {
+            val event = it.takeUnless { it == null || it.handled } ?: return@Observer
+            handleViewModelAction(event)
+        })
     }
 
     override fun onCreateView(
@@ -67,17 +69,7 @@ class AboutFragment : BaseFragment(), OnItemClickListener {
     }
 
     override fun onItemClick(titleName: Int) {
-        when (titleName) {
-            R.string.about_terms_service -> {
-                activity?.addFragment(
-                    WebViewFragment.newInstance(
-                        TERMS_LINK,
-                        getString(R.string.about_terms_service)
-                    )
-                )
-            }
-            R.string.about_open_source_licenses -> activity?.addFragment(LicensesFragment())
-        }
+        viewModel.onTitleClick(titleName)
     }
 
     private fun setupViews() {
@@ -101,5 +93,9 @@ class AboutFragment : BaseFragment(), OnItemClickListener {
         activity?.let {
             DaggerAboutComponent.builder().aboutModule(AboutModule(it)).build().inject(this)
         }
+    }
+
+    private fun handleViewModelAction(event: ViewModelEvent) {
+        event.handle(this)
     }
 }
