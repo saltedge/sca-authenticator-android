@@ -25,15 +25,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.features.settings.licenses.LicensesFragment
 import com.saltedge.authenticator.features.settings.mvvm.about.di.AboutModule
 import com.saltedge.authenticator.features.settings.mvvm.about.di.DaggerAboutComponent
+import com.saltedge.authenticator.sdk.constants.TERMS_LINK
+import com.saltedge.authenticator.tool.addFragment
 import com.saltedge.authenticator.tool.log
 import com.saltedge.authenticator.widget.fragment.BaseFragment
+import com.saltedge.authenticator.widget.fragment.WebViewFragment
 import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
 
@@ -50,10 +56,13 @@ class AboutFragment : BaseFragment(), OnItemClickListener {
             .of(this, viewModelFactory)
             .get(AboutViewModel::class.java)
 
-        viewModel.observeViewModelEvents().observe(this, Observer {
-            val event = it.takeUnless { it == null || it.handled } ?: return@Observer
-            handleViewModelAction(event)
-        })
+        viewModel.titleOfTheLicense.observeWithNewFragment(this) { LicensesFragment() }
+        viewModel.titleTermsOfService.observeWithNewFragment(this) {
+            WebViewFragment.newInstance(
+                url =TERMS_LINK,
+                title = getString(R.string.about_terms_service)
+            )
+        }
     }
 
     override fun onCreateView(
@@ -93,6 +102,17 @@ class AboutFragment : BaseFragment(), OnItemClickListener {
         activity?.let {
             DaggerAboutComponent.builder().aboutModule(AboutModule(it)).build().inject(this)
         }
+    }
+
+    private inline fun LiveData<ViewModelEvent>.observeWithNewFragment(
+        owner: Fragment,
+        crossinline fragmentSupplier: () -> Fragment
+    ) {
+       return observe(owner, Observer {
+            val event = it.takeUnless { it == null || it.handled } ?: return@Observer
+            handleViewModelAction(event)
+            activity?.addFragment(fragmentSupplier())
+        })
     }
 
     private fun handleViewModelAction(event: ViewModelEvent) {

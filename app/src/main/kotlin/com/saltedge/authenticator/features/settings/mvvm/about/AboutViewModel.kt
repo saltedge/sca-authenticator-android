@@ -29,9 +29,13 @@ import com.saltedge.authenticator.tool.AppTools
 
 class AboutViewModel(val appContext: Context) : ViewModel() {
 
-    private val observableEvents = MutableLiveData<ViewModelEvent>()
+    private val _titleTermsOfService = MutableLiveData<ViewModelEvent>()
+    val titleTermsOfService: LiveData<ViewModelEvent>
+        get() = _titleTermsOfService
 
-    fun observeViewModelEvents(): LiveData<ViewModelEvent> = observableEvents
+    private val _titleOfTheLicense = MutableLiveData<ViewModelEvent>()
+    val titleOfTheLicense: LiveData<ViewModelEvent>
+        get() = _titleOfTheLicense
 
     fun getListItems(): List<AboutListItemViewModel> {
         return listOf(
@@ -54,12 +58,8 @@ class AboutViewModel(val appContext: Context) : ViewModel() {
 
     fun onTitleClick(titleName: Int) {
         when (titleName) {
-            R.string.about_terms_service -> postViewModelEvent(WebViewFragmentEvent())
-            R.string.about_open_source_licenses -> postViewModelEvent(LicensesFragmentEvent())
+            R.string.about_terms_service -> _titleTermsOfService.postValue(ViewModelEvent())
+            R.string.about_open_source_licenses -> _titleOfTheLicense.postValue(ViewModelEvent())
         }
-    }
-
-    private fun postViewModelEvent(event: ViewModelEvent) {
-        observableEvents.postValue(event)
     }
 }

@@ -20,7 +20,8 @@
  */
 package com.saltedge.authenticator.features.settings.mvvm.about
 
-abstract class ViewModelEvent {
+open class ViewModelEvent {
+
     var handled: Boolean = false
         private set
 

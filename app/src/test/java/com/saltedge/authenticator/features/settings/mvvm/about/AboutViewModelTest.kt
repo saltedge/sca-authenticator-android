@@ -20,12 +20,15 @@
  */
 package com.saltedge.authenticator.features.settings.mvvm.about
 
+import androidx.lifecycle.Observer
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo
-import org.junit.Assert.assertThat
+import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito.mock
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
@@ -33,11 +36,48 @@ class AboutViewModelTest {
 
     private lateinit var viewModel: AboutViewModel
 
+    @Before
+    fun setUp() {
+        viewModel = AboutViewModel(TestAppTools.applicationContext)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onTitleClickTestCase1() {
+        val showEventObserver: Observer<ViewModelEvent> = mock()
+        viewModel.titleOfTheLicense.observeForever(showEventObserver)
+
+        viewModel.onTitleClick(R.string.about_terms_service)
+
+        assertNotNull(this.viewModel.titleTermsOfService.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onTitleClickTestCase2() {
+        val showEventObserver: Observer<ViewModelEvent> = mock()
+        viewModel.titleOfTheLicense.observeForever(showEventObserver)
+
+        viewModel.onTitleClick(R.string.about_open_source_licenses)
+
+        assertNotNull(this.viewModel.titleOfTheLicense.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onTitleClickTestCase3() {
+        val showEventObserver: Observer<ViewModelEvent> = mock()
+        viewModel.titleOfTheLicense.observeForever(showEventObserver)
+
+        viewModel.onTitleClick(-1)
+
+        assertNull(this.viewModel.titleOfTheLicense.value)
+        assertNull(this.viewModel.titleTermsOfService.value)
+    }
+
     @Test
     @Throws(Exception::class)
     fun getListItemsTest() {
-        viewModel = AboutViewModel(TestAppTools.applicationContext)
-
         assertThat(
             viewModel.getListItems(), equalTo(
             listOf(
@@ -58,5 +98,9 @@ class AboutViewModelTest {
             )
         )
         )
+    }
+
+    private fun mock(): Observer<ViewModelEvent> {
+        return mock(Observer::class.java) as Observer<ViewModelEvent>
     }
 }
