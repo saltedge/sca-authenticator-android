@@ -21,21 +21,21 @@
 package com.saltedge.authenticator.features.settings.mvvm.about
 
 import android.content.Context
-import androidx.lifecycle.LiveData
+import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.sdk.constants.TERMS_LINK
 import com.saltedge.authenticator.tool.AppTools
+import com.saltedge.authenticator.widget.fragment.WebViewFragment
 
 class AboutViewModel(val appContext: Context) : ViewModel() {
 
-    private val _titleTermsOfService = MutableLiveData<ViewModelEvent>()
-    val titleTermsOfService: LiveData<ViewModelEvent>
-        get() = _titleTermsOfService
+    var termsOfServiceItemClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
+        private set
 
-    private val _titleOfTheLicense = MutableLiveData<ViewModelEvent>()
-    val titleOfTheLicense: LiveData<ViewModelEvent>
-        get() = _titleOfTheLicense
+    var licenseItemClickEvent = MutableLiveData<ViewModelEvent<Int>>()
+        private set
 
     fun getListItems(): List<AboutListItemViewModel> {
         return listOf(
@@ -58,8 +58,17 @@ class AboutViewModel(val appContext: Context) : ViewModel() {
 
     fun onTitleClick(titleName: Int) {
         when (titleName) {
-            R.string.about_terms_service -> _titleTermsOfService.postValue(ViewModelEvent())
-            R.string.about_open_source_licenses -> _titleOfTheLicense.postValue(ViewModelEvent())
+            R.string.about_terms_service -> {
+                termsOfServiceItemClickEvent.postValue(
+                    ViewModelEvent(
+                        WebViewFragment.newBundle(
+                            url = TERMS_LINK,
+                            title = "Terms of Service"
+                        )
+                    )
+                )
+            }
+            R.string.about_open_source_licenses -> licenseItemClickEvent.postValue(ViewModelEvent(R.string.about_open_source_licenses))
         }
     }
 }
