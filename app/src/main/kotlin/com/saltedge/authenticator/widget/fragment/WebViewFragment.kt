@@ -75,11 +75,18 @@ class WebViewFragment : BaseFragment() {
     companion object {
         const val KEY_URL = "KEY_URL"
 
-        fun newInstance(url: String = "", title: String): WebViewFragment {
-            val args = Bundle().apply {
+        fun newBundle(url: String = "", title: String): Bundle {
+            return Bundle().apply {
                 putString(KEY_URL, url)
                 putString(KEY_TITLE, title)
             }
+        }
+
+        fun newInstance(url: String = "", title: String): WebViewFragment {
+            return newInstance(newBundle(url, title))
+        }
+
+        fun newInstance(args: Bundle): WebViewFragment {
             return WebViewFragment().apply { arguments = args }
         }
     }
