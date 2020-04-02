@@ -20,20 +20,22 @@
  */
 package com.saltedge.authenticator.features.settings.mvvm.about
 
-open class ViewModelEvent<out T>(private val content: T? = null) {
+import org.junit.Assert.*
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
-    var hasBeenHandled = false
-        private set
+@RunWith(RobolectricTestRunner::class)
+class ViewModelEventTest {
 
-    /**
-     * Returns the content and prevents its use again.
-     */
-    fun getContentIfNotHandled(): T? {
-        return if (hasBeenHandled) {
-            null
-        } else {
-            hasBeenHandled = true
-            content
-        }
+    @Test
+    @Throws(Exception::class)
+    fun getContentIfNotHandledTest() {
+        val viewModelEvent = ViewModelEvent(5)
+
+        assertFalse(viewModelEvent.hasBeenHandled)
+        assertEquals(5, viewModelEvent.getContentIfNotHandled())
+        assertTrue(viewModelEvent.hasBeenHandled)
+        assertNull(viewModelEvent.getContentIfNotHandled())
     }
 }

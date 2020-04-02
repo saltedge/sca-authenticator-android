@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.settings.mvvm.about
 
+import android.os.Bundle
 import androidx.lifecycle.Observer
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.testTools.TestAppTools
@@ -44,35 +45,35 @@ class AboutViewModelTest {
     @Test
     @Throws(Exception::class)
     fun onTitleClickTestCase1() {
-        val showEventObserver: Observer<ViewModelEvent> = mock()
-        viewModel.titleOfTheLicense.observeForever(showEventObserver)
+        val showEventObserver: Observer<ViewModelEvent<Bundle>> = mock()
+        viewModel.termsOfServiceItemClickEvent.observeForever(showEventObserver)
 
         viewModel.onTitleClick(R.string.about_terms_service)
 
-        assertNotNull(this.viewModel.titleTermsOfService.value)
+        assertNotNull(this.viewModel.termsOfServiceItemClickEvent.value)
     }
 
     @Test
     @Throws(Exception::class)
     fun onTitleClickTestCase2() {
-        val showEventObserver: Observer<ViewModelEvent> = mock()
-        viewModel.titleOfTheLicense.observeForever(showEventObserver)
+        val showEventObserver: Observer<ViewModelEvent<Int>> = mock()
+        viewModel.licenseItemClickEvent.observeForever(showEventObserver)
 
         viewModel.onTitleClick(R.string.about_open_source_licenses)
 
-        assertNotNull(this.viewModel.titleOfTheLicense.value)
+        assertNotNull(this.viewModel.licenseItemClickEvent.value)
     }
 
     @Test
     @Throws(Exception::class)
     fun onTitleClickTestCase3() {
-        val showEventObserver: Observer<ViewModelEvent> = mock()
-        viewModel.titleOfTheLicense.observeForever(showEventObserver)
+        val showEventObserver: Observer<ViewModelEvent<Int>> = mock()
+        viewModel.licenseItemClickEvent.observeForever(showEventObserver)
 
         viewModel.onTitleClick(-1)
 
-        assertNull(this.viewModel.titleOfTheLicense.value)
-        assertNull(this.viewModel.titleTermsOfService.value)
+        assertNull(this.viewModel.termsOfServiceItemClickEvent.value)
+        assertNull(this.viewModel.licenseItemClickEvent.value)
     }
 
     @Test
@@ -100,7 +101,7 @@ class AboutViewModelTest {
         )
     }
 
-    private fun mock(): Observer<ViewModelEvent> {
-        return mock(Observer::class.java) as Observer<ViewModelEvent>
+    private fun <T> mock(): Observer<ViewModelEvent<T>> {
+        return mock(Observer::class.java) as Observer<ViewModelEvent<T>>
     }
 }

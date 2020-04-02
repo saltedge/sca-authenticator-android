@@ -63,7 +63,7 @@ class AboutViewModel(val appContext: Context) : ViewModel() {
                     ViewModelEvent(
                         WebViewFragment.newBundle(
                             url = TERMS_LINK,
-                            title = "Terms of Service"
+                            title = appContext.getString(R.string.about_terms_service)
                         )
                     )
                 )

@@ -48,19 +48,7 @@ class AboutFragment : BaseFragment(), OnItemClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectDependencies()
-
-        viewModel = ViewModelProviders
-            .of(this, viewModelFactory)
-            .get(AboutViewModel::class.java)
-
-        viewModel.licenseItemClickEvent.observe(this, Observer<ViewModelEvent<Int>> {
-            it?.getContentIfNotHandled()?.let { activity?.addFragment(LicensesFragment()) }
-        })
-        viewModel.termsOfServiceItemClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
-            it?.getContentIfNotHandled()?.let { args ->
-                activity?.addFragment(WebViewFragment.newInstance(args = args))
-            }
-        })
+        setupViewModel()
     }
 
     override fun onCreateView(
@@ -100,5 +88,20 @@ class AboutFragment : BaseFragment(), OnItemClickListener {
         activity?.let {
             DaggerAboutComponent.builder().aboutModule(AboutModule(it)).build().inject(this)
         }
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProviders
+            .of(this, viewModelFactory)
+            .get(AboutViewModel::class.java)
+
+        viewModel.licenseItemClickEvent.observe(this, Observer<ViewModelEvent<Int>> {
+            it?.getContentIfNotHandled()?.let { activity?.addFragment(LicensesFragment()) }
+        })
+        viewModel.termsOfServiceItemClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
+            it?.getContentIfNotHandled()?.let { args ->
+                activity?.addFragment(WebViewFragment.newInstance(args = args))
+            }
+        })
     }
 }
