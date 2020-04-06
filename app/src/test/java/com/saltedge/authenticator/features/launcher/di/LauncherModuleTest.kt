@@ -29,21 +29,21 @@ import org.mockito.Mockito
 
 class LauncherModuleTest {
 
+    private val mockContext = Mockito.mock(Context::class.java)
+    private val mockPreferences = Mockito.mock(PreferenceRepositoryAbs::class.java)
+    private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)
+
     @Test
     @Throws(Exception::class)
     fun providePresenterTest() {
         val module = LauncherModule()
 
         Assert.assertNotNull(
-            module.providePresenter(
-                mockContext,
-                mockPreferences,
-                mockPasscodeTools
+            module.provideFactory(
+                appContext = mockContext,
+                preferences = mockPreferences,
+                passcodeTools = mockPasscodeTools
             )
         )
     }
-
-    private val mockContext = Mockito.mock(Context::class.java)
-    private val mockPreferences = Mockito.mock(PreferenceRepositoryAbs::class.java)
-    private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)
 }

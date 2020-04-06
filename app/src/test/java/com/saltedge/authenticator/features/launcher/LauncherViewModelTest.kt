@@ -25,26 +25,39 @@ import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class LauncherPresenterTest {
+class LauncherViewModelTest {
+
+    private lateinit var viewModel: LauncherViewModel
+    private val mockPreferenceRepository = Mockito.mock(PreferenceRepositoryAbs::class.java)
+    private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)
+
+    @Before
+    fun setUp() {
+        viewModel = LauncherViewModel(
+            appContext = TestAppTools.applicationContext,
+            preferenceRepository = mockPreferenceRepository,
+            passcodeTools = mockPasscodeTools
+        )
+    }
 
     @Test
     @Throws(Exception::class)
     fun setupApplicationTest() {
-        val presenter = createPresenter()
         Mockito.doReturn(false).`when`(mockPreferenceRepository).passcodeExist()
-        presenter.setupApplication()
+        viewModel.setupApplication()
 
         Mockito.verify(mockPasscodeTools).replacePasscodeKey(TestAppTools.applicationContext)
 
         Mockito.doReturn(true).`when`(mockPreferenceRepository).passcodeExist()
-        presenter.setupApplication()
+        viewModel.setupApplication()
 
         Mockito.verifyNoMoreInteractions(mockPasscodeTools)
     }
@@ -52,24 +65,12 @@ class LauncherPresenterTest {
     @Test
     @Throws(Exception::class)
     fun getNextActivityClassTest() {
-        val presenter = createPresenter()
         Mockito.doReturn(false).`when`(mockPreferenceRepository).passcodeExist()
 
-        Assert.assertEquals(presenter.getNextActivityClass(), OnboardingSetupActivity::class.java)
+        assertEquals(viewModel.getNextActivityClass(), OnboardingSetupActivity::class.java)
 
         Mockito.doReturn(true).`when`(mockPreferenceRepository).passcodeExist()
 
-        Assert.assertEquals(presenter.getNextActivityClass(), MainActivity::class.java)
-    }
-
-    private val mockPreferenceRepository = Mockito.mock(PreferenceRepositoryAbs::class.java)
-    private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)
-
-    private fun createPresenter(): LauncherPresenter {
-        return LauncherPresenter(
-            appContext = TestAppTools.applicationContext,
-            preferenceRepository = mockPreferenceRepository,
-            passcodeTools = mockPasscodeTools
-        )
+        assertEquals(viewModel.getNextActivityClass(), MainActivity::class.java)
     }
 }
