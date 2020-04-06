@@ -25,22 +25,17 @@ import android.content.Context
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
 import javax.inject.Inject
 
 class LauncherPresenter @Inject constructor(
     private val appContext: Context,
     private val preferenceRepository: PreferenceRepositoryAbs,
-    private val passcodeTools: PasscodeToolsAbs,
-    private val biometricTools: BiometricToolsAbs
+    private val passcodeTools: PasscodeToolsAbs
 ) {
 
     fun setupApplication() {
-        if (shouldSetupApplication()) {
-            passcodeTools.replacePasscodeKey(appContext)
-            biometricTools.replaceFingerprintKey()
-        }
+        if (shouldSetupApplication()) passcodeTools.replacePasscodeKey(appContext)
     }
 
     fun getNextActivityClass(): Class<out Activity> =
