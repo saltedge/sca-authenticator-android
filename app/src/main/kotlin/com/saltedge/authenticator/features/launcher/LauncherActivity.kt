@@ -24,6 +24,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.features.launcher.di.LauncherModule
 import com.saltedge.authenticator.model.realm.RealmManager
@@ -35,12 +36,13 @@ import javax.inject.Inject
 
 class LauncherActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var presenter: LauncherPresenter
+    lateinit var viewModel: LauncherViewModel
+    @Inject lateinit var viewModelFactory: LauncherViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectDependencies()
+        setupViewModel()
         this.updateScreenshotLocking()
         this.applyPreferenceLocale()
         this.registerNotificationChannels()
@@ -53,9 +55,9 @@ class LauncherActivity : AppCompatActivity() {
     }
 
     private fun startActivityWithPreset() {
-        presenter.setupApplication()
+        viewModel.setupApplication()
 
-        this.startActivity(Intent(this, presenter.getNextActivityClass())
+        this.startActivity(Intent(this, viewModel.getNextActivityClass())
             .putExtra(KEY_CONNECTION_ID, intent.getStringExtra(KEY_CONNECTION_ID))
             .putExtra(KEY_AUTHORIZATION_ID, intent.getStringExtra(KEY_AUTHORIZATION_ID))
             .putExtra(KEY_DEEP_LINK, intent.dataString)
@@ -64,14 +66,20 @@ class LauncherActivity : AppCompatActivity() {
             })
     }
 
+    private fun injectDependencies() {
+        authenticatorApp?.appComponent?.addLauncherModule(LauncherModule())?.inject(this)
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProviders
+            .of(this, viewModelFactory)
+            .get(LauncherViewModel::class.java)
+    }
+
     private fun showDbError() {
         this.showDbErrorDialog(DialogInterface.OnClickListener { _, _ ->
             RealmManager.resetError()
             finishAffinity()
         })
-    }
-
-    private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addLauncherModule(LauncherModule())?.inject(this)
     }
 }
