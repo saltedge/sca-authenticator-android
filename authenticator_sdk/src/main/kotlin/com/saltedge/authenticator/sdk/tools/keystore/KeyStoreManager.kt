@@ -177,16 +177,13 @@ object KeyStoreManager : KeyStoreManagerAbs {
                 alias,
                 KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
             )
-                .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                .setUserAuthenticationRequired(true)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+            builder.setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+            builder.setUserAuthenticationRequired(true)
+            builder.setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 builder.setInvalidatedByBiometricEnrollment(true)
             }
-            val mKeyGenerator = KeyGenerator.getInstance(
-                KeyProperties.KEY_ALGORITHM_AES,
-                STORE_TYPE
-            )
+            val mKeyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, STORE_TYPE)
             mKeyGenerator.init(builder.build())
             mKeyGenerator.generateKey()
         } catch (e: Exception) {

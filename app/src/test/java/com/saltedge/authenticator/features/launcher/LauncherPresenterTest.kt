@@ -1,18 +1,18 @@
-/* 
- * This file is part of the Salt Edge Authenticator distribution 
+/*
+ * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2019 Salt Edge Inc.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3 or later.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * For the additional permissions granted for Salt Edge Authenticator
@@ -23,7 +23,6 @@ package com.saltedge.authenticator.features.launcher
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
 import org.junit.Assert
@@ -43,13 +42,11 @@ class LauncherPresenterTest {
         presenter.setupApplication()
 
         Mockito.verify(mockPasscodeTools).replacePasscodeKey(TestAppTools.applicationContext)
-        Mockito.verify(mockBiometricTools).replaceFingerprintKey()
 
         Mockito.doReturn(true).`when`(mockPreferenceRepository).passcodeExist()
-        Mockito.clearInvocations(mockPasscodeTools, mockBiometricTools)
         presenter.setupApplication()
 
-        Mockito.verifyNoMoreInteractions(mockPasscodeTools, mockBiometricTools)
+        Mockito.verifyNoMoreInteractions(mockPasscodeTools)
     }
 
     @Test
@@ -67,14 +64,12 @@ class LauncherPresenterTest {
 
     private val mockPreferenceRepository = Mockito.mock(PreferenceRepositoryAbs::class.java)
     private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)
-    private val mockBiometricTools = Mockito.mock(BiometricToolsAbs::class.java)
 
     private fun createPresenter(): LauncherPresenter {
         return LauncherPresenter(
             appContext = TestAppTools.applicationContext,
             preferenceRepository = mockPreferenceRepository,
-            passcodeTools = mockPasscodeTools,
-            biometricTools = mockBiometricTools
+            passcodeTools = mockPasscodeTools
         )
     }
 }
