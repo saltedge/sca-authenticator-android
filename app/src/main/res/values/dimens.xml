@@ -44,6 +44,7 @@
     <dimen name="dp_24">24dp</dimen>
     <dimen name="dp_25">25dp</dimen>
     <dimen name="dp_26">26dp</dimen>
+    <dimen name="dp_28">28dp</dimen>
     <dimen name="dp_30">30dp</dimen>
     <dimen name="dp_32">32dp</dimen>
     <dimen name="dp_34">34dp</dimen>
@@ -113,8 +114,8 @@
     <dimen name="splash_logo_image_size">@dimen/dp_70</dimen>
     <dimen name="splash_power_image_height">@dimen/dp_56</dimen>
     <dimen name="splash_power_image_width">@dimen/dp_110</dimen>
-    <dimen name="button_corner_radius">2dp</dimen>
-    <dimen name="logo_corner_radius">28dp</dimen>
+    <dimen name="button_corner_radius">@dimen/dp_2</dimen>
+    <dimen name="logo_corner_radius">@dimen/dp_28</dimen>
     <dimen name="action_bar_size">@dimen/dp_56</dimen>
     <dimen name="info_view_small_icon">@dimen/dp_70</dimen>
     <dimen name="info_view_big_icon">@dimen/dp_96</dimen>

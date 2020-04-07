@@ -24,6 +24,8 @@ import android.content.Context
 import android.os.Build
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.model.realm.RealmManager
+import com.saltedge.authenticator.model.realm.RealmManagerAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepository
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
@@ -70,6 +72,10 @@ class AppModule(context: Context) {
     @Provides
     @Singleton
     fun providePasscodeTools(): PasscodeToolsAbs = PasscodeTools
+
+    @Provides
+    @Singleton
+    fun provideRealmManager(): RealmManagerAbs = RealmManager
 
     @Provides
     @Singleton

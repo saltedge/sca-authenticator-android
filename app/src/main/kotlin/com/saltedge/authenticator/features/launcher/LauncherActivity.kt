@@ -50,16 +50,6 @@ class LauncherActivity : AppCompatActivity() {
         this.registerNotificationChannels()
     }
 
-    private fun startActivityWithPreset() {
-        this.startActivity(Intent(this, viewModel.getNextActivityClass())
-            .putExtra(KEY_CONNECTION_ID, intent.getStringExtra(KEY_CONNECTION_ID))
-            .putExtra(KEY_AUTHORIZATION_ID, intent.getStringExtra(KEY_AUTHORIZATION_ID))
-            .putExtra(KEY_DEEP_LINK, intent.dataString)
-            .apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            })
-    }
-
     private fun injectDependencies() {
         authenticatorApp?.appComponent?.addLauncherModule(LauncherModule())?.inject(this)
     }
@@ -68,14 +58,28 @@ class LauncherActivity : AppCompatActivity() {
         viewModel = ViewModelProviders
             .of(this, viewModelFactory)
             .get(LauncherViewModel::class.java)
-
         lifecycle.addObserver(viewModel)
 
-        viewModel.errorOccurred.observe(this, Observer<ViewModelEvent<Boolean>> {
-            it?.getContentIfNotHandled()?.let { noErrorOccurred ->
-                if (noErrorOccurred) startActivityWithPreset() else showDbError()
+        viewModel.noErrorOccurred.observe(this, Observer<ViewModelEvent<Boolean>> {
+            it?.getContentIfNotHandled()?.let {
+                startActivityWithPreset()
             }
         })
+        viewModel.errorOccurred.observe(this, Observer<ViewModelEvent<Boolean>> {
+            it?.getContentIfNotHandled()?.let {
+                showDbError()
+            }
+        })
+    }
+
+    private fun startActivityWithPreset() {
+        this.startActivity(Intent(this, viewModel.getNextActivityClass())
+            .putExtra(KEY_CONNECTION_ID, intent.getStringExtra(KEY_CONNECTION_ID))
+            .putExtra(KEY_AUTHORIZATION_ID, intent.getStringExtra(KEY_AUTHORIZATION_ID))
+            .putExtra(KEY_DEEP_LINK, intent.dataString)
+            .apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            })
     }
 
     private fun showDbError() {

@@ -36,6 +36,18 @@
         </shape>
     </item>
 
+    <item>
+        <shape>
+            <corners android:radius="@dimen/logo_corner_radius" />
+            <solid android:color="#50CCCCCC" />
+            <padding
+                android:bottom="1dp"
+                android:left="1dp"
+                android:right="1dp"
+                android:top="1dp" />
+        </shape>
+    </item>
+
     <!-- main background !-->
     <item>
         <shape>

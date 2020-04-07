@@ -23,6 +23,7 @@ package com.saltedge.authenticator.features.launcher
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.saltedge.authenticator.model.realm.RealmManagerAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
 import javax.inject.Inject
@@ -30,11 +31,17 @@ import javax.inject.Inject
 class LauncherViewModelFactory @Inject constructor(
     val appContext: Context,
     val preferenceRepository: PreferenceRepositoryAbs,
-    val passcodeTools: PasscodeToolsAbs
+    val passcodeTools: PasscodeToolsAbs,
+    val realmManager: RealmManagerAbs
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(LauncherViewModel::class.java)) {
-            return LauncherViewModel(appContext, preferenceRepository, passcodeTools) as T
+            return LauncherViewModel(
+                appContext = appContext,
+                preferenceRepository = preferenceRepository,
+                passcodeTools = passcodeTools,
+                realmManager = realmManager
+            ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

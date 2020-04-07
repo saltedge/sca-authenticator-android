@@ -26,7 +26,7 @@ import androidx.lifecycle.*
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.features.settings.mvvm.about.ViewModelEvent
-import com.saltedge.authenticator.model.realm.RealmManager
+import com.saltedge.authenticator.model.realm.RealmManagerAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tool.AppTools
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
@@ -34,20 +34,26 @@ import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
 class LauncherViewModel(
     val appContext: Context,
     val preferenceRepository: PreferenceRepositoryAbs,
-    val passcodeTools: PasscodeToolsAbs
+    val passcodeTools: PasscodeToolsAbs,
+    val realmManager: RealmManagerAbs
 ) : ViewModel(), LifecycleObserver {
 
     var errorOccurred = MutableLiveData<ViewModelEvent<Boolean>>()
         private set
 
+    var noErrorOccurred = MutableLiveData<ViewModelEvent<Boolean>>()
+        private set
+
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onLifeCycleResume() {
-        if (!AppTools.isTestsSuite(appContext)) RealmManager.initRealm(context = appContext)
-        if (RealmManager.errorOccurred) {
-            errorOccurred.postValue(ViewModelEvent(false))
+        if (!AppTools.isTestsSuite(appContext)) realmManager.initRealm(context = appContext)
+        if (realmManager.errorOccurred) {
+            noErrorOccurred.value = null
+            errorOccurred.postValue(ViewModelEvent(true))
         } else {
             setupApplication()
-            errorOccurred.postValue(ViewModelEvent(true))
+            errorOccurred.value = null
+            noErrorOccurred.postValue(ViewModelEvent(true))
         }
     }
 
