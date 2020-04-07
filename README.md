@@ -39,10 +39,9 @@ You can find related source code:
 ## Project content
 
 Project contains 3 main modules: 
-* `app` - UI layer and UX flow;
-* `authenticator_sdk` - Salt Edge Authenticator API interactions and utility tools, 
-    See [SDK Description](/authenticator_sdk/README.md);
-* `rasp` - set of tools for Runtime Application Self-Protection checks. 
+* ### Standalone mobile application (`app`);
+* ### [Salt Edge Authenticator API interaction and utility tools](/authenticator_sdk/README.md) (`authenticator_sdk`);
+* ### [Set of tools for Runtime Application Self-Protection checks](/rasp/README.md) (`rasp`). 
 
 ## How Authenticator system works
 
