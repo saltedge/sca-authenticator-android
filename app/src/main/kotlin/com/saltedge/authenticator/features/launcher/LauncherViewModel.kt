@@ -22,17 +22,34 @@ package com.saltedge.authenticator.features.launcher
 
 import android.app.Activity
 import android.content.Context
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
+import com.saltedge.authenticator.features.settings.mvvm.about.ViewModelEvent
+import com.saltedge.authenticator.model.realm.RealmManager
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.tool.AppTools
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
 
 class LauncherViewModel(
     val appContext: Context,
     val preferenceRepository: PreferenceRepositoryAbs,
     val passcodeTools: PasscodeToolsAbs
-) : ViewModel() {
+) : ViewModel(), LifecycleObserver {
+
+    var errorOccurred = MutableLiveData<ViewModelEvent<Boolean>>()
+        private set
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    fun onLifeCycleResume() {
+        if (!AppTools.isTestsSuite(appContext)) RealmManager.initRealm(context = appContext)
+        if (RealmManager.errorOccurred) {
+            errorOccurred.postValue(ViewModelEvent(false))
+        } else {
+            setupApplication()
+            errorOccurred.postValue(ViewModelEvent(true))
+        }
+    }
 
     fun setupApplication() {
         if (shouldSetupApplication()) passcodeTools.replacePasscodeKey(appContext)

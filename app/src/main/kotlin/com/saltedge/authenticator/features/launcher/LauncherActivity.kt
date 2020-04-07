@@ -24,9 +24,11 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.features.launcher.di.LauncherModule
+import com.saltedge.authenticator.features.settings.mvvm.about.ViewModelEvent
 import com.saltedge.authenticator.model.realm.RealmManager
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
@@ -48,15 +50,7 @@ class LauncherActivity : AppCompatActivity() {
         this.registerNotificationChannels()
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (!AppTools.isTestsSuite(this)) RealmManager.initRealm(context = this)
-        if (RealmManager.errorOccurred) showDbError() else startActivityWithPreset()
-    }
-
     private fun startActivityWithPreset() {
-        viewModel.setupApplication()
-
         this.startActivity(Intent(this, viewModel.getNextActivityClass())
             .putExtra(KEY_CONNECTION_ID, intent.getStringExtra(KEY_CONNECTION_ID))
             .putExtra(KEY_AUTHORIZATION_ID, intent.getStringExtra(KEY_AUTHORIZATION_ID))
@@ -74,6 +68,14 @@ class LauncherActivity : AppCompatActivity() {
         viewModel = ViewModelProviders
             .of(this, viewModelFactory)
             .get(LauncherViewModel::class.java)
+
+        lifecycle.addObserver(viewModel)
+
+        viewModel.errorOccurred.observe(this, Observer<ViewModelEvent<Boolean>> {
+            it?.getContentIfNotHandled()?.let { noErrorOccurred ->
+                if (noErrorOccurred) startActivityWithPreset() else showDbError()
+            }
+        })
     }
 
     private fun showDbError() {

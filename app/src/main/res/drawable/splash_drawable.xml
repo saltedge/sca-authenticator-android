@@ -5,6 +5,11 @@
     <item android:drawable="@android:color/white" />
 
     <item
+        android:drawable="@drawable/shape_logo_rectangle"
+        android:gravity="center_horizontal|top"
+        android:top="@dimen/dp_115" />
+
+    <item
         android:drawable="@drawable/ic_app_icon"
         android:gravity="center_horizontal|top"
         android:top="@dimen/dp_135" />
