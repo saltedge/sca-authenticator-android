@@ -2,11 +2,9 @@
 
 Salt Edge Authenticator Android SDK - is a set of tools for implementing connection to Salt Edge Authenticator API of Service Provider (e.g Bank) System, that implements Strong Customer Authentication/Dynamic Linking process.  
 
-You can find source code of Authenticator Identity Service here: for [Authenticator Identity Service](identity_service_repo).   
-## How Salt Edge Authenticator works
+You can find source code of Authenticator Identity Service here: for [Authenticator Identity Service](identity_service_repo). Read Wiki docs about [Authenticator Identity Service](wiki) API and workflow.    
 
-Read Wiki docs about [Authenticator Identity Service](wiki) API and workflow.  
-
+## Content
  * [Prerequisites](#prerequisites)
  * [How to add SDK to project](#how-to-add-sdk-to-project)
  * [Data models](#data-models)
@@ -177,30 +175,31 @@ _This step can be skipped if application already knows service configuration._
                 }
         )
     ```  
-    If it is required authentication on Service Provider side then response will contains `connect_url` which should be used for opening authentication page in WebView.  
+    If authentication is required then response will contains `connect_url` which should be used for opening authentication page in WebView. If authentication is not required then get access token from response.  
     
-4. Processing success result.  
-This step can be skipped if Customer is already authenticated.  
+4. Processing success result (*This step can be skipped if Customer is already authenticated*).  
 
-  Open url: 
-    ```kotlin
-        val webViewClient = ConnectWebClient(contract = object : ConnectWebClientContract { })
-        webView.webViewClient = webViewClient
-        webView.loadUrl(authentication_url)
-    ```  
-   and wait for access token:
-    ```kotlin
-        private val webViewClient = ConnectWebClient(contract = object : ConnectWebClientContract {
-            override fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token) {
-                // save access token  
-            }
+Open url:  
+  ```kotlin
+      val webViewClient = ConnectWebClient(contract = object : ConnectWebClientContract { })
+      webView.webViewClient = webViewClient
+      webView.loadUrl(authentication_url)
+  ```  
     
-            override fun webAuthFinishError(errorClass: String, errorMessage: String?) {
-                // handle error result and remove previously created key pairs from KeyStore
-            }
-        })
-    ```      
-or if authentication is not required get access token from response (or extract from `connect_url` if you have received `return to` link).
+and wait for access token:  
+  
+  ```kotlin
+      private val webViewClient = ConnectWebClient(contract = object : ConnectWebClientContract {
+          override fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token) {
+              // save access token  
+          }
+
+          override fun webAuthFinishError(errorClass: String, errorMessage: String?) {
+              // handle error result and remove previously created key pairs from KeyStore
+          }
+      })
+  ```   
+   
    
 5. Set `accessToken` to `Connection` entity and save `Connection` entity to persistent storage (e.g. Realm, SQLite).  
   
