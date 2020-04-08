@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.launcher.di
 
 import android.content.Context
+import com.saltedge.authenticator.model.realm.RealmManagerAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
 import org.junit.Assert
@@ -32,6 +33,7 @@ class LauncherModuleTest {
     private val mockContext = Mockito.mock(Context::class.java)
     private val mockPreferences = Mockito.mock(PreferenceRepositoryAbs::class.java)
     private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)
+    private val mockRealmManager = Mockito.mock(RealmManagerAbs::class.java)
 
     @Test
     @Throws(Exception::class)
@@ -42,7 +44,8 @@ class LauncherModuleTest {
             module.provideFactory(
                 appContext = mockContext,
                 preferences = mockPreferences,
-                passcodeTools = mockPasscodeTools
+                passcodeTools = mockPasscodeTools,
+                realmManager = mockRealmManager
             )
         )
     }

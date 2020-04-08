@@ -51,14 +51,10 @@ class LauncherViewModel(
             noErrorOccurred.value = null
             errorOccurred.postValue(ViewModelEvent(true))
         } else {
-            setupApplication()
+            if (shouldSetupApplication()) passcodeTools.replacePasscodeKey(appContext)
             errorOccurred.value = null
             noErrorOccurred.postValue(ViewModelEvent(true))
         }
-    }
-
-    fun setupApplication() {
-        if (shouldSetupApplication()) passcodeTools.replacePasscodeKey(appContext)
     }
 
     fun getNextActivityClass(): Class<out Activity> =
