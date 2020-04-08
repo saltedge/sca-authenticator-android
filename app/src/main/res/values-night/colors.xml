@@ -1,7 +1,8 @@
-<!--
-    This file is part of the Salt Edge Authenticator distribution
+<?xml version="1.0" encoding="utf-8"?>
+ <!--
+     This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
-    Copyright (c) 2019 Salt Edge Inc.
+    Copyright (c) 2020 Salt Edge Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,19 +19,9 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="66dp"
-    android:height="66dp"
-    android:viewportWidth="66"
-    android:viewportHeight="66">
-  <path
-      android:pathData="M33,33.0001m-29.4444,0a29.4444,29.4444 0,1 1,58.8888 0a29.4444,29.4444 0,1 1,-58.8888 0"
-      android:strokeWidth="7"
-      android:fillColor="#00000000"
-      android:strokeColor="#0D93F8"/>
-  <path
-      android:pathData="M33.0008,32.9998m-20.3846,0a20.3846,20.3846 0,1 1,40.7692 0a20.3846,20.3846 0,1 1,-40.7692 0"
-      android:strokeWidth="7"
-      android:fillColor="#00000000"
-      android:strokeColor="#36A9FF"/>
-</vector>
+<resources>
+    <color name="theme_background">@color/dark_theme_background</color>
+    <color name="icon_background">@color/blue_black</color>
+    <color name="logo_background">@android:color/white</color>
+    <color name="primary_text">@android:color/white</color>
+</resources>

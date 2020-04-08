@@ -47,4 +47,12 @@
     <color name="divider_color">@color/gray_light</color>
     <color name="switch_off">@color/gray_extra_light</color>
     <color name="switch_on">@color/blue</color>
+
+    <color name="theme_background">@android:color/white</color>
+    <color name="icon_background">@android:color/white</color>
+    <color name="logo_background">@color/blue_black</color>
+
+    <!--New palette-->
+    <color name="dark_theme_background">#040411</color>
+    <color name="blue_black">#161E2A</color>
 </resources>

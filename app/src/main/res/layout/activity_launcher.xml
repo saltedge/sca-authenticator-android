@@ -18,7 +18,7 @@
     android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@color/theme_background">
 
     <ImageView
         android:id="@+id/appImageView"
@@ -27,7 +27,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/dp_135"
         android:layout_marginBottom="@dimen/dp_32"
-        android:background="@drawable/shape_bg_logo_white"
+        android:background="@drawable/shape_bg_logo"
         android:contentDescription="@string/app_name"
         android:elevation="@dimen/dp_40"
         android:scaleType="center"
