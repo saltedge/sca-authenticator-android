@@ -23,10 +23,13 @@ package com.saltedge.authenticator.features.launcher
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
+import com.saltedge.authenticator.app.LAUNCHER_SPLASH_DURATION
 import com.saltedge.authenticator.features.launcher.di.LauncherModule
 import com.saltedge.authenticator.features.settings.mvvm.about.ViewModelEvent
 import com.saltedge.authenticator.model.realm.RealmManager
@@ -48,6 +51,7 @@ class LauncherActivity : AppCompatActivity() {
         this.updateScreenshotLocking()
         this.applyPreferenceLocale()
         this.registerNotificationChannels()
+        setContentView(R.layout.activity_launcher)
     }
 
     private fun injectDependencies() {
@@ -62,7 +66,7 @@ class LauncherActivity : AppCompatActivity() {
 
         viewModel.noErrorOccurred.observe(this, Observer<ViewModelEvent<Boolean>> {
             it?.getContentIfNotHandled()?.let {
-                startActivityWithPreset()
+                proceedToNextScreen()
             }
         })
         viewModel.errorOccurred.observe(this, Observer<ViewModelEvent<Boolean>> {
@@ -70,6 +74,10 @@ class LauncherActivity : AppCompatActivity() {
                 showDbError()
             }
         })
+    }
+
+    private fun proceedToNextScreen() {
+        Handler().postDelayed({ startActivityWithPreset() }, LAUNCHER_SPLASH_DURATION)
     }
 
     private fun startActivityWithPreset() {

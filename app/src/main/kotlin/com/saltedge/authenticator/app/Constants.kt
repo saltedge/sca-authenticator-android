@@ -39,3 +39,4 @@ const val KEY_DEEP_LINK = "KEY_DEEP_LINK"
 const val DB_KEY_CONNECT_URL = "connectUrl"
 
 const val TIME_VIEW_UPDATE_TIMEOUT = 1000L
+const val LAUNCHER_SPLASH_DURATION = 1500L

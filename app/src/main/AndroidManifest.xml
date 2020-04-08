@@ -55,7 +55,7 @@
             android:label="@string/app_name_short"
             android:noHistory="true"
             android:screenOrientation="portrait"
-            android:theme="@style/SplashTheme"
+            android:theme="@style/LauncherScreenTheme"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
