@@ -26,11 +26,11 @@
 
         <variable
             name="aboutListItem"
-            type="com.saltedge.authenticator.features.settings.mvvm.about.AboutListItemViewModel" />
+            type="com.saltedge.authenticator.features.settings.about.common.AboutListItemViewModel" />
 
         <variable
             name="onItemClickListener"
-            type="com.saltedge.authenticator.features.settings.mvvm.about.OnItemClickListener" />
+            type="com.saltedge.authenticator.interfaces.OnItemClickListener" />
     </data>
 
     <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
