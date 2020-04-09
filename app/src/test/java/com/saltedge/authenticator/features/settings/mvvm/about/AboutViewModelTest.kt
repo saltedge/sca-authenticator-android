@@ -56,7 +56,7 @@ class AboutViewModelTest {
     @Test
     @Throws(Exception::class)
     fun onTitleClickTestCase2() {
-        val showEventObserver: Observer<ViewModelEvent<Int>> = mock()
+        val showEventObserver: Observer<ViewModelEvent<Unit>> = mock()
         viewModel.licenseItemClickEvent.observeForever(showEventObserver)
 
         viewModel.onTitleClick(R.string.about_open_source_licenses)
@@ -67,7 +67,7 @@ class AboutViewModelTest {
     @Test
     @Throws(Exception::class)
     fun onTitleClickTestCase3() {
-        val showEventObserver: Observer<ViewModelEvent<Int>> = mock()
+        val showEventObserver: Observer<ViewModelEvent<Unit>> = mock()
         viewModel.licenseItemClickEvent.observeForever(showEventObserver)
 
         viewModel.onTitleClick(-1)

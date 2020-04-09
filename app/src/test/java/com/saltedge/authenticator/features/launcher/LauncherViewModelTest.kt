@@ -25,6 +25,7 @@ import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.model.realm.RealmManagerAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.testTools.TestAppTools
+import com.saltedge.authenticator.tool.secure.PasscodeTools
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
 import org.junit.Assert.*
 import org.junit.Before
@@ -51,18 +52,38 @@ class LauncherViewModelTest {
         )
     }
 
+    /**
+     * When passcode is not exist, and the getNextActivityClass() was called,
+     * then it will start OnboardingSetupActivity
+     *
+     * @see OnboardingSetupActivity
+     */
     @Test
     @Throws(Exception::class)
-    fun getNextActivityClassTest() {
+    fun getNextActivityClassTestCase1() {
         Mockito.doReturn(false).`when`(mockPreferenceRepository).passcodeExist()
 
         assertEquals(viewModel.getNextActivityClass(), OnboardingSetupActivity::class.java)
+    }
 
+    /**
+     * When passcode is exist, and the getNextActivityClass() was called,
+     * then it will start MainActivity
+     *
+     * @see MainActivity
+     */
+    @Test
+    @Throws(Exception::class)
+    fun getNextActivityClassTestCase2() {
         Mockito.doReturn(true).`when`(mockPreferenceRepository).passcodeExist()
 
         assertEquals(viewModel.getNextActivityClass(), MainActivity::class.java)
     }
 
+    /**
+     * When error of realm manager was occurred, and the onLifeCycleResume() was called,
+     * then it will init realm and it will change the onDbInitializationFail value
+     */
     @Test
     @Throws(Exception::class)
     fun onLifeCycleResumeTestCase1() {
@@ -72,14 +93,21 @@ class LauncherViewModelTest {
 
         Mockito.verify(mockRealmManager).initRealm(TestAppTools.applicationContext)
         assertTrue(mockRealmManager.errorOccurred)
-        assertNotNull(viewModel.errorOccurred.value)
-        assertNull(viewModel.noErrorOccurred.value)
+        assertNotNull(viewModel.onDbInitializationFail.value)
+        assertNull(viewModel.onInitializationSuccess.value)
     }
 
+    /**
+     * When passcode is not exist, and the onLifeCycleResume() was called,
+     * then passcode key it will replace on new
+     *
+     * @see PasscodeTools
+     */
     @Test
     @Throws(Exception::class)
     fun onLifeCycleResumeTestCase2() {
         Mockito.doReturn(false).`when`(mockPreferenceRepository).passcodeExist()
+
         viewModel.onLifeCycleResume()
 
         Mockito.verify(mockPasscodeTools).replacePasscodeKey(TestAppTools.applicationContext)
@@ -90,6 +118,10 @@ class LauncherViewModelTest {
         Mockito.verifyNoMoreInteractions(mockPasscodeTools)
     }
 
+    /**
+     * When error of realm manager wasn't occurred, and the onLifeCycleResume() was called,
+     * then it will init realm and it will change the onInitializationSuccess value
+     */
     @Test
     @Throws(Exception::class)
     fun onLifeCycleResumeTestCase3() {
@@ -97,7 +129,16 @@ class LauncherViewModelTest {
 
         Mockito.verify(mockRealmManager).initRealm(TestAppTools.applicationContext)
         assertFalse(mockRealmManager.errorOccurred)
-        assertNull(viewModel.errorOccurred.value)
-        assertNotNull(viewModel.noErrorOccurred.value)
+        assertNull(viewModel.onDbInitializationFail.value)
+        assertNotNull(viewModel.onInitializationSuccess.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onOkClickTest() {
+        viewModel.onOkClick()
+
+        Mockito.verify(mockRealmManager).resetError()
+        assertNotNull(viewModel.buttonClickEvent.value)
     }
 }

@@ -64,14 +64,19 @@ class LauncherActivity : AppCompatActivity() {
             .get(LauncherViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
-        viewModel.noErrorOccurred.observe(this, Observer<ViewModelEvent<Boolean>> {
-            it?.getContentIfNotHandled()?.let {
+        viewModel.onInitializationSuccess.observe(this, Observer<ViewModelEvent<Unit>> {
+            it?.let {
                 proceedToNextScreen()
             }
         })
-        viewModel.errorOccurred.observe(this, Observer<ViewModelEvent<Boolean>> {
-            it?.getContentIfNotHandled()?.let {
+        viewModel.onDbInitializationFail.observe(this, Observer<ViewModelEvent<Unit>> {
+            it?.let {
                 showDbError()
+            }
+        })
+        viewModel.buttonClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it?.let {
+                finishAffinity()
             }
         })
     }
@@ -80,6 +85,7 @@ class LauncherActivity : AppCompatActivity() {
         Handler().postDelayed({ startActivityWithPreset() }, LAUNCHER_SPLASH_DURATION)
     }
 
+//  TODO: refactor when https://github.com/saltedge/sca-authenticator-android/issues/104 is completed
     private fun startActivityWithPreset() {
         this.startActivity(Intent(this, viewModel.getNextActivityClass())
             .putExtra(KEY_CONNECTION_ID, intent.getStringExtra(KEY_CONNECTION_ID))
@@ -91,9 +97,8 @@ class LauncherActivity : AppCompatActivity() {
     }
 
     private fun showDbError() {
-        this.showDbErrorDialog(DialogInterface.OnClickListener { _, _ ->
-            RealmManager.resetError()
-            finishAffinity()
+        this.showDbErrorDialog(listener = DialogInterface.OnClickListener { _, _ ->
+            viewModel.onOkClick()
         })
     }
 }

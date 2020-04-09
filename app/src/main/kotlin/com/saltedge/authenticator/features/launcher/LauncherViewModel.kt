@@ -38,27 +38,35 @@ class LauncherViewModel(
     val realmManager: RealmManagerAbs
 ) : ViewModel(), LifecycleObserver {
 
-    var errorOccurred = MutableLiveData<ViewModelEvent<Boolean>>()
+    var onDbInitializationFail = MutableLiveData<ViewModelEvent<Unit>>()
         private set
 
-    var noErrorOccurred = MutableLiveData<ViewModelEvent<Boolean>>()
+    var onInitializationSuccess = MutableLiveData<ViewModelEvent<Unit>>()
+        private set
+
+    var buttonClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
         private set
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onLifeCycleResume() {
         if (!AppTools.isTestsSuite(appContext)) realmManager.initRealm(context = appContext)
         if (realmManager.errorOccurred) {
-            noErrorOccurred.value = null
-            errorOccurred.postValue(ViewModelEvent(true))
+            onInitializationSuccess.value = null
+            onDbInitializationFail.postValue(ViewModelEvent())
         } else {
             if (shouldSetupApplication()) passcodeTools.replacePasscodeKey(appContext)
-            errorOccurred.value = null
-            noErrorOccurred.postValue(ViewModelEvent(true))
+            onDbInitializationFail.value = null
+            onInitializationSuccess.postValue(ViewModelEvent())
         }
     }
 
     fun getNextActivityClass(): Class<out Activity> =
         if (shouldSetupApplication()) OnboardingSetupActivity::class.java else MainActivity::class.java
+
+    fun onOkClick() {
+        realmManager.resetError()
+        buttonClickEvent.postValue(ViewModelEvent())
+    }
 
     private fun shouldSetupApplication(): Boolean = !preferenceRepository.passcodeExist()
 }
