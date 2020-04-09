@@ -18,28 +18,26 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.settings.mvvm.about
+package com.saltedge.authenticator.features.settings.about.common
 
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.saltedge.authenticator.R
 import com.saltedge.authenticator.databinding.AboutBinding
-import com.saltedge.authenticator.widget.list.AbstractListAdapter
+import com.saltedge.authenticator.interfaces.OnItemClickListener
 
-class AboutAdapter(private val clickListener: OnItemClickListener?) : AbstractListAdapter() {
+class AboutItemViewHolder(
+    binding: AboutBinding
+) : RecyclerView.ViewHolder(binding.root){
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AboutItemViewHolder {
-        val binding: AboutBinding = DataBindingUtil
-            .inflate(
-                LayoutInflater.from(parent.context), R.layout.view_item_about,
-                parent, false
-            )
-        return AboutItemViewHolder(binding = binding)
+    private var aboutBinding: AboutBinding? = null
+
+    init {
+        this.aboutBinding = binding
     }
 
-    override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
-        (holder as AboutItemViewHolder).bind(item as AboutListItemViewModel, listener = clickListener)
+    fun bind(item: AboutListItemViewModel, listener: OnItemClickListener?) {
+        aboutBinding?.aboutListItem = item
+        aboutBinding?.onItemClickListener = listener
+        aboutBinding?.executePendingBindings()
     }
 }
+

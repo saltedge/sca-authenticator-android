@@ -33,7 +33,7 @@ import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDi
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
 import com.saltedge.authenticator.features.settings.list.di.SettingsListModule
-import com.saltedge.authenticator.features.settings.mvvm.about.AboutFragment
+import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.passcode.PasscodeEditFragment
 import com.saltedge.authenticator.interfaces.CheckableListItemClickListener
 import com.saltedge.authenticator.tool.*
@@ -94,7 +94,7 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View,
     }
 
     override fun showAboutList() {
-        activity?.addFragment(AboutFragment())
+        activity?.addFragment(AboutListFragment())
     }
 
     override fun openMailApp() {

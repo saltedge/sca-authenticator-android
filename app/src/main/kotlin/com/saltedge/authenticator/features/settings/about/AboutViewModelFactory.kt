@@ -18,25 +18,18 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.settings.mvvm.about
+package com.saltedge.authenticator.features.settings.about
 
-import androidx.recyclerview.widget.RecyclerView
-import com.saltedge.authenticator.databinding.AboutBinding
+import android.content.Context
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import javax.inject.Inject
 
-class AboutItemViewHolder(
-    binding: AboutBinding
-) : RecyclerView.ViewHolder(binding.root){
-
-    private var aboutBinding: AboutBinding? = null
-
-    init {
-        this.aboutBinding = binding
-    }
-
-    fun bind(item: AboutListItemViewModel, listener: OnItemClickListener?) {
-        aboutBinding?.aboutListItem = item
-        aboutBinding?.onItemClickListener = listener
-        aboutBinding?.executePendingBindings()
+class AboutViewModelFactory @Inject constructor(val appContext: Context) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(AboutViewModel::class.java)) {
+            return AboutViewModel(appContext) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
-

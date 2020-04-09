@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,7 @@ package com.saltedge.authenticator.features.settings.about.di
 
 import android.content.Context
 import com.saltedge.authenticator.app.di.FragmentScope
-import com.saltedge.authenticator.features.settings.about.AboutListContract
-import com.saltedge.authenticator.features.settings.about.AboutListPresenter
+import com.saltedge.authenticator.features.settings.about.AboutViewModelFactory
 import dagger.Module
 import dagger.Provides
 
@@ -32,7 +31,7 @@ class AboutListModule(val appContext: Context) {
 
     @FragmentScope
     @Provides
-    fun providePresenter(): AboutListContract.Presenter {
-        return AboutListPresenter(appContext = appContext)
+    fun provideFactory(): AboutViewModelFactory {
+        return AboutViewModelFactory(appContext)
     }
 }
