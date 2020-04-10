@@ -21,7 +21,7 @@
 -->
 <resources>
     <!--THEMES-->
-    <style name="LauncherScreenTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+    <style name="LauncherScreenTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>

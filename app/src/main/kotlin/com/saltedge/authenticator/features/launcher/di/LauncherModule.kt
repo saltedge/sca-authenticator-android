@@ -22,7 +22,8 @@ package com.saltedge.authenticator.features.launcher.di
 
 import android.content.Context
 import com.saltedge.authenticator.app.di.FragmentScope
-import com.saltedge.authenticator.features.launcher.LauncherPresenter
+import com.saltedge.authenticator.features.launcher.LauncherViewModelFactory
+import com.saltedge.authenticator.model.realm.RealmManagerAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
 import dagger.Module
@@ -33,15 +34,17 @@ class LauncherModule {
 
     @FragmentScope
     @Provides
-    fun providePresenter(
+    fun provideFactory(
         appContext: Context,
         preferences: PreferenceRepositoryAbs,
-        passcodeTools: PasscodeToolsAbs
-    ): LauncherPresenter {
-        return LauncherPresenter(
+        passcodeTools: PasscodeToolsAbs,
+        realmManager: RealmManagerAbs
+    ): LauncherViewModelFactory {
+        return LauncherViewModelFactory(
             appContext = appContext,
             passcodeTools = passcodeTools,
-            preferenceRepository = preferences
+            preferenceRepository = preferences,
+            realmManager = realmManager
         )
     }
 }

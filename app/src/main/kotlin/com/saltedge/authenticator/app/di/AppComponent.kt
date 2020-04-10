@@ -43,6 +43,7 @@ import com.saltedge.authenticator.features.settings.list.di.SettingsListModule
 import com.saltedge.authenticator.features.settings.passcode.di.PasscodeEditComponent
 import com.saltedge.authenticator.features.settings.passcode.di.PasscodeEditModule
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.model.realm.RealmManagerAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
@@ -61,6 +62,7 @@ interface AppComponent {
     fun passcodeTools(): PasscodeToolsAbs
     fun biometricTools(): BiometricToolsAbs
     fun biometricPrompt(): BiometricPromptAbs?
+    fun realmManager() : RealmManagerAbs
 
     fun addLauncherModule(module: LauncherModule): LauncherComponent
     fun addOnboardingSetupModule(module: OnboardingSetupModule): OnboardingSetupComponent

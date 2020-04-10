@@ -36,7 +36,7 @@ class AboutViewModel(val appContext: Context) : ViewModel() {
     var termsOfServiceItemClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
         private set
 
-    var licenseItemClickEvent = MutableLiveData<ViewModelEvent<Int>>()
+    var licenseItemClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
         private set
 
     fun getListItems(): List<AboutListItemViewModel> {
@@ -70,11 +70,7 @@ class AboutViewModel(val appContext: Context) : ViewModel() {
                     )
                 )
             }
-            R.string.about_open_source_licenses -> licenseItemClickEvent.postValue(
-                ViewModelEvent(
-                    R.string.about_open_source_licenses
-                )
-            )
+            R.string.about_open_source_licenses -> licenseItemClickEvent.postValue(ViewModelEvent())
         }
     }
 }

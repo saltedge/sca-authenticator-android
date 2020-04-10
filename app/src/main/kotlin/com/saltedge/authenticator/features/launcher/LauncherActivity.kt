@@ -25,48 +25,68 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
+import com.saltedge.authenticator.app.LAUNCHER_SPLASH_DURATION
+import com.saltedge.authenticator.events.ViewModelEvent
 import com.saltedge.authenticator.features.launcher.di.LauncherModule
-import com.saltedge.authenticator.model.realm.RealmManager
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
-import kotlinx.android.synthetic.main.activity_launcher.*
 import javax.inject.Inject
-
-const val LAUNCHER_SPLASH_DURATION = 1500L
 
 class LauncherActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var presenter: LauncherPresenter
+    lateinit var viewModel: LauncherViewModel
+    @Inject lateinit var viewModelFactory: LauncherViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectDependencies()
+        setupViewModel()
         this.updateScreenshotLocking()
         this.applyPreferenceLocale()
         this.registerNotificationChannels()
         setContentView(R.layout.activity_launcher)
     }
 
-    override fun onResume() {
-        super.onResume()
-        animateComponents()
-        if (!AppTools.isTestsSuite(this)) RealmManager.initRealm(context = this)
-        if (RealmManager.errorOccurred) showDbError() else proceedToNextScreen()
+    private fun injectDependencies() {
+        authenticatorApp?.appComponent?.addLauncherModule(LauncherModule())?.inject(this)
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProviders
+            .of(this, viewModelFactory)
+            .get(LauncherViewModel::class.java)
+        lifecycle.addObserver(viewModel)
+
+        viewModel.onInitializationSuccess.observe(this, Observer<ViewModelEvent<Unit>> {
+            it?.let {
+                proceedToNextScreen()
+            }
+        })
+        viewModel.onDbInitializationFail.observe(this, Observer<ViewModelEvent<Unit>> {
+            it?.let {
+                showDbError()
+            }
+        })
+        viewModel.buttonClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it?.let {
+                finishAffinity()
+            }
+        })
     }
 
     private fun proceedToNextScreen() {
         Handler().postDelayed({ startActivityWithPreset() }, LAUNCHER_SPLASH_DURATION)
     }
 
+//  TODO: refactor when https://github.com/saltedge/sca-authenticator-android/issues/104 is completed
     private fun startActivityWithPreset() {
-        presenter.setupApplication()
-
-        this.startActivity(Intent(this, presenter.getNextActivityClass())
+        this.startActivity(Intent(this, viewModel.getNextActivityClass())
             .putExtra(KEY_CONNECTION_ID, intent.getStringExtra(KEY_CONNECTION_ID))
             .putExtra(KEY_AUTHORIZATION_ID, intent.getStringExtra(KEY_AUTHORIZATION_ID))
             .putExtra(KEY_DEEP_LINK, intent.dataString)
@@ -75,21 +95,9 @@ class LauncherActivity : AppCompatActivity() {
             })
     }
 
-    private fun animateComponents() {
-        appImageView?.alpha = 0f
-        appNameView?.alpha = 0f
-        appImageView?.animate()?.setDuration(500)?.alpha(1.0f)?.setStartDelay(250)?.start()
-        appNameView?.animate()?.setDuration(500)?.alpha(1.0f)?.setStartDelay(250)?.start()
-    }
-
     private fun showDbError() {
-        this.showDbErrorDialog(DialogInterface.OnClickListener { _, _ ->
-            RealmManager.resetError()
-            finishAffinity()
+        this.showDbErrorDialog(listener = DialogInterface.OnClickListener { _, _ ->
+            viewModel.onOkClick()
         })
-    }
-
-    private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addLauncherModule(LauncherModule())?.inject(this)
     }
 }

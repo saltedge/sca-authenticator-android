@@ -98,8 +98,8 @@ class AboutListFragment : BaseFragment(), OnItemClickListener {
             .of(this, viewModelFactory)
             .get(AboutViewModel::class.java)
 
-        viewModel.licenseItemClickEvent.observe(this, Observer<ViewModelEvent<Int>> {
-            it?.getContentIfNotHandled()?.let { activity?.addFragment(LicensesFragment()) }
+        viewModel.licenseItemClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it?.let { activity?.addFragment(LicensesFragment()) }
         })
         viewModel.termsOfServiceItemClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
             it?.getContentIfNotHandled()?.let { args ->

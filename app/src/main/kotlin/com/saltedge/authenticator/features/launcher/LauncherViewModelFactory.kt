@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,26 +20,29 @@
  */
 package com.saltedge.authenticator.features.launcher
 
-import android.app.Activity
 import android.content.Context
-import com.saltedge.authenticator.features.main.MainActivity
-import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.saltedge.authenticator.model.realm.RealmManagerAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
 import javax.inject.Inject
 
-class LauncherPresenter @Inject constructor(
-    private val appContext: Context,
-    private val preferenceRepository: PreferenceRepositoryAbs,
-    private val passcodeTools: PasscodeToolsAbs
-) {
-
-    fun setupApplication() {
-        if (shouldSetupApplication()) passcodeTools.replacePasscodeKey(appContext)
+class LauncherViewModelFactory @Inject constructor(
+    val appContext: Context,
+    val preferenceRepository: PreferenceRepositoryAbs,
+    val passcodeTools: PasscodeToolsAbs,
+    val realmManager: RealmManagerAbs
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(LauncherViewModel::class.java)) {
+            return LauncherViewModel(
+                appContext = appContext,
+                preferenceRepository = preferenceRepository,
+                passcodeTools = passcodeTools,
+                realmManager = realmManager
+            ) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
-
-    fun getNextActivityClass(): Class<out Activity> =
-        if (shouldSetupApplication()) OnboardingSetupActivity::class.java else MainActivity::class.java
-
-    private fun shouldSetupApplication(): Boolean = !preferenceRepository.passcodeExist()
 }
