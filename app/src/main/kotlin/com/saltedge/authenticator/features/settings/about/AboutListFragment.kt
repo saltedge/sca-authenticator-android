@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,13 +25,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.features.settings.licenses.LicensesFragment
+import com.saltedge.authenticator.features.settings.about.common.AboutAdapter
+import com.saltedge.authenticator.events.ViewModelEvent
 import com.saltedge.authenticator.features.settings.about.di.AboutListModule
 import com.saltedge.authenticator.features.settings.about.di.DaggerAboutListComponent
-import com.saltedge.authenticator.features.settings.common.SettingsAdapter
-import com.saltedge.authenticator.features.settings.licenses.LicensesFragment
+import com.saltedge.authenticator.interfaces.OnItemClickListener
 import com.saltedge.authenticator.tool.addFragment
 import com.saltedge.authenticator.tool.log
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -39,13 +43,15 @@ import com.saltedge.authenticator.widget.fragment.WebViewFragment
 import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
 
-class AboutListFragment : BaseFragment(), AboutListContract.View {
+class AboutListFragment : BaseFragment(), OnItemClickListener {
 
-    @Inject lateinit var presenterContract: AboutListContract.Presenter
+    lateinit var viewModel: AboutViewModel
+    @Inject lateinit var viewModelFactory: AboutViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectDependencies()
+        setupViewModel()
     }
 
     override fun onCreateView(
@@ -60,22 +66,8 @@ class AboutListFragment : BaseFragment(), AboutListContract.View {
         setupViews()
     }
 
-    override fun onStart() {
-        super.onStart()
-        presenterContract.viewContract = this
-    }
-
-    override fun onStop() {
-        presenterContract.viewContract = null
-        super.onStop()
-    }
-
-    override fun openLink(url: String, titleId: Int) {
-        activity?.addFragment(WebViewFragment.newInstance(url, getString(titleId)))
-    }
-
-    override fun openLicensesList() {
-        activity?.addFragment(LicensesFragment())
+    override fun onItemClick(titleName: Int) {
+        viewModel.onTitleClick(titleName)
     }
 
     private fun setupViews() {
@@ -87,8 +79,8 @@ class AboutListFragment : BaseFragment(), AboutListContract.View {
                 dividerItemDecoration.setDrawable(it)
             }
             recyclerView?.addItemDecoration(dividerItemDecoration)
-            recyclerView?.adapter = SettingsAdapter(presenterContract).apply {
-                data = presenterContract.getListItems()
+            recyclerView?.adapter = AboutAdapter(this).apply {
+                data = viewModel.getListItems()
             }
         } catch (e: Exception) {
             e.log()
@@ -97,9 +89,22 @@ class AboutListFragment : BaseFragment(), AboutListContract.View {
 
     private fun injectDependencies() {
         activity?.let {
-            DaggerAboutListComponent.builder().aboutListModule(AboutListModule(it)).build().inject(
-                this
-            )
+            DaggerAboutListComponent.builder().aboutListModule(AboutListModule(it)).build().inject(this)
         }
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProviders
+            .of(this, viewModelFactory)
+            .get(AboutViewModel::class.java)
+
+        viewModel.licenseItemClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it?.let { activity?.addFragment(LicensesFragment()) }
+        })
+        viewModel.termsOfServiceItemClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
+            it?.getContentIfNotHandled()?.let { args ->
+                activity?.addFragment(WebViewFragment.newInstance(args = args))
+            }
+        })
     }
 }

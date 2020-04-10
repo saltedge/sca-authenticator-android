@@ -23,9 +23,9 @@ package com.saltedge.authenticator.features.launcher
 import android.app.Activity
 import android.content.Context
 import androidx.lifecycle.*
+import com.saltedge.authenticator.events.ViewModelEvent
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
-import com.saltedge.authenticator.features.settings.mvvm.about.ViewModelEvent
 import com.saltedge.authenticator.model.realm.RealmManagerAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tool.AppTools

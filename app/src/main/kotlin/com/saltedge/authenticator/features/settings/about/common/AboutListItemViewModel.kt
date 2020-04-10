@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.settings.mvvm.about
+package com.saltedge.authenticator.features.settings.about.common
 
 import androidx.annotation.StringRes
 

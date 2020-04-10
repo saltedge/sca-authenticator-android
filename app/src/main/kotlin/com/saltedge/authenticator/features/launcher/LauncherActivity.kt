@@ -30,9 +30,8 @@ import androidx.lifecycle.ViewModelProviders
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.LAUNCHER_SPLASH_DURATION
+import com.saltedge.authenticator.events.ViewModelEvent
 import com.saltedge.authenticator.features.launcher.di.LauncherModule
-import com.saltedge.authenticator.features.settings.mvvm.about.ViewModelEvent
-import com.saltedge.authenticator.model.realm.RealmManager
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
 import com.saltedge.authenticator.tool.*

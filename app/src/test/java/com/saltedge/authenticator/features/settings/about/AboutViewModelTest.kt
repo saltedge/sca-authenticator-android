@@ -18,11 +18,13 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.settings.mvvm.about
+package com.saltedge.authenticator.features.settings.about
 
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.events.ViewModelEvent
+import com.saltedge.authenticator.features.settings.about.common.AboutListItemViewModel
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*

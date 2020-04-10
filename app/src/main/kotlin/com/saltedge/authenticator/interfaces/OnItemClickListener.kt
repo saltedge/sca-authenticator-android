@@ -18,22 +18,8 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.settings.mvvm.about
+package com.saltedge.authenticator.interfaces
 
-open class ViewModelEvent<out T>(private val content: T? = null) {
-
-    var hasBeenHandled = false
-        private set
-
-    /**
-     * Returns the content and prevents its use again.
-     */
-    fun getContentIfNotHandled(): T? {
-        return if (hasBeenHandled) {
-            null
-        } else {
-            hasBeenHandled = true
-            content
-        }
-    }
+interface OnItemClickListener {
+    fun onItemClick(titleName: Int)
 }
