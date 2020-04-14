@@ -1,18 +1,18 @@
-/* 
- * This file is part of the Salt Edge Authenticator distribution 
+/*
+ * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2019 Salt Edge Inc.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3 or later.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * For the additional permissions granted for Salt Edge Authenticator
@@ -96,7 +96,7 @@ class OnboardingSetupActivity : AppCompatActivity(),
     }
 
     override fun hideSkipViewAndShowProceedView() {
-        skipActionView?.setVisible(show = false)
+        actionLayout?.setVisible(show = false)
         proceedToSetup?.setVisible(show = true)
     }
 
@@ -108,9 +108,10 @@ class OnboardingSetupActivity : AppCompatActivity(),
     override fun hidePasscodeInputAndShowSetupView() {
         passcodeInputView?.setVisible(show = false)
         setupLogoImage?.setVisible(show = true)
-        setupActionsLayout?.setVisible(show = true)
+        showMainActivity()
     }
 
+    // After QR code
     override fun showMainActivity() {
         finish()
         startActivity(Intent(this, MainActivity::class.java)
@@ -131,11 +132,9 @@ class OnboardingSetupActivity : AppCompatActivity(),
         setupImageResId: Int,
         actionText: Int
     ) {
-        stepProgressView?.setStepProgress(setupStepProgress)
         titleView?.setText(headerTitle)
         descriptionView?.setText(headerDescription)
         setupLogoImage?.setImageResource(setupImageResId)
-        actionView?.setText(actionText)
 
         showPasscodeCancel?.let { passcodeInputView?.cancelActionIsAvailable = it }
         passcodePositiveActionText?.let { passcodeInputView?.setPositiveActionText(it) }
@@ -143,10 +142,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
 
     override fun setPasscodeInputMode(inputMode: PasscodeInputView.InputMode) {
         passcodeInputView?.initInputMode(inputMode = inputMode)
-    }
-
-    override fun hideSkipView() {
-        skipSetupActionView?.setInvisible(true)
     }
 
     private fun initViews() {
@@ -169,19 +164,14 @@ class OnboardingSetupActivity : AppCompatActivity(),
         }
         skipActionView?.setOnClickListener(this)
         proceedToSetup?.setOnClickListener(this)
-        skipActionView?.setVisible(show = true)
+        actionLayout?.setVisible(show = true)
         proceedToSetup?.setVisible(show = false)
     }
 
     private fun initSetupViews() {
-        stepProgressView?.stepCount = presenter.setupStepCount
-
         passcodeInputView?.biometricsActionIsAvailable = false
         passcodeInputView?.cancelActionIsAvailable = false
         passcodeInputView?.listener = this
-
-        actionView?.setOnClickListener(this)
-        skipSetupActionView?.setOnClickListener(this)
     }
 
     private fun injectDependencies() {

@@ -67,16 +67,11 @@ class OnboardingSetupPresenter(
     private var setupModesList: Array<SetupViewMode> =
         if (biometricTools.isBiometricSupported(appContext)) {
             arrayOf(
-                SetupViewMode.INPUT_PASSCODE,
-                SetupViewMode.ALLOW_BIOMETRICS,
-                SetupViewMode.ALLOW_NOTIFICATIONS,
-                SetupViewMode.COMPLETE
+                SetupViewMode.INPUT_PASSCODE
             )
         } else {
             arrayOf(
-                SetupViewMode.INPUT_PASSCODE,
-                SetupViewMode.ALLOW_NOTIFICATIONS,
-                SetupViewMode.COMPLETE
+                SetupViewMode.INPUT_PASSCODE
             )
         }
 
@@ -101,30 +96,6 @@ class OnboardingSetupPresenter(
 
     fun onViewClick(viewId: Int) {
         when (viewId) {
-            R.id.actionView -> {
-                when (setupViewMode) {
-                    SetupViewMode.ALLOW_BIOMETRICS -> onAllowTouchIdClick()
-                    SetupViewMode.ALLOW_NOTIFICATIONS -> {
-                        preferenceRepository.notificationsEnabled = true
-                        goToNextSetupView()
-                    }
-                    SetupViewMode.COMPLETE -> viewContract?.showMainActivity()
-                    SetupViewMode.INPUT_PASSCODE -> Unit
-                }
-            }
-            R.id.skipSetupActionView -> {
-                when (setupViewMode) {
-                    SetupViewMode.ALLOW_BIOMETRICS -> {
-                        preferenceRepository.fingerprintEnabled = false
-                        goToNextSetupView()
-                    }
-                    SetupViewMode.ALLOW_NOTIFICATIONS -> {
-                        preferenceRepository.notificationsEnabled = false
-                        goToNextSetupView()
-                    }
-                    else -> Unit
-                }
-            }
             R.id.skipActionView, R.id.proceedToSetup -> {
                 showPasscodeInput()
             }
@@ -155,26 +126,19 @@ class OnboardingSetupPresenter(
             headerDescription = getSetupSubtitleResId(setupViewMode, inputMode),
             showPasscodeCancel = shouldShowPasscodeInputNegativeActionView(inputMode),
             passcodePositiveActionText = getPositivePasscodeActionViewText(inputMode),
-            setupImageResId = getSetupImageResId(setupViewMode),
+            setupImageResId =  getSetupImageResId(setupViewMode),
             actionText = getActionTextResId(setupViewMode)
         )
-        if (setupViewMode == SetupViewMode.COMPLETE) viewContract?.hideSkipView()
     }
 
     private fun getActionTextResId(mode: SetupViewMode): Int {
         return when (mode) {
-            SetupViewMode.ALLOW_BIOMETRICS -> R.string.onboarding_secure_app_touch_id_allow_android
-            SetupViewMode.ALLOW_NOTIFICATIONS -> R.string.onboarding_allow_notifications_title
-            SetupViewMode.COMPLETE -> R.string.actions_proceed
             else -> R.string.actions_proceed
         }
     }
 
     private fun getSetupImageResId(mode: SetupViewMode): Int {
         return when (mode) {
-            SetupViewMode.ALLOW_BIOMETRICS -> R.drawable.ic_setup_fingerprint
-            SetupViewMode.ALLOW_NOTIFICATIONS -> R.drawable.ic_setup_notifications
-            SetupViewMode.COMPLETE -> R.drawable.ic_complete_ok_70
             else -> 0
         }
     }
@@ -188,9 +152,6 @@ class OnboardingSetupPresenter(
                 if (passcodeInputMode == PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE) R.string.onboarding_secure_app_passcode_repeat
                 else R.string.onboarding_secure_app_passcode_create
             }
-            SetupViewMode.ALLOW_BIOMETRICS -> R.string.onboarding_secure_app_touch_id_allow_android
-            SetupViewMode.ALLOW_NOTIFICATIONS -> R.string.onboarding_allow_notifications_title
-            SetupViewMode.COMPLETE -> R.string.onboarding_well_done_title
         }
     }
 
@@ -203,9 +164,6 @@ class OnboardingSetupPresenter(
                 if (passcodeInputMode == PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE) R.string.onboarding_secure_app_passcode_confirm
                 else R.string.onboarding_secure_app_passcode_description
             }
-            SetupViewMode.ALLOW_BIOMETRICS -> R.string.onboarding_secure_app_touch_id_description_android
-            SetupViewMode.ALLOW_NOTIFICATIONS -> R.string.onboarding_allow_notifications_description
-            SetupViewMode.COMPLETE -> R.string.onboarding_completed_description
         }
     }
 

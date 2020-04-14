@@ -32,30 +32,6 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <RelativeLayout
-            android:id="@+id/setupActionsLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:visibility="gone">
-
-            <Button
-                android:id="@+id/actionView"
-                style="@style/BlueFullWidthButton"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/dp_20"
-                android:fontFamily="@font/roboto_regular"
-                android:text="@string/onboarding_secure_app_touch_id_allow_android" />
-
-            <TextView
-                android:id="@+id/skipSetupActionView"
-                style="@style/WhiteLinkAction"
-                android:layout_below="@+id/actionView"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/dp_40"
-                android:text="@string/actions_skip" />
-        </RelativeLayout>
-
         <TextView
             android:id="@+id/titleView"
             style="@style/Text20BlackMedium"
@@ -90,15 +66,6 @@
             android:contentDescription="@string/onboarding_secure_app_touch_id_allow_android"
             android:src="@drawable/ic_setup_fingerprint" />
 
-        <com.saltedge.authenticator.widget.StepProgressView
-            android:id="@+id/stepProgressView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_16"
-            android:layout_marginTop="@dimen/dp_30"
-            android:layout_marginRight="@dimen/dp_16"
-            tools:background="@color/blue" />
-
         <com.saltedge.authenticator.widget.passcode.PasscodeInputView
             android:id="@+id/passcodeInputView"
             android:layout_width="match_parent"
@@ -113,38 +80,71 @@
 
         <Button
             android:id="@+id/proceedToSetup"
-            style="@style/BlueFullWidthButton"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_48"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
+            android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginEnd="@dimen/dp_32"
             android:layout_marginBottom="@dimen/dp_40"
-            android:fontFamily="@font/roboto_regular"
+            android:backgroundTint="@color/button_color_selector"
+            android:elevation="@dimen/dp_30"
+            android:fontFamily="@font/roboto_medium"
             android:text="@string/actions_get_started"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/text_14"
             android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/skipActionView"
-            style="@style/WhiteLinkAction"
+        <LinearLayout
+            android:id="@+id/actionLayout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_48"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
+            android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginEnd="@dimen/dp_32"
             android:layout_marginBottom="@dimen/dp_40"
-            android:text="@string/actions_skip"
-            tools:background="@color/blue"
-            tools:textColor="@android:color/white" />
+            android:gravity="bottom"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/skipActionView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="9dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/roboto_medium"
+                android:text="@string/actions_skip"
+                android:textColor="@color/primary"
+                android:textSize="@dimen/text_18" />
+
+            <Button
+                android:id="@+id/nextActionView"
+                android:layout_width="@dimen/dp_120"
+                android:layout_height="@dimen/dp_48"
+                android:backgroundTint="@color/button_color_selector"
+                android:elevation="@dimen/dp_30"
+                android:fontFamily="@font/roboto_medium"
+                android:text="@string/actions_next"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/text_14" />
+        </LinearLayout>
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/onboardingPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/pageIndicatorView"
             android:layout_alignParentTop="true"
-            android:layout_marginBottom="@dimen/dp_30" />
+            android:layout_marginBottom="@dimen/dp_120"
+            tools:background="@color/red" />
 
         <com.saltedge.authenticator.widget.pageindicator.DotsPageIndicatorView
             android:id="@+id/pageIndicatorView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
+            android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginTop="@dimen/dp_325"
             android:layout_marginBottom="@dimen/dp_124"
             app:selectedColor="@color/blue" />
     </RelativeLayout>

@@ -85,7 +85,10 @@
     <dimen name="dp_170">170dp</dimen>
     <dimen name="dp_180">180dp</dimen>
     <dimen name="dp_200">200dp</dimen>
+    <dimen name="dp_240">240dp</dimen>
     <dimen name="dp_250">250dp</dimen>
+    <dimen name="dp_325">325dp</dimen>
+    <dimen name="dp_328">328dp</dimen>
     <dimen name="dp_420">420dp</dimen>
 
     <dimen name="text_4">4sp</dimen>

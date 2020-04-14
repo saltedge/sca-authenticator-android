@@ -55,4 +55,8 @@
     <!--New palette-->
     <color name="dark_theme_background">#040411</color>
     <color name="blue_black">#161E2A</color>
+    <color name="neutrals_dark_100">#182C3F</color>
+
+    <color name="primary">#0D93F8</color>
+    <color name="primary_dark">#007CD9</color>
 </resources>

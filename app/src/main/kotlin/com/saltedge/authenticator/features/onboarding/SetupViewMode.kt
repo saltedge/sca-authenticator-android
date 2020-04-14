@@ -21,8 +21,5 @@
 package com.saltedge.authenticator.features.onboarding
 
 enum class SetupViewMode {
-    INPUT_PASSCODE,
-    ALLOW_BIOMETRICS,
-    ALLOW_NOTIFICATIONS,
-    COMPLETE;
+    INPUT_PASSCODE
 }
