@@ -58,14 +58,6 @@
             tools:text="Use Fingerprint to enter the App faster, but
              don’t worry, you’ll still have your passcode as backup." />
 
-        <ImageView
-            android:id="@+id/setupLogoImage"
-            android:layout_width="@dimen/dp_100"
-            android:layout_height="@dimen/dp_100"
-            android:layout_centerInParent="true"
-            android:contentDescription="@string/onboarding_secure_app_touch_id_allow_android"
-            android:src="@drawable/ic_setup_fingerprint" />
-
         <com.saltedge.authenticator.widget.passcode.PasscodeInputView
             android:id="@+id/passcodeInputView"
             android:layout_width="match_parent"

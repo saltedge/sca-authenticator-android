@@ -75,12 +75,12 @@
 
     <string name="onboarding_allow_notifications_description">Enable notifications, to receive useful alerts and always be up to speed with your transactions.</string>
     <string name="onboarding_allow_notifications_title">Allow Notifications</string>
-    <string name="onboarding_carousel_one_description">Two factor authentication brings additional security to your payments, diminishing any possibility of fraudulent activity.</string>
-    <string name="onboarding_carousel_one_title">Ultimate Payment Security</string>
-    <string name="onboarding_carousel_three_description">Simply connect your Provider to the Authenticator to never worry about the security of your transactions again.</string>
-    <string name="onboarding_carousel_three_title">One App for all Payment Accounts</string>
-    <string name="onboarding_carousel_two_description">Each time you make a payment, you’ll receive a confirmation to authorize that transaction, keeping you in control at all times.</string>
-    <string name="onboarding_carousel_two_title">Absolute Control</string>
+    <string name="onboarding_carousel_one_description">Asked to scan QR? Tap QR button to use the quick QR code scanner and take action.</string>
+    <string name="onboarding_carousel_one_title">Use QR codes</string>
+    <string name="onboarding_carousel_three_description">Strong customer authentication brings additional security to your payments, diminishing possibility of fraudulent activity.</string>
+    <string name="onboarding_carousel_three_title">Ultimate security</string>
+    <string name="onboarding_carousel_two_description">Made transaction? You will get push notification. Open application, verify the transaction details, and simply authorize your actions.</string>
+    <string name="onboarding_carousel_two_title">Full control</string>
     <string name="onboarding_completed_description">Application has been successfully set. Proceed to connect your service provider.</string>
     <string name="onboarding_well_done_title">Well done!</string>
     <string name="onboarding_secure_app_passcode_create">Create Passcode</string>

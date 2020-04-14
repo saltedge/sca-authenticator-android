@@ -24,8 +24,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.events.ViewModelEvent
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.onboarding.di.OnboardingSetupModule
 import com.saltedge.authenticator.features.security.KEY_SKIP_PIN
@@ -41,24 +44,15 @@ class OnboardingSetupActivity : AppCompatActivity(),
     View.OnClickListener,
     PasscodeInputViewListener {
 
-    @Inject
-    lateinit var presenter: OnboardingSetupPresenter
+    lateinit var viewModel: OnboardingSetupViewModel
+    @Inject lateinit var viewModelFactory: OnboardingSetupViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectDependencies()
+        setupViewModel()
         setContentView(R.layout.activity_onboarding)
         initViews()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        presenter.viewContract = this
-    }
-
-    override fun onStop() {
-        presenter.viewContract = null
-        super.onStop()
     }
 
     override fun onPageScrollStateChanged(state: Int) {}
@@ -66,17 +60,17 @@ class OnboardingSetupActivity : AppCompatActivity(),
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
     override fun onPageSelected(position: Int) {
-        presenter.onOnboardingPageSelected(position)
+        viewModel.onOnboardingPageSelected(position)
     }
 
     override fun onClick(v: View?) {
-        presenter.onViewClick(v?.id ?: return)
+        viewModel.onViewClick(v?.id ?: return)
     }
 
     override fun onBiometricInputSelected() {}
 
     override fun onPasscodeInputCanceledByUser() {
-        presenter.passcodeInputCanceledByUser()
+        viewModel.passcodeInputCanceledByUser()
     }
 
     override fun onEnteredPasscodeIsValid() {}
@@ -84,31 +78,11 @@ class OnboardingSetupActivity : AppCompatActivity(),
     override fun onEnteredPasscodeIsInvalid() {}
 
     override fun onNewPasscodeEntered(mode: PasscodeInputView.InputMode, passcode: String) {
-        presenter.enteredNewPasscode(inputMode = mode)
+        viewModel.enteredNewPasscode(inputMode = mode)
     }
 
     override fun onNewPasscodeConfirmed(passcode: String) {
-        presenter.newPasscodeConfirmed(passcode)
-    }
-
-    override fun updatePageIndicator(position: Int) {
-        pageIndicatorView?.selection = position
-    }
-
-    override fun hideSkipViewAndShowProceedView() {
-        actionLayout?.setVisible(show = false)
-        proceedToSetup?.setVisible(show = true)
-    }
-
-    override fun hideOnboardingAndShowPasscodeSetupView() {
-        onboardingLayout?.setVisible(show = false)
-        setupLayout?.setVisible(show = true)
-    }
-
-    override fun hidePasscodeInputAndShowSetupView() {
-        passcodeInputView?.setVisible(show = false)
-        setupLogoImage?.setVisible(show = true)
-        showMainActivity()
+        viewModel.newPasscodeConfirmed(passcode)
     }
 
     // After QR code
@@ -123,25 +97,78 @@ class OnboardingSetupActivity : AppCompatActivity(),
         this.showWarningDialog(message = message)
     }
 
-    override fun updateSetupViews(
-        setupStepProgress: Float,
-        headerTitle: Int,
-        headerDescription: Int,
-        showPasscodeCancel: Boolean?,
-        passcodePositiveActionText: Int?,
-        setupImageResId: Int,
-        actionText: Int
-    ) {
-        titleView?.setText(headerTitle)
-        descriptionView?.setText(headerDescription)
-        setupLogoImage?.setImageResource(setupImageResId)
-
-        showPasscodeCancel?.let { passcodeInputView?.cancelActionIsAvailable = it }
-        passcodePositiveActionText?.let { passcodeInputView?.setPositiveActionText(it) }
+    private fun injectDependencies() {
+        authenticatorApp?.appComponent?.addOnboardingSetupModule(OnboardingSetupModule())?.inject(
+            this
+        )
     }
 
-    override fun setPasscodeInputMode(inputMode: PasscodeInputView.InputMode) {
-        passcodeInputView?.initInputMode(inputMode = inputMode)
+    private fun setupViewModel() {
+        viewModel = ViewModelProviders
+            .of(this, viewModelFactory)
+            .get(OnboardingSetupViewModel::class.java)
+
+        viewModel.pageIndicator.observe(this, Observer<ViewModelEvent<Int>> {
+            it?.getContentIfNotHandled()?.let { position ->
+                pageIndicatorView?.selection = position
+            }
+        })
+
+        viewModel.hideSkipViewAndShowProceedView.observe(this, Observer<ViewModelEvent<Boolean>> {
+            it?.getContentIfNotHandled()?.let { hideSkipViewAndShowProceedView ->
+                if (hideSkipViewAndShowProceedView) {  //extract logic in view model, try to use databinding
+                    actionLayout?.setVisible(show = false)
+                    proceedToSetup?.setVisible(show = true)
+                }
+            }
+        })
+
+
+        //PASSCODE
+        viewModel.hideOnboardingAndShowPasscodeSetupView.observe(this, Observer<ViewModelEvent<Boolean>> {
+            it?.getContentIfNotHandled()?.let { hideOnboardingAndShowPasscodeSetupView ->
+                if (hideOnboardingAndShowPasscodeSetupView) {  //extract logic in view model, try to use databinding
+                    onboardingLayout?.setVisible(show = false)
+                    setupLayout?.setVisible(show = true)
+                }
+            }
+        })
+
+        viewModel.setPasscodeInputMode.observe(this, Observer<ViewModelEvent<PasscodeInputView.InputMode>> {
+            it?.getContentIfNotHandled()?.let { inputMode ->
+                passcodeInputView?.initInputMode(inputMode = inputMode)
+            }
+        })
+
+        //updateSetupViews
+        viewModel.headerTitle.observe(this, Observer<ViewModelEvent<Int>> {
+            it?.getContentIfNotHandled()?.let { getSetupTitleResId ->
+                titleView?.setText(getSetupTitleResId)
+            }
+        })
+        viewModel.headerDescription.observe(this, Observer<ViewModelEvent<Int>> {
+            it?.getContentIfNotHandled()?.let { getSetupSubtitleResId ->
+                descriptionView?.setText(getSetupSubtitleResId)
+            }
+        })
+        viewModel.showPasscodeCancel.observe(this, Observer<ViewModelEvent<Boolean>> {
+            it?.getContentIfNotHandled()?.let { shouldShowPasscodeInputNegativeActionView ->
+                shouldShowPasscodeInputNegativeActionView?.let { passcodeInputView?.cancelActionIsAvailable = it }
+            }
+        })
+        viewModel.passcodePositiveActionText.observe(this, Observer<ViewModelEvent<Int>> {
+            it?.getContentIfNotHandled()?.let { getPositivePasscodeActionViewText ->
+                getPositivePasscodeActionViewText?.let { passcodeInputView?.setPositiveActionText(it) }
+            }
+        })
+        viewModel.hidePasscodeInputAndShowSetupView.observe(this, Observer<ViewModelEvent<Boolean>> {
+            it?.getContentIfNotHandled()?.let { hidePasscodeInputAndShowSetupView ->
+                if (hidePasscodeInputAndShowSetupView) {
+                    passcodeInputView?.setVisible(show = false)
+                    showMainActivity()
+                }
+            }
+        })
     }
 
     private fun initViews() {
@@ -156,7 +183,7 @@ class OnboardingSetupActivity : AppCompatActivity(),
     private fun initOnboardingViews() {
         onboardingPager?.clearOnPageChangeListeners()
         onboardingPager?.addOnPageChangeListener(this)
-        presenter.onboardingViewModels.let {
+        viewModel.onboardingViewModels.let {
             onboardingPager?.adapter = OnboardingPagerAdapter(this, it)
             onboardingPager?.currentItem = 0
             pageIndicatorView?.setCount(it.size)
@@ -172,11 +199,5 @@ class OnboardingSetupActivity : AppCompatActivity(),
         passcodeInputView?.biometricsActionIsAvailable = false
         passcodeInputView?.cancelActionIsAvailable = false
         passcodeInputView?.listener = this
-    }
-
-    private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addOnboardingSetupModule(OnboardingSetupModule())?.inject(
-            this
-        )
     }
 }

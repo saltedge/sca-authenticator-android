@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,34 +18,31 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.onboarding.di
+package com.saltedge.authenticator.features.onboarding
 
 import android.content.Context
-import com.saltedge.authenticator.app.di.FragmentScope
-import com.saltedge.authenticator.features.onboarding.OnboardingSetupViewModel
-import com.saltedge.authenticator.features.onboarding.OnboardingSetupViewModelFactory
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
-import dagger.Module
-import dagger.Provides
+import javax.inject.Inject
 
-@Module
-class OnboardingSetupModule {
-
-    @FragmentScope
-    @Provides
-    fun provideFactory(
-        appContext: Context,
-        preferenceRepository: PreferenceRepositoryAbs,
-        biometricTools: BiometricToolsAbs,
-        passcodeTools: PasscodeToolsAbs
-    ): OnboardingSetupViewModelFactory {
-        return OnboardingSetupViewModelFactory(
-            appContext = appContext,
-            passcodeTools = passcodeTools,
-            preferenceRepository = preferenceRepository,
-            biometricTools = biometricTools
-        )
+class OnboardingSetupViewModelFactory @Inject constructor(
+    val appContext: Context,
+    val passcodeTools: PasscodeToolsAbs,
+    val preferenceRepository: PreferenceRepositoryAbs,
+    val biometricTools: BiometricToolsAbs
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(OnboardingSetupViewModel::class.java)) {
+            return OnboardingSetupViewModel(
+                appContext = appContext,
+                passcodeTools = passcodeTools,
+                preferenceRepository = preferenceRepository,
+                biometricTools = biometricTools
+            ) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

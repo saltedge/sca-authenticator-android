@@ -26,22 +26,22 @@ import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 interface OnboardingSetupContract {
 
     interface View {
-        fun updatePageIndicator(position: Int)
-        fun hideSkipViewAndShowProceedView()
+//        fun updatePageIndicator(position: Int)
+//        fun hideSkipViewAndShowProceedView()
         fun showMainActivity()
         fun showWarningDialogWithMessage(message: String)
-        fun updateSetupViews(
-            setupStepProgress: Float,
-            headerTitle: Int,
-            headerDescription: Int,
-            showPasscodeCancel: Boolean?,
-            passcodePositiveActionText: ResId?,
-            setupImageResId: Int,
-            actionText: Int
-        )
-        fun hidePasscodeInputAndShowSetupView()
+//        fun updateSetupViews(
+//            setupStepProgress: Float,
+//            headerTitle: Int,
+//            headerDescription: Int,
+//            showPasscodeCancel: Boolean?,
+//            passcodePositiveActionText: ResId?,
+//            setupImageResId: Int,
+//            actionText: Int
+//        )
+//        fun hidePasscodeInputAndShowSetupView()
 //        fun hideSkipView()
-        fun hideOnboardingAndShowPasscodeSetupView()
-        fun setPasscodeInputMode(inputMode: PasscodeInputView.InputMode)
+//        fun hideOnboardingAndShowPasscodeSetupView()
+//        fun setPasscodeInputMode(inputMode: PasscodeInputView.InputMode)
     }
 }
