@@ -24,10 +24,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.databinding.OnboardingSetupBinding
 import com.saltedge.authenticator.events.ViewModelEvent
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.onboarding.di.OnboardingSetupModule
@@ -39,19 +41,19 @@ import kotlinx.android.synthetic.main.activity_onboarding.*
 import javax.inject.Inject
 
 class OnboardingSetupActivity : AppCompatActivity(),
-    OnboardingSetupContract.View,
     ViewPager.OnPageChangeListener,
     View.OnClickListener,
     PasscodeInputViewListener {
 
     lateinit var viewModel: OnboardingSetupViewModel
     @Inject lateinit var viewModelFactory: OnboardingSetupViewModelFactory
+    private lateinit var binding: OnboardingSetupBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectDependencies()
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_onboarding)
         setupViewModel()
-        setContentView(R.layout.activity_onboarding)
         initViews()
     }
 
@@ -85,18 +87,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
         viewModel.newPasscodeConfirmed(passcode)
     }
 
-    // After QR code
-    override fun showMainActivity() {
-        finish()
-        startActivity(Intent(this, MainActivity::class.java)
-            .apply { putExtra(KEY_SKIP_PIN, true) }
-            .apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK })
-    }
-
-    override fun showWarningDialogWithMessage(message: String) {
-        this.showWarningDialog(message = message)
-    }
-
     private fun injectDependencies() {
         authenticatorApp?.appComponent?.addOnboardingSetupModule(OnboardingSetupModule())?.inject(
             this
@@ -108,12 +98,13 @@ class OnboardingSetupActivity : AppCompatActivity(),
             .of(this, viewModelFactory)
             .get(OnboardingSetupViewModel::class.java)
 
-        viewModel.pageIndicator.observe(this, Observer<ViewModelEvent<Int>> {
-            it?.getContentIfNotHandled()?.let { position ->
-                pageIndicatorView?.selection = position
-            }
-        })
+        binding.onboardingSetupViewModel = viewModel
+        binding.executePendingBindings()
+        binding.lifecycleOwner = this
 
+        viewModel.pageIndicator.observe(this, Observer<Int> { position ->
+            pageIndicatorView?.selection = position
+        })
         viewModel.hideSkipViewAndShowProceedView.observe(this, Observer<ViewModelEvent<Boolean>> {
             it?.getContentIfNotHandled()?.let { hideSkipViewAndShowProceedView ->
                 if (hideSkipViewAndShowProceedView) {  //extract logic in view model, try to use databinding
@@ -123,50 +114,40 @@ class OnboardingSetupActivity : AppCompatActivity(),
             }
         })
 
-
         //PASSCODE
-        viewModel.hideOnboardingAndShowPasscodeSetupView.observe(this, Observer<ViewModelEvent<Boolean>> {
-            it?.getContentIfNotHandled()?.let { hideOnboardingAndShowPasscodeSetupView ->
-                if (hideOnboardingAndShowPasscodeSetupView) {  //extract logic in view model, try to use databinding
-                    onboardingLayout?.setVisible(show = false)
-                    setupLayout?.setVisible(show = true)
+        viewModel.hideOnboardingAndShowPasscodeSetupView.observe(
+            this,
+            Observer<ViewModelEvent<Boolean>> {
+                it?.getContentIfNotHandled()?.let { hideOnboardingAndShowPasscodeSetupView ->
+                    if (hideOnboardingAndShowPasscodeSetupView) {  //extract logic in view model, try to use databinding
+                        onboardingLayout?.setVisible(show = false)
+                        setupLayout?.setVisible(show = true)
+                    }
                 }
-            }
-        })
+            })
 
-        viewModel.setPasscodeInputMode.observe(this, Observer<ViewModelEvent<PasscodeInputView.InputMode>> {
-            it?.getContentIfNotHandled()?.let { inputMode ->
-                passcodeInputView?.initInputMode(inputMode = inputMode)
-            }
+        viewModel.setPasscodeInputMode.observe(this, Observer<PasscodeInputView.InputMode> {
+            passcodeInputView?.initInputMode(inputMode = it)
         })
-
-        //updateSetupViews
-        viewModel.headerTitle.observe(this, Observer<ViewModelEvent<Int>> {
-            it?.getContentIfNotHandled()?.let { getSetupTitleResId ->
-                titleView?.setText(getSetupTitleResId)
-            }
+        viewModel.showPasscodeCancel.observe(this, Observer<Boolean> {
+            passcodeInputView?.cancelActionIsAvailable = it
         })
-        viewModel.headerDescription.observe(this, Observer<ViewModelEvent<Int>> {
-            it?.getContentIfNotHandled()?.let { getSetupSubtitleResId ->
-                descriptionView?.setText(getSetupSubtitleResId)
-            }
+        viewModel.passcodePositiveActionText.observe(this, Observer<Int> {
+            passcodeInputView?.setPositiveActionText(it)
         })
-        viewModel.showPasscodeCancel.observe(this, Observer<ViewModelEvent<Boolean>> {
-            it?.getContentIfNotHandled()?.let { shouldShowPasscodeInputNegativeActionView ->
-                shouldShowPasscodeInputNegativeActionView?.let { passcodeInputView?.cancelActionIsAvailable = it }
-            }
-        })
-        viewModel.passcodePositiveActionText.observe(this, Observer<ViewModelEvent<Int>> {
-            it?.getContentIfNotHandled()?.let { getPositivePasscodeActionViewText ->
-                getPositivePasscodeActionViewText?.let { passcodeInputView?.setPositiveActionText(it) }
-            }
-        })
-        viewModel.hidePasscodeInputAndShowSetupView.observe(this, Observer<ViewModelEvent<Boolean>> {
-            it?.getContentIfNotHandled()?.let { hidePasscodeInputAndShowSetupView ->
-                if (hidePasscodeInputAndShowSetupView) {
-                    passcodeInputView?.setVisible(show = false)
-                    showMainActivity()
+        viewModel.hidePasscodeInputAndShowSetupView.observe(
+            this,
+            Observer<ViewModelEvent<Boolean>> {
+                it?.getContentIfNotHandled()?.let { hidePasscodeInputAndShowSetupView ->
+                    if (hidePasscodeInputAndShowSetupView) {
+                        passcodeInputView?.setVisible(show = false)
+                        showMainActivity()
+                    }
                 }
+            })
+        viewModel.showWarningDialogWithMessage.observe(this, Observer<ViewModelEvent<String>> {
+            it?.getContentIfNotHandled()?.let { message ->
+                this.showWarningDialog(message = message)
             }
         })
     }
@@ -199,5 +180,12 @@ class OnboardingSetupActivity : AppCompatActivity(),
         passcodeInputView?.biometricsActionIsAvailable = false
         passcodeInputView?.cancelActionIsAvailable = false
         passcodeInputView?.listener = this
+    }
+
+    private fun showMainActivity() {
+        finish()
+        startActivity(Intent(this, MainActivity::class.java)
+            .apply { putExtra(KEY_SKIP_PIN, true) }
+            .apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK })
     }
 }

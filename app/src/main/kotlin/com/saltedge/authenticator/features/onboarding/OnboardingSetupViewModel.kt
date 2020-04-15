@@ -21,13 +21,11 @@
 package com.saltedge.authenticator.features.onboarding
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.events.ViewModelEvent
-import com.saltedge.authenticator.features.connections.create.ViewMode
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
@@ -38,9 +36,17 @@ class OnboardingSetupViewModel(
     val passcodeTools: PasscodeToolsAbs,
     val preferenceRepository: PreferenceRepositoryAbs,
     val biometricTools: BiometricToolsAbs
-) : ViewModel() {
+) : ViewModel(), LifecycleObserver {
 
-    var pageIndicator = MutableLiveData<ViewModelEvent<Int>>()
+    val headerTitle: MutableLiveData<Int> = MutableLiveData()
+    val headerDescription: MutableLiveData<Int> = MutableLiveData()
+
+    init {
+        headerTitle.value = R.string.onboarding_secure_app_passcode_create
+        headerDescription.value = R.string.onboarding_secure_app_passcode_description
+    }
+
+    var pageIndicator = MutableLiveData<Int>()
         private set
 
     var hideSkipViewAndShowProceedView = MutableLiveData<ViewModelEvent<Boolean>>()
@@ -50,22 +56,19 @@ class OnboardingSetupViewModel(
     var hideOnboardingAndShowPasscodeSetupView = MutableLiveData<ViewModelEvent<Boolean>>()
         private set
 
-    var setPasscodeInputMode = MutableLiveData<ViewModelEvent<PasscodeInputView.InputMode>>()
+    var setPasscodeInputMode = MutableLiveData<PasscodeInputView.InputMode>()
         private set
 
-    var headerTitle = MutableLiveData<ViewModelEvent<Int>>()
+    var showPasscodeCancel = MutableLiveData<Boolean>()
         private set
 
-    var headerDescription = MutableLiveData<ViewModelEvent<Int>>()
-        private set
-
-    var showPasscodeCancel = MutableLiveData<ViewModelEvent<Boolean>>()
-        private set
-
-    var passcodePositiveActionText = MutableLiveData<ViewModelEvent<Int>>()
+    var passcodePositiveActionText = MutableLiveData<Int>()
         private set
 
     var hidePasscodeInputAndShowSetupView = MutableLiveData<ViewModelEvent<Boolean>>()
+        private set
+
+    var showWarningDialogWithMessage = MutableLiveData<ViewModelEvent<String>>()
         private set
 
     val onboardingViewModels: List<OnboardingPageViewModel> = listOf(
@@ -88,15 +91,12 @@ class OnboardingSetupViewModel(
 
     fun onOnboardingPageSelected(position: Int) {
         if (onboardingViewModels.getOrNull(position) != null) {
-            pageIndicator.postValue(ViewModelEvent(position))
+            pageIndicator.postValue(position)
             if (shouldShowProceedToSetupAction(position)) {
                 hideSkipViewAndShowProceedView.postValue(ViewModelEvent(true))
             }
         }
     }
-
-    private fun shouldShowProceedToSetupAction(position: Int): Boolean =
-        position == onboardingViewModels.lastIndex
 
     fun onViewClick(viewId: Int) {
         when (viewId) {
@@ -106,30 +106,39 @@ class OnboardingSetupViewModel(
         }
     }
 
+    fun enteredNewPasscode(inputMode: PasscodeInputView.InputMode) {
+        updateSetupViews(inputMode)
+    }
+
+    fun newPasscodeConfirmed(passcode: String) {
+        if (passcodeTools.savePasscode(passcode)) {
+            hidePasscodeInputAndShowSetupView.postValue(ViewModelEvent(true))
+        } else {
+            showWarningDialogWithMessage.postValue(ViewModelEvent(appContext.getString(R.string.errors_cant_save_passcode)))
+        }
+    }
+
+    fun passcodeInputCanceledByUser() {
+        val inputMode = PasscodeInputView.InputMode.NEW_PASSCODE
+        setPasscodeInputMode.postValue(inputMode)
+        updateSetupViews(inputMode)
+    }
+
+    private fun shouldShowProceedToSetupAction(position: Int): Boolean =
+        position == onboardingViewModels.lastIndex
+
     private fun showPasscodeInput() {
         val inputMode = PasscodeInputView.InputMode.NEW_PASSCODE
         hideOnboardingAndShowPasscodeSetupView.postValue(ViewModelEvent(true))
-        setPasscodeInputMode.postValue(ViewModelEvent(inputMode))
+        setPasscodeInputMode.postValue(inputMode)
         updateSetupViews(inputMode)
     }
 
     private fun updateSetupViews(inputMode: PasscodeInputView.InputMode) {
-        headerTitle.postValue(ViewModelEvent(getSetupTitleResId(inputMode)))
-        headerDescription.postValue(ViewModelEvent(getSetupSubtitleResId(inputMode)))
-        showPasscodeCancel.postValue(
-            ViewModelEvent(
-                shouldShowPasscodeInputNegativeActionView(
-                    inputMode
-                )
-            )
-        )
-        passcodePositiveActionText.postValue(
-            ViewModelEvent(
-                getPositivePasscodeActionViewText(
-                    inputMode
-                )
-            )
-        )
+        headerTitle.value = getSetupTitleResId(inputMode)
+        headerDescription.value = getSetupSubtitleResId(inputMode)
+        showPasscodeCancel.value = shouldShowPasscodeInputNegativeActionView(inputMode)
+        passcodePositiveActionText.postValue(getPositivePasscodeActionViewText(inputMode))
     }
 
     private fun getSetupTitleResId(
@@ -140,7 +149,7 @@ class OnboardingSetupViewModel(
         } else R.string.onboarding_secure_app_passcode_create
     }
 
-    private fun getSetupSubtitleResId(passcodeInputMode: PasscodeInputView.InputMode): Int? {
+    private fun getSetupSubtitleResId(passcodeInputMode: PasscodeInputView.InputMode): Int {
         return if (passcodeInputMode == PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE) {
             R.string.onboarding_secure_app_passcode_confirm
         } else R.string.onboarding_secure_app_passcode_description
@@ -157,32 +166,5 @@ class OnboardingSetupViewModel(
             if (it === PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE) android.R.string.ok
             else R.string.actions_next
         }
-    }
-
-    fun enteredNewPasscode(inputMode: PasscodeInputView.InputMode) {
-        Log.d("some", "enteredNewPasscode")
-        updateSetupViews(inputMode)
-    }
-
-    fun newPasscodeConfirmed(passcode: String) {
-        Log.d("some", "newPasscodeConfirmed")
-
-        if (passcodeTools.savePasscode(passcode)) {
-//            goToNextSetupView()  TODO: check fun
-
-                hidePasscodeInputAndShowSetupView.postValue(ViewModelEvent(true))
-        }
-        //        else {
-        //            viewContract?.showWarningDialogWithMessage(
-        //                appContext.getString(R.string.errors_cant_save_passcode)
-        //            )
-        //        }
-    }
-
-    fun passcodeInputCanceledByUser() {
-        Log.d("some", "passcodeInputCanceledByUser")
-        val inputMode = PasscodeInputView.InputMode.NEW_PASSCODE
-        setPasscodeInputMode.postValue(ViewModelEvent(inputMode))
-        updateSetupViews(inputMode)
     }
 }

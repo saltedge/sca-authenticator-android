@@ -18,126 +18,137 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <RelativeLayout
-        android:id="@+id/setupLayout"
+    <data class="OnboardingSetupBinding">
+
+        <variable
+            name="onboardingSetupViewModel"
+            type="com.saltedge.authenticator.features.onboarding.OnboardingSetupViewModel" />
+    </data>
+
+    <FrameLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone">
+        android:layout_height="match_parent"
+        android:background="@android:color/white">
 
-        <TextView
-            android:id="@+id/titleView"
-            style="@style/Text20BlackMedium"
+        <RelativeLayout
+            android:id="@+id/setupLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_32"
-            android:layout_marginTop="@dimen/dp_72"
-            android:layout_marginRight="@dimen/dp_32"
-            android:gravity="center_horizontal"
-            android:maxLines="2"
-            tools:text="Allow Fingerprint" />
-
-        <TextView
-            android:id="@+id/descriptionView"
-            style="@style/Text16GrayDarkRegular"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/titleView"
-            android:layout_marginLeft="@dimen/dp_32"
-            android:layout_marginTop="@dimen/dp_12"
-            android:layout_marginRight="@dimen/dp_32"
-            android:gravity="center_horizontal"
-            android:lines="4"
-            tools:text="Use Fingerprint to enter the App faster, but
-             don’t worry, you’ll still have your passcode as backup." />
-
-        <com.saltedge.authenticator.widget.passcode.PasscodeInputView
-            android:id="@+id/passcodeInputView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/descriptionView" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/onboardingLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <Button
-            android:id="@+id/proceedToSetup"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_48"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="@dimen/dp_32"
-            android:layout_marginEnd="@dimen/dp_32"
-            android:layout_marginBottom="@dimen/dp_40"
-            android:backgroundTint="@color/button_color_selector"
-            android:elevation="@dimen/dp_30"
-            android:fontFamily="@font/roboto_medium"
-            android:text="@string/actions_get_started"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/text_14"
-            android:visibility="gone" />
-
-        <LinearLayout
-            android:id="@+id/actionLayout"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_48"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="@dimen/dp_32"
-            android:layout_marginEnd="@dimen/dp_32"
-            android:layout_marginBottom="@dimen/dp_40"
-            android:gravity="bottom"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <TextView
-                android:id="@+id/skipActionView"
-                android:layout_width="0dp"
+                android:id="@+id/titleView"
+                style="@style/Text20BlackMedium"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="9dp"
-                android:layout_weight="1"
-                android:fontFamily="@font/roboto_medium"
-                android:text="@string/actions_skip"
-                android:textColor="@color/primary"
-                android:textSize="@dimen/text_18" />
+                android:layout_marginLeft="@dimen/dp_32"
+                android:layout_marginTop="@dimen/dp_72"
+                android:layout_marginRight="@dimen/dp_32"
+                android:gravity="center_horizontal"
+                android:maxLines="2"
+                android:text="@{onboardingSetupViewModel.headerTitle}"
+                tools:text="Allow Fingerprint" />
+
+            <TextView
+                android:id="@+id/descriptionView"
+                style="@style/Text16GrayDarkRegular"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/titleView"
+                android:layout_marginLeft="@dimen/dp_32"
+                android:layout_marginTop="@dimen/dp_12"
+                android:layout_marginRight="@dimen/dp_32"
+                android:gravity="center_horizontal"
+                android:lines="4"
+                android:text="@{onboardingSetupViewModel.headerDescription}"
+                tools:text="Use Fingerprint to enter the App faster, but
+             don’t worry, you’ll still have your passcode as backup." />
+
+            <com.saltedge.authenticator.widget.passcode.PasscodeInputView
+                android:id="@+id/passcodeInputView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/descriptionView" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/onboardingLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <Button
-                android:id="@+id/nextActionView"
-                android:layout_width="@dimen/dp_120"
+                android:id="@+id/proceedToSetup"
+                android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_48"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="@dimen/dp_32"
+                android:layout_marginEnd="@dimen/dp_32"
+                android:layout_marginBottom="@dimen/dp_40"
                 android:backgroundTint="@color/button_color_selector"
                 android:elevation="@dimen/dp_30"
                 android:fontFamily="@font/roboto_medium"
-                android:text="@string/actions_next"
+                android:text="@string/actions_get_started"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
-                android:textSize="@dimen/text_14" />
-        </LinearLayout>
+                android:textSize="@dimen/text_14"
+                android:visibility="gone" />
 
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/onboardingPager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_marginBottom="@dimen/dp_120"
-            tools:background="@color/red" />
+            <LinearLayout
+                android:id="@+id/actionLayout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_48"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="@dimen/dp_32"
+                android:layout_marginEnd="@dimen/dp_32"
+                android:layout_marginBottom="@dimen/dp_40"
+                android:gravity="bottom"
+                android:orientation="horizontal">
 
-        <com.saltedge.authenticator.widget.pageindicator.DotsPageIndicatorView
-            android:id="@+id/pageIndicatorView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dp_32"
-            android:layout_marginTop="@dimen/dp_325"
-            android:layout_marginBottom="@dimen/dp_124"
-            app:selectedColor="@color/blue" />
-    </RelativeLayout>
-</FrameLayout>
+                <TextView
+                    android:id="@+id/skipActionView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="9dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/roboto_medium"
+                    android:text="@string/actions_skip"
+                    android:textColor="@color/primary"
+                    android:textSize="@dimen/text_18" />
+
+                <Button
+                    android:id="@+id/nextActionView"
+                    android:layout_width="@dimen/dp_120"
+                    android:layout_height="@dimen/dp_48"
+                    android:backgroundTint="@color/button_color_selector"
+                    android:elevation="@dimen/dp_30"
+                    android:fontFamily="@font/roboto_medium"
+                    android:text="@string/actions_next"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/text_14" />
+            </LinearLayout>
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/onboardingPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="@dimen/dp_120"
+                tools:background="@color/red" />
+
+            <com.saltedge.authenticator.widget.pageindicator.DotsPageIndicatorView
+                android:id="@+id/pageIndicatorView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_32"
+                android:layout_marginTop="@dimen/dp_325"
+                android:layout_marginBottom="@dimen/dp_124"
+                app:selectedColor="@color/blue" />
+        </RelativeLayout>
+    </FrameLayout>
+</layout>
