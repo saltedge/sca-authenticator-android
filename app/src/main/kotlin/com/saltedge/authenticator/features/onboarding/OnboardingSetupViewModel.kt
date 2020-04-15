@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.onboarding
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -40,20 +41,19 @@ class OnboardingSetupViewModel(
 
     val headerTitle: MutableLiveData<Int> = MutableLiveData()
     val headerDescription: MutableLiveData<Int> = MutableLiveData()
+    val hideSkipViewAndShowProceedView: MutableLiveData<Boolean> = MutableLiveData()
+    val hideOnboardingAndShowPasscodeSetupView: MutableLiveData<Boolean> = MutableLiveData()
+    val hidePasscodeInputAndShowSetupView: MutableLiveData<Boolean> = MutableLiveData()
 
     init {
         headerTitle.value = R.string.onboarding_secure_app_passcode_create
         headerDescription.value = R.string.onboarding_secure_app_passcode_description
+        hideSkipViewAndShowProceedView.value = false
+        hideOnboardingAndShowPasscodeSetupView.value = false
+        hidePasscodeInputAndShowSetupView.value = false
     }
 
     var pageIndicator = MutableLiveData<Int>()
-        private set
-
-    var hideSkipViewAndShowProceedView = MutableLiveData<ViewModelEvent<Boolean>>()
-        private set
-
-    //passcode
-    var hideOnboardingAndShowPasscodeSetupView = MutableLiveData<ViewModelEvent<Boolean>>()
         private set
 
     var setPasscodeInputMode = MutableLiveData<PasscodeInputView.InputMode>()
@@ -65,10 +65,10 @@ class OnboardingSetupViewModel(
     var passcodePositiveActionText = MutableLiveData<Int>()
         private set
 
-    var hidePasscodeInputAndShowSetupView = MutableLiveData<ViewModelEvent<Boolean>>()
+    var showWarningDialogWithMessage = MutableLiveData<ViewModelEvent<String>>()
         private set
 
-    var showWarningDialogWithMessage = MutableLiveData<ViewModelEvent<String>>()
+    var showMainActivity = MutableLiveData<ViewModelEvent<Unit>>()
         private set
 
     val onboardingViewModels: List<OnboardingPageViewModel> = listOf(
@@ -93,7 +93,7 @@ class OnboardingSetupViewModel(
         if (onboardingViewModels.getOrNull(position) != null) {
             pageIndicator.postValue(position)
             if (shouldShowProceedToSetupAction(position)) {
-                hideSkipViewAndShowProceedView.postValue(ViewModelEvent(true))
+                hideSkipViewAndShowProceedView.value = true
             }
         }
     }
@@ -103,6 +103,7 @@ class OnboardingSetupViewModel(
             R.id.skipActionView, R.id.proceedToSetup -> {
                 showPasscodeInput()
             }
+            R.id.nextActionView -> Log.d("some", "click on Next")
         }
     }
 
@@ -112,7 +113,8 @@ class OnboardingSetupViewModel(
 
     fun newPasscodeConfirmed(passcode: String) {
         if (passcodeTools.savePasscode(passcode)) {
-            hidePasscodeInputAndShowSetupView.postValue(ViewModelEvent(true))
+            hidePasscodeInputAndShowSetupView.value = true
+            showMainActivity.postValue(ViewModelEvent())
         } else {
             showWarningDialogWithMessage.postValue(ViewModelEvent(appContext.getString(R.string.errors_cant_save_passcode)))
         }
@@ -129,7 +131,7 @@ class OnboardingSetupViewModel(
 
     private fun showPasscodeInput() {
         val inputMode = PasscodeInputView.InputMode.NEW_PASSCODE
-        hideOnboardingAndShowPasscodeSetupView.postValue(ViewModelEvent(true))
+        hideOnboardingAndShowPasscodeSetupView.value = true
         setPasscodeInputMode.postValue(inputMode)
         updateSetupViews(inputMode)
     }

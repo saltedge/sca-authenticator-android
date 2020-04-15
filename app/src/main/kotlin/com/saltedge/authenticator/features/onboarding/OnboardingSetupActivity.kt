@@ -105,27 +105,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
         viewModel.pageIndicator.observe(this, Observer<Int> { position ->
             pageIndicatorView?.selection = position
         })
-        viewModel.hideSkipViewAndShowProceedView.observe(this, Observer<ViewModelEvent<Boolean>> {
-            it?.getContentIfNotHandled()?.let { hideSkipViewAndShowProceedView ->
-                if (hideSkipViewAndShowProceedView) {  //extract logic in view model, try to use databinding
-                    actionLayout?.setVisible(show = false)
-                    proceedToSetup?.setVisible(show = true)
-                }
-            }
-        })
-
-        //PASSCODE
-        viewModel.hideOnboardingAndShowPasscodeSetupView.observe(
-            this,
-            Observer<ViewModelEvent<Boolean>> {
-                it?.getContentIfNotHandled()?.let { hideOnboardingAndShowPasscodeSetupView ->
-                    if (hideOnboardingAndShowPasscodeSetupView) {  //extract logic in view model, try to use databinding
-                        onboardingLayout?.setVisible(show = false)
-                        setupLayout?.setVisible(show = true)
-                    }
-                }
-            })
-
         viewModel.setPasscodeInputMode.observe(this, Observer<PasscodeInputView.InputMode> {
             passcodeInputView?.initInputMode(inputMode = it)
         })
@@ -135,16 +114,9 @@ class OnboardingSetupActivity : AppCompatActivity(),
         viewModel.passcodePositiveActionText.observe(this, Observer<Int> {
             passcodeInputView?.setPositiveActionText(it)
         })
-        viewModel.hidePasscodeInputAndShowSetupView.observe(
-            this,
-            Observer<ViewModelEvent<Boolean>> {
-                it?.getContentIfNotHandled()?.let { hidePasscodeInputAndShowSetupView ->
-                    if (hidePasscodeInputAndShowSetupView) {
-                        passcodeInputView?.setVisible(show = false)
-                        showMainActivity()
-                    }
-                }
-            })
+        viewModel.showMainActivity.observe(this, Observer<ViewModelEvent<Unit>> {
+            showMainActivity()
+        })
         viewModel.showWarningDialogWithMessage.observe(this, Observer<ViewModelEvent<String>> {
             it?.getContentIfNotHandled()?.let { message ->
                 this.showWarningDialog(message = message)
@@ -172,8 +144,7 @@ class OnboardingSetupActivity : AppCompatActivity(),
         }
         skipActionView?.setOnClickListener(this)
         proceedToSetup?.setOnClickListener(this)
-        actionLayout?.setVisible(show = true)
-        proceedToSetup?.setVisible(show = false)
+        nextActionView?.setOnClickListener(this)
     }
 
     private fun initSetupViews() {
