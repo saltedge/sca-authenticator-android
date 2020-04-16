@@ -18,20 +18,26 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model.response
+package com.saltedge.authenticator.sdk.model.configuration
 
-import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.constants.KEY_ACCESS_TOKEN
-import com.saltedge.authenticator.sdk.constants.KEY_CONNECT_URL
-import com.saltedge.authenticator.sdk.constants.KEY_DATA
-import com.saltedge.authenticator.sdk.constants.KEY_ID
+import com.saltedge.authenticator.sdk.constants.API_VERSION
 
-data class CreateConnectionResponseData(
-    @SerializedName(KEY_DATA) var data: CreateConnectionData? = null
-)
-
-data class CreateConnectionData(
-    @SerializedName(KEY_CONNECT_URL) var redirectUrl: String? = null,
-    @SerializedName(KEY_ID) var connectionId: String? = null,
-    @SerializedName(KEY_ACCESS_TOKEN) var accessToken: String? = null
-)
+/**
+ * Checks validity of Provider model
+ *
+ * @receiver Encrypted authorization
+ * @return boolean. true if `name`, `code` and `connectUrl` fields are present
+ * and version code equal to API_VERSION constant
+ */
+fun ProviderConfigurationData.isValid(): Boolean {
+    return try {
+        name.isNotEmpty() &&
+            code.isNotEmpty() &&
+            connectUrl.isNotEmpty() &&
+            !connectUrl.contains("/localhost") &&
+            version == API_VERSION
+    } catch (e: Exception) {
+        e.printStackTrace()
+        false
+    }
+}

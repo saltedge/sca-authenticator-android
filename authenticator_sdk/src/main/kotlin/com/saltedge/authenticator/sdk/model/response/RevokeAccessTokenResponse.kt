@@ -18,21 +18,18 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.contract
+package com.saltedge.authenticator.sdk.model.response
 
-import com.saltedge.authenticator.sdk.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.model.AuthorizationID
-import com.saltedge.authenticator.sdk.model.ConnectionID
-import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResultData
+import com.google.gson.annotations.SerializedName
+import com.saltedge.authenticator.sdk.constants.KEY_ACCESS_TOKEN
+import com.saltedge.authenticator.sdk.constants.KEY_DATA
+import com.saltedge.authenticator.sdk.constants.KEY_SUCCESS
 
-/**
- * Confirm SCA Authorization request result
- */
-interface ConfirmAuthorizationResult {
-    fun onConfirmDenyFailure(
-        error: ApiErrorData,
-        connectionID: ConnectionID,
-        authorizationID: AuthorizationID
-    )
-    fun onConfirmDenySuccess(result: ConfirmDenyResultData, connectionID: ConnectionID)
-}
+data class RevokeAccessTokenResponse(
+    @SerializedName(KEY_DATA) var data: RevokeAccessTokenResponseData? = null
+)
+
+data class RevokeAccessTokenResponseData(
+    @SerializedName(KEY_SUCCESS) var success: Boolean? = null,
+    @SerializedName(KEY_ACCESS_TOKEN) var accessToken: String? = null
+)

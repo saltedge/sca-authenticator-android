@@ -18,22 +18,20 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model
+package com.saltedge.authenticator.sdk.model.response
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.constants.*
-import java.io.Serializable
+import com.saltedge.authenticator.sdk.constants.KEY_ACCESS_TOKEN
+import com.saltedge.authenticator.sdk.constants.KEY_CONNECT_URL
+import com.saltedge.authenticator.sdk.constants.KEY_DATA
+import com.saltedge.authenticator.sdk.constants.KEY_ID
 
-/**
- * Model of provider data
- */
-data class ProviderData(
-    @SerializedName(KEY_CONNECT_URL) var connectUrl: String,
-    @SerializedName(KEY_CODE) var code: String,
-    @SerializedName(KEY_NAME) var name: String,
-    @SerializedName(KEY_LOGO_URL) var logoUrl: String?,
-    @SerializedName(KEY_VERSION) var version: String,
-    @SerializedName(KEY_SUPPORT_EMAIL) var supportEmail: String?
-) : Serializable
+data class CreateConnectionResponse(
+    @SerializedName(KEY_DATA) var data: CreateConnectionResponseData? = null
+)
 
-data class ProviderResponseData(@SerializedName(KEY_DATA) var data: ProviderData)
+data class CreateConnectionResponseData(
+    @SerializedName(KEY_CONNECT_URL) var redirectUrl: String? = null,
+    @SerializedName(KEY_ID) var connectionId: String? = null,
+    @SerializedName(KEY_ACCESS_TOKEN) var accessToken: String? = null
+)

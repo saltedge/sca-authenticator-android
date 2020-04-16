@@ -18,12 +18,16 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model.response
+package com.saltedge.authenticator.sdk.model.request
 
 import com.google.gson.annotations.SerializedName
+import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_CODE
+import com.saltedge.authenticator.sdk.constants.KEY_CONFIRM
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
-import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
 
-data class AuthorizationShowResponseData(
-    @SerializedName(KEY_DATA) var data: EncryptedAuthorizationData? = null
+data class ConfirmDenyRequest(@SerializedName(KEY_DATA) val data: ConfirmDenyRequestData)
+
+data class ConfirmDenyRequestData(
+    @SerializedName(KEY_CONFIRM) val confirm: Boolean,
+    @SerializedName(KEY_AUTHORIZATION_CODE) val authorizationCode: String?
 )

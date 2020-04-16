@@ -376,4 +376,4 @@ Each Instant Action has unique code `actionUUID`. After receiving of `actionUUID
 On success Authenticator app receives `SubmitActionData` which has optional fields `connectionId` and `authorizationId` (if is reqiored additional confirmation).  
   
 ___
-Copyright © 2019 Salt Edge. https://www.saltedge.com  
+Copyright © 2019 - 2020 Salt Edge. https://www.saltedge.com  

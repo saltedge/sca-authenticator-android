@@ -39,17 +39,24 @@ interface AuthenticatorApiManagerAbs {
     var authenticationReturnUrl: String
 
     /**
+     * Initialize SDK
+     *
+     * @param context of Application
+     */
+    fun initializeSDK(context: Context)
+
+    /**
      * Request to get Service Provide configuration.
-     * Result is returned through callback.
+     * Result is returned via callback.
      */
     fun getProviderConfigurationData(
         providerConfigurationUrl: String,
-        resultCallback: FetchProviderConfigurationDataResult
+        resultCallback: FetchProviderConfigurationListener
     )
 
     /**
      * Request to create new SCA connection.
-     * Result is returned through callback.
+     * Result is returned via callback.
      */
     fun createConnectionRequest(
         baseUrl: String,
@@ -57,37 +64,37 @@ interface AuthenticatorApiManagerAbs {
         pushToken: String,
         providerCode: String,
         connectQueryParam: String?,
-        resultCallback: ConnectionCreateResult
+        resultCallback: ConnectionCreateListener
     )
 
     /**
      * Request to create new SCA connection.
-     * Result is returned through callback.
+     * Result is returned via callback.
      */
     fun createConnectionRequest(
         appContext: Context,
         connection: ConnectionAbs,
         pushToken: String,
         connectQueryParam: String?,
-        resultCallback: ConnectionCreateResult
+        resultCallback: ConnectionCreateListener
     )
 
     /**
      * Request to revoke SCA connection.
-     * Result is returned through callback.
+     * Result is returned via callback.
      */
     fun revokeConnections(
         connectionsAndKeys: List<ConnectionAndKey>,
-        resultCallback: ConnectionsRevokeResult?
+        resultCallback: ConnectionsRevokeListener?
     )
 
     /**
      * Request to get active SCA Authorizations list.
-     * Result is returned through callback.
+     * Result is returned via callback.
      */
     fun getAuthorizations(
         connectionsAndKeys: List<ConnectionAndKey>,
-        resultCallback: FetchAuthorizationsResult
+        resultCallback: FetchEncryptedDataListener
     )
 
     /**
@@ -97,12 +104,12 @@ interface AuthenticatorApiManagerAbs {
 
     /**
      * Request to get active SCA Authorization.
-     * Result is returned through callback.
+     * Result is returned via callback.
      */
     fun getAuthorization(
         connectionAndKey: ConnectionAndKey,
         authorizationId: String,
-        resultCallback: FetchAuthorizationResult
+        resultCallback: FetchAuthorizationListener
     )
 
     /**
@@ -112,40 +119,51 @@ interface AuthenticatorApiManagerAbs {
 
     /**
      * Request to confirm SCA Authorization.
-     * Result is returned through callback.
+     * Result is returned via callback.
      */
     fun confirmAuthorization(
         connectionAndKey: ConnectionAndKey,
         authorizationId: String,
         authorizationCode: String?,
-        resultCallback: ConfirmAuthorizationResult
+        resultCallback: ConfirmAuthorizationListener
     )
 
     /**
      * Request to deny SCA Authorization.
-     * Result is returned through callback.
+     * Result is returned via callback.
      */
     fun denyAuthorization(
         connectionAndKey: ConnectionAndKey,
         authorizationId: String,
         authorizationCode: String?,
-        resultCallback: ConfirmAuthorizationResult
+        resultCallback: ConfirmAuthorizationListener
     )
 
     /**
-     * Initialize SDK
-     *
-     * @param context of Application
-     */
-    fun initializeSDK(context: Context)
-
-    /**
      * Request to send action.
-     * Result is returned through callback.
+     * Result is returned via callback.
      */
     fun sendAction(
         actionUUID: String,
         connectionAndKey: ConnectionAndKey,
         resultCallback: ActionSubmitListener
+    )
+
+    /**
+     * Request to get active User Consents list.
+     * Result is returned via callback.
+     */
+    fun getConsents(
+        connectionsAndKeys: List<ConnectionAndKey>,
+        resultCallback: FetchEncryptedDataListener
+    )
+
+    /**
+     * Request to revoke consent
+     */
+    fun revokeConsent(
+        consentId: String,
+        connectionAndKey: ConnectionAndKey,
+        resultCallback: ConsentRevokeListener
     )
 }

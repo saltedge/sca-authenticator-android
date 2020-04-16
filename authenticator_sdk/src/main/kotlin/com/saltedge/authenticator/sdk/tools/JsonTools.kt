@@ -22,8 +22,8 @@ package com.saltedge.authenticator.sdk.tools
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.saltedge.authenticator.sdk.network.adapter.DateTimeAdapter
-import com.saltedge.authenticator.sdk.network.adapter.LocalDateAdapter
+import com.saltedge.authenticator.sdk.tools.adapter.DateTimeAdapter
+import com.saltedge.authenticator.sdk.tools.adapter.LocalDateAdapter
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
 

@@ -18,13 +18,9 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.contract
+package com.saltedge.authenticator.sdk.model.request
 
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
-
-/**
- * Polling service contract
- */
-interface FetchAuthorizationContract : FetchAuthorizationListener {
-    fun getConnectionData(): ConnectionAndKey?
-}
+internal data class SignedRequest(
+    val requestUrl: String,
+    val headersMap: Map<String, String>
+)

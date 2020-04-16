@@ -29,14 +29,16 @@ import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.model.toConnection
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.contract.ConnectionCreateResult
-import com.saltedge.authenticator.sdk.contract.FetchProviderConfigurationDataResult
+import com.saltedge.authenticator.sdk.contract.ConnectionCreateListener
+import com.saltedge.authenticator.sdk.contract.FetchProviderConfigurationListener
 import com.saltedge.authenticator.sdk.model.*
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
+import com.saltedge.authenticator.sdk.model.configuration.ProviderConfigurationData
+import com.saltedge.authenticator.sdk.model.configuration.isValid
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.error.getErrorMessage
-import com.saltedge.authenticator.sdk.model.response.CreateConnectionData
+import com.saltedge.authenticator.sdk.model.response.CreateConnectionResponseData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.tools.parseRedirect
 import javax.inject.Inject
@@ -47,13 +49,13 @@ class ConnectProviderPresenter @Inject constructor(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyStoreManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs
-) : ConnectProviderContract.Presenter, ConnectionCreateResult, FetchProviderConfigurationDataResult {
+) : ConnectProviderContract.Presenter, ConnectionCreateListener, FetchProviderConfigurationListener {
 
     override val reportProblemActionText: Int?
         get() = if (viewMode.isCompleteWithSuccess) null else R.string.actions_contact_support
     private var sessionFailMessage: String? = null
     private var initialConnectData: ConnectAppLinkData? = null
-    private var authenticateData: CreateConnectionData? = null
+    private var authenticateData: CreateConnectionResponseData? = null
     private var connection = Connection()
     private var viewMode: ViewMode = ViewMode.START_NEW_CONNECT
     override var viewContract: ConnectProviderContract.View? = null
@@ -120,7 +122,7 @@ class ConnectProviderPresenter @Inject constructor(
         if (viewId == R.id.mainActionView) viewContract?.closeView()
     }
 
-    override fun fetchProviderConfigurationDataResult(result: ProviderData?, error: ApiErrorData?) {
+    override fun fetchProviderConfigurationDataResult(result: ProviderConfigurationData?, error: ApiErrorData?) {
         when {
             error != null -> viewContract?.showErrorAndFinish(error.getErrorMessage(appContext))
             result != null && result.isValid() -> {
@@ -137,7 +139,7 @@ class ConnectProviderPresenter @Inject constructor(
         viewContract?.showErrorAndFinish(error.getErrorMessage(appContext))
     }
 
-    override fun onConnectionCreateSuccess(response: CreateConnectionData) {
+    override fun onConnectionCreateSuccess(response: CreateConnectionResponseData) {
         val accessToken = response.accessToken
         val redirectUrl = response.redirectUrl
         if (accessToken?.isNotEmpty() == true) {
@@ -149,8 +151,8 @@ class ConnectProviderPresenter @Inject constructor(
             if (redirectUrl.startsWith(AuthenticatorApiManager.authenticationReturnUrl)) {
                 parseRedirect(
                     url = redirectUrl,
-                    success = { connectionID, accessToken ->
-                        webAuthFinishSuccess(connectionID, accessToken)
+                    success = { connectionID, resultAccessToken ->
+                        webAuthFinishSuccess(connectionID, resultAccessToken)
                     },
                     error = { errorClass, errorMessage ->
                         webAuthFinishError(errorClass, errorMessage)

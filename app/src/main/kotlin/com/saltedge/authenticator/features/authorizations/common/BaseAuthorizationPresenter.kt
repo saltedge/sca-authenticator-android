@@ -1,18 +1,18 @@
-/* 
- * This file is part of the Salt Edge Authenticator distribution 
+/*
+ * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2019 Salt Edge Inc.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3 or later.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * For the additional permissions granted for Salt Edge Authenticator
@@ -23,11 +23,11 @@ package com.saltedge.authenticator.features.authorizations.common
 import android.content.Context
 import com.saltedge.authenticator.features.authorizations.confirmPasscode.PasscodePromptCallback
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationResult
+import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
 import com.saltedge.authenticator.sdk.model.AuthorizationID
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.ConnectionID
-import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResultData
+import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
 
@@ -35,7 +35,7 @@ abstract class BaseAuthorizationPresenter(
     internal val appContext: Context,
     internal val biometricTools: BiometricToolsAbs,
     internal val apiManager: AuthenticatorApiManagerAbs
-) : BiometricPromptCallback, PasscodePromptCallback, ConfirmAuthorizationResult {
+) : BiometricPromptCallback, PasscodePromptCallback, ConfirmAuthorizationListener {
 
     var currentViewModel: AuthorizationViewModel? = null
     var currentConnectionAndKey: ConnectionAndKey? = null
@@ -67,7 +67,7 @@ abstract class BaseAuthorizationPresenter(
 
     override fun passcodePromptCanceledByUser() {}
 
-    override fun onConfirmDenySuccess(result: ConfirmDenyResultData, connectionID: ConnectionID) {
+    override fun onConfirmDenySuccess(result: ConfirmDenyResponseData, connectionID: ConnectionID) {
         onConfirmDenySuccess(
             success = result.success == true && result.authorizationId?.isNotEmpty() == true,
             connectionID = connectionID,

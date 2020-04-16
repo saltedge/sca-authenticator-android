@@ -22,7 +22,7 @@ package com.saltedge.authenticator.sdk.network.connector
 
 import android.net.Uri
 import com.saltedge.authenticator.sdk.constants.DEFAULT_EXPIRATION_MINUTES
-import com.saltedge.authenticator.sdk.model.request.AuthenticatedRequestData
+import com.saltedge.authenticator.sdk.model.request.SignedRequest
 import com.saltedge.authenticator.sdk.network.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.network.HEADER_KEY_EXPIRES_AT
 import com.saltedge.authenticator.sdk.network.HEADER_KEY_SIGNATURE
@@ -35,17 +35,17 @@ import java.security.PrivateKey
 /**
  * Create Authenticated (with Signature) request data
  */
-internal fun <T> createAuthenticatedRequestData(
+internal fun <T> createSignedRequestData(
     requestMethod: String,
     baseUrl: String,
     apiRoutePath: String,
     accessToken: String,
     signPrivateKey: PrivateKey,
     requestBodyObject: T? = null
-): AuthenticatedRequestData {
+): SignedRequest {
     val requestUrl = createRequestUrl(baseUrl = baseUrl, routePath = apiRoutePath)
     val requestBodyString = requestBodyObject?.let { RestClient.defaultGson.toJson(it) } ?: ""
-    return AuthenticatedRequestData(
+    return SignedRequest(
         requestUrl = requestUrl,
         headersMap = createHeaders(
             signPrivateKey = signPrivateKey,

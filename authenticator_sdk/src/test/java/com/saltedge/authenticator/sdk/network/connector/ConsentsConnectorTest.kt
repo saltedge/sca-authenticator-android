@@ -20,15 +20,14 @@
  */
 package com.saltedge.authenticator.sdk.network.connector
 
-import com.saltedge.authenticator.sdk.contract.FetchAuthorizationsContract
-import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
+import com.saltedge.authenticator.sdk.model.EncryptedData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.EncryptedData
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.response.EncryptedListResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.HEADER_KEY_ACCESS_TOKEN
-import com.saltedge.authenticator.sdk.network.RestClient
 import com.saltedge.authenticator.sdk.testTools.get404Response
 import com.saltedge.authenticator.sdk.testTools.getDefaultTestConnection
 import com.saltedge.authenticator.sdk.testTools.getTestPrivateKey
@@ -49,30 +48,57 @@ import retrofit2.Response
 import java.security.PrivateKey
 
 @RunWith(RobolectricTestRunner::class)
-class AuthorizationsConnectorTest {
+class ConsentsConnectorTest {
 
     @Test
     @Throws(Exception::class)
     fun valuesTest() {
-        val connector = AuthorizationsConnector(RestClient.apiInterface, null)
-
-        Assert.assertNull(connector.resultCallback)
-
-        connector.resultCallback = mockCallback
+        val connector = ConsentsConnector(
+            mockApi,
+            listOf(ConnectionAndKey(requestConnection, privateKey)),
+            mockCallback
+        )
 
         Assert.assertNotNull(connector.resultCallback)
+        Assert.assertNotNull(connector.connectionsAndKeys)
     }
 
     @Test
     @Throws(Exception::class)
-    fun fetchAuthorizationsTest_allSuccess() {
-        val connector = AuthorizationsConnector(mockApi, mockCallback)
-        connector.fetchAuthorizations(listOf(ConnectionAndKey(requestConnection, privateKey)))
+    fun givenConnector_whenFetchConsents_thenEnqueueCall() {
+        //given
+        val connector = ConsentsConnector(
+            mockApi,
+            listOf(ConnectionAndKey(requestConnection, privateKey)),
+            mockCallback
+        )
 
+        //when
+        connector.fetchConsents()
+
+        //then
         verify { mockCall.enqueue(connector) }
+        verify(exactly = 1) {
+            mockApi.getConsents(
+                requestUrl = requestUrl,
+                headersMap = capturedHeaders.first()
+            )
+        }
 
-        connector.onResponse(
-            mockCall, Response.success(
+        assertThat(capturedHeaders.first()[HEADER_KEY_ACCESS_TOKEN], equalTo("accessToken"))
+        confirmVerified(mockCallback)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun givenConnectorAndSuccessResponse_whenOnResponse_thenReturnListOfEncryptedData() {
+        //given
+        val connector = ConsentsConnector(
+            mockApi,
+            listOf(ConnectionAndKey(requestConnection, privateKey)),
+            mockCallback
+        )
+        val response = Response.success(
             EncryptedListResponse(
                 data = listOf(
                     EncryptedData(
@@ -86,8 +112,11 @@ class AuthorizationsConnectorTest {
                 )
             )
         )
-        )
 
+        //when
+        connector.onResponse(mockCall, response)
+
+        //then
         verify {
             mockCallback.onFetchEncryptedDataResult(
                 result = listOf(
@@ -108,21 +137,19 @@ class AuthorizationsConnectorTest {
 
     @Test
     @Throws(Exception::class)
-    fun fetchAuthorizationsTest_withError() {
-        val connector = AuthorizationsConnector(mockApi, mockCallback)
-        connector.fetchAuthorizations(listOf(ConnectionAndKey(requestConnection, privateKey)))
+    fun givenConnectorAnd404Response_whenOnResponse_thenReturnErrors() {
+        //given
+        val connector = ConsentsConnector(
+            mockApi,
+            listOf(ConnectionAndKey(requestConnection, privateKey)),
+            mockCallback
+        )
+        val response: Response<EncryptedListResponse> = get404Response()
 
-        verify(exactly = 1) {
-            mockApi.getAuthorizations(
-                requestUrl = requestUrl,
-                headersMap = capturedHeaders.first()
-            )
-        }
-        verify { mockCall.enqueue(connector) }
-        assertThat(capturedHeaders.first()[HEADER_KEY_ACCESS_TOKEN], equalTo("accessToken"))
+        //when
+        connector.onResponse(mockCall, response)
 
-        connector.onResponse(mockCall, get404Response())
-
+        //then
         verify {
             mockCallback.onFetchEncryptedDataResult(
                 result = emptyList(),
@@ -138,10 +165,10 @@ class AuthorizationsConnectorTest {
         confirmVerified(mockCallback)
     }
 
-    private val requestUrl = "https://localhost/api/authenticator/v1/authorizations"
+    private val requestUrl = "https://localhost/api/authenticator/v1/consents"
     private val requestConnection: ConnectionAbs = getDefaultTestConnection()
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
-    private val mockCallback = mockkClass(FetchAuthorizationsContract::class)
+    private val mockCallback = mockkClass(FetchEncryptedDataListener::class)
     private val mockCall: Call<EncryptedListResponse> =
         mockkClass(Call::class) as Call<EncryptedListResponse>
     private var capturedHeaders: MutableList<Map<String, String>> = mutableListOf()
@@ -152,17 +179,15 @@ class AuthorizationsConnectorTest {
     fun setUp() {
         capturedHeaders = mutableListOf()
         every {
-            mockApi.getAuthorizations(
+            mockApi.getConsents(
                 requestUrl = requestUrl,
                 headersMap = capture(capturedHeaders)
             )
         } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
-        every { mockCall.request() } returns Request.Builder().url(requestUrl).addHeader(
-            HEADER_KEY_ACCESS_TOKEN,
-            "accessToken"
-        ).build()
-        every { mockCallback.getConnectionsData() } returns null
+        every { mockCall.request() } returns Request.Builder().url(requestUrl)
+            .addHeader(HEADER_KEY_ACCESS_TOKEN, "accessToken")
+            .build()
         every { mockCallback.onFetchEncryptedDataResult(any(), any()) } returns Unit
     }
 }

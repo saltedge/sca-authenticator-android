@@ -27,12 +27,11 @@ import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.API_VERSION
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_API_RESPONSE
-import com.saltedge.authenticator.sdk.model.ProviderData
+import com.saltedge.authenticator.sdk.model.configuration.ProviderConfigurationData
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.model.response.CreateConnectionData
+import com.saltedge.authenticator.sdk.model.response.CreateConnectionResponseData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import io.mockk.*
@@ -127,7 +126,7 @@ class ConnectProviderPresenterTest {
     fun fetchProviderConfigurationDataResultTest_case3() {
         val presenter = createPresenter(viewContract = mockView)
         presenter.fetchProviderConfigurationDataResult(
-            result = ProviderData(
+            result = ProviderConfigurationData(
                 connectUrl = "https://demo.saltedge.com",
                 code = "demobank",
                 name = "Demobank",
@@ -170,7 +169,7 @@ class ConnectProviderPresenterTest {
     @Throws(Exception::class)
     fun onConnectionInitSuccessTestCase1() {
         val presenter = createPresenter(viewContract = mockView)
-        val connectUrlData = CreateConnectionData(
+        val connectUrlData = CreateConnectionResponseData(
             redirectUrl = "https://www.fentury.com",
             connectionId = "connectionId"
         )
@@ -185,7 +184,7 @@ class ConnectProviderPresenterTest {
     @Throws(Exception::class)
     fun onConnectionInitSuccessTestCase2() {
         val presenter = createPresenter(viewContract = mockView)
-        val connectUrlData = CreateConnectionData(
+        val connectUrlData = CreateConnectionResponseData(
             redirectUrl = "invalidUrl",
             connectionId = "connectionId"
         )
@@ -298,7 +297,7 @@ class ConnectProviderPresenterTest {
         assertTrue(presenter.logoUrl.isEmpty())
 
         presenter.fetchProviderConfigurationDataResult(
-            result = ProviderData(
+            result = ProviderConfigurationData(
                 connectUrl = "https://www.fentury.com",
                 code = "demobank",
                 name = "Demobank",
@@ -355,7 +354,7 @@ class ConnectProviderPresenterTest {
 
         assertFalse(presenter.shouldShowWebView)
 
-        val connectUrlData = CreateConnectionData(
+        val connectUrlData = CreateConnectionResponseData(
             redirectUrl = "https://www.fentury.com",
             connectionId = "connectionId"
         )
@@ -572,7 +571,7 @@ class ConnectProviderPresenterTest {
     @Throws(Exception::class)
     fun onViewCreatedCase1() {
         val presenter = createPresenter(viewContract = mockView)
-        val connectUrlData = CreateConnectionData(
+        val connectUrlData = CreateConnectionResponseData(
             redirectUrl = "https://www.fentury.com",
             connectionId = "connectionId"
         )
@@ -657,7 +656,7 @@ class ConnectProviderPresenterTest {
 
         assertTrue(presenter.shouldShowProgressView)
 
-        val connectUrlData = CreateConnectionData(
+        val connectUrlData = CreateConnectionResponseData(
             redirectUrl = "https://www.fentury.com",
             connectionId = "connectionId"
         )

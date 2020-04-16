@@ -21,8 +21,9 @@
 package com.saltedge.authenticator.sdk.tools.crypt
 
 import android.util.Base64
+import com.saltedge.authenticator.sdk.model.ConsentData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
-import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
+import com.saltedge.authenticator.sdk.model.EncryptedData
 import com.saltedge.authenticator.sdk.tools.createDefaultGson
 import com.saltedge.authenticator.sdk.tools.decodeFromPemBase64String
 import java.security.Key
@@ -108,7 +109,7 @@ object CryptoTools : CryptoToolsAbs {
     }
 
     override fun decryptAuthorizationData(
-        encryptedData: EncryptedAuthorizationData,
+        encryptedData: EncryptedData,
         rsaPrivateKey: PrivateKey?
     ): AuthorizationData? {
         if (encryptedData.algorithm != supportedAlgorithm) return null
@@ -121,6 +122,26 @@ object CryptoTools : CryptoToolsAbs {
             val iv = rsaDecrypt(encryptedIV, privateKey) ?: return null
             val jsonString = aesDecrypt(encryptedMessage, key = key, iv = iv)
             createDefaultGson().fromJson(jsonString, AuthorizationData::class.java)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    override fun decryptConsentData(
+        encryptedData: EncryptedData,
+        rsaPrivateKey: PrivateKey?
+    ): ConsentData? {
+        if (encryptedData.algorithm != supportedAlgorithm) return null
+        return try {
+            val privateKey = rsaPrivateKey ?: return null
+            val encryptedKey = encryptedData.key ?: return null
+            val encryptedIV = encryptedData.iv ?: return null
+            val encryptedMessage = encryptedData.data ?: return null
+            val key = rsaDecrypt(encryptedKey, privateKey) ?: return null
+            val iv = rsaDecrypt(encryptedIV, privateKey) ?: return null
+            val jsonString = aesDecrypt(encryptedMessage, key = key, iv = iv)
+            createDefaultGson().fromJson(jsonString, ConsentData::class.java)
         } catch (e: Exception) {
             e.printStackTrace()
             null

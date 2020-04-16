@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,14 +21,12 @@
 package com.saltedge.authenticator.sdk.contract
 
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
+import com.saltedge.authenticator.sdk.model.response.ConsentRevokeResponseData
 
 /**
- * Get SCA Authorizations request result
+ * Consent revoke request result
  */
-interface FetchAuthorizationsResult {
-    fun onFetchAuthorizationsResult(
-        result: List<EncryptedAuthorizationData>,
-        errors: List<ApiErrorData>
-    )
+interface ConsentRevokeListener {
+    fun onConsentRevokeFailure(error: ApiErrorData)
+    fun onConsentRevokeSuccess(result: ConsentRevokeResponseData)
 }

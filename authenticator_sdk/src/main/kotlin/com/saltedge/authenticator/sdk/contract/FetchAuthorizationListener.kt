@@ -18,21 +18,14 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
+package com.saltedge.authenticator.sdk.contract
 
-package com.saltedge.authenticator.sdk.model.response
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.model.EncryptedData
 
-import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.constants.KEY_DATA
-import com.saltedge.authenticator.sdk.constants.KEY_ID
-import com.saltedge.authenticator.sdk.constants.KEY_SUCCESS
-
-data class ConfirmDenyResponseData(@SerializedName(KEY_DATA) var data: ConfirmDenyResultData? = null)
-
-data class ConfirmDenyResultData(
-    @SerializedName(KEY_SUCCESS) var success: Boolean? = null,
-    @SerializedName(KEY_ID) var authorizationId: String? = null
-)
-
-fun ConfirmDenyResultData.isValid(): Boolean {
-    return this.success != null && this.authorizationId?.isNotEmpty() == true
+/**
+ * Get SCA Authorization request result
+ */
+interface FetchAuthorizationListener {
+    fun onFetchAuthorizationResult(result: EncryptedData?, error: ApiErrorData?)
 }

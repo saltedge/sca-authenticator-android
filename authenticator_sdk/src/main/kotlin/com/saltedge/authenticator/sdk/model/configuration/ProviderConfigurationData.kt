@@ -18,14 +18,20 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.contract
+package com.saltedge.authenticator.sdk.model.configuration
 
-import com.saltedge.authenticator.sdk.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.model.ProviderData
+import com.google.gson.annotations.SerializedName
+import com.saltedge.authenticator.sdk.constants.*
+import java.io.Serializable
 
 /**
- * Get Service Provider configuration request result
+ * Model of provider data
  */
-interface FetchProviderConfigurationDataResult {
-    fun fetchProviderConfigurationDataResult(result: ProviderData?, error: ApiErrorData?)
-}
+data class ProviderConfigurationData(
+    @SerializedName(KEY_CONNECT_URL) var connectUrl: String,
+    @SerializedName(KEY_CODE) var code: String,
+    @SerializedName(KEY_NAME) var name: String,
+    @SerializedName(KEY_LOGO_URL) var logoUrl: String?,
+    @SerializedName(KEY_VERSION) var version: String,
+    @SerializedName(KEY_SUPPORT_EMAIL) var supportEmail: String?
+) : Serializable

@@ -18,18 +18,21 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model.response
+package com.saltedge.authenticator.sdk.model
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.constants.KEY_ACCESS_TOKEN
-import com.saltedge.authenticator.sdk.constants.KEY_DATA
-import com.saltedge.authenticator.sdk.constants.KEY_SUCCESS
+import com.saltedge.authenticator.sdk.constants.*
+import org.joda.time.DateTime
+import java.io.Serializable
 
-data class RevokeAccessTokenResponseData(
-    @SerializedName(KEY_DATA) var data: RevokeAccessTokenResultData? = null
-)
-
-data class RevokeAccessTokenResultData(
-    @SerializedName(KEY_SUCCESS) var success: Boolean? = null,
-    @SerializedName(KEY_ACCESS_TOKEN) var accessToken: String? = null
-)
+/**
+ * Consent POJO model with annotation for GSON parsing
+ */
+data class ConsentData(
+    @SerializedName(KEY_ID) var id: String,
+    @SerializedName(KEY_CREATED_AT) var createdAt: DateTime? = null,
+    @SerializedName(KEY_EXPIRES_AT) var expiresAt: DateTime,
+    @SerializedName(KEY_TITLE) var title: String,
+    @SerializedName(KEY_DESCRIPTION) var description: String,
+    @SerializedName(KEY_CONNECTION_ID) var connectionId: String
+) : Serializable

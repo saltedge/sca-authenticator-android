@@ -20,11 +20,15 @@
  */
 package com.saltedge.authenticator.sdk.contract
 
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.EncryptedData
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 
 /**
- * Polling service contract
+ * Encrypted Data (Authorizations, Consents) request result
  */
-interface FetchAuthorizationContract : FetchAuthorizationListener {
-    fun getConnectionData(): ConnectionAndKey?
+interface FetchEncryptedDataListener {
+    fun onFetchEncryptedDataResult(
+        result: List<EncryptedData>,
+        errors: List<ApiErrorData>
+    )
 }

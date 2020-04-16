@@ -20,51 +20,54 @@
  */
 package com.saltedge.authenticator.sdk.network.connector
 
-import com.saltedge.authenticator.sdk.constants.API_ACTIONS
-import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_PUT
-import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
+import com.saltedge.authenticator.sdk.constants.API_CONSENTS
+import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_DELETE
+import com.saltedge.authenticator.sdk.contract.ConsentRevokeListener
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.error.createInvalidResponseError
-import com.saltedge.authenticator.sdk.model.response.SubmitActionResponse
+import com.saltedge.authenticator.sdk.model.response.ConsentRevokeResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.ApiResponseInterceptor
 import retrofit2.Call
 
-internal class SubmitActionConnector(
-    private val apiInterface: ApiInterface,
-    var resultCallback: ActionSubmitListener?
-): ApiResponseInterceptor<SubmitActionResponse>() {
+/**
+ * Connector make request to API to get Consents list
+ *
+ * @param apiInterface - instance of ApiInterface
+ * @param resultCallback - instance of FetchEncryptedDataResult for returning query result
+ * @see QueueConnector
+ */
+internal class ConsentRevokeConnector(
+    val apiInterface: ApiInterface,
+    var resultCallback: ConsentRevokeListener?
+) : ApiResponseInterceptor<ConsentRevokeResponse>() {
 
-    fun updateAction(
-        actionUUID: String,
-        connectionAndKey: ConnectionAndKey
-    ) {
+    fun revokeConsent(consentId: String, connectionAndKey: ConnectionAndKey) {
         val requestData = createSignedRequestData<Nothing>(
-            requestMethod = REQUEST_METHOD_PUT,
+            requestMethod = REQUEST_METHOD_DELETE,
             baseUrl = connectionAndKey.connection.connectUrl,
-            apiRoutePath = "$API_ACTIONS/${actionUUID}",
+            apiRoutePath = "$API_CONSENTS/${consentId}",
             accessToken = connectionAndKey.connection.accessToken,
             signPrivateKey = connectionAndKey.key
         )
 
-        apiInterface.updateAction(
+        apiInterface.revokeConsent(
             requestData.requestUrl,
             requestData.headersMap
         ).enqueue(this)
     }
 
-
-    override fun onSuccessResponse(call: Call<SubmitActionResponse>, response: SubmitActionResponse) {
+    override fun onSuccessResponse(call: Call<ConsentRevokeResponse>, response: ConsentRevokeResponse) {
         val data = response.data
         if (data == null) {
             onFailureResponse(call, createInvalidResponseError())
         } else {
-            resultCallback?.onActionInitSuccess(data)
+            resultCallback?.onConsentRevokeSuccess(data)
         }
     }
 
-    override fun onFailureResponse(call: Call<SubmitActionResponse>, error: ApiErrorData) {
-        resultCallback?.onActionInitFailure(error)
+    override fun onFailureResponse(call: Call<ConsentRevokeResponse>, error: ApiErrorData) {
+        resultCallback?.onConsentRevokeFailure(error)
     }
 }

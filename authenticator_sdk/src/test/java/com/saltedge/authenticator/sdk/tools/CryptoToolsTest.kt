@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.sdk.tools
 
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
-import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
+import com.saltedge.authenticator.sdk.model.EncryptedData
 import com.saltedge.authenticator.sdk.testTools.TestTools
 import com.saltedge.authenticator.sdk.testTools.getTestPrivateKey
 import com.saltedge.authenticator.sdk.testTools.getTestPublicKey
@@ -143,7 +143,7 @@ class CryptoToolsTest {
         assertThat(aesKey.size, equalTo(32)) // AES-256
         assertThat(aesIV.size, equalTo(16))
 
-        val encryptedData = EncryptedAuthorizationData(
+        val encryptedData = EncryptedData(
             id = authData.id,
             connectionId = authData.connectionId,
             algorithm = "AES-256-CBC",

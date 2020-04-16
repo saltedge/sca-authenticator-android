@@ -20,11 +20,13 @@
  */
 package com.saltedge.authenticator.sdk.contract
 
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.model.response.CreateConnectionResponseData
 
 /**
- * Polling service contract
+ * Create SCA Connection request result
  */
-interface FetchAuthorizationContract : FetchAuthorizationListener {
-    fun getConnectionData(): ConnectionAndKey?
+interface ConnectionCreateListener {
+    fun onConnectionCreateFailure(error: ApiErrorData)
+    fun onConnectionCreateSuccess(response: CreateConnectionResponseData)
 }
