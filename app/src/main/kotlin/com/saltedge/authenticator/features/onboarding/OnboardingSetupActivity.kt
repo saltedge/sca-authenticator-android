@@ -122,6 +122,9 @@ class OnboardingSetupActivity : AppCompatActivity(),
                 this.showWarningDialog(message = message)
             }
         })
+        viewModel.moveNext.observe(this, Observer<ViewModelEvent<Unit>> {
+            onboardingPager.currentItem = onboardingPager.currentItem + 1
+        })
     }
 
     private fun initViews() {

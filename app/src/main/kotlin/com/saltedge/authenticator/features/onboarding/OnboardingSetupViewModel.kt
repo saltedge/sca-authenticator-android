@@ -21,7 +21,6 @@
 package com.saltedge.authenticator.features.onboarding
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -71,6 +70,9 @@ class OnboardingSetupViewModel(
     var showMainActivity = MutableLiveData<ViewModelEvent<Unit>>()
         private set
 
+    var moveNext = MutableLiveData<ViewModelEvent<Unit>>()
+        private set
+
     val onboardingViewModels: List<OnboardingPageViewModel> = listOf(
         OnboardingPageViewModel(
             R.string.onboarding_carousel_one_title,
@@ -103,7 +105,7 @@ class OnboardingSetupViewModel(
             R.id.skipActionView, R.id.proceedToSetup -> {
                 showPasscodeInput()
             }
-            R.id.nextActionView -> Log.d("some", "click on Next")
+            R.id.nextActionView -> moveNext.postValue(ViewModelEvent())
         }
     }
 

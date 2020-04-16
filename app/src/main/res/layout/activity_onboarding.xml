@@ -33,7 +33,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white">
+        android:background="@color/theme_background">
 
         <RelativeLayout
             android:id="@+id/setupLayout"
@@ -153,7 +153,7 @@
                 android:layout_marginStart="@dimen/dp_32"
                 android:layout_marginTop="@dimen/dp_325"
                 android:layout_marginBottom="@dimen/dp_124"
-                app:selectedColor="@color/blue" />
+                app:selectedColor="@color/dots_background" />
         </RelativeLayout>
     </FrameLayout>
 </layout>
