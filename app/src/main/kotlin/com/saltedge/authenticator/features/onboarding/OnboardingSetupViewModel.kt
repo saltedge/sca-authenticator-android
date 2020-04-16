@@ -64,7 +64,7 @@ class OnboardingSetupViewModel(
     var passcodePositiveActionText = MutableLiveData<Int>()
         private set
 
-    var showWarningDialogWithMessage = MutableLiveData<ViewModelEvent<String>>()
+    var showWarningDialogWithMessage = MutableLiveData<String>()
         private set
 
     var showMainActivity = MutableLiveData<ViewModelEvent<Unit>>()
@@ -118,7 +118,7 @@ class OnboardingSetupViewModel(
             hidePasscodeInputAndShowSetupView.value = true
             showMainActivity.postValue(ViewModelEvent())
         } else {
-            showWarningDialogWithMessage.postValue(ViewModelEvent(appContext.getString(R.string.errors_cant_save_passcode)))
+            showWarningDialogWithMessage.postValue(appContext.getString(R.string.errors_cant_save_passcode))
         }
     }
 

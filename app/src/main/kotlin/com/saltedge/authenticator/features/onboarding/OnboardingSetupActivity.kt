@@ -117,10 +117,8 @@ class OnboardingSetupActivity : AppCompatActivity(),
         viewModel.showMainActivity.observe(this, Observer<ViewModelEvent<Unit>> {
             showMainActivity()
         })
-        viewModel.showWarningDialogWithMessage.observe(this, Observer<ViewModelEvent<String>> {
-            it?.getContentIfNotHandled()?.let { message ->
-                this.showWarningDialog(message = message)
-            }
+        viewModel.showWarningDialogWithMessage.observe(this, Observer<String> { message ->
+            this.showWarningDialog(message = message)
         })
         viewModel.moveNext.observe(this, Observer<ViewModelEvent<Unit>> {
             onboardingPager.currentItem = onboardingPager.currentItem + 1

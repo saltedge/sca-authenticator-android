@@ -24,7 +24,7 @@ import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
-import org.junit.Assert
+import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
@@ -33,22 +33,22 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class OnboardingSetupModuleTest {
 
+    private val mockPreferences = Mockito.mock(PreferenceRepositoryAbs::class.java)
+    private val mockBiometricTools = Mockito.mock(BiometricToolsAbs::class.java)
+    private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)
+
     @Test
     @Throws(Exception::class)
     fun providePresenterTest() {
         val module = OnboardingSetupModule()
 
-        Assert.assertNotNull(
-            module.providePresenter(
-                TestAppTools.applicationContext,
-                mockPreferences,
-                mockBiometricTools,
-                mockPasscodeTools
+        assertNotNull(
+            module.provideFactory(
+                appContext = TestAppTools.applicationContext,
+                preferenceRepository = mockPreferences,
+                biometricTools = mockBiometricTools,
+                passcodeTools = mockPasscodeTools
             )
         )
     }
-
-    private val mockPreferences = Mockito.mock(PreferenceRepositoryAbs::class.java)
-    private val mockBiometricTools = Mockito.mock(BiometricToolsAbs::class.java)
-    private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)
 }
