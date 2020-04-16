@@ -40,7 +40,7 @@ repositories {
 ```
 1. Add SDK dependency to application build.gradle
 ```groovy
-implementation ('com.saltedge.authenticator.sdk:authenticator_sdk:1.0.0@aar') {
+implementation ('com.saltedge.authenticator.sdk:authenticator_sdk:1.1.0@aar') {
     transitive = true
 }
 ```  

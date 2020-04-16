@@ -26,7 +26,7 @@ apply from: './jacoco.gradle'
 apply plugin: 'maven'
 
 def libVersionCode = 1
-def libVersionName = "1.0.0"
+def libVersionName = "1.1.0"
 
 android {
     defaultConfig {
@@ -81,7 +81,7 @@ dependencies {
     api 'net.danlew:android.joda:2.10.2'
 
     androidTestUtil 'com.android.support.test:orchestrator:1.0.2'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     testImplementation 'androidx.test:core:1.2.0'
     testImplementation 'org.robolectric:robolectric:4.3.1'
     testImplementation "io.mockk:mockk:1.9.3"
