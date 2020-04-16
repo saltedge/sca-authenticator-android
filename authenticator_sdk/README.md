@@ -82,7 +82,7 @@ Fields:
  ### ConnectionAndKey model
 `ConnectionAndKey` it is often used wrapper for Connection and related PrivateKey.
  
- ### Encrypted Authorization model
+ ### Encrypted model (Authorization or Consent)
 `Encrypted Authorization` contains encrypted `Authorization` fields.  
 `Authorization` it is an entity which describes pending action which require user confirmation.
   
@@ -156,14 +156,14 @@ _This step can be skipped if application already knows service configuration._
         KeyStoreManager.createOrReplaceRsaKeyPair(connection.guid)
     ```
 
-3. Post connection data and receive ConnectionCreateResult  
+3. Post connection data and receive ConnectionCreateListener  
     ```kotlin
         AuthenticatorApiManager.createConnectionRequest(
                 appContext,
                 conenction,
                 firebaseCloudMessagingToken,
                 connectQueryParam,
-                object : ConnectionCreateResult() {
+                object : ConnectionCreateListener() {
                     override fun onConnectionCreateSuccess(response: CreateConnectionData) {
                         // process success response
                         // open response.connectUrl in WebView or get response.accessToken if present
@@ -210,14 +210,19 @@ That's all, you have connection to Service Provider.
 In some cases application may want to destroy current linking.  
 
 1. Send revoke request
-    ```kotlin
-        AuthenticatorApiManager.revokeConnections(
-            connectionsAndKeys = connectionsAndKeysToRevoke, 
-            resultCallback = object : ConnectionsRevokeResult { }
-        )
-    ```
-    Where  `connectionsAndKeysToRevoke` - List<ConnectionAndKey>. 
-    ConnectionAndKey - it is a model with pair of params: Connection and related PrivateKey
+```kotlin
+    AuthenticatorApiManager.revokeConnections(
+        connectionsAndKeys = connectionsAndKeysToRevoke, 
+        resultCallback = object : ConnectionsRevokeListener {
+            override fun onConnectionsRevokeResult(result: List<Token>, 
+                                                   errors: List<ApiErrorData>) {                   
+                //process errors and success results 
+            } 
+        }
+    )
+```  
+  Where  `connectionsAndKeysToRevoke` - List<ConnectionAndKey>. 
+  ConnectionAndKey - it is a model with pair of params: Connection and related PrivateKey
 
 1. Delete connections from persistent storage
 
@@ -233,9 +238,9 @@ To show pending Authorizations app should request them and decrypt the result.
     ```kotlin
         AuthenticatorApiManager.getAuthorizations(
             connectionsAndKeys = connectionsAndKeysToGet, 
-            resultCallback = object : FetchAuthorizationsResult {
-                override fun onFetchAuthorizationsResult(result: List<EncryptedAuthorizationData>, 
-                                                         errors: List<ApiErrorData>) {                   
+            resultCallback = object : FetchEncryptedDataListener {
+                override fun onFetchEncryptedDataListener(result: List<EncryptedAuthorizationData>, 
+                                                          errors: List<ApiErrorData>) {                   
                     //process errors or process encrypted authorizations result 
                 } 
             }
@@ -243,9 +248,9 @@ To show pending Authorizations app should request them and decrypt the result.
     ```
 
 1. Decrypt received encrypted authorization data. For decrypt should be used related PrivateKey 
-(encryptedAuthorization.connectionId -> Connection.guid -> PrivateKey)
+(encryptedData.connectionId -> Connection.guid -> PrivateKey)
     ```kotlin
-        CryptoTools.decryptAuthorizationData(encryptedAuthorization, rsaPrivateKey)
+        CryptoTools.decryptAuthorizationData(encryptedData, rsaPrivateKey)
     ```
 
 1. Show decrypted Authorizations list to user
@@ -279,7 +284,7 @@ Poll period is set to 2 seconds. For preventing memory leak application should s
         AuthenticatorApiManager.getAuthorization(
             connectionAndKey = connectionAndKeyToGet,
             authorizationId = requiredAuthorizationId,
-            resultCallback = object : FetchAuthorizationResult {
+            resultCallback = object : FetchAuthorizationListener {
                 override fun fetchAuthorizationResult(result: EncryptedAuthorizationData?, 
                                                       error: ApiErrorData?) {                   
                     //process error or process encrypted authorization result
@@ -289,9 +294,9 @@ Poll period is set to 2 seconds. For preventing memory leak application should s
     ```
 
 1. Decrypt authorization data. For decrypt use related PrivateKey 
-(encryptedAuthorization.connectionId -> Connection.guid -> PrivateKey)
+(encryptedData.connectionId -> Connection.guid -> PrivateKey)
     ```kotlin
-        CryptoTools.decryptAuthorizationData(encryptedAuthorization, rsaPrivateKey)
+        CryptoTools.decryptAuthorizationData(encryptedData, rsaPrivateKey)
     ```
 
 1. Show decrypted Authorization to user
@@ -326,7 +331,7 @@ Each pending Authorization can be confirmed. Application can ask user to identif
         connectionAndKey = connectionAndKeyForAuthorizationConfirm,
         authorizationId = confirmedAuthorizationId,
         authorizationCode = authorizationCode,
-        resultCallback = object : ConfirmAuthorizationResult {
+        resultCallback = object : ConfirmAuthorizationListener {
             override fun onConfirmDenyFailure(error: ApiErrorData) {
                 //process request error
             }
@@ -345,7 +350,7 @@ Each pending Authorization can be denyed. Application can ask user to identify b
         connectionAndKey = connectionAndKeyForAuthorizationDeny,
         authorizationId = deniedAuthorizationId,
         authorizationCode = authorizationCode,
-        resultCallback = object : ConfirmAuthorizationResult {
+        resultCallback = object : ConfirmAuthorizationListener {
             override fun onConfirmDenyFailure(error: ApiErrorData) {
                 //process request error
             }
@@ -373,7 +378,48 @@ Each Instant Action has unique code `actionUUID`. After receiving of `actionUUID
         }
     )
 ```
-On success Authenticator app receives `SubmitActionData` which has optional fields `connectionId` and `authorizationId` (if is reqiored additional confirmation).  
+On success, Authenticator app receives `SubmitActionData` which has optional fields `connectionId` and `authorizationId` (if is reqiored additional confirmation).
+
+### Get Consents list
+To show active Consents app should request them and decrypt the result.  
+
+1. Send request
+```kotlin
+    AuthenticatorApiManager.getConsents(
+        connectionsAndKeys = connectionsAndKeysToGet, 
+        resultCallback = object : FetchEncryptedDataListener {
+            override fun onFetchEncryptedDataListener(result: List<EncryptedAuthorizationData>, 
+                                                      errors: List<ApiErrorData>) {                   
+                //process errors or process encrypted consents result 
+            } 
+        }
+    )
+```
+
+1. Decrypt received encrypted authorization data. For decrypt should be used related PrivateKey 
+(encryptedData.connectionId -> Connection.guid -> PrivateKey)
+```kotlin
+    CryptoTools.decryptConsentData(encryptedData, rsaPrivateKey)
+```
+
+### Revoke Consent  
+
+Send request
+```kotlin
+    AuthenticatorApiManager.revokeConsent(
+        consentId  = "consentId",   
+        connectionAndKey = connectionAndKeyForConsent,  
+        resultCallback = object : ConsentRevokeListener {
+            override fun onConsentRevokeFailure(error: ApiErrorData) {
+                //process errors
+            }
+            override fun onConsentRevokeSuccess(result: ConsentRevokeResponseData) {
+                //process success result
+            } 
+        }
+    )
+```
+  
   
 ___
 Copyright © 2019 - 2020 Salt Edge. https://www.saltedge.com  

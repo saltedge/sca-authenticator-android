@@ -27,8 +27,5 @@ import com.saltedge.authenticator.sdk.model.error.ApiErrorData
  * Encrypted Data (Authorizations, Consents) request result
  */
 interface FetchEncryptedDataListener {
-    fun onFetchEncryptedDataResult(
-        result: List<EncryptedData>,
-        errors: List<ApiErrorData>
-    )
+    fun onFetchEncryptedDataResult(result: List<EncryptedData>, errors: List<ApiErrorData>)
 }
