@@ -41,20 +41,20 @@ class OnboardingSetupViewModel(
 
     val headerTitle: MutableLiveData<Int> = MutableLiveData()
     val headerDescription: MutableLiveData<Int> = MutableLiveData()
-    val hideSkipViewAndShowProceedView: MutableLiveData<Boolean> = MutableLiveData()
+    val proceedViewVisibility: MutableLiveData<Int> = MutableLiveData()
+    val skipViewVisibility: MutableLiveData<Int> = MutableLiveData()
     val setupLayoutVisibility: MutableLiveData<Int> = MutableLiveData()
     val onboardingLayoutVisibility: MutableLiveData<Int> = MutableLiveData()
-
-
-    val hidePasscodeInputAndShowSetupView: MutableLiveData<Boolean> = MutableLiveData()
+    val passcodeInputViewVisibility: MutableLiveData<Int> = MutableLiveData()
 
     init {
         headerTitle.value = R.string.onboarding_secure_app_passcode_create
         headerDescription.value = R.string.onboarding_secure_app_passcode_description
-        hideSkipViewAndShowProceedView.value = false
         setupLayoutVisibility.value = View.GONE
         onboardingLayoutVisibility.value = View.VISIBLE
-        hidePasscodeInputAndShowSetupView.value = false
+        proceedViewVisibility.value = View.GONE
+        skipViewVisibility.value = View.VISIBLE
+        passcodeInputViewVisibility.value = View.VISIBLE
     }
 
     var pageIndicator = MutableLiveData<Int>()
@@ -100,7 +100,8 @@ class OnboardingSetupViewModel(
         if (onboardingViewModels.getOrNull(position) != null) {
             pageIndicator.postValue(position)
             if (shouldShowProceedToSetupAction(position)) {
-                hideSkipViewAndShowProceedView.value = true
+                proceedViewVisibility.value = View.VISIBLE
+                skipViewVisibility.value = View.GONE
             }
         }
     }
@@ -120,7 +121,7 @@ class OnboardingSetupViewModel(
 
     fun newPasscodeConfirmed(passcode: String) {
         if (passcodeTools.savePasscode(passcode)) {
-            hidePasscodeInputAndShowSetupView.value = true
+            passcodeInputViewVisibility.value = View.GONE
             showMainActivity.postValue(ViewModelEvent())
         } else {
             showWarningDialogWithMessage.postValue(appContext.getString(R.string.errors_cant_save_passcode))

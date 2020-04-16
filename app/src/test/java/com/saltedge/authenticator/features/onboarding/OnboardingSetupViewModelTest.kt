@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.onboarding
 
+import android.view.View
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
@@ -88,7 +89,8 @@ class OnboardingSetupViewModelTest {
     fun onViewClickTestCase1() {
         viewModel.onViewClick(R.id.skipActionView)
 
-        assertTrue(viewModel.hideOnboardingAndShowPasscodeSetupView.value ?: false)
+        assertThat(viewModel.setupLayoutVisibility.value, equalTo(View.VISIBLE))
+        assertThat(viewModel.onboardingLayoutVisibility.value, equalTo(View.GONE))
         assertNotNull(viewModel.setPasscodeInputMode.value)
 
         assertThat(
@@ -111,7 +113,8 @@ class OnboardingSetupViewModelTest {
     fun onViewClickTestCase2() {
         viewModel.onViewClick(R.id.proceedToSetup)
 
-        assertTrue(viewModel.hideOnboardingAndShowPasscodeSetupView.value ?: false)
+        assertThat(viewModel.setupLayoutVisibility.value, equalTo(View.VISIBLE))
+        assertThat(viewModel.onboardingLayoutVisibility.value, equalTo(View.GONE))
         assertNotNull(viewModel.setPasscodeInputMode.value)
 
         assertThat(
@@ -146,7 +149,8 @@ class OnboardingSetupViewModelTest {
         viewModel.onViewClick(-1)
 
         assertNull(viewModel.moveNext.value)
-        assertFalse(viewModel.hideOnboardingAndShowPasscodeSetupView.value ?: true)
+        assertThat(viewModel.setupLayoutVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.onboardingLayoutVisibility.value, equalTo(View.VISIBLE))
         assertNull(viewModel.setPasscodeInputMode.value)
     }
 
@@ -213,7 +217,7 @@ class OnboardingSetupViewModelTest {
         Mockito.doReturn(true).`when`(mockPasscodeTools).savePasscode(Mockito.anyString())
         viewModel.newPasscodeConfirmed(passcode = "1234")
 
-        assertTrue(viewModel.hidePasscodeInputAndShowSetupView.value ?: false)
+        assertThat(viewModel.passcodeInputViewVisibility.value, equalTo(View.GONE))
         assertNotNull(viewModel.showMainActivity.value)
     }
 
@@ -238,6 +242,7 @@ class OnboardingSetupViewModelTest {
 
         viewModel.onOnboardingPageSelected(position = viewModel.onboardingViewModels.lastIndex)
 
-        assertTrue(viewModel.hideSkipViewAndShowProceedView.value ?: false)
+        assertThat(viewModel.proceedViewVisibility.value, equalTo(View.VISIBLE))
+        assertThat(viewModel.skipViewVisibility.value, equalTo(View.GONE))
     }
 }

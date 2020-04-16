@@ -75,7 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@id/descriptionView"
-                android:visibility="@{onboardingSetupViewModel.hidePasscodeInputAndShowSetupView == true ? View.GONE : View.VISIBLE}" />
+                android:visibility="@{onboardingSetupViewModel.passcodeInputViewVisibility}" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -100,7 +100,7 @@
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/text_14"
-                android:visibility="@{onboardingSetupViewModel.hideSkipViewAndShowProceedView == true ? View.VISIBLE : View.GONE}" />
+                android:visibility="@{onboardingSetupViewModel.proceedViewVisibility}" />
 
             <LinearLayout
                 android:id="@+id/actionLayout"
@@ -112,7 +112,7 @@
                 android:layout_marginBottom="@dimen/dp_40"
                 android:gravity="bottom"
                 android:orientation="horizontal"
-                android:visibility="@{onboardingSetupViewModel.hideSkipViewAndShowProceedView == true ? View.GONE : View.VISIBLE}">
+                android:visibility="@{onboardingSetupViewModel.skipViewVisibility}">
 
                 <TextView
                     android:id="@+id/skipActionView"
