@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.onboarding
 
 import android.content.Context
+import android.view.View
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -41,14 +42,18 @@ class OnboardingSetupViewModel(
     val headerTitle: MutableLiveData<Int> = MutableLiveData()
     val headerDescription: MutableLiveData<Int> = MutableLiveData()
     val hideSkipViewAndShowProceedView: MutableLiveData<Boolean> = MutableLiveData()
-    val hideOnboardingAndShowPasscodeSetupView: MutableLiveData<Boolean> = MutableLiveData()
+    val setupLayoutVisibility: MutableLiveData<Int> = MutableLiveData()
+    val onboardingLayoutVisibility: MutableLiveData<Int> = MutableLiveData()
+
+
     val hidePasscodeInputAndShowSetupView: MutableLiveData<Boolean> = MutableLiveData()
 
     init {
         headerTitle.value = R.string.onboarding_secure_app_passcode_create
         headerDescription.value = R.string.onboarding_secure_app_passcode_description
         hideSkipViewAndShowProceedView.value = false
-        hideOnboardingAndShowPasscodeSetupView.value = false
+        setupLayoutVisibility.value = View.GONE
+        onboardingLayoutVisibility.value = View.VISIBLE
         hidePasscodeInputAndShowSetupView.value = false
     }
 
@@ -133,7 +138,8 @@ class OnboardingSetupViewModel(
 
     private fun showPasscodeInput() {
         val inputMode = PasscodeInputView.InputMode.NEW_PASSCODE
-        hideOnboardingAndShowPasscodeSetupView.value = true
+        setupLayoutVisibility.value = View.VISIBLE
+        onboardingLayoutVisibility.value = View.GONE
         setPasscodeInputMode.postValue(inputMode)
         updateSetupViews(inputMode)
     }
