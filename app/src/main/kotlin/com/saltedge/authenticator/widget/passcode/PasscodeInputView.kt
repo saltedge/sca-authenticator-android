@@ -22,7 +22,6 @@ package com.saltedge.authenticator.widget.passcode
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.annotation.StringRes
@@ -42,8 +41,7 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
         setupViews()
     }
 
-    var inputMode = InputMode.CHECK_PASSCODE
-        private set
+    private var inputMode = InputMode.CHECK_PASSCODE
     private var currentPasscode: String = ""
     var listener: PasscodeInputViewListener? = null
 
@@ -103,7 +101,6 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
                 if (currentPasscode == enteredPasscode) {
                     listener?.onEnteredPasscodeIsValid()
                 } else {
-                    Log.d("some", "4444444")
                     passcodeTextInputView?.setText("")
                     onInputError(context.getString(R.string.errors_passcode_not_match))
                     listener?.onEnteredPasscodeIsInvalid()

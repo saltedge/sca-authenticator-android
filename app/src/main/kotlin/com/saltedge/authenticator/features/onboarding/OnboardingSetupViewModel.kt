@@ -75,19 +75,19 @@ class OnboardingSetupViewModel(
 
     val onboardingViewModels: List<OnboardingPageViewModel> = listOf(
         OnboardingPageViewModel(
-            R.string.onboarding_carousel_one_title,
-            R.string.onboarding_carousel_one_description,
-            R.drawable.ic_onboarding_page_1
+            titleResId = R.string.onboarding_carousel_one_title,
+            subTitleResId = R.string.onboarding_carousel_one_description,
+            imageResId = R.drawable.ic_onboarding_page_1
         ),
         OnboardingPageViewModel(
-            R.string.onboarding_carousel_two_title,
-            R.string.onboarding_carousel_two_description,
-            R.drawable.ic_onboarding_page_2
+            titleResId = R.string.onboarding_carousel_two_title,
+            subTitleResId = R.string.onboarding_carousel_two_description,
+            imageResId = R.drawable.ic_onboarding_page_2
         ),
         OnboardingPageViewModel(
-            R.string.onboarding_carousel_three_title,
-            R.string.onboarding_carousel_three_description,
-            R.drawable.ic_onboarding_page_3
+            titleResId = R.string.onboarding_carousel_three_title,
+            subTitleResId = R.string.onboarding_carousel_three_description,
+            imageResId = R.drawable.ic_onboarding_page_3
         )
     )
 
