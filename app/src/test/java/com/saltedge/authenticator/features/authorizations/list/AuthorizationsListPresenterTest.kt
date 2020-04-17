@@ -31,7 +31,7 @@ import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_CONNECTION_NOT_FOUND
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
-import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
+import com.saltedge.authenticator.sdk.model.EncryptedData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
@@ -94,7 +94,7 @@ class AuthorizationsListPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onFragmentStartTest() {
-        createPresenter(viewContract = mockView).onFragmentResume()
+        createPresenter(viewContract = mockView).onResume()
 
         Mockito.verify(mockView).updateViewsContent()
     }
@@ -188,7 +188,7 @@ class AuthorizationsListPresenterTest {
     fun onListItemClickTest_positiveActionView_invalidParams() {
         Mockito.doReturn(true).`when`(mockBiometricTools).isBiometricReady(TestAppTools.applicationContext)
         val presenter = createPresenter(viewContract = null)
-        presenter.onFetchAuthorizationsResult(
+        presenter.onFetchEncryptedDataResult(
             result = listOf(encryptedData1, encryptedData2),
             errors = emptyList()
         )
@@ -238,21 +238,21 @@ class AuthorizationsListPresenterTest {
     fun onFetchAuthorizationsResultTest_processAuthorizationsErrors() {
         val presenter = createPresenter(viewContract = mockView)
         Mockito.clearInvocations(mockConnectionsRepository)
-        presenter.onFetchAuthorizationsResult(
+        presenter.onFetchEncryptedDataResult(
             result = emptyList(),
             errors = listOf(createRequestError(404))
         )
 
         Mockito.verifyNoMoreInteractions(mockConnectionsRepository)
 
-        presenter.onFetchAuthorizationsResult(
+        presenter.onFetchEncryptedDataResult(
             result = emptyList(),
             errors = listOf(ApiErrorData(errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND))
         )
 
         Mockito.verifyNoMoreInteractions(mockConnectionsRepository)
 
-        presenter.onFetchAuthorizationsResult(
+        presenter.onFetchEncryptedDataResult(
             result = emptyList(),
             errors = listOf(
                 ApiErrorData(
@@ -409,7 +409,7 @@ class AuthorizationsListPresenterTest {
     @Throws(Exception::class)
     fun biometricAuthFinishedTest_invalidParams() {
         val presenter = createPresenter(viewContract = null)
-        presenter.onFetchAuthorizationsResult(
+        presenter.onFetchEncryptedDataResult(
             result = listOf(encryptedData1, encryptedData2),
             errors = emptyList()
         )
@@ -559,8 +559,8 @@ class AuthorizationsListPresenterTest {
             createdAt = 300L
             updatedAt = 300L
         }
-    private val encryptedData1 = EncryptedAuthorizationData(id = "1", connectionId = "1")
-    private val encryptedData2 = EncryptedAuthorizationData(id = "2", connectionId = "1")
+    private val encryptedData1 = EncryptedData(id = "1", connectionId = "1")
+    private val encryptedData2 = EncryptedData(id = "2", connectionId = "1")
     private val authorizationData1 = createAuthorization(id = 1)
     private val authorizationData2 = createAuthorization(id = 2)
     private val viewModel1 = authorizationData1.toAuthorizationViewModel(connection1)

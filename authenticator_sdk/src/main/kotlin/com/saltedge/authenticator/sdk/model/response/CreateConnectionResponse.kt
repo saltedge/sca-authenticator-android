@@ -18,21 +18,20 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-
 package com.saltedge.authenticator.sdk.model.response
 
 import com.google.gson.annotations.SerializedName
+import com.saltedge.authenticator.sdk.constants.KEY_ACCESS_TOKEN
+import com.saltedge.authenticator.sdk.constants.KEY_CONNECT_URL
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.constants.KEY_ID
-import com.saltedge.authenticator.sdk.constants.KEY_SUCCESS
 
-data class ConfirmDenyResponseData(@SerializedName(KEY_DATA) var data: ConfirmDenyResultData? = null)
-
-data class ConfirmDenyResultData(
-    @SerializedName(KEY_SUCCESS) var success: Boolean? = null,
-    @SerializedName(KEY_ID) var authorizationId: String? = null
+data class CreateConnectionResponse(
+    @SerializedName(KEY_DATA) var data: CreateConnectionResponseData? = null
 )
 
-fun ConfirmDenyResultData.isValid(): Boolean {
-    return this.success != null && this.authorizationId?.isNotEmpty() == true
-}
+data class CreateConnectionResponseData(
+    @SerializedName(KEY_CONNECT_URL) var redirectUrl: String? = null,
+    @SerializedName(KEY_ID) var connectionId: String? = null,
+    @SerializedName(KEY_ACCESS_TOKEN) var accessToken: String? = null
+)

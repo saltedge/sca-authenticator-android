@@ -2,8 +2,6 @@
 [![Gitter](https://badges.gitter.im/Salt-Edge/authenticator.svg)](https://gitter.im/Salt-Edge/authenticator?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40saltedge)](http://twitter.com/saltedge)
 
-
-
 <br />
 <p align="center">
   <img src="docs/authenticator_android_logo.png" alt="Logo" width="80" height="80">
@@ -39,10 +37,9 @@ You can find related source code:
 ## Project content
 
 Project contains 3 main modules: 
-* `app` - UI layer and UX flow;
-* `authenticator_sdk` - Salt Edge Authenticator API interactions and utility tools, 
-    See [SDK Description](/authenticator_sdk/README.md);
-* `rasp` - set of tools for Runtime Application Self-Protection checks. 
+* ### Standalone mobile application (`app`);
+* ### [Salt Edge Authenticator API interaction and utility tools](/authenticator_sdk/README.md) (`authenticator_sdk`);
+* ### [Set of tools for Runtime Application Self-Protection checks](/rasp/README.md) (`rasp`). 
 
 ## How Authenticator system works
 
@@ -88,5 +85,5 @@ Feel free to [contact us](https://www.saltedge.com/pages/contact_support)
 If you modify this Program, or any covered work, by linking or combining it with [THIRD PARTY LIBRARY](THIRD_PARTY_NOTICES.md) (or a modified version of that library), containing parts covered by the [TERMS OF LIBRARY's LICENSE](THIRD_PARTY_NOTICES.md), the licensors of this Program grant you additional permission to convey the resulting work. {Corresponding Source for a non-source form of such a combination shall include the source code for the parts of [LIBRARY](THIRD_PARTY_NOTICES.md) used as well as that of the covered work.}        
   
 ___
-Copyright © 2019 Salt Edge. https://www.saltedge.com  
+Copyright © 2019 - 2020 Salt Edge. https://www.saltedge.com  
 

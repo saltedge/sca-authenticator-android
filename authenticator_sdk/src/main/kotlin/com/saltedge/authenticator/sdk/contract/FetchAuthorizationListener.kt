@@ -21,14 +21,11 @@
 package com.saltedge.authenticator.sdk.contract
 
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
+import com.saltedge.authenticator.sdk.model.EncryptedData
 
 /**
- * Get SCA Authorizations request result
+ * Get SCA Authorization request result
  */
-interface FetchAuthorizationsResult {
-    fun onFetchAuthorizationsResult(
-        result: List<EncryptedAuthorizationData>,
-        errors: List<ApiErrorData>
-    )
+interface FetchAuthorizationListener {
+    fun onFetchAuthorizationResult(result: EncryptedData?, error: ApiErrorData?)
 }

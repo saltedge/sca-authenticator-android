@@ -18,18 +18,10 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model.authorization
+package com.saltedge.authenticator.sdk.model.response
 
-/**
- * Checks validity of Encrypted Authorization model
- *
- * @receiver Encrypted authorization
- * @return boolean. true if key, iv, algorithm, data, connection_id fields are present
- */
-fun EncryptedAuthorizationData.isValid(): Boolean {
-    return !key.isNullOrEmpty() &&
-        !iv.isNullOrEmpty() &&
-        !algorithm.isNullOrEmpty() &&
-        !data.isNullOrEmpty() &&
-        !connectionId.isNullOrEmpty()
-}
+import com.google.gson.annotations.SerializedName
+import com.saltedge.authenticator.sdk.constants.KEY_DATA
+import com.saltedge.authenticator.sdk.model.EncryptedData
+
+data class AuthorizationShowResponse(@SerializedName(KEY_DATA) var data: EncryptedData? = null)

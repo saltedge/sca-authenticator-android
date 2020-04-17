@@ -30,7 +30,7 @@ class ConfirmDenyResultDataExtensionsTest {
     @Test
     @Throws(Exception::class)
     fun isValidTest() {
-        val model = ConfirmDenyResultData(success = null, authorizationId = "")
+        val model = ConfirmDenyResponseData(success = null, authorizationId = "")
 
         assertFalse(model.isValid())
 

@@ -27,7 +27,7 @@ import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
 import com.saltedge.authenticator.sdk.model.*
-import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
+import com.saltedge.authenticator.sdk.model.EncryptedData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.error.*
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
@@ -122,7 +122,7 @@ class AuthorizationDetailsPresenter(
     override fun getConnectionData(): ConnectionAndKey? = currentConnectionAndKey
 
     override fun onFetchAuthorizationResult(
-        result: EncryptedAuthorizationData?,
+        result: EncryptedData?,
         error: ApiErrorData?
     ) {
         result?.let { processEncryptedAuthorizationResult(it) }
@@ -181,7 +181,7 @@ class AuthorizationDetailsPresenter(
         pollingService.stop()
     }
 
-    private fun processEncryptedAuthorizationResult(result: EncryptedAuthorizationData) {
+    private fun processEncryptedAuthorizationResult(result: EncryptedData) {
         if (viewMode.isProcessingMode()) return
         cryptoTools.decryptAuthorizationData(
             encryptedData = result,

@@ -1,18 +1,18 @@
-/* 
- * This file is part of the Salt Edge Authenticator distribution 
+/*
+ * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2019 Salt Edge Inc.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3 or later.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * For the additional permissions granted for Salt Edge Authenticator
@@ -21,12 +21,12 @@
 package com.saltedge.authenticator.sdk.network.connector
 
 import com.saltedge.authenticator.sdk.constants.API_CONNECTIONS
-import com.saltedge.authenticator.sdk.contract.ConnectionCreateResult
+import com.saltedge.authenticator.sdk.contract.ConnectionCreateListener
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.error.createInvalidResponseError
-import com.saltedge.authenticator.sdk.model.request.CreateConnectionData
 import com.saltedge.authenticator.sdk.model.request.CreateConnectionRequestData
-import com.saltedge.authenticator.sdk.model.response.CreateConnectionResponseData
+import com.saltedge.authenticator.sdk.model.request.CreateConnectionRequest
+import com.saltedge.authenticator.sdk.model.response.CreateConnectionResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.ApiResponseInterceptor
 import retrofit2.Call
@@ -40,8 +40,8 @@ import retrofit2.Call
  */
 internal class ConnectionInitConnector(
     private val apiInterface: ApiInterface,
-    var resultCallback: ConnectionCreateResult?
-) : ApiResponseInterceptor<CreateConnectionResponseData>() {
+    var resultCallback: ConnectionCreateListener?
+) : ApiResponseInterceptor<CreateConnectionResponse>() {
 
     /**
      * Prepare request url, request model (CreateConnectionRequestData)
@@ -60,15 +60,15 @@ internal class ConnectionInitConnector(
         connectQueryParam: String?
     ) {
         val url = createRequestUrl(baseUrl = baseUrl, routePath = API_CONNECTIONS)
-        val requestData = CreateConnectionRequestData(
-            data = CreateConnectionData(
+        val requestData = CreateConnectionRequest(
+            data = CreateConnectionRequestData(
                 publicKey = publicKey,
                 pushToken = pushToken,
                 providerCode = providerCode,
                 connectQueryParam = connectQueryParam
             )
         )
-        apiInterface.postNewConnectionData(url, requestData).enqueue(this)
+        apiInterface.createConnection(url, requestData).enqueue(this)
     }
 
     /**
@@ -80,8 +80,8 @@ internal class ConnectionInitConnector(
      * @param response - CreateConnectionResponse model
      */
     override fun onSuccessResponse(
-        call: Call<CreateConnectionResponseData>,
-        response: CreateConnectionResponseData
+        call: Call<CreateConnectionResponse>,
+        response: CreateConnectionResponse
     ) {
         val data = response.data
         if (data == null) {
@@ -97,7 +97,7 @@ internal class ConnectionInitConnector(
      * @param call - retrofit call
      * @param error - ApiError
      */
-    override fun onFailureResponse(call: Call<CreateConnectionResponseData>, error: ApiErrorData) {
+    override fun onFailureResponse(call: Call<CreateConnectionResponse>, error: ApiErrorData) {
         resultCallback?.onConnectionCreateFailure(error)
     }
 }

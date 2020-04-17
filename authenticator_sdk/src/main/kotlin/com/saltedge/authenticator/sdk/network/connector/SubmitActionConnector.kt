@@ -26,7 +26,7 @@ import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.error.createInvalidResponseError
-import com.saltedge.authenticator.sdk.model.response.SubmitActionResponseData
+import com.saltedge.authenticator.sdk.model.response.SubmitActionResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.ApiResponseInterceptor
 import retrofit2.Call
@@ -34,13 +34,13 @@ import retrofit2.Call
 internal class SubmitActionConnector(
     private val apiInterface: ApiInterface,
     var resultCallback: ActionSubmitListener?
-): ApiResponseInterceptor<SubmitActionResponseData>() {
+): ApiResponseInterceptor<SubmitActionResponse>() {
 
     fun updateAction(
         actionUUID: String,
         connectionAndKey: ConnectionAndKey
     ) {
-        val requestData = createAuthenticatedRequestData<Nothing>(
+        val requestData = createSignedRequestData<Nothing>(
             requestMethod = REQUEST_METHOD_PUT,
             baseUrl = connectionAndKey.connection.connectUrl,
             apiRoutePath = "$API_ACTIONS/${actionUUID}",
@@ -55,7 +55,7 @@ internal class SubmitActionConnector(
     }
 
 
-    override fun onSuccessResponse(call: Call<SubmitActionResponseData>, response: SubmitActionResponseData) {
+    override fun onSuccessResponse(call: Call<SubmitActionResponse>, response: SubmitActionResponse) {
         val data = response.data
         if (data == null) {
             onFailureResponse(call, createInvalidResponseError())
@@ -64,7 +64,7 @@ internal class SubmitActionConnector(
         }
     }
 
-    override fun onFailureResponse(call: Call<SubmitActionResponseData>, error: ApiErrorData) {
+    override fun onFailureResponse(call: Call<SubmitActionResponse>, error: ApiErrorData) {
         resultCallback?.onActionInitFailure(error)
     }
 }

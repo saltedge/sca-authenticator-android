@@ -20,8 +20,6 @@
  */
 package com.saltedge.authenticator.sdk.model
 
-import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
-import com.saltedge.authenticator.sdk.model.authorization.isValid
 import org.junit.Assert
 import org.junit.Test
 
@@ -30,27 +28,27 @@ class EncryptedAuthorizationDataExtensionsTest {
     @Test
     @Throws(Exception::class)
     fun isValidTest() {
-        Assert.assertFalse(EncryptedAuthorizationData().isValid())
+        Assert.assertFalse(EncryptedData().isValid())
         Assert.assertFalse(
-            EncryptedAuthorizationData(
+            EncryptedData(
                 key = "key"
             ).isValid()
         )
         Assert.assertFalse(
-            EncryptedAuthorizationData(
+            EncryptedData(
                 key = "key",
                 iv = "iv"
             ).isValid()
         )
         Assert.assertFalse(
-            EncryptedAuthorizationData(
+            EncryptedData(
                 key = "key",
                 iv = "iv",
                 algorithm = "alg"
             ).isValid()
         )
         Assert.assertFalse(
-            EncryptedAuthorizationData(
+            EncryptedData(
                 key = "key",
                 iv = "iv",
                 algorithm = "alg",
@@ -58,7 +56,7 @@ class EncryptedAuthorizationDataExtensionsTest {
             ).isValid()
         )
         Assert.assertTrue(
-            EncryptedAuthorizationData(
+            EncryptedData(
                 key = "key",
                 iv = "iv",
                 algorithm = "alg",

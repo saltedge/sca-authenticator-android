@@ -42,11 +42,11 @@ internal fun Context.checkAppSignatures(appSignatures: List<String>): String? {
         getSignaturesHashes(this).intersect(appSignatures).isEmpty()
     } catch (e: NameNotFoundException) {
         e.printStackTrace()
-        exceptionMessage = e.localizedMessage
+        exceptionMessage = e.localizedMessage ?: "NameNotFoundException"
         true
     } catch (e: NoSuchAlgorithmException) {
         e.printStackTrace()
-        exceptionMessage = e.localizedMessage
+        exceptionMessage = e.localizedMessage ?: "NoSuchAlgorithmException"
         true
     }
     return if (result) "AppSignatureInvalid:[$exceptionMessage]" else null

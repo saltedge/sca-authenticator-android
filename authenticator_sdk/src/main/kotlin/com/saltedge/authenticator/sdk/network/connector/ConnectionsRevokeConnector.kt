@@ -22,12 +22,12 @@ package com.saltedge.authenticator.sdk.network.connector
 
 import com.saltedge.authenticator.sdk.constants.API_CONNECTIONS
 import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_DELETE
-import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeResult
+import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.Token
-import com.saltedge.authenticator.sdk.model.request.AuthenticatedRequestData
-import com.saltedge.authenticator.sdk.model.response.RevokeAccessTokenResponseData
+import com.saltedge.authenticator.sdk.model.request.SignedRequest
+import com.saltedge.authenticator.sdk.model.response.RevokeAccessTokenResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import retrofit2.Call
 
@@ -39,8 +39,8 @@ import retrofit2.Call
  */
 internal class ConnectionsRevokeConnector(
     private val apiInterface: ApiInterface,
-    var resultCallback: ConnectionsRevokeResult? = null
-) : QueueConnector<RevokeAccessTokenResponseData>() {
+    var resultCallback: ConnectionsRevokeListener? = null
+) : QueueConnector<RevokeAccessTokenResponse>() {
 
     private var result = mutableListOf<Token>()
     private var errorResult: ApiErrorData? = null
@@ -53,8 +53,8 @@ internal class ConnectionsRevokeConnector(
      */
     fun revokeTokensFor(connections: List<ConnectionAndKey>) {
         if (super.queueIsEmpty()) {
-            val requestData: List<AuthenticatedRequestData> = connections.map { (connection, key) ->
-                createAuthenticatedRequestData<Nothing>(
+            val requestData: List<SignedRequest> = connections.map { (connection, key) ->
+                createSignedRequestData<Nothing>(
                     requestMethod = REQUEST_METHOD_DELETE,
                     baseUrl = connection.connectUrl,
                     apiRoutePath = API_CONNECTIONS,
@@ -84,8 +84,8 @@ internal class ConnectionsRevokeConnector(
      * @param response - RevokeAccessTokenResponseData model
      */
     override fun onSuccessResponse(
-        call: Call<RevokeAccessTokenResponseData>,
-        response: RevokeAccessTokenResponseData
+        call: Call<RevokeAccessTokenResponse>,
+        response: RevokeAccessTokenResponse
     ) {
         response.data?.accessToken?.let {
             if ((response.data?.success == true)) result.add(it)
@@ -99,13 +99,13 @@ internal class ConnectionsRevokeConnector(
      * @param call - retrofit call
      * @param error - ApiError
      */
-    override fun onFailureResponse(call: Call<RevokeAccessTokenResponseData>, error: ApiErrorData) {
+    override fun onFailureResponse(call: Call<RevokeAccessTokenResponse>, error: ApiErrorData) {
         errorResult = error
         super.onResponseReceived()
     }
 
-    private fun sendRequest(requestData: AuthenticatedRequestData) {
-        apiInterface.deleteAccessToken(
+    private fun sendRequest(requestData: SignedRequest) {
+        apiInterface.revokeConnection(
             requestUrl = requestData.requestUrl,
             headersMap = requestData.headersMap
         ).enqueue(this)

@@ -20,13 +20,12 @@
  */
 package com.saltedge.authenticator.sdk.contract
 
+import com.saltedge.authenticator.sdk.model.EncryptedData
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.model.response.CreateConnectionData
 
 /**
- * Create SCA Connection request result
+ * Encrypted Data (Authorizations, Consents) request result
  */
-interface ConnectionCreateResult {
-    fun onConnectionCreateFailure(error: ApiErrorData)
-    fun onConnectionCreateSuccess(response: CreateConnectionData)
+interface FetchEncryptedDataListener {
+    fun onFetchEncryptedDataResult(result: List<EncryptedData>, errors: List<ApiErrorData>)
 }

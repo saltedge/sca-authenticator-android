@@ -31,7 +31,7 @@ import com.saltedge.authenticator.model.db.Connection
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.KEY_NAME
-import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeResult
+import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
@@ -46,7 +46,7 @@ class ConnectionsListPresenter @Inject constructor(
     private val keyStoreManager: KeyStoreManagerAbs,
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val apiManager: AuthenticatorApiManagerAbs
-) : ConnectionsListContract.Presenter, ConnectionsRevokeResult {
+) : ConnectionsListContract.Presenter, ConnectionsRevokeListener {
 
     override var viewContract: ConnectionsListContract.View? = null
 

@@ -22,12 +22,12 @@ package com.saltedge.authenticator.sdk.network.connector
 
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_API_RESPONSE
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_HOST_UNREACHABLE
-import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeResult
+import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.response.RevokeAccessTokenResponse
 import com.saltedge.authenticator.sdk.model.response.RevokeAccessTokenResponseData
-import com.saltedge.authenticator.sdk.model.response.RevokeAccessTokenResultData
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.testTools.get404Response
@@ -75,8 +75,8 @@ class ConnectionsRevokeConnectorTest {
         connector.onResponse(
             mockCall,
             Response.success(
-                RevokeAccessTokenResponseData(
-                    RevokeAccessTokenResultData(
+                RevokeAccessTokenResponse(
+                    RevokeAccessTokenResponseData(
                         success = true,
                         accessToken = "accessToken"
                     )
@@ -176,9 +176,9 @@ class ConnectionsRevokeConnectorTest {
     }
 
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
-    private val mockCallback: ConnectionsRevokeResult = mockkClass(ConnectionsRevokeResult::class)
-    private val mockCall: Call<RevokeAccessTokenResponseData> =
-        mockkClass(Call::class) as Call<RevokeAccessTokenResponseData>
+    private val mockCallback: ConnectionsRevokeListener = mockkClass(ConnectionsRevokeListener::class)
+    private val mockCall: Call<RevokeAccessTokenResponse> =
+        mockkClass(Call::class) as Call<RevokeAccessTokenResponse>
     private val requestConnection: ConnectionAbs = getDefaultTestConnection()
     private val requestUrl = "https://localhost/api/authenticator/v1/connections"
     private var privateKey: PrivateKey = this.getTestPrivateKey()
@@ -187,7 +187,7 @@ class ConnectionsRevokeConnectorTest {
     @Throws(Exception::class)
     fun setUp() {
         every {
-            mockApi.deleteAccessToken(
+            mockApi.revokeConnection(
                 requestUrl = requestUrl,
                 headersMap = any()
             )

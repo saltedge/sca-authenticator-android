@@ -31,13 +31,13 @@ import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_AUTHORIZATION_NOT_FO
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_CONNECTION_NOT_FOUND
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_SSL_HANDSHAKE
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
-import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
+import com.saltedge.authenticator.sdk.model.EncryptedData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.error.createRequestError
-import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResultData
+import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
@@ -683,7 +683,7 @@ class AuthorizationDetailsPresenterTest {
         val presenter = createPresenter(viewContract = mockView)
         presenter.setInitialData(connectionId = "1", authorizationId = "")
 
-        presenter.onConfirmDenySuccess(result = ConfirmDenyResultData(), connectionID = "1")
+        presenter.onConfirmDenySuccess(result = ConfirmDenyResponseData(), connectionID = "1")
 
         Mockito.verifyNoMoreInteractions(mockPollingService)
         Mockito.verify(mockView).setContentViewMode(
@@ -693,7 +693,7 @@ class AuthorizationDetailsPresenterTest {
 
         Mockito.clearInvocations(mockView, mockPollingService)
         presenter.onConfirmDenySuccess(
-            result = ConfirmDenyResultData(authorizationId = "1", success = true),
+            result = ConfirmDenyResponseData(authorizationId = "1", success = true),
             connectionID = "1"
         )
 
@@ -980,8 +980,8 @@ class AuthorizationDetailsPresenterTest {
         createdAt = 300L
         updatedAt = 300L
     }
-    private val encryptedData1 = EncryptedAuthorizationData(id = "1", connectionId = "1")
-    private val encryptedData2 = EncryptedAuthorizationData(id = "2_noKey", connectionId = "1")
+    private val encryptedData1 = EncryptedData(id = "1", connectionId = "1")
+    private val encryptedData2 = EncryptedData(id = "2_noKey", connectionId = "1")
     private val authorizationData1 = createAuthorizationData(id = 1)
     private val authorizationData2 = createAuthorizationData(id = 2)
     private val viewModel1 = authorizationData1.toAuthorizationViewModel(connection1)

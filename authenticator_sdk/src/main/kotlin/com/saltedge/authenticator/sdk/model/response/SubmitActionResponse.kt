@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +18,20 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model
+package com.saltedge.authenticator.sdk.model.response
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.constants.*
-import java.io.Serializable
+import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
+import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
+import com.saltedge.authenticator.sdk.constants.KEY_DATA
+import com.saltedge.authenticator.sdk.constants.KEY_SUCCESS
 
-/**
- * Model of provider data
- */
-data class ProviderData(
-    @SerializedName(KEY_CONNECT_URL) var connectUrl: String,
-    @SerializedName(KEY_CODE) var code: String,
-    @SerializedName(KEY_NAME) var name: String,
-    @SerializedName(KEY_LOGO_URL) var logoUrl: String?,
-    @SerializedName(KEY_VERSION) var version: String,
-    @SerializedName(KEY_SUPPORT_EMAIL) var supportEmail: String?
-) : Serializable
+data class SubmitActionResponse(
+    @SerializedName(KEY_DATA) var data: SubmitActionResponseData? = null
+)
 
-data class ProviderResponseData(@SerializedName(KEY_DATA) var data: ProviderData)
+data class SubmitActionResponseData(
+    @SerializedName(KEY_SUCCESS) var success: Boolean? = null,
+    @SerializedName(KEY_CONNECTION_ID) var connectionId: String? = null,
+    @SerializedName(KEY_AUTHORIZATION_ID) var authorizationId: String? = null
+)

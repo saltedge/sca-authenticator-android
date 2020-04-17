@@ -31,7 +31,7 @@ import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifie
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.error.getErrorMessage
-import com.saltedge.authenticator.sdk.model.response.SubmitActionData
+import com.saltedge.authenticator.sdk.model.response.SubmitActionResponseData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import javax.inject.Inject
 
@@ -73,7 +73,7 @@ class SubmitActionPresenter @Inject constructor(
         viewContract?.showErrorAndFinish(error.getErrorMessage(appContext))
     }
 
-    override fun onActionInitSuccess(response: SubmitActionData) {
+    override fun onActionInitSuccess(response: SubmitActionResponseData) {
         val authorizationID = response.authorizationId ?: ""
         val connectionID = response.connectionId ?: ""
         if (response.success == true && authorizationID.isNotEmpty() && connectionID.isNotEmpty()) {

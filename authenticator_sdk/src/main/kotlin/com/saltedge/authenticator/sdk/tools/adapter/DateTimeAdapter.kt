@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.network.adapter
+package com.saltedge.authenticator.sdk.tools.adapter
 
 import com.google.gson.*
 import com.saltedge.authenticator.sdk.tools.parseToUtcDateTime

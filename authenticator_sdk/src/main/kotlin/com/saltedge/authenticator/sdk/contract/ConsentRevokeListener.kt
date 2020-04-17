@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,18 +18,15 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model.response
+package com.saltedge.authenticator.sdk.contract
 
-import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.constants.KEY_ACCESS_TOKEN
-import com.saltedge.authenticator.sdk.constants.KEY_DATA
-import com.saltedge.authenticator.sdk.constants.KEY_SUCCESS
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.model.response.ConsentRevokeResponseData
 
-data class RevokeAccessTokenResponseData(
-    @SerializedName(KEY_DATA) var data: RevokeAccessTokenResultData? = null
-)
-
-data class RevokeAccessTokenResultData(
-    @SerializedName(KEY_SUCCESS) var success: Boolean? = null,
-    @SerializedName(KEY_ACCESS_TOKEN) var accessToken: String? = null
-)
+/**
+ * Consent revoke request result
+ */
+interface ConsentRevokeListener {
+    fun onConsentRevokeFailure(error: ApiErrorData)
+    fun onConsentRevokeSuccess(result: ConsentRevokeResponseData)
+}

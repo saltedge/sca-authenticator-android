@@ -22,7 +22,7 @@ package com.saltedge.authenticator.model.db
 
 import com.saltedge.authenticator.model.toConnection
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
-import com.saltedge.authenticator.sdk.model.ProviderData
+import com.saltedge.authenticator.sdk.model.configuration.ProviderConfigurationData
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.greaterThan
@@ -37,14 +37,14 @@ class ProviderDataExtensionsTest {
     @Test
     @Throws(Exception::class)
     fun providerDataToConnectionTest() {
-        var connection = ProviderData(
-                code = "demobank",
-                name = "Demobank",
-                connectUrl = "url",
-                logoUrl = "url",
-                version = "1",
-                supportEmail = "exampple1@saltedge.com"
-            ).toConnection()!!
+        var connection = ProviderConfigurationData(
+            code = "demobank",
+            name = "Demobank",
+            connectUrl = "url",
+            logoUrl = "url",
+            version = "1",
+            supportEmail = "exampple1@saltedge.com"
+        ).toConnection()!!
 
         Assert.assertTrue(connection.guid.isNotEmpty())
         assertThat(connection.id, equalTo(""))
@@ -58,7 +58,7 @@ class ProviderDataExtensionsTest {
         assertThat(connection.status, equalTo("${ConnectionStatus.INACTIVE}"))
         assertThat(connection.supportEmail, equalTo("exampple1@saltedge.com"))
 
-        connection = ProviderData(
+        connection = ProviderConfigurationData(
             connectUrl = "url1",
             code = "code2",
             name = "name3",
@@ -80,7 +80,7 @@ class ProviderDataExtensionsTest {
         assertThat(connection.supportEmail, equalTo("example2@saltedge.com"))
 
         Assert.assertNull(
-            ProviderData(
+            ProviderConfigurationData(
                 connectUrl = "",
                 code = "",
                 name = "",

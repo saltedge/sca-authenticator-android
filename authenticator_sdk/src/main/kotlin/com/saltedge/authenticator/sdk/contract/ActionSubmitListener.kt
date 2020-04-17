@@ -21,9 +21,9 @@
 package com.saltedge.authenticator.sdk.contract
 
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.model.response.SubmitActionData
+import com.saltedge.authenticator.sdk.model.response.SubmitActionResponseData
 
 interface ActionSubmitListener {
     fun onActionInitFailure(error: ApiErrorData)
-    fun onActionInitSuccess(response: SubmitActionData)
+    fun onActionInitSuccess(response: SubmitActionResponseData)
 }

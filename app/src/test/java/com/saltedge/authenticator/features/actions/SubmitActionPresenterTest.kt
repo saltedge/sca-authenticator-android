@@ -29,7 +29,7 @@ import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.response.SubmitActionData
+import com.saltedge.authenticator.sdk.model.response.SubmitActionResponseData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo
@@ -64,7 +64,7 @@ class SubmitActionPresenterTest {
     @Throws(Exception::class)
     fun onActionInitSuccessCase1() {
         val presenter = createPresenter(viewContract = mockView)
-        val connectUrlData = SubmitActionData(
+        val connectUrlData = SubmitActionResponseData(
             success = true,
             authorizationId = "",
             connectionId = ""
@@ -88,7 +88,7 @@ class SubmitActionPresenterTest {
     fun onActionInitSuccessCase2() {
         val presenter = createPresenter(viewContract = mockView)
 
-        val connectUrlData = SubmitActionData(
+        val connectUrlData = SubmitActionResponseData(
             success = true,
             authorizationId = "authorizationId",
             connectionId = "connectionId"
@@ -111,7 +111,7 @@ class SubmitActionPresenterTest {
     @Throws(Exception::class)
     fun onConnectionInitSuccessTestCase3() {
         val presenter = createPresenter(viewContract = mockView)
-        val actionData = SubmitActionData(
+        val actionData = SubmitActionResponseData(
             success = false,
             connectionId = "",
             authorizationId = ""
@@ -293,7 +293,7 @@ class SubmitActionPresenterTest {
     @Throws(Exception::class)
     fun onViewCreatedTestCase3() {
         val presenter = createPresenter(viewContract = mockView)
-        val connectUrlData = SubmitActionData(
+        val connectUrlData = SubmitActionResponseData(
             success = true,
             authorizationId = "authorizationId",
             connectionId = "connectionId"

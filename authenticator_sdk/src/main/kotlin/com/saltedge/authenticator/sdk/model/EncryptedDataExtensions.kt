@@ -20,24 +20,16 @@
  */
 package com.saltedge.authenticator.sdk.model
 
-import com.saltedge.authenticator.sdk.constants.API_VERSION
-
 /**
- * Checks validity of Provider model
+ * Checks validity of Encrypted model
  *
- * @receiver Encrypted authorization
- * @return boolean. true if `name`, `code` and `connectUrl` fields are present
- * and version code equal to API_VERSION constant
+ * @receiver Encrypted data
+ * @return boolean. true if key, iv, algorithm, data, connection_id fields are present
  */
-fun ProviderData.isValid(): Boolean {
-    return try {
-        name.isNotEmpty() &&
-            code.isNotEmpty() &&
-            connectUrl.isNotEmpty() &&
-            !connectUrl.contains("/localhost") &&
-            version == API_VERSION
-    } catch (e: Exception) {
-        e.printStackTrace()
-        false
-    }
+fun EncryptedData.isValid(): Boolean {
+    return !key.isNullOrEmpty() &&
+        !iv.isNullOrEmpty() &&
+        !algorithm.isNullOrEmpty() &&
+        !data.isNullOrEmpty() &&
+        !connectionId.isNullOrEmpty()
 }

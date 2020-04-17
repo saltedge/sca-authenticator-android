@@ -23,7 +23,7 @@ package com.saltedge.authenticator.sdk.polling
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.response.AuthorizationShowResponseData
+import com.saltedge.authenticator.sdk.model.response.AuthorizationShowResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.RestClient
 import com.saltedge.authenticator.sdk.testTools.TestConnection
@@ -107,7 +107,7 @@ class SingleAuthorizationPollingServiceTest {
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
     private val mockContract: FetchAuthorizationContract =
         mockkClass(FetchAuthorizationContract::class)
-    private val mockCall = mockkClass(Call::class) as Call<AuthorizationShowResponseData>
+    private val mockCall = mockkClass(Call::class) as Call<AuthorizationShowResponse>
     private val requestConnection: ConnectionAbs =
         TestConnection(id = "333", guid = "test", connectUrl = "/", accessToken = "accessToken")
 

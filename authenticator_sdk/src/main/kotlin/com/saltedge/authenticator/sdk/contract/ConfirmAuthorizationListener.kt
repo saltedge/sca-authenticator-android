@@ -18,16 +18,21 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model.request
+package com.saltedge.authenticator.sdk.contract
 
-import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_CODE
-import com.saltedge.authenticator.sdk.constants.KEY_CONFIRM
-import com.saltedge.authenticator.sdk.constants.KEY_DATA
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.model.AuthorizationID
+import com.saltedge.authenticator.sdk.model.ConnectionID
+import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData
 
-data class ConfirmDenyRequestData(@SerializedName(KEY_DATA) val data: ConfirmDenyData)
-
-data class ConfirmDenyData(
-    @SerializedName(KEY_CONFIRM) val confirm: Boolean,
-    @SerializedName(KEY_AUTHORIZATION_CODE) val authorizationCode: String?
-)
+/**
+ * Confirm SCA Authorization request result
+ */
+interface ConfirmAuthorizationListener {
+    fun onConfirmDenyFailure(
+        error: ApiErrorData,
+        connectionID: ConnectionID,
+        authorizationID: AuthorizationID
+    )
+    fun onConfirmDenySuccess(result: ConfirmDenyResponseData, connectionID: ConnectionID)
+}
