@@ -27,6 +27,13 @@
         <item name="android:fontFamily">@font/roboto_medium</item>
     </style>
 
+    <style name="Text20PrimaryRegular">
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textSize">@dimen/text_20</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
+
     <style name="Text20BlackRegular">
         <item name="android:ellipsize">end</item>
         <item name="android:textColor">@color/black</item>

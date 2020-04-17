@@ -54,6 +54,7 @@
         android:id="@+id/actionsLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_48"
+        android:layout_weight="1"
         android:gravity="end"
         android:orientation="horizontal">
 
@@ -72,5 +73,8 @@
     <com.saltedge.authenticator.widget.passcode.PinpadView
         android:id="@+id/pinpadView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginEnd="@dimen/dp_16"
+        android:layout_marginBottom="@dimen/dp_40" />
 </LinearLayout>

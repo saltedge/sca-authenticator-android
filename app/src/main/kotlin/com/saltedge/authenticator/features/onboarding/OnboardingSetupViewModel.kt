@@ -40,7 +40,6 @@ class OnboardingSetupViewModel(
 ) : ViewModel(), LifecycleObserver {
 
     val headerTitle: MutableLiveData<Int> = MutableLiveData()
-    val headerDescription: MutableLiveData<Int> = MutableLiveData()
     val proceedViewVisibility: MutableLiveData<Int> = MutableLiveData()
     val skipViewVisibility: MutableLiveData<Int> = MutableLiveData()
     val setupLayoutVisibility: MutableLiveData<Int> = MutableLiveData()
@@ -49,7 +48,6 @@ class OnboardingSetupViewModel(
 
     init {
         headerTitle.value = R.string.onboarding_secure_app_passcode_create
-        headerDescription.value = R.string.onboarding_secure_app_passcode_description
         setupLayoutVisibility.value = View.GONE
         onboardingLayoutVisibility.value = View.VISIBLE
         proceedViewVisibility.value = View.GONE
@@ -147,7 +145,6 @@ class OnboardingSetupViewModel(
 
     private fun updateSetupViews(inputMode: PasscodeInputView.InputMode) {
         headerTitle.value = getSetupTitleResId(inputMode)
-        headerDescription.value = getSetupSubtitleResId(inputMode)
         showPasscodeCancel.value = shouldShowPasscodeInputNegativeActionView(inputMode)
         passcodePositiveActionText.postValue(getPositivePasscodeActionViewText(inputMode))
     }
@@ -158,12 +155,6 @@ class OnboardingSetupViewModel(
         return if (passcodeInputMode == PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE) {
             R.string.onboarding_secure_app_passcode_repeat
         } else R.string.onboarding_secure_app_passcode_create
-    }
-
-    private fun getSetupSubtitleResId(passcodeInputMode: PasscodeInputView.InputMode): Int {
-        return if (passcodeInputMode == PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE) {
-            R.string.onboarding_secure_app_passcode_confirm
-        } else R.string.onboarding_secure_app_passcode_description
     }
 
     private fun shouldShowPasscodeInputNegativeActionView(passcodeInputMode: PasscodeInputView.InputMode?): Boolean? {
