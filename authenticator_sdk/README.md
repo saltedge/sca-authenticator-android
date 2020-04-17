@@ -32,17 +32,17 @@ In order to use Authenticator SDK it is necessary to install the following tools
 
 1. Add maven repository to application's build.gradle
 ```groovy
-repositories {
-    maven {
-        url 'https://raw.github.com/saltedge/sca-authenticator-android/master/maven-repo/'
+    repositories {
+        maven {
+            url 'https://raw.github.com/saltedge/sca-authenticator-android/master/maven-repo/'
+        }
     }
-}
 ```
 1. Add SDK dependency to application build.gradle
 ```groovy
-implementation ('com.saltedge.authenticator.sdk:authenticator_sdk:1.1.0@aar') {
-    transitive = true
-}
+    implementation ('com.saltedge.authenticator.sdk:authenticator_sdk:1.1.0@aar') {
+        transitive = true
+    }
 ```  
 
 ---
@@ -137,68 +137,67 @@ Application on Java language:
 1. Fetch [Service Provider info](#provider-data-model) from configuration url (provides all required for linking information).  
 _This step can be skipped if application already knows service configuration._ 
 
-    ```kotlin
-        authenticatorApiManager.getProviderConfigurationData(providerConfigurationUrl, resultCallback = object : FetchProviderConfigurationDataResult {
-          override fun fetchProviderConfigurationDataResult(providerData: ProviderData?, error: ApiErrorData?) {
-            // process result or error
-          }
-        })
-    ```  
+```kotlin
+    authenticatorApiManager.getProviderConfigurationData(providerConfigurationUrl, resultCallback = object : FetchProviderConfigurationDataResult {
+      override fun fetchProviderConfigurationDataResult(providerData: ProviderData?, error: ApiErrorData?) {
+        // process result or error
+      }
+    })
+```  
     success result can be validated:
-    ```kotlin
-        providerData.isValid()
-    ```  
+```kotlin
+    providerData.isValid()
+```  
     Fetching of provider data is optional when application is destinated for linking with single Service Provider and application already has all required Service Provider info.
 
 2. Create RSA key pair and `Connection` model  
    Key pair should have alias equal to `connection.guid`.
-    ```kotlin
-        KeyStoreManager.createOrReplaceRsaKeyPair(connection.guid)
-    ```
+```kotlin
+    KeyStoreManager.createOrReplaceRsaKeyPair(connection.guid)
+```
 
 3. Post connection data and receive ConnectionCreateListener  
-    ```kotlin
-        AuthenticatorApiManager.createConnectionRequest(
-                appContext,
-                conenction,
-                firebaseCloudMessagingToken,
-                connectQueryParam,
-                object : ConnectionCreateListener() {
-                    override fun onConnectionCreateSuccess(response: CreateConnectionData) {
-                        // process success response
-                        // open response.connectUrl in WebView or get response.accessToken if present
-                    }
-    
-                    override fun onConnectionCreateFailure(apiErrorData: ApiErrorData) {
-                        // handle error response
-                    }
+```kotlin
+    AuthenticatorApiManager.createConnectionRequest(
+            appContext,
+            conenction,
+            firebaseCloudMessagingToken,
+            connectQueryParam,
+            object : ConnectionCreateListener() {
+                override fun onConnectionCreateSuccess(response: CreateConnectionData) {
+                    // process success response
+                    // open response.connectUrl in WebView or get response.accessToken if present
                 }
-        )
-    ```  
+
+                override fun onConnectionCreateFailure(apiErrorData: ApiErrorData) {
+                    // handle error response
+                }
+            }
+    )
+```  
     If authentication is required then response will contains `connect_url` which should be used for opening authentication page in WebView. If authentication is not required then get access token from response.  
     
 4. Processing success result (*This step can be skipped if Customer is already authenticated*).  
 
 Open url:  
-  ```kotlin
-      val webViewClient = ConnectWebClient(contract = object : ConnectWebClientContract { })
-      webView.webViewClient = webViewClient
-      webView.loadUrl(authentication_url)
-  ```  
+```kotlin
+  val webViewClient = ConnectWebClient(contract = object : ConnectWebClientContract { })
+  webView.webViewClient = webViewClient
+  webView.loadUrl(authentication_url)
+```  
     
 and wait for access token:  
-  
-  ```kotlin
-      private val webViewClient = ConnectWebClient(contract = object : ConnectWebClientContract {
-          override fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token) {
-              // save access token  
-          }
+```kotlin
+  private val webViewClient = ConnectWebClient(contract = object : ConnectWebClientContract {
+      override fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token) {
+          // save access token  
+      }
 
-          override fun webAuthFinishError(errorClass: String, errorMessage: String?) {
-              // handle error result and remove previously created key pairs from KeyStore
-          }
-      })
-  ```   
+      override fun webAuthFinishError(errorClass: String, errorMessage: String?) {
+          // handle error result and remove previously created key pairs from KeyStore
+      }
+  })
+```   
    
    
 5. Set `accessToken` to `Connection` entity and save `Connection` entity to persistent storage (e.g. Realm, SQLite).  
@@ -224,36 +223,36 @@ In some cases application may want to destroy current linking.
   Where  `connectionsAndKeysToRevoke` - List<ConnectionAndKey>. 
   ConnectionAndKey - it is a model with pair of params: Connection and related PrivateKey
 
-1. Delete connections from persistent storage
+2. Delete connections from persistent storage
 
-1. Delete related key pairs from Android Keystore
-    ```kotlin
-        KeyStoreManager.deleteKeyPairs(connectionGuids)
-    ```
+3. Delete related key pairs from Android Keystore
+```kotlin
+    KeyStoreManager.deleteKeyPairs(connectionGuids)
+```
 
 ### Get Authorizations list
 To show pending Authorizations app should request them and decrypt the result.  
 
 1. Send request
-    ```kotlin
-        AuthenticatorApiManager.getAuthorizations(
-            connectionsAndKeys = connectionsAndKeysToGet, 
-            resultCallback = object : FetchEncryptedDataListener {
-                override fun onFetchEncryptedDataListener(result: List<EncryptedAuthorizationData>, 
-                                                          errors: List<ApiErrorData>) {                   
-                    //process errors or process encrypted authorizations result 
-                } 
-            }
-        )
-    ```
-
-1. Decrypt received encrypted authorization data. For decrypt should be used related PrivateKey 
+```kotlin
+    AuthenticatorApiManager.getAuthorizations(
+        connectionsAndKeys = connectionsAndKeysToGet, 
+        resultCallback = object : FetchEncryptedDataListener {
+               override fun onFetchEncryptedDataListener(
+                   result: List<EncryptedAuthorizationData>, 
+                   errors: List<ApiErrorData>
+               ) {                   
+                   //process errors or process encrypted authorizations result 
+               } 
+        }
+    )
+```
+2. Decrypt received encrypted authorization data. For decrypt should be used related PrivateKey 
 (encryptedData.connectionId -> Connection.guid -> PrivateKey)
-    ```kotlin
-        CryptoTools.decryptAuthorizationData(encryptedData, rsaPrivateKey)
-    ```
-
-1. Show decrypted Authorizations list to user
+```kotlin
+    CryptoTools.decryptAuthorizationData(encryptedData, rsaPrivateKey)
+```
+3. Show decrypted Authorizations list to user
   
 ### Poll authorizations list
 
@@ -261,45 +260,45 @@ For periodically fetch of authorizations list use AuthorizationsPollingService.
 Poll period is set to 2 seconds. For preventing memory leak application should start/stop polling depending on application components lifecycle (e.g. Activity's onStart() and onStop())  
 
 1. Create polling service
-    ```kotlin
-        pollingService = AuthenticatorApiManager.createAuthorizationsPollingService()
-    ```
-
-1. Start polling service
-    ```kotlin
-        pollingService.contract = object : FetchAuthorizationsContract { }
-        pollingService.start()
-    ```
-
-1. Stop polling service
-    ```kotlin
-        pollingService.contract = null
-        pollingService.stop()
-    ```
+```kotlin
+    pollingService = AuthenticatorApiManager.createAuthorizationsPollingService()
+```
+2. Start polling service
+```kotlin
+    pollingService.contract = object : FetchAuthorizationsContract { }
+    pollingService.start()
+```
+3. Stop polling service
+```kotlin
+    pollingService.contract = null
+    pollingService.stop()
+```
 
 ### Get authorization by ID
 
 1. Send request
-    ```kotlin
-        AuthenticatorApiManager.getAuthorization(
-            connectionAndKey = connectionAndKeyToGet,
-            authorizationId = requiredAuthorizationId,
-            resultCallback = object : FetchAuthorizationListener {
-                override fun fetchAuthorizationResult(result: EncryptedAuthorizationData?, 
-                                                      error: ApiErrorData?) {                   
-                    //process error or process encrypted authorization result
-                } 
-            }
-        )
-    ```
+```kotlin
+    AuthenticatorApiManager.getAuthorization(
+        connectionAndKey = connectionAndKeyToGet,
+        authorizationId = requiredAuthorizationId,
+        resultCallback = object : FetchAuthorizationListener {
+           override fun fetchAuthorizationResult(
+               result: EncryptedAuthorizationData?, 
+               error: ApiErrorData?
+           ) {                   
+                //process error or process encrypted authorization result
+            } 
+        }
+    )
+```
 
-1. Decrypt authorization data. For decrypt use related PrivateKey 
+2. Decrypt authorization data. For decrypt use related PrivateKey 
 (encryptedData.connectionId -> Connection.guid -> PrivateKey)
     ```kotlin
         CryptoTools.decryptAuthorizationData(encryptedData, rsaPrivateKey)
     ```
 
-1. Show decrypted Authorization to user
+3. Show decrypted Authorization to user
 
 ### Poll authorization by ID
 
@@ -307,21 +306,21 @@ For periodically fetch of single authorization use SingleAuthorizationPollingSer
 Poll period is set to 2 seconds. For preventing memory leak application should start/stop polling depending on application components lifecycle (e.g. Activity's onStart() and onStop())  
 
 1. Create polling service
-    ```kotlin
-        pollingService = AuthenticatorApiManager.createSingleAuthorizationPollingService()
-    ```
+```kotlin
+    pollingService = AuthenticatorApiManager.createSingleAuthorizationPollingService()
+```
 
-1. Start service
-    ```kotlin
-        pollingService.contract = object : FetchAuthorizationContract { }
-        pollingService.start()
-    ```
+2. Start service
+```kotlin
+    pollingService.contract = object : FetchAuthorizationContract { }
+    pollingService.start()
+```
 
-1. Stop service
-    ```kotlin
-        pollingService.contract = null
-        pollingService.stop()
-    ```
+3. Stop service
+```kotlin
+    pollingService.contract = null
+    pollingService.stop()
+```
 
 ### Confirm authorization  
 Each pending Authorization can be confirmed. Application can ask user to identify by entering PIN code or Fingerprint.  
@@ -388,15 +387,17 @@ To show active Consents app should request them and decrypt the result.
     AuthenticatorApiManager.getConsents(
         connectionsAndKeys = connectionsAndKeysToGet, 
         resultCallback = object : FetchEncryptedDataListener {
-            override fun onFetchEncryptedDataListener(result: List<EncryptedAuthorizationData>, 
-                                                      errors: List<ApiErrorData>) {                   
+            override fun onFetchEncryptedDataListener(
+                result: List<EncryptedAuthorizationData>, 
+                errors: List<ApiErrorData>
+            ) {                   
                 //process errors or process encrypted consents result 
             } 
         }
     )
 ```
 
-1. Decrypt received encrypted authorization data. For decrypt should be used related PrivateKey 
+2. Decrypt received encrypted authorization data. For decrypt should be used related PrivateKey 
 (encryptedData.connectionId -> Connection.guid -> PrivateKey)
 ```kotlin
     CryptoTools.decryptConsentData(encryptedData, rsaPrivateKey)
