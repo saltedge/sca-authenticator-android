@@ -38,7 +38,6 @@
     <color name="color_primary_dark">#344499</color>
     <color name="color_primary_extra_light">#EBEEFF</color>
     <color name="color_accent">@color/blue</color>
-    <color name="primary_text">@color/black</color>
     <color name="base_container_bg">@color/gray_extra_light</color>
 
     <color name="button_blue_default">@color/blue</color>
@@ -48,11 +47,18 @@
     <color name="switch_off">@color/gray_extra_light</color>
     <color name="switch_on">@color/blue</color>
 
-    <color name="theme_background">@android:color/white</color>
-    <color name="icon_background">@android:color/white</color>
-    <color name="logo_background">@color/blue_black</color>
-
     <!--New palette-->
     <color name="dark_theme_background">#040411</color>
     <color name="blue_black">#161E2A</color>
+    <color name="neutrals_dark_100">#182C3F</color>
+    <color name="grey_40">#D8E5EE</color>
+    <color name="primary">#0D93F8</color>
+    <color name="primary_dark">#007CD9</color>
+    <color name="primary_light">#36A9FF</color>
+
+    <color name="dots_background">@color/primary</color>
+    <color name="primary_text">@color/neutrals_dark_100</color>
+    <color name="theme_background">@android:color/white</color>
+    <color name="icon_background">@android:color/white</color>
+    <color name="logo_background">@color/blue_black</color>
 </resources>

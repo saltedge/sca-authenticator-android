@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,37 +18,31 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.onboarding.di
+package com.saltedge.authenticator.features.onboarding
 
+import android.content.Context
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
-import com.saltedge.authenticator.testTools.TestAppTools
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
-import org.junit.Assert.assertNotNull
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.Mockito
-import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
-@RunWith(RobolectricTestRunner::class)
-class OnboardingSetupModuleTest {
-
-    private val mockPreferences = Mockito.mock(PreferenceRepositoryAbs::class.java)
-    private val mockBiometricTools = Mockito.mock(BiometricToolsAbs::class.java)
-    private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)
-
-    @Test
-    @Throws(Exception::class)
-    fun providePresenterTest() {
-        val module = OnboardingSetupModule()
-
-        assertNotNull(
-            module.provideFactory(
-                appContext = TestAppTools.applicationContext,
-                preferenceRepository = mockPreferences,
-                biometricTools = mockBiometricTools,
-                passcodeTools = mockPasscodeTools
-            )
-        )
+class OnboardingSetupViewModelFactory @Inject constructor(
+    val appContext: Context,
+    val passcodeTools: PasscodeToolsAbs,
+    val preferenceRepository: PreferenceRepositoryAbs,
+    val biometricTools: BiometricToolsAbs
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(OnboardingSetupViewModel::class.java)) {
+            return OnboardingSetupViewModel(
+                appContext = appContext,
+                passcodeTools = passcodeTools,
+                preferenceRepository = preferenceRepository,
+                biometricTools = biometricTools
+            ) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
