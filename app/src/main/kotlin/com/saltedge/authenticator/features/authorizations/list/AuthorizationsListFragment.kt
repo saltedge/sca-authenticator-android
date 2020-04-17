@@ -52,7 +52,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         super.onCreate(savedInstanceState)
         injectDependencies()
         setHasOptionsMenu(true)
-        presenter.onFragmentCreate(lifecycle = lifecycle)
+        presenter.onCreate(lifecycle = lifecycle)
     }
 
     override fun onCreateView(
@@ -82,7 +82,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     override fun onResume() {
         super.onResume()
-        presenter.onFragmentResume()
+        presenter.onResume()
         headerAdapter?.startTimer()
     }
 
@@ -99,7 +99,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     }
 
     override fun onDestroy() {
-        presenter.onFragmentDestroy()
+        presenter.onDestroy()
         super.onDestroy()
     }
 

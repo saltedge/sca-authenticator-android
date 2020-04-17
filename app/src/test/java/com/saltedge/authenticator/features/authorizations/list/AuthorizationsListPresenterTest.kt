@@ -94,7 +94,7 @@ class AuthorizationsListPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onFragmentStartTest() {
-        createPresenter(viewContract = mockView).onFragmentResume()
+        createPresenter(viewContract = mockView).onResume()
 
         Mockito.verify(mockView).updateViewsContent()
     }
@@ -108,7 +108,7 @@ class AuthorizationsListPresenterTest {
 
         Mockito.`when`(lifecycleOwner.lifecycle).thenReturn(lifecycle)
 
-        createPresenter(viewContract = mockView).onFragmentCreate(lifecycle)
+        createPresenter(viewContract = mockView).onCreate(lifecycle)
 
         assertNotNull(mockView)
         Mockito.verify(mockPollingService).start()

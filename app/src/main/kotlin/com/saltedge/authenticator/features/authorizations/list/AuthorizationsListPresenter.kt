@@ -76,16 +76,16 @@ class AuthorizationsListPresenter @Inject constructor(
 
     override fun baseViewContract(): BaseAuthorizationViewContract? = viewContract
 
-    fun onFragmentCreate(lifecycle: Lifecycle) {
+    fun onCreate(lifecycle: Lifecycle) {
         pollingService.contract = this
         pollingService.register(lifecycle)
     }
 
-    fun onFragmentResume() {
+    fun onResume() {
         viewContract?.updateViewsContent()
     }
 
-    fun onFragmentDestroy() {
+    fun onDestroy() {
         job.cancel()
     }
 
