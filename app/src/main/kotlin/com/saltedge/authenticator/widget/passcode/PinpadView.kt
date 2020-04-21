@@ -1,18 +1,18 @@
-/* 
- * This file is part of the Salt Edge Authenticator distribution 
+/*
+ * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2019 Salt Edge Inc.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3 or later.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * For the additional permissions granted for Salt Edge Authenticator
@@ -26,6 +26,7 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
@@ -37,7 +38,9 @@ import kotlinx.android.synthetic.main.view_pinpad.view.*
 class PinpadView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
     View.OnClickListener {
 
-    var inputHandler: PinpadInputHandler? = null
+    var clickListener: PinpadClickListener? = null
+    var fingerprintActionClickListener: PasscodeInputViewListener? = null
+
     private var vibrator: Vibrator? = context.getSystemService(VIBRATOR_SERVICE) as? Vibrator?
 
     init {
@@ -49,15 +52,13 @@ class PinpadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         if (view == null || !isEnabled) return
         vibrateOnKeyClick()
         when (view.id) {
-            R.id.fingerView -> inputHandler?.onKeyClick(Control.FINGER)
-            R.id.deleteView -> {
-                inputHandler?.onKeyClick(Control.DELETE)
+            R.id.fingerView -> {
+                Log.d("some", "click on fingerView")
+                fingerprintActionClickListener?.onBiometricInputSelected() //listener doesn't work
             }
-            else -> {
-                (view as? TextView)?.text?.let {
-                    inputHandler?.onKeyClick(Control.NUMBER, it.toString())
-                }
-            }
+            R.id.deleteView -> clickListener?.onDeleteKeyClick()
+            else -> clickListener?.onDigitKeyClick((view as? TextView)?.text.toString())
+
         }
     }
 
@@ -70,9 +71,5 @@ class PinpadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator?.vibrate(VibrationEffect.createOneShot(40, 32))
         } else vibrator?.vibrate(10)
-    }
-
-    enum class Control {
-        DELETE, FINGER, NUMBER
     }
 }

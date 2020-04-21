@@ -38,6 +38,7 @@ import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 import kotlinx.android.synthetic.main.activity_onboarding.*
+import kotlinx.android.synthetic.main.view_passcode_input.view.*
 import javax.inject.Inject
 
 class OnboardingSetupActivity : AppCompatActivity(),
@@ -81,6 +82,7 @@ class OnboardingSetupActivity : AppCompatActivity(),
 
     override fun onNewPasscodeEntered(mode: PasscodeInputView.InputMode, passcode: String) {
         viewModel.enteredNewPasscode(inputMode = mode)
+        passcodeInputView?.passcodeLabelView?.clearAll() //TODO: Move in view Model
     }
 
     override fun onNewPasscodeConfirmed(passcode: String) {
@@ -107,12 +109,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
         })
         viewModel.setPasscodeInputMode.observe(this, Observer<PasscodeInputView.InputMode> {
             passcodeInputView?.initInputMode(inputMode = it)
-        })
-        viewModel.showPasscodeCancel.observe(this, Observer<Boolean> {
-            passcodeInputView?.cancelActionIsAvailable = it
-        })
-        viewModel.passcodePositiveActionText.observe(this, Observer<Int> {
-            passcodeInputView?.setPositiveActionText(it)
         })
         viewModel.showMainActivity.observe(this, Observer<ViewModelEvent<Unit>> {
             showMainActivity()
@@ -150,7 +146,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
 
     private fun initSetupViews() {
         passcodeInputView?.biometricsActionIsAvailable = false
-        passcodeInputView?.cancelActionIsAvailable = false
         passcodeInputView?.listener = this
     }
 

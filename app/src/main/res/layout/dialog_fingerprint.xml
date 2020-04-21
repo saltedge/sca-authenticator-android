@@ -71,6 +71,7 @@
             android:text="@string/fingerprint_touch_sensor" />
     </LinearLayout>
 
+<!--    TODO: check usage style-->
     <TextView
         android:id="@+id/cancelActionView"
         style="@style/RightAlignedDialogAction"

@@ -46,7 +46,6 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_unlock, this)
-        setupViews()
     }
 
     fun setSavedPasscode(currentPasscode: String) {
@@ -66,10 +65,6 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
 
     fun setInputViewVisibility(show: Boolean) {
         passcodeInputView?.setVisible(show)
-    }
-
-    private fun setupViews() {
-        passcodeInputView?.cancelActionIsAvailable = false
     }
 
     private fun updateDescription(biometricsActionIsAvailable: Boolean) {

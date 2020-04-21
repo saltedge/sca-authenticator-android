@@ -61,12 +61,6 @@ class OnboardingSetupViewModel(
     var setPasscodeInputMode = MutableLiveData<PasscodeInputView.InputMode>()
         private set
 
-    var showPasscodeCancel = MutableLiveData<Boolean>()
-        private set
-
-    var passcodePositiveActionText = MutableLiveData<Int>()
-        private set
-
     var showWarningDialogWithMessage = MutableLiveData<String>()
         private set
 
@@ -145,8 +139,6 @@ class OnboardingSetupViewModel(
 
     private fun updateSetupViews(inputMode: PasscodeInputView.InputMode) {
         headerTitle.value = getSetupTitleResId(inputMode)
-        showPasscodeCancel.value = shouldShowPasscodeInputNegativeActionView(inputMode)
-        passcodePositiveActionText.postValue(getPositivePasscodeActionViewText(inputMode))
     }
 
     private fun getSetupTitleResId(
@@ -155,18 +147,5 @@ class OnboardingSetupViewModel(
         return if (passcodeInputMode == PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE) {
             R.string.onboarding_secure_app_passcode_repeat
         } else R.string.onboarding_secure_app_passcode_create
-    }
-
-    private fun shouldShowPasscodeInputNegativeActionView(passcodeInputMode: PasscodeInputView.InputMode?): Boolean? {
-        return passcodeInputMode?.let {
-            it === PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE
-        }
-    }
-
-    private fun getPositivePasscodeActionViewText(passcodeInputMode: PasscodeInputView.InputMode?): Int? {
-        return passcodeInputMode?.let {
-            if (it === PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE) android.R.string.ok
-            else R.string.actions_next
-        }
     }
 }

@@ -157,6 +157,7 @@ dependencies {
     // Lifecycles
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
 
+    implementation 'androidx.percentlayout:percentlayout:1.0.0'
     androidTestUtil 'com.android.support.test:orchestrator:1.0.2'
     testImplementation 'junit:junit:4.12'
     testImplementation 'androidx.test:core:1.2.0'
