@@ -48,8 +48,7 @@
         android:paddingEnd="@dimen/dp_24"
         android:textColor="@color/primary_text"
         android:textSize="@dimen/text_16"
-        android:visibility="gone"
-        tools:text="Passscodes don't match" />
+        tools:text="Passcodes don't match" />
 
     <com.saltedge.authenticator.widget.passcode.PinpadView
         android:id="@+id/pinpadView"

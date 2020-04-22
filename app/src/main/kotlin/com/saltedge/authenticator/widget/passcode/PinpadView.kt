@@ -26,7 +26,6 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
@@ -52,10 +51,7 @@ class PinpadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         if (view == null || !isEnabled) return
         vibrateOnKeyClick()
         when (view.id) {
-            R.id.fingerView -> {
-                Log.d("some", "click on fingerView")
-                fingerprintActionClickListener?.onBiometricInputSelected() //listener doesn't work
-            }
+            R.id.fingerView -> fingerprintActionClickListener?.onBiometricInputSelected()
             R.id.deleteView -> clickListener?.onDeleteKeyClick()
             else -> clickListener?.onDigitKeyClick((view as? TextView)?.text.toString())
 

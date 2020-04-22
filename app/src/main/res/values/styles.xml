@@ -21,18 +21,6 @@
 -->
 <resources>
     <!--COMMON-->
-    <style name="RightAlignedDialogAction" parent="@style/Text14BlueMedium">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:minWidth">@dimen/dp_64</item>
-        <item name="android:layout_height">@dimen/dp_48</item>
-        <item name="android:paddingStart">@dimen/dp_16</item>
-        <item name="android:paddingEnd">@dimen/dp_16</item>
-        <item name="android:gravity">center</item>
-        <item name="android:lines">1</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="background">?android:attr/selectableItemBackground</item>
-    </style>
-
     <style name="PinpadAction">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">0dp</item>
