@@ -56,8 +56,11 @@
     <color name="primary_dark">#007CD9</color>
     <color name="primary_light">#36A9FF</color>
     <color name="grey_light_extra">#F4F8FA</color>
+    <color name="dark_80">#465665</color>
 
+    <color name="info_message_background">@color/grey_light_extra</color>
     <color name="dots_background">@color/primary</color>
+    <color name="pin_dots_background">@color/grey_40</color>
     <color name="primary_text">@color/neutrals_dark_100</color>
     <color name="theme_background">@android:color/white</color>
     <color name="icon_background">@android:color/white</color>
