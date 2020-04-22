@@ -59,7 +59,7 @@
     <string name="errors_empty_passcode">Passcode is empty</string>
     <string name="errors_no_internet_connection">No Internet connection.\nPlease try again later.</string>
     <string name="errors_passcode_info">The Passcode should contain between %1$d and %2$d digits.</string>
-    <string name="errors_passcode_not_match">Passcode doesn\'t match, please try again.</string>
+    <string name="errors_passcode_not_match">Passcodes don\'t match</string>
     <string name="errors_passcode_try_again">Please try again in \%s minutes.</string>
     <string name="errors_passcode_try_again_short">Please try again in \%s minute. </string>
     <string name="errors_request_error">Request error</string>

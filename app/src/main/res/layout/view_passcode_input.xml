@@ -19,6 +19,7 @@
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
@@ -27,18 +28,36 @@
     <com.saltedge.authenticator.widget.passcode.PincodeLabelView
         android:id="@+id/passcodeLabelView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_113"
         android:layout_marginTop="@dimen/dp_20"
         android:layout_marginEnd="@dimen/dp_113"
-        android:layout_marginBottom="@dimen/dp_20"
-        android:layout_weight="1" />
+        android:layout_marginBottom="@dimen/dp_20" />
+
+    <TextView
+        android:id="@+id/infoMessageView"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp_44"
+        android:layout_marginTop="@dimen/dp_36"
+        android:background="@drawable/shape_bg_info_message"
+        android:ellipsize="end"
+        android:fontFamily="@font/roboto_regular"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:paddingStart="@dimen/dp_24"
+        android:paddingEnd="@dimen/dp_24"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/text_16"
+        android:visibility="gone"
+        tools:text="Passscodes don't match" />
 
     <com.saltedge.authenticator.widget.passcode.PinpadView
         android:id="@+id/pinpadView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="@dimen/dp_16"
         android:layout_marginEnd="@dimen/dp_16"
-        android:layout_marginBottom="@dimen/dp_40" />
+        android:layout_marginBottom="@dimen/dp_40"
+        android:layout_weight="1"
+        android:gravity="bottom" />
 </LinearLayout>

@@ -38,7 +38,6 @@ import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 import kotlinx.android.synthetic.main.activity_onboarding.*
-import kotlinx.android.synthetic.main.view_passcode_input.view.*
 import javax.inject.Inject
 
 class OnboardingSetupActivity : AppCompatActivity(),
@@ -78,11 +77,12 @@ class OnboardingSetupActivity : AppCompatActivity(),
 
     override fun onEnteredPasscodeIsValid() {}
 
-    override fun onEnteredPasscodeIsInvalid() {}
+    override fun onEnteredPasscodeIsInvalid() {
+        viewModel.enteredNewPasscode(PasscodeInputView.InputMode.NEW_PASSCODE)
+    }
 
     override fun onNewPasscodeEntered(mode: PasscodeInputView.InputMode, passcode: String) {
         viewModel.enteredNewPasscode(inputMode = mode)
-        passcodeInputView?.passcodeLabelView?.clearAll() //TODO: Move in view Model
     }
 
     override fun onNewPasscodeConfirmed(passcode: String) {

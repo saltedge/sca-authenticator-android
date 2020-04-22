@@ -21,18 +21,22 @@
 package com.saltedge.authenticator.widget.passcode
 
 import android.content.Context
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.annotation.StringRes
-import androidx.core.view.isVisible
-import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.ResId
+import com.saltedge.authenticator.tool.setVisible
 import kotlinx.android.synthetic.main.view_passcode_input.view.*
 
 class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
     PincodeLabelView.PincodeInputResultListener {
+
+    private var vibrator: Vibrator? = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator?
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_passcode_input, this)
@@ -68,6 +72,7 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
                 }
             }
             InputMode.NEW_PASSCODE -> {
+                infoMessageView?.setVisible(show = false)
                 run {
                     initInputMode(
                         inputMode = InputMode.REPEAT_NEW_PASSCODE,
@@ -83,7 +88,9 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
                 if (currentPasscode == passcode) {
                     listener?.onNewPasscodeConfirmed(passcode = currentPasscode)
                 } else {
+                    errorVibrate()
                     initInputMode(inputMode = InputMode.NEW_PASSCODE)
+                    listener?.onEnteredPasscodeIsInvalid()
                     onInputError(R.string.errors_passcode_not_match)
                 }
             }
@@ -91,16 +98,23 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
     }
 
     private fun setupViews() {
+        infoMessageView?.setVisible(show = false)
         passcodeLabelView?.clearAll()
         pinpadView?.setupFingerAction(active = biometricsActionIsAvailable)
         passcodeLabelView?.resultListener = this
         pinpadView?.clickListener = passcodeLabelView
     }
 
-    private fun onInputError(@StringRes errorName: ResId) { //TODO: check more errors
-        if (isVisible) pinpadView?.let {
-            Snackbar.make(it, errorName, Snackbar.LENGTH_SHORT).show()
-        }
+    private fun onInputError(@StringRes errorName: ResId) {
+        infoMessageView?.setVisible(show = true)
+        infoMessageView?.setText(errorName)
+    }
+
+    @Suppress("DEPRECATION")
+    private fun errorVibrate() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator?.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 100, 100, 100), -1))
+        } else vibrator?.vibrate(longArrayOf(0, 100, 100, 100), -1)
     }
 
     enum class InputMode {
