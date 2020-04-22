@@ -34,7 +34,7 @@ import com.saltedge.authenticator.tool.setVisible
 import kotlinx.android.synthetic.main.view_passcode_input.view.*
 
 class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
-    PincodeLabelView.PincodeInputResultListener {
+    PasscodeLabelView.PasscodeInputResultListener {
 
     private var vibrator: Vibrator? = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator?
 
@@ -59,7 +59,7 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
             pinpadView?.setupFingerAction(active = value)
         }
 
-    override fun onPincodeInputFinished(passcode: String) {
+    override fun onPasscodeInputFinished(passcode: String) {
         if (passcode.isEmpty()) return
         when (inputMode) {
             InputMode.CHECK_PASSCODE -> {

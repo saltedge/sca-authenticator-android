@@ -44,8 +44,8 @@
 
             <ImageView
                 android:id="@+id/appLogoView"
-                android:layout_width="@dimen/logo_image_size"
-                android:layout_height="@dimen/logo_image_size"
+                android:layout_width="@dimen/splash_logo_image_size"
+                android:layout_height="@dimen/splash_logo_image_size"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/dp_76"
                 android:src="@drawable/ic_app_logo" />
@@ -148,7 +148,7 @@
                         android:layout_marginStart="@dimen/dp_32"
                         android:layout_marginTop="@dimen/dp_325"
                         android:layout_marginBottom="@dimen/dp_124"
-                        app:selectedColor="@color/dots_background" />
+                        app:selectedColor="@color/splash_dots_background" />
                 </RelativeLayout>
     </FrameLayout>
 </layout>

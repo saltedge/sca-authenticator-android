@@ -155,6 +155,17 @@ class OnboardingSetupViewModelTest {
 
     @Test
     @Throws(Exception::class)
+    fun reEnterPasscodeTest() {
+        viewModel.reEnterPasscode()
+
+        assertThat(
+            viewModel.headerTitle.value,
+            equalTo(R.string.onboarding_secure_app_passcode_create)
+        )
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun passcodeInputCanceledByUserTest() {
         viewModel.passcodeInputCanceledByUser()
 

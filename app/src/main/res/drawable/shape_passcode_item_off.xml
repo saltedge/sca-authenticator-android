@@ -21,7 +21,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
 
-    <solid android:color="@color/pin_dots_background" />
+    <solid android:color="@color/passcode_dots_background" />
     <size
         android:width="@dimen/dp_14"
         android:height="@dimen/dp_14" />

@@ -78,7 +78,7 @@ class OnboardingSetupActivity : AppCompatActivity(),
     override fun onEnteredPasscodeIsValid() {}
 
     override fun onEnteredPasscodeIsInvalid() {
-        viewModel.enteredNewPasscode(PasscodeInputView.InputMode.NEW_PASSCODE)
+        viewModel.reEnterPasscode()
     }
 
     override fun onNewPasscodeEntered(mode: PasscodeInputView.InputMode, passcode: String) {

@@ -116,10 +116,10 @@
     <dimen name="text_50">50sp</dimen>
 
     <!--extra dimens and aliases-->
-    <dimen name="splash_logo_image_size">@dimen/dp_106</dimen>
+    <dimen name="splash_bg_logo_image_size">@dimen/dp_106</dimen>
     <dimen name="splash_power_image_height">@dimen/dp_24</dimen>
     <dimen name="splash_power_image_width">@dimen/dp_115</dimen>
-    <dimen name="logo_image_size">@dimen/dp_72</dimen>
+    <dimen name="splash_logo_image_size">@dimen/dp_72</dimen>
     <dimen name="button_corner_radius">@dimen/dp_2</dimen>
     <dimen name="action_bar_size">@dimen/dp_56</dimen>
     <dimen name="info_view_small_icon">@dimen/dp_70</dimen>

@@ -28,12 +28,12 @@ import android.widget.LinearLayout
 import com.saltedge.authenticator.R
 import kotlinx.android.synthetic.main.view_passcode_label.view.*
 
-private const val PINCODE_SIZE = 4
+private const val PASSCODE_SIZE = 4
 
-class PincodeLabelView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
+class PasscodeLabelView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
     PinpadClickListener {
 
-    var resultListener: PincodeInputResultListener? = null
+    var resultListener: PasscodeInputResultListener? = null
     private var text: String = ""
     private val views: Array<ImageView>
 
@@ -50,11 +50,11 @@ class PincodeLabelView(context: Context, attrs: AttributeSet) : LinearLayout(con
     }
 
     override fun onDigitKeyClick(value: String) {
-        if (text.length < PINCODE_SIZE) {
+        if (text.length < PASSCODE_SIZE) {
             text = text.plus(value)
             views[text.length - 1].setImageResource(R.drawable.shape_passcode_item_on)
-            if (text.length == PINCODE_SIZE) {
-                resultListener?.onPincodeInputFinished(text)
+            if (text.length == PASSCODE_SIZE) {
+                resultListener?.onPasscodeInputFinished(text)
             }
         }
     }
@@ -64,7 +64,7 @@ class PincodeLabelView(context: Context, attrs: AttributeSet) : LinearLayout(con
         views.forEach { it.setImageResource(R.drawable.shape_passcode_item_off) }
     }
 
-    interface PincodeInputResultListener {
-        fun onPincodeInputFinished(passcode: String)
+    interface PasscodeInputResultListener {
+        fun onPasscodeInputFinished(passcode: String)
     }
 }

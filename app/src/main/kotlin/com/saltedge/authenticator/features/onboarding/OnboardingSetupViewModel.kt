@@ -107,6 +107,10 @@ class OnboardingSetupViewModel(
         }
     }
 
+    fun reEnterPasscode() {
+        updateSetupViews(inputMode = PasscodeInputView.InputMode.NEW_PASSCODE)
+    }
+
     fun enteredNewPasscode(inputMode: PasscodeInputView.InputMode) {
         updateSetupViews(inputMode)
     }
