@@ -97,12 +97,6 @@ class OnboardingSetupViewModelTest {
             viewModel.headerTitle.value,
             equalTo(R.string.onboarding_secure_app_passcode_create)
         )
-        assertThat(
-            viewModel.headerDescription.value,
-            equalTo(R.string.onboarding_secure_app_passcode_description)
-        )
-        assertFalse(viewModel.showPasscodeCancel.value ?: true)
-        assertThat(viewModel.passcodePositiveActionText.value, equalTo(R.string.actions_next))
     }
 
     /**
@@ -121,12 +115,6 @@ class OnboardingSetupViewModelTest {
             viewModel.headerTitle.value,
             equalTo(R.string.onboarding_secure_app_passcode_create)
         )
-        assertThat(
-            viewModel.headerDescription.value,
-            equalTo(R.string.onboarding_secure_app_passcode_description)
-        )
-        assertFalse(viewModel.showPasscodeCancel.value ?: true)
-        assertThat(viewModel.passcodePositiveActionText.value, equalTo(R.string.actions_next))
     }
 
     /**
@@ -163,12 +151,6 @@ class OnboardingSetupViewModelTest {
             viewModel.headerTitle.value,
             equalTo(R.string.onboarding_secure_app_passcode_repeat)
         )
-        assertThat(
-            viewModel.headerDescription.value,
-            equalTo(R.string.onboarding_secure_app_passcode_confirm)
-        )
-        assertTrue(viewModel.showPasscodeCancel.value ?: false)
-        assertThat(viewModel.passcodePositiveActionText.value, equalTo(android.R.string.ok))
     }
 
     @Test
@@ -185,12 +167,6 @@ class OnboardingSetupViewModelTest {
             viewModel.headerTitle.value,
             equalTo(R.string.onboarding_secure_app_passcode_create)
         )
-        assertThat(
-            viewModel.headerDescription.value,
-            equalTo(R.string.onboarding_secure_app_passcode_description)
-        )
-        assertFalse(viewModel.showPasscodeCancel.value ?: true)
-        assertThat(viewModel.passcodePositiveActionText.value, equalTo(R.string.actions_next))
     }
 
     /**
