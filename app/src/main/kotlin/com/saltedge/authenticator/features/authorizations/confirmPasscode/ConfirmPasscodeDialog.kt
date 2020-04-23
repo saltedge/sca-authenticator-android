@@ -70,7 +70,6 @@ class ConfirmPasscodeDialog : BaseRoundedBottomDialogFragment(), PasscodeInputVi
 
     private fun setupDialogViews() {
         passcodeInputView?.biometricsActionIsAvailable = false
-        passcodeInputView?.cancelActionIsAvailable = true
         passcodeInputView?.listener = this
         passcodeInputView?.initInputMode(PasscodeInputView.InputMode.CHECK_PASSCODE, presenter.savedPasscode)
     }

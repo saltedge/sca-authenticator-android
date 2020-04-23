@@ -77,7 +77,9 @@ class OnboardingSetupActivity : AppCompatActivity(),
 
     override fun onEnteredPasscodeIsValid() {}
 
-    override fun onEnteredPasscodeIsInvalid() {}
+    override fun onEnteredPasscodeIsInvalid() {
+        viewModel.reEnterPasscode()
+    }
 
     override fun onNewPasscodeEntered(mode: PasscodeInputView.InputMode, passcode: String) {
         viewModel.enteredNewPasscode(inputMode = mode)
@@ -107,12 +109,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
         })
         viewModel.setPasscodeInputMode.observe(this, Observer<PasscodeInputView.InputMode> {
             passcodeInputView?.initInputMode(inputMode = it)
-        })
-        viewModel.showPasscodeCancel.observe(this, Observer<Boolean> {
-            passcodeInputView?.cancelActionIsAvailable = it
-        })
-        viewModel.passcodePositiveActionText.observe(this, Observer<Int> {
-            passcodeInputView?.setPositiveActionText(it)
         })
         viewModel.showMainActivity.observe(this, Observer<ViewModelEvent<Unit>> {
             showMainActivity()
@@ -150,7 +146,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
 
     private fun initSetupViews() {
         passcodeInputView?.biometricsActionIsAvailable = false
-        passcodeInputView?.cancelActionIsAvailable = false
         passcodeInputView?.listener = this
     }
 

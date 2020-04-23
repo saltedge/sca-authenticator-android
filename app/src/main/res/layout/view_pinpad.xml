@@ -22,8 +22,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/pinpadLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:layout_height="@dimen/dp_328"
+    android:background="@color/theme_background">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/line_vertical_1"
@@ -68,6 +68,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/line_vertical_1"
         app:layout_constraintTop_toTopOf="parent" />
+
 
     <TextView
         style="@style/PinpadAction"
