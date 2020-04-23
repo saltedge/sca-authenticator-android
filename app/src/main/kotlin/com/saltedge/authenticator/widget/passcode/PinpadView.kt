@@ -34,6 +34,9 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.setVisible
 import kotlinx.android.synthetic.main.view_pinpad.view.*
 
+/**
+ * The class contains button panel for entering a passcode
+ */
 class PinpadView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
     View.OnClickListener {
 
@@ -54,7 +57,6 @@ class PinpadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
             R.id.fingerView -> fingerprintActionClickListener?.onBiometricInputSelected()
             R.id.deleteView -> clickListener?.onDeleteKeyClick()
             else -> clickListener?.onDigitKeyClick((view as? TextView)?.text.toString())
-
         }
     }
 

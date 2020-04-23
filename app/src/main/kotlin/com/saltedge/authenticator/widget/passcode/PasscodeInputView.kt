@@ -33,6 +33,12 @@ import com.saltedge.authenticator.tool.ResId
 import com.saltedge.authenticator.tool.setVisible
 import kotlinx.android.synthetic.main.view_passcode_input.view.*
 
+/**
+ * Class container for PasscodeLabelView and PinpadView
+ *
+ * @see PasscodeLabelView
+ * @see PinpadView
+ */
 class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
     PasscodeLabelView.PasscodeInputResultListener {
 
@@ -46,6 +52,10 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
     private var inputMode = InputMode.CHECK_PASSCODE
     private var currentPasscode: String = ""
     var listener: PasscodeInputViewListener? = null
+        set(value) {
+            field = value
+            pinpadView?.fingerprintActionClickListener = value
+        }
 
     fun initInputMode(inputMode: InputMode, currentPasscode: String = "") {
         this.inputMode = inputMode

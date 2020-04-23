@@ -48,7 +48,6 @@ import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
-import kotlinx.android.synthetic.main.view_passcode_input.*
 
 const val KEY_SKIP_PIN = "KEY_SKIP_PIN"
 
@@ -137,7 +136,6 @@ abstract class LockableActivity :
         super.onStart()
         biometricPrompt?.resultCallback = this
         getUnlockAppInputView()?.listener = this
-        pinpadView?.fingerprintActionClickListener = this
         presenter.onActivityStart(intent)
     }
 

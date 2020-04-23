@@ -30,8 +30,13 @@ import kotlinx.android.synthetic.main.view_passcode_label.view.*
 
 private const val PASSCODE_SIZE = 4
 
+/**
+ * The class helps to display the passcode that is entered from the keyboard
+ *
+ * @see PinpadView
+ */
 class PasscodeLabelView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
-    PinpadClickListener {
+    PinpadClickListener { //TODO: Move business logic from class to view model
 
     var resultListener: PasscodeInputResultListener? = null
     private var text: String = ""
