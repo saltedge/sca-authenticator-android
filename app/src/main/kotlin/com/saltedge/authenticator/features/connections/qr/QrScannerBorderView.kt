@@ -21,28 +21,18 @@
 package com.saltedge.authenticator.features.connections.qr
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.RectF
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
-import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.saltedge.authenticator.R
 
 class QrScannerBorderView : View {
 
-    private var borderRect = RectF()
-    private val lineHeight: Float
-        get() = context.resources.getDimension(R.dimen.dp_8)
-    private val lineLength: Float
-        get() = borderRect.width() / 3
-    private var linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.STROKE
-        color = ContextCompat.getColor(context, R.color.gray_extra_light_50)
-        strokeWidth = lineHeight
-        strokeCap = Paint.Cap.ROUND
-    }
+    private var qrRect = RectF()
+    private var titleXPos = 0F
+    private var titleYPos = 0F
+    private var descriptionYPos = 0F
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -52,44 +42,59 @@ class QrScannerBorderView : View {
         defStyleAttr
     )
 
+    override fun onDraw(canvas: Canvas?) {
+        super.onDraw(canvas)
+        canvas?.let { drawQrItems(it) }
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        val rectHalfSize = Math.min(w, h) * 0.8f / 2
+        val rectHalfSize = Math.min(w, h) * 0.7f / 2
         val centerX = w.toFloat() / 2
         val centerY = h.toFloat() / 2
-        borderRect = RectF(
+        qrRect = RectF(
             centerX - rectHalfSize,
             centerY - rectHalfSize,
             centerX + rectHalfSize,
             centerY + rectHalfSize
         )
+
+        titleXPos = centerX
+        titleYPos = centerY - rectHalfSize * 2
+        descriptionYPos = centerY - rectHalfSize * 2 + 120F //bad number
     }
 
-    override fun onDraw(canvas: Canvas?) {
-        super.onDraw(canvas)
-        canvas?.let { drawLines(it) }
+    private fun drawQrItems(canvas: Canvas) {
+        val paint = Paint()
+
+        drawQrTitle(canvas = canvas, paint = paint)
+        drawQrDescription(canvas = canvas, paint = paint)
+        drawQrRect(canvas = canvas, paint = paint)
     }
 
-    private fun drawLines(canvas: Canvas) {
-        val path = Path()
-        path.reset()
+    private fun drawQrTitle(canvas: Canvas, paint: Paint) {
+        val customTypeface = ResourcesCompat.getFont(context, R.font.roboto_bold)
 
-        path.moveTo(borderRect.left, borderRect.top + lineLength)
-        path.lineTo(borderRect.left, borderRect.top)
-        path.lineTo(borderRect.left + lineLength, borderRect.top)
+        paint.color = context.resources.getColor(R.color.primary_text)
+        paint.textSize = context.resources.getDimension(R.dimen.text_24)
+        paint.typeface = customTypeface
+        paint.textAlign = Paint.Align.CENTER
+        canvas.drawText(context.getString(R.string.scan_qr_title), titleXPos, titleYPos, paint)
+    }
 
-        path.moveTo(borderRect.right - lineLength, borderRect.top)
-        path.lineTo(borderRect.right, borderRect.top)
-        path.lineTo(borderRect.right, borderRect.top + lineLength)
+    private fun drawQrDescription(canvas: Canvas, paint: Paint) {
+        val customTypeface = ResourcesCompat.getFont(context, R.font.roboto_regular)
 
-        path.moveTo(borderRect.right, borderRect.bottom - lineLength)
-        path.lineTo(borderRect.right, borderRect.bottom)
-        path.lineTo(borderRect.right - lineLength, borderRect.bottom)
+        paint.color = context.resources.getColor(R.color.primary_text)
+        paint.textSize = context.resources.getDimension(R.dimen.text_18)
+        paint.typeface = customTypeface
+        paint.textAlign = Paint.Align.CENTER
+        canvas.drawText(context.getString(R.string.scan_qr_description), titleXPos, descriptionYPos, paint)
+    }
 
-        path.moveTo(borderRect.left + lineLength, borderRect.bottom)
-        path.lineTo(borderRect.left, borderRect.bottom)
-        path.lineTo(borderRect.left, borderRect.bottom - lineLength)
-
-        canvas.drawPath(path, linePaint)
+    private fun drawQrRect(canvas: Canvas, paint: Paint) {
+        paint.color = Color.TRANSPARENT
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+        canvas.drawRect(qrRect, paint)
     }
 }

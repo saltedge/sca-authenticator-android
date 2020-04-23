@@ -27,4 +27,5 @@
     <color name="theme_background">@color/dark_theme_background</color>
     <color name="icon_background">@color/blue_black</color>
     <color name="logo_background">@android:color/white</color>
+    <color name="qr_background">#DD000000</color>
 </resources>

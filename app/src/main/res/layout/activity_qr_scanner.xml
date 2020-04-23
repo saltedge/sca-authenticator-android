@@ -39,7 +39,8 @@
     <com.saltedge.authenticator.features.connections.qr.QrScannerBorderView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbarView" />
+        android:layout_below="@+id/toolbarView"
+        android:background="@color/qr_background"/>
 
     <com.saltedge.authenticator.features.security.UnlockAppInputView
         android:id="@+id/unlockAppInputView"
