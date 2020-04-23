@@ -33,10 +33,10 @@ private const val PASSCODE_SIZE = 4
 /**
  * The class helps to display the passcode that is entered from the keyboard
  *
- * @see PinpadView
+ * @see KeypadView
  */
 class PasscodeLabelView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
-    PinpadClickListener { //TODO: Move business logic from class to view model
+    KeypadView.KeypadClickListener { //TODO: Move business logic from class to view model
 
     var resultListener: PasscodeInputResultListener? = null
     private var text: String = ""

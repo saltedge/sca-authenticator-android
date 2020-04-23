@@ -37,7 +37,7 @@ import kotlinx.android.synthetic.main.view_passcode_input.view.*
  * Class container for PasscodeLabelView and PinpadView
  *
  * @see PasscodeLabelView
- * @see PinpadView
+ * @see KeypadView
  */
 class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
     PasscodeLabelView.PasscodeInputResultListener {

@@ -50,7 +50,7 @@
         android:textSize="@dimen/text_16"
         tools:text="Passcodes don't match" />
 
-    <com.saltedge.authenticator.widget.passcode.PinpadView
+    <com.saltedge.authenticator.widget.passcode.KeypadView
         android:id="@+id/pinpadView"
         android:layout_width="match_parent"
         android:layout_height="0dp"

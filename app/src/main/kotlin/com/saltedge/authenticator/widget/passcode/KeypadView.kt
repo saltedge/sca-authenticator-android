@@ -37,10 +37,10 @@ import kotlinx.android.synthetic.main.view_pinpad.view.*
 /**
  * The class contains button panel for entering a passcode
  */
-class PinpadView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
+class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
     View.OnClickListener {
 
-    var clickListener: PinpadClickListener? = null
+    var clickListener: KeypadClickListener? = null
     var fingerprintActionClickListener: PasscodeInputViewListener? = null
 
     private var vibrator: Vibrator? = context.getSystemService(VIBRATOR_SERVICE) as? Vibrator?
@@ -69,5 +69,10 @@ class PinpadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator?.vibrate(VibrationEffect.createOneShot(40, 32))
         } else vibrator?.vibrate(10)
+    }
+
+    interface KeypadClickListener {
+        fun onDeleteKeyClick()
+        fun onDigitKeyClick(value: String = "")
     }
 }
