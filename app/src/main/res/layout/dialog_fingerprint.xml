@@ -73,11 +73,19 @@
 
     <TextView
         android:id="@+id/cancelActionView"
-        style="@style/RightAlignedDialogAction"
+        style="@style/Text14BlueMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp_48"
         android:layout_below="@+id/statusLayout"
         android:layout_marginTop="@dimen/dp_16"
-        android:paddingStart="@dimen/dp_4"
-        android:text="@string/actions_cancel" />
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="center"
+        android:lines="1"
+        android:minWidth="@dimen/dp_64"
+        android:paddingStart="@dimen/dp_16"
+        android:paddingEnd="@dimen/dp_16"
+        android:text="@string/actions_cancel"
+        android:textAllCaps="true" />
 </RelativeLayout>
 
 

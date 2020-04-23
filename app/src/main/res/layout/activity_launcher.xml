@@ -22,8 +22,8 @@
 
     <ImageView
         android:id="@+id/appImageView"
-        android:layout_width="@dimen/splash_logo_image_size"
-        android:layout_height="@dimen/splash_logo_image_size"
+        android:layout_width="@dimen/splash_bg_logo_image_size"
+        android:layout_height="@dimen/splash_bg_logo_image_size"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/dp_135"
         android:layout_marginBottom="@dimen/dp_32"

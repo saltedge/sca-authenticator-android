@@ -79,7 +79,6 @@ class PasscodeEditFragment : BaseFragment(), PasscodeEditContract.View, Passcode
 
     override fun updateViewContent(titleTextResId: Int, positiveActionTextResId: Int) {
         titleView?.setText(titleTextResId)
-        passcodeInputView?.setPositiveActionText(positiveActionTextResId)
     }
 
     override fun showProgress() {
@@ -114,8 +113,7 @@ class PasscodeEditFragment : BaseFragment(), PasscodeEditContract.View, Passcode
         presenterContract.enteredCurrentPasscode()
     }
 
-    override fun onEnteredPasscodeIsInvalid() {
-    }
+    override fun onEnteredPasscodeIsInvalid() {}
 
     override fun onNewPasscodeEntered(mode: PasscodeInputView.InputMode, passcode: String) {
         presenterContract.enteredNewPasscode(mode)

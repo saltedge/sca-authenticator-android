@@ -61,12 +61,14 @@
     <dimen name="dp_54">54dp</dimen>
     <dimen name="dp_55">55dp</dimen>
     <dimen name="dp_56">56dp</dimen>
+    <dimen name="dp_58">58dp</dimen>
     <dimen name="dp_60">60dp</dimen>
     <dimen name="dp_63">63dp</dimen>
     <dimen name="dp_64">64dp</dimen>
     <dimen name="dp_70">70dp</dimen>
     <dimen name="dp_72">72dp</dimen>
     <dimen name="dp_75">75dp</dimen>
+    <dimen name="dp_76">76dp</dimen>
     <dimen name="dp_80">80dp</dimen>
     <dimen name="dp_82">82dp</dimen>
     <dimen name="dp_85">85dp</dimen>
@@ -75,6 +77,7 @@
     <dimen name="dp_96">96dp</dimen>
     <dimen name="dp_100">100dp</dimen>
     <dimen name="dp_106">106dp</dimen>
+    <dimen name="dp_113">113dp</dimen>
     <dimen name="dp_115">115dp</dimen>
     <dimen name="dp_120">120dp</dimen>
     <dimen name="dp_124">124dp</dimen>
@@ -113,9 +116,10 @@
     <dimen name="text_50">50sp</dimen>
 
     <!--extra dimens and aliases-->
-    <dimen name="splash_logo_image_size">@dimen/dp_106</dimen>
+    <dimen name="splash_bg_logo_image_size">@dimen/dp_106</dimen>
     <dimen name="splash_power_image_height">@dimen/dp_24</dimen>
     <dimen name="splash_power_image_width">@dimen/dp_115</dimen>
+    <dimen name="splash_logo_image_size">@dimen/dp_72</dimen>
     <dimen name="button_corner_radius">@dimen/dp_2</dimen>
     <dimen name="action_bar_size">@dimen/dp_56</dimen>
     <dimen name="info_view_small_icon">@dimen/dp_70</dimen>

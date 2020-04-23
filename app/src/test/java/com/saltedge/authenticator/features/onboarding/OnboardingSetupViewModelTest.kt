@@ -97,12 +97,6 @@ class OnboardingSetupViewModelTest {
             viewModel.headerTitle.value,
             equalTo(R.string.onboarding_secure_app_passcode_create)
         )
-        assertThat(
-            viewModel.headerDescription.value,
-            equalTo(R.string.onboarding_secure_app_passcode_description)
-        )
-        assertFalse(viewModel.showPasscodeCancel.value ?: true)
-        assertThat(viewModel.passcodePositiveActionText.value, equalTo(R.string.actions_next))
     }
 
     /**
@@ -121,12 +115,6 @@ class OnboardingSetupViewModelTest {
             viewModel.headerTitle.value,
             equalTo(R.string.onboarding_secure_app_passcode_create)
         )
-        assertThat(
-            viewModel.headerDescription.value,
-            equalTo(R.string.onboarding_secure_app_passcode_description)
-        )
-        assertFalse(viewModel.showPasscodeCancel.value ?: true)
-        assertThat(viewModel.passcodePositiveActionText.value, equalTo(R.string.actions_next))
     }
 
     /**
@@ -163,12 +151,17 @@ class OnboardingSetupViewModelTest {
             viewModel.headerTitle.value,
             equalTo(R.string.onboarding_secure_app_passcode_repeat)
         )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun reEnterPasscodeTest() {
+        viewModel.reEnterPasscode()
+
         assertThat(
-            viewModel.headerDescription.value,
-            equalTo(R.string.onboarding_secure_app_passcode_confirm)
+            viewModel.headerTitle.value,
+            equalTo(R.string.onboarding_secure_app_passcode_create)
         )
-        assertTrue(viewModel.showPasscodeCancel.value ?: false)
-        assertThat(viewModel.passcodePositiveActionText.value, equalTo(android.R.string.ok))
     }
 
     @Test
@@ -185,12 +178,6 @@ class OnboardingSetupViewModelTest {
             viewModel.headerTitle.value,
             equalTo(R.string.onboarding_secure_app_passcode_create)
         )
-        assertThat(
-            viewModel.headerDescription.value,
-            equalTo(R.string.onboarding_secure_app_passcode_description)
-        )
-        assertFalse(viewModel.showPasscodeCancel.value ?: true)
-        assertThat(viewModel.passcodePositiveActionText.value, equalTo(R.string.actions_next))
     }
 
     /**

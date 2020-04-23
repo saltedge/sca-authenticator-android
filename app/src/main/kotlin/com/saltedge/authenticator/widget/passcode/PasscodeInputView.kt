@@ -21,20 +21,28 @@
 package com.saltedge.authenticator.widget.passcode
 
 import android.content.Context
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.annotation.StringRes
-import androidx.core.content.res.ResourcesCompat
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tool.getEnabledStateColorResId
-import com.saltedge.authenticator.tool.setTextColorResId
+import com.saltedge.authenticator.tool.ResId
 import com.saltedge.authenticator.tool.setVisible
-import com.saltedge.authenticator.tool.validatePasscode
 import kotlinx.android.synthetic.main.view_passcode_input.view.*
 
+/**
+ * Class container for PasscodeLabelView and PinpadView
+ *
+ * @see PasscodeLabelView
+ * @see KeypadView
+ */
 class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
-    PinpadInputHandlerContract {
+    PasscodeLabelView.PasscodeInputResultListener {
+
+    private var vibrator: Vibrator? = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator?
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_passcode_input, this)
@@ -44,27 +52,15 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
     private var inputMode = InputMode.CHECK_PASSCODE
     private var currentPasscode: String = ""
     var listener: PasscodeInputViewListener? = null
-
-    override fun getPasscodeOutputText(): String? = passcodeTextInputView?.text?.toString()
-
-    override fun setPasscodeOutputText(text: String) {
-        passcodeTextInputLayout?.error = null
-        passcodeTextInputView?.setText(text)
-        updatePositiveActionEnabledState(isEnabled = text.isNotEmpty())
-    }
-
-    override fun onFingerprintClickAction() {
-        listener?.onBiometricInputSelected()
-    }
+        set(value) {
+            field = value
+            pinpadView?.fingerprintActionClickListener = value
+        }
 
     fun initInputMode(inputMode: InputMode, currentPasscode: String = "") {
         this.inputMode = inputMode
         this.currentPasscode = if (inputMode == InputMode.NEW_PASSCODE) "" else currentPasscode
-        passcodeTextInputView?.setText("")
-    }
-
-    fun setPositiveActionText(@StringRes textResId: Int) {
-        positivePasscodeActionView?.setText(textResId)
+        passcodeLabelView?.clearAll()
     }
 
     var biometricsActionIsAvailable: Boolean = false
@@ -73,46 +69,24 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
             pinpadView?.setupFingerAction(active = value)
         }
 
-    var cancelActionIsAvailable: Boolean = true
-        set(value) {
-            field = value
-            negativePasscodeActionView?.setVisible(show = value)
-        }
-
-    private fun setupViews() {
-        passcodeTextInputLayout?.typeface = ResourcesCompat.getFont(context, R.font.roboto_regular)
-        pinpadView?.setupFingerAction(active = biometricsActionIsAvailable)
-        negativePasscodeActionView?.setVisible(show = cancelActionIsAvailable)
-
-        negativePasscodeActionView?.setOnClickListener { onNegativeActionClick() }
-        positivePasscodeActionView?.setOnClickListener { onPositiveActionClick() }
-        pinpadView?.inputHandler = PinpadInputHandler(contract = this)
-    }
-
-    private fun onNegativeActionClick() {
-        listener?.onPasscodeInputCanceledByUser()
-    }
-
-    private fun onPositiveActionClick() {
-        val enteredPasscode = getPasscodeOutputText() ?: return
-        if (enteredPasscode.isEmpty()) return
+    override fun onPasscodeInputFinished(passcode: String) {
+        if (passcode.isEmpty()) return
         when (inputMode) {
             InputMode.CHECK_PASSCODE -> {
-                if (currentPasscode == enteredPasscode) {
+                if (currentPasscode == passcode) {
                     listener?.onEnteredPasscodeIsValid()
                 } else {
-                    passcodeTextInputView?.setText("")
-                    onInputError(context.getString(R.string.errors_passcode_not_match))
+                    passcodeLabelView?.clearAll()
+                    onInputError(R.string.errors_passcode_not_match)
                     listener?.onEnteredPasscodeIsInvalid()
                 }
             }
             InputMode.NEW_PASSCODE -> {
-                validatePasscode(enteredPasscode, context)?.let {
-                    onInputError(it)
-                } ?: run {
+                infoMessageView?.setVisible(show = false)
+                run {
                     initInputMode(
                         inputMode = InputMode.REPEAT_NEW_PASSCODE,
-                        currentPasscode = enteredPasscode
+                        currentPasscode = passcode
                     )
                     listener?.onNewPasscodeEntered(
                         mode = InputMode.REPEAT_NEW_PASSCODE,
@@ -121,24 +95,36 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
                 }
             }
             InputMode.REPEAT_NEW_PASSCODE -> {
-                if (currentPasscode == enteredPasscode) {
+                if (currentPasscode == passcode) {
                     listener?.onNewPasscodeConfirmed(passcode = currentPasscode)
                 } else {
+                    errorVibrate()
                     initInputMode(inputMode = InputMode.NEW_PASSCODE)
-                    onInputError(context.getString(R.string.errors_passcode_not_match))
+                    listener?.onEnteredPasscodeIsInvalid()
+                    onInputError(R.string.errors_passcode_not_match)
                 }
             }
         }
     }
 
-    private fun onInputError(errorName: String) {
-        passcodeTextInputView?.setText("")
-        passcodeTextInputLayout?.error = errorName
+    private fun setupViews() {
+        infoMessageView?.setVisible(show = false)
+        passcodeLabelView?.clearAll()
+        pinpadView?.setupFingerAction(active = biometricsActionIsAvailable)
+        passcodeLabelView?.resultListener = this
+        pinpadView?.clickListener = passcodeLabelView
     }
 
-    private fun updatePositiveActionEnabledState(isEnabled: Boolean) {
-        positivePasscodeActionView?.isEnabled = isEnabled
-        positivePasscodeActionView?.setTextColorResId(getEnabledStateColorResId(isEnabled))
+    private fun onInputError(@StringRes errorName: ResId) {
+        infoMessageView?.setVisible(show = true)
+        infoMessageView?.setText(errorName)
+    }
+
+    @Suppress("DEPRECATION")
+    private fun errorVibrate() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator?.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 100, 100, 100), -1))
+        } else vibrator?.vibrate(longArrayOf(0, 100, 100, 100), -1)
     }
 
     enum class InputMode {
