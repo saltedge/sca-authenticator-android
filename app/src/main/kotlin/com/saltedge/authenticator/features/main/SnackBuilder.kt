@@ -64,14 +64,14 @@ private fun View.buildSnackbar(
     textView.setFont(R.font.roboto_regular)
     textView.maxLines = 7
     snackbar.view.setBackgroundColor(ContextCompat.getColor(context, bgColorResId))
-    val fab = this.findViewById<FloatingActionButton>(R.id.actionButton)
-    snackbar.view.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
-        override fun onViewAttachedToWindow(v: View) {}
-
-        override fun onViewDetachedFromWindow(v: View) {
-            fab?.translationY = 0f
-        }
-    })
+//    val fab = this.findViewById<FloatingActionButton>(R.id.actionButton)
+//    snackbar.view.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+//        override fun onViewAttachedToWindow(v: View) {}
+//
+//        override fun onViewDetachedFromWindow(v: View) {
+//            fab?.translationY = 0f
+//        }
+//    })
     snackbar.view.setOnTouchListener { _, _ ->
         snackbar.dismiss()
         true

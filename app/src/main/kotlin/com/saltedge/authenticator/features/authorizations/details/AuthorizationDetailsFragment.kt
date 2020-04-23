@@ -70,13 +70,13 @@ class AuthorizationDetailsFragment : BaseFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        activityComponents?.updateAppbarTitleWithFabAction(getString(R.string.authorization_feature_title))
+        activityComponents?.updateAppbarTitle(getString(R.string.authorization_feature_title))
         return inflater.inflate(R.layout.fragment_authorization_details, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         contentView?.setActionClickListener(this)
-        activityComponents?.hideNavigationBar()
+//        activityComponents?.hideNavigationBar()
     }
 
     override fun onStart() {
@@ -102,7 +102,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
     }
 
     override fun onDestroyView() {
-        activityComponents?.showNavigationBar()
+//        activityComponents?.showNavigationBar()
         super.onDestroyView()
     }
 

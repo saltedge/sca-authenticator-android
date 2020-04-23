@@ -34,8 +34,8 @@ abstract class BaseFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (actionBarIsHidden) activityComponents?.hideActionBar()
-        else activityComponents?.showActionBar()
+        if (actionBarIsHidden) activityComponents?.hideAppbar()
+        else activityComponents?.showAppbar()
     }
 
     override fun onDestroy() {

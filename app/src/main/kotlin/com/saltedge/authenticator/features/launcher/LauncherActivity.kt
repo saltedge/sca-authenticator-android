@@ -30,18 +30,20 @@ import androidx.lifecycle.ViewModelProviders
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.LAUNCHER_SPLASH_DURATION
-import com.saltedge.authenticator.events.ViewModelEvent
-import com.saltedge.authenticator.features.launcher.di.LauncherModule
+import com.saltedge.authenticator.app.di.ViewModelsFactory
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
-import com.saltedge.authenticator.tool.*
+import com.saltedge.authenticator.tool.applyPreferenceLocale
+import com.saltedge.authenticator.tool.authenticatorApp
+import com.saltedge.authenticator.tool.registerNotificationChannels
 import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
+import com.saltedge.authenticator.tool.showDbErrorDialog
 import javax.inject.Inject
 
 class LauncherActivity : AppCompatActivity() {
 
     lateinit var viewModel: LauncherViewModel
-    @Inject lateinit var viewModelFactory: LauncherViewModelFactory
+    @Inject lateinit var viewModelFactory: ViewModelsFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +56,8 @@ class LauncherActivity : AppCompatActivity() {
     }
 
     private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addLauncherModule(LauncherModule())?.inject(this)
+        authenticatorApp?.appComponent?.inject(this)
+//        authenticatorApp?.appComponent?.addLauncherModule(LauncherModule())?.inject(this)
     }
 
     private fun setupViewModel() {
@@ -63,20 +66,14 @@ class LauncherActivity : AppCompatActivity() {
             .get(LauncherViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
-        viewModel.onInitializationSuccess.observe(this, Observer<ViewModelEvent<Unit>> {
-            it?.let {
-                proceedToNextScreen()
-            }
+        viewModel.onInitializationSuccess.observe(this, Observer {
+            it?.let { proceedToNextScreen() }
         })
-        viewModel.onDbInitializationFail.observe(this, Observer<ViewModelEvent<Unit>> {
-            it?.let {
-                showDbError()
-            }
+        viewModel.onDbInitializationFail.observe(this, Observer {
+            it?.let { showDbError() }
         })
-        viewModel.buttonClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it?.let {
-                finishAffinity()
-            }
+        viewModel.buttonClickEvent.observe(this, Observer {
+            it?.let { finishAffinity() }
         })
     }
 

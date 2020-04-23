@@ -61,4 +61,5 @@
     <color name="theme_background">@android:color/white</color>
     <color name="icon_background">@android:color/white</color>
     <color name="logo_background">@color/blue_black</color>
+    <color name="action_icon_fill_color">@color/neutrals_dark_100</color>
 </resources>

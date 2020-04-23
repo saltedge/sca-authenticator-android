@@ -71,6 +71,22 @@ class AppModule(context: Context) {
 
     @Provides
     @Singleton
+    fun provideViewModelsFactory(
+        appContext: Context,
+        preferences: PreferenceRepositoryAbs,
+        passcodeTools: PasscodeToolsAbs,
+        realmManager: RealmManagerAbs
+    ): ViewModelsFactory {
+        return ViewModelsFactory(
+            appContext = appContext,
+            passcodeTools = passcodeTools,
+            preferenceRepository = preferences,
+            realmManager = realmManager
+        )
+    }
+
+    @Provides
+    @Singleton
     fun providePasscodeTools(): PasscodeToolsAbs = PasscodeTools
 
     @Provides

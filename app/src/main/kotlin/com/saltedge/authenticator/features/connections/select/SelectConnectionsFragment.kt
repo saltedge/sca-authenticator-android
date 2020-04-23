@@ -55,7 +55,7 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener, UpActio
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activityComponents?.updateAppbarTitleWithFabAction(getString(R.string.choose_connection_feature_title))
+        activityComponents?.updateAppbarTitle(getString(R.string.choose_connection_feature_title))
         return inflater.inflate(R.layout.fragment_connections_list, container, false)
     }
 

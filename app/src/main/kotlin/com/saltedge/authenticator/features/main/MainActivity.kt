@@ -24,11 +24,11 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.FragmentManager
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.lifecycle.ViewModelProviders
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.di.ViewModelsFactory
 import com.saltedge.authenticator.features.actions.AuthorizationListener
 import com.saltedge.authenticator.features.actions.SubmitActionFragment
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
@@ -43,9 +43,6 @@ import com.saltedge.authenticator.features.security.UnlockAppInputView
 import com.saltedge.authenticator.features.settings.list.SettingsListFragment
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
 import com.saltedge.authenticator.interfaces.OnBackPressListener
-import com.saltedge.authenticator.interfaces.UpActionImageListener
-import com.saltedge.authenticator.model.db.ConnectionsRepository
-import com.saltedge.authenticator.model.realm.RealmManager
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
@@ -54,11 +51,11 @@ import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 class MainActivity : LockableActivity(),
     MainActivityContract.View,
     ActivityComponentsContract,
-    BottomNavigationView.OnNavigationItemSelectedListener,
     View.OnClickListener,
     FragmentManager.OnBackStackChangedListener,
     NetworkStateChangeListener,
@@ -66,32 +63,38 @@ class MainActivity : LockableActivity(),
     ConnectionSelectorListener,
     AuthorizationListener {
 
-    private val presenter = MainActivityPresenter(
-        viewContract = this,
-        connectionsRepository = ConnectionsRepository,
-        appContext = this
-    )
+    lateinit var viewModel: MainActivityViewModel
+    @Inject
+    lateinit var viewModelFactory: ViewModelsFactory
+
+//    private val presenter = MainActivityPresenter(
+//        viewContract = this,
+//        connectionsRepository = ConnectionsRepository,
+//        appContext = this
+//    )
     private val connectivityReceiver = ConnectivityReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (!RealmManager.initialized) RealmManager.initRealm(context = this)
         super.onCreate(savedInstanceState)
+        injectDependencies()
+        setupViewModel()
         this.updateScreenshotLocking()
+        this.applyPreferenceLocale()
         setContentView(R.layout.activity_main)
         setupViews()
         if (savedInstanceState == null) {
-            presenter.launchInitialFragment(intent)
+//            presenter.launchInitialFragment(intent)
         }
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        intent?.let { presenter.onNewIntentReceived(it) }
+//        intent?.let { presenter.onNewIntentReceived(it) }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        presenter.onActivityResult(requestCode, resultCode, data)
+//        presenter.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onResume() {
@@ -117,44 +120,30 @@ class MainActivity : LockableActivity(),
         }
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        return presenter.onNavigationItemSelected(item.itemId)
-    }
-
     override fun onClick(v: View?) {
-        when (v?.id ?: return) {
-            R.id.actionButton -> this.startQrScannerActivity()
-            else -> presenter.onNavigationItemClick(isTopNavigationLevel())
-        }
+//        when (v?.id ?: return) {
+//            else -> presenter.onNavigationItemClick(isTopNavigationLevel())
+//        }
     }
 
     override fun restartActivity() {
         super.restartLockableActivity()
     }
 
-    override fun updateAppbarTitleWithFabAction(title: String, action: FabState) {
+    override fun updateAppbarTitle(title: String) {
         supportActionBar?.title = title
-        if (action === FabState.NO_ACTION) actionButton?.hide() else actionButton?.show()
     }
 
-    override fun showActionBar() {
+    override fun showAppbar() {
         supportActionBar?.show()
     }
 
-    override fun hideActionBar() {
+    override fun hideAppbar() {
         supportActionBar?.hide()
     }
 
-    override fun hideNavigationBar() {
-        bottomNavigationView?.setVisible(show = false)
-    }
-
-    override fun showNavigationBar() {
-        bottomNavigationView?.setVisible(show = true)
-    }
-
     override fun setSelectedTabbarItemId(menuId: Int) {
-        bottomNavigationView?.selectedItemId = menuId
+//        bottomNavigationView?.selectedItemId = menuId
     }
 
     override fun showConnectProvider(connectAppLinkData: ConnectAppLinkData) {
@@ -225,13 +214,13 @@ class MainActivity : LockableActivity(),
 
     override fun updateNavigationViewsContent() {
         isTopNavigationLevel().also { isOnTop ->
-            toolbarView?.navigationIcon =
-                ((currentFragmentInContainer() as? UpActionImageListener)?.getUpActionImageResId()
-                    ?: presenter.getNavigationIcon(isOnTop))?.let { resId ->
-                    this.getDrawable(resId)
-                }
-
-            bottomNavigationLayout?.setVisible(show = isOnTop)
+//            toolbarView?.navigationIcon =
+//                ((currentFragmentInContainer() as? UpActionImageListener)?.getUpActionImageResId()
+//                    ?: presenter.getNavigationIcon(isOnTop))?.let { resId ->
+//                    this.getDrawable(resId)
+//                }
+//
+//            bottomNavigationLayout?.setVisible(show = isOnTop)
         }
     }
 
@@ -240,17 +229,39 @@ class MainActivity : LockableActivity(),
     override fun getAppBarLayout(): View? = appBarLayout
 
     override fun onBackStackChanged() {
-        presenter.onFragmentBackStackChanged(isTopNavigationLevel(), intent)
+//        presenter.onFragmentBackStackChanged(isTopNavigationLevel(), intent)
     }
 
-    override fun getSnackbarAnchorView(): View? = snackBarCoordinator
+    override fun getSnackbarAnchorView(): View? = container//snackBarCoordinator
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         showNetworkMessage(isConnected)
     }
 
     override fun onConnectionSelected(connectionGuid: String) {
-        presenter.onConnectionSelected(connectionGuid)
+//        presenter.onConnectionSelected(connectionGuid)
+    }
+
+    private fun injectDependencies() {
+        authenticatorApp?.appComponent?.inject(this)
+//        authenticatorApp?.appComponent?.addLauncherModule(LauncherModule())?.inject(this)
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProviders
+            .of(this, viewModelFactory)
+            .get(MainActivityViewModel::class.java)
+        lifecycle.addObserver(viewModel)
+
+//        viewModel.onInitializationSuccess.observe(this, Observer {
+//            it?.let { proceedToNextScreen() }
+//        })
+//        viewModel.onDbInitializationFail.observe(this, Observer {
+//            it?.let { showDbError() }
+//        })
+//        viewModel.buttonClickEvent.observe(this, Observer {
+//            it?.let { finishAffinity() }
+//        })
     }
 
     private fun showNetworkMessage(isConnected: Boolean) {
@@ -264,11 +275,11 @@ class MainActivity : LockableActivity(),
 
     private fun setupViews() {
         try {
-            setSupportActionBar(toolbarView)
-            toolbarView?.setNavigationOnClickListener(this)
-            bottomNavigationView?.setOnNavigationItemSelectedListener(this)
+//            setSupportActionBar(toolbarView)
+//            toolbarView?.setNavigationOnClickListener(this)
+//            bottomNavigationView?.setOnNavigationItemSelectedListener(this)
             supportFragmentManager.addOnBackStackChangedListener(this)
-            actionButton?.setOnClickListener(this)
+//            actionButton?.setOnClickListener(this)
             updateNavigationViewsContent()
         } catch (e: Exception) {
             e.log()

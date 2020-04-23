@@ -49,7 +49,7 @@ class WebViewFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activityComponents?.updateAppbarTitleWithFabAction(title = title)
+        activityComponents?.updateAppbarTitle(title = title)
         return inflater.inflate(R.layout.fragment_web_view, container, false)
     }
 

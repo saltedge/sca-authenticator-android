@@ -24,9 +24,9 @@ import com.saltedge.authenticator.app.di.FragmentScope
 import com.saltedge.authenticator.features.launcher.LauncherActivity
 import dagger.Subcomponent
 
-@FragmentScope
-@Subcomponent(modules = [LauncherModule::class])
-interface LauncherComponent {
-
-    fun inject(activity: LauncherActivity)
-}
+//@FragmentScope
+//@Subcomponent(modules = [LauncherModule::class])
+//interface LauncherComponent {
+//
+//    fun inject(activity: LauncherActivity)
+//}

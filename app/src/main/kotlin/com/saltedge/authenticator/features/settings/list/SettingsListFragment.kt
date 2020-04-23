@@ -59,7 +59,7 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activityComponents?.updateAppbarTitleWithFabAction(getString(R.string.settings_feature_title))
+        activityComponents?.updateAppbarTitle(getString(R.string.settings_feature_title))
         setupViews()
     }
 

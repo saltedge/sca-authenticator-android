@@ -18,31 +18,44 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.launcher
+package com.saltedge.authenticator.features.main
 
 import android.content.Context
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.model.realm.RealmManagerAbs
 import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
-import javax.inject.Inject
 
-//class LauncherViewModelFactory @Inject constructor(
-//    val appContext: Context,
-//    val preferenceRepository: PreferenceRepositoryAbs,
-//    val passcodeTools: PasscodeToolsAbs,
-//    val realmManager: RealmManagerAbs
-//) : ViewModelProvider.Factory {
-//    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-//        if (modelClass.isAssignableFrom(LauncherViewModel::class.java)) {
-//            return LauncherViewModel(
-//                appContext = appContext,
-//                preferenceRepository = preferenceRepository,
-//                passcodeTools = passcodeTools,
-//                realmManager = realmManager
-//            ) as T
-//        }
-//        throw IllegalArgumentException("Unknown ViewModel class")
+class MainActivityViewModel(
+    val appContext: Context,
+    val preferenceRepository: PreferenceRepositoryAbs,
+    val passcodeTools: PasscodeToolsAbs,
+    val realmManager: RealmManagerAbs
+) : ViewModel(), LifecycleObserver {
+
+    init {
+        if (!realmManager.initialized) realmManager.initRealm(context = appContext)
+    }
+//
+//    var buttonClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+//        private set
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    fun onLifeCycleResume() {
+
+
+    }
+
+//    fun getNextActivityClass(): Class<out Activity> =
+//        if (shouldSetupApplication()) OnboardingSetupActivity::class.java else MainActivity::class.java
+//
+//    fun onOkClick() {
+//        realmManager.resetError()
+//        buttonClickEvent.postValue(ViewModelEvent())
 //    }
-//}
+//
+//    private fun shouldSetupApplication(): Boolean = !preferenceRepository.passcodeExist()
+}
