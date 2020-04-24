@@ -22,10 +22,12 @@ package com.saltedge.authenticator.features.connections.qr
 
 import android.content.Context
 import android.graphics.*
+import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.tool.convertDpToPx
 
 class QrScannerBorderView : View {
 
@@ -60,15 +62,15 @@ class QrScannerBorderView : View {
         )
 
         titleXPos = centerX
-        titleYPos = centerY - rectHalfSize * 2
-        descriptionYPos = centerY - rectHalfSize * 2 + 120F //bad number
+        titleYPos = centerY - rectHalfSize - convertDpToPx(94F)
+        descriptionYPos = centerY - rectHalfSize - convertDpToPx(58F)
     }
 
     private fun drawQrItems(canvas: Canvas) {
         val paint = Paint()
 
         drawQrTitle(canvas = canvas, paint = paint)
-        drawQrDescription(canvas = canvas, paint = paint)
+        drawQrDescription(canvas = canvas)
         drawQrRect(canvas = canvas, paint = paint)
     }
 
@@ -82,14 +84,19 @@ class QrScannerBorderView : View {
         canvas.drawText(context.getString(R.string.scan_qr_title), titleXPos, titleYPos, paint)
     }
 
-    private fun drawQrDescription(canvas: Canvas, paint: Paint) {
+    private fun drawQrDescription(canvas: Canvas) {
         val customTypeface = ResourcesCompat.getFont(context, R.font.roboto_regular)
+        val textPaint = TextPaint()
+        val descriptionText = context.getString(R.string.scan_qr_description)
 
-        paint.color = context.resources.getColor(R.color.primary_text)
-        paint.textSize = context.resources.getDimension(R.dimen.text_18)
-        paint.typeface = customTypeface
-        paint.textAlign = Paint.Align.CENTER
-        canvas.drawText(context.getString(R.string.scan_qr_description), titleXPos, descriptionYPos, paint)
+        textPaint.color = context.resources.getColor(R.color.primary_text)
+        textPaint.textSize = context.resources.getDimension(R.dimen.text_18)
+        textPaint.typeface = customTypeface
+        textPaint.textAlign = Paint.Align.CENTER
+        for (line in descriptionText.split("\n")) {
+            canvas.drawText(line, titleXPos, descriptionYPos, textPaint)
+            descriptionYPos += textPaint.descent() - textPaint.ascent()
+        }
     }
 
     private fun drawQrRect(canvas: Canvas, paint: Paint) {
