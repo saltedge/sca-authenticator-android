@@ -47,7 +47,7 @@ import com.saltedge.authenticator.tool.log
 import kotlinx.android.synthetic.main.activity_qr_scanner.*
 import java.io.IOException
 
-class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
+class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer, View.OnClickListener {
 
     private var barcodeDetector: BarcodeDetector? = null
     private var cameraSource: CameraSource? = null
@@ -81,18 +81,19 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
 
     override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView
 
-    override fun getAppBarLayout(): View? = toolbarView
+    override fun getAppBarLayout(): View? = null
 
     override fun getSnackbarAnchorView(): View? = surfaceView
 
     private fun setupViews() {
-        setSupportActionBar(toolbarView)
-        toolbarView?.navigationIcon = getDrawable(R.drawable.ic_close_white_24dp)
-        toolbarView?.setNavigationOnClickListener { finish() }
-
+        statusImageView?.setOnClickListener(this)
         setupBarcodeDetector()
         setupCameraSource()
         setupSurface()
+    }
+
+    override fun onClick(view: View?) {
+        if (view?.id == R.id.statusImageView) finish()
     }
 
     private fun setupCameraSource() {

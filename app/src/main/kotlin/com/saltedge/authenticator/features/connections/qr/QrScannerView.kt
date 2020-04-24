@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,12 @@ import androidx.core.content.res.ResourcesCompat
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.convertDpToPx
 
-class QrScannerBorderView : View {
+class QrScannerView : View {
 
     private var qrRect = RectF()
-    private var titleXPos = 0F
-    private var titleYPos = 0F
-    private var descriptionYPos = 0F
+    private var centerX = 0F
+    private var titleY = 0F
+    private var descriptionY = 0F
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -52,7 +52,7 @@ class QrScannerBorderView : View {
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         val rectHalfSize = Math.min(w, h) * 0.7f / 2
-        val centerX = w.toFloat() / 2
+        centerX = w.toFloat() / 2
         val centerY = h.toFloat() / 2
         qrRect = RectF(
             centerX - rectHalfSize,
@@ -61,9 +61,8 @@ class QrScannerBorderView : View {
             centerY + rectHalfSize
         )
 
-        titleXPos = centerX
-        titleYPos = centerY - rectHalfSize - convertDpToPx(94F)
-        descriptionYPos = centerY - rectHalfSize - convertDpToPx(58F)
+        titleY = centerY - rectHalfSize - convertDpToPx(94F)
+        descriptionY = centerY - rectHalfSize - convertDpToPx(58F)
     }
 
     private fun drawQrItems(canvas: Canvas) {
@@ -81,7 +80,7 @@ class QrScannerBorderView : View {
         paint.textSize = context.resources.getDimension(R.dimen.text_24)
         paint.typeface = customTypeface
         paint.textAlign = Paint.Align.CENTER
-        canvas.drawText(context.getString(R.string.scan_qr_title), titleXPos, titleYPos, paint)
+        canvas.drawText(context.getString(R.string.scan_qr_title), centerX, titleY, paint)
     }
 
     private fun drawQrDescription(canvas: Canvas) {
@@ -94,8 +93,8 @@ class QrScannerBorderView : View {
         textPaint.typeface = customTypeface
         textPaint.textAlign = Paint.Align.CENTER
         for (line in descriptionText.split("\n")) {
-            canvas.drawText(line, titleXPos, descriptionYPos, textPaint)
-            descriptionYPos += textPaint.descent() - textPaint.ascent()
+            canvas.drawText(line, centerX, descriptionY, textPaint)
+            descriptionY += textPaint.descent() - textPaint.ascent()
         }
     }
 

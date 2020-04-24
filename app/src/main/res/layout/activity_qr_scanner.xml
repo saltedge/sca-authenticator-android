@@ -18,33 +18,32 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/black">
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbarView"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/action_bar_size"
-        android:background="@color/color_primary"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+    android:layout_height="match_parent">
 
     <SurfaceView
         android:id="@+id/surfaceView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/toolbarView" />
+        android:layout_height="match_parent" />
 
-    <com.saltedge.authenticator.features.connections.qr.QrScannerBorderView
+    <com.saltedge.authenticator.features.connections.qr.QrScannerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbarView"
-        android:background="@color/qr_background"/>
+        android:background="@color/qr_background" />
 
     <com.saltedge.authenticator.features.security.UnlockAppInputView
         android:id="@+id/unlockAppInputView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true" />
-</RelativeLayout>
+        android:layout_height="match_parent" />
+
+    <ImageView
+        android:id="@+id/statusImageView"
+        android:layout_width="@dimen/dp_24"
+        android:layout_height="@dimen/dp_24"
+        android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginTop="@dimen/dp_16"
+        android:contentDescription="@string/fingerprint_touch_sensor"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_close_24dp" />
+</FrameLayout>
