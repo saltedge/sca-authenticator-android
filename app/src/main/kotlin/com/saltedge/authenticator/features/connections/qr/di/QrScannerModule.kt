@@ -18,23 +18,25 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.qr
+package com.saltedge.authenticator.features.connections.qr.di
 
 import android.content.Context
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.saltedge.authenticator.R
-import com.saltedge.authenticator.events.ViewModelEvent
+import com.saltedge.authenticator.app.di.FragmentScope
+import com.saltedge.authenticator.features.connections.qr.QrScannerViewModelFactory
+import dagger.Module
+import dagger.Provides
 
-class QrScannerViewModel(val appContext: Context) : ViewModel(), LifecycleObserver {
+@Module
+class QrScannerModule {
 
-    var closeActivity = MutableLiveData<ViewModelEvent<Unit>>()
-        private set
-
-    fun onViewClick(viewId: Int) {
-        when (viewId) {
-            R.id.closeImageView -> closeActivity.postValue(ViewModelEvent())
-        }
+    @FragmentScope
+    @Provides
+    fun provideFactory(
+        appContext: Context
+    ): QrScannerViewModelFactory {
+        return QrScannerViewModelFactory(
+            appContext = appContext
+        )
     }
 }
+

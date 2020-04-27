@@ -21,20 +21,19 @@
 package com.saltedge.authenticator.features.connections.qr
 
 import android.content.Context
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.saltedge.authenticator.R
-import com.saltedge.authenticator.events.ViewModelEvent
+import androidx.lifecycle.ViewModelProvider
+import javax.inject.Inject
 
-class QrScannerViewModel(val appContext: Context) : ViewModel(), LifecycleObserver {
-
-    var closeActivity = MutableLiveData<ViewModelEvent<Unit>>()
-        private set
-
-    fun onViewClick(viewId: Int) {
-        when (viewId) {
-            R.id.closeImageView -> closeActivity.postValue(ViewModelEvent())
+class QrScannerViewModelFactory @Inject constructor(
+    val appContext: Context
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(QrScannerViewModel::class.java)) {
+            return QrScannerViewModel(
+                appContext = appContext
+            ) as T
         }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

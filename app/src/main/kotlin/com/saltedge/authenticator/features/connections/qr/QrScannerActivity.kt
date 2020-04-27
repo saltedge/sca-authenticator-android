@@ -40,37 +40,32 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.events.ViewModelEvent
+import com.saltedge.authenticator.features.connections.qr.di.QrScannerModule
 import com.saltedge.authenticator.features.main.SnackbarAnchorContainer
 import com.saltedge.authenticator.features.security.LockableActivity
 import com.saltedge.authenticator.features.security.UnlockAppInputView
 import com.saltedge.authenticator.sdk.tools.isValidDeeplink
 import com.saltedge.authenticator.tool.AppTools.getDisplayHeight
 import com.saltedge.authenticator.tool.AppTools.getDisplayWidth
+import com.saltedge.authenticator.tool.authenticatorApp
 import com.saltedge.authenticator.tool.log
 import kotlinx.android.synthetic.main.activity_qr_scanner.*
 import java.io.IOException
+import javax.inject.Inject
 
 class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer, View.OnClickListener {
 
     private var barcodeDetector: BarcodeDetector? = null
     private var cameraSource: CameraSource? = null
+    @Inject lateinit var viewModelFactory: QrScannerViewModelFactory
     lateinit var viewModel: QrScannerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        injectDependencies()
         setContentView(R.layout.activity_qr_scanner)
         setupViewModel()
         setupViews()
-    }
-
-    private fun setupViewModel() {
-        viewModel = ViewModelProviders
-            .of(this)
-            .get(QrScannerViewModel::class.java)
-
-        viewModel.closeActivity.observe(this, Observer<ViewModelEvent<Unit>> {
-            finish()
-        })
     }
 
     override fun onRequestPermissionsResult(
@@ -100,15 +95,31 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer, View.OnCl
 
     override fun getSnackbarAnchorView(): View? = surfaceView
 
+    override fun onClick(view: View?) {
+        viewModel.onViewClick(view?.id ?: return)
+    }
+
+    private fun injectDependencies() {
+        authenticatorApp?.appComponent?.addQrScannerModule(QrScannerModule())?.inject(
+            this
+        )
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProviders
+            .of(this, viewModelFactory)
+            .get(QrScannerViewModel::class.java)
+
+        viewModel.closeActivity.observe(this, Observer<ViewModelEvent<Unit>> {
+            finish()
+        })
+    }
+
     private fun setupViews() {
         closeImageView?.setOnClickListener(this)
         setupBarcodeDetector()
         setupCameraSource()
         setupSurface()
-    }
-
-    override fun onClick(view: View?) {
-        viewModel.onViewClick(view?.id ?: return)
     }
 
     private fun setupCameraSource() {
