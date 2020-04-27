@@ -18,7 +18,7 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -27,18 +27,37 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.saltedge.authenticator.features.connections.qr.QrScannerView
+    <com.saltedge.authenticator.features.connections.qr.QrCameraMaskView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/qr_background" />
+        android:background="@color/qr_camera_mask_background" />
 
-    <com.saltedge.authenticator.features.security.UnlockAppInputView
-        android:id="@+id/unlockAppInputView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <TextView
+        android:id="@+id/titleView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/descriptionView"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/roboto_bold"
+        android:text="@string/scan_qr_title"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/text_24" />
+
+    <TextView
+        android:id="@+id/descriptionView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="@dimen/dp_15"
+        android:fontFamily="@font/roboto_regular"
+        android:paddingBottom="@dimen/dp_280"
+        android:text="@string/scan_qr_description"
+        android:textAlignment="center"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/text_18" />
 
     <ImageView
-        android:id="@+id/statusImageView"
+        android:id="@+id/closeImageView"
         android:layout_width="@dimen/dp_24"
         android:layout_height="@dimen/dp_24"
         android:layout_marginStart="@dimen/dp_16"
@@ -46,4 +65,9 @@
         android:contentDescription="@string/fingerprint_touch_sensor"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_close_24dp" />
-</FrameLayout>
+
+    <com.saltedge.authenticator.features.security.UnlockAppInputView
+        android:id="@+id/unlockAppInputView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</RelativeLayout>

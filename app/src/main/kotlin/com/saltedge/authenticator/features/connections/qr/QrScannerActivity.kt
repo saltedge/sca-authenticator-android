@@ -30,6 +30,8 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.util.forEach
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
@@ -37,6 +39,7 @@ import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
+import com.saltedge.authenticator.events.ViewModelEvent
 import com.saltedge.authenticator.features.main.SnackbarAnchorContainer
 import com.saltedge.authenticator.features.security.LockableActivity
 import com.saltedge.authenticator.features.security.UnlockAppInputView
@@ -51,11 +54,23 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer, View.OnCl
 
     private var barcodeDetector: BarcodeDetector? = null
     private var cameraSource: CameraSource? = null
+    lateinit var viewModel: QrScannerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_qr_scanner)
+        setupViewModel()
         setupViews()
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProviders
+            .of(this)
+            .get(QrScannerViewModel::class.java)
+
+        viewModel.closeActivity.observe(this, Observer<ViewModelEvent<Unit>> {
+            finish()
+        })
     }
 
     override fun onRequestPermissionsResult(
@@ -86,14 +101,14 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer, View.OnCl
     override fun getSnackbarAnchorView(): View? = surfaceView
 
     private fun setupViews() {
-        statusImageView?.setOnClickListener(this)
+        closeImageView?.setOnClickListener(this)
         setupBarcodeDetector()
         setupCameraSource()
         setupSurface()
     }
 
     override fun onClick(view: View?) {
-        if (view?.id == R.id.statusImageView) finish()
+        viewModel.onViewClick(view?.id ?: return)
     }
 
     private fun setupCameraSource() {
@@ -142,7 +157,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer, View.OnCl
         })
     }
 
-    private fun onReceivedCodes(codes: SparseArray<Barcode>) {
+    private fun onReceivedCodes(codes: SparseArray<Barcode>) { //move to view model
         val deeplinks = mutableListOf<String>()
         codes.forEach { _, value ->
             if (value.displayValue.isValidDeeplink()) {
@@ -154,7 +169,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer, View.OnCl
         }
     }
 
-    private fun startCameraSource() {
+    private fun startCameraSource() { //move to view model
         try {
             if (ActivityCompat.checkSelfPermission(
                     applicationContext,
@@ -175,7 +190,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer, View.OnCl
         }
     }
 
-    private fun returnResultAndFinish(deeplink: String) {
+    private fun returnResultAndFinish(deeplink: String) { //observer in view model
         this.setResult(
             Activity.RESULT_OK,
             intent.putExtra(KEY_DEEP_LINK, deeplink)
@@ -183,7 +198,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer, View.OnCl
         this.finish()
     }
 
-    private fun showError(reason: String?) {
+    private fun showError(reason: String?) {  //observer in view model
         AlertDialog.Builder(this)
             .setTitle(android.R.string.dialog_alert_title)
             .setMessage(reason ?: getString(R.string.errors_invalid_qr))

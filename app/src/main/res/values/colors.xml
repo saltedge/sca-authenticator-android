@@ -65,5 +65,5 @@
     <color name="theme_background">@android:color/white</color>
     <color name="icon_background">@android:color/white</color>
     <color name="logo_background">@color/blue_black</color>
-    <color name="qr_background">#DDFFFFFF</color>
+    <color name="qr_camera_mask_background">#DDFFFFFF</color>
 </resources>

@@ -90,6 +90,7 @@
     <dimen name="dp_200">200dp</dimen>
     <dimen name="dp_240">240dp</dimen>
     <dimen name="dp_250">250dp</dimen>
+    <dimen name="dp_280">280dp</dimen>
     <dimen name="dp_325">325dp</dimen>
     <dimen name="dp_328">328dp</dimen>
     <dimen name="dp_420">420dp</dimen>

@@ -22,19 +22,13 @@ package com.saltedge.authenticator.features.connections.qr
 
 import android.content.Context
 import android.graphics.*
-import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
-import androidx.core.content.res.ResourcesCompat
-import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.convertDpToPx
 
-class QrScannerView : View {
+class QrCameraMaskView : View {
 
     private var qrRect = RectF()
-    private var centerX = 0F
-    private var titleY = 0F
-    private var descriptionY = 0F
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -46,13 +40,13 @@ class QrScannerView : View {
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        canvas?.let { drawQrItems(it) }
+        canvas?.let { drawQrRect(it) }
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        val rectHalfSize = Math.min(w, h) * 0.7f / 2
-        centerX = w.toFloat() / 2
+        val rectHalfSize = convertDpToPx(232F) / 2
+        val centerX = w.toFloat() / 2
         val centerY = h.toFloat() / 2
         qrRect = RectF(
             centerX - rectHalfSize,
@@ -60,45 +54,11 @@ class QrScannerView : View {
             centerX + rectHalfSize,
             centerY + rectHalfSize
         )
-
-        titleY = centerY - rectHalfSize - convertDpToPx(94F)
-        descriptionY = centerY - rectHalfSize - convertDpToPx(58F)
     }
 
-    private fun drawQrItems(canvas: Canvas) {
+    private fun drawQrRect(canvas: Canvas) {
         val paint = Paint()
 
-        drawQrTitle(canvas = canvas, paint = paint)
-        drawQrDescription(canvas = canvas)
-        drawQrRect(canvas = canvas, paint = paint)
-    }
-
-    private fun drawQrTitle(canvas: Canvas, paint: Paint) {
-        val customTypeface = ResourcesCompat.getFont(context, R.font.roboto_bold)
-
-        paint.color = context.resources.getColor(R.color.primary_text)
-        paint.textSize = context.resources.getDimension(R.dimen.text_24)
-        paint.typeface = customTypeface
-        paint.textAlign = Paint.Align.CENTER
-        canvas.drawText(context.getString(R.string.scan_qr_title), centerX, titleY, paint)
-    }
-
-    private fun drawQrDescription(canvas: Canvas) {
-        val customTypeface = ResourcesCompat.getFont(context, R.font.roboto_regular)
-        val textPaint = TextPaint()
-        val descriptionText = context.getString(R.string.scan_qr_description)
-
-        textPaint.color = context.resources.getColor(R.color.primary_text)
-        textPaint.textSize = context.resources.getDimension(R.dimen.text_18)
-        textPaint.typeface = customTypeface
-        textPaint.textAlign = Paint.Align.CENTER
-        for (line in descriptionText.split("\n")) {
-            canvas.drawText(line, centerX, descriptionY, textPaint)
-            descriptionY += textPaint.descent() - textPaint.ascent()
-        }
-    }
-
-    private fun drawQrRect(canvas: Canvas, paint: Paint) {
         paint.color = Color.TRANSPARENT
         paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
         canvas.drawRect(qrRect, paint)
