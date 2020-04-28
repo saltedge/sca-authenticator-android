@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MainScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimaryDark">@color/system_bar_color</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="colorAccent">@color/blue</item>
+        <item name="android:colorButtonNormal">@color/button_blue_default</item>
+        <item name="android:colorControlHighlight">@color/button_blue_pressed</item>
+        <item name="android:itemBackground">@android:color/white</item>
+        <item name="android:itemTextAppearance">@style/MenuItemTextAppearance</item>
+    </style>
+</resources>

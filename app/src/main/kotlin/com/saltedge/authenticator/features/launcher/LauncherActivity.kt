@@ -30,7 +30,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.LAUNCHER_SPLASH_DURATION
-import com.saltedge.authenticator.app.di.ViewModelsFactory
+import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
 import com.saltedge.authenticator.tool.applyPreferenceLocale
@@ -47,17 +47,12 @@ class LauncherActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectDependencies()
+        authenticatorApp?.appComponent?.inject(this)
         setupViewModel()
         this.updateScreenshotLocking()
         this.applyPreferenceLocale()
         this.registerNotificationChannels()
         setContentView(R.layout.activity_launcher)
-    }
-
-    private fun injectDependencies() {
-        authenticatorApp?.appComponent?.inject(this)
-//        authenticatorApp?.appComponent?.addLauncherModule(LauncherModule())?.inject(this)
     }
 
     private fun setupViewModel() {

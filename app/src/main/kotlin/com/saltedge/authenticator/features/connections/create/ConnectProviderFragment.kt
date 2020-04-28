@@ -30,7 +30,6 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.features.connections.create.di.ConnectProviderModule
 import com.saltedge.authenticator.interfaces.OnBackPressListener
-import com.saltedge.authenticator.interfaces.UpActionImageListener
 import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.Token
@@ -46,8 +45,7 @@ class ConnectProviderFragment : BaseFragment(),
     ConnectProviderContract.View,
     ConnectWebClientContract,
     View.OnClickListener,
-    OnBackPressListener,
-    UpActionImageListener {
+    OnBackPressListener {
 
     @Inject
     lateinit var presenterContract: ConnectProviderContract.Presenter
@@ -67,7 +65,10 @@ class ConnectProviderFragment : BaseFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activityComponents?.updateAppbarTitle(getString(presenterContract.getTitleResId()))
+        activityComponents?.updateAppbar(
+            titleResId = presenterContract.getTitleResId(),
+            backActionImageResId = R.drawable.ic_action_close
+        )
         return inflater.inflate(R.layout.fragment_connect, container, false)
     }
 
@@ -150,8 +151,6 @@ class ConnectProviderFragment : BaseFragment(),
             }
         )
     }
-
-    override fun getUpActionImageResId(): ResId? = R.drawable.ic_close_white_24dp
 
     private fun updateLayoutsVisibility() {
         fragmentConnectProcessingLayout?.setVisible(show = presenterContract.shouldShowProgressView)

@@ -18,15 +18,26 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.settings.about.di
+package com.saltedge.authenticator.features.main
 
-import com.saltedge.authenticator.app.di.FragmentScope
-import com.saltedge.authenticator.features.settings.about.AboutListFragment
-import dagger.Component
+import android.content.Intent
+import com.saltedge.authenticator.app.KEY_DEEP_LINK
+import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
+import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
 
-@FragmentScope
-@Component(modules = [AboutListModule::class])
-interface AboutListComponent {
+val Intent?.connectionId: String
+    get() = this?.getStringExtra(KEY_CONNECTION_ID) ?: ""
 
-    fun inject(fragment: AboutListFragment)
-}
+val Intent?.authorizationId: String
+    get() = this?.getStringExtra(KEY_AUTHORIZATION_ID) ?: ""
+
+val Intent?.deepLink: String
+    get() = this?.getStringExtra(KEY_DEEP_LINK) ?: ""
+
+// Data for Authorization Details Fragment
+val Intent?.hasPendingAuthorizationData: Boolean
+    get() = this != null && this.connectionId.isNotEmpty() && this.authorizationId.isNotEmpty()
+
+// Data for Connect Activity
+val Intent?.hasDeepLinkData: Boolean
+    get() = deepLink.isNotEmpty()

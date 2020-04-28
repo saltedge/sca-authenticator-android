@@ -49,7 +49,10 @@ class LicensesFragment : BaseFragment(), LicensesContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activityComponents?.updateAppbarTitle(getString(R.string.about_open_source_licenses))
+        activityComponents?.updateAppbar(
+            titleResId = R.string.about_open_source_licenses,
+            backActionImageResId = R.drawable.ic_action_back
+        )
         setupViews()
     }
 

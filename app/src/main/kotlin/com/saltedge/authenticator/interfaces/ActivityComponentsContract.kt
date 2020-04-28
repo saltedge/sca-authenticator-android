@@ -20,8 +20,14 @@
  */
 package com.saltedge.authenticator.interfaces
 
+import com.saltedge.authenticator.tool.ResId
+
 interface ActivityComponentsContract {
-    fun updateAppbarTitle(title: String)
-    fun hideAppbar()
-    fun showAppbar()
+    fun updateAppbar(
+        titleResId: ResId? = null,
+        title: String? = null,
+        backActionImageResId: ResId? = null,
+        showMenu: Boolean = false
+    )
+    fun onLanguageChanged()
 }

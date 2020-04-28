@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,274 +21,172 @@
 package com.saltedge.authenticator.features.main
 
 import android.content.Intent
-import android.content.IntentFilter
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.di.ViewModelsFactory
-import com.saltedge.authenticator.features.actions.AuthorizationListener
-import com.saltedge.authenticator.features.actions.SubmitActionFragment
+import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
-import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
-import com.saltedge.authenticator.features.connections.select.ConnectionSelectorListener
-import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment
 import com.saltedge.authenticator.features.security.LockableActivity
 import com.saltedge.authenticator.features.security.UnlockAppInputView
 import com.saltedge.authenticator.features.settings.list.SettingsListFragment
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
 import com.saltedge.authenticator.interfaces.OnBackPressListener
-import com.saltedge.authenticator.sdk.model.GUID
-import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
-import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
-import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
+import com.saltedge.authenticator.interfaces.ViewModelContract
 import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
-import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 class MainActivity : LockableActivity(),
-    MainActivityContract.View,
-    ActivityComponentsContract,
+    ViewModelContract,
     View.OnClickListener,
-    FragmentManager.OnBackStackChangedListener,
-    NetworkStateChangeListener,
-    SnackbarAnchorContainer,
-    ConnectionSelectorListener,
-    AuthorizationListener {
-
-    lateinit var viewModel: MainActivityViewModel
+    SnackbarAnchorContainer
+{
+    override lateinit var viewModel: MainActivityViewModel
     @Inject
     lateinit var viewModelFactory: ViewModelsFactory
 
-//    private val presenter = MainActivityPresenter(
-//        viewContract = this,
-//        connectionsRepository = ConnectionsRepository,
-//        appContext = this
-//    )
-    private val connectivityReceiver = ConnectivityReceiver()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectDependencies()
+        printToLogcat("TEST_TEST", "onCreate")
+        authenticatorApp?.appComponent?.inject(this)
         setupViewModel()
         this.updateScreenshotLocking()
-        this.applyPreferenceLocale()
         setContentView(R.layout.activity_main)
         setupViews()
-        if (savedInstanceState == null) {
-//            presenter.launchInitialFragment(intent)
-        }
+        viewModel.onLifeCycleCreate(savedInstanceState, intent)
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-//        intent?.let { presenter.onNewIntentReceived(it) }
+        viewModel.onNewIntent(intent)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-//        presenter.onActivityResult(requestCode, resultCode, data)
+        viewModel.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onResume() {
         super.onResume()
         this.applyPreferenceLocale()
-        registerReceiver(
-            connectivityReceiver,
-            IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-        )
-        connectivityReceiver.networkStateListener = this
     }
 
-    override fun onPause() {
-        super.onPause()
-        unregisterReceiver(connectivityReceiver)
-        connectivityReceiver.networkStateListener = null
-    }
-
+    /**
+     * Redirect back press events to fragments in container
+     */
     override fun onBackPressed() {
         val onBackPressListener = currentFragmentInContainer() as? OnBackPressListener
-        if (onBackPressListener?.onBackPress() != true) {
-            super.onBackPressed()
-        }
+        if (onBackPressListener?.onBackPress() != true) super.onBackPressed()
     }
 
     override fun onClick(v: View?) {
-//        when (v?.id ?: return) {
-//            else -> presenter.onNavigationItemClick(isTopNavigationLevel())
-//        }
-    }
-
-    override fun restartActivity() {
-        super.restartLockableActivity()
-    }
-
-    override fun updateAppbarTitle(title: String) {
-        supportActionBar?.title = title
-    }
-
-    override fun showAppbar() {
-        supportActionBar?.show()
-    }
-
-    override fun hideAppbar() {
-        supportActionBar?.hide()
-    }
-
-    override fun setSelectedTabbarItemId(menuId: Int) {
-//        bottomNavigationView?.selectedItemId = menuId
-    }
-
-    override fun showConnectProvider(connectAppLinkData: ConnectAppLinkData) {
-        this.addFragment(ConnectProviderFragment.newInstance(connectAppLinkData = connectAppLinkData))
-    }
-
-    override fun showAuthorizationsList() {
-        replaceFragmentInContainer(AuthorizationsListFragment())
-    }
-
-    override fun showConnectionsList() {
-        replaceFragmentInContainer(ConnectionsListFragment())
-    }
-
-    override fun showSettingsList() {
-        replaceFragmentInContainer(SettingsListFragment())
-    }
-
-    override fun showAuthorizationDetailsView(connectionID: String, authorizationID: String) {
-        this.addFragment(
-            AuthorizationDetailsFragment.newInstance(
-                connectionId = connectionID,
-                authorizationId = authorizationID
-            )
-        )
-    }
-
-    override fun onNewAuthorization(authorizationIdentifier: AuthorizationIdentifier) {
-        this.addFragment(
-            AuthorizationDetailsFragment.newInstance(
-                connectionId = authorizationIdentifier.connectionID,
-                authorizationId = authorizationIdentifier.authorizationID
-            )
-        )
-    }
-
-    override fun closeView() {
-        finish()
-    }
-
-    override fun popBackStack() {
-        supportFragmentManager.popBackStack()
-    }
-
-    override fun showNoConnectionsError() {
-        val snackbar = this.buildWarning(
-            text = getString(R.string.connections_list_no_connections),
-            snackBarDuration = 5000
-        )
-        snackbar?.show()
-    }
-
-    override fun showSubmitActionFragment(
-        connectionGuid: GUID,
-        actionAppLinkData: ActionAppLinkData
-    ) {
-        this.addFragment(
-            SubmitActionFragment.newInstance(
-                connectionGuid = connectionGuid,
-                actionAppLinkData = actionAppLinkData
-            )
-        )
-    }
-
-    override fun showConnectionsSelectorFragment(connections: List<ConnectionViewModel>) {
-        this.addFragment(SelectConnectionsFragment.newInstance(connections = connections))
-    }
-
-    override fun updateNavigationViewsContent() {
-        isTopNavigationLevel().also { isOnTop ->
-//            toolbarView?.navigationIcon =
-//                ((currentFragmentInContainer() as? UpActionImageListener)?.getUpActionImageResId()
-//                    ?: presenter.getNavigationIcon(isOnTop))?.let { resId ->
-//                    this.getDrawable(resId)
-//                }
-//
-//            bottomNavigationLayout?.setVisible(show = isOnTop)
-        }
+        viewModel.onViewClick(v?.id ?: return)
     }
 
     override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView
 
     override fun getAppBarLayout(): View? = appBarLayout
 
-    override fun onBackStackChanged() {
-//        presenter.onFragmentBackStackChanged(isTopNavigationLevel(), intent)
-    }
-
-    override fun getSnackbarAnchorView(): View? = container//snackBarCoordinator
-
-    override fun onNetworkConnectionChanged(isConnected: Boolean) {
-        showNetworkMessage(isConnected)
-    }
-
-    override fun onConnectionSelected(connectionGuid: String) {
-//        presenter.onConnectionSelected(connectionGuid)
-    }
-
-    private fun injectDependencies() {
-        authenticatorApp?.appComponent?.inject(this)
-//        authenticatorApp?.appComponent?.addLauncherModule(LauncherModule())?.inject(this)
-    }
+    override fun getSnackbarAnchorView(): View? = container
 
     private fun setupViewModel() {
-        viewModel = ViewModelProviders
-            .of(this, viewModelFactory)
-            .get(MainActivityViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(MainActivityViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
-//        viewModel.onInitializationSuccess.observe(this, Observer {
-//            it?.let { proceedToNextScreen() }
-//        })
-//        viewModel.onDbInitializationFail.observe(this, Observer {
-//            it?.let { showDbError() }
-//        })
-//        viewModel.buttonClickEvent.observe(this, Observer {
-//            it?.let { finishAffinity() }
-//        })
-    }
+        // Events
+        viewModel.onQrScanClickEvent.observe(this, Observer {
+            it.getContentIfNotHandled()?.let {
+                this.showQrScannerActivity()
+            }
+        })
+        viewModel.onAppBarMenuClickEvent.observe(this, Observer {
+            it.getContentIfNotHandled()?.let {
+                //TODO show appbar menu
+            }
+        })
+        viewModel.onBackActionClickEvent.observe(this, Observer {
+            it.getContentIfNotHandled()?.let {
+                onBackPressed()
+            }
+        })
+        viewModel.onRestartActivityEvent.observe(this, Observer {
+            it.getContentIfNotHandled()?.let {
+                super.restartLockableActivity()
+            }
+        })
+        viewModel.onShowAuthorizationsListEvent.observe(this, Observer {
+            it.getContentIfNotHandled()?.let {
+                this.replaceFragmentInContainer(AuthorizationsListFragment())
+            }
+        })
+        viewModel.onShowAuthorizationDetailsEvent.observe(this, Observer {
+            it.getContentIfNotHandled()?.let { authorizationIdentifier ->
+                this.addFragment(AuthorizationDetailsFragment.newInstance(authorizationIdentifier))
+            }
+        })
+        viewModel.onShowConnectionsListEvent.observe(this, Observer {
+            it.getContentIfNotHandled()?.let {
+                this.addFragment(ConnectionsListFragment())
+            }
+        })
+        viewModel.onShowSettingsListEvent.observe(this, Observer {
+            it.getContentIfNotHandled()?.let {
+                this.addFragment(SettingsListFragment())
+            }
+        })
+        viewModel.onShowConnectEvent.observe(this, Observer {
+            it.getContentIfNotHandled()?.let { connectAppLinkData ->
+                this.addFragment(ConnectProviderFragment.newInstance(connectAppLinkData = connectAppLinkData))
+            }
+        })
+        viewModel.onShowSubmitActionEvent.observe(this, Observer {
+            it.getContentIfNotHandled()?.let {
+//        this.addFragment(
+//            SubmitActionFragment.newInstance(//TODO refactor new instance to exclude connection selection in main activity
+//                connectionGuid = connectionGuid,
+//                actionAppLinkData = actionAppLinkData
+//            )
+//        )
+                //TODO show submit action
+            }
+        })
 
-    private fun showNetworkMessage(isConnected: Boolean) {
-        if (isConnected) {
-            snackbar?.dismiss()
-        } else {
-            snackbar = this.buildWarning(getString(R.string.warning_no_internet_connection))
-            snackbar?.show()
-        }
+        // Views states
+        viewModel.internetConnectionWarningVisibility.observe(this, Observer {
+            //TODO update internet connection warning visibility
+        })
+        viewModel.appBarTitle.observe(this, Observer {
+            appBarTitle?.text = it
+        })
+        viewModel.appBarBackActionImage.observe(this, Observer {
+            appBarBackAction?.setImageResource(it)
+        })
+        viewModel.appBarBackActionVisibility.observe(this, Observer {
+            appBarBackAction?.visibility = it
+        })
+        viewModel.appBarMenuVisibility.observe(this, Observer {
+            appBarActionQrCode?.visibility = it
+            appBarActionMenu?.visibility = it
+        })
     }
 
     private fun setupViews() {
-        try {
-//            setSupportActionBar(toolbarView)
-//            toolbarView?.setNavigationOnClickListener(this)
-//            bottomNavigationView?.setOnNavigationItemSelectedListener(this)
-            supportFragmentManager.addOnBackStackChangedListener(this)
-//            actionButton?.setOnClickListener(this)
-            updateNavigationViewsContent()
-        } catch (e: Exception) {
-            e.log()
-        }
-    }
-
-    private fun replaceFragmentInContainer(fragment: BaseFragment) {
-        if (currentFragmentInContainer()?.javaClass != fragment.javaClass) {
-            this.replaceFragment(fragment)
-        }
+        appBarActionQrCode?.setOnClickListener(this)
+        appBarActionMenu?.setOnClickListener(this)
+        appBarBackAction?.setOnClickListener(this)
     }
 }
+
+val FragmentActivity.newAuthorizationListener: NewAuthorizationListener?
+    get() = (this as? ViewModelContract)?.viewModel as? NewAuthorizationListener
+
+val FragmentActivity.activityComponentsContract: ActivityComponentsContract?
+    get() = (this as? ViewModelContract)?.viewModel as? ActivityComponentsContract

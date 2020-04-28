@@ -60,7 +60,10 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activityComponents?.updateAppbarTitle(getString(R.string.authorizations_feature_title))
+        activityComponents?.updateAppbar(
+            titleResId = R.string.authorizations_feature_title,
+            showMenu = true
+        )
         return inflater.inflate(R.layout.fragment_authorizations_list, container, false)
     }
 
@@ -139,7 +142,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.qr_code) activity?.startQrScannerActivity()
+        if (item.itemId == R.id.qr_code) activity?.showQrScannerActivity()
         return true
     }
 

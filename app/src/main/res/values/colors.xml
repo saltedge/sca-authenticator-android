@@ -35,7 +35,7 @@
 
     <!--extra palette and aliases-->
     <color name="color_primary">@color/blue</color>
-    <color name="color_primary_dark">#344499</color>
+    <color name="system_bar_color">#344499</color>
     <color name="color_primary_extra_light">#EBEEFF</color>
     <color name="color_accent">@color/blue</color>
     <color name="base_container_bg">@color/gray_extra_light</color>

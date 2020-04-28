@@ -62,6 +62,10 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        activityComponents?.updateAppbar(
+            titleResId = R.string.connections_feature_title,
+            backActionImageResId = R.drawable.ic_action_back
+        )
         return inflater.inflate(R.layout.fragment_connections_list, container, false)
     }
 
@@ -116,7 +120,6 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         val viewIsEmpty = adapter.isEmpty
         emptyView?.setVisible(viewIsEmpty)
         connectionsListView?.setVisible(!viewIsEmpty)
-        activityComponents?.updateAppbarTitle(title = getString(R.string.connections_feature_title))
     }
 
     override fun showApiErrorView(message: String) {
@@ -162,7 +165,7 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
     }
 
     override fun showQrScanView() {
-        activity?.startQrScannerActivity()
+        activity?.showQrScannerActivity()
     }
 
     private fun injectDependencies() {

@@ -32,12 +32,24 @@
         android:background="@color/theme_background"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/appBarTopSection"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_56"
-            app:layout_constraintTop_toTopOf="parent"/>
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/appBarBackAction"
+                android:layout_width="@dimen/dp_24"
+                android:layout_height="@dimen/dp_24"
+                android:layout_marginLeft="@dimen/dp_16"
+                android:layout_marginRight="@dimen/dp_16"
+                android:visibility="gone"
+                android:src="@drawable/ic_action_back"
+                />
+        </FrameLayout>
 
         <LinearLayout
             android:id="@+id/appBarBottomSection"

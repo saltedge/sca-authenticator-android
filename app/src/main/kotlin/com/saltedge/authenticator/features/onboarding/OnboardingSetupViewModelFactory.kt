@@ -19,30 +19,30 @@
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
 package com.saltedge.authenticator.features.onboarding
-
-import android.content.Context
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
-import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
-import javax.inject.Inject
-
-class OnboardingSetupViewModelFactory @Inject constructor(
-    val appContext: Context,
-    val passcodeTools: PasscodeToolsAbs,
-    val preferenceRepository: PreferenceRepositoryAbs,
-    val biometricTools: BiometricToolsAbs
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(OnboardingSetupViewModel::class.java)) {
-            return OnboardingSetupViewModel(
-                appContext = appContext,
-                passcodeTools = passcodeTools,
-                preferenceRepository = preferenceRepository,
-                biometricTools = biometricTools
-            ) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}
+//
+//import android.content.Context
+//import androidx.lifecycle.ViewModel
+//import androidx.lifecycle.ViewModelProvider
+//import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+//import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
+//import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
+//import javax.inject.Inject
+//
+//class OnboardingSetupViewModelFactory @Inject constructor(
+//    val appContext: Context,
+//    val passcodeTools: PasscodeToolsAbs,
+//    val preferenceRepository: PreferenceRepositoryAbs,
+//    val biometricTools: BiometricToolsAbs
+//) : ViewModelProvider.Factory {
+//    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+//        if (modelClass.isAssignableFrom(OnboardingSetupViewModel::class.java)) {
+//            return OnboardingSetupViewModel(
+//                appContext = appContext,
+//                passcodeTools = passcodeTools,
+//                preferenceRepository = preferenceRepository,
+//                biometricTools = biometricTools
+//            ) as T
+//        }
+//        throw IllegalArgumentException("Unknown ViewModel class")
+//    }
+//}

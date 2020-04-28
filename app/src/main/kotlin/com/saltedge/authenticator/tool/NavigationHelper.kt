@@ -24,7 +24,6 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -34,6 +33,7 @@ import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.connections.qr.QrScannerActivity
 import com.saltedge.authenticator.features.security.KEY_SKIP_PIN
 import com.saltedge.authenticator.sdk.constants.DEFAULT_SUPPORT_EMAIL_LINK
+import com.saltedge.authenticator.widget.fragment.BaseFragment
 
 /**
  * Check fragment navigation level
@@ -63,7 +63,7 @@ fun FragmentActivity.addFragment(fragment: Fragment) {
 }
 
 /**
- * Replace fragment in container if backStackEntryCount > 0
+ * Replace fragment in container. If stack is not empty then clear it.
  *
  * @receiver fragment activity
  */
@@ -91,7 +91,7 @@ fun FragmentActivity.replaceFragment(fragment: Fragment) {
  * @receiver app compat activity
  * @return fragment object which is in the container
  */
-fun AppCompatActivity.currentFragmentInContainer(): Fragment? {
+fun FragmentActivity.currentFragmentInContainer(): Fragment? {
     try {
         return supportFragmentManager.findFragmentById(R.id.container)
     } catch (ignored: IllegalStateException) {
@@ -167,7 +167,7 @@ fun FragmentActivity.startSystemSettings() {
  *
  * @receiver fragment activity
  */
-fun FragmentActivity.startQrScannerActivity() {
+fun FragmentActivity.showQrScannerActivity() {
     try {
         this.startActivityForResult(
             Intent(this, QrScannerActivity::class.java).apply { putExtra(KEY_SKIP_PIN, true) },
@@ -191,6 +191,15 @@ fun FragmentActivity.restartApp() {
         intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         this.startActivity(intent)
     } catch (ignored: Exception) {
+    }
+}
+
+/**
+ * Replace fragment in container if required fragment is not current fragment
+ */
+fun FragmentActivity.replaceFragmentInContainer(fragment: BaseFragment) {
+    if (this.currentFragmentInContainer()?.javaClass != fragment.javaClass) {
+        this.replaceFragment(fragment)
     }
 }
 

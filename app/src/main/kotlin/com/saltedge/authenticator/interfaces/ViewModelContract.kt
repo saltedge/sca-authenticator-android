@@ -18,18 +18,10 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.settings.about
+package com.saltedge.authenticator.interfaces
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import javax.inject.Inject
 
-class AboutViewModelFactory @Inject constructor(val appContext: Context) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(AboutViewModel::class.java)) {
-            return AboutViewModel(appContext) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
+interface ViewModelContract {
+    val viewModel: ViewModel
 }
