@@ -159,6 +159,9 @@
     <string name="fingerprint_scan_unlock">Unlock the app with biometrics</string>
     <string name="fingerprint_touch_sensor">Touch Sensor</string>
 
+    <string name="scan_qr_title">Scan QR code</string>
+    <string name="scan_qr_description">Scan the QR to make your \nfirst connection\n</string>
+
     <string name="ui_dialog_clear_data_title">Delete all data?</string>
     <string name="ui_dialog_clear_data_message">All app data including service providers, user data and settings will be permanently deleted.</string>
     <string name="ui_dialog_rename_title">Rename connection</string>
