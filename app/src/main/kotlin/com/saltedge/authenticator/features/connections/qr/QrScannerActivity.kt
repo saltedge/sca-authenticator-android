@@ -168,7 +168,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer, View.OnCl
         })
     }
 
-    private fun onReceivedCodes(codes: SparseArray<Barcode>) { //move to view model
+    private fun onReceivedCodes(codes: SparseArray<Barcode>) {
         val deeplinks = mutableListOf<String>()
         codes.forEach { _, value ->
             if (value.displayValue.isValidDeeplink()) {
@@ -180,7 +180,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer, View.OnCl
         }
     }
 
-    private fun startCameraSource() { //move to view model
+    private fun startCameraSource() {
         try {
             if (ActivityCompat.checkSelfPermission(
                     applicationContext,
@@ -201,7 +201,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer, View.OnCl
         }
     }
 
-    private fun returnResultAndFinish(deeplink: String) { //observer in view model
+    private fun returnResultAndFinish(deeplink: String) {
         this.setResult(
             Activity.RESULT_OK,
             intent.putExtra(KEY_DEEP_LINK, deeplink)
@@ -209,7 +209,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer, View.OnCl
         this.finish()
     }
 
-    private fun showError(reason: String?) {  //observer in view model
+    private fun showError(reason: String?) {
         AlertDialog.Builder(this)
             .setTitle(android.R.string.dialog_alert_title)
             .setMessage(reason ?: getString(R.string.errors_invalid_qr))

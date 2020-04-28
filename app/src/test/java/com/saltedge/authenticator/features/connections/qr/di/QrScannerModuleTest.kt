@@ -18,8 +18,22 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.qr.di
+package com.saltedge.authenticator.features.connections.qr.di
 
-//TODO: Added tests
+import com.saltedge.authenticator.testTools.TestAppTools
+import org.junit.Assert.assertNotNull
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+
+@RunWith(RobolectricTestRunner::class)
 class QrScannerModuleTest {
+
+    @Test
+    @Throws(Exception::class)
+    fun providePresenterTest() {
+        val module = QrScannerModule()
+
+        assertNotNull(module.provideFactory(appContext = TestAppTools.applicationContext))
+    }
 }
