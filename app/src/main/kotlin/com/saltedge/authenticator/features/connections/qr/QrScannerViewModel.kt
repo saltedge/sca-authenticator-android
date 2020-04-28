@@ -21,20 +21,45 @@
 package com.saltedge.authenticator.features.connections.qr
 
 import android.content.Context
+import android.util.SparseArray
+import androidx.core.util.forEach
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.vision.barcode.Barcode
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.events.ViewModelEvent
+import com.saltedge.authenticator.sdk.tools.isValidDeeplink
+import com.saltedge.authenticator.tool.ResId
 
 class QrScannerViewModel(val appContext: Context) : ViewModel(), LifecycleObserver {
 
     var closeActivity = MutableLiveData<ViewModelEvent<Unit>>()
+        private set
+    var returnResultAndFinish = MutableLiveData<String>()
+        private set
+    var showError = MutableLiveData<Int?>()
         private set
 
     fun onViewClick(viewId: Int) {
         when (viewId) {
             R.id.closeImageView -> closeActivity.postValue(ViewModelEvent())
         }
+    }
+
+    fun onReceivedCodes(codes: SparseArray<Barcode>) {
+        val deeplinks = mutableListOf<String>()
+        codes.forEach { _, value ->
+            if (value.displayValue.isValidDeeplink()) {
+                deeplinks.add(value.displayValue)
+            }
+        }
+        deeplinks.firstOrNull()?.let { deeplink ->
+            returnResultAndFinish.postValue(deeplink)
+        }
+    }
+
+    fun showErrorMessage(errorName: ResId?) {
+        showError.postValue(errorName)
     }
 }
