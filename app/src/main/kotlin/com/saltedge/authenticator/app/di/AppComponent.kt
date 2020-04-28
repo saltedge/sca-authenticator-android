@@ -32,6 +32,8 @@ import com.saltedge.authenticator.features.connections.create.di.ConnectProvider
 import com.saltedge.authenticator.features.connections.create.di.ConnectProviderModule
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListComponent
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListModule
+import com.saltedge.authenticator.features.connections.qr.di.QrScannerComponent
+import com.saltedge.authenticator.features.connections.qr.di.QrScannerModule
 import com.saltedge.authenticator.features.launcher.LauncherActivity
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
@@ -66,6 +68,7 @@ interface AppComponent {
     fun realmManager() : RealmManagerAbs
     fun viewModelsFactory() : ViewModelsFactory
 
+    fun addQrScannerModule(module: QrScannerModule): QrScannerComponent
     fun addConnectionsListModule(module: ConnectionsListModule): ConnectionsListComponent
     fun addConnectProviderModule(module: ConnectProviderModule): ConnectProviderComponent
     fun addActionModule(moduleSubmit: SubmitActionModule): SubmitActionComponent
