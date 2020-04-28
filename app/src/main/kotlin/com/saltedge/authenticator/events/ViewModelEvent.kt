@@ -20,8 +20,6 @@
  */
 package com.saltedge.authenticator.events
 
-import com.saltedge.authenticator.tool.printToLogcat
-
 open class ViewModelEvent<out T>(private val content: T) {
 
     var hasBeenHandled = false
@@ -31,7 +29,6 @@ open class ViewModelEvent<out T>(private val content: T) {
      * Returns the content and prevents its use again.
      */
     fun getContentIfNotHandled(): T? {
-        printToLogcat("TEST_TEST", "getContentIfNotHandled hasBeenHandled=$hasBeenHandled")
         return if (hasBeenHandled) {
             null
         } else {

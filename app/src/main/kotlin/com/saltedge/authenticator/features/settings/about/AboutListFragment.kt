@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.events.ViewModelEvent
 import com.saltedge.authenticator.features.settings.about.common.AboutAdapter
 import com.saltedge.authenticator.features.settings.licenses.LicensesFragment
 import com.saltedge.authenticator.interfaces.OnItemClickListener
@@ -59,7 +60,7 @@ class AboutListFragment : BaseFragment(), OnItemClickListener {
         savedInstanceState: Bundle?
     ): View {
         activityComponents?.updateAppbar(titleResId = R.string.about_feature_title,
-            backActionImageResId = R.drawable.ic_action_back
+            actionImageResId = R.drawable.ic_action_back
         )
         return inflater.inflate(R.layout.fragment_base_list, container, false)
     }
@@ -95,10 +96,10 @@ class AboutListFragment : BaseFragment(), OnItemClickListener {
             .of(this, viewModelFactory)
             .get(AboutViewModel::class.java)
 
-        viewModel.licenseItemClickEvent.observe(this, Observer {
+        viewModel.licenseItemClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it?.let { activity?.addFragment(LicensesFragment()) }
         })
-        viewModel.termsOfServiceItemClickEvent.observe(this, Observer {
+        viewModel.termsOfServiceItemClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
             it?.getContentIfNotHandled()?.let { args ->
                 activity?.addFragment(WebViewFragment.newInstance(args = args))
             }

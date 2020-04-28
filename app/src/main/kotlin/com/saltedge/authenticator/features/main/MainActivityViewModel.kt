@@ -40,7 +40,6 @@ import com.saltedge.authenticator.sdk.tools.extractActionAppLinkData
 import com.saltedge.authenticator.sdk.tools.extractConnectAppLinkData
 import com.saltedge.authenticator.tool.ResId
 import com.saltedge.authenticator.tool.applyPreferenceLocale
-import com.saltedge.authenticator.tool.printToLogcat
 import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
 
 class MainActivityViewModel(
@@ -78,12 +77,10 @@ class MainActivityViewModel(
     }
 
     fun onLifeCycleCreate(savedInstanceState: Bundle?, intent: Intent?) {
-        printToLogcat("TEST_TEST", "onLifeCycleCreate")
         if (savedInstanceState == null) {
             if (intent != null && (intent.hasPendingAuthorizationData || intent.hasDeepLinkData)) {
                 onNewIntent(intent)
             } else {
-                printToLogcat("TEST_TEST", "onShowAuthorizationsListEvent.postValue(ViewModelEvent())")
                 onShowAuthorizationsListEvent.postValue(ViewModelEvent(Unit))
             }
         }
@@ -92,6 +89,7 @@ class MainActivityViewModel(
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onLifeCycleResume() {
         connectivityReceiver.register(appContext, this)
+        appContext.applyPreferenceLocale()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
@@ -144,15 +142,9 @@ class MainActivityViewModel(
      */
     fun onViewClick(viewId: Int) {
         when (viewId) {
-            R.id.appBarActionQrCode -> {
-                onQrScanClickEvent.postValue(ViewModelEvent(Unit))
-            }
-            R.id.appBarActionMenu -> {
-                onAppBarMenuClickEvent.postValue(ViewModelEvent(Unit))
-            }
-            R.id.appBarBackAction -> {
-                onAppBarMenuClickEvent.postValue(ViewModelEvent(Unit))
-            }
+            R.id.appBarActionQrCode -> onQrScanClickEvent.postValue(ViewModelEvent(Unit))
+            R.id.appBarActionMenu -> onAppBarMenuClickEvent.postValue(ViewModelEvent(Unit))
+            R.id.appBarBackAction -> onAppBarMenuClickEvent.postValue(ViewModelEvent(Unit))
         }
     }
 
@@ -169,13 +161,13 @@ class MainActivityViewModel(
     override fun updateAppbar(
         titleResId: ResId?,
         title: String?,
-        backActionImageResId: ResId?,
+        actionImageResId: ResId?,
         showMenu: Boolean
     ) {
         titleResId?.let { appBarTitle.postValue(appContext.getString(it)) }
             ?: appBarTitle.postValue(title ?: "")
-        backActionImageResId?.let { appBarBackActionImage.postValue(backActionImageResId) }
-        appBarBackActionVisibility.postValue(if (backActionImageResId == null) View.GONE else View.VISIBLE)
+        actionImageResId?.let { appBarBackActionImage.postValue(it) }
+        appBarBackActionVisibility.postValue(if (actionImageResId == null) View.GONE else View.VISIBLE)
         appBarMenuVisibility.postValue(if (showMenu) View.VISIBLE else View.GONE)
     }
 

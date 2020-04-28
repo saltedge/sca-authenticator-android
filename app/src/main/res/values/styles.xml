@@ -94,7 +94,7 @@
 
 <!--NEW STYLES-->
     <style name="app_bar_title">
-        <item name="android:textSize">30sp</item>
-        <item name="android:textColor">@color/neutrals_dark_100</item>
+        <item name="android:textSize">@dimen/text_30</item>
+        <item name="android:textColor">@color/primary_text</item>
     </style>
 </resources>

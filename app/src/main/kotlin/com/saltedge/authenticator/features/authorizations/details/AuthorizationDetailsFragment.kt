@@ -32,7 +32,10 @@ import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.confirmPasscode.ConfirmPasscodeDialog
 import com.saltedge.authenticator.features.authorizations.details.di.AuthorizationDetailsModule
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.tool.*
+import com.saltedge.authenticator.tool.authenticatorApp
+import com.saltedge.authenticator.tool.finishFragment
+import com.saltedge.authenticator.tool.setInvisible
+import com.saltedge.authenticator.tool.showDialogFragment
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.showAuthorizationConfirm
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -65,7 +68,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
     ): View? {
         activityComponents?.updateAppbar(
             titleResId = R.string.authorization_feature_title,
-            backActionImageResId = R.drawable.ic_action_close
+            actionImageResId = R.drawable.ic_action_close
         )
         return inflater.inflate(R.layout.fragment_authorization_details, container, false)
     }
@@ -94,10 +97,6 @@ class AuthorizationDetailsFragment : BaseFragment(),
         biometricPrompt?.resultCallback = null
         presenterContract.viewContract = null
         super.onStop()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
     }
 
     override fun onClick(view: View?) {

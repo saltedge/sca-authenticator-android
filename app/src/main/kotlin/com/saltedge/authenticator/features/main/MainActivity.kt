@@ -55,7 +55,6 @@ class MainActivity : LockableActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        printToLogcat("TEST_TEST", "onCreate")
         authenticatorApp?.appComponent?.inject(this)
         setupViewModel()
         this.updateScreenshotLocking()
@@ -72,11 +71,6 @@ class MainActivity : LockableActivity(),
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         viewModel.onActivityResult(requestCode, resultCode, data)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        this.applyPreferenceLocale()
     }
 
     /**
@@ -101,7 +95,6 @@ class MainActivity : LockableActivity(),
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainActivityViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
-        // Events
         viewModel.onQrScanClickEvent.observe(this, Observer {
             it.getContentIfNotHandled()?.let {
                 this.showQrScannerActivity()
@@ -149,17 +142,10 @@ class MainActivity : LockableActivity(),
         })
         viewModel.onShowSubmitActionEvent.observe(this, Observer {
             it.getContentIfNotHandled()?.let {
-//        this.addFragment(
-//            SubmitActionFragment.newInstance(//TODO refactor new instance to exclude connection selection in main activity
-//                connectionGuid = connectionGuid,
-//                actionAppLinkData = actionAppLinkData
-//            )
-//        )
                 //TODO show submit action
             }
         })
 
-        // Views states
         viewModel.internetConnectionWarningVisibility.observe(this, Observer {
             //TODO update internet connection warning visibility
         })

@@ -51,7 +51,7 @@ class LicensesFragment : BaseFragment(), LicensesContract.View {
         super.onViewCreated(view, savedInstanceState)
         activityComponents?.updateAppbar(
             titleResId = R.string.about_open_source_licenses,
-            backActionImageResId = R.drawable.ic_action_back
+            actionImageResId = R.drawable.ic_action_back
         )
         setupViews()
     }

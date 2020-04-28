@@ -28,16 +28,16 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="102dp"
+        android:layout_height="@dimen/dp_102"
         android:background="@color/theme_background"
         app:layout_constraintTop_toTopOf="parent">
 
         <FrameLayout
             android:id="@+id/appBarTopSection"
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_56"
             android:gravity="center_vertical"
+            android:orientation="horizontal"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
@@ -46,46 +46,42 @@
                 android:layout_height="@dimen/dp_24"
                 android:layout_marginLeft="@dimen/dp_16"
                 android:layout_marginRight="@dimen/dp_16"
-                android:visibility="gone"
                 android:src="@drawable/ic_action_back"
-                />
+                android:visibility="gone" />
         </FrameLayout>
 
         <LinearLayout
             android:id="@+id/appBarBottomSection"
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_46"
             android:gravity="center_vertical"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <TextView
                 android:id="@+id/appBarTitle"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp_16"
                 android:layout_marginRight="@dimen/dp_16"
+                android:layout_weight="1"
+                android:lineSpacingExtra="@dimen/text_zero_line"
                 android:text="@string/app_name_short"
-                android:textAppearance="@style/app_bar_title"
-                android:lineSpacingExtra="0sp"
-                />
+                android:textAppearance="@style/app_bar_title" />
 
             <ImageView
                 android:id="@+id/appBarActionQrCode"
                 android:layout_width="@dimen/dp_24"
                 android:layout_height="@dimen/dp_24"
                 android:layout_marginRight="@dimen/dp_24"
-                android:src="@drawable/ic_action_qr_code"
-                />
+                android:src="@drawable/ic_action_qr_code" />
 
             <ImageView
                 android:id="@+id/appBarActionMenu"
                 android:layout_width="@dimen/dp_24"
                 android:layout_height="@dimen/dp_24"
                 android:layout_marginRight="@dimen/dp_16"
-                android:src="@drawable/ic_action_menu"
-                />
+                android:src="@drawable/ic_action_menu" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -101,6 +97,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -63,7 +63,7 @@ class SubmitActionFragment : BaseFragment(), SubmitActionContract.View, View.OnC
     ): View? {
         activityComponents?.updateAppbar(
             titleResId = R.string.action_new_action_title,
-            backActionImageResId = R.drawable.ic_action_close
+            actionImageResId = R.drawable.ic_action_close
         )
         return inflater.inflate(R.layout.fragment_submit_action, container, false)
     }
@@ -131,6 +131,7 @@ class SubmitActionFragment : BaseFragment(), SubmitActionContract.View, View.OnC
     companion object {
         const val KEY_ACTION_DEEP_LINK_DATA = "ACTION_DEEP_LINK_DATA"
 
+        //TODO refactor new instance to exclude connection selection (in main activity)
         fun newInstance(
             connectionGuid: String,
             actionAppLinkData: ActionAppLinkData

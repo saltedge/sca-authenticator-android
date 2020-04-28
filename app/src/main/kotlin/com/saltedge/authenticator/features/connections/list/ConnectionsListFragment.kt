@@ -64,7 +64,7 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
     ): View {
         activityComponents?.updateAppbar(
             titleResId = R.string.connections_feature_title,
-            backActionImageResId = R.drawable.ic_action_back
+            actionImageResId = R.drawable.ic_action_back
         )
         return inflater.inflate(R.layout.fragment_connections_list, container, false)
     }

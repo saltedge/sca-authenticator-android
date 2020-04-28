@@ -29,7 +29,6 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.list.ConnectionsListAdapter
 import com.saltedge.authenticator.interfaces.ListItemClickListener
-import com.saltedge.authenticator.tool.ResId
 import com.saltedge.authenticator.tool.finishFragment
 import com.saltedge.authenticator.tool.setVisible
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -56,7 +55,7 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener {
     ): View {
         activityComponents?.updateAppbar(
             titleResId = R.string.choose_connection_feature_title,
-            backActionImageResId = R.drawable.ic_action_close
+            actionImageResId = R.drawable.ic_action_close
         )
         return inflater.inflate(R.layout.fragment_connections_list, container, false)
     }

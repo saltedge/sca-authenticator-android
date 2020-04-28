@@ -26,7 +26,7 @@ interface ActivityComponentsContract {
     fun updateAppbar(
         titleResId: ResId? = null,
         title: String? = null,
-        backActionImageResId: ResId? = null,
+        actionImageResId: ResId? = null,
         showMenu: Boolean = false
     )
     fun onLanguageChanged()
