@@ -158,6 +158,7 @@
     <string name="fingerprint_scan_continue">Scan your Fingerprint to continue</string>
     <string name="fingerprint_scan_unlock">Unlock the app with biometrics</string>
     <string name="fingerprint_touch_sensor">Touch Sensor</string>
+    <string name="fingerprint_forgot">Forgot?</string>
 
     <string name="scan_qr_title">Scan QR code</string>
     <string name="scan_qr_description">Scan the QR to make your \nfirst connection\n</string>

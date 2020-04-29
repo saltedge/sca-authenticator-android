@@ -26,6 +26,7 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
@@ -56,12 +57,15 @@ class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         when (view.id) {
             R.id.fingerView -> fingerprintActionClickListener?.onBiometricInputSelected()
             R.id.deleteView -> clickListener?.onDeleteKeyClick()
+            R.id.forgotView -> Log.d("some", "forgotView")
             else -> clickListener?.onDigitKeyClick((view as? TextView)?.text.toString())
         }
     }
 
     fun setupFingerAction(active: Boolean) {
         fingerView?.setVisible(active)
+        forgotView?.setVisible(active)
+        deleteView?.setVisible(!active)
     }
 
     @Suppress("DEPRECATION")
