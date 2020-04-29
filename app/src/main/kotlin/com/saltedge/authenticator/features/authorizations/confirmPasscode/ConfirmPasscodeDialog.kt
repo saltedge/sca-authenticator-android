@@ -23,7 +23,7 @@ package com.saltedge.authenticator.features.authorizations.confirmPasscode
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tool.secure.PasscodeTools
+import com.saltedge.authenticator.tools.PasscodeTools
 import com.saltedge.authenticator.widget.fragment.BaseRoundedBottomDialogFragment
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener

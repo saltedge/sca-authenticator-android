@@ -25,10 +25,10 @@ import android.content.Context
 import android.content.Intent
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.*
-import com.saltedge.authenticator.features.connections.common.ConnectionOptions
+import com.saltedge.authenticator.features.menu.ConnectionOptions
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
-import com.saltedge.authenticator.model.db.Connection
-import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.Connection
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.KEY_NAME
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener

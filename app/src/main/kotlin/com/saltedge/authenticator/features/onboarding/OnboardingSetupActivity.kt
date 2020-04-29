@@ -31,12 +31,12 @@ import androidx.viewpager.widget.ViewPager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.OnboardingSetupBinding
-import com.saltedge.authenticator.events.ViewModelEvent
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.features.main.MainActivity
-import com.saltedge.authenticator.features.security.KEY_SKIP_PIN
-import com.saltedge.authenticator.tool.authenticatorApp
-import com.saltedge.authenticator.tool.log
-import com.saltedge.authenticator.tool.showWarningDialog
+import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
+import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.log
+import com.saltedge.authenticator.tools.showWarningDialog
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 import kotlinx.android.synthetic.main.activity_onboarding.*

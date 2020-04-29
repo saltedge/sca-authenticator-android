@@ -28,9 +28,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.vision.barcode.Barcode
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.events.ViewModelEvent
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.tools.isValidDeeplink
-import com.saltedge.authenticator.tool.ResId
+import com.saltedge.authenticator.tools.ResId
 
 class QrScannerViewModel(val appContext: Context) : ViewModel(), LifecycleObserver {
 

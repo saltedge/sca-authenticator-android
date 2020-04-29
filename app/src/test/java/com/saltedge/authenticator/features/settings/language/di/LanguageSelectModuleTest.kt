@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.features.settings.language.di
 
-import com.saltedge.authenticator.model.repository.PreferenceRepository
+import com.saltedge.authenticator.models.repository.PreferenceRepository
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.junit.Assert
 import org.junit.Test

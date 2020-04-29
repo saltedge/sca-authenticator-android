@@ -22,7 +22,7 @@ package com.saltedge.authenticator.instrumentationTestTools
 
 import android.content.Context
 import androidx.test.platform.app.InstrumentationRegistry
-import com.saltedge.authenticator.tool.updateApplicationLocale
+import com.saltedge.authenticator.tools.updateApplicationLocale
 import java.util.*
 
 object TestTools {

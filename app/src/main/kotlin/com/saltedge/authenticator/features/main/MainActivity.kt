@@ -33,14 +33,14 @@ import com.saltedge.authenticator.features.authorizations.details.AuthorizationD
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
-import com.saltedge.authenticator.features.security.LockableActivity
-import com.saltedge.authenticator.features.security.UnlockAppInputView
+import com.saltedge.authenticator.widget.security.LockableActivity
+import com.saltedge.authenticator.widget.security.UnlockAppInputView
 import com.saltedge.authenticator.features.settings.list.SettingsListFragment
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.interfaces.ViewModelContract
-import com.saltedge.authenticator.tool.*
-import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
+import com.saltedge.authenticator.tools.*
+import com.saltedge.authenticator.tools.updateScreenshotLocking
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 

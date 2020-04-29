@@ -28,19 +28,19 @@ import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
-import com.saltedge.authenticator.events.ViewModelEvent
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
-import com.saltedge.authenticator.model.realm.RealmManagerAbs
-import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.models.realm.RealmManagerAbs
+import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.tools.extractActionAppLinkData
 import com.saltedge.authenticator.sdk.tools.extractConnectAppLinkData
-import com.saltedge.authenticator.tool.ResId
-import com.saltedge.authenticator.tool.applyPreferenceLocale
-import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
+import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.applyPreferenceLocale
+import com.saltedge.authenticator.tools.PasscodeToolsAbs
 
 class MainActivityViewModel(
     val appContext: Context,

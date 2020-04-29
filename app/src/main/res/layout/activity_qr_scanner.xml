@@ -83,7 +83,7 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.5" />
 
-    <com.saltedge.authenticator.features.security.UnlockAppInputView
+    <com.saltedge.authenticator.widget.security.UnlockAppInputView
         android:id="@+id/unlockAppInputView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

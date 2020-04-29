@@ -24,7 +24,7 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
-import com.saltedge.authenticator.tool.convertDpToPx
+import com.saltedge.authenticator.tools.convertDpToPx
 
 class QrCameraMaskView : View {
 

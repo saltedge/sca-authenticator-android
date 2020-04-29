@@ -37,7 +37,7 @@ import com.saltedge.authenticator.features.connections.qr.di.QrScannerModule
 import com.saltedge.authenticator.features.launcher.LauncherActivity
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
-import com.saltedge.authenticator.features.security.LockableActivity
+import com.saltedge.authenticator.widget.security.LockableActivity
 import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.language.di.LanguageSelectComponent
 import com.saltedge.authenticator.features.settings.language.di.LanguageSelectModule
@@ -45,12 +45,12 @@ import com.saltedge.authenticator.features.settings.list.di.SettingsListComponen
 import com.saltedge.authenticator.features.settings.list.di.SettingsListModule
 import com.saltedge.authenticator.features.settings.passcode.di.PasscodeEditComponent
 import com.saltedge.authenticator.features.settings.passcode.di.PasscodeEditModule
-import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.model.realm.RealmManagerAbs
-import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.realm.RealmManagerAbs
+import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
+import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import dagger.Component
 import javax.inject.Singleton

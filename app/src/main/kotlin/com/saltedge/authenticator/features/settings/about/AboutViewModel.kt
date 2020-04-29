@@ -26,9 +26,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.settings.about.common.AboutListItemViewModel
-import com.saltedge.authenticator.events.ViewModelEvent
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.constants.TERMS_LINK
-import com.saltedge.authenticator.tool.AppTools
+import com.saltedge.authenticator.tools.AppTools
 import com.saltedge.authenticator.widget.fragment.WebViewFragment
 
 class AboutViewModel(val appContext: Context) : ViewModel() {

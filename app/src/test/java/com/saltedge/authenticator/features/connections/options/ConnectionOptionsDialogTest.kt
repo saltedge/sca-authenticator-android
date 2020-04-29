@@ -22,7 +22,8 @@ package com.saltedge.authenticator.features.connections.options
 
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.KEY_OPTION_ID
-import com.saltedge.authenticator.features.connections.common.ConnectionOptions
+import com.saltedge.authenticator.features.menu.ConnectionOptions
+import com.saltedge.authenticator.features.menu.ConnectionOptionsDialog
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test

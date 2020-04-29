@@ -29,11 +29,11 @@ import com.saltedge.android.security.RaspChecker
 import com.saltedge.authenticator.app.di.AppComponent
 import com.saltedge.authenticator.app.di.AppModule
 import com.saltedge.authenticator.app.di.DaggerAppComponent
-import com.saltedge.authenticator.model.realm.RealmManager
+import com.saltedge.authenticator.models.realm.RealmManager
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
-import com.saltedge.authenticator.tool.AppTools
-import com.saltedge.authenticator.tool.createCrashlyticsKit
-import com.saltedge.authenticator.tool.log
+import com.saltedge.authenticator.tools.AppTools
+import com.saltedge.authenticator.tools.createCrashlyticsKit
+import com.saltedge.authenticator.tools.log
 import io.fabric.sdk.android.Fabric
 import net.danlew.android.joda.JodaTimeAndroid
 

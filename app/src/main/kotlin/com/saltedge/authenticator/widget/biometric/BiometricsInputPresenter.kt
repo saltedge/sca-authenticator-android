@@ -29,11 +29,10 @@ import android.hardware.biometrics.BiometricPrompt.BIOMETRIC_ERROR_USER_CANCELED
 import android.hardware.fingerprint.FingerprintManager
 import android.os.Build
 import android.os.CancellationSignal
-import androidx.annotation.RequiresApi
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.biometric.getFingerprintManager
-import com.saltedge.authenticator.tool.log
+import com.saltedge.authenticator.tools.log
 
 @TargetApi(Build.VERSION_CODES.M)
 class BiometricsInputPresenter(

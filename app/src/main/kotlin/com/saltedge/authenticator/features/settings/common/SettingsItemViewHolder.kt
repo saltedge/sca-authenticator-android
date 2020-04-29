@@ -29,8 +29,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.interfaces.CheckableListItemClickListener
-import com.saltedge.authenticator.tool.inflateListItemView
-import com.saltedge.authenticator.tool.setVisible
+import com.saltedge.authenticator.tools.inflateListItemView
+import com.saltedge.authenticator.tools.setVisible
 
 class SettingsItemViewHolder(
     parent: ViewGroup,

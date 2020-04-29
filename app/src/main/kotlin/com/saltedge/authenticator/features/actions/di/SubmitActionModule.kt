@@ -24,7 +24,7 @@ import android.content.Context
 import com.saltedge.authenticator.app.di.FragmentScope
 import com.saltedge.authenticator.features.actions.SubmitActionContract
 import com.saltedge.authenticator.features.actions.SubmitActionPresenter
-import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import dagger.Module

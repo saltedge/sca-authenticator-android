@@ -92,7 +92,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
 
-    <com.saltedge.authenticator.features.security.UnlockAppInputView
+    <com.saltedge.authenticator.widget.security.UnlockAppInputView
         android:id="@+id/unlockAppInputView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

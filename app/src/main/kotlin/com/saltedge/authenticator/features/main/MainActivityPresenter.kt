@@ -27,7 +27,7 @@ package com.saltedge.authenticator.features.main
 //import com.saltedge.authenticator.app.KEY_DEEP_LINK
 //import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 //import com.saltedge.authenticator.features.connections.list.convertConnectionsToViewModels
-//import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
+//import com.saltedge.authenticator.model.repository.ConnectionsRepositoryAbs
 //import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 //import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
 //import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData

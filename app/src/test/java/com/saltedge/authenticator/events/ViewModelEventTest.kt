@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.events
 
+import com.saltedge.authenticator.models.ViewModelEvent
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith

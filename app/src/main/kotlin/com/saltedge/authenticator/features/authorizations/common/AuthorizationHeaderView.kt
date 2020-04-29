@@ -27,7 +27,7 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.sdk.tools.remainedSeconds
 import com.saltedge.authenticator.sdk.tools.remainedTimeDescription
 import com.saltedge.authenticator.sdk.tools.secondsBetweenDates
-import com.saltedge.authenticator.tool.loadImage
+import com.saltedge.authenticator.tools.loadImage
 import kotlinx.android.synthetic.main.view_authorization_header.view.*
 import org.joda.time.DateTime
 
