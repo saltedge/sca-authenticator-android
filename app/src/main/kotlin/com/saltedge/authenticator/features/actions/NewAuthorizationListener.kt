@@ -18,20 +18,11 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.settings.about.di
+package com.saltedge.authenticator.features.actions
 
-import android.content.Context
-import com.saltedge.authenticator.app.di.FragmentScope
-import com.saltedge.authenticator.features.settings.about.AboutViewModelFactory
-import dagger.Module
-import dagger.Provides
+import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 
-@Module
-class AboutListModule(val appContext: Context) {
-
-    @FragmentScope
-    @Provides
-    fun provideFactory(): AboutViewModelFactory {
-        return AboutViewModelFactory(appContext)
-    }
+interface NewAuthorizationListener {
+    fun onNewAuthorization(authorizationIdentifier: AuthorizationIdentifier)
 }
+

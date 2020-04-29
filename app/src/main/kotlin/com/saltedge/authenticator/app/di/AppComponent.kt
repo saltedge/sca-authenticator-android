@@ -21,23 +21,24 @@
 package com.saltedge.authenticator.app.di
 
 import android.content.Context
+import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.features.actions.di.SubmitActionComponent
+import com.saltedge.authenticator.features.actions.di.SubmitActionModule
 import com.saltedge.authenticator.features.authorizations.details.di.AuthorizationDetailsComponent
 import com.saltedge.authenticator.features.authorizations.details.di.AuthorizationDetailsModule
 import com.saltedge.authenticator.features.authorizations.list.di.AuthorizationsListComponent
 import com.saltedge.authenticator.features.authorizations.list.di.AuthorizationsListModule
-import com.saltedge.authenticator.features.actions.di.SubmitActionComponent
-import com.saltedge.authenticator.features.actions.di.SubmitActionModule
 import com.saltedge.authenticator.features.connections.create.di.ConnectProviderComponent
 import com.saltedge.authenticator.features.connections.create.di.ConnectProviderModule
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListComponent
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListModule
 import com.saltedge.authenticator.features.connections.qr.di.QrScannerComponent
 import com.saltedge.authenticator.features.connections.qr.di.QrScannerModule
-import com.saltedge.authenticator.features.launcher.di.LauncherComponent
-import com.saltedge.authenticator.features.launcher.di.LauncherModule
-import com.saltedge.authenticator.features.onboarding.di.OnboardingSetupComponent
-import com.saltedge.authenticator.features.onboarding.di.OnboardingSetupModule
+import com.saltedge.authenticator.features.launcher.LauncherActivity
+import com.saltedge.authenticator.features.main.MainActivity
+import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.features.security.LockableActivity
+import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.language.di.LanguageSelectComponent
 import com.saltedge.authenticator.features.settings.language.di.LanguageSelectModule
 import com.saltedge.authenticator.features.settings.list.di.SettingsListComponent
@@ -65,9 +66,8 @@ interface AppComponent {
     fun biometricTools(): BiometricToolsAbs
     fun biometricPrompt(): BiometricPromptAbs?
     fun realmManager() : RealmManagerAbs
+    fun viewModelsFactory() : ViewModelsFactory
 
-    fun addLauncherModule(module: LauncherModule): LauncherComponent
-    fun addOnboardingSetupModule(module: OnboardingSetupModule): OnboardingSetupComponent
     fun addQrScannerModule(module: QrScannerModule): QrScannerComponent
     fun addConnectionsListModule(module: ConnectionsListModule): ConnectionsListComponent
     fun addConnectProviderModule(module: ConnectProviderModule): ConnectProviderComponent
@@ -79,4 +79,8 @@ interface AppComponent {
     fun addPasscodeEditModule(module: PasscodeEditModule): PasscodeEditComponent
 
     fun inject(activity: LockableActivity)
+    fun inject(activity: OnboardingSetupActivity)
+    fun inject(activity: LauncherActivity)
+    fun inject(activity: MainActivity)
+    fun inject(fragment: AboutListFragment)
 }

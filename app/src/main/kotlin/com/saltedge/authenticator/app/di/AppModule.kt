@@ -22,6 +22,7 @@ package com.saltedge.authenticator.app.di
 
 import android.content.Context
 import android.os.Build
+import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.model.realm.RealmManager
@@ -67,6 +68,24 @@ class AppModule(context: Context) {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> BiometricsInputDialog(biometricTools)
             else -> null
         }
+    }
+
+    @Provides
+    @Singleton
+    fun provideViewModelsFactory(
+        appContext: Context,
+        passcodeTools: PasscodeToolsAbs,
+        biometricTools: BiometricToolsAbs,
+        preferences: PreferenceRepositoryAbs,
+        realmManager: RealmManagerAbs
+    ): ViewModelsFactory {
+        return ViewModelsFactory(
+            appContext = appContext,
+            passcodeTools = passcodeTools,
+            biometricTools = biometricTools,
+            preferenceRepository = preferences,
+            realmManager = realmManager
+        )
     }
 
     @Provides

@@ -30,18 +30,18 @@ import android.view.ViewGroup
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.features.actions.di.SubmitActionModule
-import com.saltedge.authenticator.interfaces.UpActionImageListener
+import com.saltedge.authenticator.features.main.newAuthorizationListener
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.tool.*
+import com.saltedge.authenticator.tool.authenticatorApp
+import com.saltedge.authenticator.tool.finishFragment
+import com.saltedge.authenticator.tool.setVisible
+import com.saltedge.authenticator.tool.showWarningDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_submit_action.*
 import javax.inject.Inject
 
-class SubmitActionFragment : BaseFragment(),
-    SubmitActionContract.View,
-    UpActionImageListener,
-    View.OnClickListener {
+class SubmitActionFragment : BaseFragment(), SubmitActionContract.View, View.OnClickListener {
 
     @Inject
     lateinit var presenterContract: SubmitActionContract.Presenter
@@ -61,7 +61,10 @@ class SubmitActionFragment : BaseFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        activityComponents?.updateAppbarTitleWithFabAction(getString(R.string.action_new_action))
+        activityComponents?.updateAppbar(
+            titleResId = R.string.action_new_action_title,
+            actionImageResId = R.drawable.ic_action_close
+        )
         return inflater.inflate(R.layout.fragment_submit_action, container, false)
     }
 
@@ -77,8 +80,6 @@ class SubmitActionFragment : BaseFragment(),
         super.onDestroyView()
     }
 
-    override fun getUpActionImageResId(): ResId? = R.drawable.ic_close_white_24dp
-
     override fun closeView() {
         activity?.finishFragment()
     }
@@ -93,7 +94,7 @@ class SubmitActionFragment : BaseFragment(),
     }
 
     override fun setResultAuthorizationIdentifier(authorizationIdentifier: AuthorizationIdentifier) {
-        (activity as? AuthorizationListener)?.onNewAuthorization(authorizationIdentifier)
+        activity?.newAuthorizationListener?.onNewAuthorization(authorizationIdentifier)
     }
 
     override fun onClick(v: View?) {
@@ -130,6 +131,7 @@ class SubmitActionFragment : BaseFragment(),
     companion object {
         const val KEY_ACTION_DEEP_LINK_DATA = "ACTION_DEEP_LINK_DATA"
 
+        //TODO refactor new instance to exclude connection selection (in main activity)
         fun newInstance(
             connectionGuid: String,
             actionAppLinkData: ActionAppLinkData

@@ -103,7 +103,7 @@ class OnboardingSetupViewModel(
             R.id.skipActionView, R.id.proceedToSetup -> {
                 showPasscodeInput()
             }
-            R.id.nextActionView -> moveNext.postValue(ViewModelEvent())
+            R.id.nextActionView -> moveNext.postValue(ViewModelEvent(Unit))
         }
     }
 
@@ -118,7 +118,7 @@ class OnboardingSetupViewModel(
     fun newPasscodeConfirmed(passcode: String) {
         if (passcodeTools.savePasscode(passcode)) {
             passcodeInputViewVisibility.value = View.GONE
-            showMainActivity.postValue(ViewModelEvent())
+            showMainActivity.postValue(ViewModelEvent(Unit))
         } else {
             showWarningDialogWithMessage.postValue(appContext.getString(R.string.errors_cant_save_passcode))
         }

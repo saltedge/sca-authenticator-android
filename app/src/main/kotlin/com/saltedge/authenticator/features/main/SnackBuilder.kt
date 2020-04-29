@@ -27,7 +27,6 @@ import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.setFont
@@ -64,14 +63,6 @@ private fun View.buildSnackbar(
     textView.setFont(R.font.roboto_regular)
     textView.maxLines = 7
     snackbar.view.setBackgroundColor(ContextCompat.getColor(context, bgColorResId))
-    val fab = this.findViewById<FloatingActionButton>(R.id.actionButton)
-    snackbar.view.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
-        override fun onViewAttachedToWindow(v: View) {}
-
-        override fun onViewDetachedFromWindow(v: View) {
-            fab?.translationY = 0f
-        }
-    })
     snackbar.view.setOnTouchListener { _, _ ->
         snackbar.dismiss()
         true

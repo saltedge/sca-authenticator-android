@@ -25,9 +25,8 @@ import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.main.MainActivityContract
+import com.saltedge.authenticator.features.main.activityComponentsContract
 import com.saltedge.authenticator.features.settings.language.di.LanguageSelectModule
-import com.saltedge.authenticator.tool.applyPreferenceLocale
 import com.saltedge.authenticator.tool.authenticatorApp
 import javax.inject.Inject
 
@@ -59,8 +58,7 @@ class LanguageSelectDialog : DialogFragment(), LanguageSelectContract.View {
     }
 
     override fun applyChanges() {
-        context?.applyPreferenceLocale()
-        (activity as? MainActivityContract.View)?.restartActivity()
+        activity?.activityComponentsContract?.onLanguageChanged()
     }
 
     private fun injectDependencies() {

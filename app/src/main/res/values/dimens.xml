@@ -76,6 +76,7 @@
     <dimen name="dp_90">90dp</dimen>
     <dimen name="dp_96">96dp</dimen>
     <dimen name="dp_100">100dp</dimen>
+    <dimen name="dp_102">102dp</dimen>
     <dimen name="dp_106">106dp</dimen>
     <dimen name="dp_113">113dp</dimen>
     <dimen name="dp_115">115dp</dimen>
@@ -95,6 +96,7 @@
     <dimen name="dp_328">328dp</dimen>
     <dimen name="dp_420">420dp</dimen>
 
+    <dimen name="text_zero_line">0sp</dimen>
     <dimen name="text_4">4sp</dimen>
     <dimen name="text_8">8sp</dimen>
     <dimen name="text_10">10sp</dimen>

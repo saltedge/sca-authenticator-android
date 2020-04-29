@@ -23,20 +23,13 @@ package com.saltedge.authenticator.widget.fragment
 import android.app.ProgressDialog
 import androidx.fragment.app.Fragment
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.features.main.activityComponentsContract
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
 
 abstract class BaseFragment : Fragment() {
-
     private var progressDialog: ProgressDialog? = null
-    private var actionBarIsHidden: Boolean = false
     val activityComponents: ActivityComponentsContract?
-        get() = activity as? ActivityComponentsContract
-
-    override fun onResume() {
-        super.onResume()
-        if (actionBarIsHidden) activityComponents?.hideActionBar()
-        else activityComponents?.showActionBar()
-    }
+        get() = activity?.activityComponentsContract
 
     override fun onDestroy() {
         progressDialog?.dismiss()

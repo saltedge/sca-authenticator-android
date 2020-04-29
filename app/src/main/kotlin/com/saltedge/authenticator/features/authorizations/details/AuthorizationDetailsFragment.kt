@@ -26,16 +26,16 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.KEY_ID
 import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.confirmPasscode.ConfirmPasscodeDialog
 import com.saltedge.authenticator.features.authorizations.details.di.AuthorizationDetailsModule
-import com.saltedge.authenticator.interfaces.UpActionImageListener
-import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
-import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
-import com.saltedge.authenticator.sdk.model.AuthorizationID
-import com.saltedge.authenticator.sdk.model.ConnectionID
-import com.saltedge.authenticator.tool.*
+import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
+import com.saltedge.authenticator.tool.authenticatorApp
+import com.saltedge.authenticator.tool.finishFragment
+import com.saltedge.authenticator.tool.setInvisible
+import com.saltedge.authenticator.tool.showDialogFragment
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.showAuthorizationConfirm
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -46,8 +46,7 @@ import javax.inject.Inject
 
 class AuthorizationDetailsFragment : BaseFragment(),
     AuthorizationDetailsContract.View,
-    View.OnClickListener,
-    UpActionImageListener {
+    View.OnClickListener {
 
     @Inject
     lateinit var presenterContract: AuthorizationDetailsPresenter
@@ -59,10 +58,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectDependencies()
-        presenterContract.setInitialData(
-            connectionId = arguments?.getString(KEY_CONNECTION_ID),
-            authorizationId = arguments?.getString(KEY_AUTHORIZATION_ID)
-        )
+        presenterContract.setInitialData(identifier = arguments?.getSerializable(KEY_ID) as? AuthorizationIdentifier)
     }
 
     override fun onCreateView(
@@ -70,13 +66,15 @@ class AuthorizationDetailsFragment : BaseFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        activityComponents?.updateAppbarTitleWithFabAction(getString(R.string.authorization_feature_title))
+        activityComponents?.updateAppbar(
+            titleResId = R.string.authorization_feature_title,
+            actionImageResId = R.drawable.ic_action_close
+        )
         return inflater.inflate(R.layout.fragment_authorization_details, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         contentView?.setActionClickListener(this)
-        activityComponents?.hideNavigationBar()
     }
 
     override fun onStart() {
@@ -101,16 +99,9 @@ class AuthorizationDetailsFragment : BaseFragment(),
         super.onStop()
     }
 
-    override fun onDestroyView() {
-        activityComponents?.showNavigationBar()
-        super.onDestroyView()
-    }
-
     override fun onClick(view: View?) {
         presenterContract.onViewClick(view?.id ?: return)
     }
-
-    override fun getUpActionImageResId(): ResId? = R.drawable.ic_close_white_24dp
 
     override fun updateTimeViews() {
         headerView?.onTimeUpdate()
@@ -176,19 +167,14 @@ class AuthorizationDetailsFragment : BaseFragment(),
 
     companion object {
         /**
-         * Creates new instance of AuthorizationDetailsFragment
+         * Create new instance of AuthorizationDetailsFragment
          *
-         * @param connectionId - id of Connection for Authorization
-         * @param authorizationId - id of Authorization
-         *
+         * @param identifier - wrapper for ID of Connection and ID of Authorization
          * @return AuthorizationDetailsFragment
          */
-        fun newInstance(connectionId: ConnectionID,  authorizationId: AuthorizationID): AuthorizationDetailsFragment {
+        fun newInstance(identifier: AuthorizationIdentifier): AuthorizationDetailsFragment {
             return AuthorizationDetailsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(KEY_CONNECTION_ID, connectionId)
-                    putString(KEY_AUTHORIZATION_ID, authorizationId)
-                }
+                arguments = Bundle().apply { putSerializable(KEY_ID, identifier) }
             }
         }
     }

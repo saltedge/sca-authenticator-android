@@ -29,15 +29,13 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.list.ConnectionsListAdapter
 import com.saltedge.authenticator.interfaces.ListItemClickListener
-import com.saltedge.authenticator.interfaces.UpActionImageListener
-import com.saltedge.authenticator.tool.ResId
 import com.saltedge.authenticator.tool.finishFragment
 import com.saltedge.authenticator.tool.setVisible
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
 import kotlinx.android.synthetic.main.fragment_connections_list.*
 
-class SelectConnectionsFragment : BaseFragment(), ListItemClickListener, UpActionImageListener {
+class SelectConnectionsFragment : BaseFragment(), ListItemClickListener {
 
     private val adapter = ConnectionsListAdapter(clickListener = this)
     private var headerDecorator: SpaceItemDecoration? = null
@@ -55,7 +53,10 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener, UpActio
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activityComponents?.updateAppbarTitleWithFabAction(getString(R.string.choose_connection_feature_title))
+        activityComponents?.updateAppbar(
+            titleResId = R.string.choose_connection_feature_title,
+            actionImageResId = R.drawable.ic_action_close
+        )
         return inflater.inflate(R.layout.fragment_connections_list, container, false)
     }
 
@@ -79,8 +80,6 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener, UpActio
         activity?.finishFragment()
         (activity as? ConnectionSelectorListener)?.onConnectionSelected(connectionGuid)
     }
-
-    override fun getUpActionImageResId(): ResId? = R.drawable.ic_close_white_24dp
 
     companion object {
         const val KEY_CONNECTIONS = "CONNECTIONS"

@@ -70,7 +70,7 @@ class AboutViewModel(val appContext: Context) : ViewModel() {
                     )
                 )
             }
-            R.string.about_open_source_licenses -> licenseItemClickEvent.postValue(ViewModelEvent())
+            R.string.about_open_source_licenses -> licenseItemClickEvent.postValue(ViewModelEvent(Unit))
         }
     }
 }

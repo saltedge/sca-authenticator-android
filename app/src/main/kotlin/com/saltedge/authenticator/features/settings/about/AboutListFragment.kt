@@ -30,13 +30,13 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.settings.licenses.LicensesFragment
-import com.saltedge.authenticator.features.settings.about.common.AboutAdapter
+import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.events.ViewModelEvent
-import com.saltedge.authenticator.features.settings.about.di.AboutListModule
-import com.saltedge.authenticator.features.settings.about.di.DaggerAboutListComponent
+import com.saltedge.authenticator.features.settings.about.common.AboutAdapter
+import com.saltedge.authenticator.features.settings.licenses.LicensesFragment
 import com.saltedge.authenticator.interfaces.OnItemClickListener
 import com.saltedge.authenticator.tool.addFragment
+import com.saltedge.authenticator.tool.authenticatorApp
 import com.saltedge.authenticator.tool.log
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.fragment.WebViewFragment
@@ -46,11 +46,11 @@ import javax.inject.Inject
 class AboutListFragment : BaseFragment(), OnItemClickListener {
 
     lateinit var viewModel: AboutViewModel
-    @Inject lateinit var viewModelFactory: AboutViewModelFactory
+    @Inject lateinit var viewModelFactory: ViewModelsFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectDependencies()
+        authenticatorApp?.appComponent?.inject(this)
         setupViewModel()
     }
 
@@ -58,11 +58,15 @@ class AboutListFragment : BaseFragment(), OnItemClickListener {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = inflater.inflate(R.layout.fragment_base_list, container, false)
+    ): View {
+        activityComponents?.updateAppbar(titleResId = R.string.about_feature_title,
+            actionImageResId = R.drawable.ic_action_back
+        )
+        return inflater.inflate(R.layout.fragment_base_list, container, false)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activityComponents?.updateAppbarTitleWithFabAction(getString(R.string.about_feature_title))
         setupViews()
     }
 
@@ -84,12 +88,6 @@ class AboutListFragment : BaseFragment(), OnItemClickListener {
             }
         } catch (e: Exception) {
             e.log()
-        }
-    }
-
-    private fun injectDependencies() {
-        activity?.let {
-            DaggerAboutListComponent.builder().aboutListModule(AboutListModule(it)).build().inject(this)
         }
     }
 

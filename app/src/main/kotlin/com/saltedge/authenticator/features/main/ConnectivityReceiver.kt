@@ -23,14 +23,27 @@ package com.saltedge.authenticator.features.main
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.ConnectivityManager
 
 class ConnectivityReceiver : BroadcastReceiver() {
 
     var networkStateListener: NetworkStateChangeListener? = null
 
+    fun register(context: Context, networkStateListener: NetworkStateChangeListener) {
+        context.registerReceiver(this, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+        this.networkStateListener = networkStateListener
+    }
+
+    fun unregister(context: Context) {
+        this.networkStateListener = null
+        context.unregisterReceiver(this)
+    }
+
     override fun onReceive(context: Context, intent: Intent?) {
-        networkStateListener?.onNetworkConnectionChanged(isConnectedOrConnecting(context))
+        if (ConnectivityManager.CONNECTIVITY_ACTION == intent?.action) {
+            networkStateListener?.onNetworkConnectionChanged(isConnectedOrConnecting(context))
+        }
     }
 
     private fun isConnectedOrConnecting(context: Context): Boolean {

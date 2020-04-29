@@ -29,12 +29,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.OnboardingSetupBinding
 import com.saltedge.authenticator.events.ViewModelEvent
 import com.saltedge.authenticator.features.main.MainActivity
-import com.saltedge.authenticator.features.onboarding.di.OnboardingSetupModule
 import com.saltedge.authenticator.features.security.KEY_SKIP_PIN
-import com.saltedge.authenticator.tool.*
+import com.saltedge.authenticator.tool.authenticatorApp
+import com.saltedge.authenticator.tool.log
+import com.saltedge.authenticator.tool.showWarningDialog
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 import kotlinx.android.synthetic.main.activity_onboarding.*
@@ -46,12 +48,12 @@ class OnboardingSetupActivity : AppCompatActivity(),
     PasscodeInputViewListener {
 
     lateinit var viewModel: OnboardingSetupViewModel
-    @Inject lateinit var viewModelFactory: OnboardingSetupViewModelFactory
+    @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var binding: OnboardingSetupBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectDependencies()
+        authenticatorApp?.appComponent?.inject(this)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_onboarding)
         setupViewModel()
         initViews()
@@ -87,12 +89,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
 
     override fun onNewPasscodeConfirmed(passcode: String) {
         viewModel.newPasscodeConfirmed(passcode)
-    }
-
-    private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addOnboardingSetupModule(OnboardingSetupModule())?.inject(
-            this
-        )
     }
 
     private fun setupViewModel() {

@@ -34,7 +34,6 @@ import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDi
 import com.saltedge.authenticator.features.connections.edit.name.EditConnectionNameDialog
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListModule
 import com.saltedge.authenticator.features.connections.options.ConnectionOptionsDialog
-import com.saltedge.authenticator.features.main.FabState
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.tool.*
@@ -63,6 +62,10 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        activityComponents?.updateAppbar(
+            titleResId = R.string.connections_feature_title,
+            actionImageResId = R.drawable.ic_action_back
+        )
         return inflater.inflate(R.layout.fragment_connections_list, container, false)
     }
 
@@ -117,10 +120,6 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         val viewIsEmpty = adapter.isEmpty
         emptyView?.setVisible(viewIsEmpty)
         connectionsListView?.setVisible(!viewIsEmpty)
-        activityComponents?.updateAppbarTitleWithFabAction(
-            title = getString(R.string.connections_feature_title),
-            action = if (viewIsEmpty) FabState.NO_ACTION else FabState.SCAN_QR
-        )
     }
 
     override fun showApiErrorView(message: String) {
@@ -166,7 +165,7 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
     }
 
     override fun showQrScanView() {
-        activity?.startQrScannerActivity()
+        activity?.showQrScannerActivity()
     }
 
     private fun injectDependencies() {
