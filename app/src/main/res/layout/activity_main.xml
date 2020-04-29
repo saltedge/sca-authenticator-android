@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
-    Copyright (c) 2019 Salt Edge Inc.
+    Copyright (c) 2020 Salt Edge Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,86 +18,85 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activityRootLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/dp_102"
+        android:background="@color/theme_background"
+        app:layout_constraintTop_toTopOf="parent">
 
         <FrameLayout
+            android:id="@+id/appBarTopSection"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="@dimen/dp_56"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbarView"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/action_bar_size"
-                android:background="@color/color_primary"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+            <ImageView
+                android:id="@+id/appBarBackAction"
+                android:layout_width="@dimen/dp_24"
+                android:layout_height="@dimen/dp_24"
+                android:layout_marginLeft="@dimen/dp_16"
+                android:layout_marginRight="@dimen/dp_16"
+                android:src="@drawable/ic_action_back"
+                android:visibility="gone" />
         </FrameLayout>
-    </com.google.android.material.appbar.AppBarLayout>
+
+        <LinearLayout
+            android:id="@+id/appBarBottomSection"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_46"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:id="@+id/appBarTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_16"
+                android:layout_marginRight="@dimen/dp_16"
+                android:layout_weight="1"
+                android:lineSpacingExtra="@dimen/text_zero_line"
+                android:text="@string/app_name_short"
+                android:textAppearance="@style/app_bar_title" />
+
+            <ImageView
+                android:id="@+id/appBarActionQrCode"
+                android:layout_width="@dimen/dp_24"
+                android:layout_height="@dimen/dp_24"
+                android:layout_marginRight="@dimen/dp_24"
+                android:src="@drawable/ic_action_qr_code" />
+
+            <ImageView
+                android:id="@+id/appBarActionMenu"
+                android:layout_width="@dimen/dp_24"
+                android:layout_height="@dimen/dp_24"
+                android:layout_marginRight="@dimen/dp_16"
+                android:src="@drawable/ic_action_menu" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/appBarLayout"
-        android:layout_above="@+id/bottomNavigationLayout"/>
-
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/snackBarCoordinator"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/bottomNavigationLayout">
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/actionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/dp_16"
-            android:scaleType="center"
-            android:src="@drawable/ic_add_white_24dp"
-            app:backgroundTint="@color/blue"
-            app:borderWidth="0dp"
-            app:elevation="3dp"
-            app:fabSize="normal"
-            app:layout_behavior=".features.main.FabBehavior"/>
-
-        <View
-            android:id="@+id/bottomDivider"
-            android:layout_width="match_parent"
-            android:layout_height="0.1dp"
-            android:layout_gravity="bottom" />
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <LinearLayout
-        android:id="@+id/bottomNavigationLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="vertical">
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavigationView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:itemBackground="@android:color/white"
-            app:itemIconTint="@drawable/selector_bottom_bar_item"
-            app:itemTextColor="@color/blue"
-            app:labelVisibilityMode="unlabeled"
-            app:menu="@menu/main_navigation" />
-    </LinearLayout>
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
 
     <com.saltedge.authenticator.features.security.UnlockAppInputView
         android:id="@+id/unlockAppInputView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true" />
-</RelativeLayout>
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

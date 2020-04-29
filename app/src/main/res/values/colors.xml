@@ -35,7 +35,7 @@
 
     <!--extra palette and aliases-->
     <color name="color_primary">@color/blue</color>
-    <color name="color_primary_dark">#344499</color>
+    <color name="system_bar_color">#344499</color>
     <color name="color_primary_extra_light">#EBEEFF</color>
     <color name="color_accent">@color/blue</color>
     <color name="base_container_bg">@color/gray_extra_light</color>
@@ -65,5 +65,6 @@
     <color name="theme_background">@android:color/white</color>
     <color name="icon_background">@android:color/white</color>
     <color name="logo_background">@color/blue_black</color>
+    <color name="action_icon_fill_color">@color/neutrals_dark_100</color>
     <color name="qr_camera_mask_background">#DDFFFFFF</color>
 </resources>

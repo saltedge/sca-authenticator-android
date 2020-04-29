@@ -28,6 +28,7 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
 import com.saltedge.authenticator.sdk.model.*
 import com.saltedge.authenticator.sdk.model.EncryptedData
+import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.error.*
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
@@ -57,13 +58,13 @@ class AuthorizationDetailsPresenter(
     private val viewMode: ViewMode
         get() = currentViewModel?.viewMode ?: ViewMode.LOADING
 
-    fun setInitialData(connectionId: String?, authorizationId: String?) {
+    fun setInitialData(identifier: AuthorizationIdentifier?) {
         super.currentConnectionAndKey = createConnectionAndKey(
-            connectionID = connectionId ?: "",
+            connectionID = identifier?.connectionID ?: "",
             repository = connectionsRepository,
             keyStoreManager = keyStoreManager
         )
-        this.authorizationId = authorizationId
+        this.authorizationId = identifier?.authorizationID
         this.currentViewModel = AuthorizationViewModel(
             authorizationID = "",
             authorizationCode = "",
@@ -75,7 +76,7 @@ class AuthorizationDetailsPresenter(
             connectionID = "",
             connectionName = "",
             connectionLogoUrl = "",
-            viewMode = if (currentConnectionAndKey == null || authorizationId == null || authorizationId.isEmpty()) ViewMode.UNAVAILABLE else ViewMode.LOADING
+            viewMode = if (currentConnectionAndKey == null || authorizationId.isNullOrEmpty()) ViewMode.UNAVAILABLE else ViewMode.LOADING
         )
     }
 

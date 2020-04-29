@@ -52,11 +52,11 @@ class LauncherViewModel(
         if (!AppTools.isTestsSuite(appContext)) realmManager.initRealm(context = appContext)
         if (realmManager.errorOccurred) {
             onInitializationSuccess.value = null
-            onDbInitializationFail.postValue(ViewModelEvent())
+            onDbInitializationFail.postValue(ViewModelEvent(Unit))
         } else {
             if (shouldSetupApplication()) passcodeTools.replacePasscodeKey(appContext)
             onDbInitializationFail.value = null
-            onInitializationSuccess.postValue(ViewModelEvent())
+            onInitializationSuccess.postValue(ViewModelEvent(Unit))
         }
     }
 
@@ -65,7 +65,7 @@ class LauncherViewModel(
 
     fun onOkClick() {
         realmManager.resetError()
-        buttonClickEvent.postValue(ViewModelEvent())
+        buttonClickEvent.postValue(ViewModelEvent(Unit))
     }
 
     private fun shouldSetupApplication(): Boolean = !preferenceRepository.passcodeExist()

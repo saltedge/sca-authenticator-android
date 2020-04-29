@@ -20,8 +20,10 @@
  */
 package com.saltedge.authenticator.sdk.model.authorization
 
+import java.io.Serializable
+
 /**
  * Container for authorizationID and connectionID
  */
 //TODO: Use where we use authorizationID with connectionID
-data class AuthorizationIdentifier(val authorizationID: String, val connectionID: String)
+data class AuthorizationIdentifier(val authorizationID: String, val connectionID: String) : Serializable

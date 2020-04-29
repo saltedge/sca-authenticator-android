@@ -48,7 +48,10 @@ class PasscodeEditFragment : BaseFragment(), PasscodeEditContract.View, Passcode
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activityComponents?.updateAppbarTitleWithFabAction(getString(R.string.settings_passcode))
+        activityComponents?.updateAppbar(
+            titleResId = R.string.settings_passcode,
+            actionImageResId = R.drawable.ic_action_back
+        )
         return inflater.inflate(R.layout.fragment_edit_passcode, container, false)
     }
 
