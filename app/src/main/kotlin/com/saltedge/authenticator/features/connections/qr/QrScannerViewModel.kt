@@ -43,7 +43,7 @@ class QrScannerViewModel(val appContext: Context) : ViewModel(), LifecycleObserv
 
     fun onViewClick(viewId: Int) {
         when (viewId) {
-            R.id.closeImageView -> closeActivity.postValue(ViewModelEvent())
+            R.id.closeImageView -> closeActivity.postValue(ViewModelEvent(Unit))
         }
     }
 

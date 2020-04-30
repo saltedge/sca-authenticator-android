@@ -77,7 +77,7 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
                     listener?.onEnteredPasscodeIsValid()
                 } else {
                     passcodeLabelView?.clearAll()
-                    onInputError(R.string.errors_passcode_not_match)
+                    onInputError(R.string.errors_wrong_passcode)
                     listener?.onEnteredPasscodeIsInvalid()
                 }
             }
@@ -105,6 +105,10 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
                 }
             }
         }
+    }
+
+    override fun onPasscodeLabelChanged(passcode: String) {
+        if (passcode.isEmpty()) pinpadView?.showFingerView() else pinpadView?.showDeleteView()
     }
 
     private fun setupViews() {

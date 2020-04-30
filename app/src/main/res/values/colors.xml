@@ -30,7 +30,6 @@
     <color name="color_secondary">#85CDCF</color>
     <color name="color_secondary_extra_light">#EAFAFB</color>
     <color name="cyan_light">#E5F9FA</color>
-    <color name="red">#FE5F55</color>
     <color name="red_extra_light">#FFF1F0</color>
 
     <!--extra palette and aliases-->
@@ -48,23 +47,39 @@
     <color name="switch_on">@color/blue</color>
 
     <!--New palette-->
-    <color name="dark_theme_background">#040411</color>
-    <color name="blue_black">#161E2A</color>
-    <color name="neutrals_dark_100">#182C3F</color>
-    <color name="grey_40">#D8E5EE</color>
     <color name="primary">#0D93F8</color>
     <color name="primary_dark">#007CD9</color>
     <color name="primary_light">#36A9FF</color>
-    <color name="grey_light_extra">#F4F8FA</color>
+    <color name="primary_light_extra">#86C9FB</color>
+    <color name="dark_100">#182C3F</color>
     <color name="dark_80">#465665</color>
+    <color name="dark_60">#81A2BA</color>
+    <color name="grey_100">#AEC9DC</color>
+    <color name="grey_80">#BED4E3</color>
+    <color name="grey_60">#CEDEEA</color>
+    <color name="grey_40">#D8E5EE</color>
+    <color name="grey_20">#EFF4F8</color>
+    <color name="grey_light_extra">#F4F8FA</color>
+    <color name="red">#FA5B5B</color>
+    <color name="red_dark">#D54B4B</color>
+    <color name="red_light">#FF7979</color>
+    <color name="red_light_extra">#FCADAD</color>
+    <color name="green">#12BA56</color>
+    <color name="green_dark">#0A9C45</color>
+    <color name="green_light">#4BD683</color>
+    <color name="green_light_extra">#88DCAB</color>
+    <color name="dark_theme_background">#040411</color>
+    <color name="blue_black">#161E2A</color>
 
     <color name="info_message_background">@color/grey_light_extra</color>
     <color name="splash_dots_background">@color/primary</color>
     <color name="passcode_dots_background">@color/grey_40</color>
-    <color name="primary_text">@color/neutrals_dark_100</color>
+    <color name="primary_text">@color/dark_100</color>
     <color name="theme_background">@android:color/white</color>
     <color name="icon_background">@android:color/white</color>
     <color name="logo_background">@color/blue_black</color>
-    <color name="action_icon_fill_color">@color/neutrals_dark_100</color>
+    <color name="action_icon_fill_color">@color/dark_100</color>
     <color name="qr_camera_mask_background">#DDFFFFFF</color>
+    <color name="inner_circle_of_the_logo">@color/primary_light_extra</color>
+    <color name="finger_icon_fill_color">@color/primary</color>
 </resources>

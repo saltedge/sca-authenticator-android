@@ -51,6 +51,7 @@ class PasscodeLabelView(context: Context, attrs: AttributeSet) : LinearLayout(co
         if (text.isNotEmpty()) {
             text = text.take(text.length - 1)
             views[text.length].setImageResource(R.drawable.shape_passcode_item_off)
+            resultListener?.onPasscodeLabelChanged(text)
         }
     }
 
@@ -58,6 +59,7 @@ class PasscodeLabelView(context: Context, attrs: AttributeSet) : LinearLayout(co
         if (text.length < PASSCODE_SIZE) {
             text = text.plus(value)
             views[text.length - 1].setImageResource(R.drawable.shape_passcode_item_on)
+            resultListener?.onPasscodeLabelChanged(text)
             if (text.length == PASSCODE_SIZE) {
                 resultListener?.onPasscodeInputFinished(text)
             }
@@ -71,5 +73,6 @@ class PasscodeLabelView(context: Context, attrs: AttributeSet) : LinearLayout(co
 
     interface PasscodeInputResultListener {
         fun onPasscodeInputFinished(passcode: String)
+        fun onPasscodeLabelChanged(passcode: String)
     }
 }

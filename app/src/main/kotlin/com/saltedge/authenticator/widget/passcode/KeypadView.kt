@@ -75,6 +75,16 @@ class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         } else vibrator?.vibrate(10)
     }
 
+    fun showDeleteView() {
+        fingerView?.setVisible(show = false)
+        deleteView?.setVisible(show = true)
+    }
+
+    fun showFingerView() {
+        fingerView?.setVisible(show = true)
+        deleteView?.setVisible(show = false)
+    }
+
     interface KeypadClickListener {
         fun onDeleteKeyClick()
         fun onDigitKeyClick(value: String = "")
