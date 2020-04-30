@@ -36,7 +36,6 @@
             android:id="@+id/appBarTopSection"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_56"
-            android:gravity="center_vertical"
             android:orientation="horizontal"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -46,8 +45,8 @@
                 android:layout_height="@dimen/dp_24"
                 android:layout_marginLeft="@dimen/dp_16"
                 android:layout_marginRight="@dimen/dp_16"
-                android:src="@drawable/ic_appbar_action_back"
-                android:visibility="gone" />
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_appbar_action_back" />
         </FrameLayout>
 
         <LinearLayout

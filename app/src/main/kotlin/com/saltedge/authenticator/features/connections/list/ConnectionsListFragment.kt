@@ -157,7 +157,7 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         options: Array<ConnectionOptions>,
         requestCode: Int
     ) {
-//        optionsDialog?.dismiss()
+//        optionsDialog?.dismiss()// TODO show popup dialog
 //        optionsDialog = BottomMenuDialog.newInstance(connectionGuid, options).also {
 //            it.setTargetFragment(this, requestCode)
 //        }
