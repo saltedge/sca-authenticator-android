@@ -26,22 +26,25 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_GUID
+import com.saltedge.authenticator.app.KEY_ID
 import com.saltedge.authenticator.app.KEY_OPTION_ID
 import com.saltedge.authenticator.interfaces.ListItemClickListener
-import com.saltedge.authenticator.widget.fragment.BaseBottomDialogFragment
+import com.saltedge.authenticator.widget.fragment.BaseRoundedBottomDialogFragment
 
-class ConnectionOptionsDialog : BaseBottomDialogFragment(), ListItemClickListener {
+class BottomMenuDialog : BaseRoundedBottomDialogFragment(), ListItemClickListener {
 
-    private val presenter = ConnectionOptionsPresenter()
-    private val adapter = ConnectionOptionsAdapter(this)
+    private val presenter = BottomMenuPresenter()
+    private val adapter = MenuItemsAdapter(this)
     private var contentRecyclerView: RecyclerView? = null
 
-    override fun getDialogViewLayout(): Int = R.layout.dialog_options
+    override fun getDialogViewLayout(): Int = R.layout.dialog_menu
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter.setInitialData(arguments?.getIntArray(KEY_OPTION_ID))
+        presenter.setInitialData(
+            arguments?.getString(KEY_ID),
+            arguments?.getSerializable(KEY_ITEMS) as? List<MenuItemData>
+        )
     }
 
     override fun onStart() {
@@ -50,32 +53,40 @@ class ConnectionOptionsDialog : BaseBottomDialogFragment(), ListItemClickListene
     }
 
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
-        val item = adapter.getItem(itemIndex) as ConnectionOptions
+        val item = adapter.getItem(itemIndex) as MenuItemData
         dismiss()
-        targetFragment?.onActivityResult(
-            targetRequestCode,
-            RESULT_OK,
-            Intent().putExtra(KEY_GUID, arguments?.getString(KEY_GUID))
-                .putExtra(KEY_OPTION_ID, item.ordinal)
-        )
+        val menuItemSelectListener = activity as? MenuItemSelectListener
+        if (menuItemSelectListener == null) {
+            targetFragment?.onActivityResult(
+                targetRequestCode,
+                RESULT_OK,
+                Intent()
+                    .putExtra(KEY_ID, presenter.menuId)
+                    .putExtra(KEY_OPTION_ID, item.id)
+            )
+        } else {
+            menuItemSelectListener.onMenuItemSelected(presenter.menuId ?: "", item.id)
+        }
     }
 
     private fun setupDialogViews() {
-        contentRecyclerView = dialog?.findViewById<RecyclerView?>(R.id.recyclerView)
+        contentRecyclerView = dialog?.findViewById(R.id.recyclerView)
         activity?.let { contentRecyclerView?.layoutManager = LinearLayoutManager(it) }
         contentRecyclerView?.adapter = adapter
         adapter.data = presenter.listItems
     }
 
     companion object {
+        const val KEY_ITEMS = "items"
+
         fun newInstance(
-            connectionGuid: String,
-            options: Array<ConnectionOptions>
-        ): ConnectionOptionsDialog {
-            return ConnectionOptionsDialog().apply {
+            menuId: String = "",
+            menuItems: List<MenuItemData>
+        ): BottomMenuDialog {
+            return BottomMenuDialog().apply {
                 arguments = Bundle().apply {
-                    putString(KEY_GUID, connectionGuid)
-                    putIntArray(KEY_OPTION_ID, options.map { it.ordinal }.toIntArray())
+                    putString(KEY_ID, menuId)
+                    putSerializable(KEY_ITEMS, ArrayList(menuItems))
                 }
             }
         }

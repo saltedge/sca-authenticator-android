@@ -68,7 +68,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
     ): View? {
         activityComponents?.updateAppbar(
             titleResId = R.string.authorization_feature_title,
-            actionImageResId = R.drawable.ic_action_close
+            actionImageResId = R.drawable.ic_appbar_action_close
         )
         return inflater.inflate(R.layout.fragment_authorization_details, container, false)
     }

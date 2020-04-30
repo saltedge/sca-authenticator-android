@@ -18,14 +18,27 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.menu
+package com.saltedge.authenticator.features.connections.common
 
-class ConnectionOptionsPresenter {
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import com.saltedge.authenticator.R
 
-    var listItems = listOf(ConnectionOptions.REPORT_PROBLEM)
-        private set
-
-    fun setInitialData(optionsIds: IntArray?) {
-        if (optionsIds != null) listItems = optionsIds.map { ConnectionOptions.values()[it] }
-    }
+enum class ConnectionOptions(@DrawableRes val iconId: Int, @StringRes val textId: Int) {
+    RECONNECT(
+        R.drawable.ic_reconnect_gray_24dp,
+        R.string.actions_reconnect
+    ),
+    REPORT_PROBLEM(
+        R.drawable.ic_about_black54_24dp,
+        R.string.actions_contact_support
+    ),
+    RENAME(
+        R.drawable.ic_rename_gray_24dp,
+        R.string.actions_rename
+    ),
+    DELETE(
+        R.drawable.ic_delete_gray_24dp,
+        R.string.actions_delete
+    );
 }

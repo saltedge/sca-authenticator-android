@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.qr
+package com.saltedge.authenticator.features.qr
 
 import android.util.SparseArray
 import com.google.android.gms.vision.barcode.Barcode
@@ -51,7 +51,7 @@ class QrScannerViewModelTest {
     fun onViewClickTestCase1() {
         viewModel.onViewClick(R.id.closeImageView)
 
-        assertNotNull(viewModel.closeActivity.value)
+        assertNotNull(viewModel.onCloseEvent.value)
     }
 
     /**
@@ -62,7 +62,7 @@ class QrScannerViewModelTest {
     fun onViewClickTestCase2() {
         viewModel.onViewClick(-1)
 
-        assertNull(viewModel.closeActivity.value)
+        assertNull(viewModel.onCloseEvent.value)
     }
 
     @Test
@@ -70,11 +70,11 @@ class QrScannerViewModelTest {
     fun showErrorMessageTest() {
         viewModel.showErrorMessage(null)
 
-        assertNull(viewModel.showError.value)
+        assertNull(viewModel.errorMessageResId.value)
 
         viewModel.showErrorMessage(R.string.errors_camera_init)
 
-        assertThat(viewModel.showError.value, equalTo(R.string.errors_camera_init))
+        assertThat(viewModel.errorMessageResId.value, equalTo(R.string.errors_camera_init))
     }
 
     @Test

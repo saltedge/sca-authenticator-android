@@ -20,8 +20,8 @@
  */
 package com.saltedge.authenticator.features.connections.options
 
-import com.saltedge.authenticator.features.menu.ConnectionOptions
-import com.saltedge.authenticator.features.menu.ConnectionOptionsPresenter
+import com.saltedge.authenticator.features.connections.common.ConnectionOptions
+import com.saltedge.authenticator.features.menu.BottomMenuPresenter
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
 import org.junit.Test
@@ -31,7 +31,7 @@ class ConnectionOptionsPresenterTest {
     @Test
     @Throws(Exception::class)
     fun setInitialDataTest() {
-        val presenter = ConnectionOptionsPresenter()
+        val presenter = BottomMenuPresenter()
         presenter.setInitialData(optionsIds = intArrayOf(ConnectionOptions.RENAME.ordinal))
 
         assertThat(listOf(ConnectionOptions.RENAME), equalTo(presenter.listItems))

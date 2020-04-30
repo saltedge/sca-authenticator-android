@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.connections.list
 
 import android.content.Intent
-import com.saltedge.authenticator.features.menu.ConnectionOptions
+import com.saltedge.authenticator.features.connections.common.ConnectionOptions
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.interfaces.BaseViewContract
 import com.saltedge.authenticator.sdk.model.GUID

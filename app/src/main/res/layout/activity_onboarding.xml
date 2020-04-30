@@ -148,7 +148,7 @@
                         android:layout_marginStart="@dimen/dp_32"
                         android:layout_marginTop="@dimen/dp_325"
                         android:layout_marginBottom="@dimen/dp_124"
-                        app:selectedColor="@color/splash_dots_background" />
+                        app:selectedColor="@color/onboarding_dots_background" />
                 </RelativeLayout>
     </FrameLayout>
 </layout>

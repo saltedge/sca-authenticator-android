@@ -32,12 +32,10 @@ import com.saltedge.authenticator.features.connections.create.di.ConnectProvider
 import com.saltedge.authenticator.features.connections.create.di.ConnectProviderModule
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListComponent
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListModule
-import com.saltedge.authenticator.features.connections.qr.di.QrScannerComponent
-import com.saltedge.authenticator.features.connections.qr.di.QrScannerModule
+import com.saltedge.authenticator.features.qr.QrScannerActivity
 import com.saltedge.authenticator.features.launcher.LauncherActivity
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
-import com.saltedge.authenticator.widget.security.LockableActivity
 import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.language.di.LanguageSelectComponent
 import com.saltedge.authenticator.features.settings.language.di.LanguageSelectModule
@@ -45,13 +43,14 @@ import com.saltedge.authenticator.features.settings.list.di.SettingsListComponen
 import com.saltedge.authenticator.features.settings.list.di.SettingsListModule
 import com.saltedge.authenticator.features.settings.passcode.di.PasscodeEditComponent
 import com.saltedge.authenticator.features.settings.passcode.di.PasscodeEditModule
-import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
+import com.saltedge.authenticator.widget.security.LockableActivity
 import dagger.Component
 import javax.inject.Singleton
 
@@ -68,7 +67,6 @@ interface AppComponent {
     fun realmManager() : RealmManagerAbs
     fun viewModelsFactory() : ViewModelsFactory
 
-    fun addQrScannerModule(module: QrScannerModule): QrScannerComponent
     fun addConnectionsListModule(module: ConnectionsListModule): ConnectionsListComponent
     fun addConnectProviderModule(module: ConnectProviderModule): ConnectProviderComponent
     fun addActionModule(moduleSubmit: SubmitActionModule): SubmitActionComponent
@@ -82,5 +80,6 @@ interface AppComponent {
     fun inject(activity: OnboardingSetupActivity)
     fun inject(activity: LauncherActivity)
     fun inject(activity: MainActivity)
+    fun inject(activity: QrScannerActivity)
     fun inject(fragment: AboutListFragment)
 }

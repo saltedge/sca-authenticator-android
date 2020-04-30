@@ -63,7 +63,7 @@ class SubmitActionFragment : BaseFragment(), SubmitActionContract.View, View.OnC
     ): View? {
         activityComponents?.updateAppbar(
             titleResId = R.string.action_new_action_title,
-            actionImageResId = R.drawable.ic_action_close
+            actionImageResId = R.drawable.ic_appbar_action_close
         )
         return inflater.inflate(R.layout.fragment_submit_action, container, false)
     }

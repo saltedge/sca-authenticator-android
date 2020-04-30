@@ -23,7 +23,7 @@ package com.saltedge.authenticator.features.connections.list
 import android.app.Activity
 import android.content.Intent
 import com.saltedge.authenticator.app.*
-import com.saltedge.authenticator.features.menu.ConnectionOptions
+import com.saltedge.authenticator.features.connections.common.ConnectionOptions
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs

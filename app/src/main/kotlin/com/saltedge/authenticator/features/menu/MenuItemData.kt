@@ -18,25 +18,15 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.qr.di
+package com.saltedge.authenticator.features.menu
 
-import android.content.Context
-import com.saltedge.authenticator.app.di.FragmentScope
-import com.saltedge.authenticator.features.connections.qr.QrScannerViewModelFactory
-import dagger.Module
-import dagger.Provides
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import com.saltedge.authenticator.tools.ResId
+import java.io.Serializable
 
-@Module
-class QrScannerModule {
-
-    @FragmentScope
-    @Provides
-    fun provideFactory(
-        appContext: Context
-    ): QrScannerViewModelFactory {
-        return QrScannerViewModelFactory(
-            appContext = appContext
-        )
-    }
-}
-
+data class MenuItemData(
+    val id: Int,
+    @DrawableRes val iconResId: ResId,
+    @StringRes val textResId: ResId
+) : Serializable

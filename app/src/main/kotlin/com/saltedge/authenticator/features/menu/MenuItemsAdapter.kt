@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2020 Salt Edge Inc.
+ * Copyright (c) 2019 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +18,19 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.qr.di
+package com.saltedge.authenticator.features.menu
 
-import com.saltedge.authenticator.testTools.TestAppTools
-import org.junit.Assert.assertNotNull
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.saltedge.authenticator.interfaces.ListItemClickListener
+import com.saltedge.authenticator.widget.list.AbstractListAdapter
 
-@RunWith(RobolectricTestRunner::class)
-class QrScannerModuleTest {
+class MenuItemsAdapter(private val clickListener: ListItemClickListener?) : AbstractListAdapter() {
 
-    @Test
-    @Throws(Exception::class)
-    fun providePresenterTest() {
-        val module = QrScannerModule()
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        MenuItemHolder(parent, clickListener)
 
-        assertNotNull(module.provideFactory(appContext = TestAppTools.applicationContext))
+    override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
+        (holder as MenuItemHolder).bind(item as MenuItemData)
     }
 }

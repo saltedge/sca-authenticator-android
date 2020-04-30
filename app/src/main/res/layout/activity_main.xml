@@ -46,7 +46,7 @@
                 android:layout_height="@dimen/dp_24"
                 android:layout_marginLeft="@dimen/dp_16"
                 android:layout_marginRight="@dimen/dp_16"
-                android:src="@drawable/ic_action_back"
+                android:src="@drawable/ic_appbar_action_back"
                 android:visibility="gone" />
         </FrameLayout>
 
@@ -74,14 +74,16 @@
                 android:layout_width="@dimen/dp_24"
                 android:layout_height="@dimen/dp_24"
                 android:layout_marginRight="@dimen/dp_24"
-                android:src="@drawable/ic_action_qr_code" />
+                android:background="?android:attr/selectableItemBackground"
+                android:src="@drawable/ic_appbar_action_qr" />
 
             <ImageView
                 android:id="@+id/appBarActionMenu"
                 android:layout_width="@dimen/dp_24"
                 android:layout_height="@dimen/dp_24"
                 android:layout_marginRight="@dimen/dp_16"
-                android:src="@drawable/ic_action_menu" />
+                android:background="?android:attr/selectableItemBackground"
+                android:src="@drawable/ic_appbar_action_menu" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

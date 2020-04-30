@@ -22,7 +22,7 @@ package com.saltedge.authenticator.features.connections.list
 
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ITEM_OPTIONS_REQUEST_CODE
-import com.saltedge.authenticator.features.menu.ConnectionOptions
+import com.saltedge.authenticator.features.connections.common.ConnectionOptions
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs

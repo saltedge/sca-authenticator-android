@@ -18,15 +18,8 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.qr.di
+package com.saltedge.authenticator.features.menu
 
-import com.saltedge.authenticator.app.di.FragmentScope
-import com.saltedge.authenticator.features.connections.qr.QrScannerActivity
-import dagger.Subcomponent
-
-@FragmentScope
-@Subcomponent(modules = [QrScannerModule::class])
-interface QrScannerComponent {
-
-    fun inject(activity: QrScannerActivity)
+interface MenuItemSelectListener {
+    fun onMenuItemSelected(menuId: String = "", selectedItemId: Int)
 }

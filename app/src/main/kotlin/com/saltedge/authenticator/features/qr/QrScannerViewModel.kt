@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.qr
+package com.saltedge.authenticator.features.qr
 
 import android.content.Context
 import android.util.SparseArray
@@ -34,32 +34,31 @@ import com.saltedge.authenticator.tools.ResId
 
 class QrScannerViewModel(val appContext: Context) : ViewModel(), LifecycleObserver {
 
-    var closeActivity = MutableLiveData<ViewModelEvent<Unit>>()
+    var onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()
         private set
-    var returnResultAndFinish = MutableLiveData<String>()
+    var setActivityResult = MutableLiveData<String>()
         private set
-    var showError = MutableLiveData<Int?>()
+    var errorMessageResId = MutableLiveData<Int?>()
         private set
 
     fun onViewClick(viewId: Int) {
         when (viewId) {
-            R.id.closeImageView -> closeActivity.postValue(ViewModelEvent())
+            R.id.closeImageView -> onCloseEvent.postValue(ViewModelEvent(Unit))
         }
     }
 
     fun onReceivedCodes(codes: SparseArray<Barcode>) {
         val deeplinks = mutableListOf<String>()
         codes.forEach { _, value ->
-            if (value.displayValue.isValidDeeplink()) {
-                deeplinks.add(value.displayValue)
-            }
+            if (value.displayValue.isValidDeeplink()) deeplinks.add(value.displayValue)
         }
         deeplinks.firstOrNull()?.let { deeplink ->
-            returnResultAndFinish.postValue(deeplink)
+            setActivityResult.postValue(deeplink)
+            onCloseEvent.postValue(ViewModelEvent(Unit))
         }
     }
 
-    fun showErrorMessage(errorName: ResId?) {
-        showError.postValue(errorName)
+    fun showErrorMessage(errorNameResId: ResId?) {
+        errorMessageResId.postValue(errorNameResId)
     }
 }

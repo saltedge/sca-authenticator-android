@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +18,23 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.menu
+package com.saltedge.authenticator.features.qr
 
-import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
-import com.saltedge.authenticator.interfaces.ListItemClickListener
-import com.saltedge.authenticator.widget.list.AbstractListAdapter
+import android.content.Context
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import javax.inject.Inject
 
-class ConnectionOptionsAdapter(private val clickListener: ListItemClickListener?) : AbstractListAdapter() {
+class QrScannerViewModelFactory @Inject constructor(
+    val appContext: Context
+) : ViewModelProvider.Factory {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        ConnectionOptionItemHolder(parent, clickListener)
-
-    override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
-        (holder as ConnectionOptionItemHolder).bind(item as ConnectionOptions)
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(QrScannerViewModel::class.java)) {
+            return QrScannerViewModel(
+                appContext = appContext
+            ) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

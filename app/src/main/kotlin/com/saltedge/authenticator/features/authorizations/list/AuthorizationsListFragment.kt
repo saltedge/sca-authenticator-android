@@ -137,16 +137,6 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
         activity?.showDialogFragment(ConfirmPasscodeDialog.newInstance(resultCallback = presenter))
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.menu_authorizations, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.qr_code) activity?.showQrScannerActivity()
-        return true
-    }
-
     private fun setupViews() {
         activity?.let {
             contentAdapter = AuthorizationsContentPagerAdapter(it).apply {

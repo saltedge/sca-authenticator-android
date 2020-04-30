@@ -18,23 +18,22 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.qr
+package com.saltedge.authenticator.features.qr.di
 
-import android.content.Context
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import javax.inject.Inject
+import com.saltedge.authenticator.testTools.TestAppTools
+import org.junit.Assert.assertNotNull
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
-class QrScannerViewModelFactory @Inject constructor(
-    val appContext: Context
-) : ViewModelProvider.Factory {
+@RunWith(RobolectricTestRunner::class)
+class QrScannerModuleTest {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(QrScannerViewModel::class.java)) {
-            return QrScannerViewModel(
-                appContext = appContext
-            ) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
+    @Test
+    @Throws(Exception::class)
+    fun providePresenterTest() {
+        val module = QrScannerModule()
+
+        assertNotNull(module.provideFactory(appContext = TestAppTools.applicationContext))
     }
 }

@@ -20,25 +20,18 @@
  */
 package com.saltedge.authenticator.features.menu
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
-import com.saltedge.authenticator.R
+class BottomMenuPresenter {
 
-enum class ConnectionOptions(@DrawableRes val iconId: Int, @StringRes val textId: Int) {
-    RECONNECT(
-        R.drawable.ic_reconnect_gray_24dp,
-        R.string.actions_reconnect
-    ),
-    REPORT_PROBLEM(
-        R.drawable.ic_about_black54_24dp,
-        R.string.actions_contact_support
-    ),
-    RENAME(
-        R.drawable.ic_rename_gray_24dp,
-        R.string.actions_rename
-    ),
-    DELETE(
-        R.drawable.ic_delete_gray_24dp,
-        R.string.actions_delete
-    );
+    var menuId: String? = null
+        private set
+    var listItems: List<MenuItemData> = emptyList()
+        private set
+
+    fun setInitialData(
+        menuId: String?,
+        menuItems: List<MenuItemData>?
+    ) {
+        this.menuId = menuId
+        menuItems?.let { listItems = menuItems }
+    }
 }

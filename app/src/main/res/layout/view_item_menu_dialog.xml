@@ -27,7 +27,7 @@
     android:orientation="horizontal">
 
     <ImageView
-        android:id="@+id/optionImageView"
+        android:id="@+id/menuItemImageView"
         android:layout_width="@dimen/dp_24"
         android:layout_height="@dimen/dp_24"
         android:layout_marginStart="@dimen/dp_16"
@@ -36,8 +36,8 @@
         tools:src="@drawable/ic_about_black54_24dp" />
 
     <TextView
-        android:id="@+id/optionTitleView"
-        style="@style/Text16BlackRegular"
+        android:id="@+id/menuItemTitleView"
+        style="@style/Text16Regular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_24"

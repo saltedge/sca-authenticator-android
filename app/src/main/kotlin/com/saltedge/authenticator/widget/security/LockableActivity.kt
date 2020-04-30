@@ -194,15 +194,19 @@ abstract class LockableActivity :
 
     private fun isBiometricInputReady(): Boolean = biometricTools?.isBiometricReady(context = this) == true
 
+    /**
+     * Display biometric prompt if resultCallback is already set on Activity start
+     */
     @TargetApi(Build.VERSION_CODES.P)
     private fun displayBiometricPrompt() {
-        biometricPrompt?.resultCallback = this
-        biometricPrompt?.showBiometricPrompt(
-            context = this,
-            titleResId = R.string.app_name,
-            descriptionResId = R.string.fingerprint_scan_unlock,
-            negativeActionTextResId = R.string.actions_cancel
-        )
+        if (biometricPrompt?.resultCallback != null) {
+            biometricPrompt?.showBiometricPrompt(
+                context = this,
+                titleResId = R.string.app_name,
+                descriptionResId = R.string.fingerprint_scan_unlock,
+                negativeActionTextResId = R.string.actions_cancel
+            )
+        }
     }
 
     private fun showWrongPasscodeErrorAndDisablePasscodeInput(remainedMinutes: Int) {

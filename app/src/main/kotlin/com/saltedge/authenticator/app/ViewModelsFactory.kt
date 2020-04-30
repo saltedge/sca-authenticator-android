@@ -23,6 +23,7 @@ package com.saltedge.authenticator.app
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.saltedge.authenticator.features.qr.QrScannerViewModel
 import com.saltedge.authenticator.features.launcher.LauncherViewModel
 import com.saltedge.authenticator.features.main.MainActivityViewModel
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupViewModel
@@ -69,6 +70,9 @@ class ViewModelsFactory @Inject constructor(
                     preferenceRepository = preferenceRepository,
                     biometricTools = biometricTools
                 ) as T
+            }
+            modelClass.isAssignableFrom(QrScannerViewModel::class.java) -> {
+                return QrScannerViewModel(appContext = appContext) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

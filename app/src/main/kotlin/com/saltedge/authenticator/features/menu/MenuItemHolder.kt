@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,23 +29,29 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tools.inflateListItemView
 
-class ConnectionOptionItemHolder(parent: ViewGroup, private val listener: ListItemClickListener?) :
-    RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_connection_option)),
+class MenuItemHolder(
+    parent: ViewGroup,
+    private val listener: ListItemClickListener?
+) : RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_menu_dialog)),
     View.OnClickListener {
 
-    private val optionImageView = itemView.findViewById<ImageView>(R.id.optionImageView)
-    private val optionTitleView = itemView.findViewById<TextView>(R.id.optionTitleView)
+    private val optionImageView = itemView.findViewById<ImageView>(R.id.menuItemImageView)
+    private val optionTitleView = itemView.findViewById<TextView>(R.id.menuItemTitleView)
+    private var itemId: Int = -1
 
     init {
         itemView.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
-        if (adapterPosition > RecyclerView.NO_POSITION) listener?.onListItemClick(itemIndex = adapterPosition)
+        if (adapterPosition > RecyclerView.NO_POSITION) {
+            listener?.onListItemClick(itemIndex = adapterPosition, itemViewId = itemId)
+        }
     }
 
-    fun bind(item: ConnectionOptions) {
-        optionTitleView.setText(item.textId)
-        optionImageView.setImageResource(item.iconId)
+    fun bind(item: MenuItemData) {
+        optionImageView.setImageResource(item.iconResId)
+        optionTitleView.setText(item.textResId)
+        itemId = item.id
     }
 }
