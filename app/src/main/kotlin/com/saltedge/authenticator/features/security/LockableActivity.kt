@@ -39,11 +39,8 @@ import com.saltedge.authenticator.features.main.buildWarning
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.repository.PreferenceRepository
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
-import com.saltedge.authenticator.tool.authenticatorApp
-import com.saltedge.authenticator.tool.restartApp
+import com.saltedge.authenticator.tool.*
 import com.saltedge.authenticator.tool.secure.PasscodeTools
-import com.saltedge.authenticator.tool.setVisible
-import com.saltedge.authenticator.tool.showResetUserDialog
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
@@ -168,6 +165,13 @@ abstract class LockableActivity :
 
     override fun onNewPasscodeConfirmed(passcode: String) {}
 
+    override fun onResetPasscode() {
+        getUnlockAppInputView()?.let {
+            it.setInputViewVisibility(show = false)
+            it.setResetPasscodeView()
+        }
+    }
+
     override fun biometricAuthFinished() {
         presenter.onSuccessAuthentication()
     }
@@ -215,6 +219,7 @@ abstract class LockableActivity :
         getUnlockAppInputView()?.let {
             it.setDescriptionText("$wrongPasscodeMessage\n$retryMessage")
             it.setInputViewVisibility(show = false)
+            it.setResetPasscodeViewVisibility(show = false)
         }
     }
 

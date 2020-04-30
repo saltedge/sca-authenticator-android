@@ -27,4 +27,5 @@ interface PasscodeInputViewListener {
     fun onEnteredPasscodeIsInvalid()
     fun onNewPasscodeEntered(mode: PasscodeInputView.InputMode, passcode: String)
     fun onNewPasscodeConfirmed(passcode: String)
+    fun onResetPasscode() {}
 }

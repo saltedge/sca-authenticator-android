@@ -135,7 +135,7 @@
     <string name="settings_feature_title">Settings</string>
     <string name="settings_report_bug">Report a bug</string>
     <string name="settings_language">Language</string>
-    <string name="settings_clear_all_data">Clear all data</string>
+    <string name="settings_clear_data">Clear data</string>
     <string name="settings_notifications">Notifications</string>
     <string name="settings_passcode">Passcode</string>
     <string name="settings_passcode_description">Change passcode</string>
@@ -159,6 +159,8 @@
     <string name="fingerprint_scan_unlock">Unlock the app with biometrics</string>
     <string name="fingerprint_touch_sensor">Touch Sensor</string>
     <string name="fingerprint_forgot">Forgot?</string>
+    <string name="fingerprint_forgot_passcode">Forgot passcode?</string>
+    <string name="fingerprint_forgot_passcode_description">Please clear app data and establish new connection with your provider.</string>
 
     <string name="scan_qr_title">Scan QR code</string>
     <string name="scan_qr_description">Scan the QR to make your \nfirst connection\n</string>

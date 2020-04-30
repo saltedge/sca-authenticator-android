@@ -22,7 +22,9 @@ package com.saltedge.authenticator.features.security
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.LinearLayout
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tool.setVisible
@@ -30,13 +32,13 @@ import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 import kotlinx.android.synthetic.main.view_unlock.view.*
 
-class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
+class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
+    View.OnClickListener {
 
     var biometricsActionIsAvailable: Boolean
         get() = passcodeInputView?.biometricsActionIsAvailable ?: false
         set(value) {
             passcodeInputView?.biometricsActionIsAvailable = value
-            updateDescription(value)
         }
     var listener: PasscodeInputViewListener?
         get() = passcodeInputView?.listener
@@ -46,6 +48,8 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_unlock, this)
+        clearView?.setOnClickListener(this)
+        backImageView?.setOnClickListener(this)
     }
 
     fun setSavedPasscode(currentPasscode: String) {
@@ -55,22 +59,39 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
         )
     }
 
-    fun setDescriptionText(textResId: Int) {
-//        descriptionView?.setText(textResId)
+    fun setDescriptionText(text: String) {
+        descriptionView?.text = text
     }
 
-    fun setDescriptionText(text: String) {
-//        descriptionView?.text = text
+    fun setDescriptionText(textResId: Int) {
+        descriptionView?.setText(textResId)
     }
 
     fun setInputViewVisibility(show: Boolean) {
         passcodeInputView?.setVisible(show)
+        appLogoView?.setVisible(show)
+
+        descriptionView?.setVisible(!show)
     }
 
-    private fun updateDescription(biometricsActionIsAvailable: Boolean) {
-//        descriptionView?.setText(
-//            if (biometricsActionIsAvailable) R.string.actions_enter_passcode_or_fingerprint
-//            else R.string.actions_enter_passcode
-//        )
+    fun setResetPasscodeView() {
+        titleView?.text = context?.getString(R.string.fingerprint_forgot_passcode)
+        subTitleView?.text = context?.getString(R.string.fingerprint_forgot_passcode_description)
+    }
+
+    fun setResetPasscodeViewVisibility(show: Boolean) {
+        appLogoView?.setVisible(!show)
+        descriptionView?.setVisible(!show)
+
+        resetPasscodeLayout?.setVisible(show)
+    }
+
+    //TODO: Add logic when click on id's
+    override fun onClick(view: View?) {
+        val viewId = view?.id ?: return
+        when (viewId) {
+            R.id.clearView -> Log.d("some", "clearView")
+            R.id.backImageView -> Log.d("some", "backImageView")
+        }
     }
 }

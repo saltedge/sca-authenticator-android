@@ -57,7 +57,7 @@ class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         when (view.id) {
             R.id.fingerView -> fingerprintActionClickListener?.onBiometricInputSelected()
             R.id.deleteView -> clickListener?.onDeleteKeyClick()
-            R.id.forgotView -> Log.d("some", "forgotView")
+            R.id.forgotView -> fingerprintActionClickListener?.onResetPasscode()
             else -> clickListener?.onDigitKeyClick((view as? TextView)?.text.toString())
         }
     }

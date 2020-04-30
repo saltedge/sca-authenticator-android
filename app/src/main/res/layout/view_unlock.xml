@@ -19,6 +19,7 @@
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/theme_background"
@@ -32,9 +33,96 @@
         android:layout_marginTop="@dimen/dp_76"
         android:src="@drawable/ic_app_logo" />
 
+    <TextView
+        android:id="@+id/descriptionView"
+        style="@style/Text14GrayDarkRegular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_32"
+        android:layout_marginTop="@dimen/dp_38"
+        android:layout_marginEnd="@dimen/dp_32"
+        android:gravity="center_horizontal"
+        android:lines="2"
+        android:maxLines="2"
+        android:text="@string/actions_enter_passcode_or_fingerprint"
+        android:visibility="gone" />
+
     <com.saltedge.authenticator.widget.passcode.PasscodeInputView
         android:id="@+id/passcodeInputView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/dp_115" />
+
+    <LinearLayout
+        android:id="@+id/resetPasscodeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/backImageView"
+            android:layout_width="@dimen/dp_24"
+            android:layout_height="@dimen/dp_24"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_16"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_back_24dp" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="@dimen/dp_328"
+            android:layout_height="@dimen/dp_200"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_125"
+            android:layout_marginEnd="@dimen/dp_16"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_onboarding_page_1"
+            tools:background="@color/primary" />
+
+        <TextView
+            android:id="@+id/titleView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginTop="@dimen/dp_30"
+            android:layout_marginEnd="@dimen/dp_32"
+            android:ellipsize="end"
+            android:fontFamily="@font/roboto_regular"
+            android:maxLines="2"
+            android:textAlignment="center"
+            android:textColor="@color/primary_text"
+            android:textSize="@dimen/text_27"
+            tools:background="@color/primary"
+            tools:text="Forgot passcode?" />
+
+        <TextView
+            android:id="@+id/subTitleView"
+            style="@style/Text18NeutralsDarkRegular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginEnd="@dimen/dp_32"
+            android:lines="2"
+            android:textAlignment="center"
+            tools:background="@color/primary"
+            tools:text="Please clear app data and establish new connection with your provider." />
+
+        <Button
+            android:id="@+id/clearView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_48"
+            android:layout_marginStart="@dimen/dp_58"
+            android:layout_marginTop="@dimen/dp_28"
+            android:layout_marginEnd="@dimen/dp_58"
+            android:backgroundTint="@color/button_color_selector"
+            android:elevation="@dimen/dp_30"
+            android:fontFamily="@font/roboto_medium"
+            android:text="@string/settings_clear_data"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/text_18" />
+    </LinearLayout>
 </LinearLayout>
