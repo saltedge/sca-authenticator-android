@@ -22,7 +22,7 @@ package com.saltedge.authenticator.features.settings.passcode
 
 import com.saltedge.authenticator.features.settings.passcode.saver.PasscodeSaveResultListener
 import com.saltedge.authenticator.features.settings.passcode.saver.PasscodeSaver
-import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
+import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

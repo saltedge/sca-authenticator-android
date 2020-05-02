@@ -55,5 +55,5 @@
         android:layout_marginBottom="@dimen/dp_30"
         android:contentDescription="@string/app_name"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_app_logo_with_text" />
+        android:src="@drawable/ic_company_logo" />
 </RelativeLayout>

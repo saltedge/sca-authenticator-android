@@ -27,7 +27,7 @@ import android.view.ViewGroup
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.settings.passcode.di.PasscodeEditModule
-import com.saltedge.authenticator.tool.*
+import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
@@ -50,7 +50,7 @@ class PasscodeEditFragment : BaseFragment(), PasscodeEditContract.View, Passcode
     ): View {
         activityComponents?.updateAppbar(
             titleResId = R.string.settings_passcode,
-            actionImageResId = R.drawable.ic_action_back
+            actionImageResId = R.drawable.ic_appbar_action_back
         )
         return inflater.inflate(R.layout.fragment_edit_passcode, container, false)
     }

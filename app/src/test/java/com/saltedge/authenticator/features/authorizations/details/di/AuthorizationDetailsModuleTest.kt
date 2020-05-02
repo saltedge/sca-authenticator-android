@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.features.authorizations.details.di
 
-import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs

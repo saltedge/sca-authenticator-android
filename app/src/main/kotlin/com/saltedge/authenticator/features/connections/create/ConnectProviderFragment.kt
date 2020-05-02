@@ -36,7 +36,7 @@ import com.saltedge.authenticator.sdk.model.Token
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import com.saltedge.authenticator.sdk.web.ConnectWebClient
 import com.saltedge.authenticator.sdk.web.ConnectWebClientContract
-import com.saltedge.authenticator.tool.*
+import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_connect.*
 import javax.inject.Inject
@@ -67,7 +67,7 @@ class ConnectProviderFragment : BaseFragment(),
     ): View {
         activityComponents?.updateAppbar(
             titleResId = presenterContract.getTitleResId(),
-            actionImageResId = R.drawable.ic_action_close
+            actionImageResId = R.drawable.ic_appbar_action_close
         )
         return inflater.inflate(R.layout.fragment_connect, container, false)
     }

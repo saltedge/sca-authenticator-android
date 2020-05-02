@@ -21,10 +21,10 @@
 package com.saltedge.authenticator.features.settings.language
 
 import android.content.Context
-import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.tool.currentAppLocaleName
-import com.saltedge.authenticator.tool.getAvailableLocalizations
-import com.saltedge.authenticator.tool.localeCodeToName
+import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.tools.currentAppLocaleName
+import com.saltedge.authenticator.tools.getAvailableLocalizations
+import com.saltedge.authenticator.tools.localeCodeToName
 
 class LanguageSelectPresenter(
     private val appContext: Context,

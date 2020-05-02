@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.features.actions.di
 
-import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.junit.Assert.assertNotNull

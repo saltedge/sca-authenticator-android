@@ -29,7 +29,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tool.setFont
+import com.saltedge.authenticator.tools.setFont
 
 fun AppCompatActivity.buildWarning(
     text: String,

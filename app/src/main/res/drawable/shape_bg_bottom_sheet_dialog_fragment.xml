@@ -25,5 +25,5 @@
         android:topLeftRadius="@dimen/dp_8"
         android:topRightRadius="@dimen/dp_8" />
     <padding android:top="@dimen/dp_8" />
-    <solid android:color="@android:color/white" />
+    <solid android:color="@color/bottom_menu_background" />
 </shape>

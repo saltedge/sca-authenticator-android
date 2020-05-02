@@ -31,7 +31,7 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tool.setVisible
+import com.saltedge.authenticator.tools.setVisible
 import kotlinx.android.synthetic.main.view_pinpad.view.*
 
 /**

@@ -24,7 +24,7 @@ import android.content.Context
 import com.saltedge.authenticator.app.di.FragmentScope
 import com.saltedge.authenticator.features.settings.language.LanguageSelectContract
 import com.saltedge.authenticator.features.settings.language.LanguageSelectPresenter
-import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import dagger.Module
 import dagger.Provides
 

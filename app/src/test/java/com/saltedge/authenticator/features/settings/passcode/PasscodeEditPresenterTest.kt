@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.settings.passcode
 
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
+import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import org.junit.Assert
 import org.junit.Test

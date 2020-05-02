@@ -33,21 +33,23 @@ import com.saltedge.authenticator.features.authorizations.details.AuthorizationD
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
-import com.saltedge.authenticator.features.security.LockableActivity
-import com.saltedge.authenticator.features.security.UnlockAppInputView
+import com.saltedge.authenticator.features.menu.BottomMenuDialog
+import com.saltedge.authenticator.features.menu.MenuItemSelectListener
 import com.saltedge.authenticator.features.settings.list.SettingsListFragment
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.interfaces.ViewModelContract
-import com.saltedge.authenticator.tool.*
-import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
+import com.saltedge.authenticator.tools.*
+import com.saltedge.authenticator.widget.security.LockableActivity
+import com.saltedge.authenticator.widget.security.UnlockAppInputView
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 class MainActivity : LockableActivity(),
     ViewModelContract,
     View.OnClickListener,
-    SnackbarAnchorContainer
+    SnackbarAnchorContainer,
+    MenuItemSelectListener
 {
     override lateinit var viewModel: MainActivityViewModel
     @Inject
@@ -91,6 +93,10 @@ class MainActivity : LockableActivity(),
 
     override fun getSnackbarAnchorView(): View? = container
 
+    override fun onMenuItemSelected(menuId: String, selectedItemId: Int) {
+        viewModel.onMenuItemSelected(menuId, selectedItemId)
+    }
+
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainActivityViewModel::class.java)
         lifecycle.addObserver(viewModel)
@@ -101,8 +107,8 @@ class MainActivity : LockableActivity(),
             }
         })
         viewModel.onAppBarMenuClickEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let {
-                //TODO show appbar menu
+            it.getContentIfNotHandled()?.let { menuItems ->
+                this.showDialogFragment(BottomMenuDialog.newInstance(menuItems = menuItems))
             }
         })
         viewModel.onBackActionClickEvent.observe(this, Observer {
@@ -128,6 +134,11 @@ class MainActivity : LockableActivity(),
         viewModel.onShowConnectionsListEvent.observe(this, Observer {
             it.getContentIfNotHandled()?.let {
                 this.addFragment(ConnectionsListFragment())
+            }
+        })
+        viewModel.onShowConsentsListEvent.observe(this, Observer {
+            it.getContentIfNotHandled()?.let {
+                // TODO show consents list
             }
         })
         viewModel.onShowSettingsListEvent.observe(this, Observer {

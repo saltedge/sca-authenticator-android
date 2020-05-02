@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.authorizations.common
 
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tool.ResId
+import com.saltedge.authenticator.tools.ResId
 
 enum class ViewMode {
     LOADING,

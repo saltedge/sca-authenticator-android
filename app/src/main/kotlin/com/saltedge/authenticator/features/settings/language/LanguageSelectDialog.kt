@@ -27,7 +27,7 @@ import androidx.fragment.app.DialogFragment
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.main.activityComponentsContract
 import com.saltedge.authenticator.features.settings.language.di.LanguageSelectModule
-import com.saltedge.authenticator.tool.authenticatorApp
+import com.saltedge.authenticator.tools.authenticatorApp
 import javax.inject.Inject
 
 class LanguageSelectDialog : DialogFragment(), LanguageSelectContract.View {

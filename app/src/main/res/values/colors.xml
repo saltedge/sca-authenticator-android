@@ -35,7 +35,6 @@
 
     <!--extra palette and aliases-->
     <color name="color_primary">@color/blue</color>
-    <color name="system_bar_color">#344499</color>
     <color name="color_primary_extra_light">#EBEEFF</color>
     <color name="color_accent">@color/blue</color>
     <color name="base_container_bg">@color/gray_extra_light</color>
@@ -47,24 +46,32 @@
     <color name="switch_off">@color/gray_extra_light</color>
     <color name="switch_on">@color/blue</color>
 
-    <!--New palette-->
-    <color name="dark_theme_background">#040411</color>
+    <!--New colors-->
+    <color name="primary">#0D93F8</color>
+    <color name="primary_light">#36A9FF</color>
     <color name="blue_black">#161E2A</color>
     <color name="neutrals_dark_100">#182C3F</color>
     <color name="grey_40">#D8E5EE</color>
-    <color name="primary">#0D93F8</color>
-    <color name="primary_dark">#007CD9</color>
-    <color name="primary_light">#36A9FF</color>
     <color name="grey_light_extra">#F4F8FA</color>
+    <color name="dark_60">#81A2BA</color>
     <color name="dark_80">#465665</color>
+    <color name="white_87">#DDFFFFFF</color>
+    <color name="black_87">#DD000000</color>
 
+    <color name="theme_background_dark">#040411</color>
+    <color name="primary_dark">#007CD9</color>
+
+    <!--New aliases-->
+    <color name="system_bar_color">@color/primary</color>
+    <color name="theme_background">@android:color/white</color>
     <color name="info_message_background">@color/grey_light_extra</color>
-    <color name="splash_dots_background">@color/primary</color>
+    <color name="onboarding_dots_background">@color/primary</color>
     <color name="passcode_dots_background">@color/grey_40</color>
     <color name="primary_text">@color/neutrals_dark_100</color>
-    <color name="theme_background">@android:color/white</color>
-    <color name="icon_background">@android:color/white</color>
-    <color name="logo_background">@color/blue_black</color>
-    <color name="action_icon_fill_color">@color/neutrals_dark_100</color>
-    <color name="qr_camera_mask_background">#DDFFFFFF</color>
+    <color name="app_logo_background">@android:color/white</color>
+    <color name="company_logo_background">@color/blue_black</color>
+    <color name="appbar_action_icon_fill_color">@color/neutrals_dark_100</color>
+    <color name="menu_action_icon_fill_color">@color/dark_60</color>
+    <color name="qr_camera_mask_background">@color/white_87</color>
+    <color name="bottom_menu_background">@android:color/white</color>
 </resources>

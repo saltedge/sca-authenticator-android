@@ -20,14 +20,11 @@
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
 <resources>
-
-    <style name="MainScreenTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <item name="colorPrimaryDark">@color/system_bar_color</item>
+    <style name="SetupScreenTheme" parent="SetupScreenThemeBase">
         <item name="android:windowLightStatusBar">true</item>
-        <item name="colorAccent">@color/blue</item>
-        <item name="android:colorButtonNormal">@color/button_blue_default</item>
-        <item name="android:colorControlHighlight">@color/button_blue_pressed</item>
-        <item name="android:itemBackground">@android:color/white</item>
-        <item name="android:itemTextAppearance">@style/MenuItemTextAppearance</item>
+    </style>
+
+    <style name="MainScreenTheme" parent="MainScreenThemeBase">
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 </resources>

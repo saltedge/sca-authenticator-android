@@ -34,7 +34,7 @@ import android.util.Pair
 import android.view.View
 import androidx.viewpager.widget.ViewPager
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tool.applyAlphaToColor
+import com.saltedge.authenticator.tools.applyAlphaToColor
 
 const val DOTS_INDICATOR_ANIMATION_TIME = 350L
 

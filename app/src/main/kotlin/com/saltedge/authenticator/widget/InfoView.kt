@@ -27,9 +27,9 @@ import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tool.setFont
-import com.saltedge.authenticator.tool.setInvisible
-import com.saltedge.authenticator.tool.setVisible
+import com.saltedge.authenticator.tools.setFont
+import com.saltedge.authenticator.tools.setInvisible
+import com.saltedge.authenticator.tools.setVisible
 import kotlinx.android.synthetic.main.view_info.view.*
 
 class InfoView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {

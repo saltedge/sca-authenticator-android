@@ -25,11 +25,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
-import com.saltedge.authenticator.features.connections.common.RoundedImageView
+import com.saltedge.authenticator.widget.RoundedImageView
 import com.saltedge.authenticator.interfaces.ListItemClickListener
-import com.saltedge.authenticator.tool.inflateListItemView
-import com.saltedge.authenticator.tool.loadImage
-import com.saltedge.authenticator.tool.setTextColorResId
+import com.saltedge.authenticator.tools.inflateListItemView
+import com.saltedge.authenticator.tools.loadImage
+import com.saltedge.authenticator.tools.setTextColorResId
 
 class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClickListener?) :
     RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_connection)) {

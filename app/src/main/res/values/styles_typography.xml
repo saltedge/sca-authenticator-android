@@ -116,4 +116,18 @@
         <item name="android:textSize">@dimen/text_14</item>
         <item name="android:fontFamily">@font/roboto_medium</item>
     </style>
+
+<!--NEW STYLES-->
+    <style name="app_bar_title">
+        <item name="android:textSize">@dimen/text_30</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
+
+    <style name="Text16Regular">
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textSize">@dimen/text_16</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
 </resources>
