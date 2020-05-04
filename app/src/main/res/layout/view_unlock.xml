@@ -113,7 +113,7 @@
         <Button
             android:id="@+id/clearView"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_48"
+            android:layout_height="@dimen/dp_54"
             android:layout_marginStart="@dimen/dp_58"
             android:layout_marginTop="@dimen/dp_28"
             android:layout_marginEnd="@dimen/dp_58"

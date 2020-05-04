@@ -22,11 +22,11 @@ package com.saltedge.authenticator.features.security
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
 import com.saltedge.authenticator.tool.setVisible
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
@@ -52,6 +52,14 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
         backImageView?.setOnClickListener(this)
     }
 
+    override fun onClick(view: View?) {
+        val viewId = view?.id ?: return
+        when (viewId) {
+            R.id.clearView -> listener?.showDeleteConnectionView(requestCode = DELETE_ALL_REQUEST_CODE)
+            R.id.backImageView -> setInputViewVisibility(show = true)
+        }
+    }
+
     fun setSavedPasscode(currentPasscode: String) {
         passcodeInputView?.initInputMode(
             PasscodeInputView.InputMode.CHECK_PASSCODE,
@@ -70,8 +78,6 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
     fun setInputViewVisibility(show: Boolean) {
         passcodeInputView?.setVisible(show)
         appLogoView?.setVisible(show)
-
-        descriptionView?.setVisible(!show)
     }
 
     fun setResetPasscodeView() {
@@ -81,17 +87,11 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
 
     fun setResetPasscodeViewVisibility(show: Boolean) {
         appLogoView?.setVisible(!show)
-        descriptionView?.setVisible(!show)
-
         resetPasscodeLayout?.setVisible(show)
+        showErrorMessage(show)
     }
 
-    //TODO: Add logic when click on id's
-    override fun onClick(view: View?) {
-        val viewId = view?.id ?: return
-        when (viewId) {
-            R.id.clearView -> Log.d("some", "clearView")
-            R.id.backImageView -> Log.d("some", "backImageView")
-        }
+    fun showErrorMessage(show: Boolean) {
+        descriptionView?.setVisible(show)
     }
 }

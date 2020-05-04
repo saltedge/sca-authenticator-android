@@ -36,6 +36,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.main.buildWarning
+import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.model.db.ConnectionsRepository
 import com.saltedge.authenticator.model.repository.PreferenceRepository
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
@@ -52,7 +53,8 @@ const val KEY_SKIP_PIN = "KEY_SKIP_PIN"
 abstract class LockableActivity :
     AppCompatActivity(),
     PasscodeInputViewListener,
-    BiometricPromptCallback {
+    BiometricPromptCallback,
+    DialogInterface.OnClickListener {
 
     abstract fun getUnlockAppInputView(): UnlockAppInputView?
     abstract fun getAppBarLayout(): View?
@@ -169,6 +171,18 @@ abstract class LockableActivity :
         getUnlockAppInputView()?.let {
             it.setInputViewVisibility(show = false)
             it.setResetPasscodeView()
+            it.showErrorMessage(false)
+        }
+    }
+
+    override fun showDeleteConnectionView(requestCode: Int) {
+        showResetDataDialog(this)
+    }
+
+    override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
+        when (dialogActionId) {
+            DialogInterface.BUTTON_POSITIVE -> showOnboardingActivity()
+            DialogInterface.BUTTON_NEGATIVE -> listener?.dismiss()
         }
     }
 
@@ -220,6 +234,7 @@ abstract class LockableActivity :
             it.setDescriptionText("$wrongPasscodeMessage\n$retryMessage")
             it.setInputViewVisibility(show = false)
             it.setResetPasscodeViewVisibility(show = false)
+            it.showErrorMessage(true)
         }
     }
 
@@ -244,8 +259,11 @@ abstract class LockableActivity :
     }
 
     private fun enablePasscodeInput() {
-        getUnlockAppInputView()?.biometricsActionIsAvailable = isBiometricInputReady()
-        getUnlockAppInputView()?.setInputViewVisibility(show = true)
+        getUnlockAppInputView()?.let {
+            it.biometricsActionIsAvailable = isBiometricInputReady()
+            it.setInputViewVisibility(show = true)
+            it.showErrorMessage(show = false)
+        }
     }
 
     private fun unlockScreen() {
@@ -270,6 +288,11 @@ abstract class LockableActivity :
 
     private fun showPasscodeErrorMessage(@StringRes messageResId: Int) {
         getUnlockAppInputView()?.setDescriptionText(messageResId)
+    }
+
+    private fun showOnboardingActivity() {
+        finish()
+        startActivity(Intent(this, OnboardingSetupActivity::class.java))
     }
 
     @Suppress("DEPRECATION")

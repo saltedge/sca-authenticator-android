@@ -116,6 +116,30 @@ fun FragmentActivity.showResetUserDialog(listener: DialogInterface.OnClickListen
 }
 
 /**
+ * Show reset data dialog
+ *
+ * @receiver FragmentActivity
+ * @param listener - on dialog action click listener
+ */
+fun FragmentActivity.showResetDataDialog(listener: DialogInterface.OnClickListener) {
+    try {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.ui_dialog_clear_data_title)
+            .setPositiveButton(R.string.actions_clear, listener)
+            .setNegativeButton(R.string.actions_cancel, listener)
+            .setMessage(R.string.ui_dialog_clear_data_message)
+            .create().apply {
+                getButton(DialogInterface.BUTTON_POSITIVE)?.setTextColor(ContextCompat.getColor(this.context, R.color.clear_button_background))
+                getButton(DialogInterface.BUTTON_NEGATIVE)?.setTextColor(ContextCompat.getColor(this.context, R.color.cancel_button_background))
+                window?.setBackgroundDrawableResource(R.color.dialog_background)
+            }
+            .show()
+    } catch (e: java.lang.Exception) {
+        e.log()
+    }
+}
+
+/**
  * Change the text color of the buttons for the dialog
  *
  * @receiver alert dialog

@@ -45,6 +45,7 @@
     <string name="actions_connect_provider">Connect Provider</string>
     <string name="actions_confirm">Confirm</string>
     <string name="actions_enter_passcode_or_fingerprint">Enter Passcode or use Fingerprint</string>
+    <string name="actions_clear">Clear</string>
 
     <string name="errors_touch_id_not_enrolled">No Fingerprint was enrolled.</string>
     <string name="errors_touch_id_not_supported">Fingerprint is not supported on your device</string>
@@ -165,8 +166,8 @@
     <string name="scan_qr_title">Scan QR code</string>
     <string name="scan_qr_description">Scan the QR to make your \nfirst connection\n</string>
 
-    <string name="ui_dialog_clear_data_title">Delete all data?</string>
-    <string name="ui_dialog_clear_data_message">All app data including service providers, user data and settings will be permanently deleted.</string>
+    <string name="ui_dialog_clear_data_title">Clear app data?</string>
+    <string name="ui_dialog_clear_data_message">All app data including connected providers, user data and settings will be permanently deleted.</string>
     <string name="ui_dialog_rename_title">Rename connection</string>
     <string name="ui_dialog_delete_title">Delete connection</string>
     <string name="ui_dialog_delete_message">You will stop receiving authorization requests from provider. Are you sure you want to delete this connection?</string>

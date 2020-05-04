@@ -32,4 +32,7 @@
     <color name="qr_camera_mask_background">#DD000000</color>
     <color name="inner_circle_of_the_logo">@color/primary_light</color>
     <color name="finger_icon_fill_color">@color/primary_light</color>
+    <color name="clear_button_background">@color/red_light</color>
+    <color name="cancel_button_background">@color/primary_light</color>
+    <color name="dialog_background">@color/dark_100</color>
 </resources>
