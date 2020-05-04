@@ -30,10 +30,10 @@ import com.saltedge.authenticator.models.repository.PreferenceRepository
  * @receiver AppCompatActivity
  */
 fun AppCompatActivity.updateScreenshotLocking() {
-//    val flag = WindowManager.LayoutParams.FLAG_SECURE
-//    if (PreferenceRepository.screenshotLockEnabled) {
-//        this.window.setFlags(flag, flag)
-//    } else {
-//        this.window.clearFlags(flag)
-//    }
+    val flag = WindowManager.LayoutParams.FLAG_SECURE
+    if (PreferenceRepository.screenshotLockEnabled) {
+        this.window.setFlags(flag, flag)
+    } else {
+        this.window.clearFlags(flag)
+    }
 }
