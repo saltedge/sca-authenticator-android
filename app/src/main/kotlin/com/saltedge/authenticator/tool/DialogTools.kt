@@ -123,16 +123,12 @@ fun FragmentActivity.showResetUserDialog(listener: DialogInterface.OnClickListen
  */
 fun FragmentActivity.showResetDataDialog(listener: DialogInterface.OnClickListener) {
     try {
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(this, R.style.AlertDialogTheme)
             .setTitle(R.string.ui_dialog_clear_data_title)
             .setPositiveButton(R.string.actions_clear, listener)
             .setNegativeButton(R.string.actions_cancel, listener)
             .setMessage(R.string.ui_dialog_clear_data_message)
-            .create().apply {
-                getButton(DialogInterface.BUTTON_POSITIVE)?.setTextColor(ContextCompat.getColor(this.context, R.color.clear_button_background))
-                getButton(DialogInterface.BUTTON_NEGATIVE)?.setTextColor(ContextCompat.getColor(this.context, R.color.cancel_button_background))
-                window?.setBackgroundDrawableResource(R.color.dialog_background)
-            }
+            .create()
             .show()
     } catch (e: java.lang.Exception) {
         e.log()
