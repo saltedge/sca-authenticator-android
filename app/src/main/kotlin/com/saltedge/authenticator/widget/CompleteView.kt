@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,15 +30,15 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.setFont
 import com.saltedge.authenticator.tools.setInvisible
 import com.saltedge.authenticator.tools.setVisible
-import kotlinx.android.synthetic.main.view_info.view.*
+import kotlinx.android.synthetic.main.view_complete.view.*
 
-class InfoView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
-
-    private val defaultIconDimension: Float
-        get() = context.resources.getDimension(R.dimen.info_view_small_icon)
+/**
+ * View show final state (success, error)
+ */
+class CompleteView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_info, this)
+        LayoutInflater.from(context).inflate(R.layout.view_complete, this)
         initAttributes(context, attrs)
         setupViews()
     }
@@ -62,7 +62,7 @@ class InfoView(context: Context, attrs: AttributeSet) : LinearLayout(context, at
     fun setMainActionText(@StringRes textId: Int) = setMainActionText(context.getString(textId))
 
     fun setAltActionText(@StringRes textId: Int?) {
-        setAltActionText(if (textId == null) null else context.getString(textId))
+        setAltActionText(textId?.let { context.getString(it) })
     }
 
     fun setIconResource(@DrawableRes resId: Int) {
@@ -76,22 +76,16 @@ class InfoView(context: Context, attrs: AttributeSet) : LinearLayout(context, at
     }
 
     private fun initAttributes(context: Context, attrs: AttributeSet) {
-        val attributes = context.obtainStyledAttributes(attrs, R.styleable.InfoView)
+        val attributes = context.obtainStyledAttributes(attrs, R.styleable.CompleteView)
         try {
-            attributes.getString(R.styleable.InfoView_titleText)?.let { setTitleText(it) }
-            attributes.getString(R.styleable.InfoView_subTitleText)?.let { setSubtitleText(it) }
-            setMainActionText(attributes.getString(R.styleable.InfoView_mainActionText))
-            setAltActionText(attributes.getString(R.styleable.InfoView_altActionText))
+            attributes.getString(R.styleable.CompleteView_title)?.let { setTitleText(it) }
+            attributes.getString(R.styleable.CompleteView_description)?.let { setSubtitleText(it) }
+            setMainActionText(attributes.getString(R.styleable.CompleteView_mainActionText))
+            setAltActionText(attributes.getString(R.styleable.CompleteView_altActionText))
             setIconResource(
                 attributes.getResourceId(
-                    R.styleable.InfoView_iconSrc,
+                    R.styleable.CompleteView_iconSrc,
                     R.mipmap.ic_launcher
-                )
-            )
-            setIconDimension(
-                attributes.getDimension(
-                    R.styleable.InfoView_iconDimension,
-                    defaultIconDimension
                 )
             )
         } finally {
@@ -112,13 +106,5 @@ class InfoView(context: Context, attrs: AttributeSet) : LinearLayout(context, at
     private fun setAltActionText(text: String?) {
         altActionView?.setVisible(show = text != null)
         altActionView?.text = text
-    }
-
-    private fun setIconDimension(dimensionPx: Float) {
-        iconView?.let {
-            it.layoutParams.height = dimensionPx.toInt()
-            it.layoutParams.width = it.layoutParams.height
-            it.requestLayout()
-        }
     }
 }

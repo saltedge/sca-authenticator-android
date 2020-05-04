@@ -18,15 +18,9 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.authorizations.confirmPasscode
+package com.saltedge.authenticator.features.authorizations.confirm
 
-import com.saltedge.authenticator.tools.PasscodeToolsAbs
-
-class ConfirmPasscodePresenter(val passcodeTools: PasscodeToolsAbs) {
-
-    /**
-     * Computed property that read the encrypted passcode from preferences
-     */
-    val savedPasscode: String
-        get() = passcodeTools.getPasscode()
+interface PasscodePromptCallback {
+    fun successAuthWithPasscode()
+    fun passcodePromptCanceledByUser()
 }

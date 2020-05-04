@@ -26,7 +26,7 @@
         android:id="@+id/fragmentActionProcessingLayout"
         layout="@layout/fragment_connect_processing" />
 
-    <com.saltedge.authenticator.widget.InfoView
+    <com.saltedge.authenticator.widget.CompleteView
         android:id="@+id/completeView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

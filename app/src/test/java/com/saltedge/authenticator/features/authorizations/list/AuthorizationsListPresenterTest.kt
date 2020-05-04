@@ -218,7 +218,7 @@ class AuthorizationsListPresenterTest {
         Mockito.doReturn(emptyList<Connection>()).`when`(mockConnectionsRepository).getAllActiveConnections()
         val presenter = createPresenter(viewContract = mockView)
 
-        Assert.assertNull(presenter.getConnectionsData())
+        Assert.assertNull(presenter.getCurrentConnectionsAndKeysForPolling())
     }
 
     @Test
@@ -228,7 +228,7 @@ class AuthorizationsListPresenterTest {
         val presenter = createPresenter(viewContract = mockView)
 
         assertThat(
-            presenter.getConnectionsData(),
+            presenter.getCurrentConnectionsAndKeysForPolling(),
             equalTo(listOf(ConnectionAndKey(connection1, mockPrivateKey)))
         )
     }

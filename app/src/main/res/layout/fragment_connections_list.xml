@@ -31,13 +31,13 @@
         android:scrollbars="vertical"
         android:visibility="gone" />
 
-    <com.saltedge.authenticator.widget.InfoView
+    <com.saltedge.authenticator.widget.CompleteView
         android:id="@+id/emptyView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:iconDimension="@dimen/info_view_big_icon"
         app:iconSrc="@drawable/ic_no_connections_80dp"
         app:mainActionText="@string/actions_connect_provider"
-        app:subTitleText="@string/connections_list_no_connections_description"
-        app:titleText="@string/connections_list_no_connections" />
+        app:description="@string/connections_list_no_connections_description"
+        app:title="@string/connections_list_no_connections" />
 </RelativeLayout>

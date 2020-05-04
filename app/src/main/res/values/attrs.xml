@@ -21,18 +21,30 @@
 -->
 <resources>
 
+    <attr name="title" format="string" />
+    <attr name="description" format="string" />
+    <attr name="mainActionText" format="string" />
+    <attr name="iconSrc" format="reference" />
+
+    <declare-styleable name="CompleteView">
+        <attr name="title" />
+        <attr name="description" />
+        <attr name="mainActionText" />
+        <attr name="altActionText" format="string" />
+        <attr name="iconSrc" />
+        <attr name="iconDimension" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="EmptyView">
+        <attr name="title" />
+        <attr name="description" />
+        <attr name="mainActionText" />
+        <attr name="iconSrc" />
+    </declare-styleable>
+
     <declare-styleable name="DotsPageIndicatorView">
         <attr name="select" format="integer" />
         <attr name="unselectedColor" format="color" />
         <attr name="selectedColor" format="color" />
-    </declare-styleable>
-
-    <declare-styleable name="InfoView">
-        <attr name="titleText" format="string" />
-        <attr name="subTitleText" format="string" />
-        <attr name="mainActionText" format="string" />
-        <attr name="altActionText" format="string" />
-        <attr name="iconSrc" format="reference" />
-        <attr name="iconDimension" format="dimension" />
     </declare-styleable>
 </resources>

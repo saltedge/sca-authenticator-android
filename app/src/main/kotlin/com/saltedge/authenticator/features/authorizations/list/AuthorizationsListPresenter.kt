@@ -31,8 +31,8 @@ import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationsContract
 import com.saltedge.authenticator.sdk.model.AuthorizationID
 import com.saltedge.authenticator.sdk.model.ConnectionID
-import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.model.EncryptedData
+import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.model.authorization.isNotExpired
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
@@ -41,6 +41,7 @@ import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import kotlinx.coroutines.*
+import org.joda.time.DateTime
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -114,7 +115,7 @@ class AuthorizationsListPresenter @Inject constructor(
         }
     }
 
-    override fun getConnectionsData(): List<ConnectionAndKey>? = collectAuthorizationRequestData()
+    override fun getCurrentConnectionsAndKeysForPolling(): List<ConnectionAndKey>? = collectAuthorizationRequestData()
 
     override fun onFetchEncryptedDataResult(
         result: List<EncryptedData>,

@@ -32,11 +32,11 @@
     </style>
 
     <style name="BlueButton" parent="@style/Widget.AppCompat.Button.Colored">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">@dimen/text_14</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textSize">@dimen/text_18</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:backgroundTint">@color/button_color_selector</item>
-        <item name="android:elevation">@dimen/dp_2</item>
+        <item name="android:elevation">@dimen/dp_4</item>
     </style>
 
     <style name="BlueFullWidthButton" parent="BlueButton">
@@ -45,11 +45,11 @@
     </style>
 
     <style name="WhiteButton" parent="@style/Widget.AppCompat.Button.Colored">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">@dimen/text_14</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:backgroundTint">@android:color/white</item>
-        <item name="android:elevation">@dimen/dp_2</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textSize">@dimen/text_18</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:backgroundTint">@color/authorization_header_view_background</item>
+        <item name="android:elevation">@dimen/dp_4</item>
     </style>
 
     <style name="WhiteLinkAction" parent="Text14BlueMedium">

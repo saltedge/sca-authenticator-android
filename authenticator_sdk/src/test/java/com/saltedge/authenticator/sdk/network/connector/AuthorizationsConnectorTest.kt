@@ -162,7 +162,7 @@ class AuthorizationsConnectorTest {
             HEADER_KEY_ACCESS_TOKEN,
             "accessToken"
         ).build()
-        every { mockCallback.getConnectionsData() } returns null
+        every { mockCallback.getCurrentConnectionsAndKeysForPolling() } returns null
         every { mockCallback.onFetchEncryptedDataResult(any(), any()) } returns Unit
     }
 }

@@ -22,6 +22,7 @@
 <resources>
     <dimen name="dp_1">1dp</dimen>
     <dimen name="dp_2">2dp</dimen>
+    <dimen name="dp_3">3dp</dimen>
     <dimen name="dp_4">4dp</dimen>
     <dimen name="dp_5">5dp</dimen>
     <dimen name="dp_6">6dp</dimen>
@@ -63,7 +64,6 @@
     <dimen name="dp_56">56dp</dimen>
     <dimen name="dp_58">58dp</dimen>
     <dimen name="dp_60">60dp</dimen>
-    <dimen name="dp_63">63dp</dimen>
     <dimen name="dp_64">64dp</dimen>
     <dimen name="dp_70">70dp</dimen>
     <dimen name="dp_72">72dp</dimen>
@@ -124,8 +124,10 @@
     <dimen name="splash_power_image_width">@dimen/dp_115</dimen>
     <dimen name="splash_logo_image_size">@dimen/dp_72</dimen>
     <dimen name="button_corner_radius">@dimen/dp_2</dimen>
-    <dimen name="action_bar_size">@dimen/dp_56</dimen>
+    <dimen name="action_bar_top_section_size">@dimen/dp_56</dimen>
+    <dimen name="action_bar_bottom_section_size">@dimen/dp_46</dimen>
     <dimen name="info_view_small_icon">@dimen/dp_70</dimen>
     <dimen name="info_view_big_icon">@dimen/dp_96</dimen>
     <dimen name="logo_corner_radius">@dimen/dp_28</dimen>
+    <dimen name="authorizations_headers_pager_height">@dimen/dp_96</dimen>
 </resources>

@@ -59,7 +59,7 @@
                 tools:text="Connected on 12 sept. 2019, 18:02" />
         </LinearLayout>
 
-        <com.saltedge.authenticator.widget.RoundedImageView
+        <ImageView
             android:id="@+id/logoImageView"
             style="@style/ConnectionLogoImage"
             android:layout_centerVertical="true"

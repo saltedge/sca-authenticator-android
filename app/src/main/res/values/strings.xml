@@ -113,8 +113,8 @@
 
     <string name="authorizations_feature_title">Authorizations</string>
     <string name="authorization_feature_title">Authorization</string>
-    <string name="authorizations_nothing_confirm">Nothing to confirm</string>
-    <string name="authorizations_nothing_confirm_description">You have no active authorizations. Once an action authorization is generated, it will be valid for a few minutes.</string>
+    <string name="authorizations_nothing_confirm">Nothing to authorize</string>
+    <string name="authorizations_nothing_confirm_description">You do not have any active authorization request yet. Once initiate an action, you will have a few minutes to authorize it.</string>
     <string name="authorizations_loading">Loading…</string>
     <string name="authorizations_loading_description">Please wait while authorization is loading</string>
     <string name="authorizations_processing">Processing…</string>

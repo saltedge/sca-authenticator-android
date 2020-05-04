@@ -20,22 +20,13 @@
  */
 package com.saltedge.authenticator.features.authorizations.confirm
 
-import org.junit.Assert
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.Mockito
-import org.robolectric.RobolectricTestRunner
+import com.saltedge.authenticator.tools.PasscodeToolsAbs
 
-@RunWith(RobolectricTestRunner::class)
-class ConfirmPasscodeDialogTest {
+class ConfirmPasscodePresenter(val passcodeTools: PasscodeToolsAbs) {
 
-    private val mockView = Mockito.mock(PasscodePromptCallback::class.java)
-
-    @Test
-    @Throws(Exception::class)
-    fun newInstanceTest() {
-        val arguments = ConfirmPasscodeDialog.newInstance(resultCallback = mockView).arguments
-
-        Assert.assertNull(arguments)
-    }
+    /**
+     * Computed property that read the encrypted passcode from preferences
+     */
+    val savedPasscode: String
+        get() = passcodeTools.getPasscode()
 }

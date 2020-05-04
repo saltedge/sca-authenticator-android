@@ -105,12 +105,6 @@
         <item name="android:fontFamily">@font/roboto_medium</item>
     </style>
 
-    <style name="Text14BlueMedium">
-        <item name="android:textColor">@color/blue</item>
-        <item name="android:textSize">@dimen/text_14</item>
-        <item name="android:fontFamily">@font/roboto_medium</item>
-    </style>
-
     <style name="Text14WhiteMedium">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">@dimen/text_14</item>
@@ -119,8 +113,22 @@
 
 <!--NEW STYLES-->
     <style name="app_bar_title">
-        <item name="android:textSize">@dimen/text_30</item>
         <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textSize">@dimen/text_30</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
+
+    <style name="Text24Regular">
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textSize">@dimen/text_24</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
+
+    <style name="Text20Regular">
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textSize">@dimen/text_20</item>
         <item name="android:fontFamily">@font/roboto_regular</item>
     </style>
 
@@ -129,5 +137,12 @@
         <item name="android:textColor">@color/primary_text</item>
         <item name="android:textSize">@dimen/text_16</item>
         <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
+
+    <style name="Text14BlueMedium">
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/blue_text</item>
+        <item name="android:textSize">@dimen/text_14</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
     </style>
 </resources>
