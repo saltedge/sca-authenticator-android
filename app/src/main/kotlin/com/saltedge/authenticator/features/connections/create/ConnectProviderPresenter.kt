@@ -23,10 +23,10 @@ package com.saltedge.authenticator.features.connections.create
 import android.content.Context
 import android.webkit.URLUtil.isValidUrl
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.model.db.Connection
-import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.model.toConnection
+import com.saltedge.authenticator.models.Connection
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.models.toConnection
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ConnectionCreateListener

@@ -21,9 +21,9 @@
 package com.saltedge.authenticator.features.launcher.di
 
 import android.content.Context
-import com.saltedge.authenticator.model.realm.RealmManagerAbs
-import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
+import com.saltedge.authenticator.models.realm.RealmManagerAbs
+import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mockito

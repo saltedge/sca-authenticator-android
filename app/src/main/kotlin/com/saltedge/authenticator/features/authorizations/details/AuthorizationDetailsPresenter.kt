@@ -23,7 +23,7 @@ package com.saltedge.authenticator.features.authorizations.details
 import android.content.Context
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.common.*
-import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
 import com.saltedge.authenticator.sdk.model.*

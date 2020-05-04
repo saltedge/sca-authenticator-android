@@ -25,8 +25,8 @@ import android.content.Intent
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
-import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs

@@ -32,7 +32,7 @@ import androidx.core.view.isVisible
 import com.fivehundredpx.android.blur.BlurringView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.sdk.tools.hasHTMLTags
-import com.saltedge.authenticator.tool.setVisible
+import com.saltedge.authenticator.tools.setVisible
 import kotlinx.android.synthetic.main.view_authorization_content.view.*
 
 class AuthorizationContentView : LinearLayout {

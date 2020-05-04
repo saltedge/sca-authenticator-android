@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.interfaces
 
-import com.saltedge.authenticator.tool.ResId
+import com.saltedge.authenticator.tools.ResId
 
 interface ActivityComponentsContract {
     fun updateAppbar(

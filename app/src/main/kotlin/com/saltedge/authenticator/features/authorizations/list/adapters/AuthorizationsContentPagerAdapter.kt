@@ -27,7 +27,7 @@ import android.view.ViewGroup
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationContentView
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
-import com.saltedge.authenticator.tool.getOrPut
+import com.saltedge.authenticator.tools.getOrPut
 
 class AuthorizationsContentPagerAdapter(val context: Context) :
     AuthorizationsPagerAdapter(),

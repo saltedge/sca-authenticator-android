@@ -33,10 +33,10 @@ import com.saltedge.authenticator.features.actions.di.SubmitActionModule
 import com.saltedge.authenticator.features.main.newAuthorizationListener
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.tool.authenticatorApp
-import com.saltedge.authenticator.tool.finishFragment
-import com.saltedge.authenticator.tool.setVisible
-import com.saltedge.authenticator.tool.showWarningDialog
+import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.finishFragment
+import com.saltedge.authenticator.tools.setVisible
+import com.saltedge.authenticator.tools.showWarningDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_submit_action.*
 import javax.inject.Inject
@@ -63,7 +63,7 @@ class SubmitActionFragment : BaseFragment(), SubmitActionContract.View, View.OnC
     ): View? {
         activityComponents?.updateAppbar(
             titleResId = R.string.action_new_action_title,
-            actionImageResId = R.drawable.ic_action_close
+            actionImageResId = R.drawable.ic_appbar_action_close
         )
         return inflater.inflate(R.layout.fragment_submit_action, container, false)
     }

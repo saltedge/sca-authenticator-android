@@ -22,7 +22,7 @@ package com.saltedge.authenticator.features.actions
 
 import android.content.Context
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
 import com.saltedge.authenticator.sdk.model.GUID

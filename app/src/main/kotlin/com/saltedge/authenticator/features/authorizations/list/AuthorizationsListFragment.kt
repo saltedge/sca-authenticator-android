@@ -24,6 +24,7 @@ import android.os.Bundle
 import android.view.*
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.cloud.clearNotifications
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.features.authorizations.confirmPasscode.ConfirmPasscodeDialog
 import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsContentPagerAdapter
@@ -31,7 +32,7 @@ import com.saltedge.authenticator.features.authorizations.list.adapters.Authoriz
 import com.saltedge.authenticator.features.authorizations.list.di.AuthorizationsListModule
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.error.getErrorMessage
-import com.saltedge.authenticator.tool.*
+import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.showAuthorizationConfirm
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -134,16 +135,6 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     override fun askUserPasscodeConfirmation() {
         activity?.showDialogFragment(ConfirmPasscodeDialog.newInstance(resultCallback = presenter))
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.menu_authorizations, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.qr_code) activity?.showQrScannerActivity()
-        return true
     }
 
     private fun setupViews() {

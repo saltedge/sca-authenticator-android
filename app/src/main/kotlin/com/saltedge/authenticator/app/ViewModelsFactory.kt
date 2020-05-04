@@ -23,14 +23,15 @@ package com.saltedge.authenticator.app
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.saltedge.authenticator.features.qr.QrScannerViewModel
 import com.saltedge.authenticator.features.launcher.LauncherViewModel
 import com.saltedge.authenticator.features.main.MainActivityViewModel
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupViewModel
 import com.saltedge.authenticator.features.settings.about.AboutViewModel
-import com.saltedge.authenticator.model.realm.RealmManagerAbs
-import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.models.realm.RealmManagerAbs
+import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
-import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
+import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import javax.inject.Inject
 
 class ViewModelsFactory @Inject constructor(
@@ -69,6 +70,9 @@ class ViewModelsFactory @Inject constructor(
                     preferenceRepository = preferenceRepository,
                     biometricTools = biometricTools
                 ) as T
+            }
+            modelClass.isAssignableFrom(QrScannerViewModel::class.java) -> {
+                return QrScannerViewModel(appContext = appContext) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

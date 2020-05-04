@@ -26,7 +26,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.interfaces.ListItemClickListener
-import com.saltedge.authenticator.tool.inflateListItemView
+import com.saltedge.authenticator.tools.inflateListItemView
 
 class LicenseItemHolder(
     parent: ViewGroup,

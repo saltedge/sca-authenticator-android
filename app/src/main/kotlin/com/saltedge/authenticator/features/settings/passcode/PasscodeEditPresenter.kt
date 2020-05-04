@@ -23,7 +23,7 @@ package com.saltedge.authenticator.features.settings.passcode
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.settings.passcode.saver.PasscodeSaveResultListener
 import com.saltedge.authenticator.features.settings.passcode.saver.PasscodeSaver
-import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
+import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import javax.inject.Inject
 

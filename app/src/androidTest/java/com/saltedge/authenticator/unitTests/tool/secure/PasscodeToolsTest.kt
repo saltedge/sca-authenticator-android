@@ -22,8 +22,8 @@ package com.saltedge.authenticator.unitTests.tool.secure
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.saltedge.authenticator.instrumentationTestTools.TestTools.applicationContext
-import com.saltedge.authenticator.model.repository.PreferenceRepository
-import com.saltedge.authenticator.tool.secure.PasscodeTools
+import com.saltedge.authenticator.models.repository.PreferenceRepository
+import com.saltedge.authenticator.tools.PasscodeTools
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat

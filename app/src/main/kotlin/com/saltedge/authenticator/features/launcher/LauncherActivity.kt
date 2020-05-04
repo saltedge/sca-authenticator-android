@@ -33,11 +33,11 @@ import com.saltedge.authenticator.app.LAUNCHER_SPLASH_DURATION
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
-import com.saltedge.authenticator.tool.applyPreferenceLocale
-import com.saltedge.authenticator.tool.authenticatorApp
-import com.saltedge.authenticator.tool.registerNotificationChannels
-import com.saltedge.authenticator.tool.secure.updateScreenshotLocking
-import com.saltedge.authenticator.tool.showDbErrorDialog
+import com.saltedge.authenticator.tools.applyPreferenceLocale
+import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.cloud.registerNotificationChannels
+import com.saltedge.authenticator.tools.updateScreenshotLocking
+import com.saltedge.authenticator.tools.showDbErrorDialog
 import javax.inject.Inject
 
 class LauncherActivity : AppCompatActivity() {

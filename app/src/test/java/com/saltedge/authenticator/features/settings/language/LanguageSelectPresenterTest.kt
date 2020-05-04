@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.features.settings.language
 
-import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat

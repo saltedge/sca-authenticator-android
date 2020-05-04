@@ -174,4 +174,6 @@
 
     <string name="warning_no_internet_connection">No internet connection</string>
     <string name="warning_application_was_locked">Application will be locked due to inactivity</string>
+
+    <string name="consents_feature_title">Consents</string>
 </resources>

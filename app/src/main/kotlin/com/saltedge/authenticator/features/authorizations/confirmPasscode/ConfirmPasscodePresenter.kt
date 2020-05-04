@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.features.authorizations.confirmPasscode
 
-import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
+import com.saltedge.authenticator.tools.PasscodeToolsAbs
 
 class ConfirmPasscodePresenter(val passcodeTools: PasscodeToolsAbs) {
 

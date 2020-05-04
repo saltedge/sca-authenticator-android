@@ -23,7 +23,7 @@ package com.saltedge.authenticator.features.settings.about
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.events.ViewModelEvent
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.features.settings.about.common.AboutListItemViewModel
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo

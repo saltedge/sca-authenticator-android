@@ -28,19 +28,20 @@ import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
-import com.saltedge.authenticator.events.ViewModelEvent
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
+import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
-import com.saltedge.authenticator.model.realm.RealmManagerAbs
-import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.realm.RealmManagerAbs
+import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.tools.extractActionAppLinkData
 import com.saltedge.authenticator.sdk.tools.extractConnectAppLinkData
-import com.saltedge.authenticator.tool.ResId
-import com.saltedge.authenticator.tool.applyPreferenceLocale
-import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
+import com.saltedge.authenticator.tools.PasscodeToolsAbs
+import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.applyPreferenceLocale
 
 class MainActivityViewModel(
     val appContext: Context,
@@ -56,13 +57,14 @@ class MainActivityViewModel(
     private val connectivityReceiver = ConnectivityReceiver()//TODO make ext dependency
 
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onAppBarMenuClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onAppBarMenuClickEvent = MutableLiveData<ViewModelEvent<List<MenuItemData>>>()
     val onBackActionClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onRestartActivityEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowAuthorizationsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowAuthorizationDetailsEvent = MutableLiveData<ViewModelEvent<AuthorizationIdentifier>>()
     val onShowConnectionsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowSettingsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onShowConsentsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowConnectEvent = MutableLiveData<ViewModelEvent<ConnectAppLinkData>>()
     val onShowSubmitActionEvent = MutableLiveData<ViewModelEvent<ActionAppLinkData>>()
 
@@ -143,8 +145,38 @@ class MainActivityViewModel(
     fun onViewClick(viewId: Int) {
         when (viewId) {
             R.id.appBarActionQrCode -> onQrScanClickEvent.postValue(ViewModelEvent(Unit))
-            R.id.appBarActionMenu -> onAppBarMenuClickEvent.postValue(ViewModelEvent(Unit))
-            R.id.appBarBackAction -> onAppBarMenuClickEvent.postValue(ViewModelEvent(Unit))
+            R.id.appBarActionMenu -> {
+                val menuItems = listOf<MenuItemData>(
+                    MenuItemData(
+                        id = R.string.connections_feature_title,
+                        iconResId = R.drawable.ic_menu_action_list,
+                        textResId = R.string.connections_feature_title
+                    ),
+                    MenuItemData(
+                        id = R.string.consents_feature_title,
+                        iconResId = R.drawable.ic_menu_action_list,
+                        textResId = R.string.consents_feature_title
+                    ),
+                    MenuItemData(
+                        id = R.string.settings_feature_title,
+                        iconResId = R.drawable.ic_menu_action_settings,
+                        textResId = R.string.settings_feature_title
+                    )
+                )
+                onAppBarMenuClickEvent.postValue(ViewModelEvent(menuItems))
+            }
+            R.id.appBarBackAction -> onBackActionClickEvent.postValue(ViewModelEvent(Unit))
+        }
+    }
+
+    /**
+     * Handle clicks on menu
+     */
+    fun onMenuItemSelected(menuId: String, selectedItemId: Int) {
+        when (selectedItemId) {
+            R.string.connections_feature_title -> onShowConnectionsListEvent.postValue(ViewModelEvent(Unit))
+            R.string.consents_feature_title -> onShowConsentsListEvent.postValue(ViewModelEvent(Unit))
+            R.string.settings_feature_title -> onShowSettingsListEvent.postValue(ViewModelEvent(Unit))
         }
     }
 

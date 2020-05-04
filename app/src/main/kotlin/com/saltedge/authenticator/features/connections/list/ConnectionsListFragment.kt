@@ -33,10 +33,10 @@ import com.saltedge.authenticator.features.connections.create.ConnectProviderFra
 import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
 import com.saltedge.authenticator.features.connections.edit.name.EditConnectionNameDialog
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListModule
-import com.saltedge.authenticator.features.connections.options.ConnectionOptionsDialog
+import com.saltedge.authenticator.features.menu.BottomMenuDialog
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.sdk.model.GUID
-import com.saltedge.authenticator.tool.*
+import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
 import kotlinx.android.synthetic.main.fragment_connections_list.*
@@ -48,7 +48,7 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
     @Inject
     lateinit var presenterContract: ConnectionsListContract.Presenter
     private val adapter = ConnectionsListAdapter(clickListener = this)
-    private var optionsDialog: ConnectionOptionsDialog? = null
+    private var optionsDialog: BottomMenuDialog? = null
     private var headerDecorator: SpaceItemDecoration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,7 +64,7 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
     ): View {
         activityComponents?.updateAppbar(
             titleResId = R.string.connections_feature_title,
-            actionImageResId = R.drawable.ic_action_back
+            actionImageResId = R.drawable.ic_appbar_action_back
         )
         return inflater.inflate(R.layout.fragment_connections_list, container, false)
     }
@@ -157,11 +157,11 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         options: Array<ConnectionOptions>,
         requestCode: Int
     ) {
-        optionsDialog?.dismiss()
-        optionsDialog = ConnectionOptionsDialog.newInstance(connectionGuid, options).also {
-            it.setTargetFragment(this, requestCode)
-        }
-        optionsDialog?.let { activity?.showDialogFragment(it) }
+//        optionsDialog?.dismiss()// TODO show popup dialog
+//        optionsDialog = BottomMenuDialog.newInstance(connectionGuid, options).also {
+//            it.setTargetFragment(this, requestCode)
+//        }
+//        optionsDialog?.let { activity?.showDialogFragment(it) }
     }
 
     override fun showQrScanView() {

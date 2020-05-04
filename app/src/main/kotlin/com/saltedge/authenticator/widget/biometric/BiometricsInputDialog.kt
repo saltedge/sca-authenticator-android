@@ -34,9 +34,9 @@ import com.saltedge.authenticator.app.KEY_ACTION
 import com.saltedge.authenticator.sdk.constants.KEY_DESCRIPTION
 import com.saltedge.authenticator.sdk.constants.KEY_TITLE
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
-import com.saltedge.authenticator.tool.ResId
-import com.saltedge.authenticator.tool.setTextColorResId
-import com.saltedge.authenticator.tool.showDialogFragment
+import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.setTextColorResId
+import com.saltedge.authenticator.tools.showDialogFragment
 import com.saltedge.authenticator.widget.fragment.BaseRoundedBottomDialogFragment
 
 class BiometricsInputDialog(

@@ -27,7 +27,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.saltedge.authenticator.tool.convertDpToPx
+import com.saltedge.authenticator.tools.convertDpToPx
 
 abstract class BaseBottomDialogFragment : BottomSheetDialogFragment() {
 
