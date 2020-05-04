@@ -72,6 +72,7 @@
     <color name="white_87">#DDFFFFFF</color>
     <color name="black_87">#DD000000</color>
 
+    <!--New aliases-->
     <color name="system_bar_color">@color/primary</color>
     <color name="theme_background">@android:color/white</color>
     <color name="info_message_background">@color/grey_light_extra</color>
