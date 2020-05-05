@@ -159,9 +159,6 @@
     <string name="fingerprint_scan_continue">Scan your Fingerprint to continue</string>
     <string name="fingerprint_scan_unlock">Unlock the app with biometrics</string>
     <string name="fingerprint_touch_sensor">Touch Sensor</string>
-    <string name="fingerprint_forgot">Forgot?</string>
-    <string name="fingerprint_forgot_passcode">Forgot passcode?</string>
-    <string name="fingerprint_forgot_passcode_description">Please clear app data and establish new connection with your provider.</string>
 
     <string name="scan_qr_title">Scan QR code</string>
     <string name="scan_qr_description">Scan the QR to make your \nfirst connection\n</string>
@@ -174,6 +171,10 @@
 
     <string name="warning_no_internet_connection">No internet connection</string>
     <string name="warning_application_was_locked">Application will be locked due to inactivity</string>
+
+    <string name="forgot_passcode">Forgot?</string>
+    <string name="forgot_passcode_title">Forgot passcode?</string>
+    <string name="forgot_passcode_description">Please clear app data and establish new connection with your provider.</string>
 
     <string name="consents_feature_title">Consents</string>
 </resources>

@@ -152,7 +152,7 @@
             android:fontFamily="@font/roboto_medium"
             android:textColor="@color/primary_text"
             android:layout_gravity="center"
-            android:text="@string/fingerprint_forgot" />
+            android:text="@string/forgot_passcode" />
     </FrameLayout>
 
     <FrameLayout

@@ -27,8 +27,8 @@
 
     <ImageView
         android:id="@+id/appLogoView"
-        android:layout_width="@dimen/splash_logo_image_size"
-        android:layout_height="@dimen/splash_logo_image_size"
+        android:layout_width="@dimen/logo_image_size"
+        android:layout_height="@dimen/logo_image_size"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/dp_76"
         android:src="@drawable/ic_app_logo" />
@@ -60,7 +60,7 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/backImageView"
+            android:id="@+id/backActionImageView"
             android:layout_width="@dimen/dp_24"
             android:layout_height="@dimen/dp_24"
             android:layout_marginStart="@dimen/dp_16"
@@ -69,8 +69,7 @@
             android:src="@drawable/ic_back_24dp" />
 
         <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="@dimen/dp_328"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/dp_200"
             android:layout_gravity="center_horizontal"
             android:layout_marginStart="@dimen/dp_16"
@@ -83,46 +82,39 @@
 
         <TextView
             android:id="@+id/titleView"
+            style="@style/Text22DarkRegular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_32"
             android:layout_marginTop="@dimen/dp_30"
             android:layout_marginEnd="@dimen/dp_32"
-            android:ellipsize="end"
-            android:fontFamily="@font/roboto_regular"
-            android:maxLines="2"
-            android:textAlignment="center"
-            android:textColor="@color/primary_text"
-            android:textSize="@dimen/text_27"
+            android:text="@string/forgot_passcode_title"
             tools:background="@color/primary"
             tools:text="Forgot passcode?" />
 
         <TextView
             android:id="@+id/subTitleView"
-            style="@style/Text18NeutralsDarkRegular"
+            style="@style/Text18DarkRegular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_32"
             android:layout_marginTop="@dimen/dp_10"
             android:layout_marginEnd="@dimen/dp_32"
             android:lines="2"
+            android:text="@string/forgot_passcode_description"
             android:textAlignment="center"
             tools:background="@color/primary"
             tools:text="Please clear app data and establish new connection with your provider." />
 
         <Button
             android:id="@+id/clearView"
+            style="@style/BlueButton"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_54"
             android:layout_marginStart="@dimen/dp_58"
             android:layout_marginTop="@dimen/dp_28"
             android:layout_marginEnd="@dimen/dp_58"
-            android:backgroundTint="@color/button_color_selector"
-            android:elevation="@dimen/dp_30"
-            android:fontFamily="@font/roboto_medium"
             android:text="@string/settings_clear_data"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
             android:textSize="@dimen/text_18" />
     </LinearLayout>
 </LinearLayout>

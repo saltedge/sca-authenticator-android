@@ -128,7 +128,6 @@ fun FragmentActivity.showResetDataDialog(listener: DialogInterface.OnClickListen
             .setPositiveButton(R.string.actions_clear, listener)
             .setNegativeButton(R.string.actions_cancel, listener)
             .setMessage(R.string.ui_dialog_clear_data_message)
-            .create()
             .show()
     } catch (e: java.lang.Exception) {
         e.log()

@@ -49,14 +49,14 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
     init {
         LayoutInflater.from(context).inflate(R.layout.view_unlock, this)
         clearView?.setOnClickListener(this)
-        backImageView?.setOnClickListener(this)
+        backActionImageView?.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {
         val viewId = view?.id ?: return
         when (viewId) {
             R.id.clearView -> listener?.showDeleteConnectionView(requestCode = DELETE_ALL_REQUEST_CODE)
-            R.id.backImageView -> setInputViewVisibility(show = true)
+            R.id.backActionImageView -> setInputViewVisibility(show = true)
         }
     }
 
@@ -78,11 +78,6 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
     fun setInputViewVisibility(show: Boolean) {
         passcodeInputView?.setVisible(show)
         appLogoView?.setVisible(show)
-    }
-
-    fun setResetPasscodeView() {
-        titleView?.text = context?.getString(R.string.fingerprint_forgot_passcode)
-        subTitleView?.text = context?.getString(R.string.fingerprint_forgot_passcode_description)
     }
 
     fun setResetPasscodeViewVisibility(show: Boolean) {

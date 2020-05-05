@@ -169,13 +169,13 @@ abstract class LockableActivity :
     override fun onResetPasscode() {
         getUnlockAppInputView()?.let {
             it.setInputViewVisibility(show = false)
-            it.setResetPasscodeView()
-            it.showErrorMessage(false)
+//            it.setResetPasscodeView()
+            it.showErrorMessage(show = false)
         }
     }
 
     override fun showDeleteConnectionView(requestCode: Int) {
-        showResetDataDialog(this)
+        showResetDataDialog(listener = this)
     }
 
     override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
@@ -237,7 +237,7 @@ abstract class LockableActivity :
             it.setDescriptionText("$wrongPasscodeMessage\n$retryMessage")
             it.setInputViewVisibility(show = false)
             it.setResetPasscodeViewVisibility(show = false)
-            it.showErrorMessage(true)
+            it.showErrorMessage(show = true)
         }
     }
 

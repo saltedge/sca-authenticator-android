@@ -44,8 +44,8 @@
 
             <ImageView
                 android:id="@+id/appLogoView"
-                android:layout_width="@dimen/splash_logo_image_size"
-                android:layout_height="@dimen/splash_logo_image_size"
+                android:layout_width="@dimen/logo_image_size"
+                android:layout_height="@dimen/logo_image_size"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/dp_76"
                 android:src="@drawable/ic_app_logo" />
@@ -81,6 +81,7 @@
 
             <Button
                 android:id="@+id/proceedToSetup"
+                style="@style/BlueButton"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_48"
                 android:layout_alignParentBottom="true"
@@ -88,13 +89,7 @@
                 android:layout_marginStart="@dimen/dp_32"
                 android:layout_marginEnd="@dimen/dp_32"
                 android:layout_marginBottom="@dimen/dp_40"
-                android:backgroundTint="@color/button_color_selector"
-                android:elevation="@dimen/dp_30"
-                android:fontFamily="@font/roboto_medium"
                 android:text="@string/actions_get_started"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/text_14"
                 android:visibility="@{onboardingSetupViewModel.proceedViewVisibility}" />
 
             <LinearLayout
