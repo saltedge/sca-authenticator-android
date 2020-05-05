@@ -125,27 +125,31 @@
 
         <FrameLayout
             android:id="@+id/statusProgressOrImageContainer"
-            android:layout_width="@dimen/dp_70"
-            android:layout_height="@dimen/dp_70"
+            android:layout_width="@dimen/dp_76"
+            android:layout_height="@dimen/dp_76"
+            android:elevation="@dimen/dp_40"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/statusTitleTextView"
-            android:layout_marginBottom="@dimen/dp_32">
+            android:layout_marginBottom="@dimen/dp_26"
+            android:background="@drawable/shape_bg_process_status">
 
             <ProgressBar
                 android:id="@+id/progressStatusView"
                 style="?android:attr/progressBarStyleLarge"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/dp_56"
+                android:layout_height="@dimen/dp_56"
                 android:indeterminateTint="@color/blue"
+                android:layout_gravity="center"
                 android:indeterminateTintMode="src_in" />
 
             <ImageView
                 android:id="@id/statusImageView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/dp_56"
+                android:layout_height="@dimen/dp_56"
                 android:contentDescription="@string/authorizations_processing"
-                android:src="@drawable/ic_success_70"/>
+                android:layout_gravity="center"
+                tools:src="@drawable/ic_status_success"/>
         </FrameLayout>
 
         <TextView
@@ -153,9 +157,9 @@
             style="@style/Text20Regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dp_16"
-            android:layout_marginEnd="@dimen/dp_16"
-            android:layout_marginBottom="@dimen/dp_8"
+            android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginEnd="@dimen/dp_32"
+            android:layout_marginBottom="@dimen/dp_10"
             android:gravity="center"
             android:lines="1"
             app:layout_constraintEnd_toEndOf="parent"
@@ -170,7 +174,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_16"
             android:layout_marginEnd="@dimen/dp_16"
-            android:layout_marginTop="@dimen/dp_8"
             android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -128,6 +128,5 @@
     <dimen name="action_bar_bottom_section_size">@dimen/dp_46</dimen>
     <dimen name="info_view_small_icon">@dimen/dp_70</dimen>
     <dimen name="info_view_big_icon">@dimen/dp_96</dimen>
-    <dimen name="logo_corner_radius">@dimen/dp_28</dimen>
     <dimen name="authorizations_headers_pager_height">@dimen/dp_96</dimen>
 </resources>

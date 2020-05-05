@@ -59,7 +59,7 @@ class MainActivity : LockableActivity(),
         super.onCreate(savedInstanceState)
         authenticatorApp?.appComponent?.inject(this)
         setupViewModel()
-//        this.updateScreenshotLocking()
+        this.updateScreenshotLocking()
         setContentView(R.layout.activity_main)
         setupViews()
         viewModel.onLifeCycleCreate(savedInstanceState, intent)

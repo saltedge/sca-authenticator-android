@@ -21,39 +21,36 @@
 package com.saltedge.authenticator.features.authorizations.list
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.cloud.clearNotifications
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
-import com.saltedge.authenticator.features.authorizations.confirm.ConfirmPasscodeDialog
 import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsContentPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsHeaderPagerAdapter
-import com.saltedge.authenticator.features.authorizations.list.di.AuthorizationsListModule
-import com.saltedge.authenticator.sdk.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.model.error.getErrorMessage
-import com.saltedge.authenticator.tools.*
-import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
-import com.saltedge.authenticator.widget.biometric.showAuthorizationConfirm
+import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_authorizations_list.*
 import javax.inject.Inject
 
-class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.View {
+class AuthorizationsListFragment : BaseFragment() {
 
-    @Inject
-    lateinit var presenter: AuthorizationsListPresenter
-    var biometricPrompt: BiometricPromptAbs? = null
-        @Inject set
+    lateinit var viewModel: AuthorizationsListViewModel
+    @Inject lateinit var viewModelFactory: ViewModelsFactory
     private val pagersScrollSynchronizer = PagersScrollSynchronizer()
     private var headerAdapter: AuthorizationsHeaderPagerAdapter? = null
     private var contentAdapter: AuthorizationsContentPagerAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectDependencies()
-        setHasOptionsMenu(true)
-        presenter.onCreate(lifecycle = lifecycle)
+        authenticatorApp?.appComponent?.inject(this)
+        setupViewModel()
     }
 
     override fun onCreateView(
@@ -70,24 +67,19 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        try {
-            setupViews()
-        } catch (e: Exception) {
-            e.log()
-        }
+        setupViews()
     }
 
     override fun onStart() {
         super.onStart()
-        presenter.viewContract = this
-        biometricPrompt?.resultCallback = presenter
-        contentAdapter?.listItemClickListener = presenter
+        contentAdapter?.listItemClickListener = viewModel
     }
 
     override fun onResume() {
         super.onResume()
-        presenter.onResume()
+        clearAllNotifications()
         headerAdapter?.startTimer()
+
     }
 
     override fun onPause() {
@@ -96,45 +88,37 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     }
 
     override fun onStop() {
-        biometricPrompt?.resultCallback = null
-        presenter.viewContract = null
         contentAdapter?.listItemClickListener = null
         super.onStop()
     }
 
-    override fun onDestroy() {
-        presenter.onDestroy()
-        super.onDestroy()
-    }
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(this, viewModelFactory).get(AuthorizationsListViewModel::class.java)
+        viewModel.setup(lifecycle = lifecycle)
 
-    override fun showError(error: ApiErrorData) {
-        view?.let {
-            Snackbar.make(it, error.getErrorMessage(it.context), Snackbar.LENGTH_LONG).show()
-        }
-    }
-
-    override fun updateViewsContent() {
-        clearAllNotifications()
-        activity?.runOnUiThread {
-            listGroup?.setVisible(presenter.showContentViews)
-            emptyView?.setVisible(presenter.showEmptyView)
-
-            headerAdapter?.data = presenter.viewModels
-            contentAdapter?.data = presenter.viewModels
-        }
-    }
-
-    override fun updateItem(viewModel: AuthorizationViewModel, itemId: Int) {
-        contentAdapter?.updateItem(viewModel, itemId)
-        headerAdapter?.updateItem(viewModel, itemId)
-    }
-
-    override fun askUserBiometricConfirmation() {
-        activity?.let { biometricPrompt?.showAuthorizationConfirm(it) }
-    }
-
-    override fun askUserPasscodeConfirmation() {
-        activity?.showDialogFragment(ConfirmPasscodeDialog.newInstance(resultCallback = presenter))
+        viewModel.listVisibility.observe(this, Observer<Int> {
+            listGroup?.visibility = it
+        })
+        viewModel.emptyViewVisibility.observe(this, Observer<Int> {
+            emptyView?.visibility = it
+        })
+        viewModel.listItems.observe(this, Observer<List<AuthorizationViewModel>> {
+            headerAdapter?.data = it
+            contentAdapter?.data = it
+        })
+        viewModel.listItemUpdateEvent.observe(this, Observer<ViewModelEvent<Int>> {
+            it.getContentIfNotHandled()?.let { itemIndex ->
+                viewModel.listItemsValues.getOrNull(itemIndex)?.let { item ->
+                    contentAdapter?.updateItem(item, itemIndex)
+                    headerAdapter?.updateItem(item, itemIndex)
+                }
+            }
+        })
+        viewModel.onConfirmErrorEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
+            event.getContentIfNotHandled()?.let { errorMessage ->
+                view?.let { Snackbar.make(it, errorMessage, Snackbar.LENGTH_LONG).show() }
+            }
+        })
     }
 
     private fun setupViews() {
@@ -142,7 +126,7 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
             contentAdapter = AuthorizationsContentPagerAdapter(it).apply {
                 contentViewPager?.adapter = this
             }
-            headerAdapter = AuthorizationsHeaderPagerAdapter(it, presenter).apply {
+            headerAdapter = AuthorizationsHeaderPagerAdapter(it, viewModel).apply {
                 headerViewPager?.adapter = this
             }
         }
@@ -152,10 +136,5 @@ class AuthorizationsListFragment : BaseFragment(), AuthorizationsListContract.Vi
     // Clear all system notification
     private fun clearAllNotifications() {
         activity?.clearNotifications()
-    }
-
-    private fun injectDependencies() {
-        authenticatorApp?.appComponent
-            ?.addAuthorizationsListModule(AuthorizationsListModule())?.inject(this)
     }
 }

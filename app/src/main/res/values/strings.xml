@@ -117,12 +117,12 @@
     <string name="authorizations_nothing_confirm_description">You do not have any active authorization request yet. Once initiate an action, you will have a few minutes to authorize it.</string>
     <string name="authorizations_loading">Loading…</string>
     <string name="authorizations_loading_description">Please wait while authorization is loading</string>
-    <string name="authorizations_processing">Processing…</string>
+    <string name="authorizations_processing">Authorizing</string>
     <string name="authorizations_processing_description">Please wait while authorization is processing</string>
     <string name="authorizations_notification_title">Authorization request</string>
     <string name="authorizations_notification_description">New authorization request available. Tap to proceed.</string>
     <string name="authorizations_confirmed">Success</string>
-    <string name="authorizations_confirmed_description">Your action was authorized</string>
+    <string name="authorizations_confirmed_description">Your action was successfully authorized</string>
     <string name="authorizations_denied">Denied</string>
     <string name="authorizations_denied_description">Your action was denied</string>
     <string name="authorizations_error">Something went wrong</string>

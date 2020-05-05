@@ -35,31 +35,6 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class AuthorizationsListModuleTest {
 
-    @Test
-    @Throws(Exception::class)
-    fun providePresenterTest() {
-        val module = AuthorizationsListModule()
-
-        Assert.assertNotNull(
-            module.providePresenter(
-                appContext = TestAppTools.applicationContext,
-                connections = mockConnectionsRepository,
-                biometricTools = mockBiometricTools,
-                cryptoTools = mockCryptoTools,
-                keyStoreManager = mockKeyStoreManager,
-                apiManager = mockApiManager
-            )
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun provideTimerTest() {
-        val module = AuthorizationsListModule()
-
-        Assert.assertNotNull(module.provideTimer())
-    }
-
     private val mockKeyStoreManager = Mockito.mock(KeyStoreManagerAbs::class.java)
     private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
     private val mockBiometricTools = Mockito.mock(BiometricToolsAbs::class.java)
