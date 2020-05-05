@@ -26,7 +26,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
 import com.saltedge.authenticator.tools.setVisible
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
@@ -40,7 +39,7 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
         set(value) {
             passcodeInputView?.biometricsActionIsAvailable = value
         }
-    var listener: PasscodeInputViewListener?
+    var passcodeInputViewListener: PasscodeInputViewListener?
         get() = passcodeInputView?.listener
         set(value) {
             passcodeInputView?.listener = value
@@ -55,7 +54,7 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
     override fun onClick(view: View?) {
         val viewId = view?.id ?: return
         when (viewId) {
-            R.id.clearView -> listener?.showDeleteConnectionView(requestCode = DELETE_ALL_REQUEST_CODE)
+            R.id.clearView -> passcodeInputViewListener?.onClearDataActionSelected()
             R.id.backActionImageView -> setInputViewVisibility(show = true)
         }
     }

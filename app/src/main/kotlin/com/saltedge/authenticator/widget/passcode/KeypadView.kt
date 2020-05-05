@@ -41,7 +41,7 @@ class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
     View.OnClickListener {
 
     var clickListener: KeypadClickListener? = null
-    var fingerprintActionClickListener: PasscodeInputViewListener? = null
+    var passcodeInputViewListener: PasscodeInputViewListener? = null
 
     private var vibrator: Vibrator? = context.getSystemService(VIBRATOR_SERVICE) as? Vibrator?
 
@@ -54,9 +54,9 @@ class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         if (view == null || !isEnabled) return
         vibrateOnKeyClick()
         when (view.id) {
-            R.id.fingerView -> fingerprintActionClickListener?.onBiometricInputSelected()
+            R.id.fingerView -> passcodeInputViewListener?.onBiometricInputSelected()
             R.id.deleteView -> clickListener?.onDeleteKeyClick()
-            R.id.forgotView -> fingerprintActionClickListener?.onResetPasscode()
+            R.id.forgotView -> passcodeInputViewListener?.onForgotActionSelected()
             else -> clickListener?.onDigitKeyClick((view as? TextView)?.text.toString())
         }
     }

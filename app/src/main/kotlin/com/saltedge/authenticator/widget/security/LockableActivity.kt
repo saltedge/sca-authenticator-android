@@ -133,14 +133,14 @@ abstract class LockableActivity :
     override fun onStart() {
         super.onStart()
         biometricPrompt?.resultCallback = this
-        getUnlockAppInputView()?.listener = this
+        getUnlockAppInputView()?.passcodeInputViewListener = this
         presenter.onActivityStart(intent)
     }
 
     override fun onStop() {
         presenter.destroyTimer()
         biometricPrompt?.resultCallback = null
-        getUnlockAppInputView()?.listener = null
+        getUnlockAppInputView()?.passcodeInputViewListener = null
         super.onStop()
     }
 
@@ -166,15 +166,14 @@ abstract class LockableActivity :
 
     override fun onNewPasscodeConfirmed(passcode: String) {}
 
-    override fun onResetPasscode() {
+    override fun onForgotActionSelected() {
         getUnlockAppInputView()?.let {
             it.setInputViewVisibility(show = false)
-//            it.setResetPasscodeView()
             it.showErrorMessage(show = false)
         }
     }
 
-    override fun showDeleteConnectionView(requestCode: Int) {
+    override fun onClearDataActionSelected() {
         showResetDataDialog(listener = this)
     }
 
