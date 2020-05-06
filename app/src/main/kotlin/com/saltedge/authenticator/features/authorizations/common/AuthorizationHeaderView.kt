@@ -27,7 +27,7 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.sdk.tools.remainedSeconds
 import com.saltedge.authenticator.sdk.tools.remainedTimeDescription
 import com.saltedge.authenticator.sdk.tools.secondsBetweenDates
-import com.saltedge.authenticator.tools.loadImage
+import com.saltedge.authenticator.tools.loadRoundedImage
 import kotlinx.android.synthetic.main.view_authorization_header.view.*
 import org.joda.time.DateTime
 
@@ -51,9 +51,10 @@ class AuthorizationHeaderView : LinearLayout, TimeUpdateListener {
         if (logoUrl?.isEmpty() == true) {
             logoView?.setImageResource(R.drawable.ic_logo_bank_placeholder)
         } else {
-            logoView?.loadImage(
+            logoView?.loadRoundedImage(
                 imageUrl = logoUrl,
-                placeholderId = R.drawable.ic_logo_bank_placeholder
+                placeholderId = R.drawable.ic_logo_bank_placeholder,
+                cornerRadius = resources.getDimension(R.dimen.dp_6)
             )
         }
     }

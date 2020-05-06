@@ -23,14 +23,19 @@ package com.saltedge.authenticator.app
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.saltedge.authenticator.features.qr.QrScannerViewModel
+import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListViewModel
 import com.saltedge.authenticator.features.launcher.LauncherViewModel
 import com.saltedge.authenticator.features.main.MainActivityViewModel
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupViewModel
+import com.saltedge.authenticator.features.qr.QrScannerViewModel
 import com.saltedge.authenticator.features.settings.about.AboutViewModel
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import javax.inject.Inject
 
@@ -38,8 +43,12 @@ class ViewModelsFactory @Inject constructor(
     val appContext: Context,
     val passcodeTools: PasscodeToolsAbs,
     val biometricTools: BiometricToolsAbs,
+    val cryptoTools: CryptoToolsAbs,
     val preferenceRepository: PreferenceRepositoryAbs,
-    val realmManager: RealmManagerAbs
+    val connectionsRepository: ConnectionsRepositoryAbs,
+    val keyStoreManager: KeyStoreManagerAbs,
+    val realmManager: RealmManagerAbs,
+    val apiManager: AuthenticatorApiManagerAbs
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -60,9 +69,6 @@ class ViewModelsFactory @Inject constructor(
                     realmManager = realmManager
                 ) as T
             }
-            modelClass.isAssignableFrom(AboutViewModel::class.java) -> {
-                return AboutViewModel(appContext) as T
-            }
             modelClass.isAssignableFrom(OnboardingSetupViewModel::class.java) -> {
                 return OnboardingSetupViewModel(
                     appContext = appContext,
@@ -73,6 +79,18 @@ class ViewModelsFactory @Inject constructor(
             }
             modelClass.isAssignableFrom(QrScannerViewModel::class.java) -> {
                 return QrScannerViewModel(appContext = appContext) as T
+            }
+            modelClass.isAssignableFrom(AboutViewModel::class.java) -> {
+                return AboutViewModel(appContext) as T
+            }
+            modelClass.isAssignableFrom(AuthorizationsListViewModel::class.java) -> {
+                return AuthorizationsListViewModel(
+                    appContext = appContext,
+                    connectionsRepository = connectionsRepository,
+                    keyStoreManager = keyStoreManager,
+                    cryptoTools = cryptoTools,
+                    apiManager = apiManager
+                ) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

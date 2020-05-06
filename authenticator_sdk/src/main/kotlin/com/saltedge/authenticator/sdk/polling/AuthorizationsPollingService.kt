@@ -39,7 +39,7 @@ class AuthorizationsPollingService : PollingServiceAbs<FetchAuthorizationsContra
                 apiInterface = RestClient.apiInterface,
                 resultCallback = contract
             )
-            contract?.getConnectionsData()?.let { connector.fetchAuthorizations(connectionsAndKeys = it) }
+            contract?.getCurrentConnectionsAndKeysForPolling()?.let { connector.fetchAuthorizations(connectionsAndKeys = it) }
         } catch (e: Exception) {
             e.printStackTrace()
         }

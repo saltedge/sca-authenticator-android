@@ -18,86 +18,111 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activityRootLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data class="MainActivityBinding">
+        <import type="android.view.View" />
+        <import type="androidx.core.content.ContextCompat" />
+        <variable
+            name="viewModel"
+            type="com.saltedge.authenticator.features.main.MainActivityViewModel" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/appBarLayout"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activityRootLayout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_102"
-        android:background="@color/theme_background"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/appBarTopSection"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_56"
-            android:orientation="horizontal"
+            android:layout_height="@dimen/dp_102"
+            android:background="@color/theme_background"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/appBarBackAction"
-                android:layout_width="@dimen/dp_24"
-                android:layout_height="@dimen/dp_24"
-                android:layout_marginLeft="@dimen/dp_16"
-                android:layout_marginRight="@dimen/dp_16"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_appbar_action_back" />
-        </FrameLayout>
+            <FrameLayout
+                android:id="@+id/appBarTopSection"
+                android:layout_width="@dimen/action_bar_top_section_size"
+                android:layout_height="@dimen/action_bar_top_section_size"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:background="?android:attr/selectableItemBackground"
+                android:visibility="@{viewModel.appBarBackActionVisibility}">
 
-        <LinearLayout
-            android:id="@+id/appBarBottomSection"
+                <ImageView
+                    android:id="@+id/appBarBackAction"
+                    android:layout_width="@dimen/dp_24"
+                    android:layout_height="@dimen/dp_24"
+                    android:layout_gravity="center"
+                    android:src="@{ContextCompat.getDrawable(context, viewModel.appBarBackActionImageResource)}" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/appBarBottomSection"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/action_bar_bottom_section_size"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <TextView
+                    android:id="@+id/appBarTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dp_16"
+                    android:layout_marginRight="@dimen/dp_16"
+                    android:layout_weight="1"
+                    android:lineSpacingExtra="@dimen/text_zero_line"
+                    android:text="@{viewModel.appBarTitle}"
+                    android:textAppearance="@style/app_bar_title" />
+
+                <FrameLayout
+                    android:id="@+id/appBarActionQrCode"
+                    android:layout_width="@dimen/action_bar_bottom_section_size"
+                    android:layout_height="@dimen/action_bar_bottom_section_size"
+                    android:layout_marginEnd="@dimen/dp_8"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:visibility="@{viewModel.appBarMenuVisibility}">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_24"
+                        android:layout_height="@dimen/dp_24"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_appbar_action_qr" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/appBarActionMenu"
+                    android:layout_width="@dimen/action_bar_bottom_section_size"
+                    android:layout_height="@dimen/action_bar_bottom_section_size"
+                    android:layout_marginEnd="@dimen/dp_8"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:visibility="@{viewModel.appBarMenuVisibility}">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_24"
+                        android:layout_height="@dimen/dp_24"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_appbar_action_menu" />
+                </FrameLayout>
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <FrameLayout
+            android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_46"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent">
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
 
-            <TextView
-                android:id="@+id/appBarTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/dp_16"
-                android:layout_marginRight="@dimen/dp_16"
-                android:layout_weight="1"
-                android:lineSpacingExtra="@dimen/text_zero_line"
-                android:text="@string/app_name_short"
-                android:textAppearance="@style/app_bar_title" />
-
-            <ImageView
-                android:id="@+id/appBarActionQrCode"
-                android:layout_width="@dimen/dp_24"
-                android:layout_height="@dimen/dp_24"
-                android:layout_marginRight="@dimen/dp_24"
-                android:background="?android:attr/selectableItemBackground"
-                android:src="@drawable/ic_appbar_action_qr" />
-
-            <ImageView
-                android:id="@+id/appBarActionMenu"
-                android:layout_width="@dimen/dp_24"
-                android:layout_height="@dimen/dp_24"
-                android:layout_marginRight="@dimen/dp_16"
-                android:background="?android:attr/selectableItemBackground"
-                android:src="@drawable/ic_appbar_action_menu" />
-        </LinearLayout>
+        <com.saltedge.authenticator.widget.security.UnlockAppInputView
+            android:id="@+id/unlockAppInputView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <FrameLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
-
-    <com.saltedge.authenticator.widget.security.UnlockAppInputView
-        android:id="@+id/unlockAppInputView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

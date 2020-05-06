@@ -70,8 +70,8 @@ class MainActivityViewModel(
 
     val internetConnectionWarningVisibility = MutableLiveData<Int>()
     val appBarTitle = MutableLiveData<String>()
-    val appBarBackActionImage = MutableLiveData<ResId>()
-    val appBarBackActionVisibility = MutableLiveData<Int>()
+    val appBarBackActionImageResource = MutableLiveData<ResId>(R.drawable.ic_appbar_action_back)
+    val appBarBackActionVisibility = MutableLiveData<Int>(View.GONE)
     val appBarMenuVisibility = MutableLiveData<Int>()
 
     init {
@@ -198,7 +198,7 @@ class MainActivityViewModel(
     ) {
         titleResId?.let { appBarTitle.postValue(appContext.getString(it)) }
             ?: appBarTitle.postValue(title ?: "")
-        actionImageResId?.let { appBarBackActionImage.postValue(it) }
+        actionImageResId?.let { appBarBackActionImageResource.postValue(it) }
         appBarBackActionVisibility.postValue(if (actionImageResId == null) View.GONE else View.VISIBLE)
         appBarMenuVisibility.postValue(if (showMenu) View.VISIBLE else View.GONE)
     }

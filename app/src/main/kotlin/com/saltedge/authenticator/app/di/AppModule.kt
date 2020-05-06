@@ -76,15 +76,23 @@ class AppModule(context: Context) {
         appContext: Context,
         passcodeTools: PasscodeToolsAbs,
         biometricTools: BiometricToolsAbs,
+        cryptoTools: CryptoToolsAbs,
         preferences: PreferenceRepositoryAbs,
-        realmManager: RealmManagerAbs
+        connectionsRepository: ConnectionsRepositoryAbs,
+        keyStoreManager: KeyStoreManagerAbs,
+        realmManager: RealmManagerAbs,
+        apiManager: AuthenticatorApiManagerAbs
     ): ViewModelsFactory {
         return ViewModelsFactory(
             appContext = appContext,
             passcodeTools = passcodeTools,
             biometricTools = biometricTools,
+            cryptoTools = cryptoTools,
             preferenceRepository = preferences,
-            realmManager = realmManager
+            connectionsRepository = connectionsRepository,
+            keyStoreManager = keyStoreManager,
+            realmManager = realmManager,
+            apiManager = apiManager
         )
     }
 

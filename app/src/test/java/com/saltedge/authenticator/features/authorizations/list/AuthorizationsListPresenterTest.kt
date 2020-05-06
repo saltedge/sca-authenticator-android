@@ -218,7 +218,7 @@ class AuthorizationsListPresenterTest {
         Mockito.doReturn(emptyList<Connection>()).`when`(mockConnectionsRepository).getAllActiveConnections()
         val presenter = createPresenter(viewContract = mockView)
 
-        Assert.assertNull(presenter.getConnectionsData())
+        Assert.assertNull(presenter.getCurrentConnectionsAndKeysForPolling())
     }
 
     @Test
@@ -228,7 +228,7 @@ class AuthorizationsListPresenterTest {
         val presenter = createPresenter(viewContract = mockView)
 
         assertThat(
-            presenter.getConnectionsData(),
+            presenter.getCurrentConnectionsAndKeysForPolling(),
             equalTo(listOf(ConnectionAndKey(connection1, mockPrivateKey)))
         )
     }
@@ -357,7 +357,7 @@ class AuthorizationsListPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onConfirmDenySuccessTest_ConfirmSuccess() {
-        val presenter: AuthorizationsListPresenter = createPresenter(viewContract = mockView)
+        val presenter: AuthorizationsListViewModel = createPresenter(viewContract = mockView)
         presenter.viewModels = listOf(viewModel1.copy(), viewModel2.copy(viewMode = ViewMode.CONFIRM_PROCESSING))
 
         presenter.onConfirmDenySuccess(success = true, authorizationID = "2", connectionID = "1")
@@ -371,7 +371,7 @@ class AuthorizationsListPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onConfirmDenySuccessTest_DenySuccess() {
-        val presenter: AuthorizationsListPresenter = createPresenter(viewContract = mockView)
+        val presenter: AuthorizationsListViewModel = createPresenter(viewContract = mockView)
         presenter.viewModels = listOf(viewModel1.copy(), viewModel2.copy(viewMode = ViewMode.DENY_PROCESSING))
 
         presenter.onConfirmDenySuccess(success = true, authorizationID = "2", connectionID = "1")
@@ -385,7 +385,7 @@ class AuthorizationsListPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onConfirmDenySuccessTest_invalidParams() {
-        val presenter: AuthorizationsListPresenter = createPresenter(viewContract = mockView)
+        val presenter: AuthorizationsListViewModel = createPresenter(viewContract = mockView)
         presenter.onConfirmDenySuccess(authorizationID = "1", connectionID = "1", success = false)
 
         Mockito.verify(mockPollingService).start()
@@ -566,8 +566,8 @@ class AuthorizationsListPresenterTest {
     private val viewModel1 = authorizationData1.toAuthorizationViewModel(connection1)
     private val viewModel2 = authorizationData2.toAuthorizationViewModel(connection1)
 
-    private fun createPresenter(viewContract: AuthorizationsListContract.View? = null): AuthorizationsListPresenter {
-        return AuthorizationsListPresenter(
+    private fun createPresenter(viewContract: AuthorizationsListContract.View? = null): AuthorizationsListViewModel {
+        return AuthorizationsListViewModel(
             appContext = TestAppTools.applicationContext,
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,

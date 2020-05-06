@@ -2,7 +2,7 @@
 <!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
-    Copyright (c) 2019 Salt Edge Inc.
+    Copyright (c) 2020 Salt Edge Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,14 +24,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
     android:transitionGroup="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/blurredView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white"
         android:transitionGroup="true">
 
         <androidx.constraintlayout.widget.Guideline
@@ -45,10 +43,10 @@
             android:id="@+id/negativeActionView"
             style="@style/WhiteButton"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="16dp"
+            android:layout_height="@dimen/dp_54"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginEnd="@dimen/dp_4"
+            android:layout_marginBottom="@dimen/dp_16"
             android:text="@string/actions_deny"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -58,10 +56,10 @@
             android:id="@+id/positiveActionView"
             style="@style/BlueButton"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_height="@dimen/dp_54"
+            android:layout_marginStart="@dimen/dp_4"
+            android:layout_marginEnd="@dimen/dp_16"
+            android:layout_marginBottom="@dimen/dp_16"
             android:text="@string/actions_allow"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -69,12 +67,12 @@
 
         <TextView
             android:id="@+id/titleTextView"
-            style="@style/Text14GrayRegular"
+            style="@style/Text24Regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginTop="@dimen/dp_8"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginEnd="@dimen/dp_16"
             android:gravity="center"
             android:maxLines="2"
             app:layout_constraintEnd_toEndOf="parent"
@@ -84,10 +82,10 @@
 
         <TextView
             android:id="@+id/descriptionTextView"
-            style="@style/Text14GrayRegular"
+            style="@style/Text16Regular"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="16dp"
+            android:layout_margin="@dimen/dp_16"
             android:gravity="start"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
@@ -100,7 +98,7 @@
             android:id="@+id/descriptionWebView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="16dp"
+            android:layout_margin="@dimen/dp_16"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/titleTextView"
@@ -127,37 +125,41 @@
 
         <FrameLayout
             android:id="@+id/statusProgressOrImageContainer"
-            android:layout_width="@dimen/dp_70"
-            android:layout_height="@dimen/dp_70"
+            android:layout_width="@dimen/dp_76"
+            android:layout_height="@dimen/dp_76"
+            android:elevation="@dimen/dp_40"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/statusTitleTextView"
-            android:layout_marginBottom="@dimen/dp_32">
+            android:layout_marginBottom="@dimen/dp_26"
+            android:background="@drawable/shape_bg_process_status">
 
             <ProgressBar
                 android:id="@+id/progressStatusView"
                 style="?android:attr/progressBarStyleLarge"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/dp_56"
+                android:layout_height="@dimen/dp_56"
                 android:indeterminateTint="@color/blue"
+                android:layout_gravity="center"
                 android:indeterminateTintMode="src_in" />
 
             <ImageView
                 android:id="@id/statusImageView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/dp_56"
+                android:layout_height="@dimen/dp_56"
                 android:contentDescription="@string/authorizations_processing"
-                android:src="@drawable/ic_success_70"/>
+                android:layout_gravity="center"
+                tools:src="@drawable/ic_status_success"/>
         </FrameLayout>
 
         <TextView
             android:id="@+id/statusTitleTextView"
-            style="@style/Text20BlackMedium"
+            style="@style/Text20Regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginEnd="@dimen/dp_32"
+            android:layout_marginBottom="@dimen/dp_10"
             android:gravity="center"
             android:lines="1"
             app:layout_constraintEnd_toEndOf="parent"
@@ -167,12 +169,11 @@
 
         <TextView
             android:id="@+id/statusDescriptionTextView"
-            style="@style/Text16BlackRegular"
+            style="@style/Text16Regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginEnd="@dimen/dp_16"
             android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -21,40 +21,42 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:layout_height="@dimen/authorizations_headers_pager_height">
 
-    <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    <androidx.cardview.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/cardView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_42"
+        android:layout_height="@dimen/dp_48"
         android:layout_gravity="center"
-        android:layout_marginStart="@dimen/dp_7"
-        android:layout_marginEnd="@dimen/dp_7"
-        android:layout_marginTop="@dimen/dp_20"
-        android:layout_marginBottom="@dimen/dp_20"
-        card_view:cardCornerRadius="@dimen/dp_21"
-        card_view:cardElevation="@dimen/dp_6">
+        android:layout_marginStart="@dimen/dp_8"
+        android:layout_marginEnd="@dimen/dp_8"
+        android:layout_marginTop="@dimen/dp_24"
+        android:layout_marginBottom="@dimen/dp_24"
+        card_view:cardCornerRadius="@dimen/dp_6"
+        card_view:cardElevation="@dimen/dp_8"
+        >
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/authorization_header_view_background">
 
             <ImageView
                 android:id="@+id/logoView"
-                android:layout_width="@dimen/dp_24"
-                android:layout_height="@dimen/dp_24"
-                android:layout_marginStart="@dimen/dp_14"
-                android:layout_marginTop="@dimen/dp_9"
+                android:layout_width="@dimen/dp_28"
+                android:layout_height="@dimen/dp_28"
+                android:layout_marginStart="@dimen/dp_8"
+                android:layout_marginTop="@dimen/dp_10"
                 android:layout_marginEnd="@dimen/dp_8"
-                android:layout_marginBottom="@dimen/dp_9"
+                android:layout_marginBottom="@dimen/dp_10"
                 android:contentDescription="@null"
                 android:scaleType="fitCenter"
                 tools:background="@color/blue" />
 
             <TextView
                 android:id="@+id/titleView"
-                style="@style/Text16BlackRegular"
+                style="@style/Text16Regular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -80,14 +82,14 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_2"
-                android:indeterminateTint="@color/blue"
                 android:progressBackgroundTint="@android:color/transparent"
-                android:progressTint="@color/blue"
+                android:progressTint="@color/blue_text"
+                android:indeterminateTint="@color/blue_text"
                 android:indeterminateTintMode="src_in"
                 android:progressTintMode="src_in"
                 android:layout_alignParentBottom="true"
-                android:layout_marginStart="@dimen/dp_13"
-                android:layout_marginEnd="@dimen/dp_13" />
+                android:layout_marginStart="@dimen/dp_2"
+                android:layout_marginEnd="@dimen/dp_2" />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 </RelativeLayout>

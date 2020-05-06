@@ -103,7 +103,7 @@ class SubmitActionPresenter @Inject constructor(
             ViewMode.ACTION_SUCCESS -> {
                 viewContract?.setProcessingVisibility(false)
                 viewContract?.updateCompleteViewContent(
-                    iconResId = R.drawable.ic_success_70,
+                    iconResId = R.drawable.ic_status_success,
                     completeTitleResId = R.string.action_feature_title,
                     completeMessageResId = R.string.action_feature_description,
                     mainActionTextResId = android.R.string.ok
@@ -112,7 +112,7 @@ class SubmitActionPresenter @Inject constructor(
             ViewMode.ACTION_ERROR -> {
                 viewContract?.setProcessingVisibility(false)
                 viewContract?.updateCompleteViewContent(
-                    iconResId = R.drawable.ic_auth_error_70,
+                    iconResId = R.drawable.ic_status_error,
                     completeTitleResId = R.string.action_error_title,
                     completeMessageResId = R.string.action_error_description,
                     mainActionTextResId = R.string.actions_try_again

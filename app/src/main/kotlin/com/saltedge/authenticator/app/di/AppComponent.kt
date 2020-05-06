@@ -26,16 +26,15 @@ import com.saltedge.authenticator.features.actions.di.SubmitActionComponent
 import com.saltedge.authenticator.features.actions.di.SubmitActionModule
 import com.saltedge.authenticator.features.authorizations.details.di.AuthorizationDetailsComponent
 import com.saltedge.authenticator.features.authorizations.details.di.AuthorizationDetailsModule
-import com.saltedge.authenticator.features.authorizations.list.di.AuthorizationsListComponent
-import com.saltedge.authenticator.features.authorizations.list.di.AuthorizationsListModule
+import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
 import com.saltedge.authenticator.features.connections.create.di.ConnectProviderComponent
 import com.saltedge.authenticator.features.connections.create.di.ConnectProviderModule
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListComponent
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListModule
-import com.saltedge.authenticator.features.qr.QrScannerActivity
 import com.saltedge.authenticator.features.launcher.LauncherActivity
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
+import com.saltedge.authenticator.features.qr.QrScannerActivity
 import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.language.di.LanguageSelectComponent
 import com.saltedge.authenticator.features.settings.language.di.LanguageSelectModule
@@ -70,7 +69,6 @@ interface AppComponent {
     fun addConnectionsListModule(module: ConnectionsListModule): ConnectionsListComponent
     fun addConnectProviderModule(module: ConnectProviderModule): ConnectProviderComponent
     fun addActionModule(moduleSubmit: SubmitActionModule): SubmitActionComponent
-    fun addAuthorizationsListModule(module: AuthorizationsListModule): AuthorizationsListComponent
     fun addAuthorizationDetailsModule(module: AuthorizationDetailsModule): AuthorizationDetailsComponent
     fun addSettingsListModule(module: SettingsListModule): SettingsListComponent
     fun addLanguageSelectModule(module: LanguageSelectModule): LanguageSelectComponent
@@ -81,5 +79,6 @@ interface AppComponent {
     fun inject(activity: LauncherActivity)
     fun inject(activity: MainActivity)
     fun inject(activity: QrScannerActivity)
+    fun inject(fragment: AuthorizationsListFragment)
     fun inject(fragment: AboutListFragment)
 }

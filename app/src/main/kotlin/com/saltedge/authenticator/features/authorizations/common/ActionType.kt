@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.features.authorizations.common
 
-enum class ActionType {
+enum class ActionType {//TODO REVIEW USAGE
     CONFIRM, DENY;
 
     fun toViewMode(): ViewMode {

@@ -371,7 +371,7 @@ class ConnectProviderPresenterTest {
     fun getIconResIdTestCase1() {
         val presenter = createPresenter(viewContract = mockView)
 
-        assertThat(presenter.iconResId, equalTo(R.drawable.ic_auth_error_70))
+        assertThat(presenter.iconResId, equalTo(R.drawable.ic_status_error))
     }
 
     /**
@@ -394,7 +394,7 @@ class ConnectProviderPresenterTest {
 
         presenter.webAuthFinishSuccess(id = "1", accessToken = "access_token")
 
-        assertThat(presenter.iconResId, equalTo(R.drawable.ic_complete_ok_70))
+        assertThat(presenter.iconResId, equalTo(R.drawable.ic_status_success))
     }
 
     /**

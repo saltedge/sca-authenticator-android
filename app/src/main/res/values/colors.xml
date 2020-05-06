@@ -76,6 +76,7 @@
     <color name="system_bar_color">@color/primary</color>
     <color name="theme_background">@android:color/white</color>
     <color name="info_message_background">@color/grey_light_extra</color>
+    <color name="blue_text">@color/primary_dark</color>
     <color name="onboarding_dots_background">@color/primary</color>
     <color name="passcode_dots_background">@color/grey_40</color>
     <color name="primary_text">@color/dark_100</color>
@@ -90,4 +91,6 @@
     <color name="menu_action_icon_fill_color">@color/dark_60</color>
     <color name="qr_camera_mask_background">@color/white_87</color>
     <color name="bottom_menu_background">@android:color/white</color>
+    <color name="authorization_header_view_background">@android:color/white</color>
+    <color name="rounded_image_background">@color/grey_20</color>
 </resources>

@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.authorizations.confirm
 
-import com.saltedge.authenticator.features.authorizations.confirmPasscode.ConfirmPasscodePresenter
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat

@@ -21,20 +21,20 @@
 package com.saltedge.authenticator.features.connections.list
 
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
-import com.saltedge.authenticator.widget.RoundedImageView
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tools.inflateListItemView
-import com.saltedge.authenticator.tools.loadImage
+import com.saltedge.authenticator.tools.loadRoundedImage
 import com.saltedge.authenticator.tools.setTextColorResId
 
 class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClickListener?) :
     RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_connection)) {
 
-    private val logoImageView = itemView.findViewById<RoundedImageView>(R.id.logoImageView)
+    private val logoImageView = itemView.findViewById<ImageView>(R.id.logoImageView)
     private val titleView = itemView.findViewById<TextView>(R.id.titleView)
     private val subTitleView = itemView.findViewById<TextView>(R.id.subTitleView)
 
@@ -46,7 +46,7 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
     }
 
     fun bind(item: ConnectionViewModel) {
-        logoImageView.loadImage(
+        logoImageView.loadRoundedImage(
             imageUrl = item.logoUrl,
             placeholderId = R.drawable.ic_logo_bank_placeholder
         )

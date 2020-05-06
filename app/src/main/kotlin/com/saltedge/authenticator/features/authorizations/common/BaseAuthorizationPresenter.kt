@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.authorizations.common
 
 import android.content.Context
-import com.saltedge.authenticator.features.authorizations.confirmPasscode.PasscodePromptCallback
+import com.saltedge.authenticator.features.authorizations.confirm.PasscodePromptCallback
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
 import com.saltedge.authenticator.sdk.model.AuthorizationID

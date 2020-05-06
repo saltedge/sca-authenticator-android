@@ -95,7 +95,7 @@ android {
         }
     }
 
-    dataBinding {
+    dataBinding {//TODO replace in future with viewBinding
         enabled = true
     }
 
