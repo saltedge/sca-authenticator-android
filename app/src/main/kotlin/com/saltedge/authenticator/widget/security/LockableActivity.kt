@@ -39,7 +39,9 @@ import com.saltedge.authenticator.features.main.buildWarning
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.models.repository.ConnectionsRepository
 import com.saltedge.authenticator.models.repository.PreferenceRepository
+import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
@@ -108,7 +110,9 @@ abstract class LockableActivity :
         viewContract = viewContract,
         connectionsRepository = ConnectionsRepository,
         preferenceRepository = PreferenceRepository,
-        passcodeTools = PasscodeTools
+        passcodeTools = PasscodeTools,
+        keyStoreManager = KeyStoreManager,
+        apiManager = AuthenticatorApiManager
     )
 
     private var biometricTools: BiometricToolsAbs? = null
@@ -293,6 +297,7 @@ abstract class LockableActivity :
     }
 
     private fun showOnboardingActivity() {
+        presenter.clearAppData()
         finish()
         startActivity(Intent(this, OnboardingSetupActivity::class.java))
     }

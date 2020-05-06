@@ -54,17 +54,17 @@ class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         if (view == null || !isEnabled) return
         vibrateOnKeyClick()
         when (view.id) {
-            R.id.fingerView -> passcodeInputViewListener?.onBiometricInputSelected()
-            R.id.deleteView -> clickListener?.onDeleteKeyClick()
-            R.id.forgotView -> passcodeInputViewListener?.onForgotActionSelected()
+            R.id.fingerActionView -> passcodeInputViewListener?.onBiometricInputSelected()
+            R.id.deleteActionView -> clickListener?.onDeleteKeyClick()
+            R.id.forgotActionView -> passcodeInputViewListener?.onForgotActionSelected()
             else -> clickListener?.onDigitKeyClick((view as? TextView)?.text.toString())
         }
     }
 
     fun setupFingerAction(active: Boolean) {
-        fingerView?.setVisible(active)
-        forgotView?.setVisible(active)
-        deleteView?.setVisible(!active)
+        fingerActionView?.setVisible(active)
+        forgotActionView?.setVisible(active)
+        deleteActionView?.setVisible(!active)
     }
 
     @Suppress("DEPRECATION")
@@ -75,13 +75,13 @@ class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
     }
 
     fun showDeleteView() {
-        fingerView?.setVisible(show = false)
-        deleteView?.setVisible(show = true)
+        fingerActionView?.setVisible(show = false)
+        deleteActionView?.setVisible(show = true)
     }
 
     fun showFingerView() {
-        fingerView?.setVisible(show = true)
-        deleteView?.setVisible(show = false)
+        fingerActionView?.setVisible(show = true)
+        deleteActionView?.setVisible(show = false)
     }
 
     interface KeypadClickListener {

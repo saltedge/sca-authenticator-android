@@ -138,7 +138,7 @@
 
     <!--fourth row-->
     <FrameLayout
-        android:id="@+id/forgotView"
+        android:id="@+id/forgotActionView"
         style="@style/PinpadAction"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -156,7 +156,7 @@
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/fingerView"
+        android:id="@+id/fingerActionView"
         style="@style/PinpadAction"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/line_vertical_2"
@@ -181,7 +181,7 @@
         app:layout_constraintTop_toBottomOf="@id/line_horizontal_3" />
 
     <FrameLayout
-        android:id="@+id/deleteView"
+        android:id="@+id/deleteActionView"
         style="@style/PinpadAction"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/line_vertical_2"
