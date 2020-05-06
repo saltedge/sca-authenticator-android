@@ -24,9 +24,14 @@ import android.content.Intent
 import android.os.CountDownTimer
 import android.os.SystemClock
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.connection.isActive
 import com.saltedge.authenticator.sdk.tools.MILLIS_IN_MINUTE
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.tools.millisToRemainedMinutes
 import com.saltedge.authenticator.tools.log
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
@@ -37,7 +42,9 @@ class LockableActivityPresenter(
     val viewContract: LockableActivityContract,
     val connectionsRepository: ConnectionsRepositoryAbs,
     val preferenceRepository: PreferenceRepositoryAbs,
-    val passcodeTools: PasscodeToolsAbs
+    val passcodeTools: PasscodeToolsAbs,
+    val keyStoreManager: KeyStoreManagerAbs,
+    val apiManager: AuthenticatorApiManagerAbs
 ) {
 
     private var returnFromOwnActivity = false
@@ -114,6 +121,11 @@ class LockableActivityPresenter(
         lockScreen()
     }
 
+    fun clearAppData() {
+        sendRevokeRequestForConnections(connectionsRepository.getAllActiveConnections())
+        deleteAllConnectionsAndKeys()
+    }
+
     private fun lockScreen() {
         viewContract.lockScreen()
         val inputAttempt = preferenceRepository.pinInputAttempts
@@ -167,5 +179,18 @@ class LockableActivityPresenter(
         attemptNumber == 9 -> 60L * MILLIS_IN_MINUTE
         attemptNumber == 10 -> 60L * MILLIS_IN_MINUTE
         else -> Long.MAX_VALUE
+    }
+
+    private fun sendRevokeRequestForConnections(connections: List<Connection>) {
+        val connectionsAndKeys: List<ConnectionAndKey> = connections.filter { it.isActive() }
+            .mapNotNull { keyStoreManager.createConnectionAndKeyModel(it) }
+
+        apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = null)
+    }
+
+    private fun deleteAllConnectionsAndKeys() {
+        val connectionGuids = connectionsRepository.getAllConnections().map { it.guid }
+        keyStoreManager.deleteKeyPairs(connectionGuids)
+        connectionsRepository.deleteAllConnections()
     }
 }

@@ -44,8 +44,8 @@
 
             <ImageView
                 android:id="@+id/appLogoView"
-                android:layout_width="@dimen/splash_logo_image_size"
-                android:layout_height="@dimen/splash_logo_image_size"
+                android:layout_width="@dimen/logo_image_size"
+                android:layout_height="@dimen/logo_image_size"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/dp_76"
                 android:src="@drawable/ic_app_logo" />
@@ -68,87 +68,82 @@
                 android:id="@+id/passcodeInputView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/dp_28"
                 android:layout_below="@id/titleView"
+                android:layout_marginTop="@dimen/dp_28"
                 android:visibility="@{onboardingSetupViewModel.passcodeInputViewVisibility}" />
         </RelativeLayout>
 
-                <RelativeLayout
-                    android:id="@+id/onboardingLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="@{onboardingSetupViewModel.onboardingLayoutVisibility}">
+        <RelativeLayout
+            android:id="@+id/onboardingLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="@{onboardingSetupViewModel.onboardingLayoutVisibility}">
 
-                    <Button
-                        android:id="@+id/proceedToSetup"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/dp_48"
-                        android:layout_alignParentBottom="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginStart="@dimen/dp_32"
-                        android:layout_marginEnd="@dimen/dp_32"
-                        android:layout_marginBottom="@dimen/dp_40"
-                        android:backgroundTint="@color/button_color_selector"
-                        android:elevation="@dimen/dp_30"
-                        android:fontFamily="@font/roboto_medium"
-                        android:text="@string/actions_get_started"
-                        android:textAllCaps="false"
-                        android:textColor="@android:color/white"
-                        android:textSize="@dimen/text_14"
-                        android:visibility="@{onboardingSetupViewModel.proceedViewVisibility}" />
+            <Button
+                android:id="@+id/proceedToSetup"
+                style="@style/BlueButton"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_48"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="@dimen/dp_32"
+                android:layout_marginEnd="@dimen/dp_32"
+                android:layout_marginBottom="@dimen/dp_40"
+                android:text="@string/actions_get_started"
+                android:visibility="@{onboardingSetupViewModel.proceedViewVisibility}" />
 
-                    <LinearLayout
-                        android:id="@+id/actionLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/dp_48"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginStart="@dimen/dp_32"
-                        android:layout_marginEnd="@dimen/dp_32"
-                        android:layout_marginBottom="@dimen/dp_40"
-                        android:gravity="bottom"
-                        android:orientation="horizontal"
-                        android:visibility="@{onboardingSetupViewModel.skipViewVisibility}">
+            <LinearLayout
+                android:id="@+id/actionLayout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_48"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="@dimen/dp_32"
+                android:layout_marginEnd="@dimen/dp_32"
+                android:layout_marginBottom="@dimen/dp_40"
+                android:gravity="bottom"
+                android:orientation="horizontal"
+                android:visibility="@{onboardingSetupViewModel.skipViewVisibility}">
 
-                        <TextView
-                            android:id="@+id/skipActionView"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="9dp"
-                            android:layout_weight="1"
-                            android:fontFamily="@font/roboto_medium"
-                            android:text="@string/actions_skip"
-                            android:textColor="@color/primary"
-                            android:textSize="@dimen/text_18" />
+                <TextView
+                    android:id="@+id/skipActionView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="9dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/roboto_medium"
+                    android:text="@string/actions_skip"
+                    android:textColor="@color/primary"
+                    android:textSize="@dimen/text_18" />
 
-                        <Button
-                            android:id="@+id/nextActionView"
-                            android:layout_width="@dimen/dp_120"
-                            android:layout_height="@dimen/dp_48"
-                            android:backgroundTint="@color/button_color_selector"
-                            android:elevation="@dimen/dp_30"
-                            android:fontFamily="@font/roboto_medium"
-                            android:text="@string/actions_next"
-                            android:textAllCaps="false"
-                            android:textColor="@android:color/white"
-                            android:textSize="@dimen/text_14" />
-                    </LinearLayout>
+                <Button
+                    android:id="@+id/nextActionView"
+                    android:layout_width="@dimen/dp_120"
+                    android:layout_height="@dimen/dp_48"
+                    android:backgroundTint="@color/button_color_selector"
+                    android:elevation="@dimen/dp_30"
+                    android:fontFamily="@font/roboto_medium"
+                    android:text="@string/actions_next"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/text_14" />
+            </LinearLayout>
 
-                    <androidx.viewpager.widget.ViewPager
-                        android:id="@+id/onboardingPager"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginBottom="@dimen/dp_120"
-                        tools:background="@color/red" />
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/onboardingPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="@dimen/dp_120"
+                tools:background="@color/red" />
 
-                    <com.saltedge.authenticator.widget.pageindicator.DotsPageIndicatorView
-                        android:id="@+id/pageIndicatorView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/dp_32"
-                        android:layout_marginTop="@dimen/dp_325"
-                        android:layout_marginBottom="@dimen/dp_124"
-                        app:selectedColor="@color/onboarding_dots_background" />
-                </RelativeLayout>
+            <com.saltedge.authenticator.widget.pageindicator.DotsPageIndicatorView
+                android:id="@+id/pageIndicatorView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_32"
+                android:layout_marginTop="@dimen/dp_325"
+                android:layout_marginBottom="@dimen/dp_124"
+                app:selectedColor="@color/onboarding_dots_background" />
+        </RelativeLayout>
     </FrameLayout>
 </layout>

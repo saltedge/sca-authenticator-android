@@ -41,7 +41,7 @@ class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
     View.OnClickListener {
 
     var clickListener: KeypadClickListener? = null
-    var fingerprintActionClickListener: PasscodeInputViewListener? = null
+    var passcodeInputViewListener: PasscodeInputViewListener? = null
 
     private var vibrator: Vibrator? = context.getSystemService(VIBRATOR_SERVICE) as? Vibrator?
 
@@ -54,14 +54,17 @@ class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         if (view == null || !isEnabled) return
         vibrateOnKeyClick()
         when (view.id) {
-            R.id.fingerView -> fingerprintActionClickListener?.onBiometricInputSelected()
-            R.id.deleteView -> clickListener?.onDeleteKeyClick()
+            R.id.fingerActionView -> passcodeInputViewListener?.onBiometricInputSelected()
+            R.id.deleteActionView -> clickListener?.onDeleteKeyClick()
+            R.id.forgotActionView -> passcodeInputViewListener?.onForgotActionSelected()
             else -> clickListener?.onDigitKeyClick((view as? TextView)?.text.toString())
         }
     }
 
     fun setupFingerAction(active: Boolean) {
-        fingerView?.setVisible(active)
+        fingerActionView?.setVisible(active)
+        forgotActionView?.setVisible(active)
+        deleteActionView?.setVisible(!active)
     }
 
     @Suppress("DEPRECATION")
@@ -69,6 +72,16 @@ class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator?.vibrate(VibrationEffect.createOneShot(40, 32))
         } else vibrator?.vibrate(10)
+    }
+
+    fun showDeleteView() {
+        fingerActionView?.setVisible(show = false)
+        deleteActionView?.setVisible(show = true)
+    }
+
+    fun showFingerView() {
+        fingerActionView?.setVisible(show = true)
+        deleteActionView?.setVisible(show = false)
     }
 
     interface KeypadClickListener {

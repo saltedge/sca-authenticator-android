@@ -56,12 +56,21 @@
         <item name="android:fontFamily">@font/roboto_regular</item>
     </style>
 
-    <style name="Text18NeutralsDarkRegular">
+    <style name="Text18DarkRegular">
         <item name="android:ellipsize">end</item>
         <item name="android:textColor">@color/primary_text</item>
         <item name="android:textSize">@dimen/text_18</item>
         <item name="android:lineSpacingExtra">@dimen/text_4</item>
         <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
+
+    <style name="Text22DarkRegular">
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textSize">@dimen/text_22</item>
+        <item name="android:lineSpacingExtra">@dimen/text_4</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textAlignment">center</item>
     </style>
 
     <style name="Text16GrayRegular">
