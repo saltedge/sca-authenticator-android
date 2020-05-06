@@ -54,7 +54,12 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
     var listener: PasscodeInputViewListener? = null
         set(value) {
             field = value
-            pinpadView?.fingerprintActionClickListener = value
+            pinpadView?.passcodeInputViewListener = value
+        }
+    var biometricsActionIsAvailable: Boolean = false
+        set(value) {
+            field = value
+            pinpadView?.setupFingerAction(active = value)
         }
 
     fun initInputMode(inputMode: InputMode, currentPasscode: String = "") {
@@ -62,12 +67,6 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
         this.currentPasscode = if (inputMode == InputMode.NEW_PASSCODE) "" else currentPasscode
         passcodeLabelView?.clearAll()
     }
-
-    var biometricsActionIsAvailable: Boolean = false
-        set(value) {
-            field = value
-            pinpadView?.setupFingerAction(active = value)
-        }
 
     override fun onPasscodeInputFinished(passcode: String) {
         if (passcode.isEmpty()) return
@@ -77,7 +76,7 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
                     listener?.onEnteredPasscodeIsValid()
                 } else {
                     passcodeLabelView?.clearAll()
-                    onInputError(R.string.errors_passcode_not_match)
+                    onInputError(R.string.errors_wrong_passcode)
                     listener?.onEnteredPasscodeIsInvalid()
                 }
             }
@@ -105,6 +104,10 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
                 }
             }
         }
+    }
+
+    override fun onPasscodeLabelChanged(passcode: String) {
+        if (passcode.isEmpty()) pinpadView?.showFingerView() else pinpadView?.showDeleteView()
     }
 
     private fun setupViews() {

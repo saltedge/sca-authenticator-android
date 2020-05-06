@@ -73,7 +73,7 @@ class SettingsListPresenter @Inject constructor(
                 itemIsClickable = true
             ),
             SettingsItemViewModel(
-                titleId = R.string.settings_clear_all_data,
+                titleId = R.string.settings_clear_data,
                 itemIsClickable = true,
                 colorResId = R.color.red
             )
@@ -112,7 +112,7 @@ class SettingsListPresenter @Inject constructor(
                 }
             R.string.about_feature_title -> viewContract?.showAboutList()
             R.string.settings_report_bug -> viewContract?.openMailApp()
-            R.string.settings_clear_all_data -> viewContract?.showDeleteConnectionView(requestCode = DELETE_ALL_REQUEST_CODE)
+            R.string.settings_clear_data -> viewContract?.showDeleteConnectionView(requestCode = DELETE_ALL_REQUEST_CODE)
         }
     }
 

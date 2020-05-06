@@ -85,7 +85,7 @@ class SettingsListPresenterTest {
                     itemIsClickable = true
                 ),
                 SettingsItemViewModel(
-                    titleId = R.string.settings_clear_all_data,
+                    titleId = R.string.settings_clear_data,
                     itemIsClickable = true,
                     colorResId = R.color.red
                 )

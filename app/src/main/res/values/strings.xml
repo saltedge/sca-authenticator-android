@@ -45,6 +45,7 @@
     <string name="actions_connect_provider">Connect Provider</string>
     <string name="actions_confirm">Confirm</string>
     <string name="actions_enter_passcode_or_fingerprint">Enter Passcode or use Fingerprint</string>
+    <string name="actions_clear">Clear</string>
 
     <string name="errors_touch_id_not_enrolled">No Fingerprint was enrolled.</string>
     <string name="errors_touch_id_not_supported">Fingerprint is not supported on your device</string>
@@ -60,12 +61,12 @@
     <string name="errors_no_internet_connection">No Internet connection.\nPlease try again later.</string>
     <string name="errors_passcode_info">The Passcode should contain between %1$d and %2$d digits.</string>
     <string name="errors_passcode_not_match">Passcodes don\'t match</string>
+    <string name="errors_wrong_passcode">Wrong passcode</string>
     <string name="errors_passcode_try_again">Please try again in \%s minutes.</string>
     <string name="errors_passcode_try_again_short">Please try again in \%s minute. </string>
     <string name="errors_request_error">Request error</string>
     <string name="errors_warning">Warning</string>
     <string name="errors_error">Error</string>
-    <string name="errors_wrong_passcode">You entered the wrong Passcode.</string>
     <string name="errors_wrong_passcode_long">You entered the wrong Passcode, please try again.</string>
     <string name="errors_connection_failed">Connection Failed</string>
     <string name="errors_connection_failed_description">Provider not found. Please create connection to your service provider and try again.</string>
@@ -135,7 +136,7 @@
     <string name="settings_feature_title">Settings</string>
     <string name="settings_report_bug">Report a bug</string>
     <string name="settings_language">Language</string>
-    <string name="settings_clear_all_data">Clear all data</string>
+    <string name="settings_clear_data">Clear data</string>
     <string name="settings_notifications">Notifications</string>
     <string name="settings_passcode">Passcode</string>
     <string name="settings_passcode_description">Change passcode</string>
@@ -162,14 +163,18 @@
     <string name="scan_qr_title">Scan QR code</string>
     <string name="scan_qr_description">Scan the QR to make your \nfirst connection\n</string>
 
-    <string name="ui_dialog_clear_data_title">Delete all data?</string>
-    <string name="ui_dialog_clear_data_message">All app data including service providers, user data and settings will be permanently deleted.</string>
+    <string name="ui_dialog_clear_data_title">Clear app data?</string>
+    <string name="ui_dialog_clear_data_message">All app data including connected providers, user data and settings will be permanently deleted.</string>
     <string name="ui_dialog_rename_title">Rename connection</string>
     <string name="ui_dialog_delete_title">Delete connection</string>
     <string name="ui_dialog_delete_message">You will stop receiving authorization requests from provider. Are you sure you want to delete this connection?</string>
 
     <string name="warning_no_internet_connection">No internet connection</string>
     <string name="warning_application_was_locked">Application will be locked due to inactivity</string>
+
+    <string name="forgot_passcode">Forgot?</string>
+    <string name="forgot_passcode_title">Forgot passcode?</string>
+    <string name="forgot_passcode_description">Please clear app data and establish new connection with your provider.</string>
 
     <string name="consents_feature_title">Consents</string>
 </resources>
