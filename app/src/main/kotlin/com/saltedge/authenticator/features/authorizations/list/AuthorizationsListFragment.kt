@@ -86,7 +86,6 @@ class AuthorizationsListFragment : BaseFragment() {
         super.onResume()
         clearAllNotifications()
         headerAdapter?.startTimer()
-
     }
 
     override fun onPause() {
