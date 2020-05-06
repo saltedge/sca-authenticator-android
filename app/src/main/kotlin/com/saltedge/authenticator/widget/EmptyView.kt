@@ -66,8 +66,8 @@ class EmptyView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
         actionView?.text = text
     }
 
-    fun setIconResource(@DrawableRes resId: Int) {
-        imageView?.setImageResource(resId)
+    fun setImageResource(@DrawableRes resId: Int) {
+        emptyImageView?.setImageResource(resId)
     }
 
     override fun setOnClickListener(l: OnClickListener?) {
@@ -81,7 +81,7 @@ class EmptyView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
             attributes.getString(R.styleable.EmptyView_title)?.let { setTitle(it) }
             attributes.getString(R.styleable.EmptyView_description)?.let { setDescription(it) }
             setActionText(attributes.getString(R.styleable.EmptyView_mainActionText))
-            setIconResource(
+            setImageResource(
                 attributes.getResourceId(
                     R.styleable.EmptyView_iconSrc,
                     R.mipmap.ic_launcher

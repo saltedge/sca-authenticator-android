@@ -76,6 +76,52 @@ class AuthorizationsListViewModel @Inject constructor(
     val listItemUpdateEvent = MutableLiveData<ViewModelEvent<Int>>()
     val onConfirmErrorEvent = MutableLiveData<ViewModelEvent<String>>()
 
+    override fun onViewModelsExpired() {
+        listItemsValues.filter { it.shouldBeSetTimeOutMode }.forEach {
+            updateItemViewMode(listItem = it, newViewMode = ViewMode.TIME_OUT)
+        }
+    }
+
+    override fun onViewModelsShouldBeDestroyed() {
+        val currentItems = listItemsValues.filter { !it.shouldBeDestroyed }
+        if (currentItems != listItemsValues) postListItemsUpdate(newItems = currentItems)
+    }
+
+    override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
+        val listItem = listItemsValues.getOrNull(itemIndex) ?: return
+        val connectionAndKey = connectionsAndKeys[listItem.connectionID] ?: return
+        when (itemViewId) {
+            R.id.positiveActionView -> sendConfirmRequest(listItem = listItem, connectionAndKey = connectionAndKey)
+            R.id.negativeActionView -> sendDenyRequest(listItem = listItem, connectionAndKey = connectionAndKey)
+        }
+    }
+
+    override fun getCurrentConnectionsAndKeysForPolling(): List<ConnectionAndKey>? = collectAuthorizationRequestData()
+
+    override fun onFetchEncryptedDataResult(result: List<EncryptedData>, errors: List<ApiErrorData>) {
+        processAuthorizationsErrors(errors = errors)
+        processEncryptedAuthorizationsResult(encryptedList = result)
+    }
+
+    override fun onConfirmDenySuccess(result: ConfirmDenyResponseData, connectionID: ConnectionID) {
+        findListItem(connectionID, result.authorizationId ?: "")?.let { item ->
+            val viewMode = if (item.viewMode == ViewMode.DENY_PROCESSING)
+                ViewMode.DENY_SUCCESS else ViewMode.CONFIRM_SUCCESS
+            updateItemViewMode(listItem = item, newViewMode = viewMode)
+        }
+    }
+
+    override fun onConfirmDenyFailure(
+        error: ApiErrorData,
+        connectionID: ConnectionID,
+        authorizationID: AuthorizationID
+    ) {
+        onConfirmErrorEvent.postValue(ViewModelEvent(error.getErrorMessage(appContext)))
+        findListItem(connectionID, authorizationID)?.let { item ->
+            updateItemViewMode(listItem = item, newViewMode = ViewMode.ERROR)
+        }
+    }
+
     fun setup(lifecycle: Lifecycle) {
         lifecycle.addObserver(this)
         lifecycle.addObserver(pollingService)
@@ -87,80 +133,28 @@ class AuthorizationsListViewModel @Inject constructor(
         decryptJob.cancel()
     }
 
-    override fun onViewModelsExpired() {
-        listItemsValues.filter { it.shouldBeSetTimeOutMode }.forEach {
-            updateItemViewMode(it, ViewMode.TIME_OUT)
-        }
+    //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
+    fun processDecryptedAuthorizationsResult(result: List<AuthorizationData>) {
+        val newAuthorizationsData = result
+            .filter { it.isNotExpired() }
+            .sortedBy { it.createdAt }
+        val joinedViewModels = createViewModels(newAuthorizationsData).joinFinalModels(this.listItemsValues)
+        if (listItemsValues != joinedViewModels) postListItemsUpdate(newItems = joinedViewModels)
     }
-
-    override fun onViewModelsShouldBeDestroyed() {
-        val currentItems = listItemsValues.filter { !it.shouldBeDestroyed }
-        if (currentItems != listItemsValues) postListItemsUpdate(currentItems)
-    }
-
-    private fun postListItemsUpdate(currentItems: List<AuthorizationViewModel>) {
-        listItems.postValue(currentItems)
-        if (currentItems.isEmpty()) {
-            emptyViewVisibility.postValue(View.VISIBLE)
-            listVisibility.postValue(View.GONE)
-        } else {
-            listVisibility.postValue(View.VISIBLE)
-            emptyViewVisibility.postValue(View.GONE)
-        }
-    }
-
-    override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
-        val listItem = listItemsValues.getOrNull(itemIndex) ?: return
-        val connectionAndKey = connectionsAndKeys[listItem.connectionID] ?: return
-        when (itemViewId) {
-            R.id.positiveActionView -> sendConfirmRequest(listItem, connectionAndKey)
-            R.id.negativeActionView -> sendDenyRequest(listItem, connectionAndKey)
-        }
-    }
-
-    override fun getCurrentConnectionsAndKeysForPolling(): List<ConnectionAndKey>? = collectAuthorizationRequestData()
-
-    override fun onFetchEncryptedDataResult(result: List<EncryptedData>, errors: List<ApiErrorData>) {
-        processAuthorizationsErrors(errors)
-        processEncryptedAuthorizationsResult(result)
-    }
-
-    override fun onConfirmDenySuccess(result: ConfirmDenyResponseData, connectionID: ConnectionID) {
-        findListItem(connectionID, result.authorizationId ?: "")?.let { item ->
-            val viewMode = if (item.viewMode == ViewMode.DENY_PROCESSING)
-                ViewMode.DENY_SUCCESS else ViewMode.CONFIRM_SUCCESS
-            updateItemViewMode(item, viewMode)
-        }
-    }
-
-    override fun onConfirmDenyFailure(
-        error: ApiErrorData,
-        connectionID: ConnectionID,
-        authorizationID: AuthorizationID
-    ) {
-        onConfirmErrorEvent.postValue(ViewModelEvent(error.getErrorMessage(appContext)))
-        findListItem(connectionID, authorizationID)?.let { item ->
-            updateItemViewMode(item, ViewMode.ERROR)
-        }
-    }
-
-
 
     private fun collectAuthorizationRequestData(): List<ConnectionAndKey>? {
         return if (connectionsAndKeys.isEmpty()) null else connectionsAndKeys.values.toList()
     }
 
-    private fun processEncryptedAuthorizationsResult(result: List<EncryptedData>) {
+    private fun processEncryptedAuthorizationsResult(encryptedList: List<EncryptedData>) {
         launch {
-            val data = decryptAuthorizations(result)
-            withContext(Dispatchers.Main) {
-                processDecryptedAuthorizationsResult(result = data)
-            }
+            val data = decryptAuthorizations(encryptedList = encryptedList)
+            withContext(Dispatchers.Main) { processDecryptedAuthorizationsResult(result = data) }
         }
     }
 
-    private fun decryptAuthorizations(encryptedData: List<EncryptedData>): List<AuthorizationData> {
-        return encryptedData.mapNotNull {
+    private fun decryptAuthorizations(encryptedList: List<EncryptedData>): List<AuthorizationData> {
+        return encryptedList.mapNotNull {
             cryptoTools.decryptAuthorizationData(
                 encryptedData = it,
                 rsaPrivateKey = connectionsAndKeys[it.connectionId]?.key
@@ -168,19 +162,10 @@ class AuthorizationsListViewModel @Inject constructor(
         }
     }
 
-    //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
-    fun processDecryptedAuthorizationsResult(result: List<AuthorizationData>) {
-        val newAuthorizationsData = result
-            .filter { it.isNotExpired() }
-            .sortedBy { it.createdAt }
-        val joinedViewModels = createViewModels(newAuthorizationsData).joinFinalModels(this.listItemsValues)
-        if (listItemsValues != joinedViewModels) postListItemsUpdate(joinedViewModels)
-    }
-
     private fun createViewModels(authorizations: List<AuthorizationData>): List<AuthorizationViewModel> {
         return authorizations.mapNotNull { item ->
             connectionsAndKeys[item.connectionId]?.let {
-                item.toAuthorizationViewModel(it.connection)
+                item.toAuthorizationViewModel(connection = it.connection)
             }
         }
     }
@@ -231,7 +216,18 @@ class AuthorizationsListViewModel @Inject constructor(
 
     private fun updateItemViewMode(listItem: AuthorizationViewModel, newViewMode: ViewMode) {
         val itemIndex = listItemsValues.indexOf(listItem)
-        listItem.setNewViewMode(newViewMode)
+        listItem.setNewViewMode(newViewMode = newViewMode)
         listItemUpdateEvent.postValue(ViewModelEvent(itemIndex))
+    }
+
+    private fun postListItemsUpdate(newItems: List<AuthorizationViewModel>) {
+        listItems.postValue(newItems)
+        if (newItems.isEmpty()) {
+            emptyViewVisibility.postValue(View.VISIBLE)
+            listVisibility.postValue(View.GONE)
+        } else {
+            listVisibility.postValue(View.VISIBLE)
+            emptyViewVisibility.postValue(View.GONE)
+        }
     }
 }

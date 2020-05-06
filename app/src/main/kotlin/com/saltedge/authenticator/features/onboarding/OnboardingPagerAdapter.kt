@@ -55,7 +55,7 @@ class OnboardingPagerAdapter(
         val view = layoutInflater.inflate(R.layout.page_onboarding, null)
         view.findViewById<TextView?>(R.id.titleView)?.setText(item.titleResId)
         view.findViewById<TextView?>(R.id.subTitleView)?.setText(item.subTitleResId)
-        view.findViewById<ImageView?>(R.id.imageView)?.setImageResource(item.imageResId)
+        view.findViewById<ImageView?>(R.id.emptyImageView)?.setImageResource(item.imageResId)
         return view
     }
 }
