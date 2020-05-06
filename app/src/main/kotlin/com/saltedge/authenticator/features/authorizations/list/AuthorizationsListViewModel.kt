@@ -60,7 +60,7 @@ class AuthorizationsListViewModel @Inject constructor(
     ConfirmAuthorizationListener,
     AuthorizationStatusListener,
     CoroutineScope
-{
+{// TODO add tests
     private val decryptJob: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = decryptJob + Dispatchers.IO

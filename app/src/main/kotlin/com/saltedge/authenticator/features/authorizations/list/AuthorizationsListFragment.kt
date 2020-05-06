@@ -24,12 +24,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.cloud.clearNotifications
+import com.saltedge.authenticator.databinding.AuthorizationsListBinding
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsContentPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsHeaderPagerAdapter
@@ -41,11 +43,13 @@ import javax.inject.Inject
 
 class AuthorizationsListFragment : BaseFragment() {
 
-    lateinit var viewModel: AuthorizationsListViewModel
     @Inject lateinit var viewModelFactory: ViewModelsFactory
+    private lateinit var viewModel: AuthorizationsListViewModel
+    private lateinit var binding: AuthorizationsListBinding
     private val pagersScrollSynchronizer = PagersScrollSynchronizer()
     private var headerAdapter: AuthorizationsHeaderPagerAdapter? = null
     private var contentAdapter: AuthorizationsContentPagerAdapter? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +66,10 @@ class AuthorizationsListFragment : BaseFragment() {
             titleResId = R.string.authorizations_feature_title,
             showMenu = true
         )
-        return inflater.inflate(R.layout.fragment_authorizations_list, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_authorizations_list, container, false)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -96,12 +103,6 @@ class AuthorizationsListFragment : BaseFragment() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(AuthorizationsListViewModel::class.java)
         viewModel.setup(lifecycle = lifecycle)
 
-        viewModel.listVisibility.observe(this, Observer<Int> {
-            listGroup?.visibility = it
-        })
-        viewModel.emptyViewVisibility.observe(this, Observer<Int> {
-            emptyView?.visibility = it
-        })
         viewModel.listItems.observe(this, Observer<List<AuthorizationViewModel>> {
             headerAdapter?.data = it
             contentAdapter?.data = it

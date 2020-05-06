@@ -26,19 +26,19 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.OnboardingSetupBinding
-import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.features.main.MainActivity
-import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.log
 import com.saltedge.authenticator.tools.showWarningDialog
 import com.saltedge.authenticator.widget.passcode.PasscodeInputView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
+import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
 import kotlinx.android.synthetic.main.activity_onboarding.*
 import javax.inject.Inject
 
@@ -92,10 +92,8 @@ class OnboardingSetupActivity : AppCompatActivity(),
     }
 
     private fun setupViewModel() {
-        viewModel = ViewModelProviders
-            .of(this, viewModelFactory)
+        viewModel = ViewModelProvider(this, viewModelFactory)
             .get(OnboardingSetupViewModel::class.java)
-
         binding.onboardingSetupViewModel = viewModel
         binding.executePendingBindings()
         binding.lifecycleOwner = this

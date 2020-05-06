@@ -23,11 +23,13 @@ package com.saltedge.authenticator.features.main
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.databinding.MainActivityBinding
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
@@ -52,15 +54,15 @@ class MainActivity : LockableActivity(),
     MenuItemSelectListener
 {
     override lateinit var viewModel: MainActivityViewModel
-    @Inject
-    lateinit var viewModelFactory: ViewModelsFactory
+    @Inject lateinit var viewModelFactory: ViewModelsFactory
+    private lateinit var binding: MainActivityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        authenticatorApp?.appComponent?.inject(this)
-        setupViewModel()
         this.updateScreenshotLocking()
-        setContentView(R.layout.activity_main)
+        authenticatorApp?.appComponent?.inject(this)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        setupViewModel()
         setupViews()
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
     }
@@ -99,6 +101,10 @@ class MainActivity : LockableActivity(),
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainActivityViewModel::class.java)
+
+        binding.viewModel = viewModel
+        binding.executePendingBindings()
+        binding.lifecycleOwner = this
         lifecycle.addObserver(viewModel)
 
         viewModel.onQrScanClickEvent.observe(this, Observer {
@@ -159,19 +165,6 @@ class MainActivity : LockableActivity(),
 
         viewModel.internetConnectionWarningVisibility.observe(this, Observer {
             //TODO update internet connection warning visibility
-        })
-        viewModel.appBarTitle.observe(this, Observer {
-            appBarTitle?.text = it
-        })
-        viewModel.appBarBackActionImage.observe(this, Observer {
-            appBarBackAction?.setImageResource(it)
-        })
-        viewModel.appBarBackActionVisibility.observe(this, Observer {
-            appBarBackAction?.visibility = it
-        })
-        viewModel.appBarMenuVisibility.observe(this, Observer {
-            appBarActionQrCode?.visibility = it
-            appBarActionMenu?.visibility = it
         })
     }
 

@@ -18,37 +18,49 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/theme_background">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
-        android:id="@+id/listGroup"
+    <data class="AuthorizationsListBinding">
+        <import type="android.view.View" />
+        <variable
+            name="viewModel"
+            type="com.saltedge.authenticator.features.authorizations.list.AuthorizationsListViewModel" />
+    </data>
+
+    <FrameLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:background="@color/theme_background">
 
-        <com.saltedge.authenticator.features.authorizations.list.WrapContentViewPager
-            android:id="@+id/headerViewPager"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/authorizations_headers_pager_height"
-            tools:background="@color/red"/>
-
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/contentViewPager"
+        <LinearLayout
+            android:id="@+id/listGroup"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:background="@color/blue" />
-    </LinearLayout>
+            android:orientation="vertical"
+            android:visibility="@{viewModel.listVisibility}">
 
-    <com.saltedge.authenticator.widget.EmptyView
-        android:id="@+id/emptyView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:iconSrc="@drawable/ic_authorizations_empty"
-        app:title="@string/authorizations_nothing_confirm"
-        app:description="@string/authorizations_nothing_confirm_description"/>
-</FrameLayout>
+            <com.saltedge.authenticator.features.authorizations.list.WrapContentViewPager
+                android:id="@+id/headerViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/authorizations_headers_pager_height"
+                tools:background="@color/red"/>
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/contentViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:background="@color/blue" />
+        </LinearLayout>
+
+        <com.saltedge.authenticator.widget.EmptyView
+            android:id="@+id/emptyView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:iconSrc="@drawable/ic_authorizations_empty"
+            app:title="@string/authorizations_nothing_confirm"
+            app:description="@string/authorizations_nothing_confirm_description"
+            android:visibility="@{viewModel.emptyViewVisibility}"/>
+    </FrameLayout>
+</layout>
