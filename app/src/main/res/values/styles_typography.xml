@@ -134,10 +134,10 @@
         <item name="android:fontFamily">@font/roboto_regular</item>
     </style>
 
-    <style name="Text20Regular">
+    <style name="Text22Regular">
         <item name="android:ellipsize">end</item>
         <item name="android:textColor">@color/primary_text</item>
-        <item name="android:textSize">@dimen/text_20</item>
+        <item name="android:textSize">@dimen/text_22</item>
         <item name="android:fontFamily">@font/roboto_regular</item>
     </style>
 
