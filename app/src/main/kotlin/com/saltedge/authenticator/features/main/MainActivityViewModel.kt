@@ -53,7 +53,7 @@ class MainActivityViewModel(
     NetworkStateChangeListener,
     NewAuthorizationListener,
     ActivityComponentsContract
-{// TODO add tests
+{
     private val connectivityReceiver = ConnectivityReceiver()//TODO make ext dependency
 
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
@@ -107,6 +107,16 @@ class MainActivityViewModel(
     }
 
     /**
+     * Handle result from QR Scanner
+     * if result is correct then show Connect View
+     */
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == QR_SCAN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            data?.let { onNewIntent(intent = it) }
+        }
+    }
+
+    /**
      * Handle Intents from external sources
      */
     fun onNewIntent(intent: Intent?) {
@@ -126,16 +136,6 @@ class MainActivityViewModel(
                     onShowSubmitActionEvent.postValue(ViewModelEvent(actionAppLinkData))
                 }
             }
-        }
-    }
-
-    /**
-     * Handle result from QR Scanner
-     * if result is correct then show Connect View
-     */
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == QR_SCAN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            data?.let { onNewIntent(intent = it) }
         }
     }
 
@@ -193,13 +193,12 @@ class MainActivityViewModel(
     override fun updateAppbar(
         titleResId: ResId?,
         title: String?,
-        actionImageResId: ResId?,
+        backActionImageResId: ResId?,
         showMenu: Boolean
     ) {
-        titleResId?.let { appBarTitle.postValue(appContext.getString(it)) }
-            ?: appBarTitle.postValue(title ?: "")
-        actionImageResId?.let { appBarBackActionImageResource.postValue(it) }
-        appBarBackActionVisibility.postValue(if (actionImageResId == null) View.GONE else View.VISIBLE)
+        appBarTitle.postValue(titleResId?.let { appContext.getString(it) } ?: title ?: "")
+        backActionImageResId?.let { appBarBackActionImageResource.postValue(it) }
+        appBarBackActionVisibility.postValue(if (backActionImageResId == null) View.GONE else View.VISIBLE)
         appBarMenuVisibility.postValue(if (showMenu) View.VISIBLE else View.GONE)
     }
 

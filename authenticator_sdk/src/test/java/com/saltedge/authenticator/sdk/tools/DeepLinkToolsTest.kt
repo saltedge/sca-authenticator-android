@@ -75,7 +75,7 @@ class DeepLinkToolsTest {
                 "&connect_url=https://www.saltedge.com/").extractActionAppLinkData(),
             equalTo(
                 ActionAppLinkData(
-                    actionUuid = "123456",
+                    actionUUID = "123456",
                     connectUrl = "https://www.saltedge.com/",
                     returnTo = null
                 )
@@ -86,7 +86,7 @@ class DeepLinkToolsTest {
                 "&connect_url=http://www.fentury.com/").extractActionAppLinkData(),
             equalTo(
                 ActionAppLinkData(
-                    actionUuid = "123456",
+                    actionUUID = "123456",
                     connectUrl = "http://www.fentury.com/",
                     returnTo = "https://www.saltedge.com/"
                 )

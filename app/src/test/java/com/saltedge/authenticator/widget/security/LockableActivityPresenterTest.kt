@@ -25,6 +25,8 @@ import android.os.SystemClock
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
+import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -41,6 +43,8 @@ class LockableActivityPresenterTest {
     private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
     private val mockPreferenceRepository = Mockito.mock(PreferenceRepositoryAbs::class.java)
     private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)
+    private val mockKeyStoreManager = Mockito.mock(KeyStoreManagerAbs::class.java)
+    private val mockAuthenticatorApiManager = Mockito.mock(AuthenticatorApiManagerAbs::class.java)
 
     @Before
     fun setUp() {
@@ -276,7 +280,9 @@ class LockableActivityPresenterTest {
             viewContract = mockView,
             connectionsRepository = mockConnectionsRepository,
             preferenceRepository = mockPreferenceRepository,
-            passcodeTools = mockPasscodeTools
+            passcodeTools = mockPasscodeTools,
+            keyStoreManager = mockKeyStoreManager,
+            apiManager =  mockAuthenticatorApiManager
         )
     }
 }

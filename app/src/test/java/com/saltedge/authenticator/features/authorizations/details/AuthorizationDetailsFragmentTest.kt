@@ -22,6 +22,7 @@ package com.saltedge.authenticator.features.authorizations.details
 
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
+import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
 import org.junit.Test
@@ -35,8 +36,7 @@ class AuthorizationDetailsFragmentTest {
     @Throws(Exception::class)
     fun newInstanceTest() {
         val fragment = AuthorizationDetailsFragment.newInstance(
-            connectionId = "2",
-            authorizationId = "1"
+            AuthorizationIdentifier(connectionID = "2", authorizationID = "1")
         )
         val arguments = fragment.arguments!!
 

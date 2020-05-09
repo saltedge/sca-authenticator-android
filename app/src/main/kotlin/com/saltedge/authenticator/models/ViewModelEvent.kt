@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.models
 
-open class ViewModelEvent<out T>(private val content: T) {
+data class ViewModelEvent<out T>(private val content: T) {
 
     var hasBeenHandled = false
         private set

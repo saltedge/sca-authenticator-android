@@ -61,7 +61,7 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View,
         super.onViewCreated(view, savedInstanceState)
         activityComponents?.updateAppbar(
             titleResId = R.string.settings_feature_title,
-            actionImageResId = R.drawable.ic_appbar_action_back
+            backActionImageResId = R.drawable.ic_appbar_action_back
         )
         setupViews()
     }

@@ -58,7 +58,7 @@ class SubmitActionPresenter @Inject constructor(
     override fun onViewCreated() {
         if (viewMode == ViewMode.START) {
             apiManager.sendAction(
-                actionUUID = actionAppLinkData?.actionUuid ?: "",
+                actionUUID = actionAppLinkData?.actionUUID ?: "",
                 connectionAndKey = connectionAndKey ?: return,
                 resultCallback = this
             )
