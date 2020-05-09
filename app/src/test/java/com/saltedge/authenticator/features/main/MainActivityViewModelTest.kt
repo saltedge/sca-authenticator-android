@@ -25,29 +25,60 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import androidx.test.core.app.ApplicationProvider
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
-import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.BDDMockito.given
 import org.mockito.Mockito
+import org.mockito.Mockito.mock
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class MainActivityViewModelTest {
+
+    @Test
+    @Throws(Exception::class)
+    fun initTestCase1() {
+         //given
+        given(mockRealmManager.initialized).willReturn(true)
+
+        //when
+        val viewModel = createViewModel()
+
+        //then
+        Mockito.never()
+
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun initTestCase2() {
+        //given
+        given(mockRealmManager.initialized).willReturn(false)
+
+        //when
+        createViewModel()
+
+        //then
+        Mockito.verify(mockRealmManager).initRealm(context)
+    }
 
     @Test
     @Throws(Exception::class)
@@ -181,6 +212,70 @@ class MainActivityViewModelTest {
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onLifeCycleResumeTest() {
+        //given
+        val mockLifecycleOwner: LifecycleOwner = mock(LifecycleOwner::class.java)
+        val lifecycle = LifecycleRegistry(mockLifecycleOwner)
+        Mockito.`when`(mockLifecycleOwner.lifecycle).thenReturn(lifecycle)
+        val viewModel = createViewModel()
+        viewModel.bindLifecycleObserver(mockLifecycleOwner)
+
+        //when
+        lifecycle.currentState = Lifecycle.State.RESUMED
+
+        //then
+        Mockito.verify(mockConnectivityReceiver).addNetworkStateChangeListener(viewModel)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onLifeCyclePauseTest() {
+        //given
+        val mockLifecycleOwner: LifecycleOwner = mock(LifecycleOwner::class.java)
+        val lifecycle = LifecycleRegistry(mockLifecycleOwner)
+        Mockito.`when`(mockLifecycleOwner.lifecycle).thenReturn(lifecycle)
+        val viewModel = createViewModel()
+        viewModel.bindLifecycleObserver(mockLifecycleOwner)
+
+        //when
+        lifecycle.currentState = Lifecycle.State.RESUMED
+        lifecycle.currentState = Lifecycle.State.STARTED//move to pause state (possible only after RESUMED state)
+
+        //then
+        assertThat(viewModel.event, equalTo(Lifecycle.Event.ON_PAUSE))
+        Mockito.verify(mockConnectivityReceiver).removeNetworkStateChangeListener(viewModel)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onNetworkConnectionChangedTestCase1() {
+        //given
+        val isConnected = false
+        val viewModel = createViewModel()
+
+        //when
+        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
+
+        //then
+        assertThat(viewModel.internetConnectionWarningVisibility.value, equalTo(View.VISIBLE))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onNetworkConnectionChangedTestCase2() {
+        //given
+        val isConnected = true
+        val viewModel = createViewModel()
+
+        //when
+        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
+
+        //then
+        assertThat(viewModel.internetConnectionWarningVisibility.value, equalTo(View.GONE))
     }
 
     @Test
@@ -535,17 +630,15 @@ class MainActivityViewModelTest {
         assertThat(viewModel.onRestartActivityEvent.value, equalTo(ViewModelEvent(Unit)))
     }
 
-    private val mockPreferenceRepository = Mockito.mock(PreferenceRepositoryAbs::class.java)
-    private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)
     private val mockRealmManager = Mockito.mock(RealmManagerAbs::class.java)
+    private val mockConnectivityReceiver = Mockito.mock(ConnectivityReceiverAbs::class.java)
     private val context: Context = ApplicationProvider.getApplicationContext()
 
     private fun createViewModel(): MainActivityViewModel {
         return MainActivityViewModel(
             appContext = context,
-            preferenceRepository = mockPreferenceRepository,
-            passcodeTools = mockPasscodeTools,
-            realmManager = mockRealmManager
+            realmManager = mockRealmManager,
+            connectivityReceiver = mockConnectivityReceiver
         )
     }
 }

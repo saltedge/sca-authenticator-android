@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.main
+package com.saltedge.authenticator.app
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -26,23 +26,26 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 
-class ConnectivityReceiver : BroadcastReceiver() {
+class ConnectivityReceiver() : BroadcastReceiver(), ConnectivityReceiverAbs {
 
-    var networkStateListener: NetworkStateChangeListener? = null
-
-    fun register(context: Context, networkStateListener: NetworkStateChangeListener) {
+    constructor(context: Context) : this() {
         context.registerReceiver(this, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
-        this.networkStateListener = networkStateListener
     }
 
-    fun unregister(context: Context) {
-        this.networkStateListener = null
-        context.unregisterReceiver(this)
+    private var networkStateListeners: ArrayList<NetworkStateChangeListener> = ArrayList()
+
+    override fun addNetworkStateChangeListener(listener: NetworkStateChangeListener) {
+        networkStateListeners.add(listener)
+    }
+
+    override fun removeNetworkStateChangeListener(listener: NetworkStateChangeListener) {
+        networkStateListeners.remove(listener)
     }
 
     override fun onReceive(context: Context, intent: Intent?) {
         if (ConnectivityManager.CONNECTIVITY_ACTION == intent?.action) {
-            networkStateListener?.onNetworkConnectionChanged(isConnectedOrConnecting(context))
+            val isConnected = isConnectedOrConnecting(context)
+            networkStateListeners.forEach { it.onNetworkConnectionChanged(isConnected) }
         }
     }
 
@@ -51,6 +54,11 @@ class ConnectivityReceiver : BroadcastReceiver() {
         val networkInfo = connectivityManager?.activeNetworkInfo
         return networkInfo != null && networkInfo.isConnectedOrConnecting
     }
+}
+
+interface ConnectivityReceiverAbs {
+    fun addNetworkStateChangeListener(listener: NetworkStateChangeListener)
+    fun removeNetworkStateChangeListener(listener: NetworkStateChangeListener)
 }
 
 interface NetworkStateChangeListener {
