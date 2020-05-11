@@ -47,7 +47,7 @@ class OnboardingSetupViewModel(
     val passcodeInputViewVisibility: MutableLiveData<Int> = MutableLiveData()
 
     init {
-        headerTitle.value = R.string.onboarding_secure_app_passcode_create
+        headerTitle.value = R.string.onboarding_secure_app_passcode_create //TODO: move to constructor
         setupLayoutVisibility.value = View.GONE
         onboardingLayoutVisibility.value = View.VISIBLE
         proceedViewVisibility.value = View.GONE

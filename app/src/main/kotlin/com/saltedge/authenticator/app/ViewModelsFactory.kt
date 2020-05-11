@@ -24,6 +24,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListViewModel
+import com.saltedge.authenticator.features.connections.create.ConnectProviderViewModel
 import com.saltedge.authenticator.features.launcher.LauncherViewModel
 import com.saltedge.authenticator.features.main.MainActivityViewModel
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupViewModel
@@ -80,9 +81,6 @@ class ViewModelsFactory @Inject constructor(
             modelClass.isAssignableFrom(QrScannerViewModel::class.java) -> {
                 return QrScannerViewModel(appContext = appContext) as T
             }
-            modelClass.isAssignableFrom(AboutViewModel::class.java) -> {
-                return AboutViewModel(appContext) as T
-            }
             modelClass.isAssignableFrom(AuthorizationsListViewModel::class.java) -> {
                 return AuthorizationsListViewModel(
                     appContext = appContext,
@@ -91,6 +89,18 @@ class ViewModelsFactory @Inject constructor(
                     cryptoTools = cryptoTools,
                     apiManager = apiManager
                 ) as T
+            }
+            modelClass.isAssignableFrom(ConnectProviderViewModel::class.java) -> {
+                return ConnectProviderViewModel(
+                    appContext = appContext,
+                    preferenceRepository = preferenceRepository,
+                    connectionsRepository = connectionsRepository,
+                    keyStoreManager = keyStoreManager,
+                    apiManager = apiManager
+                ) as T
+            }
+            modelClass.isAssignableFrom(AboutViewModel::class.java) -> {
+                return AboutViewModel(appContext) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

@@ -51,7 +51,7 @@ class CompleteView(context: Context, attrs: AttributeSet) : LinearLayout(context
         titleView?.text = context.getString(textResId)
     }
 
-    fun setSubtitleText(text: String) {
+    fun setSubtitleText(text: String) { //TODO: rename to description
         subTitleView?.text = text
     }
 

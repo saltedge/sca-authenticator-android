@@ -27,8 +27,7 @@ import com.saltedge.authenticator.features.actions.di.SubmitActionModule
 import com.saltedge.authenticator.features.authorizations.details.di.AuthorizationDetailsComponent
 import com.saltedge.authenticator.features.authorizations.details.di.AuthorizationDetailsModule
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
-import com.saltedge.authenticator.features.connections.create.di.ConnectProviderComponent
-import com.saltedge.authenticator.features.connections.create.di.ConnectProviderModule
+import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListComponent
 import com.saltedge.authenticator.features.connections.list.di.ConnectionsListModule
 import com.saltedge.authenticator.features.launcher.LauncherActivity
@@ -67,7 +66,6 @@ interface AppComponent {
     fun viewModelsFactory() : ViewModelsFactory
 
     fun addConnectionsListModule(module: ConnectionsListModule): ConnectionsListComponent
-    fun addConnectProviderModule(module: ConnectProviderModule): ConnectProviderComponent
     fun addActionModule(moduleSubmit: SubmitActionModule): SubmitActionComponent
     fun addAuthorizationDetailsModule(module: AuthorizationDetailsModule): AuthorizationDetailsComponent
     fun addSettingsListModule(module: SettingsListModule): SettingsListComponent
@@ -80,5 +78,6 @@ interface AppComponent {
     fun inject(activity: MainActivity)
     fun inject(activity: QrScannerActivity)
     fun inject(fragment: AuthorizationsListFragment)
+    fun inject(fragment: ConnectProviderFragment)
     fun inject(fragment: AboutListFragment)
 }
