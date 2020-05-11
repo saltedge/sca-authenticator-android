@@ -75,8 +75,8 @@ class MainActivityViewModel(
         if (!realmManager.initialized) realmManager.initRealm(context = appContext)
     }
 
-    fun bindLifecycleObserver(lifecycleOwner: LifecycleOwner) {
-        lifecycleOwner.lifecycle.let {
+    fun bindLifecycleObserver(lifecycle: Lifecycle) {
+        lifecycle.let {
             it.removeObserver(this)
             it.addObserver(this)
         }

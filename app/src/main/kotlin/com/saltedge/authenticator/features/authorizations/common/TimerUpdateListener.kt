@@ -20,6 +20,6 @@
  */
 package com.saltedge.authenticator.features.authorizations.common
 
-interface TimeUpdateListener {
+interface TimerUpdateListener {
     fun onTimeUpdate()
 }

@@ -25,42 +25,46 @@ import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
 import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
-import com.saltedge.authenticator.features.authorizations.common.*
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationHeaderView
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
+import com.saltedge.authenticator.features.authorizations.common.TimerUpdateListener
 import com.saltedge.authenticator.tools.getOrPut
 import java.util.*
 import kotlin.collections.HashSet
 
 class AuthorizationsHeaderPagerAdapter(
     val context: Context,
-    val expirationListener: AuthorizationStatusListener
+    viewModelTimerUpdateListener: TimerUpdateListener
 ) : AuthorizationsPagerAdapter() {
 
-    private val timeUpdateListeners: HashSet<TimeUpdateListener> = HashSet()
-    private var timeViewUpdateTimer: Timer = Timer()
-    private val map = SparseArray<AuthorizationHeaderView>()
+    private val timerUpdateListeners: HashSet<TimerUpdateListener> = HashSet()
+    private var timer: Timer = Timer()
+    private val itemsMap = SparseArray<AuthorizationHeaderView>()
+
+    init {
+        timerUpdateListeners.add(viewModelTimerUpdateListener)
+    }
 
     fun startTimer() {
-        timeViewUpdateTimer = Timer()
-        timeViewUpdateTimer.schedule(object : TimerTask() {
+        timer = Timer()
+        timer.schedule(object : TimerTask() {
             override fun run() {
-                if (existExpiredModels()) expirationListener.onViewModelsExpired()
-                if (existModelsShouldBeDestroyed()) expirationListener.onViewModelsShouldBeDestroyed()
-                timeUpdateListeners.iterator().forEach { it.onTimeUpdate() }
+                timerUpdateListeners.iterator().forEach { it.onTimeUpdate() }
             }
         }, 0, TIME_VIEW_UPDATE_TIMEOUT)
     }
 
     fun stopTimer() {
-        timeViewUpdateTimer.cancel()
-        timeViewUpdateTimer.purge()
+        timer.cancel()
+        timer.purge()
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val view = map.getOrPut(position) {
+        val view = itemsMap.getOrPut(position) {
             AuthorizationHeaderView(context = context)
         }
         updateViewContent(view, data[position])
-        timeUpdateListeners.add(view as TimeUpdateListener)
+        timerUpdateListeners.add(view as TimerUpdateListener)
         container.addView(view, 0)
         return view
     }
@@ -68,12 +72,8 @@ class AuthorizationsHeaderPagerAdapter(
     override fun destroyItem(container: ViewGroup, position: Int, view: Any) {
         super.destroyItem(container, position, view)
 //        map.remove(position) //TODO: https://github.com/saltedge/sca-authenticator-android/issues/83
-        timeUpdateListeners.remove(view as TimeUpdateListener)
+        timerUpdateListeners.remove(view as TimerUpdateListener)
     }
-
-    private fun existExpiredModels(): Boolean = data.any { it.isExpired }
-
-    private fun existModelsShouldBeDestroyed(): Boolean = data.any { it.shouldBeDestroyed }
 
     private fun updateViewContent(pageView: View, model: AuthorizationViewModel) {
         (pageView as AuthorizationHeaderView).apply {

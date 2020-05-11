@@ -218,11 +218,9 @@ class MainActivityViewModelTest {
     @Throws(Exception::class)
     fun onLifeCycleResumeTest() {
         //given
-        val mockLifecycleOwner: LifecycleOwner = mock(LifecycleOwner::class.java)
-        val lifecycle = LifecycleRegistry(mockLifecycleOwner)
-        Mockito.`when`(mockLifecycleOwner.lifecycle).thenReturn(lifecycle)
+        val lifecycle = LifecycleRegistry(mock(LifecycleOwner::class.java))
         val viewModel = createViewModel()
-        viewModel.bindLifecycleObserver(mockLifecycleOwner)
+        viewModel.bindLifecycleObserver(lifecycle)
 
         //when
         lifecycle.currentState = Lifecycle.State.RESUMED
@@ -235,11 +233,9 @@ class MainActivityViewModelTest {
     @Throws(Exception::class)
     fun onLifeCyclePauseTest() {
         //given
-        val mockLifecycleOwner: LifecycleOwner = mock(LifecycleOwner::class.java)
-        val lifecycle = LifecycleRegistry(mockLifecycleOwner)
-        Mockito.`when`(mockLifecycleOwner.lifecycle).thenReturn(lifecycle)
+        val lifecycle = LifecycleRegistry(mock(LifecycleOwner::class.java))
         val viewModel = createViewModel()
-        viewModel.bindLifecycleObserver(mockLifecycleOwner)
+        viewModel.bindLifecycleObserver(lifecycle)
 
         //when
         lifecycle.currentState = Lifecycle.State.RESUMED

@@ -101,7 +101,7 @@ class MainActivity : LockableActivity(),
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainActivityViewModel::class.java)
-        viewModel.bindLifecycleObserver(lifecycleOwner = this)
+        viewModel.bindLifecycleObserver(lifecycle = lifecycle)
         binding.viewModel = viewModel
         binding.executePendingBindings()
         binding.lifecycleOwner = this

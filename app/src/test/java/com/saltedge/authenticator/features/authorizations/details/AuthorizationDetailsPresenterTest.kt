@@ -694,7 +694,7 @@ class AuthorizationDetailsPresenterTest {
 
         Mockito.clearInvocations(mockView, mockPollingService)
         presenter.onConfirmDenySuccess(
-            result = ConfirmDenyResponseData(authorizationId = "1", success = true),
+            result = ConfirmDenyResponseData(authorizationID = "1", success = true),
             connectionID = "1"
         )
 

@@ -69,9 +69,9 @@ abstract class BaseAuthorizationPresenter(
 
     override fun onConfirmDenySuccess(result: ConfirmDenyResponseData, connectionID: ConnectionID) {
         onConfirmDenySuccess(
-            success = result.success == true && result.authorizationId?.isNotEmpty() == true,
+            success = result.success == true && result.authorizationID?.isNotEmpty() == true,
             connectionID = connectionID,
-            authorizationID = result.authorizationId ?: ""
+            authorizationID = result.authorizationID ?: ""
         )
     }
 
