@@ -20,8 +20,7 @@
  */
 package com.saltedge.authenticator.features.authorizations.details
 
-import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
-import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
+import com.saltedge.authenticator.app.KEY_ID
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
@@ -35,12 +34,13 @@ class AuthorizationDetailsFragmentTest {
     @Test
     @Throws(Exception::class)
     fun newInstanceTest() {
-        val fragment = AuthorizationDetailsFragment.newInstance(
-            AuthorizationIdentifier(connectionID = "2", authorizationID = "1")
-        )
-        val arguments = fragment.arguments!!
+        //given identifier
+        val identifier = AuthorizationIdentifier(connectionID = "2", authorizationID = "1")
 
-        assertThat(arguments.getString(KEY_AUTHORIZATION_ID), equalTo("1"))
-        assertThat(arguments.getString(KEY_CONNECTION_ID), equalTo("2"))
+        //when
+        val fragment = AuthorizationDetailsFragment.newInstance(identifier)
+
+        //then
+        assertThat(fragment.arguments!!.getSerializable(KEY_ID) as AuthorizationIdentifier, equalTo(identifier))
     }
 }
