@@ -26,7 +26,7 @@ apply from: './jacoco.gradle'
 apply plugin: 'maven'
 
 def libVersionCode = 1
-def libVersionName = "1.1.0"
+def libVersionName = "1.1.1"
 
 android {
     defaultConfig {
@@ -75,6 +75,7 @@ android {
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     api 'androidx.appcompat:appcompat:1.1.0'
+    api "androidx.webkit:webkit:1.3.0-alpha02"
     api 'com.squareup.retrofit2:retrofit:2.7.1'
     api 'com.squareup.retrofit2:converter-gson:2.7.1'
     api 'com.squareup.okhttp3:logging-interceptor:4.3.1'

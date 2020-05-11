@@ -26,8 +26,13 @@ import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import android.webkit.WebView
+import androidx.webkit.WebSettingsCompat
+import androidx.webkit.WebViewFeature
 
-class LollipopFixedWebView : WebView {
+/**
+ * Web view designated for light content (Authorization content)
+ */
+open class SEFrameWebView : WebView {
 
     constructor(context: Context) : super(getFixedContext(context)) {
         setupView()
@@ -42,7 +47,16 @@ class LollipopFixedWebView : WebView {
     }
 
     private fun setupView() {
-        setLayerType(View.LAYER_TYPE_HARDWARE, null)
+        this.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+            val mode = if (isDarkThemeUsed(context)) WebSettingsCompat.FORCE_DARK_ON else WebSettingsCompat.FORCE_DARK_OFF
+            WebSettingsCompat.setForceDark(this.settings, mode)
+        }
+    }
+
+    private fun isDarkThemeUsed(context: Context): Boolean {
+        return context.resources.configuration.uiMode and
+            Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
     }
 
     companion object {
