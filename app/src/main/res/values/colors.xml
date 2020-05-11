@@ -93,4 +93,5 @@
     <color name="bottom_menu_background">@android:color/white</color>
     <color name="authorization_header_view_background">@android:color/white</color>
     <color name="rounded_image_background">@color/grey_20</color>
+    <color name="white_button_background">@android:color/white</color>
 </resources>

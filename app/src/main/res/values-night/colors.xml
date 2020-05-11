@@ -39,4 +39,5 @@
     <color name="bottom_menu_background">@color/dark_100</color>
     <color name="authorization_header_view_background">@color/blue_black</color>
     <color name="rounded_image_background">@color/dark_100</color>
+    <color name="white_button_background">@color/blue_black</color>
 </resources>
