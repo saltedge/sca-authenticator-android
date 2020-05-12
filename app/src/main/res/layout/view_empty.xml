@@ -59,7 +59,7 @@
 
     <Button
         android:id="@+id/actionView"
-        style="@style/BlueFullWidthButton"
+        style="@style/LargeBlueButton"
         android:layout_marginTop="@dimen/dp_24"
         tools:text="Button"
         tools:textColor="@android:color/white" />
