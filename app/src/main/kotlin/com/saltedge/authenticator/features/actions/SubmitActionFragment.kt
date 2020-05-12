@@ -109,7 +109,7 @@ class SubmitActionFragment : BaseFragment(), SubmitActionContract.View, View.OnC
     ) {
         completeView?.setIconResource(iconResId)
         completeView?.setTitleText(completeTitleResId)
-        completeView?.setSubtitleText(completeMessageResId)
+        completeView?.setDescription(completeMessageResId)
         completeView?.setMainActionText(mainActionTextResId)
     }
 

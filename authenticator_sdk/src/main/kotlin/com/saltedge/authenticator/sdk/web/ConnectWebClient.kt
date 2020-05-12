@@ -29,7 +29,7 @@ import com.saltedge.authenticator.sdk.tools.parseRedirect
 private const val WEB_PAGE_Y_CORRECTION_OFFSET = 20
 
 @Suppress("OverridingDeprecatedMember", "DEPRECATION")
-class ConnectWebClient(val contract: ConnectWebClientContract) : WebViewClient() { //TODO: check contract
+class ConnectWebClient(val contract: ConnectWebClientContract) : WebViewClient() {
 
     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
         return if (url != null && url.startsWith(AuthenticatorApiManager.authenticationReturnUrl)) {

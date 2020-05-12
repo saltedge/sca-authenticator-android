@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.connections.create
 
 import android.content.Context
+import android.content.DialogInterface
 import android.view.View
 import android.webkit.URLUtil
 import androidx.lifecycle.*
@@ -55,12 +56,11 @@ class ConnectProviderViewModel @Inject constructor(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyStoreManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs
-) : ViewModel(), LifecycleObserver,
-    ConnectionCreateListener, FetchProviderConfigurationListener {
+) : ViewModel(), LifecycleObserver, ConnectionCreateListener, FetchProviderConfigurationListener {
 
     val iconResId: MutableLiveData<Int> = MutableLiveData(R.drawable.ic_status_success)
     val completeTitle: MutableLiveData<String> = MutableLiveData("")
-    val completeMessage: MutableLiveData<String> = MutableLiveData("")
+    val completeDescription: MutableLiveData<String> = MutableLiveData("")
     val mainActionTextResId: MutableLiveData<Int> = MutableLiveData(R.string.actions_proceed)
     val reportProblemActionText: MutableLiveData<Int?> = MutableLiveData(null)
     val shouldShowWebViewVisibility = MutableLiveData<Int>()
@@ -168,11 +168,15 @@ class ConnectProviderViewModel @Inject constructor(
             ViewMode.COMPLETE_SUCCESS -> Unit
             ViewMode.COMPLETE_ERROR -> Unit
         }
-        updateViewsContent() //TODO: check if we need it
+        updateViewsContent()
     }
 
     fun onViewClick(viewId: Int) {
         if (viewId == R.id.mainActionView) onCloseEvent.postValue(ViewModelEvent(Unit))
+    }
+
+    fun onDialogActionIdClick(dialogActionId: Int) {
+        if (dialogActionId == DialogInterface.BUTTON_POSITIVE) onCloseEvent.postValue(ViewModelEvent(Unit))
     }
 
     fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token) {
@@ -183,6 +187,10 @@ class ConnectProviderViewModel @Inject constructor(
         viewMode = ViewMode.COMPLETE_ERROR
         sessionFailMessage = errorMessage
         updateViewsContent()
+    }
+
+    fun shouldShowWebView(): Boolean {
+        return viewMode == ViewMode.WEB_ENROLL
     }
 
     private fun performFetchConfigurationRequest() {
@@ -229,7 +237,7 @@ class ConnectProviderViewModel @Inject constructor(
     private fun updateViewsContent() {
         iconResId.postValue(getIconResId())
         completeTitle.postValue(getCompleteTitle())
-        completeMessage.postValue(getCompleteMessage())
+        completeDescription.postValue(getCompleteMessage())
         mainActionTextResId.postValue(getActionTextResId())
         reportProblemActionText.postValue(getReportProblemActionText())
 

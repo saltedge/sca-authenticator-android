@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,8 @@ import javax.inject.Inject
 class ConnectProviderFragment : BaseFragment(),
     ConnectWebClientContract,
     View.OnClickListener,
-    OnBackPressListener {
+    OnBackPressListener,
+    DialogInterface.OnClickListener {
 
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: ConnectProviderViewModel
@@ -93,18 +94,21 @@ class ConnectProviderFragment : BaseFragment(),
         super.onDestroyView()
     }
 
+    override fun onClick(view: View?) {
+        viewModel.onViewClick(view?.id ?: return)
+    }
+
+    override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
+        viewModel.onDialogActionIdClick(dialogActionId)
+    }
+
     override fun onBackPress(): Boolean {
-//        return if (viewModel.shouldShowWebView && connectWebView?.canGoBack() == true) { //TODO: add condition
-        return if (connectWebView?.canGoBack() == true) {
+        return if (viewModel.shouldShowWebView() && connectWebView?.canGoBack() == true) {
             connectWebView.goBack()
             true
         } else {
             false
         }
-    }
-
-    override fun onClick(view: View?) {
-        viewModel.onViewClick(view?.id ?: return)
     }
 
     override fun webAuthFinishError(errorClass: String, errorMessage: String?) {
@@ -135,13 +139,11 @@ class ConnectProviderFragment : BaseFragment(),
         viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let { activity?.finishFragment() }
         })
-        viewModel.showErrorAndFinishEvent.observe(this, Observer<ViewModelEvent<String>> { //TODO try to devide to 2 parts showError/finishFragment
+        viewModel.showErrorAndFinishEvent.observe(this, Observer<ViewModelEvent<String>> {
             it.getContentIfNotHandled()?.let { message ->
                 activity?.showErrorDialog(
                     message = message,
-                    listener = DialogInterface.OnClickListener { _: DialogInterface, _: Int ->
-                        activity?.finishFragment()
-                    }
+                    listener = this
                 )
             }
         })
@@ -156,8 +158,8 @@ class ConnectProviderFragment : BaseFragment(),
         viewModel.completeTitle.observe(this, Observer<String> {
             completeView?.setTitleText(it)
         })
-        viewModel.completeMessage.observe(this, Observer<String> {
-            completeView?.setSubtitleText(it) //TODO: completeDescription
+        viewModel.completeDescription.observe(this, Observer<String> {
+            completeView?.setDescription(it)
         })
         viewModel.mainActionTextResId.observe(this, Observer<Int> {
             completeView?.setMainActionText(it)
