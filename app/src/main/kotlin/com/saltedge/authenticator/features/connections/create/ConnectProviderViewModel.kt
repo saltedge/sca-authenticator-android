@@ -45,7 +45,6 @@ import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.error.getErrorMessage
 import com.saltedge.authenticator.sdk.model.response.CreateConnectionResponseData
-import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.tools.parseRedirect
 import javax.inject.Inject
@@ -58,11 +57,11 @@ class ConnectProviderViewModel @Inject constructor(
     private val apiManager: AuthenticatorApiManagerAbs
 ) : ViewModel(), LifecycleObserver, ConnectionCreateListener, FetchProviderConfigurationListener {
 
-    val iconResId: MutableLiveData<Int> = MutableLiveData(R.drawable.ic_status_success)
+    val iconResId: MutableLiveData<Int> = MutableLiveData(R.drawable.ic_status_error)
     val completeTitle: MutableLiveData<String> = MutableLiveData("")
     val completeDescription: MutableLiveData<String> = MutableLiveData("")
-    val mainActionTextResId: MutableLiveData<Int> = MutableLiveData(R.string.actions_proceed)
-    val reportProblemActionText: MutableLiveData<Int?> = MutableLiveData(null)
+    val mainActionTextResId: MutableLiveData<Int> = MutableLiveData(R.string.actions_try_again)
+    val reportProblemActionText: MutableLiveData<Int> = MutableLiveData(R.string.actions_contact_support)
     val shouldShowWebViewVisibility = MutableLiveData<Int>()
     val shouldShowProgressViewVisibility = MutableLiveData<Int>()
     val shouldShowCompleteViewVisibility = MutableLiveData<Int>()
@@ -77,7 +76,7 @@ class ConnectProviderViewModel @Inject constructor(
         private set
     var showErrorAndFinishEvent = MutableLiveData<ViewModelEvent<String>>()
         private set
-    var loadUrlInWebViewEvent = MutableLiveData<ViewModelEvent<String?>>()
+    var loadUrlInWebViewEvent = MutableLiveData<ViewModelEvent<String>>()
         private set
 
     override fun onConnectionCreateSuccess(response: CreateConnectionResponseData) {
@@ -237,7 +236,7 @@ class ConnectProviderViewModel @Inject constructor(
     private fun updateViewsContent() {
         iconResId.postValue(getIconResId())
         completeTitle.postValue(getCompleteTitle())
-        completeDescription.postValue(getCompleteMessage())
+        completeDescription.postValue(getCompleteDescription())
         mainActionTextResId.postValue(getActionTextResId())
         reportProblemActionText.postValue(getReportProblemActionText())
 
@@ -258,7 +257,7 @@ class ConnectProviderViewModel @Inject constructor(
         }
     }
 
-    private fun getCompleteMessage(): String {
+    private fun getCompleteDescription(): String {
         return if (viewMode.isCompleteWithSuccess) {
             appContext.getString(R.string.connect_status_provider_success_description)
         } else {
@@ -276,15 +275,15 @@ class ConnectProviderViewModel @Inject constructor(
         return if (viewMode.isCompleteWithSuccess) null else R.string.actions_contact_support
     }
 
-    private fun showWebView(): Int? {
+    private fun showWebView(): Int {
         return if (viewMode == ViewMode.WEB_ENROLL) View.VISIBLE else View.GONE
     }
 
-    private fun showProgressView(): Int? {
+    private fun showProgressView(): Int {
         return if (viewMode == ViewMode.START_NEW_CONNECT || viewMode == ViewMode.START_RECONNECT) View.VISIBLE else View.GONE
     }
 
-    private fun showCompleteViewVisibility(): Int? {
+    private fun showCompleteViewVisibility(): Int {
         return if (viewMode == ViewMode.COMPLETE_SUCCESS || viewMode == ViewMode.COMPLETE_ERROR) View.VISIBLE else View.GONE
     }
 }
