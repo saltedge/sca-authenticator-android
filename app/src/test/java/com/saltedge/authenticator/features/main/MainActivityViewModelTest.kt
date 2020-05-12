@@ -89,6 +89,7 @@ class MainActivityViewModelTest {
         val viewModel = createViewModel()
         val savedInstanceState: Bundle? = null
         val intent: Intent? = null
+
         assertThat(viewModel.onShowAuthorizationsListEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
 
@@ -579,6 +580,7 @@ class MainActivityViewModelTest {
         val title = null
         val backActionImageResId = null
         val showMenu = true
+
         assertThat(viewModel.appBarBackActionImageResource.value, equalTo(R.drawable.ic_appbar_action_back))
 
         //when
