@@ -55,7 +55,7 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener {
     ): View {
         activityComponents?.updateAppbar(
             titleResId = R.string.choose_connection_feature_title,
-            actionImageResId = R.drawable.ic_appbar_action_close
+            backActionImageResId = R.drawable.ic_appbar_action_close
         )
         return inflater.inflate(R.layout.fragment_connections_list, container, false)
     }

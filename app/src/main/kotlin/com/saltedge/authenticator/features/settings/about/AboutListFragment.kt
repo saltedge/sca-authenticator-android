@@ -60,7 +60,7 @@ class AboutListFragment : BaseFragment(), OnItemClickListener {
         savedInstanceState: Bundle?
     ): View {
         activityComponents?.updateAppbar(titleResId = R.string.about_feature_title,
-            actionImageResId = R.drawable.ic_appbar_action_back
+            backActionImageResId = R.drawable.ic_appbar_action_back
         )
         return inflater.inflate(R.layout.fragment_base_list, container, false)
     }

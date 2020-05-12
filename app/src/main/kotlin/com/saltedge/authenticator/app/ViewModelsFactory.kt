@@ -48,7 +48,8 @@ class ViewModelsFactory @Inject constructor(
     val connectionsRepository: ConnectionsRepositoryAbs,
     val keyStoreManager: KeyStoreManagerAbs,
     val realmManager: RealmManagerAbs,
-    val apiManager: AuthenticatorApiManagerAbs
+    val apiManager: AuthenticatorApiManagerAbs,
+    val connectivityReceiver: ConnectivityReceiverAbs
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -64,9 +65,8 @@ class ViewModelsFactory @Inject constructor(
             modelClass.isAssignableFrom(MainActivityViewModel::class.java) -> {
                 return MainActivityViewModel(
                     appContext = appContext,
-                    preferenceRepository = preferenceRepository,
-                    passcodeTools = passcodeTools,
-                    realmManager = realmManager
+                    realmManager = realmManager,
+                    connectivityReceiver = connectivityReceiver
                 ) as T
             }
             modelClass.isAssignableFrom(OnboardingSetupViewModel::class.java) -> {

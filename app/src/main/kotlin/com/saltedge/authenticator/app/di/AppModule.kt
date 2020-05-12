@@ -22,11 +22,13 @@ package com.saltedge.authenticator.app.di
 
 import android.content.Context
 import android.os.Build
+import com.saltedge.authenticator.app.ConnectivityReceiver
+import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.models.repository.ConnectionsRepository
-import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.realm.RealmManager
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
+import com.saltedge.authenticator.models.repository.ConnectionsRepository
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepository
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
@@ -52,6 +54,7 @@ class AppModule(context: Context) {
 
     private var _context: Context = context
     private val preferenceRepository = PreferenceRepository.initObject(context)
+    private val connectivityReceiver = ConnectivityReceiver(context)
 
     @Provides
     @Singleton
@@ -81,7 +84,8 @@ class AppModule(context: Context) {
         connectionsRepository: ConnectionsRepositoryAbs,
         keyStoreManager: KeyStoreManagerAbs,
         realmManager: RealmManagerAbs,
-        apiManager: AuthenticatorApiManagerAbs
+        apiManager: AuthenticatorApiManagerAbs,
+        connectivityReceiver: ConnectivityReceiverAbs
     ): ViewModelsFactory {
         return ViewModelsFactory(
             appContext = appContext,
@@ -92,7 +96,8 @@ class AppModule(context: Context) {
             connectionsRepository = connectionsRepository,
             keyStoreManager = keyStoreManager,
             realmManager = realmManager,
-            apiManager = apiManager
+            apiManager = apiManager,
+            connectivityReceiver = connectivityReceiver
         )
     }
 
@@ -123,4 +128,8 @@ class AppModule(context: Context) {
     @Provides
     @Singleton
     fun provideKeyStoreManager(): KeyStoreManagerAbs = KeyStoreManager
+
+    @Provides
+    @Singleton
+    fun provideConnectivityReceiver(): ConnectivityReceiverAbs = connectivityReceiver
 }

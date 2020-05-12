@@ -36,7 +36,7 @@ class SubmitActionFragmentTest {
     @Throws(Exception::class)
     fun newInstanceTestCase() {
         val actionAppLinkData = ActionAppLinkData(
-            actionUuid = "actionUuid",
+            actionUUID = "actionUuid",
             connectUrl = "connectUrl",
             returnTo = "returnTo"
         )

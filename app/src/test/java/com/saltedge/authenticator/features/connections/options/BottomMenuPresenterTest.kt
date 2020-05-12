@@ -22,30 +22,30 @@ package com.saltedge.authenticator.features.connections.options
 
 import com.saltedge.authenticator.features.connections.common.ConnectionOptions
 import com.saltedge.authenticator.features.menu.BottomMenuPresenter
-import org.hamcrest.CoreMatchers.equalTo
-import org.junit.Assert.assertThat
+import com.saltedge.authenticator.features.menu.MenuItemData
+import org.hamcrest.CoreMatchers.*
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.empty
 import org.junit.Test
 
-class ConnectionOptionsPresenterTest {
+class BottomMenuPresenterTest {
 
     @Test
     @Throws(Exception::class)
     fun setInitialDataTest() {
         val presenter = BottomMenuPresenter()
-        presenter.setInitialData(optionsIds = intArrayOf(ConnectionOptions.RENAME.ordinal))
 
-        assertThat(listOf(ConnectionOptions.RENAME), equalTo(presenter.listItems))
+        assertThat(presenter.menuId, `is`(nullValue()))
+        assertThat(presenter.listItems, `is`(empty()))
 
-        presenter.setInitialData(optionsIds = intArrayOf(ConnectionOptions.RECONNECT.ordinal))
+        presenter.setInitialData(menuId = null, menuItems = null)
 
-        assertThat(listOf(ConnectionOptions.RECONNECT), equalTo(presenter.listItems))
+        assertThat(presenter.menuId, `is`(nullValue()))
+        assertThat(presenter.listItems, `is`(empty()))
 
-        presenter.setInitialData(optionsIds = intArrayOf(ConnectionOptions.DELETE.ordinal))
+        presenter.setInitialData(menuId = "0", menuItems = listOf(MenuItemData(1, 2, 3)))
 
-        assertThat(listOf(ConnectionOptions.DELETE), equalTo(presenter.listItems))
-
-        presenter.setInitialData(optionsIds = intArrayOf(ConnectionOptions.REPORT_PROBLEM.ordinal))
-
-        assertThat(listOf(ConnectionOptions.REPORT_PROBLEM), equalTo(presenter.listItems))
+        assertThat(presenter.menuId, equalTo("0"))
+        assertThat(presenter.listItems, equalTo(listOf(MenuItemData(1, 2, 3))))
     }
 }

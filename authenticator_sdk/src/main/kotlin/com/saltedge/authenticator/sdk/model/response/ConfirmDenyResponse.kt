@@ -30,9 +30,9 @@ data class ConfirmDenyResponse(@SerializedName(KEY_DATA) var data: ConfirmDenyRe
 
 data class ConfirmDenyResponseData(
     @SerializedName(KEY_SUCCESS) var success: Boolean? = null,
-    @SerializedName(KEY_ID) var authorizationId: String? = null
+    @SerializedName(KEY_ID) var authorizationID: String? = null
 )
 
 fun ConfirmDenyResponseData.isValid(): Boolean {
-    return this.success != null && this.authorizationId?.isNotEmpty() == true
+    return this.success != null && this.authorizationID?.isNotEmpty() == true
 }

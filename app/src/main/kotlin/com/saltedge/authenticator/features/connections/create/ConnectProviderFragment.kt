@@ -67,7 +67,7 @@ class ConnectProviderFragment : BaseFragment(),
     ): View {
         activityComponents?.updateAppbar(
             titleResId = presenterContract.getTitleResId(),
-            actionImageResId = R.drawable.ic_appbar_action_close
+            backActionImageResId = R.drawable.ic_appbar_action_close
         )
         return inflater.inflate(R.layout.fragment_connect, container, false)
     }

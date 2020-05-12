@@ -72,7 +72,7 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
         currentActivityName = activity?.javaClass?.name ?: ""
 
         val raspFailReport = RaspChecker.collectFailsReport(this)
-        if (BuildConfig.BUILD_TYPE == "release" && raspFailReport.isNotEmpty()) {
+        if ("release" == BuildConfig.BUILD_TYPE && raspFailReport.isNotEmpty()) {
             val errorMessage = "App Is Tempered:[$raspFailReport]"
             throw Exception(errorMessage)
         }
@@ -94,9 +94,7 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
 
     private fun patchSecurityProvider() {
         try {
-            if (BuildConfig.BUILD_TYPE == "release") {
-                ProviderInstaller.installIfNeeded(this)
-            }
+            if ("release" == BuildConfig.BUILD_TYPE) ProviderInstaller.installIfNeeded(this)
         } catch (e: Exception) {
             e.log()
         }
