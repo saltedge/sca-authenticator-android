@@ -101,11 +101,10 @@ class MainActivity : LockableActivity(),
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainActivityViewModel::class.java)
-
+        viewModel.bindLifecycleObserver(lifecycle = lifecycle)
         binding.viewModel = viewModel
         binding.executePendingBindings()
         binding.lifecycleOwner = this
-        lifecycle.addObserver(viewModel)
 
         viewModel.onQrScanClickEvent.observe(this, Observer {
             it.getContentIfNotHandled()?.let {

@@ -181,10 +181,9 @@ class LockableActivityPresenter(
         else -> Long.MAX_VALUE
     }
 
-    private fun sendRevokeRequestForConnections(connections: List<Connection>) {
+    private fun sendRevokeRequestForConnections(connections: List<Connection>) {//TODO move connections interactor
         val connectionsAndKeys: List<ConnectionAndKey> = connections.filter { it.isActive() }
             .mapNotNull { keyStoreManager.createConnectionAndKeyModel(it) }
-
         apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = null)
     }
 

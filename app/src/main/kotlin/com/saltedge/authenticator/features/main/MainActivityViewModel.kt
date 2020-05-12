@@ -27,35 +27,32 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.ConnectivityReceiverAbs
+import com.saltedge.authenticator.app.NetworkStateChangeListener
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
-import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.tools.extractActionAppLinkData
 import com.saltedge.authenticator.sdk.tools.extractConnectAppLinkData
-import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.applyPreferenceLocale
 
 class MainActivityViewModel(
     val appContext: Context,
-    val preferenceRepository: PreferenceRepositoryAbs,
-    val passcodeTools: PasscodeToolsAbs,
-    val realmManager: RealmManagerAbs
+    val realmManager: RealmManagerAbs,
+    val connectivityReceiver: ConnectivityReceiverAbs
 ) : ViewModel(),
     LifecycleObserver,
     NetworkStateChangeListener,
     NewAuthorizationListener,
     ActivityComponentsContract
-{// TODO add tests
-    private val connectivityReceiver = ConnectivityReceiver()//TODO make ext dependency
-
+{
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onAppBarMenuClickEvent = MutableLiveData<ViewModelEvent<List<MenuItemData>>>()
     val onBackActionClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
@@ -78,6 +75,13 @@ class MainActivityViewModel(
         if (!realmManager.initialized) realmManager.initRealm(context = appContext)
     }
 
+    fun bindLifecycleObserver(lifecycle: Lifecycle) {
+        lifecycle.let {
+            it.removeObserver(this)
+            it.addObserver(this)
+        }
+    }
+
     fun onLifeCycleCreate(savedInstanceState: Bundle?, intent: Intent?) {
         if (savedInstanceState == null) {
             if (intent != null && (intent.hasPendingAuthorizationData || intent.hasDeepLinkData)) {
@@ -90,13 +94,27 @@ class MainActivityViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onLifeCycleResume() {
-        connectivityReceiver.register(appContext, this)
+        connectivityReceiver.addNetworkStateChangeListener(this)
         appContext.applyPreferenceLocale()
+        event = Lifecycle.Event.ON_RESUME
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onLifeCyclePause() {
-        connectivityReceiver.unregister(appContext)
+        connectivityReceiver.removeNetworkStateChangeListener(this)
+        event = Lifecycle.Event.ON_PAUSE
+    }
+
+    lateinit var event: Lifecycle.Event
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onLifeCycleStop() {
+        event = Lifecycle.Event.ON_STOP
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    fun onLifeCycleDestroy() {
+        event = Lifecycle.Event.ON_DESTROY
     }
 
     /**
@@ -104,6 +122,16 @@ class MainActivityViewModel(
      */
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         internetConnectionWarningVisibility.postValue(if (isConnected) View.GONE else View.VISIBLE)
+    }
+
+    /**
+     * Handle result from QR Scanner
+     * if result is correct then show Connect View
+     */
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == QR_SCAN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            data?.let { onNewIntent(intent = it) }
+        }
     }
 
     /**
@@ -126,16 +154,6 @@ class MainActivityViewModel(
                     onShowSubmitActionEvent.postValue(ViewModelEvent(actionAppLinkData))
                 }
             }
-        }
-    }
-
-    /**
-     * Handle result from QR Scanner
-     * if result is correct then show Connect View
-     */
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == QR_SCAN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            data?.let { onNewIntent(intent = it) }
         }
     }
 
@@ -193,13 +211,12 @@ class MainActivityViewModel(
     override fun updateAppbar(
         titleResId: ResId?,
         title: String?,
-        actionImageResId: ResId?,
+        backActionImageResId: ResId?,
         showMenu: Boolean
     ) {
-        titleResId?.let { appBarTitle.postValue(appContext.getString(it)) }
-            ?: appBarTitle.postValue(title ?: "")
-        actionImageResId?.let { appBarBackActionImageResource.postValue(it) }
-        appBarBackActionVisibility.postValue(if (actionImageResId == null) View.GONE else View.VISIBLE)
+        appBarTitle.postValue(titleResId?.let { appContext.getString(it) } ?: title ?: "")
+        backActionImageResId?.let { appBarBackActionImageResource.postValue(it) }
+        appBarBackActionVisibility.postValue(if (backActionImageResId == null) View.GONE else View.VISIBLE)
         appBarMenuVisibility.postValue(if (showMenu) View.VISIBLE else View.GONE)
     }
 

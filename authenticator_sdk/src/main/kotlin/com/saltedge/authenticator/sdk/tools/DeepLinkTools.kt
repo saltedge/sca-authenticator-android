@@ -59,15 +59,15 @@ fun String.extractConnectAppLinkData(): ConnectAppLinkData? {
 }
 
 /**
- * Extract action data from App Link
+ * Extract Instant Action data from App Link
  *
- * @receiver deep link String (e.g. authenticator://saltedge.com/action?action_uuid=123456&return_to=http://return.com&connect_url=http://someurl.com)
+ * @receiver deep link String (e.g. authenticator://saltedge.com/action?action_uuid=123456&return_to=https://return.com&connect_url=https://someurl.com)
  * @return ActionAppLinkData object
  */
 fun String.extractActionAppLinkData(): ActionAppLinkData? {
     val uri = Uri.parse(this)
     return ActionAppLinkData(
-        actionUuid = uri.getQueryParameter(KEY_ACTION_UUID_PARAM) ?: return null,
+        actionUUID = uri.getQueryParameter(KEY_ACTION_UUID_PARAM) ?: return null,
         connectUrl = uri.getQueryParameter(KEY_CONNECT_URL_PARAM) ?: return null,
         returnTo = uri.getQueryParameter(KEY_RETURN_TO_PARAM)
     )

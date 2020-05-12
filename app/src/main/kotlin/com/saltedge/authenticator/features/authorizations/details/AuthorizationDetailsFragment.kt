@@ -31,6 +31,7 @@ import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.confirm.ConfirmPasscodeDialog
 import com.saltedge.authenticator.features.authorizations.details.di.AuthorizationDetailsModule
+import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.finishFragment
@@ -46,7 +47,8 @@ import javax.inject.Inject
 
 class AuthorizationDetailsFragment : BaseFragment(),
     AuthorizationDetailsContract.View,
-    View.OnClickListener {
+    View.OnClickListener,
+    OnBackPressListener {
 
     @Inject
     lateinit var presenterContract: AuthorizationDetailsPresenter
@@ -68,7 +70,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
     ): View? {
         activityComponents?.updateAppbar(
             titleResId = R.string.authorization_feature_title,
-            actionImageResId = R.drawable.ic_appbar_action_close
+            backActionImageResId = R.drawable.ic_appbar_action_close
         )
         return inflater.inflate(R.layout.fragment_authorization_details, container, false)
     }
@@ -97,6 +99,11 @@ class AuthorizationDetailsFragment : BaseFragment(),
         biometricPrompt?.resultCallback = null
         presenterContract.viewContract = null
         super.onStop()
+    }
+
+    override fun onBackPress(): Boolean {
+        activity?.finish()
+        return true
     }
 
     override fun onClick(view: View?) {

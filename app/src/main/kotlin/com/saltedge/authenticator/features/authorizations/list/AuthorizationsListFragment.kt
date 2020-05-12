@@ -100,7 +100,7 @@ class AuthorizationsListFragment : BaseFragment() {
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(AuthorizationsListViewModel::class.java)
-        viewModel.setup(lifecycle = lifecycle)
+        viewModel.bindLifecycleObserver(lifecycle = lifecycle)
 
         viewModel.listItems.observe(this, Observer<List<AuthorizationViewModel>> {
             headerAdapter?.data = it

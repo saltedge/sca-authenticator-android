@@ -23,7 +23,7 @@ package com.saltedge.authenticator.sdk.model.appLink
 import java.io.Serializable
 
 data class ActionAppLinkData(
-    var actionUuid: String,
+    var actionUUID: String,
     var connectUrl: String,
     var returnTo: String?
 ) : Serializable

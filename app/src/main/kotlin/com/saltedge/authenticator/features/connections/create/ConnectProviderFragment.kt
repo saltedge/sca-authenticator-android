@@ -74,7 +74,7 @@ class ConnectProviderFragment : BaseFragment(),
     ): View {
         activityComponents?.updateAppbar(
             titleResId = viewModel.getTitleResId(),
-            actionImageResId = R.drawable.ic_appbar_action_close
+            backActionImageResId = R.drawable.ic_appbar_action_close
         )
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_connect, container, false)
         binding.viewModel = viewModel

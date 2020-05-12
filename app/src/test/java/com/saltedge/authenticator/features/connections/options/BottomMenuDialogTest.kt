@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2020 Salt Edge Inc.
+ * Copyright (c) 2019 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +18,31 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.qr.di
+package com.saltedge.authenticator.features.connections.options
 
-import com.saltedge.authenticator.testTools.TestAppTools
-import org.junit.Assert.assertNotNull
+import com.saltedge.authenticator.app.KEY_ID
+import com.saltedge.authenticator.features.menu.BottomMenuDialog
+import com.saltedge.authenticator.features.menu.MenuItemData
+import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class QrScannerModuleTest {
+class BottomMenuDialogTest {
 
     @Test
     @Throws(Exception::class)
-    fun providePresenterTest() {
-        val module = QrScannerModule()
+    fun newInstanceTest() {
+        val arguments = BottomMenuDialog.newInstance(
+            menuId = "88", menuItems = listOf(MenuItemData(0, 0, 0))
+        ).arguments!!
 
-        assertNotNull(module.provideFactory(appContext = TestAppTools.applicationContext))
+        assertThat(arguments.getString(KEY_ID), equalTo("88"))
+        assertThat(
+            arguments.getSerializable(BottomMenuDialog.KEY_ITEMS) as List<MenuItemData>,
+            equalTo(listOf(MenuItemData(0, 0, 0)))
+        )
     }
 }

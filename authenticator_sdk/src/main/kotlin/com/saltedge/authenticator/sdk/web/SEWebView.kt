@@ -23,13 +23,11 @@ package com.saltedge.authenticator.sdk.web
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
-import android.webkit.WebView
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 
-class SEWebView : WebView {
+class SEWebView : SEFrameWebView {
 
     constructor(context: Context) : super(context.applicationContext) {
         setupView()
@@ -63,7 +61,5 @@ class SEWebView : WebView {
         settings?.domStorageEnabled = true
         settings?.allowFileAccess = true
         settings?.userAgentString = AuthenticatorApiManager.userAgentInfo
-
-        setLayerType(View.LAYER_TYPE_HARDWARE, null)
     }
 }
