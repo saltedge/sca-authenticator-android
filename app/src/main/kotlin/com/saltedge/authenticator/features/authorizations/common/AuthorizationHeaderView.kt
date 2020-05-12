@@ -31,7 +31,7 @@ import com.saltedge.authenticator.tools.loadRoundedImage
 import kotlinx.android.synthetic.main.view_authorization_header.view.*
 import org.joda.time.DateTime
 
-class AuthorizationHeaderView : LinearLayout, TimeUpdateListener {
+class AuthorizationHeaderView : LinearLayout, TimerUpdateListener {
 
     private var startTime: DateTime? = null
     private var endTime: DateTime? = null

@@ -80,7 +80,7 @@ class ConfirmOrDenyConnectorTest {
                 ConfirmDenyResponse(
                     ConfirmDenyResponseData(
                         success = true,
-                        authorizationId = requestAuthorizationId
+                        authorizationID = requestAuthorizationId
                     )
                 )
             )
@@ -90,7 +90,7 @@ class ConfirmOrDenyConnectorTest {
             mockCallback.onConfirmDenySuccess(
                 ConfirmDenyResponseData(
                     success = true,
-                    authorizationId = requestAuthorizationId
+                    authorizationID = requestAuthorizationId
                 ),
                 connectionID = "333"
             )

@@ -23,6 +23,7 @@ package com.saltedge.authenticator.features.qr
 import android.util.SparseArray
 import com.google.android.gms.vision.barcode.Barcode
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*
@@ -38,9 +39,7 @@ class QrScannerViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = QrScannerViewModel(
-            appContext = TestAppTools.applicationContext
-        )
+        viewModel = QrScannerViewModel(appContext = TestAppTools.applicationContext)
     }
 
     /**
@@ -84,7 +83,8 @@ class QrScannerViewModelTest {
 
         viewModel.onReceivedCodes(codes)
 
-        assertNull(viewModel.returnResultAndFinish.value)
+        assertNull(viewModel.setActivityResult.value)
+        assertNull(viewModel.onCloseEvent.value)
     }
 
     @Test
@@ -92,12 +92,13 @@ class QrScannerViewModelTest {
     fun onReceivedCodesTestCase2() {
         val validDeeplink = "authenticator://saltedge.com/connect?configuration=https://example.com/configuration&connect_query=1234567890"
         val barcode = Barcode()
-        val codes = SparseArray<Barcode>()
-
         barcode.displayValue = validDeeplink
+        val codes = SparseArray<Barcode>()
         codes.put((0), barcode)
+
         viewModel.onReceivedCodes(codes)
 
-        assertThat(viewModel.returnResultAndFinish.value, equalTo(validDeeplink))
+        assertThat(viewModel.setActivityResult.value, equalTo(validDeeplink))
+        assertThat(viewModel.onCloseEvent.value, equalTo(ViewModelEvent(Unit)))
     }
 }

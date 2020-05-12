@@ -50,7 +50,7 @@ class PasscodeEditFragment : BaseFragment(), PasscodeEditContract.View, Passcode
     ): View {
         activityComponents?.updateAppbar(
             titleResId = R.string.settings_passcode,
-            actionImageResId = R.drawable.ic_appbar_action_back
+            backActionImageResId = R.drawable.ic_appbar_action_back
         )
         return inflater.inflate(R.layout.fragment_edit_passcode, container, false)
     }

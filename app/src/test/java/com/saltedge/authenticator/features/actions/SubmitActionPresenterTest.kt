@@ -161,7 +161,7 @@ class SubmitActionPresenterTest {
         presenter.setInitialData(
             connectionGuid = "guid1",
             actionAppLinkData = ActionAppLinkData(
-                actionUuid = "123456",
+                actionUUID = "123456",
                 connectUrl = "https://www.fentury.com/",
                 returnTo = "https://www.saltedge.com/"
             )
@@ -192,7 +192,7 @@ class SubmitActionPresenterTest {
         presenter.setInitialData(
             connectionGuid = "guid1",
             actionAppLinkData = ActionAppLinkData(
-                actionUuid = "123456",
+                actionUUID = "123456",
                 connectUrl = "https://www.fentury.com/",
                 returnTo = ""
             )
@@ -236,7 +236,7 @@ class SubmitActionPresenterTest {
         presenter.setInitialData(
             connectionGuid = "guid1",
             actionAppLinkData = ActionAppLinkData(
-                actionUuid = "123456",
+                actionUUID = "123456",
                 connectUrl = "https://www.fentury.com/",
                 returnTo = "https://www.saltedge.com/"
             )
@@ -274,7 +274,7 @@ class SubmitActionPresenterTest {
         presenter.setInitialData(
             connectionGuid = "guid1",
             actionAppLinkData = ActionAppLinkData(
-                actionUuid = "123456",
+                actionUUID = "123456",
                 connectUrl = "https://www.fentury.com/",
                 returnTo = "https://www.saltedge.com/"
             )
@@ -338,7 +338,7 @@ class SubmitActionPresenterTest {
         presenter.setInitialData(
             connectionGuid = "guid1",
             actionAppLinkData = ActionAppLinkData(
-                actionUuid = "123456",
+                actionUUID = "123456",
                 connectUrl = "https://www.fentury.com/",
                 returnTo = "https://www.saltedge.com/"
             )

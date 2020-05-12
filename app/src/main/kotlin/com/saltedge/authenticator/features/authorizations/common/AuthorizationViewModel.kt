@@ -152,17 +152,27 @@ fun AuthorizationData.toAuthorizationViewModel(connection: ConnectionAbs): Autho
 /**
  * Converts AuthorizationData in AuthorizationViewModel
  *
- * @receiver list of AuthorizationViewModel's received from server
- * @param listWithFinalModels stored in presenter list of AuthorizationViewModel's
+ * @param newViewModels newly received list of AuthorizationViewModel's
+ * @param oldViewModels previously stored list of AuthorizationViewModel's
  * @return List, result of merging
  */
-fun List<AuthorizationViewModel>.joinFinalModels(listWithFinalModels: List<AuthorizationViewModel>): List<AuthorizationViewModel> {
-    val finalModels = listWithFinalModels.filter { it.hasFinalMode }
-    val finalAuthorizationIDs = finalModels.map { it.authorizationID }
-    val finalConnectionIDs = finalModels.map { it.connectionID }
-    return (this.filter {
-        !finalAuthorizationIDs.contains(it.authorizationID) || !finalConnectionIDs.contains(it.connectionID)
-    } + finalModels).sortedBy { it.createdAt }
+fun joinViewModels(newViewModels: List<AuthorizationViewModel>, oldViewModels: List<AuthorizationViewModel>): List<AuthorizationViewModel> {
+    val finalModels = oldViewModels.filter { it.hasFinalMode }
+    val newModelsWithoutExitingFinalModels = newViewModels.filter {
+        !finalModels.containsIdentifier(it.authorizationID, it.connectionID)
+    }
+    return (newModelsWithoutExitingFinalModels + finalModels).sortedBy { it.createdAt }
+}
+
+private fun List<AuthorizationViewModel>.containsIdentifier(
+    authorizationID: AuthorizationID,
+    connectionID: ConnectionID): Boolean
+{
+    return this.any { it.hasIdentifier(authorizationID, connectionID) }
+}
+
+private fun AuthorizationViewModel.hasIdentifier(authorizationID: AuthorizationID, connectionID: ConnectionID): Boolean {
+    return this.authorizationID == authorizationID && this.connectionID == connectionID
 }
 
 private fun authorizationExpirationPeriod(authorization: AuthorizationData): Int {

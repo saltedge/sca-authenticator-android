@@ -58,9 +58,9 @@ class AuthorizationsListViewModel @Inject constructor(
     ListItemClickListener,
     FetchAuthorizationsContract,
     ConfirmAuthorizationListener,
-    AuthorizationStatusListener,
+    TimerUpdateListener,
     CoroutineScope
-{// TODO add tests
+{
     private val decryptJob: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = decryptJob + Dispatchers.IO
@@ -76,15 +76,40 @@ class AuthorizationsListViewModel @Inject constructor(
     val listItemUpdateEvent = MutableLiveData<ViewModelEvent<Int>>()
     val onConfirmErrorEvent = MutableLiveData<ViewModelEvent<String>>()
 
-    override fun onViewModelsExpired() {
-        listItemsValues.filter { it.shouldBeSetTimeOutMode }.forEach {
-            updateItemViewMode(listItem = it, newViewMode = ViewMode.TIME_OUT)
+    fun bindLifecycleObserver(lifecycle: Lifecycle) {
+        lifecycle.let {
+            it.removeObserver(this)
+            it.addObserver(this)
+            it.removeObserver(pollingService)
+            it.addObserver(pollingService)
         }
+        pollingService.contract = this
     }
 
-    override fun onViewModelsShouldBeDestroyed() {
-        val currentItems = listItemsValues.filter { !it.shouldBeDestroyed }
-        if (currentItems != listItemsValues) postListItemsUpdate(newItems = currentItems)
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    fun onDestroy() {
+        decryptJob.cancel()
+    }
+
+    //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
+    fun processDecryptedAuthorizationsResult(result: List<AuthorizationData>) {
+        val newAuthorizationsData = result
+            .filter { it.isNotExpired() }
+            .sortedWith(compareBy({ it.createdAt }, { it.id }))
+        val joinedViewModels = joinViewModels(
+            newViewModels = createViewModels(newAuthorizationsData),
+            oldViewModels = this.listItemsValues
+        )
+        if (listItemsValues != joinedViewModels) postListItemsUpdate(newItems = joinedViewModels)
+    }
+
+    override fun getCurrentConnectionsAndKeysForPolling(): List<ConnectionAndKey>? = collectAuthorizationRequestData()
+
+    override fun onTimeUpdate() {
+        listItemsValues.let { items ->
+            if (items.any { it.isExpired }) cleanExpiredItems()
+            if (items.any { it.shouldBeDestroyed }) cleanDeadItems()
+        }
     }
 
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
@@ -96,15 +121,13 @@ class AuthorizationsListViewModel @Inject constructor(
         }
     }
 
-    override fun getCurrentConnectionsAndKeysForPolling(): List<ConnectionAndKey>? = collectAuthorizationRequestData()
-
     override fun onFetchEncryptedDataResult(result: List<EncryptedData>, errors: List<ApiErrorData>) {
         processAuthorizationsErrors(errors = errors)
         processEncryptedAuthorizationsResult(encryptedList = result)
     }
 
     override fun onConfirmDenySuccess(result: ConfirmDenyResponseData, connectionID: ConnectionID) {
-        findListItem(connectionID, result.authorizationId ?: "")?.let { item ->
+        findListItem(connectionID = connectionID, authorizationID = result.authorizationID ?: "")?.let { item ->
             val viewMode = if (item.viewMode == ViewMode.DENY_PROCESSING)
                 ViewMode.DENY_SUCCESS else ViewMode.CONFIRM_SUCCESS
             updateItemViewMode(listItem = item, newViewMode = viewMode)
@@ -120,26 +143,6 @@ class AuthorizationsListViewModel @Inject constructor(
         findListItem(connectionID, authorizationID)?.let { item ->
             updateItemViewMode(listItem = item, newViewMode = ViewMode.ERROR)
         }
-    }
-
-    fun setup(lifecycle: Lifecycle) {
-        lifecycle.addObserver(this)
-        lifecycle.addObserver(pollingService)
-        pollingService.contract = this
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun onDestroy() {
-        decryptJob.cancel()
-    }
-
-    //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
-    fun processDecryptedAuthorizationsResult(result: List<AuthorizationData>) {
-        val newAuthorizationsData = result
-            .filter { it.isNotExpired() }
-            .sortedBy { it.createdAt }
-        val joinedViewModels = createViewModels(newAuthorizationsData).joinFinalModels(this.listItemsValues)
-        if (listItemsValues != joinedViewModels) postListItemsUpdate(newItems = joinedViewModels)
     }
 
     private fun collectAuthorizationRequestData(): List<ConnectionAndKey>? {
@@ -229,5 +232,16 @@ class AuthorizationsListViewModel @Inject constructor(
             listVisibility.postValue(View.VISIBLE)
             emptyViewVisibility.postValue(View.GONE)
         }
+    }
+
+    private fun cleanExpiredItems() {
+        listItemsValues.filter { it.shouldBeSetTimeOutMode }.forEach {
+            updateItemViewMode(listItem = it, newViewMode = ViewMode.TIME_OUT)
+        }
+    }
+
+    private fun cleanDeadItems() {
+        val currentItems = listItemsValues.filter { !it.shouldBeDestroyed }
+        if (currentItems != listItemsValues) postListItemsUpdate(newItems = currentItems)
     }
 }

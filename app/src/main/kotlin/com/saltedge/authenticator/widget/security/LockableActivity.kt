@@ -51,8 +51,7 @@ import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 const val KEY_SKIP_PIN = "KEY_SKIP_PIN"
 
 @SuppressLint("Registered")
-abstract class LockableActivity :
-    AppCompatActivity(),
+abstract class LockableActivity : AppCompatActivity(),
     PasscodeInputViewListener,
     BiometricPromptCallback,
     DialogInterface.OnClickListener {
