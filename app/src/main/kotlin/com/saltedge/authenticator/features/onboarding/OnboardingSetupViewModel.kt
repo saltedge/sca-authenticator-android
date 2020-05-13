@@ -39,7 +39,7 @@ class OnboardingSetupViewModel(
     val biometricTools: BiometricToolsAbs
 ) : ViewModel(), LifecycleObserver {
 
-    val headerTitle: MutableLiveData<Int> = MutableLiveData(R.string.onboarding_secure_app_passcode_create )
+    val headerTitle: MutableLiveData<Int> = MutableLiveData(R.string.onboarding_secure_app_passcode_create)
     val proceedViewVisibility: MutableLiveData<Int> = MutableLiveData(View.GONE)
     val skipViewVisibility: MutableLiveData<Int> = MutableLiveData(View.VISIBLE)
     val setupLayoutVisibility: MutableLiveData<Int> = MutableLiveData(View.GONE)

@@ -61,10 +61,6 @@ class ConnectProviderFragment : BaseFragment(),
         super.onCreate(savedInstanceState)
         authenticatorApp?.appComponent?.inject(this)
         setupViewModel()
-        viewModel.setInitialData(
-            initialConnectData = arguments?.getSerializable(KEY_CONNECT_DATA) as? ConnectAppLinkData,
-            connectionGuid = arguments?.getString(KEY_GUID)
-        )
     }
 
     override fun onCreateView(
@@ -86,7 +82,6 @@ class ConnectProviderFragment : BaseFragment(),
         super.onViewCreated(view, savedInstanceState)
         connectWebView?.webViewClient = webViewClient
         completeView?.setOnClickListener(this)
-        viewModel.onViewCreated()
     }
 
     override fun onDestroyView() {
@@ -103,12 +98,7 @@ class ConnectProviderFragment : BaseFragment(),
     }
 
     override fun onBackPress(): Boolean {
-        return if (viewModel.shouldShowWebView() && connectWebView?.canGoBack() == true) {
-            connectWebView.goBack()
-            true
-        } else {
-            false
-        }
+        return viewModel.onBackPress(webViewCanGoBack = connectWebView?.canGoBack())
     }
 
     override fun webAuthFinishError(errorClass: String, errorMessage: String?) {
@@ -120,7 +110,7 @@ class ConnectProviderFragment : BaseFragment(),
     override fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token) {
         connectWebView?.clearCache(true)
         CookieManager.getInstance().removeSessionCookies(null)
-        viewModel.webAuthFinishSuccess(id, accessToken)
+        viewModel.authFinishedWithSuccess(id, accessToken)
     }
 
     override fun onPageLoadStarted() {
@@ -139,7 +129,7 @@ class ConnectProviderFragment : BaseFragment(),
         viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let { activity?.finishFragment() }
         })
-        viewModel.showErrorAndFinishEvent.observe(this, Observer<ViewModelEvent<String>> {
+        viewModel.onShowErrorEvent.observe(this, Observer<ViewModelEvent<String>> {
             it.getContentIfNotHandled()?.let { message ->
                 activity?.showErrorDialog(
                     message = message,
@@ -147,12 +137,18 @@ class ConnectProviderFragment : BaseFragment(),
                 )
             }
         })
-        viewModel.loadUrlInWebViewEvent.observe(this, Observer<ViewModelEvent<String?>> {
+        viewModel.onUrlChangedEvent.observe(this, Observer<ViewModelEvent<String?>> {
             it.getContentIfNotHandled()?.let { url ->
                 connectWebView?.loadUrl(url)
             }
         })
-        viewModel.iconResId.observe(this, Observer<Int> {
+        viewModel.shouldGoBackEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let {
+                connectWebView.goBack()
+                true
+            }
+        })
+        viewModel.statusIconResId.observe(this, Observer<Int> {
             completeView?.setIconResource(it)
         })
         viewModel.completeTitle.observe(this, Observer<String> {
@@ -164,6 +160,10 @@ class ConnectProviderFragment : BaseFragment(),
         viewModel.mainActionTextResId.observe(this, Observer<Int> {
             completeView?.setMainActionText(it)
         })
+        viewModel.setInitialData(
+            initialConnectData = arguments?.getSerializable(KEY_CONNECT_DATA) as? ConnectAppLinkData,
+            connectionGuid = arguments?.getString(KEY_GUID)
+        )
     }
 
     companion object {

@@ -57,7 +57,7 @@ class ConnectProviderViewModel @Inject constructor(
     private val apiManager: AuthenticatorApiManagerAbs
 ) : ViewModel(), LifecycleObserver, ConnectionCreateListener, FetchProviderConfigurationListener {
 
-    val iconResId: MutableLiveData<Int> = MutableLiveData(R.drawable.ic_status_error)
+    val statusIconResId: MutableLiveData<Int> = MutableLiveData(R.drawable.ic_status_error)
     val completeTitle: MutableLiveData<String> = MutableLiveData("")
     val completeDescription: MutableLiveData<String> = MutableLiveData("")
     val mainActionTextResId: MutableLiveData<Int> = MutableLiveData(R.string.actions_try_again)
@@ -73,9 +73,11 @@ class ConnectProviderViewModel @Inject constructor(
 
     var onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()
         private set
-    var showErrorAndFinishEvent = MutableLiveData<ViewModelEvent<String>>()
+    var onShowErrorEvent = MutableLiveData<ViewModelEvent<String>>()
         private set
-    var loadUrlInWebViewEvent = MutableLiveData<ViewModelEvent<String>>()
+    var onUrlChangedEvent = MutableLiveData<ViewModelEvent<String>>()
+        private set
+    var shouldGoBackEvent = MutableLiveData<ViewModelEvent<Unit>>()
         private set
 
     override fun onConnectionCreateSuccess(response: CreateConnectionResponseData) {
@@ -91,7 +93,7 @@ class ConnectProviderViewModel @Inject constructor(
                 parseRedirect(
                     url = redirectUrl,
                     success = { connectionID, resultAccessToken ->
-                        webAuthFinishSuccess(connectionID, resultAccessToken)
+                        authFinishedWithSuccess(connectionID, resultAccessToken)
                     },
                     error = { errorClass, errorMessage ->
                         webAuthFinishError(errorClass, errorMessage)
@@ -108,7 +110,7 @@ class ConnectProviderViewModel @Inject constructor(
     }
 
     override fun onConnectionCreateFailure(error: ApiErrorData) {
-        showErrorAndFinishEvent.postValue(ViewModelEvent(error.getErrorMessage(appContext)))
+        onShowErrorEvent.postValue(ViewModelEvent(error.getErrorMessage(appContext)))
     }
 
     override fun fetchProviderConfigurationDataResult(
@@ -116,7 +118,7 @@ class ConnectProviderViewModel @Inject constructor(
         error: ApiErrorData?
     ) {
         when {
-            error != null -> showErrorAndFinishEvent.postValue(
+            error != null -> onShowErrorEvent.postValue(
                 ViewModelEvent(
                     error.getErrorMessage(
                         appContext
@@ -128,10 +130,22 @@ class ConnectProviderViewModel @Inject constructor(
                     this.connection = it
                     performCreateConnectionRequest()
                 }
-                    ?: showErrorAndFinishEvent.postValue(ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider)))
+                    ?: onShowErrorEvent.postValue(ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider)))
             }
-            else -> showErrorAndFinishEvent.postValue(ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider)))
+            else -> onShowErrorEvent.postValue(ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider)))
         }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    fun onResume() {
+        when (viewMode) {
+            ViewMode.START_NEW_CONNECT -> performFetchConfigurationRequest()
+            ViewMode.START_RECONNECT -> performCreateConnectionRequest()
+            ViewMode.WEB_ENROLL -> loadWebRedirectUrl()
+            ViewMode.COMPLETE_SUCCESS -> Unit
+            ViewMode.COMPLETE_ERROR -> Unit
+        }
+        updateViewsContent()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -158,17 +172,6 @@ class ConnectProviderViewModel @Inject constructor(
         else R.string.actions_reconnect
     }
 
-    fun onViewCreated() {
-        when (viewMode) {
-            ViewMode.START_NEW_CONNECT -> performFetchConfigurationRequest()
-            ViewMode.START_RECONNECT -> performCreateConnectionRequest()
-            ViewMode.WEB_ENROLL -> loadWebRedirectUrl()
-            ViewMode.COMPLETE_SUCCESS -> Unit
-            ViewMode.COMPLETE_ERROR -> Unit
-        }
-        updateViewsContent()
-    }
-
     fun onViewClick(viewId: Int) {
         if (viewId == R.id.mainActionView) onCloseEvent.postValue(ViewModelEvent(Unit))
     }
@@ -177,46 +180,7 @@ class ConnectProviderViewModel @Inject constructor(
         if (dialogActionId == DialogInterface.BUTTON_POSITIVE) onCloseEvent.postValue(ViewModelEvent(Unit))
     }
 
-    fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token) {
-        authFinishedWithSuccess(connectionId = id, accessToken = accessToken)
-    }
-
-    fun webAuthFinishError(errorClass: String, errorMessage: String?) {
-        viewMode = ViewMode.COMPLETE_ERROR
-        sessionFailMessage = errorMessage
-        updateViewsContent()
-    }
-
-    fun shouldShowWebView(): Boolean {
-        return viewMode == ViewMode.WEB_ENROLL
-    }
-
-    private fun performFetchConfigurationRequest() {
-        initialConnectData?.configurationUrl?.let {
-            apiManager.getProviderConfigurationData(it, resultCallback = this)
-        }
-            ?: showErrorAndFinishEvent.postValue(ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider)))
-    }
-
-    private fun performCreateConnectionRequest() {
-        if (connection.connectUrl.isNotEmpty()) {
-            apiManager.createConnectionRequest(
-                appContext = appContext,
-                connection = connection,
-                pushToken = preferenceRepository.cloudMessagingToken,
-                connectQueryParam = initialConnectData?.connectQuery,
-                resultCallback = this
-            )
-        } else {
-            showErrorAndFinishEvent.postValue(ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider)))
-        }
-    }
-
-    private fun loadWebRedirectUrl() {
-        loadUrlInWebViewEvent.postValue(ViewModelEvent(authenticateData?.redirectUrl ?: ""))
-    }
-
-    private fun authFinishedWithSuccess(connectionId: ConnectionID, accessToken: Token) {
+    fun authFinishedWithSuccess(connectionId: ConnectionID, accessToken: Token) {
         viewMode = ViewMode.COMPLETE_SUCCESS
         connection.id = connectionId
         connection.accessToken = accessToken
@@ -229,18 +193,59 @@ class ConnectProviderViewModel @Inject constructor(
         updateViewsContent()
     }
 
+    fun webAuthFinishError(errorClass: String, errorMessage: String?) {
+        viewMode = ViewMode.COMPLETE_ERROR
+        sessionFailMessage = errorMessage
+        updateViewsContent()
+    }
+
+    fun shouldShowWebView(): Boolean {
+        return viewMode == ViewMode.WEB_ENROLL
+    }
+
+    fun onBackPress(webViewCanGoBack: Boolean?): Boolean {
+        val result = shouldShowWebView() && webViewCanGoBack == true
+        if (result) shouldGoBackEvent.postValue(ViewModelEvent(Unit))
+        return result
+    }
+
+    private fun performFetchConfigurationRequest() {
+        initialConnectData?.configurationUrl?.let {
+            apiManager.getProviderConfigurationData(it, resultCallback = this)
+        }
+            ?: onShowErrorEvent.postValue(ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider)))
+    }
+
+    private fun performCreateConnectionRequest() {
+        if (connection.connectUrl.isNotEmpty()) {
+            apiManager.createConnectionRequest(
+                appContext = appContext,
+                connection = connection,
+                pushToken = preferenceRepository.cloudMessagingToken,
+                connectQueryParam = initialConnectData?.connectQuery,
+                resultCallback = this
+            )
+        } else {
+            onShowErrorEvent.postValue(ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider)))
+        }
+    }
+
+    private fun loadWebRedirectUrl() {
+        onUrlChangedEvent.postValue(ViewModelEvent(authenticateData?.redirectUrl ?: ""))
+    }
+
     private val ViewMode.isCompleteWithSuccess: Boolean
         get() = this == ViewMode.COMPLETE_SUCCESS
 
     private fun updateViewsContent() {
-        iconResId.postValue(getIconResId())
+        statusIconResId.postValue(getIconResId())
         completeTitle.postValue(getCompleteTitle())
         completeDescription.postValue(getCompleteDescription())
         mainActionTextResId.postValue(getActionTextResId())
 
-        shouldShowWebViewVisibility.postValue(showWebView())
-        shouldShowProgressViewVisibility.postValue(showProgressView())
-        shouldShowCompleteViewVisibility.postValue(showCompleteViewVisibility())
+        shouldShowWebViewVisibility.postValue(getWebViewVisibility())
+        shouldShowProgressViewVisibility.postValue(getProgressViewVisibility())
+        shouldShowCompleteViewVisibility.postValue(getCompleteViewVisibility())
     }
 
     private fun getIconResId(): Int {
@@ -269,15 +274,15 @@ class ConnectProviderViewModel @Inject constructor(
         return if (viewMode.isCompleteWithSuccess) R.string.actions_proceed else R.string.actions_try_again
     }
 
-    private fun showWebView(): Int {
+    private fun getWebViewVisibility(): Int {
         return if (viewMode == ViewMode.WEB_ENROLL) View.VISIBLE else View.GONE
     }
 
-    private fun showProgressView(): Int {
+    private fun getProgressViewVisibility(): Int {
         return if (viewMode == ViewMode.START_NEW_CONNECT || viewMode == ViewMode.START_RECONNECT) View.VISIBLE else View.GONE
     }
 
-    private fun showCompleteViewVisibility(): Int {
+    private fun getCompleteViewVisibility(): Int {
         return if (viewMode == ViewMode.COMPLETE_SUCCESS || viewMode == ViewMode.COMPLETE_ERROR) View.VISIBLE else View.GONE
     }
 }

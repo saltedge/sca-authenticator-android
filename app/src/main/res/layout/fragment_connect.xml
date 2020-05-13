@@ -39,6 +39,7 @@
             android:layout_height="match_parent"
             android:visibility="@{viewModel.shouldShowWebViewVisibility}" />
 
+        <!--TODO: fragment_connect_processing and complete_view very similar-->
         <include
             android:id="@+id/fragmentConnectProcessingLayout"
             layout="@layout/fragment_connect_processing"
