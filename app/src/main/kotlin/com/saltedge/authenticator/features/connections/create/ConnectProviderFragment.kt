@@ -164,9 +164,6 @@ class ConnectProviderFragment : BaseFragment(),
         viewModel.mainActionTextResId.observe(this, Observer<Int> {
             completeView?.setMainActionText(it)
         })
-        viewModel.reportProblemActionText.observe(this, Observer<Int?> {
-            completeView?.setAltActionText(it)
-        })
     }
 
     companion object {

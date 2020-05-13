@@ -61,7 +61,6 @@ class ConnectProviderViewModel @Inject constructor(
     val completeTitle: MutableLiveData<String> = MutableLiveData("")
     val completeDescription: MutableLiveData<String> = MutableLiveData("")
     val mainActionTextResId: MutableLiveData<Int> = MutableLiveData(R.string.actions_try_again)
-    val reportProblemActionText: MutableLiveData<Int> = MutableLiveData(R.string.actions_contact_support)
     val shouldShowWebViewVisibility = MutableLiveData<Int>()
     val shouldShowProgressViewVisibility = MutableLiveData<Int>()
     val shouldShowCompleteViewVisibility = MutableLiveData<Int>()
@@ -238,7 +237,6 @@ class ConnectProviderViewModel @Inject constructor(
         completeTitle.postValue(getCompleteTitle())
         completeDescription.postValue(getCompleteDescription())
         mainActionTextResId.postValue(getActionTextResId())
-        reportProblemActionText.postValue(getReportProblemActionText())
 
         shouldShowWebViewVisibility.postValue(showWebView())
         shouldShowProgressViewVisibility.postValue(showProgressView())
@@ -269,10 +267,6 @@ class ConnectProviderViewModel @Inject constructor(
 
     private fun getActionTextResId(): Int {
         return if (viewMode.isCompleteWithSuccess) R.string.actions_proceed else R.string.actions_try_again
-    }
-
-    private fun getReportProblemActionText(): Int? {
-        return if (viewMode.isCompleteWithSuccess) null else R.string.actions_contact_support
     }
 
     private fun showWebView(): Int {
