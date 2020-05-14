@@ -84,6 +84,6 @@ enum class ViewMode {
             }
         }
 
-    val showProgress: Boolean
+    val processingMode: Boolean
         get() = this === LOADING || this === CONFIRM_PROCESSING || this === DENY_PROCESSING
 }

@@ -21,7 +21,6 @@
 package com.saltedge.authenticator.features.authorizations.details
 
 import android.content.Context
-import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
@@ -60,8 +59,6 @@ class AuthorizationDetailsViewModel(
     val onCloseViewEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onTimeUpdateEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val authorizationData = MutableLiveData<AuthorizationViewModel>()
-    val headerVisibility = MutableLiveData<Int>()
-    val ignoreTimeUpdate = MutableLiveData<Boolean>()
 
     private var connectionAndKey: ConnectionAndKey? = null
     private var pollingService: SingleAuthorizationPollingService = apiManager.createSingleAuthorizationPollingService()
@@ -70,8 +67,6 @@ class AuthorizationDetailsViewModel(
     private val modelHasFinalMode: Boolean
         get() = authorizationData.value?.hasFinalMode ?: false
     private var authorizationId: String? = null
-    private val authorizationAvailable: Boolean
-        get() = viewMode != ViewMode.UNAVAILABLE
 
     fun bindLifecycleObserver(lifecycle: Lifecycle) {
         lifecycle.let {
@@ -112,7 +107,6 @@ class AuthorizationDetailsViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onFragmentResume() {
-        postHeaderUpdates()
         if (viewMode === ViewMode.LOADING || viewMode === ViewMode.DEFAULT) startPolling()
     }
 
@@ -180,7 +174,6 @@ class AuthorizationDetailsViewModel(
             )
             if (!modelHasFinalMode && authorizationData.value != newViewModel) {
                 authorizationData.postValue(newViewModel)
-                postHeaderUpdates()
             }
         } ?: updateToFinalViewMode(ViewMode.UNAVAILABLE)
     }
@@ -244,16 +237,10 @@ class AuthorizationDetailsViewModel(
             it.setNewViewMode(newViewMode = newViewMode)
             authorizationData.postValue(it)
         }
-        postHeaderUpdates()
-    }
-
-    private fun postHeaderUpdates() {
-        ignoreTimeUpdate.postValue(viewMode.showProgress)
-        headerVisibility.postValue(if (authorizationAvailable) View.VISIBLE else View.INVISIBLE)
     }
 
     private fun startPolling() {
-        if (authorizationAvailable) {
+        if (viewMode != ViewMode.UNAVAILABLE) {
             authorizationId?.let {
                 pollingService.contract = this
                 pollingService.start(authorizationId = it)

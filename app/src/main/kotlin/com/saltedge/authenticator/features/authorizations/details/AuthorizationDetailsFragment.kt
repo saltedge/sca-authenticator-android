@@ -96,11 +96,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
     private fun startTimer() {
         timeViewUpdateTimer = Timer()
         timeViewUpdateTimer.schedule(object : TimerTask() {
-            override fun run() {
-                activity?.runOnUiThread {
-                    viewModel.onTimerTick()
-                }
-            }
+            override fun run() { activity?.runOnUiThread { viewModel.onTimerTick() } }
         }, 0, TIME_VIEW_UPDATE_TIMEOUT)
     }
 
@@ -114,7 +110,9 @@ class AuthorizationDetailsFragment : BaseFragment(),
         viewModel.bindLifecycleObserver(lifecycle = lifecycle)
 
         viewModel.onTimeUpdateEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
-            event.getContentIfNotHandled()?.let { headerView?.onTimeUpdate() }
+            event.getContentIfNotHandled()?.let {
+                headerView?.onTimeUpdate()
+            }
         })
         viewModel.onErrorEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
             event.getContentIfNotHandled()?.let { message ->
@@ -124,18 +122,13 @@ class AuthorizationDetailsFragment : BaseFragment(),
         viewModel.onCloseViewEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
             event.getContentIfNotHandled()?.let { activity?.finishFragment() }
         })
-
         viewModel.authorizationData.observe(this, Observer<AuthorizationViewModel> {
             headerView?.setTitleAndLogo(title = it.connectionName, logoUrl = it.connectionLogoUrl ?: "")
             headerView?.setProgressTime(startTime = it.startTime, endTime = it.endTime)
+            headerView?.ignoreTimeUpdate = it.ignoreTimeUpdate
+            headerView?.visibility = it.timeViewVisibility
             contentView?.setTitleAndDescription(it.title, it.description)
             contentView?.setViewMode(it.viewMode)
-        })
-        viewModel.headerVisibility.observe(this, Observer<Int> {
-            headerView?.visibility = it
-        })
-        viewModel.ignoreTimeUpdate.observe(this, Observer<Boolean> {
-            headerView?.ignoreTimeUpdate = it
         })
 
         viewModel.setInitialData(identifier = arguments?.getSerializable(KEY_ID) as? AuthorizationIdentifier)

@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.authorizations.common
 
+import android.view.View
 import com.saltedge.authenticator.sdk.model.AuthorizationID
 import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
@@ -45,9 +46,6 @@ data class AuthorizationViewModel(
 ) : Serializable {
 
     var destroyAt: DateTime? = null
-
-    val hasProcessingMode: Boolean
-        get() = viewMode.showProgress
 
     /**
      * Set new viewMode and if is final mode set destroyAt
@@ -82,7 +80,19 @@ data class AuthorizationViewModel(
         get() = viewMode.isFinalMode()
 
     /**
-     * Check that `time views` should ignore time changes
+     * Check that `time views` should be hidden
+     *
+     * @return View.INVISIBLE if view mode is UNAVAILABLE or LOADING or View.VISIBLE
+     */
+    val timeViewVisibility: Int
+        get() {
+            val invisible = viewMode == ViewMode.UNAVAILABLE || viewMode == ViewMode.LOADING
+            return if (invisible) View.INVISIBLE else View.VISIBLE
+        }
+
+    /**
+     * Check that `time views` should ignore time changes.
+     * freeze last time state
      *
      * @return Boolean, true if view mode is not default
      */

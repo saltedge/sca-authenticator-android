@@ -62,8 +62,8 @@ class AuthorizationContentView : LinearLayout {
                 statusLayout?.animate()?.setDuration(500)?.alpha(1.0f)?.start()
             }
 
-            progressStatusView?.setVisible(show = viewMode.showProgress)
-            statusImageView?.setVisible(show = !viewMode.showProgress)
+            progressStatusView?.setVisible(show = viewMode.processingMode)
+            statusImageView?.setVisible(show = !viewMode.processingMode)
             viewMode.statusImageResId?.let { statusImageView.setImageResource(it) }
             statusTitleTextView?.setText(viewMode.statusTitleResId)
             statusDescriptionTextView?.setText(viewMode.statusDescriptionResId)

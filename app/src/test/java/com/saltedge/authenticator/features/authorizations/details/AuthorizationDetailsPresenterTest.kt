@@ -77,7 +77,7 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verify(mockView).setHeaderVisibility(false)
         Mockito.verify(mockView).setContentViewMode(
             ViewMode.UNAVAILABLE,
-            ignoreTimeUpdate = ViewMode.UNAVAILABLE.showProgress
+            ignoreTimeUpdate = ViewMode.UNAVAILABLE.processingMode
         )
         Mockito.verify(mockView).setHeaderValues(
             logoUrl = "",
@@ -103,7 +103,7 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verify(mockView).setHeaderVisibility(true)
         Mockito.verify(mockView).setContentViewMode(
             ViewMode.LOADING,
-            ignoreTimeUpdate = ViewMode.LOADING.showProgress
+            ignoreTimeUpdate = ViewMode.LOADING.processingMode
         )
         Mockito.verify(mockView).setHeaderValues(
             logoUrl = "",
@@ -150,7 +150,7 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verify(mockPollingService).stop()
         Mockito.verify(mockView).setContentViewMode(
             ViewMode.DENY_PROCESSING,
-            ignoreTimeUpdate = ViewMode.DENY_PROCESSING.showProgress
+            ignoreTimeUpdate = ViewMode.DENY_PROCESSING.processingMode
         )
     }
 
@@ -249,7 +249,7 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verify(mockPollingService).stop()
         Mockito.verify(mockView).setContentViewMode(
             ViewMode.CONFIRM_PROCESSING,
-            ignoreTimeUpdate = ViewMode.CONFIRM_PROCESSING.showProgress
+            ignoreTimeUpdate = ViewMode.CONFIRM_PROCESSING.processingMode
         )
     }
 
@@ -303,7 +303,7 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verify(mockView).updateTimeViews()
         Mockito.verify(mockView).setContentViewMode(
             ViewMode.TIME_OUT,
-            ignoreTimeUpdate = ViewMode.TIME_OUT.showProgress
+            ignoreTimeUpdate = ViewMode.TIME_OUT.processingMode
         )
         assertThat(presenter.currentViewModel!!.viewMode, equalTo(ViewMode.TIME_OUT))
     }
@@ -448,7 +448,7 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verify(mockView).setHeaderVisibility(true)
         Mockito.verify(mockView).setContentViewMode(
             ViewMode.DEFAULT,
-            ignoreTimeUpdate = ViewMode.DEFAULT.showProgress
+            ignoreTimeUpdate = ViewMode.DEFAULT.processingMode
         )
         Mockito.verify(mockView).setHeaderValues(
             logoUrl = viewModel1.connectionLogoUrl ?: "",
@@ -562,7 +562,7 @@ class AuthorizationDetailsPresenterTest {
         assertThat(presenter.currentViewModel!!.viewMode, equalTo(ViewMode.ERROR))
         Mockito.verify(mockView).setContentViewMode(
             ViewMode.ERROR,
-            ignoreTimeUpdate = ViewMode.ERROR.showProgress
+            ignoreTimeUpdate = ViewMode.ERROR.processingMode
         )
 
         presenter.setInitialData(AuthorizationIdentifier(connectionID = "X", authorizationID = ""))
@@ -572,7 +572,7 @@ class AuthorizationDetailsPresenterTest {
         assertThat(presenter.currentViewModel!!.viewMode, equalTo(ViewMode.ERROR))
         Mockito.verify(mockView).setContentViewMode(
             ViewMode.ERROR,
-            ignoreTimeUpdate = ViewMode.ERROR.showProgress
+            ignoreTimeUpdate = ViewMode.ERROR.processingMode
         )
 
         Mockito.verifyNoMoreInteractions(mockConnectionsRepository)
@@ -640,7 +640,7 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verify(mockConnectionsRepository).invalidateConnectionsByTokens(listOf("token1"))
         Mockito.verify(mockView).setContentViewMode(
             ViewMode.ERROR,
-            ignoreTimeUpdate = ViewMode.ERROR.showProgress
+            ignoreTimeUpdate = ViewMode.ERROR.processingMode
         )
     }
 
@@ -661,7 +661,7 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verify(mockPollingService).stop()
         Mockito.verify(mockView).setContentViewMode(
             ViewMode.UNAVAILABLE,
-            ignoreTimeUpdate = ViewMode.UNAVAILABLE.showProgress
+            ignoreTimeUpdate = ViewMode.UNAVAILABLE.processingMode
         )
 
         presenter.currentViewModel = viewModel1
@@ -689,7 +689,7 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verifyNoMoreInteractions(mockPollingService)
         Mockito.verify(mockView).setContentViewMode(
             ViewMode.DEFAULT,
-            ignoreTimeUpdate = ViewMode.DEFAULT.showProgress
+            ignoreTimeUpdate = ViewMode.DEFAULT.processingMode
         )
 
         Mockito.clearInvocations(mockView, mockPollingService)
@@ -700,7 +700,7 @@ class AuthorizationDetailsPresenterTest {
 
         Mockito.verify(mockView).setContentViewMode(
             ViewMode.ERROR,
-            ignoreTimeUpdate = ViewMode.ERROR.showProgress
+            ignoreTimeUpdate = ViewMode.ERROR.processingMode
         )
     }
 
@@ -716,7 +716,7 @@ class AuthorizationDetailsPresenterTest {
         assertThat(presenter.currentViewModel!!.viewMode, equalTo(ViewMode.CONFIRM_SUCCESS))
         Mockito.verify(mockView).setContentViewMode(
             ViewMode.CONFIRM_SUCCESS,
-            ignoreTimeUpdate = ViewMode.CONFIRM_SUCCESS.showProgress
+            ignoreTimeUpdate = ViewMode.CONFIRM_SUCCESS.processingMode
         )
     }
 
@@ -732,7 +732,7 @@ class AuthorizationDetailsPresenterTest {
         assertThat(presenter.currentViewModel!!.viewMode, equalTo(ViewMode.DENY_SUCCESS))
         Mockito.verify(mockView).setContentViewMode(
             ViewMode.DENY_SUCCESS,
-            ignoreTimeUpdate = ViewMode.DENY_SUCCESS.showProgress
+            ignoreTimeUpdate = ViewMode.DENY_SUCCESS.processingMode
         )
     }
 
@@ -749,7 +749,7 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verify(mockPollingService).start(authorizationId = "1")
         Mockito.verify(mockView).setContentViewMode(
             ViewMode.DEFAULT,
-            ignoreTimeUpdate = ViewMode.DEFAULT.showProgress
+            ignoreTimeUpdate = ViewMode.DEFAULT.processingMode
         )
     }
 
@@ -766,7 +766,7 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verify(mockPollingService).start(authorizationId = "1")
         Mockito.verify(mockView).setContentViewMode(
             ViewMode.DEFAULT,
-            ignoreTimeUpdate = ViewMode.DEFAULT.showProgress
+            ignoreTimeUpdate = ViewMode.DEFAULT.processingMode
         )
     }
 
@@ -790,7 +790,7 @@ class AuthorizationDetailsPresenterTest {
         )
         Mockito.verify(mockView).setContentViewMode(
             ViewMode.CONFIRM_PROCESSING,
-            ignoreTimeUpdate = ViewMode.CONFIRM_PROCESSING.showProgress
+            ignoreTimeUpdate = ViewMode.CONFIRM_PROCESSING.processingMode
         )
     }
 
@@ -864,7 +864,7 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verify(mockPollingService).stop()
         Mockito.verify(mockView).setContentViewMode(
             ViewMode.CONFIRM_PROCESSING,
-            ignoreTimeUpdate = ViewMode.CONFIRM_PROCESSING.showProgress
+            ignoreTimeUpdate = ViewMode.CONFIRM_PROCESSING.processingMode
         )
     }
 
