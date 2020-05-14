@@ -50,12 +50,12 @@ class EmptyView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
         setTitle(context.getString(titleResId))
     }
 
-    fun setDescription(description: String) {
-        descriptionView?.text = description
+    fun setDescription(text: String) {
+        descriptionView?.text = text
     }
 
-    fun setDescription(descriptionResId: Int) {
-        setDescription(context.getString(descriptionResId))
+    fun setDescription(textResId: Int) {
+        setDescription(context.getString(textResId))
     }
 
     fun setActionText(@StringRes textId: Int) = setActionText(context.getString(textId))

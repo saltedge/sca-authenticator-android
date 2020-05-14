@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +26,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.CookieManager
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
-import com.saltedge.authenticator.features.connections.create.di.ConnectProviderModule
+import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.databinding.ConnectProviderBinding
 import com.saltedge.authenticator.interfaces.OnBackPressListener
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.Token
@@ -42,22 +47,20 @@ import kotlinx.android.synthetic.main.fragment_connect.*
 import javax.inject.Inject
 
 class ConnectProviderFragment : BaseFragment(),
-    ConnectProviderContract.View,
     ConnectWebClientContract,
     View.OnClickListener,
-    OnBackPressListener {
+    OnBackPressListener,
+    DialogInterface.OnClickListener {
 
-    @Inject
-    lateinit var presenterContract: ConnectProviderContract.Presenter
+    @Inject lateinit var viewModelFactory: ViewModelsFactory
+    private lateinit var viewModel: ConnectProviderViewModel
     private val webViewClient = ConnectWebClient(contract = this)
+    private lateinit var binding: ConnectProviderBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectDependencies()
-        presenterContract.setInitialData(
-            initialConnectData = arguments?.getSerializable(KEY_CONNECT_DATA) as? ConnectAppLinkData,
-            connectionGuid = arguments?.getString(KEY_GUID)
-        )
+        authenticatorApp?.appComponent?.inject(this)
+        setupViewModel()
     }
 
     override fun onCreateView(
@@ -66,73 +69,48 @@ class ConnectProviderFragment : BaseFragment(),
         savedInstanceState: Bundle?
     ): View {
         activityComponents?.updateAppbar(
-            titleResId = presenterContract.getTitleResId(),
+            titleResId = viewModel.getTitleResId(),
             backActionImageResId = R.drawable.ic_appbar_action_close
         )
-        return inflater.inflate(R.layout.fragment_connect, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_connect, container, false)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         connectWebView?.webViewClient = webViewClient
         completeView?.setOnClickListener(this)
-        updateViewsContent()
-        presenterContract.viewContract = this
-        presenterContract.onViewCreated()
     }
 
     override fun onDestroyView() {
         connectWebView?.destroy()
-        presenterContract.viewContract = null
         super.onDestroyView()
     }
 
-    override fun onDestroy() {
-        presenterContract.onDestroyView()
-        super.onDestroy()
+    override fun onClick(view: View?) {
+        viewModel.onViewClick(view?.id ?: return)
+    }
+
+    override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
+        viewModel.onDialogActionIdClick(dialogActionId)
     }
 
     override fun onBackPress(): Boolean {
-        return if (presenterContract.shouldShowWebView && connectWebView?.canGoBack() == true) {
-            connectWebView.goBack()
-            true
-        } else {
-            false
-        }
-    }
-
-    override fun onClick(view: View?) {
-        presenterContract.onViewClick(view?.id ?: return)
-    }
-
-    override fun closeView() {
-        activity?.finishFragment()
-    }
-
-    override fun updateViewsContent() {
-        completeView?.setIconResource(presenterContract.iconResId)
-        completeView?.setTitleText(presenterContract.completeTitle)
-        completeView?.setSubtitleText(presenterContract.completeMessage)
-        completeView?.setMainActionText(presenterContract.mainActionTextResId)
-        completeView?.setAltActionText(presenterContract.reportProblemActionText)
-
-        updateLayoutsVisibility()
-    }
-
-    override fun loadUrlInWebView(url: String) {
-        connectWebView?.loadUrl(url)
+        return viewModel.onBackPress(webViewCanGoBack = connectWebView?.canGoBack())
     }
 
     override fun webAuthFinishError(errorClass: String, errorMessage: String?) {
         connectWebView?.clearCache(true)
         CookieManager.getInstance().removeSessionCookies(null)
-        presenterContract.webAuthFinishError(errorClass, errorMessage)
+        viewModel.webAuthFinishError(errorClass, errorMessage)
     }
 
     override fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token) {
         connectWebView?.clearCache(true)
         CookieManager.getInstance().removeSessionCookies(null)
-        presenterContract.webAuthFinishSuccess(id, accessToken)
+        viewModel.authFinishedWithSuccess(id, accessToken)
     }
 
     override fun onPageLoadStarted() {
@@ -143,24 +121,48 @@ class ConnectProviderFragment : BaseFragment(),
         dismissLoadProgress()
     }
 
-    override fun showErrorAndFinish(message: String) {
-        activity?.showErrorDialog(
-            message = message,
-            listener = DialogInterface.OnClickListener { _: DialogInterface, _: Int ->
-                activity?.finishFragment()
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(this, viewModelFactory)
+            .get(ConnectProviderViewModel::class.java)
+        lifecycle.addObserver(viewModel)
+
+        viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let { activity?.finishFragment() }
+        })
+        viewModel.onShowErrorEvent.observe(this, Observer<ViewModelEvent<String>> {
+            it.getContentIfNotHandled()?.let { message ->
+                activity?.showErrorDialog(
+                    message = message,
+                    listener = this
+                )
             }
-        )
-    }
-
-    private fun updateLayoutsVisibility() {
-        fragmentConnectProcessingLayout?.setVisible(show = presenterContract.shouldShowProgressView)
-        completeView?.setVisible(show = presenterContract.shouldShowCompleteView)
-        connectWebView?.setVisible(show = presenterContract.shouldShowWebView)
-    }
-
-    private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addConnectProviderModule(ConnectProviderModule())?.inject(
-            this
+        })
+        viewModel.onUrlChangedEvent.observe(this, Observer<ViewModelEvent<String?>> {
+            it.getContentIfNotHandled()?.let { url ->
+                connectWebView?.loadUrl(url)
+            }
+        })
+        viewModel.shouldGoBackEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let {
+                connectWebView.goBack()
+                true
+            }
+        })
+        viewModel.statusIconResId.observe(this, Observer<Int> {
+            completeView?.setIconResource(it)
+        })
+        viewModel.completeTitle.observe(this, Observer<String> {
+            completeView?.setTitleText(it)
+        })
+        viewModel.completeDescription.observe(this, Observer<String> {
+            completeView?.setDescription(it)
+        })
+        viewModel.mainActionTextResId.observe(this, Observer<Int> {
+            completeView?.setMainActionText(it)
+        })
+        viewModel.setInitialData(
+            initialConnectData = arguments?.getSerializable(KEY_CONNECT_DATA) as? ConnectAppLinkData,
+            connectionGuid = arguments?.getString(KEY_GUID)
         )
     }
 

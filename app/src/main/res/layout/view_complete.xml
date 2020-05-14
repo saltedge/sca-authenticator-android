@@ -19,45 +19,55 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_centerInParent="true"
-    android:layout_marginTop="@dimen/dp_72"
+    android:background="@color/theme_background"
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/iconView"
-        android:layout_width="@dimen/info_view_small_icon"
-        android:layout_height="@dimen/info_view_small_icon"
-        android:contentDescription="@null"
-        android:scaleType="fitCenter"
-        android:src="@mipmap/ic_launcher" />
+    <FrameLayout
+        android:id="@+id/statusProgressOrImageContainer"
+        android:layout_width="@dimen/dp_76"
+        android:layout_height="@dimen/dp_76"
+        android:layout_marginTop="@dimen/dp_106"
+        android:background="@drawable/shape_bg_process_status"
+        android:elevation="@dimen/dp_40">
+
+        <ImageView
+            android:id="@+id/iconView"
+            android:layout_width="@dimen/dp_56"
+            android:layout_height="@dimen/dp_56"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            tools:src="@drawable/ic_status_success" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/titleView"
-        style="@style/Text20BlackMedium"
+        style="@style/Text22Regular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_32"
-        android:layout_marginTop="@dimen/dp_32"
+        android:layout_marginTop="@dimen/dp_26"
         android:layout_marginRight="@dimen/dp_32"
         android:gravity="center_horizontal"
         android:maxLines="3"
-        tools:text="Title text view" />
+        tools:text="HSBC was successfully connected" />
 
     <TextView
         android:id="@+id/subTitleView"
-        style="@style/Text16GrayDarkRegular"
+        style="@style/Text18DarkRegular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_32"
-        android:layout_marginTop="@dimen/dp_17"
+        android:layout_marginTop="@dimen/dp_10"
         android:layout_marginRight="@dimen/dp_32"
         android:gravity="center_horizontal"
-        tools:text="Subtitle text view" />
+        tools:text="You will receive an authorization request every time you make an action." />
 
     <Button
         android:id="@+id/mainActionView"
         style="@style/LargeBlueButton"
-        android:layout_marginTop="@dimen/dp_32"
+        android:layout_height="@dimen/dp_54"
+        android:layout_marginTop="@dimen/dp_24"
         tools:text="Button"
         tools:textColor="@android:color/white" />
 
