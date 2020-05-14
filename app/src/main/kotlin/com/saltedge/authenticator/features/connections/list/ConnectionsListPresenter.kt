@@ -85,7 +85,7 @@ class ConnectionsListPresenter @Inject constructor(
     }
 
     override fun onViewClick(viewId: Int) {
-        if (viewId == R.id.mainActionView) viewContract?.showQrScanView()
+        if (viewId == R.id.actionView) viewContract?.showQrScanView()
     }
 
     override fun onConnectionsRevokeResult(revokedTokens: List<String>, apiError: ApiErrorData?) {}

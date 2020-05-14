@@ -51,11 +51,11 @@ class CompleteView(context: Context, attrs: AttributeSet) : LinearLayout(context
         titleView?.text = context.getString(textResId)
     }
 
-    fun setSubtitleText(text: String) {
+    fun setDescription(text: String) {
         subTitleView?.text = text
     }
 
-    fun setSubtitleText(textResId: Int) {
+    fun setDescription(textResId: Int) {
         subTitleView?.text = context.getString(textResId)
     }
 
@@ -79,7 +79,7 @@ class CompleteView(context: Context, attrs: AttributeSet) : LinearLayout(context
         val attributes = context.obtainStyledAttributes(attrs, R.styleable.CompleteView)
         try {
             attributes.getString(R.styleable.CompleteView_title)?.let { setTitleText(it) }
-            attributes.getString(R.styleable.CompleteView_description)?.let { setSubtitleText(it) }
+            attributes.getString(R.styleable.CompleteView_description)?.let { setDescription(it) }
             setMainActionText(attributes.getString(R.styleable.CompleteView_mainActionText))
             setAltActionText(attributes.getString(R.styleable.CompleteView_altActionText))
             setIconResource(

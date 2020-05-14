@@ -42,7 +42,6 @@
     <string name="actions_unlock_authenticator">Unlock Salt Edge Authenticator</string>
     <string name="actions_view_more">View More</string>
     <string name="actions_allow">Allow</string>
-    <string name="actions_connect_provider">Connect Provider</string>
     <string name="actions_confirm">Confirm</string>
     <string name="actions_enter_passcode_or_fingerprint">Enter Passcode or use Fingerprint</string>
     <string name="actions_clear">Clear</string>
@@ -95,7 +94,7 @@
     <string name="connections_feature_title">Connections</string>
     <string name="choose_connection_feature_title">Choose connection</string>
     <string name="connections_list_no_connections">No Connections</string>
-    <string name="connections_list_no_connections_description">You have no currently connected service providers. Connect one to start receiving authorizations for your actions (e.g. payments).</string>
+    <string name="connections_list_no_connections_description">Seems like you didn’t connect to your provider yet. Add new connection to securely authorize your actions.</string>
     <string name="connections_list_delete_all_connections">Delete all connections and stop receiving confirmations until another Provider is connected.</string>
     <string name="connection_status_connected_on">Connected on</string>
     <string name="connection_status_inactive">Inactive connection. Remove or reconnect.</string>

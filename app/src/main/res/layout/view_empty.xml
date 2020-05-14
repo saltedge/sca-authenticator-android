@@ -18,10 +18,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/dp_60"
-    android:gravity="center_horizontal"
     android:background="@color/theme_background"
-    android:orientation="vertical">
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/dp_60">
 
     <ImageView
         android:id="@+id/emptyImageView"
@@ -35,31 +35,31 @@
 
     <TextView
         android:id="@+id/titleView"
-        style="@style/Text20Regular"
+        style="@style/Text22Regular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_32"
+        android:layout_marginTop="@dimen/dp_30"
         android:layout_marginEnd="@dimen/dp_32"
-        android:layout_marginTop="@dimen/dp_32"
         android:gravity="center_horizontal"
         android:maxLines="3"
         tools:text="Title text view" />
 
     <TextView
         android:id="@+id/descriptionView"
-        style="@style/Text16Regular"
+        style="@style/Text18DarkRegular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_32"
+        android:layout_marginTop="@dimen/dp_10"
         android:layout_marginEnd="@dimen/dp_32"
-        android:layout_marginTop="@dimen/dp_12"
         android:gravity="center_horizontal"
         android:maxLines="5"
         tools:text="Description text view" />
 
     <Button
         android:id="@+id/actionView"
-        style="@style/LargeBlueButton"
+        style="@style/LargeBlueButtonWithInset"
         android:layout_marginTop="@dimen/dp_24"
         tools:text="Button"
         tools:textColor="@android:color/white" />

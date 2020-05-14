@@ -45,6 +45,11 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="LargeBlueButtonWithInset" parent="BlueButton">
+        <item name="android:layout_width">@dimen/dp_246</item>
+        <item name="android:layout_height">@dimen/dp_54</item>
+    </style>
+
     <style name="WhiteButton" parent="@style/Widget.AppCompat.Button.Colored">
         <item name="android:fontFamily">@font/roboto_regular</item>
         <item name="android:textSize">@dimen/text_18</item>

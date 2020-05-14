@@ -147,11 +147,11 @@ class ConnectionsListPresenterTestSet1 {
     @Test
     @Throws(Exception::class)
     fun onViewClickTest() {
-        createPresenter(viewContract = null).onViewClick(viewId = R.id.mainActionView)
+        createPresenter(viewContract = null).onViewClick(viewId = R.id.actionView)
 
         Mockito.never()
 
-        createPresenter(viewContract = mockView).onViewClick(viewId = R.id.mainActionView)
+        createPresenter(viewContract = mockView).onViewClick(viewId = R.id.actionView)
 
         Mockito.verify(mockView).showQrScanView()
     }

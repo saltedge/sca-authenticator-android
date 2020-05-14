@@ -154,7 +154,7 @@
 
         <TextView
             android:id="@+id/statusTitleTextView"
-            style="@style/Text20Regular"
+            style="@style/Text22Regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_32"
