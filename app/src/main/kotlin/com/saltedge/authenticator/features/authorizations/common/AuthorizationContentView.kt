@@ -73,8 +73,15 @@ class AuthorizationContentView : LinearLayout {
     }
 
     fun setTitleAndDescription(title: String, description: String) {
-        titleTextView?.text = title
+        setTitle(title)
+        setDescription(description)
+    }
 
+    fun setTitle(title: String) {
+        titleTextView?.text = title
+    }
+
+    fun setDescription(description: String) {
         description.hasHTMLTags().let { showWebView ->
             descriptionTextView?.setVisible(show = !showWebView)
             descriptionWebView?.setVisible(show = showWebView)

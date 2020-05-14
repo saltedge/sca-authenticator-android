@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.authorizations.list.adapters
+package com.saltedge.authenticator.features.authorizations.list.pagers
 
 import android.content.Context
 import android.util.SparseArray
@@ -81,7 +81,7 @@ class AuthorizationsHeaderPagerAdapter(
                 title = model.connectionName,
                 logoUrl = model.connectionLogoUrl
             )
-            setProgressTime(startTime = model.createdAt, endTime = model.expiresAt)
+            setProgressTime(startTime = model.startTime, endTime = model.endTime)
             ignoreTimeUpdate = model.ignoreTimeUpdate
         }
     }

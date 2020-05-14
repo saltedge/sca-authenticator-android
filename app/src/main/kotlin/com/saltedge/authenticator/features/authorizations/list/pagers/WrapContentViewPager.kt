@@ -18,22 +18,26 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.authorizations.details
+package com.saltedge.authenticator.features.authorizations.list.pagers
 
-import com.saltedge.authenticator.features.authorizations.common.BaseAuthorizationViewContract
-import com.saltedge.authenticator.features.authorizations.common.ViewMode
-import org.joda.time.DateTime
+import android.content.Context
+import android.util.AttributeSet
+import androidx.viewpager.widget.ViewPager
 
-interface AuthorizationDetailsContract {
-    interface View : BaseAuthorizationViewContract {
-        fun setHeaderVisibility(show: Boolean)
-        fun setHeaderValues(logoUrl: String, title: String, startTime: DateTime, endTime: DateTime)
-        fun updateTimeViews()
-        fun setContentViewMode(mode: ViewMode, ignoreTimeUpdate: Boolean)
-        fun setContentTitleAndDescription(title: String, description: String)
-        fun showError(errorMessage: String)
-        fun startTimer()
-        fun stopTimer()
-        fun closeView()
+private const val PADDING_TO_WIDTH_RATIO = 0.15
+
+class WrapContentViewPager : ViewPager {
+
+    constructor(context: Context) : super(context)
+
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val actualWidth = MeasureSpec.getSize(widthMeasureSpec)
+        val padding: Int = (actualWidth * PADDING_TO_WIDTH_RATIO).toInt()
+        setPadding(padding, 0, padding, 0)
+        clipToPadding = false
+        pageMargin = 0
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 }

@@ -20,86 +20,86 @@
  */
 package com.saltedge.authenticator.features.authorizations.common
 
-import android.content.Context
-import com.saltedge.authenticator.features.authorizations.confirm.PasscodePromptCallback
-import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
-import com.saltedge.authenticator.sdk.model.AuthorizationID
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.ConnectionID
-import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
-import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
+//import android.content.Context
+//import com.saltedge.authenticator.features.authorizations.confirm.PasscodePromptCallback
+//import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
+//import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
+//import com.saltedge.authenticator.sdk.model.AuthorizationID
+//import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+//import com.saltedge.authenticator.sdk.model.ConnectionID
+//import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData
+//import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
+//import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
 
-abstract class BaseAuthorizationPresenter(
-    internal val appContext: Context,
-    internal val biometricTools: BiometricToolsAbs,
-    internal val apiManager: AuthenticatorApiManagerAbs
-) : BiometricPromptCallback, PasscodePromptCallback, ConfirmAuthorizationListener {
-
-    var currentViewModel: AuthorizationViewModel? = null
-    var currentConnectionAndKey: ConnectionAndKey? = null
-
-    abstract fun onAuthorizeStart(connectionID: ConnectionID, authorizationID: AuthorizationID, type: ActionType)
-    abstract fun onConfirmDenySuccess(success: Boolean, connectionID: ConnectionID, authorizationID: AuthorizationID)
-    abstract fun baseViewContract(): BaseAuthorizationViewContract?
-
-    fun onAuthorizeActionSelected(requestType: ActionType) {
-        val viewModel = currentViewModel ?: return
-        if (!viewModel.canBeAuthorized) return
-        when(requestType) {
-            ActionType.CONFIRM -> sendConfirmRequest()
-            ActionType.DENY -> sendDenyRequest()
-        }
-    }
-
-    override fun biometricAuthFinished() {
-        onAuthorizationConfirmedByUser()
-    }
-
-    override fun biometricsCanceledByUser() {
-        baseViewContract()?.askUserPasscodeConfirmation()
-    }
-
-    override fun successAuthWithPasscode() {
-        onAuthorizationConfirmedByUser()
-    }
-
-    override fun passcodePromptCanceledByUser() {}
-
-    override fun onConfirmDenySuccess(result: ConfirmDenyResponseData, connectionID: ConnectionID) {
-        onConfirmDenySuccess(
-            success = result.success == true && result.authorizationID?.isNotEmpty() == true,
-            connectionID = connectionID,
-            authorizationID = result.authorizationID ?: ""
-        )
-    }
-
-    private fun onAuthorizationConfirmedByUser() {
-        sendConfirmRequest()
-    }
-
-    private fun sendConfirmRequest() {
-        val viewModel = currentViewModel ?: return
-        val connectionAndKey = currentConnectionAndKey ?: return
-        onAuthorizeStart(connectionID = viewModel.connectionID, authorizationID = viewModel.authorizationID, type = ActionType.CONFIRM)
-        apiManager.confirmAuthorization(
-            connectionAndKey = connectionAndKey,
-            authorizationId = viewModel.authorizationID,
-            authorizationCode = viewModel.authorizationCode,
-            resultCallback = this
-        )
-    }
-
-    private fun sendDenyRequest() {
-        val viewModel = currentViewModel ?: return
-        val connectionAndKey = currentConnectionAndKey ?: return
-        onAuthorizeStart(connectionID = viewModel.connectionID, authorizationID = viewModel.authorizationID, type = ActionType.DENY)
-        apiManager.denyAuthorization(
-            connectionAndKey = connectionAndKey,
-            authorizationId = viewModel.authorizationID,
-            authorizationCode = viewModel.authorizationCode,
-            resultCallback = this
-        )
-    }
-}
+//abstract class BaseAuthorizationPresenter(//TODO remove
+//    internal val appContext: Context,
+//    internal val biometricTools: BiometricToolsAbs,
+//    internal val apiManager: AuthenticatorApiManagerAbs
+//) : BiometricPromptCallback, PasscodePromptCallback, ConfirmAuthorizationListener {
+//
+//    var currentViewModel: AuthorizationViewModel? = null
+//    var currentConnectionAndKey: ConnectionAndKey? = null
+//
+//    abstract fun onAuthorizeStart(connectionID: ConnectionID, authorizationID: AuthorizationID, type: ActionType)
+//    abstract fun onConfirmDenySuccess(success: Boolean, connectionID: ConnectionID, authorizationID: AuthorizationID)
+//    abstract fun baseViewContract(): BaseAuthorizationViewContract?
+//
+//    fun onAuthorizeActionSelected(requestType: ActionType) {
+//        val viewModel = currentViewModel ?: return
+//        if (!viewModel.canBeAuthorized) return
+//        when(requestType) {
+//            ActionType.CONFIRM -> sendConfirmRequest()
+//            ActionType.DENY -> sendDenyRequest()
+//        }
+//    }
+//
+//    override fun biometricAuthFinished() {
+//        onAuthorizationConfirmedByUser()
+//    }
+//
+//    override fun biometricsCanceledByUser() {
+//        baseViewContract()?.askUserPasscodeConfirmation()
+//    }
+//
+//    override fun successAuthWithPasscode() {
+//        onAuthorizationConfirmedByUser()
+//    }
+//
+//    override fun passcodePromptCanceledByUser() {}
+//
+//    override fun onConfirmDenySuccess(result: ConfirmDenyResponseData, connectionID: ConnectionID) {
+//        onConfirmDenySuccess(
+//            success = result.success == true && result.authorizationID?.isNotEmpty() == true,
+//            connectionID = connectionID,
+//            authorizationID = result.authorizationID ?: ""
+//        )
+//    }
+//
+//    private fun onAuthorizationConfirmedByUser() {
+//        sendConfirmRequest()
+//    }
+//
+//    private fun sendConfirmRequest() {
+//        val viewModel = currentViewModel ?: return
+//        val connectionAndKey = currentConnectionAndKey ?: return
+//        onAuthorizeStart(connectionID = viewModel.connectionID, authorizationID = viewModel.authorizationID, type = ActionType.CONFIRM)
+//        apiManager.confirmAuthorization(
+//            connectionAndKey = connectionAndKey,
+//            authorizationId = viewModel.authorizationID,
+//            authorizationCode = viewModel.authorizationCode,
+//            resultCallback = this
+//        )
+//    }
+//
+//    private fun sendDenyRequest() {
+//        val viewModel = currentViewModel ?: return
+//        val connectionAndKey = currentConnectionAndKey ?: return
+//        onAuthorizeStart(connectionID = viewModel.connectionID, authorizationID = viewModel.authorizationID, type = ActionType.DENY)
+//        apiManager.denyAuthorization(
+//            connectionAndKey = connectionAndKey,
+//            authorizationId = viewModel.authorizationID,
+//            authorizationCode = viewModel.authorizationCode,
+//            resultCallback = this
+//        )
+//    }
+//}

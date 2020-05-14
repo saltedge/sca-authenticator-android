@@ -41,7 +41,7 @@
             android:orientation="vertical"
             android:visibility="@{viewModel.listVisibility}">
 
-            <com.saltedge.authenticator.features.authorizations.list.WrapContentViewPager
+            <com.saltedge.authenticator.features.authorizations.list.pagers.WrapContentViewPager
                 android:id="@+id/headerViewPager"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/authorizations_headers_pager_height"

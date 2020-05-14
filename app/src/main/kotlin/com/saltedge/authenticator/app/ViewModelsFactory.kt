@@ -23,6 +23,7 @@ package com.saltedge.authenticator.app
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsViewModel
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListViewModel
 import com.saltedge.authenticator.features.launcher.LauncherViewModel
 import com.saltedge.authenticator.features.main.MainActivityViewModel
@@ -85,6 +86,15 @@ class ViewModelsFactory @Inject constructor(
             }
             modelClass.isAssignableFrom(AuthorizationsListViewModel::class.java) -> {
                 return AuthorizationsListViewModel(
+                    appContext = appContext,
+                    connectionsRepository = connectionsRepository,
+                    keyStoreManager = keyStoreManager,
+                    cryptoTools = cryptoTools,
+                    apiManager = apiManager
+                ) as T
+            }
+            modelClass.isAssignableFrom(AuthorizationDetailsViewModel::class.java) -> {
+                return AuthorizationDetailsViewModel(
                     appContext = appContext,
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,

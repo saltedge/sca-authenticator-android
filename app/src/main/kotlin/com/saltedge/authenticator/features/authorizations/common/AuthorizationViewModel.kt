@@ -36,8 +36,8 @@ data class AuthorizationViewModel(
     val title: String,
     val description: String,
     val validSeconds: Int,
-    val expiresAt: DateTime,
-    val createdAt: DateTime,
+    val endTime: DateTime,
+    val startTime: DateTime,
     val connectionID: ConnectionID,
     val connectionName: String,
     val connectionLogoUrl: String?,
@@ -45,6 +45,9 @@ data class AuthorizationViewModel(
 ) : Serializable {
 
     var destroyAt: DateTime? = null
+
+    val hasProcessingMode: Boolean
+        get() = viewMode.showProgress
 
     /**
      * Set new viewMode and if is final mode set destroyAt
@@ -100,7 +103,7 @@ data class AuthorizationViewModel(
      * @return Boolean, true if expiresAt time is before now
      */
     val isExpired: Boolean
-        get() = expiresAt.isEqualNow || expiresAt.isBeforeNow
+        get() = endTime.isEqualNow || endTime.isBeforeNow
 
     /**
      * Check that authorization is not expired
@@ -116,7 +119,7 @@ data class AuthorizationViewModel(
      * @return Int, seconds
      */
     val remainedSecondsTillExpire: Int
-        get() = expiresAt.remainedSeconds()
+        get() = endTime.remainedSeconds()
 
     /**
      * Calculates interval between current time and expiresAt time and prepare timestamp string result
@@ -124,7 +127,7 @@ data class AuthorizationViewModel(
      * @return String, timestamp in "minutes:seconds" format
      */
     val remainedTimeStringTillExpire: String
-        get() = expiresAt.remainedSeconds().remainedTimeDescription()
+        get() = endTime.remainedSeconds().remainedTimeDescription()
 }
 
 /**
@@ -142,8 +145,8 @@ fun AuthorizationData.toAuthorizationViewModel(connection: ConnectionAbs): Autho
         connectionName = connection.name,
         connectionLogoUrl = connection.logoUrl,
         validSeconds = authorizationExpirationPeriod(this),
-        expiresAt = this.expiresAt,
-        createdAt = this.createdAt ?: DateTime(0L),
+        endTime = this.expiresAt,
+        startTime = this.createdAt ?: DateTime(0L),
         authorizationID = this.id,
         authorizationCode = this.authorizationCode ?: ""
     )
@@ -161,7 +164,7 @@ fun joinViewModels(newViewModels: List<AuthorizationViewModel>, oldViewModels: L
     val newModelsWithoutExitingFinalModels = newViewModels.filter {
         !finalModels.containsIdentifier(it.authorizationID, it.connectionID)
     }
-    return (newModelsWithoutExitingFinalModels + finalModels).sortedBy { it.createdAt }
+    return (newModelsWithoutExitingFinalModels + finalModels).sortedBy { it.startTime }
 }
 
 private fun List<AuthorizationViewModel>.containsIdentifier(

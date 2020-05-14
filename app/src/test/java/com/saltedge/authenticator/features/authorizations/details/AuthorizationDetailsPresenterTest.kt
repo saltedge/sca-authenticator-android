@@ -296,7 +296,7 @@ class AuthorizationDetailsPresenterTest {
             authorizationID = viewModel1.authorizationID
         ))
         presenter.currentViewModel =
-            viewModel1.copy(expiresAt = DateTime.now().minusMinutes(1), viewMode = ViewMode.DEFAULT)
+            viewModel1.copy(endTime = DateTime.now().minusMinutes(1), viewMode = ViewMode.DEFAULT)
 
         presenter.onTimerTick()
 
@@ -423,16 +423,16 @@ class AuthorizationDetailsPresenterTest {
     fun getRequestDataTest() {
         val presenter = createPresenter(viewContract = mockView)
 
-        Assert.assertNull(presenter.getConnectionData())
+        Assert.assertNull(presenter.getConnectionDataForAuthorizationPolling())
 
         presenter.setInitialData(AuthorizationIdentifier(connectionID = "2_noKey", authorizationID = ""))
 
-        Assert.assertNull(presenter.getConnectionData())
+        Assert.assertNull(presenter.getConnectionDataForAuthorizationPolling())
 
         presenter.setInitialData(AuthorizationIdentifier(connectionID = "1", authorizationID = "2_noKey"))
 
         assertThat(
-            presenter.getConnectionData(),
+            presenter.getConnectionDataForAuthorizationPolling(),
             equalTo(ConnectionAndKey(connection1 as ConnectionAbs, mockPrivateKey))
         )
     }
@@ -453,8 +453,8 @@ class AuthorizationDetailsPresenterTest {
         Mockito.verify(mockView).setHeaderValues(
             logoUrl = viewModel1.connectionLogoUrl ?: "",
             title = viewModel1.connectionName,
-            startTime = viewModel1.createdAt,
-            endTime = viewModel1.expiresAt
+            startTime = viewModel1.startTime,
+            endTime = viewModel1.endTime
         )
         Mockito.verify(mockView).setContentTitleAndDescription(
             title = viewModel1.title,
@@ -880,8 +880,8 @@ class AuthorizationDetailsPresenterTest {
             title = "",
             description = "",
             validSeconds = 0,
-            expiresAt = DateTime(0L),
-            createdAt = DateTime(0L),
+            endTime = DateTime(0L),
+            startTime = DateTime(0L),
             connectionID = "",
             connectionName = "",
             connectionLogoUrl = "",
@@ -896,8 +896,8 @@ class AuthorizationDetailsPresenterTest {
             title = "",
             description = "",
             validSeconds = 0,
-            expiresAt = DateTime(0L),
-            createdAt = DateTime(0L),
+            endTime = DateTime(0L),
+            startTime = DateTime(0L),
             connectionID = "",
             connectionName = "",
             connectionLogoUrl = "",
@@ -912,8 +912,8 @@ class AuthorizationDetailsPresenterTest {
             title = "",
             description = "",
             validSeconds = 0,
-            expiresAt = DateTime(0L),
-            createdAt = DateTime(0L),
+            endTime = DateTime(0L),
+            startTime = DateTime(0L),
             connectionID = "",
             connectionName = "",
             connectionLogoUrl = "",
@@ -988,8 +988,8 @@ class AuthorizationDetailsPresenterTest {
     private val viewModel1 = authorizationData1.toAuthorizationViewModel(connection1)
 
     private fun createPresenter(viewContract: AuthorizationDetailsContract.View? = null):
-        AuthorizationDetailsPresenter {
-        return AuthorizationDetailsPresenter(
+        AuthorizationDetailsViewModel {
+        return AuthorizationDetailsViewModel(
             appContext = TestAppTools.applicationContext,
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,

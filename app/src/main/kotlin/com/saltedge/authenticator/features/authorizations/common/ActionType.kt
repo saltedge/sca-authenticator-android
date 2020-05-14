@@ -20,13 +20,13 @@
  */
 package com.saltedge.authenticator.features.authorizations.common
 
-enum class ActionType {//TODO REVIEW USAGE
-    CONFIRM, DENY;
-
-    fun toViewMode(): ViewMode {
-        return when(this) {
-            CONFIRM -> ViewMode.CONFIRM_PROCESSING
-            DENY -> ViewMode.DENY_PROCESSING
-        }
-    }
-}
+//enum class ActionType {//TODO REVIEW USAGE
+//    CONFIRM, DENY;
+//
+//    fun toViewMode(): ViewMode {
+//        return when(this) {
+//            CONFIRM -> ViewMode.CONFIRM_PROCESSING
+//            DENY -> ViewMode.DENY_PROCESSING
+//        }
+//    }
+//}
