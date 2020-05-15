@@ -58,15 +58,14 @@ class AuthorizationDetailsViewModel(
     val onErrorEvent = MutableLiveData<ViewModelEvent<String>>()
     val onCloseViewEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onTimeUpdateEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val authorizationData = MutableLiveData<AuthorizationViewModel>()
+    val authorizationModel = MutableLiveData<AuthorizationViewModel>()
 
     private var connectionAndKey: ConnectionAndKey? = null
     private var pollingService: SingleAuthorizationPollingService = apiManager.createSingleAuthorizationPollingService()
     private val viewMode: ViewMode
-        get() = authorizationData.value?.viewMode ?: ViewMode.LOADING
+        get() = authorizationModel.value?.viewMode ?: ViewMode.LOADING
     private val modelHasFinalMode: Boolean
-        get() = authorizationData.value?.hasFinalMode ?: false
-    private var authorizationId: String? = null
+        get() = authorizationModel.value?.hasFinalMode ?: false
 
     fun bindLifecycleObserver(lifecycle: Lifecycle) {
         lifecycle.let {
@@ -84,21 +83,20 @@ class AuthorizationDetailsViewModel(
             repository = connectionsRepository,
             keyStoreManager = keyStoreManager
         )
-        this.authorizationId = identifier?.authorizationID
-        val viewMode = if (connectionAndKey == null || authorizationId.isNullOrEmpty()) {
+        val viewMode = if (connectionAndKey == null || identifier?.authorizationID.isNullOrEmpty()) {
             ViewMode.UNAVAILABLE
         } else {
             ViewMode.LOADING
         }
-        authorizationData.value = AuthorizationViewModel(
-            authorizationID = "",
+        authorizationModel.value = AuthorizationViewModel(
+            authorizationID = identifier?.authorizationID ?: "",
             authorizationCode = "",
             title = "",
             description = "",
             validSeconds = 0,
             endTime = DateTime(0L),
             startTime = DateTime(0L),
-            connectionID = "",
+            connectionID = identifier?.connectionID ?: "",
             connectionName = "",
             connectionLogoUrl = "",
             viewMode = viewMode
@@ -107,11 +105,13 @@ class AuthorizationDetailsViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onFragmentResume() {
+        println("onFragmentResume")
         if (viewMode === ViewMode.LOADING || viewMode === ViewMode.DEFAULT) startPolling()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onFragmentPause() {
+        println("onFragmentPause")
         stopPolling()
     }
 
@@ -123,7 +123,7 @@ class AuthorizationDetailsViewModel(
     }
 
     fun onTimerTick() {
-        authorizationData.value?.also { model ->
+        authorizationModel.value?.also { model ->
             when {
                 model.shouldBeSetTimeOutMode -> updateToFinalViewMode(ViewMode.TIME_OUT)
                 model.shouldBeDestroyed -> onCloseViewEvent.postValue(ViewModelEvent(Unit))
@@ -172,8 +172,8 @@ class AuthorizationDetailsViewModel(
             val newViewModel = it.toAuthorizationViewModel(
                 connection = connectionAndKey?.connection ?: return
             )
-            if (!modelHasFinalMode && authorizationData.value != newViewModel) {
-                authorizationData.postValue(newViewModel)
+            if (!modelHasFinalMode && authorizationModel.value != newViewModel) {
+                authorizationModel.postValue(newViewModel)
             }
         } ?: updateToFinalViewMode(ViewMode.UNAVAILABLE)
     }
@@ -205,8 +205,8 @@ class AuthorizationDetailsViewModel(
         onStartConfirmDenyFlow(viewMode = ViewMode.CONFIRM_PROCESSING)
         apiManager.confirmAuthorization(
             connectionAndKey = connectionAndKey ?: return,
-            authorizationId = authorizationData.value?.authorizationID ?: return,
-            authorizationCode = authorizationData.value?.authorizationCode,
+            authorizationId = authorizationModel.value?.authorizationID ?: return,
+            authorizationCode = authorizationModel.value?.authorizationCode,
             resultCallback = this
         )
     }
@@ -215,8 +215,8 @@ class AuthorizationDetailsViewModel(
         onStartConfirmDenyFlow(ViewMode.DENY_PROCESSING)
         apiManager.denyAuthorization(
             connectionAndKey = connectionAndKey ?: return,
-            authorizationId = authorizationData.value?.authorizationID ?: return,
-            authorizationCode = authorizationData.value?.authorizationCode,
+            authorizationId = authorizationModel.value?.authorizationID ?: return,
+            authorizationCode = authorizationModel.value?.authorizationCode,
             resultCallback = this
         )
     }
@@ -233,15 +233,15 @@ class AuthorizationDetailsViewModel(
     }
 
     private fun updateViewMode(newViewMode: ViewMode) {
-        authorizationData.value?.let {
+        authorizationModel.value?.let {
             it.setNewViewMode(newViewMode = newViewMode)
-            authorizationData.postValue(it)
+            authorizationModel.postValue(it)
         }
     }
 
     private fun startPolling() {
         if (viewMode != ViewMode.UNAVAILABLE) {
-            authorizationId?.let {
+            authorizationModel.value?.authorizationID?.let {
                 pollingService.contract = this
                 pollingService.start(authorizationId = it)
             }

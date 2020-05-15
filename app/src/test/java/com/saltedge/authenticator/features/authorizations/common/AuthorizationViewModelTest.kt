@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.authorizations.common
 
+import android.view.View
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
 import com.saltedge.authenticator.testTools.TestAppTools
@@ -274,6 +275,29 @@ class AuthorizationViewModelTest {
 
         Assert.assertFalse(model.copy(endTime = now.plusMinutes(1)).isExpired)
         Assert.assertTrue(model.copy(endTime = now.minusMinutes(1)).isExpired)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun timeViewVisibilityTest() {
+        val results = ViewMode.values().map {
+            model.viewMode = it
+            it to model.timeViewVisibility
+        }.toMap()
+
+        assertThat(results, equalTo(
+            mapOf(
+                ViewMode.LOADING to View.INVISIBLE,
+                ViewMode.DEFAULT to View.VISIBLE,
+                ViewMode.CONFIRM_PROCESSING to View.VISIBLE,
+                ViewMode.DENY_PROCESSING to View.VISIBLE,
+                ViewMode.CONFIRM_SUCCESS to View.VISIBLE,
+                ViewMode.DENY_SUCCESS to View.VISIBLE,
+                ViewMode.ERROR to View.VISIBLE,
+                ViewMode.TIME_OUT to View.VISIBLE,
+                ViewMode.UNAVAILABLE to View.INVISIBLE
+            )
+        ))
     }
 
     @Test

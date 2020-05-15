@@ -122,7 +122,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
         viewModel.onCloseViewEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
             event.getContentIfNotHandled()?.let { activity?.finishFragment() }
         })
-        viewModel.authorizationData.observe(this, Observer<AuthorizationViewModel> {
+        viewModel.authorizationModel.observe(this, Observer<AuthorizationViewModel> {
             headerView?.setTitleAndLogo(title = it.connectionName, logoUrl = it.connectionLogoUrl ?: "")
             headerView?.setProgressTime(startTime = it.startTime, endTime = it.endTime)
             headerView?.ignoreTimeUpdate = it.ignoreTimeUpdate
