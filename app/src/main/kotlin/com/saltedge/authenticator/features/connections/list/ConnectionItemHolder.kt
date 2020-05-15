@@ -48,7 +48,8 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
     fun bind(item: ConnectionViewModel) {
         logoImageView.loadRoundedImage(
             imageUrl = item.logoUrl,
-            placeholderId = R.drawable.ic_logo_bank_placeholder
+            placeholderId = R.drawable.ic_logo_bank_placeholder,
+            cornerRadius = itemView.resources.getDimension(R.dimen.dp_12)
         )
         titleView.text = item.name
         subTitleView.text = item.statusDescription
