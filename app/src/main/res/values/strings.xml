@@ -25,6 +25,7 @@
 
     <string name="actions_cancel">Cancel</string>
     <string name="actions_connect">Connect</string>
+    <string name="actions_scan_qr">Scan QR</string>
     <string name="actions_delete">Delete</string>
     <string name="actions_delete_all">Delete All</string>
     <string name="actions_deny">Deny</string>
@@ -175,5 +176,5 @@
     <string name="forgot_passcode_title">Forgot passcode?</string>
     <string name="forgot_passcode_description">Please clear app data and establish new connection with your provider.</string>
 
-    <string name="consents_feature_title">Consents</string>
+    <string name="consents_feature_title">Consent management</string>
 </resources>

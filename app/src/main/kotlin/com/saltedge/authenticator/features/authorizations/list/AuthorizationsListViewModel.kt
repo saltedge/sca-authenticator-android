@@ -43,6 +43,7 @@ import com.saltedge.authenticator.sdk.model.error.isConnectionNotFound
 import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.tools.ResId
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -67,13 +68,17 @@ class AuthorizationsListViewModel(
     private var connectionsAndKeys: Map<ConnectionID, ConnectionAndKey> =
         collectConnectionsAndKeys(connectionsRepository, keyStoreManager)
 
-    val listVisibility = MutableLiveData<Int>()
-    val emptyViewVisibility = MutableLiveData<Int>()
+    val listVisibility = MutableLiveData<Int>(View.GONE)
+    val emptyViewVisibility = MutableLiveData<Int>(View.VISIBLE)
+    val emptyViewActionText = MutableLiveData<ResId>(R.string.actions_scan_qr)
+    val emptyViewTitleText = MutableLiveData<ResId>(R.string.authorizations_nothing_confirm)
+    val emptyViewDescriptionText = MutableLiveData<ResId>(R.string.authorizations_nothing_confirm_description)
     val listItems = MutableLiveData<List<AuthorizationViewModel>>()
     val listItemsValues: List<AuthorizationViewModel>
         get() = listItems.value ?: emptyList()
     val listItemUpdateEvent = MutableLiveData<ViewModelEvent<Int>>()
     val onConfirmErrorEvent = MutableLiveData<ViewModelEvent<String>>()
+    val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
     fun bindLifecycleObserver(lifecycle: Lifecycle) {
         lifecycle.let {
@@ -83,6 +88,12 @@ class AuthorizationsListViewModel(
             it.addObserver(pollingService)
         }
         pollingService.contract = this
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    fun onResume() {
+        connectionsAndKeys = collectConnectionsAndKeys(connectionsRepository, keyStoreManager)
+        postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -109,6 +120,10 @@ class AuthorizationsListViewModel(
             if (items.any { it.isExpired }) cleanExpiredItems()
             if (items.any { it.shouldBeDestroyed }) cleanDeadItems()
         }
+    }
+
+    fun onEmptyViewActionClick() {
+        onQrScanClickEvent.postValue(ViewModelEvent(Unit))
     }
 
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
@@ -224,13 +239,26 @@ class AuthorizationsListViewModel(
 
     private fun postListItemsUpdate(newItems: List<AuthorizationViewModel>) {
         listItems.postValue(newItems)
-        if (newItems.isEmpty()) {
-            emptyViewVisibility.postValue(View.VISIBLE)
-            listVisibility.postValue(View.GONE)
-        } else {
-            listVisibility.postValue(View.VISIBLE)
-            emptyViewVisibility.postValue(View.GONE)
-        }
+        postMainComponentsState(itemsListIsEmpty = newItems.isEmpty())
+    }
+
+    private fun postMainComponentsState(itemsListIsEmpty: Boolean) {
+        val connectionsListIsEmpty = connectionsAndKeys.isEmpty()
+        val emptyViewIsVisible = connectionsListIsEmpty || itemsListIsEmpty
+
+        emptyViewVisibility.postValue(if (emptyViewIsVisible) View.VISIBLE else View.GONE)
+        listVisibility.postValue(if (emptyViewIsVisible) View.GONE else View.VISIBLE)
+        emptyViewActionText.postValue(
+            if (connectionsListIsEmpty) R.string.actions_connect else R.string.actions_scan_qr
+        )
+        emptyViewTitleText.postValue(
+            if (connectionsListIsEmpty) R.string.connections_list_no_connections
+            else R.string.authorizations_nothing_confirm
+        )
+        emptyViewDescriptionText.postValue(
+            if (connectionsListIsEmpty) R.string.connections_list_no_connections_description
+            else R.string.authorizations_nothing_confirm_description
+        )
     }
 
     private fun cleanExpiredItems() {

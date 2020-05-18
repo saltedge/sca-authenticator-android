@@ -107,9 +107,7 @@ class MainActivity : LockableActivity(),
         binding.lifecycleOwner = this
 
         viewModel.onQrScanClickEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let {
-                this.showQrScannerActivity()
-            }
+            it.getContentIfNotHandled()?.let { this.showQrScannerActivity() }
         })
         viewModel.onAppBarMenuClickEvent.observe(this, Observer {
             it.getContentIfNotHandled()?.let { menuItems ->
@@ -117,14 +115,10 @@ class MainActivity : LockableActivity(),
             }
         })
         viewModel.onBackActionClickEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let {
-                onBackPressed()
-            }
+            it.getContentIfNotHandled()?.let { onBackPressed() }
         })
         viewModel.onRestartActivityEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let {
-                super.restartLockableActivity()
-            }
+            it.getContentIfNotHandled()?.let { super.restartLockableActivity() }
         })
         viewModel.onShowAuthorizationsListEvent.observe(this, Observer {
             it.getContentIfNotHandled()?.let {
