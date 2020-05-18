@@ -105,13 +105,11 @@ class AuthorizationDetailsViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onFragmentResume() {
-        println("onFragmentResume")
         if (viewMode === ViewMode.LOADING || viewMode === ViewMode.DEFAULT) startPolling()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onFragmentPause() {
-        println("onFragmentPause")
         stopPolling()
     }
 
