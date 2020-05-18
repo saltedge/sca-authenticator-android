@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.authorizations.list.adapters
+package com.saltedge.authenticator.features.authorizations.list.pagers
 
 import android.view.View
 import android.view.ViewGroup

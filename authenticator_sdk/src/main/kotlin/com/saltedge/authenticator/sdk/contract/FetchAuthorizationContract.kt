@@ -26,5 +26,5 @@ import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
  * Polling service contract
  */
 interface FetchAuthorizationContract : FetchAuthorizationListener {
-    fun getConnectionData(): ConnectionAndKey?
+    fun getConnectionDataForAuthorizationPolling(): ConnectionAndKey?
 }

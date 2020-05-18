@@ -96,25 +96,11 @@ class MainActivityViewModel(
     fun onLifeCycleResume() {
         connectivityReceiver.addNetworkStateChangeListener(this)
         appContext.applyPreferenceLocale()
-        event = Lifecycle.Event.ON_RESUME
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onLifeCyclePause() {
         connectivityReceiver.removeNetworkStateChangeListener(this)
-        event = Lifecycle.Event.ON_PAUSE
-    }
-
-    lateinit var event: Lifecycle.Event
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun onLifeCycleStop() {
-        event = Lifecycle.Event.ON_STOP
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun onLifeCycleDestroy() {
-        event = Lifecycle.Event.ON_DESTROY
     }
 
     /**

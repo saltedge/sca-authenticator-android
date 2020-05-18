@@ -18,15 +18,26 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.authorizations.common
+package com.saltedge.authenticator.features.authorizations.list.pagers
 
-enum class ActionType {//TODO REVIEW USAGE
-    CONFIRM, DENY;
+import android.content.Context
+import android.util.AttributeSet
+import androidx.viewpager.widget.ViewPager
 
-    fun toViewMode(): ViewMode {
-        return when(this) {
-            CONFIRM -> ViewMode.CONFIRM_PROCESSING
-            DENY -> ViewMode.DENY_PROCESSING
-        }
+private const val PADDING_TO_WIDTH_RATIO = 0.15
+
+class WrapContentViewPager : ViewPager {
+
+    constructor(context: Context) : super(context)
+
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val actualWidth = MeasureSpec.getSize(widthMeasureSpec)
+        val padding: Int = (actualWidth * PADDING_TO_WIDTH_RATIO).toInt()
+        setPadding(padding, 0, padding, 0)
+        clipToPadding = false
+        pageMargin = 0
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 }

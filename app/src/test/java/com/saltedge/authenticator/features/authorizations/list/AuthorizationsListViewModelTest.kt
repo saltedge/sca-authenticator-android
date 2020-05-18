@@ -49,7 +49,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
 import java.security.PrivateKey
@@ -153,7 +152,7 @@ class AuthorizationsListViewModelTest {
     fun onTimeUpdateTestCase1() {
         //given list with expired item
         val viewModel = createViewModel()
-        viewModel.listItems.postValue(listOf(viewModel1, viewModel2.copy(expiresAt = DateTime(0))))
+        viewModel.listItems.postValue(listOf(viewModel1, viewModel2.copy(endTime = DateTime(0))))
 
         //when
         viewModel.onTimeUpdate()
@@ -161,7 +160,7 @@ class AuthorizationsListViewModelTest {
         //then
         assertThat(
             viewModel.listItemsValues[1],
-            equalTo(viewModel2.copy(expiresAt = DateTime(0), viewMode = ViewMode.TIME_OUT))
+            equalTo(viewModel2.copy(endTime = DateTime(0), viewMode = ViewMode.TIME_OUT))
         )
     }
 
@@ -490,12 +489,12 @@ class AuthorizationsListViewModelTest {
     }
 
     private val context: Context = ApplicationProvider.getApplicationContext()
-    private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
-    private val mockKeyStoreManager = Mockito.mock(KeyStoreManagerAbs::class.java)
-    private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
-    private val mockCryptoTools = Mockito.mock(CryptoToolsAbs::class.java)
-    private val mockApiManager = Mockito.mock(AuthenticatorApiManagerAbs::class.java)
-    private val mockPollingService = Mockito.mock(PollingServiceAbs::class.java)
+    private val mockPrivateKey = mock(PrivateKey::class.java)
+    private val mockKeyStoreManager = mock(KeyStoreManagerAbs::class.java)
+    private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
+    private val mockCryptoTools = mock(CryptoToolsAbs::class.java)
+    private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
+    private val mockPollingService = mock(PollingServiceAbs::class.java)
 
     private val mockConnection1 = Connection().apply {
         guid = "guid1"

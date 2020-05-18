@@ -243,7 +243,6 @@ class MainActivityViewModelTest {
         lifecycle.currentState = Lifecycle.State.STARTED//move to pause state (possible only after RESUMED state)
 
         //then
-        assertThat(viewModel.event, equalTo(Lifecycle.Event.ON_PAUSE))
         Mockito.verify(mockConnectivityReceiver).removeNetworkStateChangeListener(viewModel)
     }
 

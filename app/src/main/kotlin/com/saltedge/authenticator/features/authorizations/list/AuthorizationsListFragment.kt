@@ -33,8 +33,9 @@ import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.cloud.clearNotifications
 import com.saltedge.authenticator.databinding.AuthorizationsListBinding
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
-import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsContentPagerAdapter
-import com.saltedge.authenticator.features.authorizations.list.adapters.AuthorizationsHeaderPagerAdapter
+import com.saltedge.authenticator.features.authorizations.list.pagers.AuthorizationsContentPagerAdapter
+import com.saltedge.authenticator.features.authorizations.list.pagers.AuthorizationsHeaderPagerAdapter
+import com.saltedge.authenticator.features.authorizations.list.pagers.PagersScrollSynchronizer
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -84,7 +85,7 @@ class AuthorizationsListFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        clearAllNotifications()
+        activity?.clearNotifications()
         headerAdapter?.startTimer()
     }
 
@@ -131,10 +132,5 @@ class AuthorizationsListFragment : BaseFragment() {
             }
         }
         pagersScrollSynchronizer.initViews(headerViewPager, contentViewPager)
-    }
-
-    // Clear all system notification
-    private fun clearAllNotifications() {
-        activity?.clearNotifications()
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,43 +24,37 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_ID
 import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
-import com.saltedge.authenticator.features.authorizations.common.ViewMode
-import com.saltedge.authenticator.features.authorizations.confirm.ConfirmPasscodeDialog
-import com.saltedge.authenticator.features.authorizations.details.di.AuthorizationDetailsModule
+import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.cloud.clearNotifications
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.interfaces.OnBackPressListener
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.finishFragment
-import com.saltedge.authenticator.tools.setInvisible
-import com.saltedge.authenticator.tools.showDialogFragment
-import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
-import com.saltedge.authenticator.widget.biometric.showAuthorizationConfirm
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_authorization_details.*
-import org.joda.time.DateTime
 import java.util.*
 import javax.inject.Inject
 
 class AuthorizationDetailsFragment : BaseFragment(),
-    AuthorizationDetailsContract.View,
     View.OnClickListener,
     OnBackPressListener {
 
-    @Inject
-    lateinit var presenterContract: AuthorizationDetailsPresenter
-    @Inject
-    lateinit var timeViewUpdateTimer: Timer
-    var biometricPrompt: BiometricPromptAbs? = null
-        @Inject set
+    @Inject lateinit var viewModelFactory: ViewModelsFactory
+    private lateinit var viewModel: AuthorizationDetailsViewModel
+    private var timeViewUpdateTimer: Timer = Timer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectDependencies()
-        presenterContract.setInitialData(identifier = arguments?.getSerializable(KEY_ID) as? AuthorizationIdentifier)
+        authenticatorApp?.appComponent?.inject(this)
+        setupViewModel()
     }
 
     override fun onCreateView(
@@ -79,26 +73,15 @@ class AuthorizationDetailsFragment : BaseFragment(),
         contentView?.setActionClickListener(this)
     }
 
-    override fun onStart() {
-        super.onStart()
-        presenterContract.viewContract = this
-        biometricPrompt?.resultCallback = presenterContract
-    }
-
     override fun onResume() {
         super.onResume()
-        presenterContract.onFragmentResume()
+        activity?.clearNotifications()
+        startTimer()
     }
 
     override fun onPause() {
-        presenterContract.onFragmentPause()
+        stopTimer()
         super.onPause()
-    }
-
-    override fun onStop() {
-        biometricPrompt?.resultCallback = null
-        presenterContract.viewContract = null
-        super.onStop()
     }
 
     override fun onBackPress(): Boolean {
@@ -107,69 +90,48 @@ class AuthorizationDetailsFragment : BaseFragment(),
     }
 
     override fun onClick(view: View?) {
-        presenterContract.onViewClick(view?.id ?: return)
+        viewModel.onViewClick(view?.id ?: return)
     }
 
-    override fun updateTimeViews() {
-        headerView?.onTimeUpdate()
-    }
-
-    override fun setHeaderVisibility(show: Boolean) {
-        headerView?.setInvisible(!show)
-    }
-
-    override fun setHeaderValues(logoUrl: String, title: String, startTime: DateTime, endTime: DateTime) {
-        headerView?.setTitleAndLogo(title = title, logoUrl = logoUrl)
-        headerView?.setProgressTime(startTime = startTime, endTime = endTime)
-    }
-
-    override fun setContentViewMode(mode: ViewMode, ignoreTimeUpdate: Boolean) {
-        contentView?.setViewMode(mode)
-        headerView?.ignoreTimeUpdate = ignoreTimeUpdate
-    }
-
-    override fun setContentTitleAndDescription(title: String, description: String) {
-        contentView?.setTitleAndDescription(title, description)
-    }
-
-    override fun showError(errorMessage: String) {
-        view?.let { Snackbar.make(it, errorMessage, Snackbar.LENGTH_LONG).show() }
-    }
-
-    override fun askUserBiometricConfirmation() {
-        activity?.let { biometricPrompt?.showAuthorizationConfirm(it) }
-    }
-
-    override fun askUserPasscodeConfirmation() {
-        activity?.showDialogFragment(
-            ConfirmPasscodeDialog.newInstance(resultCallback = presenterContract)
-        )
-    }
-
-    override fun startTimer() {
+    private fun startTimer() {
         timeViewUpdateTimer = Timer()
         timeViewUpdateTimer.schedule(object : TimerTask() {
-            override fun run() {
-                activity?.runOnUiThread {
-                    presenterContract.onTimerTick()
-                }
-            }
+            override fun run() { activity?.runOnUiThread { viewModel.onTimerTick() } }
         }, 0, TIME_VIEW_UPDATE_TIMEOUT)
     }
 
-    override fun stopTimer() {
+    private fun stopTimer() {
         timeViewUpdateTimer.cancel()
         timeViewUpdateTimer.purge()
     }
 
-    override fun closeView() {
-        activity?.finishFragment()
-    }
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(this, viewModelFactory).get(AuthorizationDetailsViewModel::class.java)
+        viewModel.bindLifecycleObserver(lifecycle = lifecycle)
 
-    private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addAuthorizationDetailsModule(AuthorizationDetailsModule())?.inject(
-            this
-        )
+        viewModel.onTimeUpdateEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
+            event.getContentIfNotHandled()?.let {
+                headerView?.onTimeUpdate()
+            }
+        })
+        viewModel.onErrorEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
+            event.getContentIfNotHandled()?.let { message ->
+                view?.let { anchor -> Snackbar.make(anchor, message, Snackbar.LENGTH_LONG).show() }
+            }
+        })
+        viewModel.onCloseViewEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
+            event.getContentIfNotHandled()?.let { activity?.finishFragment() }
+        })
+        viewModel.authorizationModel.observe(this, Observer<AuthorizationViewModel> {
+            headerView?.setTitleAndLogo(title = it.connectionName, logoUrl = it.connectionLogoUrl ?: "")
+            headerView?.setProgressTime(startTime = it.startTime, endTime = it.endTime)
+            headerView?.ignoreTimeUpdate = it.ignoreTimeUpdate
+            headerView?.visibility = it.timeViewVisibility
+            contentView?.setTitleAndDescription(it.title, it.description)
+            contentView?.setViewMode(it.viewMode)
+        })
+
+        viewModel.setInitialData(identifier = arguments?.getSerializable(KEY_ID) as? AuthorizationIdentifier)
     }
 
     companion object {
