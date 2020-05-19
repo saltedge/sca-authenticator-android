@@ -25,35 +25,41 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.connections.common.ConnectionOptions
+import com.saltedge.authenticator.app.DELETE_REQUEST_CODE
+import com.saltedge.authenticator.app.RENAME_REQUEST_CODE
+import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.databinding.ConnectionsListBinding
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
 import com.saltedge.authenticator.features.connections.edit.name.EditConnectionNameDialog
-import com.saltedge.authenticator.features.connections.list.di.ConnectionsListModule
 import com.saltedge.authenticator.features.menu.BottomMenuDialog
 import com.saltedge.authenticator.interfaces.ListItemClickListener
-import com.saltedge.authenticator.sdk.model.GUID
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
 import kotlinx.android.synthetic.main.fragment_connections_list.*
 import javax.inject.Inject
 
-class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
-    ListItemClickListener, View.OnClickListener {
+class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnClickListener {
 
-    @Inject
-    lateinit var presenterContract: ConnectionsListContract.Presenter
+    @Inject lateinit var viewModelFactory: ViewModelsFactory
+    private lateinit var viewModel: ConnectionsListViewModel
+    private lateinit var binding: ConnectionsListBinding
     private val adapter = ConnectionsListAdapter(clickListener = this)
     private var optionsDialog: BottomMenuDialog? = null
     private var headerDecorator: SpaceItemDecoration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectDependencies()
+        authenticatorApp?.appComponent?.inject(this)
+        setupViewModel()
         setHasOptionsMenu(true)
     }
 
@@ -66,11 +72,89 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
             titleResId = R.string.connections_feature_title,
             backActionImageResId = R.drawable.ic_appbar_action_back
         )
-        return inflater.inflate(R.layout.fragment_connections_list, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_connections_list, container, false)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupViews()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        viewModel.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onClick(v: View?) {
+        viewModel.onViewClick(v?.id ?: return)
+    }
+
+    override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
+        viewModel.onListItemClick((adapter.getItem(itemIndex) as ConnectionViewModel).guid)
+    }
+
+//    override fun updateListItemName(connectionGuid: GUID, name: String) {
+//        adapter.updateListItemName(connectionGuid, name)
+//    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(this, viewModelFactory)
+            .get(ConnectionsListViewModel::class.java)
+        lifecycle.addObserver(viewModel)
+
+        viewModel.onQrScanClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let {
+                activity?.showQrScannerActivity()
+            }
+        })
+        viewModel.onRenameClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
+            it.getContentIfNotHandled()?.let {
+                val dialog = EditConnectionNameDialog.newInstance(it).also {
+                    it.setTargetFragment(this, RENAME_REQUEST_CODE)
+                }
+                activity?.showDialogFragment(dialog)
+            }
+        })
+        viewModel.onDeleteClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
+            it.getContentIfNotHandled()?.let {
+                val dialog = DeleteConnectionDialog.newInstance(it).also {
+                    it.setTargetFragment(this, DELETE_REQUEST_CODE)
+                }
+                activity?.showDialogFragment(dialog)
+            }
+        })
+//        viewModel.onOptionsClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
+//            it.getContentIfNotHandled()?.let {
+//                Log.d("some", "options dialog")
+////                optionsDialog?.dismiss()// TODO show popup dialog
+////                optionsDialog = BottomMenuDialog.newInstance(it).also {
+////                    it.setTargetFragment(this, ITEM_OPTIONS_REQUEST_CODE)
+////                }
+////                optionsDialog?.let { activity?.showDialogFragment(it) }
+//                activity?.showDialogFragment(BottomMenuDialog.newInstance(menuItems = it))
+//            }
+//        })
+        viewModel.onOptionsClickEvent2.observe(this, Observer {
+            it.getContentIfNotHandled()?.let { menuItems ->
+                activity?.showDialogFragment(BottomMenuDialog.newInstance(menuItems = menuItems))
+            }
+        })
+        viewModel.onReconnectClickEvent.observe(this, Observer<ViewModelEvent<String>> {
+            it.getContentIfNotHandled()?.let {
+                activity?.addFragment(ConnectProviderFragment.newInstance(connectionGuid = it))
+            }
+        })
+        viewModel.onSupportClickEvent.observe(this, Observer<ViewModelEvent<String?>> {
+            it.getContentIfNotHandled()?.let { supportEmail->
+                activity?.startMailApp(supportEmail)
+            }
+        })
+    }
+
+    private fun setupViews() {
         try {
             activity?.let { connectionsListView?.layoutManager = LinearLayoutManager(it) }
             connectionsListView?.adapter = adapter
@@ -79,98 +163,14 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
             headerDecorator = SpaceItemDecoration(
                 context = context
             ).apply { connectionsListView?.addItemDecoration(this) }
+
+            //updatesViewContent
+            viewModel.getListItems().let {
+                headerDecorator?.headerPositions = it.mapIndexed { index, _ -> index }.toTypedArray()
+                adapter.data = it
+            }
         } catch (e: Exception) {
             e.log()
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        presenterContract.viewContract = this
-        updateViewsContent()
-    }
-
-    override fun onStop() {
-        presenterContract.viewContract = null
-        super.onStop()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        presenterContract.onActivityResult(requestCode, resultCode, data)
-    }
-
-    override fun onClick(v: View?) {
-        presenterContract.onViewClick(v?.id ?: return)
-    }
-
-    override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
-        presenterContract.onListItemClick((adapter.getItem(itemIndex) as ConnectionViewModel).guid)
-    }
-
-    override fun updateListItemName(connectionGuid: GUID, name: String) {
-        adapter.updateListItemName(connectionGuid, name)
-    }
-
-    override fun updateViewsContent() {
-        presenterContract.getListItems().let {
-            headerDecorator?.headerPositions = it.mapIndexed { index, _ -> index }.toTypedArray()
-            adapter.data = it
-        }
-        val viewIsEmpty = adapter.isEmpty
-        emptyView?.setVisible(viewIsEmpty)
-        connectionsListView?.setVisible(!viewIsEmpty)
-    }
-
-    override fun showApiErrorView(message: String) {
-        activity?.showWarningDialog(message = message)
-    }
-
-    override fun showSupportView(supportEmail: String?) {
-        activity?.startMailApp(supportEmail)
-    }
-
-    override fun showConnectView(connectionGuid: GUID) {
-        activity?.addFragment(ConnectProviderFragment.newInstance(connectionGuid = connectionGuid))
-    }
-
-    override fun showConnectionNameEditView(
-        connectionGuid: String,
-        connectionName: String,
-        requestCode: Int
-    ) {
-        val dialog = EditConnectionNameDialog.newInstance(connectionGuid, connectionName).also {
-            it.setTargetFragment(this, requestCode)
-        }
-        activity?.showDialogFragment(dialog)
-    }
-
-    override fun showDeleteConnectionView(connectionGuid: String?, requestCode: Int) {
-        val dialog = DeleteConnectionDialog.newInstance(connectionGuid).also {
-            it.setTargetFragment(this, requestCode)
-        }
-        activity?.showDialogFragment(dialog)
-    }
-
-    override fun showOptionsView(
-        connectionGuid: String,
-        options: Array<ConnectionOptions>,
-        requestCode: Int
-    ) {
-//        optionsDialog?.dismiss()// TODO show popup dialog
-//        optionsDialog = BottomMenuDialog.newInstance(connectionGuid, options).also {
-//            it.setTargetFragment(this, requestCode)
-//        }
-//        optionsDialog?.let { activity?.showDialogFragment(it) }
-    }
-
-    override fun showQrScanView() {
-        activity?.showQrScannerActivity()
-    }
-
-    private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addConnectionsListModule(ConnectionsListModule())?.inject(
-            fragment = this
-        )
     }
 }

@@ -106,10 +106,12 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
 
     companion object {
         fun newInstance(guid: String, name: String): EditConnectionNameDialog =
-            EditConnectionNameDialog().apply {
-                arguments = Bundle()
-                    .apply { putString(KEY_GUID, guid) }
-                    .apply { putString(KEY_NAME, name) }
-            }
+            newInstance(Bundle()
+                .apply { putString(KEY_GUID, guid) }
+                .apply { putString(KEY_NAME, name) }
+            )
+
+        fun newInstance(bundle: Bundle): EditConnectionNameDialog =
+            EditConnectionNameDialog().apply { arguments = bundle }
     }
 }

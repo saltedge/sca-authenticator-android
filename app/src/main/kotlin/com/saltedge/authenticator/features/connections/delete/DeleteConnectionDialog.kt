@@ -74,5 +74,8 @@ class DeleteConnectionDialog :
             DeleteConnectionDialog().apply {
                 arguments = Bundle().apply { putString(KEY_GUID, connectionGuid) }
             }
+
+        fun newInstance(bundle: Bundle): DeleteConnectionDialog =
+            DeleteConnectionDialog().apply { arguments = bundle }
     }
 }
