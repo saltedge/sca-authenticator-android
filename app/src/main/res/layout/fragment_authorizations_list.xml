@@ -61,6 +61,7 @@
             app:iconSrc="@drawable/ic_authorizations_empty"
             app:title="@string/authorizations_nothing_confirm"
             app:description="@string/authorizations_nothing_confirm_description"
+            app:mainActionText="@string/actions_scan_qr"
             android:visibility="@{viewModel.emptyViewVisibility}"/>
     </FrameLayout>
 </layout>

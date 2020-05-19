@@ -37,7 +37,9 @@ import com.saltedge.authenticator.features.authorizations.list.pagers.Authorizat
 import com.saltedge.authenticator.features.authorizations.list.pagers.AuthorizationsHeaderPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.pagers.PagersScrollSynchronizer
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.showQrScannerActivity
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_authorizations_list.*
 import javax.inject.Inject
@@ -120,6 +122,18 @@ class AuthorizationsListFragment : BaseFragment() {
                 view?.let { Snackbar.make(it, errorMessage, Snackbar.LENGTH_LONG).show() }
             }
         })
+        viewModel.onQrScanClickEvent.observe(this, Observer {
+            it.getContentIfNotHandled()?.let { activity?.showQrScannerActivity() }
+        })
+        viewModel.emptyViewActionText.observe(this, Observer<ResId> {
+            emptyView.setActionText(it)
+        })
+        viewModel.emptyViewTitleText.observe(this, Observer<ResId> {
+            emptyView.setTitle(it)
+        })
+        viewModel.emptyViewDescriptionText.observe(this, Observer<ResId> {
+            emptyView.setDescription(it)
+        })
     }
 
     private fun setupViews() {
@@ -132,5 +146,6 @@ class AuthorizationsListFragment : BaseFragment() {
             }
         }
         pagersScrollSynchronizer.initViews(headerViewPager, contentViewPager)
+        emptyView?.setOnClickListener { viewModel.onEmptyViewActionClick() }
     }
 }

@@ -153,7 +153,7 @@ class MainActivityViewModel(
                 val menuItems = listOf<MenuItemData>(
                     MenuItemData(
                         id = R.string.connections_feature_title,
-                        iconResId = R.drawable.ic_menu_action_list,
+                        iconResId = R.drawable.ic_menu_action_connections,
                         textResId = R.string.connections_feature_title
                     ),
                     MenuItemData(

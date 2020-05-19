@@ -19,30 +19,14 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24">
-  <path
-      android:pathData="M2.6923,1C1.7577,1 1,1.7577 1,2.6923L1,8.6154C1,9.55 1.7577,10.3077 2.6923,10.3077H8.6154C9.55,10.3077 10.3077,9.55 10.3077,8.6154V2.6923C10.3077,1.7577 9.55,1 8.6154,1L2.6923,1ZM4.3,3.5385C3.8794,3.5385 3.5385,3.8794 3.5385,4.3L3.5385,7.0077C3.5385,7.4283 3.8794,7.7692 4.3,7.7692H7.0077C7.4283,7.7692 7.7692,7.4283 7.7692,7.0077V4.3C7.7692,3.8794 7.4283,3.5385 7.0077,3.5385L4.3,3.5385Z"
-      android:fillColor="@color/appbar_action_icon_fill_color"
-      android:fillType="evenOdd"/>
-  <path
-      android:pathData="M15.3846,1C14.45,1 13.6923,1.7577 13.6923,2.6923V8.6154C13.6923,9.55 14.45,10.3077 15.3846,10.3077L21.3077,10.3077C22.2423,10.3077 23,9.55 23,8.6154V2.6923C23,1.7577 22.2423,1 21.3077,1L15.3846,1ZM16.9923,3.5385C16.5717,3.5385 16.2308,3.8794 16.2308,4.3V7.0077C16.2308,7.4283 16.5717,7.7692 16.9923,7.7692H19.7C20.1206,7.7692 20.4615,7.4283 20.4615,7.0077V4.3C20.4615,3.8794 20.1206,3.5385 19.7,3.5385H16.9923Z"
-      android:fillColor="@color/appbar_action_icon_fill_color"
-      android:fillType="evenOdd"/>
-  <path
-      android:pathData="M2.6923,13.6923C1.7577,13.6923 1,14.45 1,15.3846L1,21.3077C1,22.2423 1.7577,23 2.6923,23H8.6154C9.55,23 10.3077,22.2423 10.3077,21.3077L10.3077,15.3846C10.3077,14.45 9.55,13.6923 8.6154,13.6923H2.6923ZM4.3,16.2308C3.8794,16.2308 3.5385,16.5717 3.5385,16.9923V19.7C3.5385,20.1206 3.8794,20.4615 4.3,20.4615H7.0077C7.4283,20.4615 7.7692,20.1206 7.7692,19.7V16.9923C7.7692,16.5717 7.4283,16.2308 7.0077,16.2308H4.3Z"
-      android:fillColor="@color/appbar_action_icon_fill_color"
-      android:fillType="evenOdd"/>
-  <path
-      android:pathData="M12.8462,13.6923C12.8462,13.225 13.225,12.8462 13.6923,12.8462H15.3846C15.8519,12.8462 16.2308,13.225 16.2308,13.6923V16.2308H13.6923C13.225,16.2308 12.8462,15.8519 12.8462,15.3846V13.6923Z"
-      android:fillColor="@color/appbar_action_icon_fill_color"/>
-  <path
-      android:pathData="M19.6154,16.2308H16.2308V19.6154H13.6923C13.225,19.6154 12.8462,19.9942 12.8462,20.4615V22.1538C12.8462,22.6212 13.225,23 13.6923,23H15.3846C15.8519,23 16.2308,22.6212 16.2308,22.1538V19.6154H19.6154V22.1538C19.6154,22.6212 19.9942,23 20.4615,23H22.1538C22.6212,23 23,22.6212 23,22.1538V20.4615C23,19.9942 22.6212,19.6154 22.1538,19.6154H19.6154V16.2308Z"
-      android:fillColor="@color/appbar_action_icon_fill_color"/>
-  <path
-      android:pathData="M19.6154,16.2308V13.6923C19.6154,13.225 19.9942,12.8462 20.4615,12.8462H22.1538C22.6212,12.8462 23,13.225 23,13.6923V15.3846C23,15.8519 22.6212,16.2308 22.1538,16.2308H19.6154Z"
-      android:fillColor="@color/appbar_action_icon_fill_color"/>
+<vector android:height="24dp" android:viewportHeight="22"
+    android:viewportWidth="22" android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="@color/appbar_action_icon_fill_color" android:pathData="M7.62,0L1.69,0A1.69,1.69 0,0 0,0 1.69L0,7.62a1.69,1.69 0,0 0,1.69 1.69L7.62,9.31a1.69,1.69 0,0 0,1.69 -1.69L9.31,1.69A1.69,1.69 0,0 0,7.62 0ZM6.77,6A0.76,0.76 0,0 1,6 6.77L3.3,6.77A0.76,0.76 0,0 1,2.54 6L2.54,3.3a0.76,0.76 0,0 1,0.76 -0.76L6,2.54a0.76,0.76 0,0 1,0.76 0.76Z"/>
+    <path android:fillColor="@color/appbar_action_icon_fill_color" android:pathData="M20.31,0L14.38,0a1.69,1.69 0,0 0,-1.69 1.69L12.69,7.62a1.69,1.69 0,0 0,1.69 1.69h5.93A1.69,1.69 0,0 0,22 7.62L22,1.69A1.69,1.69 0,0 0,20.31 0ZM19.46,6a0.76,0.76 0,0 1,-0.76 0.76L16,6.76A0.76,0.76 0,0 1,15.23 6L15.23,3.3A0.76,0.76 0,0 1,16 2.54L18.7,2.54a0.76,0.76 0,0 1,0.76 0.76Z"/>
+    <path android:fillColor="@color/appbar_action_icon_fill_color" android:pathData="M7.62,12.69L1.69,12.69A1.69,1.69 0,0 0,0 14.38v5.93A1.69,1.69 0,0 0,1.69 22L7.62,22a1.69,1.69 0,0 0,1.69 -1.69L9.31,14.38A1.69,1.69 0,0 0,7.62 12.69ZM6.77,18.69a0.76,0.76 0,0 1,-0.76 0.76L3.3,19.45a0.76,0.76 0,0 1,-0.76 -0.76L2.54,16a0.76,0.76 0,0 1,0.76 -0.76L6,15.24a0.76,0.76 0,0 1,0.76 0.76Z"/>
+    <path android:fillColor="@color/appbar_action_icon_fill_color" android:pathData="M14.38,11.85L12.69,11.85a0.83,0.83 0,0 0,-0.84 0.84v1.69a0.84,0.84 0,0 0,0.84 0.85h2.54L15.23,12.69A0.84,0.84 0,0 0,14.38 11.85Z"/>
+    <path android:fillColor="@color/appbar_action_icon_fill_color" android:pathData="M19.46,22h1.69a0.85,0.85 0,0 0,0.85 -0.85L22,19.46a0.84,0.84 0,0 0,-0.85 -0.84L18.62,18.62v2.53A0.84,0.84 0,0 0,19.46 22Z"/>
+    <path android:fillColor="@color/appbar_action_icon_fill_color" android:pathData="M15.23,15.23h3.38v3.38h-3.38z"/>
+    <path android:fillColor="@color/appbar_action_icon_fill_color" android:pathData="M11.85,19.46v1.69a0.84,0.84 0,0 0,0.84 0.85h1.69a0.85,0.85 0,0 0,0.85 -0.85L15.23,18.62L12.69,18.62A0.83,0.83 0,0 0,11.85 19.46Z"/>
+    <path android:fillColor="@color/appbar_action_icon_fill_color" android:pathData="M21.15,11.85L19.46,11.85a0.83,0.83 0,0 0,-0.84 0.84v2.54h2.53a0.85,0.85 0,0 0,0.85 -0.85L22,12.69A0.84,0.84 0,0 0,21.15 11.85Z"/>
 </vector>
