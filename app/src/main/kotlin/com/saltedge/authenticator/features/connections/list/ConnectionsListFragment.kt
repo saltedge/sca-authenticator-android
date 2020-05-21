@@ -25,6 +25,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -38,7 +39,6 @@ import com.saltedge.authenticator.features.connections.common.ConnectionViewMode
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
 import com.saltedge.authenticator.features.connections.edit.name.EditConnectionNameDialog
-import com.saltedge.authenticator.features.menu.BottomMenuDialog
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.*
@@ -53,7 +53,6 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
     private lateinit var viewModel: ConnectionsListViewModel
     private lateinit var binding: ConnectionsListBinding
     private val adapter = ConnectionsListAdapter(clickListener = this)
-    private var optionsDialog: BottomMenuDialog? = null
     private var headerDecorator: SpaceItemDecoration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,17 +92,18 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
     }
 
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
-        viewModel.onListItemClick((adapter.getItem(itemIndex) as ConnectionViewModel).guid)
+        viewModel.onListItemClick(itemIndex)
     }
-
-//    override fun updateListItemName(connectionGuid: GUID, name: String) {
-//        adapter.updateListItemName(connectionGuid, name)
-//    }
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(ConnectionsListViewModel::class.java)
         lifecycle.addObserver(viewModel)
+        val context = activity ?: return
+
+        viewModel.listItems.observe(this, Observer<List<ConnectionViewModel>> {
+            adapter.data = it
+        })
 
         viewModel.onQrScanClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let {
@@ -126,20 +126,12 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
                 activity?.showDialogFragment(dialog)
             }
         })
-//        viewModel.onOptionsClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
-//            it.getContentIfNotHandled()?.let {
-//                Log.d("some", "options dialog")
-////                optionsDialog?.dismiss()// TODO show popup dialog
-////                optionsDialog = BottomMenuDialog.newInstance(it).also {
-////                    it.setTargetFragment(this, ITEM_OPTIONS_REQUEST_CODE)
-////                }
-////                optionsDialog?.let { activity?.showDialogFragment(it) }
-//                activity?.showDialogFragment(BottomMenuDialog.newInstance(menuItems = it))
-//            }
-//        })
-        viewModel.onOptionsClickEvent2.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { menuItems ->
-                activity?.showDialogFragment(BottomMenuDialog.newInstance(menuItems = menuItems))
+        viewModel.onOptionsClickEvent.observe(this, Observer<ViewModelEvent<Int>> {
+            it.getContentIfNotHandled()?.let { index ->
+                val popupMenu = PopupMenu(context, connectionsListView.getChildAt(index))
+                popupMenu.inflate(R.menu.popup_menu)
+                popupMenu.setOnMenuItemClickListener(viewModel)
+                popupMenu.show()
             }
         })
         viewModel.onReconnectClickEvent.observe(this, Observer<ViewModelEvent<String>> {
@@ -148,8 +140,15 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
             }
         })
         viewModel.onSupportClickEvent.observe(this, Observer<ViewModelEvent<String?>> {
-            it.getContentIfNotHandled()?.let { supportEmail->
+            it.getContentIfNotHandled()?.let { supportEmail ->
                 activity?.startMailApp(supportEmail)
+            }
+        })
+        viewModel.listItemUpdateEvent.observe(this, Observer<ViewModelEvent<Int>> {
+            it.getContentIfNotHandled()?.let { itemIndex ->
+                viewModel.listItemsValues.getOrNull(itemIndex)?.let { item ->
+                    adapter.updateListItemName(item.guid, item.name)
+                }
             }
         })
     }
@@ -164,9 +163,9 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
                 context = context
             ).apply { connectionsListView?.addItemDecoration(this) }
 
-            //updatesViewContent
             viewModel.getListItems().let {
-                headerDecorator?.headerPositions = it.mapIndexed { index, _ -> index }.toTypedArray()
+                headerDecorator?.headerPositions =
+                    it.mapIndexed { index, _ -> index }.toTypedArray()
                 adapter.data = it
             }
         } catch (e: Exception) {

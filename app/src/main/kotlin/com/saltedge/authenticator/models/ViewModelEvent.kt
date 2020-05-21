@@ -36,4 +36,8 @@ data class ViewModelEvent<out T>(private val content: T) {
             content
         }
     }
+
+    fun getContent(): T {
+        return content
+    }
 }

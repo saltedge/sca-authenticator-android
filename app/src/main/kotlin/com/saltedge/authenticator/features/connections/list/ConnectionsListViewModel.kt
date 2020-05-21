@@ -24,15 +24,14 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.*
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.features.connections.common.ConnectionOptions
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
-import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -54,11 +53,11 @@ class ConnectionsListViewModel @Inject constructor(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyStoreManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs
-) : ViewModel(), LifecycleObserver, ConnectionsRevokeListener {
+) : ViewModel(), LifecycleObserver, ConnectionsRevokeListener, PopupMenu.OnMenuItemClickListener {
 
     var onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
         private set
-    var onOptionsClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
+    var onOptionsClickEvent = MutableLiveData<ViewModelEvent<Int>>()
         private set
     var onSupportClickEvent = MutableLiveData<ViewModelEvent<String?>>()
         private set
@@ -69,91 +68,31 @@ class ConnectionsListViewModel @Inject constructor(
     var onDeleteClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
         private set
 
-    val onOptionsClickEvent2 = MutableLiveData<ViewModelEvent<List<MenuItemData>>>()
-
-
     val listVisibility = MutableLiveData<Int>()
     val emptyViewVisibility = MutableLiveData<Int>()
-
 
     val listItems = MutableLiveData<List<ConnectionViewModel>>()
     val listItemsValues: List<ConnectionViewModel>
         get() = listItems.value ?: emptyList()
+    val listItemUpdateEvent = MutableLiveData<ViewModelEvent<Int>>()
 
-
-    //    val listItemUpdateEvent = MutableLiveData<ViewModelEvent<Int>>()
-
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_START) //TODO: mb in onResume
-    fun onStart() {
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    fun onResume() {
         updateViewsContent()
     }
 
     //TODO: Check if we need it
     override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?) {}
 
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (data == null || resultCode != Activity.RESULT_OK) return
-        when (requestCode) {
-            ITEM_OPTIONS_REQUEST_CODE -> {
-                ConnectionOptions.values().getOrNull(data.getIntExtra(KEY_OPTION_ID, -1))?.let {
-                    data.getStringExtra(KEY_GUID)?.let { guid ->
-                        onOptionItemClick(item = it, connectionGuid = guid)
-                    }
-                }
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        val index = onOptionsClickEvent.value?.getContent() ?: return false
+        val connectionGuid = listItemsValues.getOrNull(index)?.guid ?: return false
+        return when (item?.itemId) {
+            R.id.rename -> {
+                onRenameOptionSelected(connectionGuid)
+                true
             }
-            RENAME_REQUEST_CODE -> {
-                onUserRenamedConnection(
-                    connectionGuid = data.getStringExtra(KEY_GUID) ?: return,
-                    newConnectionName = data.getStringExtra(KEY_NAME) ?: return
-                )
-            }
-            DELETE_REQUEST_CODE -> onUserConfirmedDeleteConnection(
-                connectionGuid = data.getStringExtra(KEY_GUID) ?: return
-            )
-        }
-    }
-
-    fun onViewClick(viewId: Int) {
-        if (viewId == R.id.actionView) onQrScanClickEvent.postValue(ViewModelEvent(Unit))
-    }
-
-    fun onListItemClick(connectionGuid: GUID) { //TODO: resolve options
-        //        onOptionsClickEvent.postValue(ViewModelEvent(Bundle()
-        //            .apply { putString(KEY_GUID, connectionGuid) }
-        //            .apply { putString("options", createOptionsMenuList(connectionGuid)) })
-        //        ))
-
-        val menuItems = listOf<MenuItemData>(
-            MenuItemData(
-                id = R.string.connections_feature_title,
-                iconResId = R.drawable.ic_menu_action_list,
-                textResId = R.string.connections_feature_title
-            ),
-            MenuItemData(
-                id = R.string.consents_feature_title,
-                iconResId = R.drawable.ic_menu_action_list,
-                textResId = R.string.consents_feature_title
-            ),
-            MenuItemData(
-                id = R.string.settings_feature_title,
-                iconResId = R.drawable.ic_menu_action_settings,
-                textResId = R.string.settings_feature_title
-            )
-        )
-//        onOptionsClickEvent.postValue(ViewModelEvent(Bundle()
-//            .apply { putParcelableArrayList("options", menuItems) })
-//        )
-        onOptionsClickEvent2.postValue(ViewModelEvent(menuItems))
-    }
-
-    fun getListItems(): List<ConnectionViewModel> {
-        return collectAllConnectionsViewModels(connectionsRepository, appContext)
-    }
-
-    private fun onOptionItemClick(item: ConnectionOptions, connectionGuid: GUID) {
-        when (item) {
-            ConnectionOptions.REPORT_PROBLEM -> {
+            R.id.contact_support -> {
                 onSupportClickEvent.postValue(
                     ViewModelEvent(
                         connectionsRepository.getByGuid(
@@ -161,12 +100,44 @@ class ConnectionsListViewModel @Inject constructor(
                         )?.supportEmail
                     )
                 )
+                true
             }
-            ConnectionOptions.RENAME -> onRenameOptionSelected(connectionGuid = connectionGuid) // onRenameOptionEvent
-            ConnectionOptions.DELETE -> onDeleteOptionsSelected(connectionGuid = connectionGuid) //onDeleteOptionEvent
-            ConnectionOptions.RECONNECT ->
-                onReconnectClickEvent.postValue(ViewModelEvent(connectionGuid)) //onReconnectClickEvent
+            R.id.delete -> {
+                onDeleteOptionsSelected(connectionGuid)
+                true
+            }
+            R.id.reconnect -> {
+                onReconnectClickEvent.postValue(ViewModelEvent(connectionGuid))
+                true
+            }
+            else -> false
         }
+    }
+
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (data == null || resultCode != Activity.RESULT_OK) return
+        val listItem = listItemsValues.find { it.guid == data.getStringExtra(KEY_GUID) } ?: return
+        when (requestCode) {
+            RENAME_REQUEST_CODE -> {
+                onUserRenamedConnection(
+                    listItem = listItem,
+                    newConnectionName = data.getStringExtra(KEY_NAME) ?: return
+                )
+            }
+            DELETE_REQUEST_CODE -> onUserConfirmedDeleteConnection(listItem = listItem)
+        }
+    }
+
+    fun onViewClick(viewId: Int) {
+        if (viewId == R.id.actionView) onQrScanClickEvent.postValue(ViewModelEvent(Unit))
+    }
+
+    fun onListItemClick(itemIndex: Int) {
+        onOptionsClickEvent.postValue(ViewModelEvent(itemIndex))
+    }
+
+    fun getListItems(): List<ConnectionViewModel> {
+        return collectAllConnectionsViewModels(connectionsRepository, appContext)
     }
 
     private fun onRenameOptionSelected(connectionGuid: GUID) {
@@ -184,32 +155,29 @@ class ConnectionsListViewModel @Inject constructor(
         ))
     }
 
-    private fun onUserRenamedConnection(connectionGuid: GUID, newConnectionName: String) {
-        connectionsRepository.getByGuid(connectionGuid)?.let { connection ->
-            if (connection.name != newConnectionName && newConnectionName.isNotEmpty()) {
+    private fun onUserRenamedConnection(listItem: ConnectionViewModel, newConnectionName: String) {
+        val itemIndex = listItemsValues.indexOf(listItem)
+        if (listItem.name != newConnectionName && newConnectionName.isNotEmpty()) {
+            connectionsRepository.getByGuid(listItem.guid)?.let { connection ->
                 connectionsRepository.updateNameAndSave(connection, newConnectionName)
-
-                //                viewContract?.updateListItemName(connectionGuid, newConnectionName) //TODO: do smth
-
-                //                val itemIndex = listItemsValues.indexOf(listItem)
-                //                listItem.setNewViewMode(newViewMode = newConnectionName)
-                //                listItemUpdateEvent.postValue(ViewModelEvent(itemIndex))
+                listItems.value?.get(itemIndex)?.name = newConnectionName
+                listItemUpdateEvent.postValue(ViewModelEvent(itemIndex))
             }
         }
     }
 
-    private fun onUserConfirmedDeleteConnection(connectionGuid: GUID) {
-        connectionsRepository.getByGuid(connectionGuid)?.let { connection ->
+    private fun onUserConfirmedDeleteConnection(listItem: ConnectionViewModel) {
+        connectionsRepository.getByGuid(listItem.guid)?.let { connection ->
             sendRevokeRequestForConnections(listOf(connection))
         }
-        deleteConnectionsAndKeys(connectionGuid)
+        deleteConnectionsAndKeys(listItem.guid)
         updateViewsContent()
     }
 
     private fun updateViewsContent() {
         getListItems()
         listItems.postValue(getListItems())
-        if (listItemsValues.isNotEmpty()) { //TODO: replace on isEmpty
+        if (listItemsValues.isEmpty()) {
             emptyViewVisibility.postValue(View.VISIBLE)
             listVisibility.postValue(View.GONE)
         } else {
@@ -232,6 +200,10 @@ class ConnectionsListViewModel @Inject constructor(
         keyStoreManager.deleteKeyPair(connectionGuid)
         connectionsRepository.deleteConnection(connectionGuid)
     }
+
+//    fun showReconnect() {
+//        return it.getStatus() === ConnectionStatus.ACTIVE
+//    }
 
     private fun createOptionsMenuList(connectionGuid: GUID): Array<ConnectionOptions> {
         return connectionsRepository.getByGuid(connectionGuid)?.let {
