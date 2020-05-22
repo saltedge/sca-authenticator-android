@@ -30,7 +30,6 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.*
-import com.saltedge.authenticator.features.connections.common.ConnectionOptions
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -76,12 +75,11 @@ class ConnectionsListViewModel @Inject constructor(
         get() = listItems.value ?: emptyList()
     val listItemUpdateEvent = MutableLiveData<ViewModelEvent<Int>>()
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onResume() {
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onStart() {
         updateViewsContent()
     }
 
-    //TODO: Check if we need it
     override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?) {}
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
@@ -136,8 +134,12 @@ class ConnectionsListViewModel @Inject constructor(
         onOptionsClickEvent.postValue(ViewModelEvent(itemIndex))
     }
 
-    fun getListItems(): List<ConnectionViewModel> {
-        return collectAllConnectionsViewModels(connectionsRepository, appContext)
+    fun isReconnect(): Boolean {
+        val index = onOptionsClickEvent.value?.getContent() ?: return false
+        val connectionGuid = listItemsValues.getOrNull(index)?.guid ?: return false
+        return connectionsRepository.getByGuid(connectionGuid)?.let {
+            it.getStatus() === ConnectionStatus.ACTIVE
+        } ?: false
     }
 
     private fun onRenameOptionSelected(connectionGuid: GUID) {
@@ -175,9 +177,9 @@ class ConnectionsListViewModel @Inject constructor(
     }
 
     private fun updateViewsContent() {
-        getListItems()
-        listItems.postValue(getListItems())
-        if (listItemsValues.isEmpty()) {
+        val newListItems = collectAllConnectionsViewModels(connectionsRepository, appContext)
+        listItems.postValue(newListItems)
+        if (newListItems.isEmpty()) {
             emptyViewVisibility.postValue(View.VISIBLE)
             listVisibility.postValue(View.GONE)
         } else {
@@ -199,28 +201,5 @@ class ConnectionsListViewModel @Inject constructor(
     private fun deleteConnectionsAndKeys(connectionGuid: GUID) {
         keyStoreManager.deleteKeyPair(connectionGuid)
         connectionsRepository.deleteConnection(connectionGuid)
-    }
-
-//    fun showReconnect() {
-//        return it.getStatus() === ConnectionStatus.ACTIVE
-//    }
-
-    private fun createOptionsMenuList(connectionGuid: GUID): Array<ConnectionOptions> {
-        return connectionsRepository.getByGuid(connectionGuid)?.let {
-            if (it.getStatus() === ConnectionStatus.ACTIVE) {
-                arrayOf(
-                    ConnectionOptions.RENAME,
-                    ConnectionOptions.REPORT_PROBLEM,
-                    ConnectionOptions.DELETE
-                )
-            } else {
-                arrayOf(
-                    ConnectionOptions.RECONNECT,
-                    ConnectionOptions.RENAME,
-                    ConnectionOptions.REPORT_PROBLEM,
-                    ConnectionOptions.DELETE
-                )
-            }
-        } ?: emptyArray()
     }
 }

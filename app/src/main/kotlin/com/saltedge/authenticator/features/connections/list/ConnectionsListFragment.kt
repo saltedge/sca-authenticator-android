@@ -71,7 +71,12 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
             titleResId = R.string.connections_feature_title,
             backActionImageResId = R.drawable.ic_appbar_action_back
         )
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_connections_list, container, false)
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_connections_list,
+            container,
+            false
+        )
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
         return binding.root
@@ -99,12 +104,12 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(ConnectionsListViewModel::class.java)
         lifecycle.addObserver(viewModel)
-        val context = activity ?: return
 
         viewModel.listItems.observe(this, Observer<List<ConnectionViewModel>> {
+            headerDecorator?.headerPositions =
+                it.mapIndexed { index, _ -> index }.toTypedArray()
             adapter.data = it
         })
-
         viewModel.onQrScanClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let {
                 activity?.showQrScannerActivity()
@@ -126,12 +131,15 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
                 activity?.showDialogFragment(dialog)
             }
         })
-        viewModel.onOptionsClickEvent.observe(this, Observer<ViewModelEvent<Int>> {
-            it.getContentIfNotHandled()?.let { index ->
-                val popupMenu = PopupMenu(context, connectionsListView.getChildAt(index))
-                popupMenu.inflate(R.menu.popup_menu)
-                popupMenu.setOnMenuItemClickListener(viewModel)
-                popupMenu.show()
+        viewModel.onOptionsClickEvent.observe(this, Observer<ViewModelEvent<Int>> { event ->
+            event.getContentIfNotHandled()?.let { index ->
+                activity?.let {
+                    val popupMenu = PopupMenu(it, connectionsListView.getChildAt(index))
+                    popupMenu.inflate(R.menu.popup_menu)
+                    popupMenu.menu.findItem(R.id.reconnect).isVisible = !viewModel.isReconnect()
+                    popupMenu.setOnMenuItemClickListener(viewModel)
+                    popupMenu.show()
+                }
             }
         })
         viewModel.onReconnectClickEvent.observe(this, Observer<ViewModelEvent<String>> {
@@ -154,22 +162,12 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
     }
 
     private fun setupViews() {
-        try {
-            activity?.let { connectionsListView?.layoutManager = LinearLayoutManager(it) }
-            connectionsListView?.adapter = adapter
-            emptyView?.setOnClickListener(this)
-            val context = activity ?: return
-            headerDecorator = SpaceItemDecoration(
-                context = context
-            ).apply { connectionsListView?.addItemDecoration(this) }
-
-            viewModel.getListItems().let {
-                headerDecorator?.headerPositions =
-                    it.mapIndexed { index, _ -> index }.toTypedArray()
-                adapter.data = it
-            }
-        } catch (e: Exception) {
-            e.log()
-        }
+        activity?.let { connectionsListView?.layoutManager = LinearLayoutManager(it) }
+        connectionsListView?.adapter = adapter
+        emptyView?.setOnClickListener(this)
+        headerDecorator = SpaceItemDecoration(
+            context = activity ?: return
+        ).apply { connectionsListView?.addItemDecoration(this) }
+        binding.executePendingBindings()
     }
 }
