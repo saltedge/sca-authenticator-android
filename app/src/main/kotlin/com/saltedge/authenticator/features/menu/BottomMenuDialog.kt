@@ -90,8 +90,5 @@ class BottomMenuDialog : BaseRoundedBottomDialogFragment(), ListItemClickListene
                 }
             }
         }
-
-        fun newInstance(bundle: Bundle): BottomMenuDialog =
-            BottomMenuDialog().apply { arguments = bundle }
     }
 }

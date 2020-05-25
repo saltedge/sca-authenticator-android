@@ -37,7 +37,8 @@ data class ViewModelEvent<out T>(private val content: T) {
         }
     }
 
-    fun getContent(): T {
-        return content
-    }
+    /**
+     * Returns the content, even if it's already been handled.
+     */
+    fun peekContent(): T = content
 }

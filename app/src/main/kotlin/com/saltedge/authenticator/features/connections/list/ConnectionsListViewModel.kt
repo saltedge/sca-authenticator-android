@@ -52,7 +52,7 @@ class ConnectionsListViewModel @Inject constructor(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyStoreManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs
-) : ViewModel(), LifecycleObserver, ConnectionsRevokeListener, PopupMenu.OnMenuItemClickListener {
+) : ViewModel(), LifecycleObserver, ConnectionsRevokeListener {
 
     var onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
         private set
@@ -82,10 +82,10 @@ class ConnectionsListViewModel @Inject constructor(
 
     override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?) {}
 
-    override fun onMenuItemClick(item: MenuItem?): Boolean {
-        val index = onOptionsClickEvent.value?.getContent() ?: return false
+    fun onMenuItemClick(itemId: Int): Boolean {
+        val index = onOptionsClickEvent.value?.peekContent() ?: return false
         val connectionGuid = listItemsValues.getOrNull(index)?.guid ?: return false
-        return when (item?.itemId) {
+        return when (itemId) {
             R.id.rename -> {
                 onRenameOptionSelected(connectionGuid)
                 true
@@ -135,7 +135,7 @@ class ConnectionsListViewModel @Inject constructor(
     }
 
     fun isReconnect(): Boolean {
-        val index = onOptionsClickEvent.value?.getContent() ?: return false
+        val index = onOptionsClickEvent.value?.peekContent() ?: return false
         val connectionGuid = listItemsValues.getOrNull(index)?.guid ?: return false
         return connectionsRepository.getByGuid(connectionGuid)?.let {
             it.getStatus() === ConnectionStatus.ACTIVE

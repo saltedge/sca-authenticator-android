@@ -137,7 +137,9 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
                     val popupMenu = PopupMenu(it, connectionsListView.getChildAt(index))
                     popupMenu.inflate(R.menu.popup_menu)
                     popupMenu.menu.findItem(R.id.reconnect).isVisible = !viewModel.isReconnect()
-                    popupMenu.setOnMenuItemClickListener(viewModel)
+                    popupMenu.setOnMenuItemClickListener { item ->
+                        viewModel.onMenuItemClick(item.itemId)
+                    }
                     popupMenu.show()
                 }
             }
