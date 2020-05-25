@@ -24,7 +24,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
 import com.saltedge.authenticator.R
@@ -40,13 +39,11 @@ import com.saltedge.authenticator.sdk.constants.KEY_NAME
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers.equalTo
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.robolectric.RobolectricTestRunner
@@ -158,31 +155,31 @@ class ConnectionsListViewModelTest {
             connections.convertConnectionsToViewModels(context)
         viewModel.listItems.postValue(connection)
 
-        assertNull(viewModel.onOptionsClickEvent.value)
+        assertNull(viewModel.onListItemClickEvent.value)
 
         viewModel.onStart()
 
         viewModel.onListItemClick(itemIndex = 1)
 
-        assertThat(viewModel.onOptionsClickEvent.value, equalTo(ViewModelEvent(content = 1)))
+        assertThat(viewModel.onListItemClickEvent.value, equalTo(ViewModelEvent(content = 1)))
     }
 
     @Test
     @Throws(Exception::class)
     fun onMenuItemClickTestCase1() {
+        //given
         val connection: List<ConnectionViewModel> =
             connections.convertConnectionsToViewModels(context)
 
-        viewModel.listItems.postValue(connection)
-        viewModel.onStart()
-        viewModel.onListItemClick(itemIndex = 1)
+        viewModel.listItems.value = connection
+        viewModel.onListItemClickEvent.value = ViewModelEvent<Int>(1)
+
+        //when
         viewModel.onMenuItemClick(R.id.rename)
 
-        //        assertThat(viewModel.onRenameClickEvent.value, equalTo(ViewModelEvent(Bundle()
-        //            .apply { putString(KEY_GUID, "guid2") }
-        //            .apply { putString(KEY_NAME, "Demobank2") })
-        //        ))
-        assertNotNull(viewModel.onRenameClickEvent.value)
+        //than
+        assertThat(viewModel.onRenameClickEvent.value!!.peekContent().getString(KEY_GUID), equalTo("guid2"))
+        assertThat(viewModel.onRenameClickEvent.value!!.peekContent().getString(KEY_NAME), equalTo("Demobank2"))
     }
 
     @Test
@@ -211,9 +208,9 @@ class ConnectionsListViewModelTest {
         viewModel.onListItemClick(itemIndex = 1)
         viewModel.onMenuItemClick(R.id.delete)
 
-//        assertThat(viewModel.onDeleteClickEvent.value, equalTo(ViewModelEvent(Bundle()
-//            .apply { putString(KEY_GUID, "guid2") }
-//        )))
+        //        assertThat(viewModel.onDeleteClickEvent.value, equalTo(ViewModelEvent(Bundle()
+        //            .apply { putString(KEY_GUID, "guid2") }
+        //        )))
         assertNotNull(viewModel.onDeleteClickEvent.value)
     }
 
@@ -333,6 +330,11 @@ class ConnectionsListViewModelTest {
     @Test
     @Throws(Exception::class)
     fun onActivityResultTest_Rename() {
+        val connection: List<ConnectionViewModel> =
+            connections.convertConnectionsToViewModels(context)
+
+        viewModel.listItems.value = connection
+
         viewModel.onActivityResult(
             resultCode = Activity.RESULT_OK,
             requestCode = RENAME_REQUEST_CODE,
@@ -341,11 +343,11 @@ class ConnectionsListViewModelTest {
                 .putExtra(KEY_GUID, "guid2")
         )
 
-//        assertNotNull(viewModel.listItemUpdateEvent.value)
-//        Mockito.verify(mockConnectionsRepository)
-//            .updateNameAndSave(connection = connections[1], newName = "new name")
-//        Mockito.verify(mockView)
-//            .updateListItemName(connectionGuid = "guid2", name = "new name")
+                assertNotNull(viewModel.listItemUpdateEvent.value)
+                Mockito.verify(mockConnectionsRepository)
+                    .updateNameAndSave(connection = connections[1], newName = "new name")
+        //        Mockito.verify(mockView)
+        //            .updateListItemName(connectionGuid = "guid2", name = "new name")
     }
 
     /**
@@ -358,7 +360,9 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun onActivityResultTest_DeleteSingleConnection_InvalidParams_Case1() {
         Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid2")
-        Mockito.doReturn(ConnectionAndKey(connections[1], mockPrivateKey)).`when`(mockKeyStoreManager).createConnectionAndKeyModel(connections[1])
+        Mockito.doReturn(ConnectionAndKey(connections[1], mockPrivateKey)).`when`(
+            mockKeyStoreManager
+        ).createConnectionAndKeyModel(connections[1])
         val presenter = viewModel
         presenter.onActivityResult(
             resultCode = Activity.RESULT_OK, requestCode = DELETE_REQUEST_CODE,
@@ -387,7 +391,9 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun onActivityResultTest_DeleteSingleConnection() {
         Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid2")
-        Mockito.doReturn(ConnectionAndKey(connections[1], mockPrivateKey)).`when`(mockKeyStoreManager).createConnectionAndKeyModel(connections[1])
+        Mockito.doReturn(ConnectionAndKey(connections[1], mockPrivateKey)).`when`(
+            mockKeyStoreManager
+        ).createConnectionAndKeyModel(connections[1])
         viewModel.onActivityResult(
             resultCode = Activity.RESULT_OK,
             requestCode = DELETE_REQUEST_CODE,
@@ -400,9 +406,8 @@ class ConnectionsListViewModelTest {
         )
         Mockito.verify(mockConnectionsRepository).deleteConnection("guid2")
         Mockito.verify(mockKeyStoreManager).deleteKeyPair("guid2")
-//        Mockito.verify(viewModel).updateViewsContent()
+        //        Mockito.verify(viewModel).updateViewsContent()
     }
-
 
 
 }

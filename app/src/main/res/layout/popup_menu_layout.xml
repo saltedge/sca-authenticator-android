@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+     This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2020 Salt Edge Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/dp_10"
+    android:layout_marginBottom="@dimen/dp_10"
+    android:background="@drawable/shape_bg_popup_menu"
+    android:elevation="@dimen/dp_26">
+
+    <LinearLayout
+        android:id="@+id/reconnectView"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp_40"
+        android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginEnd="@dimen/dp_16"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/reconnectImageView"
+            android:layout_width="@dimen/dp_24"
+            android:layout_height="@dimen/dp_24"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_reconnect_24dp" />
+
+        <TextView
+            android:id="@+id/reconnectTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_12"
+            android:fontFamily="@font/roboto_regular"
+            android:text="Reconnect"
+            android:textAllCaps="false"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/primary_text"
+            android:textSize="@dimen/text_14" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/renameView"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp_40"
+        android:layout_below="@+id/reconnectView"
+        android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginEnd="@dimen/dp_16"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/renameImageView"
+            android:layout_width="@dimen/dp_24"
+            android:layout_height="@dimen/dp_24"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_edit_24dp" />
+
+        <TextView
+            android:id="@+id/renameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_12"
+            android:fontFamily="@font/roboto_regular"
+            android:text="Rename"
+            android:textAllCaps="false"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/primary_text"
+            android:textSize="@dimen/text_14" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/contactSupportView"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp_40"
+        android:layout_below="@+id/renameView"
+        android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginEnd="@dimen/dp_16"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/contactSupportImageView"
+            android:layout_width="@dimen/dp_24"
+            android:layout_height="@dimen/dp_24"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_contact_support_24dp" />
+
+        <TextView
+            android:id="@+id/contactSupportTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_12"
+            android:fontFamily="@font/roboto_regular"
+            android:text="Contact Support"
+            android:textAllCaps="false"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/primary_text"
+            android:textSize="@dimen/text_14" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/deleteView"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp_40"
+        android:layout_below="@+id/contactSupportView"
+        android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginEnd="@dimen/dp_16"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/deleteImageView"
+            android:layout_width="@dimen/dp_24"
+            android:layout_height="@dimen/dp_24"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_delete_24dp" />
+
+        <TextView
+            android:id="@+id/deleteTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_12"
+            android:fontFamily="@font/roboto_regular"
+            android:text="Delete"
+            android:textAllCaps="false"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/primary_text"
+            android:textSize="@dimen/text_14" />
+    </LinearLayout>
+</RelativeLayout>

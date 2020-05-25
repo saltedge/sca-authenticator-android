@@ -24,9 +24,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
-import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.*
@@ -56,7 +54,7 @@ class ConnectionsListViewModel @Inject constructor(
 
     var onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
         private set
-    var onOptionsClickEvent = MutableLiveData<ViewModelEvent<Int>>()
+    var onListItemClickEvent = MutableLiveData<ViewModelEvent<Int>>()
         private set
     var onSupportClickEvent = MutableLiveData<ViewModelEvent<String?>>()
         private set
@@ -82,36 +80,6 @@ class ConnectionsListViewModel @Inject constructor(
 
     override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?) {}
 
-    fun onMenuItemClick(itemId: Int): Boolean {
-        val index = onOptionsClickEvent.value?.peekContent() ?: return false
-        val connectionGuid = listItemsValues.getOrNull(index)?.guid ?: return false
-        return when (itemId) {
-            R.id.rename -> {
-                onRenameOptionSelected(connectionGuid)
-                true
-            }
-            R.id.contact_support -> {
-                onSupportClickEvent.postValue(
-                    ViewModelEvent(
-                        connectionsRepository.getByGuid(
-                            connectionGuid
-                        )?.supportEmail
-                    )
-                )
-                true
-            }
-            R.id.delete -> {
-                onDeleteOptionsSelected(connectionGuid)
-                true
-            }
-            R.id.reconnect -> {
-                onReconnectClickEvent.postValue(ViewModelEvent(connectionGuid))
-                true
-            }
-            else -> false
-        }
-    }
-
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data == null || resultCode != Activity.RESULT_OK) return
         val listItem = listItemsValues.find { it.guid == data.getStringExtra(KEY_GUID) } ?: return
@@ -131,18 +99,28 @@ class ConnectionsListViewModel @Inject constructor(
     }
 
     fun onListItemClick(itemIndex: Int) {
-        onOptionsClickEvent.postValue(ViewModelEvent(itemIndex))
+        onListItemClickEvent.postValue(ViewModelEvent(itemIndex))
     }
 
     fun isReconnect(): Boolean {
-        val index = onOptionsClickEvent.value?.peekContent() ?: return false
+        val index = onListItemClickEvent.value?.peekContent() ?: return false
         val connectionGuid = listItemsValues.getOrNull(index)?.guid ?: return false
         return connectionsRepository.getByGuid(connectionGuid)?.let {
             it.getStatus() === ConnectionStatus.ACTIVE
         } ?: false
     }
 
-    private fun onRenameOptionSelected(connectionGuid: GUID) {
+    fun onReconnectOptionSelected() {
+        val index = onListItemClickEvent.value?.peekContent() ?: return
+        val connectionGuid = listItemsValues.getOrNull(index)?.guid ?: return
+
+        onReconnectClickEvent.postValue(ViewModelEvent(connectionGuid))
+    }
+
+    fun onRenameOptionSelected() {
+        val index = onListItemClickEvent.value?.peekContent() ?: return
+        val connectionGuid = listItemsValues.getOrNull(index)?.guid ?: return
+
         connectionsRepository.getByGuid(connectionGuid)?.let { connection ->
             onRenameClickEvent.postValue(ViewModelEvent(Bundle()
                 .apply { putString(KEY_GUID, connectionGuid) }
@@ -151,7 +129,23 @@ class ConnectionsListViewModel @Inject constructor(
         }
     }
 
-    private fun onDeleteOptionsSelected(connectionGuid: GUID) {
+    fun onContactSupportOptionSelected() {
+        val index = onListItemClickEvent.value?.peekContent() ?: return
+        val connectionGuid = listItemsValues.getOrNull(index)?.guid ?: return
+
+        onSupportClickEvent.postValue(
+            ViewModelEvent(
+                connectionsRepository.getByGuid(
+                    connectionGuid
+                )?.supportEmail
+            )
+        )
+    }
+
+    fun onDeleteOptionsSelected() {
+        val index = onListItemClickEvent.value?.peekContent() ?: return
+        val connectionGuid = listItemsValues.getOrNull(index)?.guid ?: return
+
         onDeleteClickEvent.postValue(ViewModelEvent(Bundle()
             .apply { putString(KEY_GUID, connectionGuid) }
         ))

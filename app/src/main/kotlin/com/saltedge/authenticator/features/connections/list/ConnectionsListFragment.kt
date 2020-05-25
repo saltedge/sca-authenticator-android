@@ -20,12 +20,14 @@
  */
 package com.saltedge.authenticator.features.connections.list
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.PopupMenu
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -131,16 +133,10 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
                 activity?.showDialogFragment(dialog)
             }
         })
-        viewModel.onOptionsClickEvent.observe(this, Observer<ViewModelEvent<Int>> { event ->
+        viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<Int>> { event ->
             event.getContentIfNotHandled()?.let { index ->
                 activity?.let {
-                    val popupMenu = PopupMenu(it, connectionsListView.getChildAt(index))
-                    popupMenu.inflate(R.menu.popup_menu)
-                    popupMenu.menu.findItem(R.id.reconnect).isVisible = !viewModel.isReconnect()
-                    popupMenu.setOnMenuItemClickListener { item ->
-                        viewModel.onMenuItemClick(item.itemId)
-                    }
-                    popupMenu.show()
+                    showPopupMenu(view = connectionsListView.getChildAt(index))
                 }
             }
         })
@@ -164,12 +160,50 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
     }
 
     private fun setupViews() {
-        activity?.let { connectionsListView?.layoutManager = LinearLayoutManager(it) }
+        connectionsListView?.layoutManager = LinearLayoutManager(activity ?: return)
         connectionsListView?.adapter = adapter
         emptyView?.setOnClickListener(this)
         headerDecorator = SpaceItemDecoration(
             context = activity ?: return
-        ).apply { connectionsListView?.addItemDecoration(this) }
+        ).apply {
+            connectionsListView?.addItemDecoration(this)
+        }
         binding.executePendingBindings()
+    }
+
+    private fun showPopupMenu(view: View?) {
+        val layoutInflater = context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val popupView = layoutInflater.inflate(R.layout.popup_menu_layout, null)
+        val popupWindow = PopupWindow(
+            popupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        popupWindow.isOutsideTouchable = true
+        popupWindow.isFocusable = true
+        popupWindow.showAsDropDown(view)
+
+        val renameView = popupView.findViewById<LinearLayout>(R.id.renameView)
+        val reconnectView = popupView.findViewById<LinearLayout>(R.id.reconnectView)
+        val contactSupportView = popupView.findViewById<LinearLayout>(R.id.contactSupportView)
+        val deleteView = popupView.findViewById<LinearLayout>(R.id.deleteView)
+
+        reconnectView.setVisible(!viewModel.isReconnect())
+        reconnectView.setOnClickListener {
+            popupWindow.dismiss()
+            viewModel.onReconnectOptionSelected()
+        }
+        renameView.setOnClickListener {
+            popupWindow.dismiss()
+            viewModel.onRenameOptionSelected()
+        }
+        contactSupportView.setOnClickListener {
+            popupWindow.dismiss()
+            viewModel.onContactSupportOptionSelected()
+        }
+        deleteView.setOnClickListener {
+            popupWindow.dismiss()
+            viewModel.onDeleteOptionsSelected()
+        }
     }
 }
