@@ -93,19 +93,22 @@ class ConnectionsListViewModelTest {
         )
     }
 
-//    /**
-//     * Test onStart when db is empty
-//     */
-//    @Test
-//    @Throws(Exception::class)
-//    fun onStartTestCase1() {
-//        viewModel.listItems.value = emptyList()
-//
-//        viewModel.onStart()
-//
-//        assertThat(viewModel.emptyViewVisibility.value, equalTo(View.VISIBLE))
-//        assertThat(viewModel.listVisibility.value, equalTo(View.GONE))
-//    }
+    /**
+     * Test onStart when db is empty
+     */
+    @Test
+    @Throws(Exception::class)
+    fun onStartTestCase1() {
+        //given
+        Mockito.doReturn(listOf<Connection>()).`when`(mockConnectionsRepository).getAllConnections()
+
+        //when
+        viewModel.onStart()
+
+        //than
+        assertThat(viewModel.emptyViewVisibility.value, equalTo(View.VISIBLE))
+        assertThat(viewModel.listVisibility.value, equalTo(View.GONE))
+    }
 
     /**
      * Test onStart when db isn't empty
@@ -113,12 +116,15 @@ class ConnectionsListViewModelTest {
     @Test
     @Throws(Exception::class)
     fun onStartTestCase2() {
+        //given
         val connection: List<ConnectionViewModel> =
             connections.convertConnectionsToViewModels(context)
         viewModel.listItems.value = connection
 
+        //when
         viewModel.onStart()
 
+        //than
         assertThat(viewModel.listItemsValues, equalTo(connection))
         assertThat(viewModel.emptyViewVisibility.value, equalTo(View.GONE))
         assertThat(viewModel.listVisibility.value, equalTo(View.VISIBLE))
@@ -145,9 +151,8 @@ class ConnectionsListViewModelTest {
 
         assertNull(viewModel.onListItemClickEvent.value)
 
-        viewModel.onStart()
-
-        viewModel.onListItemClick(itemIndex = 1)
+        viewModel.listItems.value = connection
+        viewModel.onListItemClickEvent.value = ViewModelEvent<Int>(1)
 
         assertThat(viewModel.onListItemClickEvent.value, equalTo(ViewModelEvent(content = 1)))
     }
