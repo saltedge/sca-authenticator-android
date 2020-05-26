@@ -26,8 +26,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -187,8 +189,16 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
         val reconnectView = popupView.findViewById<LinearLayout>(R.id.reconnectView)
         val contactSupportView = popupView.findViewById<LinearLayout>(R.id.contactSupportView)
         val deleteView = popupView.findViewById<LinearLayout>(R.id.deleteView)
+        val deleteImageView = popupView.findViewById<ImageView>(R.id.deleteImageView)
+        val deleteTextView = popupView.findViewById<TextView>(R.id.deleteTextView)
 
-        reconnectView.setVisible(!viewModel.isReconnect())
+        if (viewModel.isReconnect()) {
+            reconnectView.setVisible(false)
+        } else {
+            reconnectView.setVisible(true)
+            deleteImageView.setImageDrawable(resources.getDrawable(R.drawable.ic_remove_24dp))
+            deleteTextView.text = getString(R.string.actions_remove)
+        }
         reconnectView.setOnClickListener {
             popupWindow.dismiss()
             viewModel.onReconnectOptionSelected()

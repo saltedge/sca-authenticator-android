@@ -41,14 +41,13 @@
             android:scrollbars="vertical"
             android:visibility="@{viewModel.listVisibility}" />
 
-        <!--TODO: replace iconSrc on actual-->
         <com.saltedge.authenticator.widget.EmptyView
             android:id="@+id/emptyView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="@{viewModel.emptyViewVisibility}"
             app:description="@string/connections_list_no_connections_description"
-            app:iconSrc="@drawable/ic_authorizations_empty"
+            app:iconSrc="@drawable/ic_connections_empty"
             app:mainActionText="@string/actions_connect"
             app:title="@string/connections_list_no_connections" />
     </RelativeLayout>

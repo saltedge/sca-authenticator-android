@@ -47,7 +47,7 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
     private var positiveButton: Button? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val adb = AlertDialog.Builder(activity!!)
+        val adb = AlertDialog.Builder(activity!!, R.style.AlertDialogTheme)
             .setTitle(R.string.ui_dialog_rename_title)
             .setPositiveButton(android.R.string.ok, this)
             .setNegativeButton(R.string.actions_cancel, this)
@@ -63,7 +63,7 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
         val text = arguments?.getString(KEY_NAME) ?: ""
         inputView = dialog?.findViewById(R.id.connectionNameView) as EditText?
         inputView?.addTextChangedListener(this)
-        (dialog as AlertDialog).setButtonsColor(R.color.blue)
+//        (dialog as AlertDialog).setButtonsColor(R.color.blue)
         inputView?.requestFocus()
         inputView?.setText(text)
         inputView?.setSelection(text.length)
