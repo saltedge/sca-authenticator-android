@@ -36,10 +36,10 @@ class ConnectionsListAdapter(val clickListener: ListItemClickListener?) : Abstra
         (holder as ConnectionItemHolder).bind(item as ConnectionViewModel)
     }
 
-    fun updateListItemName(connectionGuid: GUID, name: String) {
+    fun updateListItem(item: ConnectionViewModel) {
         data.mapIndexed { index, any -> index to (any as ConnectionViewModel) }
-            .firstOrNull { it.second.guid == connectionGuid }?.let { (itemIndex, item) ->
-                updateItem(item.copy(name = name), itemIndex)
+            .firstOrNull { it.second.guid == item.guid }?.let { (itemIndex, item) ->
+                updateItem(item.copy(name = item.name), itemIndex)
             }
     }
 }

@@ -154,7 +154,7 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
         viewModel.updateListItemEvent.observe(this, Observer<ViewModelEvent<Int>> {
             it.getContentIfNotHandled()?.let { itemIndex ->
                 viewModel.listItemsValues.getOrNull(itemIndex)?.let { item ->
-                    adapter.updateListItemName(item.guid, item.name)
+                    adapter.updateListItem(item)
                 }
             }
         })
