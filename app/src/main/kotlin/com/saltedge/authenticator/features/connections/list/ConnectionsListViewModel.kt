@@ -67,11 +67,14 @@ class ConnectionsListViewModel @Inject constructor(
 
     val listVisibility = MutableLiveData<Int>()
     val emptyViewVisibility = MutableLiveData<Int>()
+    val reconnectViewVisibility = MutableLiveData<Int>()
+    val deleteTextViewResource = MutableLiveData<Int>()
+    val deleteImageViewResource = MutableLiveData<Int>()
 
     val listItems = MutableLiveData<List<ConnectionViewModel>>()
     val listItemsValues: List<ConnectionViewModel>
         get() = listItems.value ?: emptyList()
-    val listItemUpdateEvent = MutableLiveData<ViewModelEvent<Int>>()
+    val updateListItemEvent = MutableLiveData<ViewModelEvent<Int>>()
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStart() {
@@ -102,12 +105,16 @@ class ConnectionsListViewModel @Inject constructor(
         onListItemClickEvent.postValue(ViewModelEvent(itemIndex))
     }
 
-    fun isReconnect(): Boolean {
-        val index = onListItemClickEvent.value?.peekContent() ?: return false
-        val connectionGuid = listItemsValues.getOrNull(index)?.guid ?: return false
-        return connectionsRepository.getByGuid(connectionGuid)?.let {
-            it.getStatus() === ConnectionStatus.ACTIVE
-        } ?: false
+    fun checkStatusOfConnection(itemIndex: Int) {
+        if (isActiveConnection(itemIndex)) {
+            reconnectViewVisibility.value = View.GONE
+            deleteTextViewResource.value = R.string.actions_delete
+            deleteImageViewResource.value = R.drawable.ic_delete_24dp
+        } else {
+            reconnectViewVisibility.value = View.VISIBLE
+            deleteTextViewResource.value = R.string.actions_remove
+            deleteImageViewResource.value = R.drawable.ic_remove_24dp
+        }
     }
 
     fun onReconnectOptionSelected() {
@@ -151,13 +158,20 @@ class ConnectionsListViewModel @Inject constructor(
         ))
     }
 
+    private fun isActiveConnection(itemIndex: Int): Boolean {
+        val connectionGuid = listItemsValues.getOrNull(itemIndex)?.guid ?: return false
+        return connectionsRepository.getByGuid(connectionGuid)?.let {
+            it.getStatus() === ConnectionStatus.ACTIVE
+        } ?: false
+    }
+
     private fun onUserRenamedConnection(listItem: ConnectionViewModel, newConnectionName: String) {
         val itemIndex = listItemsValues.indexOf(listItem)
         if (listItem.name != newConnectionName && newConnectionName.isNotEmpty()) {
             connectionsRepository.getByGuid(listItem.guid)?.let { connection ->
                 connectionsRepository.updateNameAndSave(connection, newConnectionName)
                 listItems.value?.get(itemIndex)?.name = newConnectionName
-                listItemUpdateEvent.postValue(ViewModelEvent(itemIndex))
+                updateListItemEvent.postValue(ViewModelEvent(itemIndex))
             }
         }
     }

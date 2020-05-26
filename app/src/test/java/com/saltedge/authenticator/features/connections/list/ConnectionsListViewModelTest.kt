@@ -351,7 +351,7 @@ class ConnectionsListViewModelTest {
                 .putExtra(KEY_GUID, "guid2")
         )
 
-        assertNotNull(viewModel.listItemUpdateEvent.value)
+        assertNotNull(viewModel.updateListItemEvent.value)
         Mockito.verify(mockConnectionsRepository)
             .updateNameAndSave(connection = connections[1], newName = "new name")
     }
@@ -421,5 +421,45 @@ class ConnectionsListViewModelTest {
         )
         Mockito.verify(mockConnectionsRepository).deleteConnection("guid2")
         Mockito.verify(mockKeyStoreManager).deleteKeyPair("guid2")
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun checkStatusOfConnectionTestCase1() {
+        //given
+        val connection: List<ConnectionViewModel> =
+            connections.convertConnectionsToViewModels(context)
+        viewModel.listItems.postValue(connection)
+
+        viewModel.listItems.value = connection
+        viewModel.onListItemClickEvent.value = ViewModelEvent<Int>(0)
+
+        //when
+        viewModel.checkStatusOfConnection(itemIndex = 0)
+
+        //than
+        assertThat(viewModel.reconnectViewVisibility.value, equalTo(View.VISIBLE))
+        assertThat(viewModel.deleteTextViewResource.value, equalTo(R.string.actions_remove))
+        assertThat(viewModel.deleteImageViewResource.value, equalTo(R.drawable.ic_remove_24dp))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun checkStatusOfConnectionTestCase2() {
+        //given
+        val connection: List<ConnectionViewModel> =
+            connections.convertConnectionsToViewModels(context)
+        viewModel.listItems.postValue(connection)
+
+        viewModel.listItems.value = connection
+        viewModel.onListItemClickEvent.value = ViewModelEvent<Int>(1)
+
+        //when
+        viewModel.checkStatusOfConnection(itemIndex = 1)
+
+        //than
+        assertThat(viewModel.reconnectViewVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.deleteTextViewResource.value, equalTo(R.string.actions_delete))
+        assertThat(viewModel.deleteImageViewResource.value, equalTo(R.drawable.ic_delete_24dp))
     }
 }
