@@ -135,9 +135,9 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
             }
         })
         viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<Int>> { event ->
-            event.getContentIfNotHandled()?.let { index ->
-                activity?.let {
-                    showPopupMenu(view = connectionsListView.getChildAt(index), itemIndex = index)
+            event.getContentIfNotHandled()?.let { itemIndex ->
+                viewModel.listItemsValues.getOrNull(itemIndex)?.let { item ->
+                    showPopupMenu(view = connectionsListView?.getChildAt(itemIndex), item = item)
                 }
             }
         })
@@ -151,12 +151,8 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
                 activity?.startMailApp(supportEmail)
             }
         })
-        viewModel.updateListItemEvent.observe(this, Observer<ViewModelEvent<Int>> {
-            it.getContentIfNotHandled()?.let { itemIndex ->
-                viewModel.listItemsValues.getOrNull(itemIndex)?.let { item ->
-                    adapter.updateListItem(item)
-                }
-            }
+        viewModel.updateListItemEvent.observe(this, Observer<ConnectionViewModel> { itemIndex ->
+                adapter.updateListItem(itemIndex)
         })
     }
 
@@ -172,7 +168,7 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
         binding.executePendingBindings()
     }
 
-    private fun showPopupMenu(view: View?, itemIndex:  Int) {
+    private fun showPopupMenu(view: View?, item: ConnectionViewModel) {
         val layoutInflater = context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val popupView = layoutInflater.inflate(R.layout.popup_menu_layout, null)
         val popupWindow = PopupWindow(
@@ -191,17 +187,9 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
         val deleteImageView = popupView.findViewById<ImageView>(R.id.deleteImageView)
         val deleteTextView = popupView.findViewById<TextView>(R.id.deleteTextView)
 
-        viewModel.checkStatusOfConnection(itemIndex)
-
-        viewModel.reconnectViewVisibility.observe(this, Observer<Int> {
-            reconnectView.visibility = it
-        })
-        viewModel.deleteTextViewResource.observe(this, Observer<Int> { textResId ->
-            deleteTextView.text = getString(textResId)
-        })
-        viewModel.deleteImageViewResource.observe(this, Observer<Int> { imageResId ->
-            deleteImageView.setImageDrawable(resources.getDrawable(imageResId))
-        })
+        reconnectView.setVisible(item.reconnectOptionIsVisible)
+        deleteTextView.setText(item.deleteMenuItemText)
+        deleteImageView.setImageResource(item.deleteMenuItemImage)
 
         reconnectView.setOnClickListener {
             popupWindow.dismiss()
