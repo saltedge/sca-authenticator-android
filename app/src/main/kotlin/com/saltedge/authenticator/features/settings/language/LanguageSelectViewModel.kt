@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,28 +21,34 @@
 package com.saltedge.authenticator.features.settings.language
 
 import android.content.Context
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tools.currentAppLocaleName
 import com.saltedge.authenticator.tools.getAvailableLocalizations
 import com.saltedge.authenticator.tools.localeCodeToName
 
-class LanguageSelectPresenter(
+class LanguageSelectViewModel(
     private val appContext: Context,
-    private val preferences: PreferenceRepositoryAbs
-) : LanguageSelectContract.Presenter {
+    private val preferenceRepository: PreferenceRepositoryAbs
+) : ViewModel() {
 
     private var availableLocales = appContext.getAvailableLocalizations().sorted()
-    override var viewContract: LanguageSelectContract.View? = null
-    override var availableLanguages: Array<String> =
-        availableLocales.map { it.localeCodeToName() }.toTypedArray()
-    override var currentItemIndex: Int =
-        availableLanguages.indexOf(appContext.currentAppLocaleName())
+    var listItems: Array<String> = availableLocales.map { it.localeCodeToName() }.toTypedArray()
+    var selectedItemIndex: Int = listItems.indexOf(appContext.currentAppLocaleName())
+    val onLanguageChangedEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
-    override fun onOkClick() {
-        viewContract?.closeView()
-        if (appContext.currentAppLocaleName() != availableLanguages[currentItemIndex]) {
-            preferences.currentLocale = availableLocales[currentItemIndex]
-            viewContract?.applyChanges()
+    fun onOkClick() {
+        onCloseEvent.postValue(ViewModelEvent(Unit))
+        if (appContext.currentAppLocaleName() != listItems[selectedItemIndex]) {
+            preferenceRepository.currentLocale = availableLocales[selectedItemIndex]
+            onLanguageChangedEvent.postValue(ViewModelEvent(Unit))
         }
+    }
+
+    fun onCancelClick() {
+        onCloseEvent.postValue(ViewModelEvent(Unit))
     }
 }

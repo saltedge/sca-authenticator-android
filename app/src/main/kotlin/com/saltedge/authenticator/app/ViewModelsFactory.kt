@@ -32,6 +32,7 @@ import com.saltedge.authenticator.features.main.MainActivityViewModel
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupViewModel
 import com.saltedge.authenticator.features.qr.QrScannerViewModel
 import com.saltedge.authenticator.features.settings.about.AboutViewModel
+import com.saltedge.authenticator.features.settings.language.LanguageSelectViewModel
 import com.saltedge.authenticator.features.settings.licenses.LicensesViewModel
 import com.saltedge.authenticator.features.settings.list.SettingsListViewModel
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
@@ -134,6 +135,12 @@ class ViewModelsFactory @Inject constructor(
             }
             modelClass.isAssignableFrom(LicensesViewModel::class.java) -> {
                 return LicensesViewModel() as T
+            }
+            modelClass.isAssignableFrom(LanguageSelectViewModel::class.java) -> {
+                return LanguageSelectViewModel(
+                    appContext = appContext,
+                    preferenceRepository = preferenceRepository
+                ) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

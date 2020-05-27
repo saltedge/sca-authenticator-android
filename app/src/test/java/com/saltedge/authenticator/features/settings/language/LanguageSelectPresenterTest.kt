@@ -66,8 +66,8 @@ class LanguageSelectPresenterTest {
     private val mockView = Mockito.mock(LanguageSelectContract.View::class.java)
     private val mockPreferenceRepository = Mockito.mock(PreferenceRepositoryAbs::class.java)
 
-    private fun createPresenter(viewContract: LanguageSelectContract.View? = null): LanguageSelectPresenter {
-        return LanguageSelectPresenter(TestAppTools.applicationContext, mockPreferenceRepository)
+    private fun createPresenter(viewContract: LanguageSelectContract.View? = null): LanguageSelectViewModel {
+        return LanguageSelectViewModel(TestAppTools.applicationContext, mockPreferenceRepository)
             .apply { this.viewContract = viewContract }
     }
 }

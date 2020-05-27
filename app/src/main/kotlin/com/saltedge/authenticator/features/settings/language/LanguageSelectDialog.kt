@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,44 +24,45 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.features.main.activityComponentsContract
-import com.saltedge.authenticator.features.settings.language.di.LanguageSelectModule
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.authenticatorApp
 import javax.inject.Inject
 
-class LanguageSelectDialog : DialogFragment(), LanguageSelectContract.View {
+class LanguageSelectDialog : DialogFragment() {
 
-    @Inject lateinit var presenterContract: LanguageSelectContract.Presenter
+    @Inject lateinit var viewModelFactory: ViewModelsFactory
+    private lateinit var viewModel: LanguageSelectViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectDependencies()
+        authenticatorApp?.appComponent?.inject(this)
+        setupViewModel()
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(activity, R.style.MaterialThemeDialog)
             .setTitle(R.string.settings_language)
-            .setSingleChoiceItems(
-                presenterContract.availableLanguages,
-                presenterContract.currentItemIndex
-            ) { _, which ->
-                presenterContract.currentItemIndex = which
+            .setSingleChoiceItems(viewModel.listItems, viewModel.selectedItemIndex) { _, which ->
+                viewModel.selectedItemIndex = which
             }
-            .setPositiveButton(android.R.string.ok) { _, _ -> presenterContract.onOkClick() }
-            .setNegativeButton(R.string.actions_cancel) { _, _ -> closeView() }
+            .setPositiveButton(android.R.string.ok) { _, _ -> viewModel.onOkClick() }
+            .setNegativeButton(R.string.actions_cancel) { _, _ -> viewModel.onCancelClick() }
             .create()
     }
 
-    override fun closeView() {
-        dismiss()
-    }
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(this, viewModelFactory).get(LanguageSelectViewModel::class.java)
 
-    override fun applyChanges() {
-        activity?.activityComponentsContract?.onLanguageChanged()
-    }
-
-    private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addLanguageSelectModule(LanguageSelectModule())?.inject(this)
+        viewModel.onLanguageChangedEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let { activity?.activityComponentsContract?.onLanguageChanged() }
+        })
+        viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let { dismiss() }
+        })
     }
 }

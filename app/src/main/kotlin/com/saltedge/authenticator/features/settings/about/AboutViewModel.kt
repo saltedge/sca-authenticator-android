@@ -34,12 +34,8 @@ import com.saltedge.authenticator.widget.fragment.WebViewFragment
 
 class AboutViewModel(val appContext: Context) : ViewModel(), ListItemClickListener {
 
-    var termsOfServiceItemClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
-        private set
-
-    var licenseItemClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
-        private set
-
+    val termsOfServiceItemClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
+    val licenseItemClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val listItems = listOf(
             SettingsItemModel(
                 titleId = R.string.about_app_version,
