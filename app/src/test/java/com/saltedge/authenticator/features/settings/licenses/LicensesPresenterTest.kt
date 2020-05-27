@@ -150,7 +150,7 @@ class LicensesPresenterTest {
     private val mockView = Mockito.mock(LicensesContract.View::class.java)
     private val apacheLicense = "https://www.apache.org/licenses/LICENSE-2.0.txt"
 
-    private fun createPresenter(viewContract: LicensesContract.View? = null): LicensesPresenter {
-        return LicensesPresenter().apply { this.viewContract = viewContract }
+    private fun createPresenter(viewContract: LicensesContract.View? = null): LicensesViewModel {
+        return LicensesViewModel().apply { this.viewContract = viewContract }
     }
 }
