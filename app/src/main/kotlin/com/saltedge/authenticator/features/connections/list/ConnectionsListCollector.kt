@@ -51,9 +51,24 @@ fun List<Connection>.convertConnectionsToViewModels(context: Context): List<Conn
                 connection = connection
             ),
             statusColorResId = getConnectionStateColorResId(connection),
-            logoUrl = connection.logoUrl
+            logoUrl = connection.logoUrl,
+            reconnectOptionIsVisible = isActiveConnection(connection),
+            deleteMenuItemText = getConnectionDeleteTextResId(connection),
+            deleteMenuItemImage = getConnectionDeleteImageResId(connection)
         )
     }
+}
+
+private fun isActiveConnection(connection: ConnectionAbs): Boolean {
+    return connection.getStatus() !== ConnectionStatus.ACTIVE
+}
+
+private fun getConnectionDeleteTextResId(connection: ConnectionAbs): Int {
+    return if (connection.getStatus() === ConnectionStatus.ACTIVE) R.string.actions_delete else R.string.actions_remove
+}
+
+private fun getConnectionDeleteImageResId(connection: ConnectionAbs): Int {
+    return if (connection.getStatus() === ConnectionStatus.ACTIVE) R.drawable.ic_delete_24dp else R.drawable.ic_remove_24dp
 }
 
 private fun getConnectionStateColorResId(connection: ConnectionAbs): Int {

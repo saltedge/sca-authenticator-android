@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsViewModel
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListViewModel
 import com.saltedge.authenticator.features.connections.create.ConnectProviderViewModel
+import com.saltedge.authenticator.features.connections.list.ConnectionsListViewModel
 import com.saltedge.authenticator.features.launcher.LauncherViewModel
 import com.saltedge.authenticator.features.main.MainActivityViewModel
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupViewModel
@@ -106,6 +107,14 @@ class ViewModelsFactory @Inject constructor(
                 return ConnectProviderViewModel(
                     appContext = appContext,
                     preferenceRepository = preferenceRepository,
+                    connectionsRepository = connectionsRepository,
+                    keyStoreManager = keyStoreManager,
+                    apiManager = apiManager
+                ) as T
+            }
+            modelClass.isAssignableFrom(ConnectionsListViewModel::class.java) -> {
+                return ConnectionsListViewModel(
+                    appContext = appContext,
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,
                     apiManager = apiManager

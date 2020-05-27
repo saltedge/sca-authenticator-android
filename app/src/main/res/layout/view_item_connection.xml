@@ -21,27 +21,32 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/dp_75"
-    android:background="@android:color/white"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/dp_80"
+    android:layout_marginStart="@dimen/dp_16"
+    android:layout_marginEnd="@dimen/dp_16"
     android:clipToPadding="false"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardElevation="@dimen/dp_2">
+    app:cardCornerRadius="@dimen/dp_6"
+    app:cardElevation="@dimen/dp_20">
 
+    <!--TODO: use actual naming for background color-->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/app_logo_background">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_72"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/dp_15"
             android:layout_toEndOf="@+id/logoImageView"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/titleView"
-                style="@style/Text16BlackRegular"
+                style="@style/Text18Primary"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -53,8 +58,8 @@
                 android:id="@+id/subTitleView"
                 style="@style/Text14Secondary"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_3"
                 android:maxLines="1"
                 tools:text="Connected on 12 sept. 2019, 18:02" />
         </LinearLayout>

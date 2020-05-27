@@ -38,7 +38,6 @@ import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.sdk.constants.KEY_NAME
 import com.saltedge.authenticator.tools.getEnabledStateColorResId
 import com.saltedge.authenticator.tools.hideSystemKeyboard
-import com.saltedge.authenticator.tools.setButtonsColor
 import com.saltedge.authenticator.tools.setTextColorResId
 
 class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListener, TextWatcher {
@@ -47,7 +46,7 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
     private var positiveButton: Button? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val adb = AlertDialog.Builder(activity!!)
+        val adb = AlertDialog.Builder(activity!!, R.style.AlertDialogTheme)
             .setTitle(R.string.ui_dialog_rename_title)
             .setPositiveButton(android.R.string.ok, this)
             .setNegativeButton(R.string.actions_cancel, this)
@@ -63,7 +62,6 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
         val text = arguments?.getString(KEY_NAME) ?: ""
         inputView = dialog?.findViewById(R.id.connectionNameView) as EditText?
         inputView?.addTextChangedListener(this)
-        (dialog as AlertDialog).setButtonsColor(R.color.blue)
         inputView?.requestFocus()
         inputView?.setText(text)
         inputView?.setSelection(text.length)
@@ -106,10 +104,12 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
 
     companion object {
         fun newInstance(guid: String, name: String): EditConnectionNameDialog =
-            EditConnectionNameDialog().apply {
-                arguments = Bundle()
-                    .apply { putString(KEY_GUID, guid) }
-                    .apply { putString(KEY_NAME, name) }
-            }
+            newInstance(Bundle()
+                .apply { putString(KEY_GUID, guid) }
+                .apply { putString(KEY_NAME, name) }
+            )
+
+        fun newInstance(bundle: Bundle): EditConnectionNameDialog =
+            EditConnectionNameDialog().apply { arguments = bundle }
     }
 }

@@ -24,7 +24,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
-import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.widget.list.AbstractListAdapter
 
 class ConnectionsListAdapter(val clickListener: ListItemClickListener?) : AbstractListAdapter() {
@@ -36,10 +35,11 @@ class ConnectionsListAdapter(val clickListener: ListItemClickListener?) : Abstra
         (holder as ConnectionItemHolder).bind(item as ConnectionViewModel)
     }
 
-    fun updateListItemName(connectionGuid: GUID, name: String) {
+    //TODO: replace mapIndexed to indexOf
+    fun updateListItem(viewModel: ConnectionViewModel) {
         data.mapIndexed { index, any -> index to (any as ConnectionViewModel) }
-            .firstOrNull { it.second.guid == connectionGuid }?.let { (itemIndex, item) ->
-                updateItem(item.copy(name = name), itemIndex)
+            .firstOrNull { it.second.guid == viewModel.guid }?.let { (itemIndex, _) ->
+                updateItem(viewModel, itemIndex)
             }
     }
 }
