@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.connections.select
 
+import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment.Companion.KEY_CONNECTIONS
 import org.hamcrest.CoreMatchers.equalTo
@@ -41,7 +42,10 @@ class SelectConnectionsFragmentTest {
                 name = "name",
                 logoUrl = "logoUrl",
                 statusDescription = "statusDescription",
-                statusColorResId = 1
+                statusColorResId = 1,
+                reconnectOptionIsVisible = false,
+                deleteMenuItemText = R.string.actions_delete,
+                deleteMenuItemImage = R.drawable.ic_delete_24dp
             )
         )
         val arguments = SelectConnectionsFragment.newInstance(

@@ -27,8 +27,7 @@ import com.saltedge.authenticator.features.actions.di.SubmitActionModule
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
-import com.saltedge.authenticator.features.connections.list.di.ConnectionsListComponent
-import com.saltedge.authenticator.features.connections.list.di.ConnectionsListModule
+import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
 import com.saltedge.authenticator.features.launcher.LauncherActivity
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
@@ -64,7 +63,6 @@ interface AppComponent {
     fun realmManager() : RealmManagerAbs
     fun viewModelsFactory() : ViewModelsFactory
 
-    fun addConnectionsListModule(module: ConnectionsListModule): ConnectionsListComponent
     fun addActionModule(moduleSubmit: SubmitActionModule): SubmitActionComponent
     fun addSettingsListModule(module: SettingsListModule): SettingsListComponent
     fun addLanguageSelectModule(module: LanguageSelectModule): LanguageSelectComponent
@@ -78,5 +76,6 @@ interface AppComponent {
     fun inject(fragment: AuthorizationsListFragment)
     fun inject(fragment: AuthorizationDetailsFragment)
     fun inject(fragment: ConnectProviderFragment)
+    fun inject(fragment: ConnectionsListFragment)
     fun inject(fragment: AboutListFragment)
 }
