@@ -35,7 +35,7 @@
 
     <TextView
         android:id="@+id/descriptionView"
-        style="@style/Text14GrayDarkRegular"
+        style="@style/Text14Primary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_32"
@@ -77,7 +77,7 @@
             android:layout_marginEnd="@dimen/dp_16"
             android:contentDescription="@null"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_onboarding_page_1"
+            android:src="@drawable/ic_app_logo"
             tools:background="@color/primary" />
 
         <TextView
@@ -94,7 +94,7 @@
 
         <TextView
             android:id="@+id/subTitleView"
-            style="@style/Text18DarkRegular"
+            style="@style/Text18Primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_32"

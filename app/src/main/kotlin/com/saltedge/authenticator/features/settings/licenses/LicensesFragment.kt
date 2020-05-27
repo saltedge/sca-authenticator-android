@@ -71,19 +71,9 @@ class LicensesFragment : BaseFragment(), LicensesContract.View {
     }
 
     private fun setupViews() {
-        try {
-            val layoutManager = LinearLayoutManager(activity)
-            recyclerView?.layoutManager = layoutManager
-            val dividerItemDecoration = DividerItemDecoration(context, layoutManager.orientation)
-            ContextCompat.getDrawable(context ?: return, R.drawable.shape_full_divider)?.let {
-                dividerItemDecoration.setDrawable(it)
-            }
-            recyclerView?.addItemDecoration(dividerItemDecoration)
-            recyclerView?.adapter = LicensesAdapter(presenter).apply {
-                data = presenter.getListItems()
-            }
-        } catch (e: Exception) {
-            e.log()
+        recyclerView?.layoutManager = LinearLayoutManager(activity)
+        recyclerView?.adapter = LicensesAdapter(presenter).apply {
+            data = presenter.getListItems()
         }
     }
 }

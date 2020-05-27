@@ -20,58 +20,58 @@
 -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <data class="AboutBinding">
+<!--    <data class="AboutBinding">-->
 
-        <import type="android.view.View" />
+<!--        <import type="android.view.View" />-->
 
-        <variable
-            name="aboutListItem"
-            type="com.saltedge.authenticator.features.settings.about.common.AboutListItemViewModel" />
+<!--        <variable-->
+<!--            name="aboutListItem"-->
+<!--            type="com.saltedge.authenticator.features.settings.about.common.AboutListItemViewModel" />-->
 
-        <variable
-            name="onItemClickListener"
-            type="com.saltedge.authenticator.interfaces.OnItemClickListener" />
-    </data>
+<!--        <variable-->
+<!--            name="onItemClickListener"-->
+<!--            type="com.saltedge.authenticator.interfaces.OnItemClickListener" />-->
+<!--    </data>-->
 
-    <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_75"
-        android:background="@android:color/white"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:onClick="@{()->onItemClickListener.onItemClick(aboutListItem.titleId)}"
-        app:cardElevation="@dimen/dp_2">
+<!--    <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--        xmlns:tools="http://schemas.android.com/tools"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="@dimen/dp_75"-->
+<!--        android:background="@android:color/white"-->
+<!--        android:foreground="?android:attr/selectableItemBackground"-->
+<!--        android:onClick="@{()->onItemClickListener.onItemClick(aboutListItem.titleId)}"-->
+<!--        app:cardElevation="@dimen/dp_2">-->
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="@dimen/dp_16">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:orientation="vertical">
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_centerVertical="true"-->
+<!--                android:orientation="vertical">-->
 
-                <TextView
-                    android:id="@+id/titleView"
-                    style="@style/Text16BlackRegular"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:text="@{aboutListItem.titleId}"
-                    tools:text="Title" />
+<!--                <TextView-->
+<!--                    android:id="@+id/titleView"-->
+<!--                    style="@style/Text16Primary"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:maxLines="1"-->
+<!--                    android:text="@{aboutListItem.titleId}"-->
+<!--                    tools:text="Title" />-->
 
-                <TextView
-                    android:id="@+id/valueView"
-                    style="@style/Text14GrayDarkRegular"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="2"
-                    android:text="@{aboutListItem.value}"
-                    android:visibility="@{aboutListItem.value != null ? View.VISIBLE : View.GONE}"
-                    tools:text="Subtitle" />
-            </LinearLayout>
+<!--                <TextView-->
+<!--                    android:id="@+id/valueView"-->
+<!--                    style="@style/Text14Secondary"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:maxLines="2"-->
+<!--                    android:text="@{aboutListItem.value}"-->
+<!--                    android:visibility="@{aboutListItem.value != null ? View.VISIBLE : View.GONE}"-->
+<!--                    tools:text="Subtitle" />-->
+<!--            </LinearLayout>-->
         </RelativeLayout>
-    </androidx.cardview.widget.CardView>
+<!--    </androidx.cardview.widget.CardView>-->
 </layout>

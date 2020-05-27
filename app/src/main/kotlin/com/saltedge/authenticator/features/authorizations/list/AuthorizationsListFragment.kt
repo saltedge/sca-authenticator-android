@@ -53,7 +53,6 @@ class AuthorizationsListFragment : BaseFragment() {
     private var headerAdapter: AuthorizationsHeaderPagerAdapter? = null
     private var contentAdapter: AuthorizationsContentPagerAdapter? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         authenticatorApp?.appComponent?.inject(this)

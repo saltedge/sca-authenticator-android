@@ -33,7 +33,7 @@
         style="@style/Text20BlackMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/settings_fingerprint" />
+        android:text="@string/fingerprint_title" />
 
     <TextView
         android:id="@+id/subtitleView"
@@ -63,7 +63,7 @@
 
         <TextView
             android:id="@+id/descriptionView"
-            style="@style/Text14GrayDarkRegular"
+            style="@style/Text14Primary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_12"

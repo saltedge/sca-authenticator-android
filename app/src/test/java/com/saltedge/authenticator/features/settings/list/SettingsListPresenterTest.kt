@@ -24,7 +24,7 @@ import android.app.Activity
 import android.content.Intent
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
-import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
+import com.saltedge.authenticator.features.settings.common.SettingsItemModel
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
@@ -61,30 +61,30 @@ class SettingsListPresenterTest {
         assertThat(
             presenter.getListItems(), equalTo(
             listOf(
-                SettingsItemViewModel(
+                SettingsItemModel(
                     titleId = R.string.settings_passcode,
                     value = TestAppTools.getString(R.string.settings_passcode_description),
                     itemIsClickable = true
                 ),
-                SettingsItemViewModel(
+                SettingsItemModel(
                     titleId = R.string.settings_notifications,
                     switchEnabled = true,
-                    isChecked = notificationsEnabled
+                    switchIsChecked = notificationsEnabled
                 ),
-                SettingsItemViewModel(
+                SettingsItemModel(
                     titleId = R.string.settings_screenshot_lock,
                     switchEnabled = true,
-                    isChecked = screenshotLockEnabled
+                    switchIsChecked = screenshotLockEnabled
                 ),
-                SettingsItemViewModel(
+                SettingsItemModel(
                     titleId = R.string.about_feature_title,
                     itemIsClickable = true
                 ),
-                SettingsItemViewModel(
+                SettingsItemModel(
                     titleId = R.string.settings_report_bug,
                     itemIsClickable = true
                 ),
-                SettingsItemViewModel(
+                SettingsItemModel(
                     titleId = R.string.settings_clear_data,
                     itemIsClickable = true,
                     colorResId = R.color.red
@@ -253,8 +253,8 @@ class SettingsListPresenterTest {
     private val mockApiManager = Mockito.mock(AuthenticatorApiManagerAbs::class.java)
     private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
 
-    private fun createPresenter(viewContract: SettingsListContract.View? = null): SettingsListPresenter {
-        return SettingsListPresenter(
+    private fun createPresenter(viewContract: SettingsListContract.View? = null): SettingsListViewModel {
+        return SettingsListViewModel(
             TestAppTools.applicationContext,
             mockKeyStoreManager,
             mockApiManager,

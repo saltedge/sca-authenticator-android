@@ -36,8 +36,7 @@ import com.saltedge.authenticator.features.qr.QrScannerActivity
 import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.language.di.LanguageSelectComponent
 import com.saltedge.authenticator.features.settings.language.di.LanguageSelectModule
-import com.saltedge.authenticator.features.settings.list.di.SettingsListComponent
-import com.saltedge.authenticator.features.settings.list.di.SettingsListModule
+import com.saltedge.authenticator.features.settings.list.SettingsListFragment
 import com.saltedge.authenticator.features.settings.passcode.di.PasscodeEditComponent
 import com.saltedge.authenticator.features.settings.passcode.di.PasscodeEditModule
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
@@ -66,7 +65,6 @@ interface AppComponent {
 
     fun addConnectionsListModule(module: ConnectionsListModule): ConnectionsListComponent
     fun addActionModule(moduleSubmit: SubmitActionModule): SubmitActionComponent
-    fun addSettingsListModule(module: SettingsListModule): SettingsListComponent
     fun addLanguageSelectModule(module: LanguageSelectModule): LanguageSelectComponent
     fun addPasscodeEditModule(module: PasscodeEditModule): PasscodeEditComponent
 
@@ -78,5 +76,6 @@ interface AppComponent {
     fun inject(fragment: AuthorizationsListFragment)
     fun inject(fragment: AuthorizationDetailsFragment)
     fun inject(fragment: ConnectProviderFragment)
+    fun inject(fragment: SettingsListFragment)
     fun inject(fragment: AboutListFragment)
 }

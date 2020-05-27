@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,30 +25,33 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.widget.list.SpaceItemDecoration
+import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
+import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
+import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
-import com.saltedge.authenticator.features.settings.list.di.SettingsListModule
-import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.passcode.PasscodeEditFragment
-import com.saltedge.authenticator.interfaces.CheckableListItemClickListener
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
 
-class SettingsListFragment : BaseFragment(), SettingsListContract.View,
-    CheckableListItemClickListener {
+class SettingsListFragment : BaseFragment() {
 
-    @Inject lateinit var presenterContract: SettingsListContract.Presenter
+    @Inject lateinit var viewModelFactory: ViewModelsFactory
+    private lateinit var viewModel: SettingsListViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectDependencies()
+        authenticatorApp?.appComponent?.inject(this)
+        setupViewModel()
     }
 
     override fun onCreateView(
@@ -66,84 +69,48 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View,
         setupViews()
     }
 
-    override fun onStart() {
-        super.onStart()
-        presenterContract.viewContract = this
-    }
-
-    override fun onStop() {
-        presenterContract.viewContract = null
-        super.onStop()
-    }
-
-    override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
-        presenterContract.onListItemClick(itemViewId)
-    }
-
-    override fun onListItemCheckedStateChanged(itemId: Int, checked: Boolean) {
-        presenterContract.onListItemCheckedStateChanged(itemId, checked)
-    }
-
-    override fun showLanguageSelector() {
-        activity?.showDialogFragment(LanguageSelectDialog())
-    }
-
-    override fun showPasscodeEditor() {
-        activity?.addFragment(PasscodeEditFragment())
-    }
-
-    override fun showSystemSettings() {
-        activity?.startSystemSettings()
-    }
-
-    override fun showAboutList() {
-        activity?.addFragment(AboutListFragment())
-    }
-
-    override fun openMailApp() {
-        activity?.startMailApp()
-    }
-
-    override fun showRestartAppQuery() {
-        view?.let {
-            Snackbar.make(it, getString(R.string.settings_restart_app), Snackbar.LENGTH_LONG)
-                .setAction(getString(android.R.string.ok)) { activity?.restartApp() }
-                .show()
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        presenterContract.onActivityResult(requestCode, resultCode, data)
+        viewModel.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun showDeleteConnectionView(requestCode: Int) {
-        val dialog = DeleteConnectionDialog.newInstance(null).also {
-            it.setTargetFragment(this, requestCode)
-        }
-        activity?.showDialogFragment(dialog)
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(this, viewModelFactory).get(SettingsListViewModel::class.java)
+
+        viewModel.languageClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let { activity?.showDialogFragment(LanguageSelectDialog()) }
+        })
+        viewModel.passcodeClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let { activity?.addFragment(PasscodeEditFragment()) }
+        })
+        viewModel.aboutClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let { activity?.addFragment(AboutListFragment()) }
+        })
+        viewModel.supportClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let { activity?.startMailApp() }
+        })
+        viewModel.clearClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let {
+                val dialog = DeleteConnectionDialog.newInstance(null)
+                    .also { dialog -> dialog.setTargetFragment(this, DELETE_ALL_REQUEST_CODE) }
+                activity?.showDialogFragment(dialog)
+            }
+        })
+        viewModel.screenshotClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let { view?.let { anchorView ->
+                Snackbar.make(anchorView, getString(R.string.settings_restart_app), Snackbar.LENGTH_LONG)
+                    .setAction(getString(android.R.string.ok)) { viewModel.restartConfirmed() }
+                    .show()
+            } }
+        })
+        viewModel.restartClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let { activity?.restartApp() }
+        })
     }
 
     private fun setupViews() {
-        try {
-            val context = activity ?: return
-            val layoutManager = LinearLayoutManager(context)
-            recyclerView?.layoutManager = layoutManager
-            recyclerView?.addItemDecoration(
-                SpaceItemDecoration(
-                    context = context,
-                    headerPositions = presenterContract.getPositionsOfHeaders()
-                )
-            )
-            recyclerView?.adapter = SettingsAdapter(this).apply {
-                data = presenterContract.getListItems()
-            }
-        } catch (e: Exception) {
-            e.log()
-        }
-    }
-
-    private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addSettingsListModule(SettingsListModule())?.inject(this)
+        recyclerView?.layoutManager = LinearLayoutManager(activity)
+        recyclerView?.adapter = SettingsAdapter(listener = viewModel)
+            .apply { data = viewModel.listItems }
     }
 }

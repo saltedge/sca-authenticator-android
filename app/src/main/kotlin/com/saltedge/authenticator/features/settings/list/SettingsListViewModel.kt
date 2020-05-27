@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,100 +23,106 @@ package com.saltedge.authenticator.features.settings.list
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
-import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
+import com.saltedge.authenticator.features.settings.common.SettingsHeaderModel
+import com.saltedge.authenticator.features.settings.common.SettingsItemModel
+import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.Connection
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.isActive
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import javax.inject.Inject
 
-class SettingsListPresenter @Inject constructor(
+class SettingsListViewModel(
     private val appContext: Context,
     private val keyStoreManager: KeyStoreManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
     private val connectionsRepository: ConnectionsRepositoryAbs,
-    private val preferences: PreferenceRepositoryAbs,
-    private val biometricTools: BiometricToolsAbs
-) : SettingsListContract.Presenter {
+    private val preferenceRepository: PreferenceRepositoryAbs
+) : ViewModel(), ListItemClickListener {
 
-    override var viewContract: SettingsListContract.View? = null
+    val languageClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val passcodeClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val screenshotClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val aboutClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val supportClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val clearClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val restartClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
-    override fun getListItems(): List<SettingsItemViewModel> {
-        return listOf(
-            SettingsItemViewModel(
+    val listItems = listOf(
+            SettingsHeaderModel(appContext.getString(R.string.settings_general)),
+            SettingsItemModel(
+                iconId = R.drawable.ic_setting_passcode,
                 titleId = R.string.settings_passcode,
-                value = appContext.getString(R.string.settings_passcode_description),
                 itemIsClickable = true
             ),
-            SettingsItemViewModel(
-                titleId = R.string.settings_notifications,
-                switchEnabled = true,
-                isChecked = preferences.notificationsEnabled
+            SettingsItemModel(
+                iconId = R.drawable.ic_setting_language,
+                titleId = R.string.settings_language,
+                itemIsClickable = true
             ),
-            SettingsItemViewModel(
+            SettingsItemModel(
+                iconId = R.drawable.ic_setting_screenshots,
                 titleId = R.string.settings_screenshot_lock,
-                switchEnabled = true,
-                isChecked = preferences.screenshotLockEnabled
+                switchIsChecked = preferenceRepository.screenshotLockEnabled
             ),
-            SettingsItemViewModel(
+            SettingsHeaderModel(appContext.getString(R.string.settings_info)),
+            SettingsItemModel(
+                iconId = R.drawable.ic_setting_about,
                 titleId = R.string.about_feature_title,
                 itemIsClickable = true
             ),
-            SettingsItemViewModel(
+            SettingsItemModel(
+                iconId = R.drawable.ic_setting_support,
                 titleId = R.string.settings_report_bug,
                 itemIsClickable = true
             ),
-            SettingsItemViewModel(
+            SettingsHeaderModel(""),
+            SettingsItemModel(
+                iconId = R.drawable.ic_setting_clear,
                 titleId = R.string.settings_clear_data,
-                itemIsClickable = true,
-                colorResId = R.color.red
-            )
+                titleColor = ContextCompat.getColor(appContext, R.color.red),
+                itemIsClickable = true
+            ),
+            SettingsHeaderModel("")
         )
-    }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data == null || resultCode != Activity.RESULT_OK) return
         when (requestCode) {
             DELETE_ALL_REQUEST_CODE -> onUserConfirmedDeleteAllConnections()
         }
     }
 
-    override fun onListItemCheckedStateChanged(itemId: Int, checked: Boolean) {
-        when (itemId) {
-            R.string.settings_fingerprint ->
-                if (biometricTools.isBiometricReady(appContext)) {
-                    if (checked) biometricTools.activateFingerprint()
-                    preferences.fingerprintEnabled = checked
-                }
-            R.string.settings_notifications ->
-                preferences.notificationsEnabled = checked
-            R.string.settings_screenshot_lock -> {
-                preferences.screenshotLockEnabled = checked
-                viewContract?.showRestartAppQuery()
-            }
-        }
+    fun restartConfirmed() {
+        restartClickEvent.postValue(ViewModelEvent(Unit))
     }
 
     override fun onListItemClick(itemId: Int) {
         when (itemId) {
-            R.string.settings_passcode -> viewContract?.showPasscodeEditor()
-            R.string.settings_fingerprint ->
-                if (biometricTools.isBiometricNotConfigured(appContext)) {
-                    viewContract?.showSystemSettings()
-                }
-            R.string.about_feature_title -> viewContract?.showAboutList()
-            R.string.settings_report_bug -> viewContract?.openMailApp()
-            R.string.settings_clear_data -> viewContract?.showDeleteConnectionView(requestCode = DELETE_ALL_REQUEST_CODE)
+            R.string.settings_passcode -> passcodeClickEvent.postValue(ViewModelEvent(Unit))
+            R.string.settings_language -> languageClickEvent.postValue(ViewModelEvent(Unit))
+            R.string.about_feature_title -> aboutClickEvent.postValue(ViewModelEvent(Unit))
+            R.string.settings_report_bug -> supportClickEvent.postValue(ViewModelEvent(Unit))
+            R.string.settings_clear_data -> clearClickEvent.postValue(ViewModelEvent(Unit))
         }
     }
 
-    override fun getPositionsOfHeaders(): Array<Int> = arrayOf(0, 3, 5)
+    override fun onListItemCheckedStateChanged(itemId: Int, checked: Boolean) {
+        when (itemId) {
+            R.string.settings_screenshot_lock -> {
+                preferenceRepository.screenshotLockEnabled = checked
+                screenshotClickEvent.postValue(ViewModelEvent(Unit))
+            }
+        }
+    }
 
     private fun onUserConfirmedDeleteAllConnections() {
         sendRevokeRequestForConnections(connectionsRepository.getAllActiveConnections())

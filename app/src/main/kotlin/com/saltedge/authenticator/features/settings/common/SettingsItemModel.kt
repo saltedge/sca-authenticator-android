@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,23 @@
  */
 package com.saltedge.authenticator.features.settings.common
 
+import android.graphics.Color
+import android.view.View
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.tools.ResId
 
-data class SettingsItemViewModel(
-    @StringRes val titleId: Int,
-    val value: String? = null,
-    val switchEnabled: Boolean? = null,
-    val isChecked: Boolean = false,
-    val itemIsClickable: Boolean = false,
-    val colorResId: Int = R.color.black
-)
+data class SettingsItemModel(
+    @StringRes val titleId: ResId,
+    val titleColor: Int = Color.BLACK,
+    @DrawableRes val iconId: ResId? = null,
+    val description: String = "",
+    val switchIsChecked: Boolean? = null,
+    val itemIsClickable: Boolean = false
+) {
+    val iconResource: ResId = iconId ?: R.drawable.ic_menu_action_list
+    val iconVisibility: Int = if (iconId == null) View.GONE else View.VISIBLE
+    val descriptionVisibility: Int = if (description.isEmpty()) View.GONE else View.VISIBLE
+    val switchVisibility: Int = if (switchIsChecked == null) View.GONE else View.VISIBLE
+}
