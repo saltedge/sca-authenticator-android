@@ -29,7 +29,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
-import com.saltedge.authenticator.tools.setButtonsColor
 
 class DeleteConnectionDialog :
     DialogFragment(),
