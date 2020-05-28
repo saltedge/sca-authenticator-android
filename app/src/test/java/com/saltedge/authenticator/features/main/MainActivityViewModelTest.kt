@@ -34,6 +34,7 @@ import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.menu.MenuItemData
+import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
@@ -415,7 +416,7 @@ class MainActivityViewModelTest {
          * given viewId = appBarActionMenu
          */
         val viewModel = createViewModel()
-        val viewId = R.id.appBarActionMenu
+        val viewId = R.id.appBarActionMore
 
         //when
         viewModel.onViewClick(viewId)
@@ -578,18 +579,20 @@ class MainActivityViewModelTest {
         val titleResId = R.string.app_name
         val title = null
         val backActionImageResId = null
-        val showMenu = true
+        val showMenu = arrayOf(MenuItem.SCAN_QR, MenuItem.MORE)
 
         assertThat(viewModel.appBarBackActionImageResource.value, equalTo(R.drawable.ic_appbar_action_back))
 
         //when
-        viewModel.updateAppbar(titleResId, title, backActionImageResId, showMenu)
+        viewModel.updateAppbar(titleResId, title, backActionImageResId, showMenu = showMenu)
 
         //then updated view
         assertThat(viewModel.appBarTitle.value, equalTo(context.getString(R.string.app_name)))
         assertThat(viewModel.appBarBackActionImageResource.value, equalTo(R.drawable.ic_appbar_action_back))
         assertThat(viewModel.appBarBackActionVisibility.value, equalTo(View.GONE))
-        assertThat(viewModel.appBarMenuVisibility.value, equalTo(View.VISIBLE))
+        assertThat(viewModel.appBarActionQRVisibility.value, equalTo(View.VISIBLE))
+        assertThat(viewModel.appBarActionMoreVisibility.value, equalTo(View.VISIBLE))
+        assertThat(viewModel.appBarActionThemeVisibility.value, equalTo(View.GONE))
     }
 
     @Test
@@ -602,7 +605,7 @@ class MainActivityViewModelTest {
         val titleResId = null
         val title = "Test"
         val actionImageResId = R.drawable.ic_appbar_action_close
-        val showMenu = false
+        val showMenu = emptyArray<MenuItem>()
 
         //when
         viewModel.updateAppbar(titleResId, title, actionImageResId, showMenu)
@@ -611,7 +614,9 @@ class MainActivityViewModelTest {
         assertThat(viewModel.appBarTitle.value, equalTo("Test"))
         assertThat(viewModel.appBarBackActionImageResource.value, equalTo(R.drawable.ic_appbar_action_close))
         assertThat(viewModel.appBarBackActionVisibility.value, equalTo(View.VISIBLE))
-        assertThat(viewModel.appBarMenuVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.appBarActionQRVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.appBarActionMoreVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.appBarActionThemeVisibility.value, equalTo(View.GONE))
     }
 
     @Test

@@ -137,7 +137,7 @@
     <string name="settings_feature_title">Settings</string>
     <string name="settings_report_bug">Report a bug</string>
     <string name="settings_language">Language</string>
-    <string name="settings_clear_data">Clear data</string>
+    <string name="settings_clear_data">Clear all data</string>
     <string name="settings_notifications">Notifications</string>
     <string name="settings_passcode">Passcode</string>
     <string name="settings_passcode_description">Change passcode</string>
@@ -145,9 +145,10 @@
     <string name="settings_passcode_input_new">Input new passcode</string>
     <string name="settings_passcode_repeat_new">Repeat new passcode</string>
     <string name="settings_passcode_success">New passcode successfully set</string>
-    <string name="settings_fingerprint">Fingerprint</string>
     <string name="settings_screenshot_lock">Screenshot lock</string>
     <string name="settings_restart_app">Restart app for these changes to take effect</string>
+    <string name="settings_general">General</string>
+    <string name="settings_info">Info</string>
 
     <string name="about_feature_title">About</string>
     <string name="about_app_version">App Version</string>
@@ -156,6 +157,7 @@
     <string name="about_terms_service">Terms of Service</string>
     <string name="about_open_source_licenses">Open-source licenses</string>
 
+    <string name="fingerprint_title">Fingerprint</string>
     <string name="fingerprint_confirmed">Fingerprint confirmed</string>
     <string name="fingerprint_scan_continue">Scan your Fingerprint to continue</string>
     <string name="fingerprint_scan_unlock">Unlock the app with biometrics</string>

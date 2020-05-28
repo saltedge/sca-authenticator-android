@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2020 Salt Edge Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:pathData="M7.05,4.125H5.25C2.9718,4.125 1.125,5.9718 1.125,8.25V9.675C1.125,9.9235 1.3265,10.125 1.575,10.125H2.925C3.1735,10.125 3.375,9.9235 3.375,9.675V8.25C3.375,7.2145 4.2145,6.375 5.25,6.375H7.05C7.2985,6.375 7.5,6.1735 7.5,5.925V4.575C7.5,4.3265 7.2985,4.125 7.05,4.125Z"
+      android:fillColor="#0D93F8"/>
+  <path
+      android:pathData="M1.125,14.325C1.125,14.0765 1.3265,13.875 1.575,13.875H2.925C3.1735,13.875 3.375,14.0765 3.375,14.325V15.75C3.375,16.7855 4.2145,17.625 5.25,17.625H7.05C7.2985,17.625 7.5,17.8265 7.5,18.075V19.425C7.5,19.6735 7.2985,19.875 7.05,19.875H5.25C2.9718,19.875 1.125,18.0282 1.125,15.75V14.325Z"
+      android:fillColor="#0D93F8"/>
+  <path
+      android:pathData="M21.075,13.875C20.8265,13.875 20.625,14.0765 20.625,14.325V15.75C20.625,16.7855 19.7855,17.625 18.75,17.625H16.2C15.9515,17.625 15.75,17.8265 15.75,18.075V19.425C15.75,19.6735 15.9515,19.875 16.2,19.875H18.75C21.0282,19.875 22.875,18.0282 22.875,15.75V14.325C22.875,14.0765 22.6735,13.875 22.425,13.875H21.075Z"
+      android:fillColor="#0D93F8"/>
+  <path
+      android:pathData="M22.875,9.675C22.875,9.9235 22.6735,10.125 22.425,10.125H21.075C20.8265,10.125 20.625,9.9235 20.625,9.675V8.25C20.625,7.2145 19.7855,6.375 18.75,6.375H16.2C15.9515,6.375 15.75,6.1735 15.75,5.925V4.575C15.75,4.3265 15.9515,4.125 16.2,4.125H18.75C21.0282,4.125 22.875,5.9718 22.875,8.25V9.675Z"
+      android:fillColor="#0D93F8"/>
+  <path
+      android:pathData="M7.2,7.875C6.123,7.875 5.25,8.748 5.25,9.825V14.175C5.25,15.252 6.123,16.125 7.2,16.125H16.8C17.877,16.125 18.75,15.252 18.75,14.175V9.825C18.75,8.748 17.877,7.875 16.8,7.875H7.2Z"
+      android:fillColor="#0D93F8"/>
+</vector>

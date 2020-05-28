@@ -32,6 +32,9 @@ import com.saltedge.authenticator.features.main.MainActivityViewModel
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupViewModel
 import com.saltedge.authenticator.features.qr.QrScannerViewModel
 import com.saltedge.authenticator.features.settings.about.AboutViewModel
+import com.saltedge.authenticator.features.settings.language.LanguageSelectViewModel
+import com.saltedge.authenticator.features.settings.licenses.LicensesViewModel
+import com.saltedge.authenticator.features.settings.list.SettingsListViewModel
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
@@ -118,8 +121,26 @@ class ViewModelsFactory @Inject constructor(
                     apiManager = apiManager
                 ) as T
             }
+            modelClass.isAssignableFrom(SettingsListViewModel::class.java) -> {
+                return SettingsListViewModel(
+                    appContext = appContext,
+                    preferenceRepository = preferenceRepository,
+                    connectionsRepository = connectionsRepository,
+                    keyStoreManager = keyStoreManager,
+                    apiManager = apiManager
+                ) as T
+            }
             modelClass.isAssignableFrom(AboutViewModel::class.java) -> {
                 return AboutViewModel(appContext) as T
+            }
+            modelClass.isAssignableFrom(LicensesViewModel::class.java) -> {
+                return LicensesViewModel(appContext) as T
+            }
+            modelClass.isAssignableFrom(LanguageSelectViewModel::class.java) -> {
+                return LanguageSelectViewModel(
+                    appContext = appContext,
+                    preferenceRepository = preferenceRepository
+                ) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

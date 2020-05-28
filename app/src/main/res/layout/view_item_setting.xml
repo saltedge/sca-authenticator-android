@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
-    Copyright (c) 2019 Salt Edge Inc.
+    Copyright (c) 2020 Salt Edge Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,41 +18,69 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/dp_75"
-    android:background="@android:color/white"
-    android:foreground="?android:attr/selectableItemBackground"
-    app:cardElevation="@dimen/dp_2">
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data class="SettingsItemBinding">
+        <import type="android.view.View" />
+        <import type="androidx.core.content.ContextCompat" />
+
+        <variable
+            name="item"
+            type="com.saltedge.authenticator.features.settings.common.SettingsItemViewModel" />
+
+        <variable
+            name="listener"
+            type="com.saltedge.authenticator.interfaces.ListItemClickListener" />
+    </data>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="@dimen/dp_16">
+        android:layout_height="@dimen/dp_64"
+        android:background="@color/theme_background"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:paddingLeft="@dimen/dp_16"
+        android:paddingRight="@dimen/dp_16"
+        android:onClick="@{()->listener.onListItemClick(item.titleId)}"
+        tools:ignore="UnusedAttribute">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="@dimen/dp_24"
+            android:layout_height="@dimen/dp_24"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/settings_feature_title"
+            app:imageResource="@{item.iconResource}"
+            android:visibility="@{item.iconVisibility}"
+            android:layout_marginEnd="@dimen/dp_16"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/imageView"
             android:layout_toStartOf="@+id/checkView"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/titleView"
-                style="@style/Text16BlackRegular"
+                style="@style/Text16Primary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
+                android:text="@{item.titleId}"
+                android:textColor="@{ContextCompat.getColor(context, item.titleColorRes)}"
                 tools:text="Title" />
 
             <TextView
                 android:id="@+id/valueView"
-                style="@style/Text14GrayDarkRegular"
+                style="@style/Text14Secondary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="2"
+                android:text="@{item.description}"
+                android:visibility="@{item.descriptionVisibility}"
                 tools:text="Subtitle" />
         </LinearLayout>
 
@@ -64,6 +92,8 @@
             android:layout_centerInParent="true"
             android:layout_marginStart="@dimen/dp_16"
             android:thumbTint="@color/switch_thumb_color_selector"
-            android:visibility="gone" />
+            android:checked="@{item.switchIsChecked}"
+            android:onCheckedChanged="@{(switch, checked) -> listener.onListItemCheckedStateChanged(item.titleId, checked)}"
+            android:visibility="@{item.switchVisibility}" />
     </RelativeLayout>
-</androidx.cardview.widget.CardView>
+</layout>

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,28 +18,6 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.settings.language.di
+package com.saltedge.authenticator.features.settings.common
 
-import com.saltedge.authenticator.models.repository.PreferenceRepository
-import com.saltedge.authenticator.testTools.TestAppTools
-import org.junit.Assert
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-
-@RunWith(RobolectricTestRunner::class)
-class LanguageSelectModuleTest {
-
-    @Test
-    @Throws(Exception::class)
-    fun initTest() {
-        val module = LanguageSelectModule()
-
-        Assert.assertNotNull(
-            module.providePresenter(
-                TestAppTools.applicationContext,
-                PreferenceRepository
-            )
-        )
-    }
-}
+data class SettingsHeaderViewModelModel(val title: String = "")

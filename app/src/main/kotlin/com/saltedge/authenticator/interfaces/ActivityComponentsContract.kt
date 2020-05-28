@@ -27,7 +27,11 @@ interface ActivityComponentsContract {
         titleResId: ResId? = null,
         title: String? = null,
         backActionImageResId: ResId? = null,
-        showMenu: Boolean = false
+        showMenu: Array<MenuItem> = emptyArray()
     )
     fun onLanguageChanged()
+}
+
+enum class MenuItem {
+    SCAN_QR, THEME, MORE
 }
