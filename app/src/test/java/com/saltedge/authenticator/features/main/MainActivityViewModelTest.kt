@@ -415,7 +415,7 @@ class MainActivityViewModelTest {
          * given viewId = appBarActionMenu
          */
         val viewModel = createViewModel()
-        val viewId = R.id.appBarActionMenu
+        val viewId = R.id.appBarActionMore
 
         //when
         viewModel.onViewClick(viewId)

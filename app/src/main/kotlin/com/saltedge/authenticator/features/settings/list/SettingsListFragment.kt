@@ -37,6 +37,7 @@ import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
 import com.saltedge.authenticator.features.settings.passcode.PasscodeEditFragment
+import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -64,7 +65,8 @@ class SettingsListFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         activityComponents?.updateAppbar(
             titleResId = R.string.settings_feature_title,
-            backActionImageResId = R.drawable.ic_appbar_action_back
+            backActionImageResId = R.drawable.ic_appbar_action_back,
+            showMenu = arrayOf(MenuItem.THEME)
         )
         setupViews()
     }

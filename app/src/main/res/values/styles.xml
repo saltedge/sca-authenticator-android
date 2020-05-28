@@ -104,4 +104,17 @@
     <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
         <item name="android:textColor">@color/clear_button_background</item>
     </style>
+
+    <style name="AppBarActionContainer">
+        <item name="android:layout_width">@dimen/action_bar_bottom_section_size</item>
+        <item name="android:layout_height">@dimen/action_bar_bottom_section_size</item>
+        <item name="android:layout_marginEnd">@dimen/dp_8</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+
+    <style name="AppBarActionImage">
+        <item name="android:layout_width">@dimen/dp_24</item>
+        <item name="android:layout_height">@dimen/dp_24</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
 </resources>
