@@ -20,137 +20,92 @@
  */
 package com.saltedge.authenticator.features.settings.licenses
 
+import com.saltedge.authenticator.R
+import com.saltedge.authenticator.features.settings.common.SettingsItemModel
 import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Assert
+import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito
-import org.mockito.Mockito.inOrder
 
 class LicensesViewModelTest {
+    private val apache2LicenseLink = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+    private lateinit var viewModel: LicensesViewModel
 
-    @Test
-    @Throws(Exception::class)
-    fun constructorTest() {
-        Assert.assertNull(createPresenter(viewContract = null).viewContract)
-        Assert.assertNotNull(createPresenter(viewContract = mockView).viewContract)
+    @Before
+    fun setUp() {
+        viewModel = LicensesViewModel()
     }
 
     @Test
     @Throws(Exception::class)
     fun getListItemsTest() {
-        val presenter = createPresenter(viewContract = mockView)
-
         assertThat(
-            presenter.getListItems(), equalTo(
-            listOf(
-                "Realm",
-                "Dagger",
-                "Android Compat Support Library",
-                "Android Constraint Layout Library",
-                "Android Material Components",
-                "Square/Retrofit2",
-                "Square/Okhttp3",
-                "JodaTime",
-                "Bumptech/Glide",
-                "JUnit",
-                "Jacoco",
-                "Java Hamcrest",
-                "Mockito",
-                "MockK",
-                "findbugs/jsr305",
-                "ktlint",
-                "jlleitschuh/ktlint-gradle",
-                "500px-android-blur"
-            )
-        )
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onListItemClickTest() {
-        val presenter = createPresenter(viewContract = mockView)
-        presenter.onListItemClick(itemCode = "Realm")
-        presenter.onListItemClick(itemCode = "Dagger")
-        presenter.onListItemClick(itemCode = "Android Compat Support Library")
-        presenter.onListItemClick(itemCode = "Android Constraint Layout Library")
-        presenter.onListItemClick(itemCode = "Android Material Components")
-        presenter.onListItemClick(itemCode = "Square/Retrofit2")
-        presenter.onListItemClick(itemCode = "Square/Okhttp3")
-        presenter.onListItemClick(itemCode = "JodaTime")
-        presenter.onListItemClick(itemCode = "Bumptech/Glide")
-        presenter.onListItemClick(itemCode = "JUnit")
-        presenter.onListItemClick(itemCode = "Jacoco")
-        presenter.onListItemClick(itemCode = "Java Hamcrest")
-        presenter.onListItemClick(itemCode = "Mockito")
-        presenter.onListItemClick(itemCode = "MockK")
-        presenter.onListItemClick(itemCode = "findbugs/jsr305")
-
-        val inOrder = inOrder(mockView)
-        inOrder.verify(mockView).openLink(url = apacheLicense, title = "Realm")
-        inOrder.verify(mockView).openLink(url = apacheLicense, title = "Dagger")
-        inOrder.verify(mockView).openLink(
-            url = apacheLicense,
-            title = "Android Compat Support Library"
-        )
-        inOrder.verify(mockView).openLink(
-            url = apacheLicense,
-            title = "Android Constraint Layout Library"
-        )
-        inOrder.verify(mockView).openLink(
-            url = apacheLicense,
-            title = "Android Material Components"
-        )
-        inOrder.verify(mockView).openLink(url = apacheLicense, title = "Square/Retrofit2")
-        inOrder.verify(mockView).openLink(url = apacheLicense, title = "Square/Okhttp3")
-        inOrder.verify(mockView).openLink(url = apacheLicense, title = "JodaTime")
-        inOrder.verify(mockView).openLink(
-            url = "https://raw.githubusercontent.com/bumptech/glide/master/LICENSE",
-            title = "Bumptech/Glide"
-        )
-        inOrder.verify(mockView).openLink(
-            url = "https://junit.org/junit4/license.html",
-            title = "JUnit"
-        )
-        inOrder.verify(mockView).openLink(
-            url = "https://www.jacoco.org/jacoco/trunk/doc/license.html",
-            title = "Jacoco"
-        )
-        inOrder.verify(mockView).openLink(
-            url = "https://raw.githubusercontent.com/hamcrest/JavaHamcrest/master/LICENSE.txt",
-            title = "Java Hamcrest"
-        )
-        inOrder.verify(mockView).openLink(
-            url = "https://raw.githubusercontent.com/mockito/mockito/release/2.x/LICENSE",
-            title = "Mockito"
-        )
-        inOrder.verify(mockView).openLink(url = apacheLicense, title = "MockK")
-        inOrder.verify(mockView).openLink(
-            url = "https://raw.githubusercontent.com/findbugsproject/findbugs/master/findbugs/licenses/LICENSE-jsr305.txt",
-            title = "findbugs/jsr305"
+            viewModel.listItems,
+            equalTo(listOf(
+                SettingsItemModel(titleId = R.string.library_realm),
+                SettingsItemModel(titleId = R.string.library_dagger),
+                SettingsItemModel(titleId = R.string.library_compat),
+                SettingsItemModel(titleId = R.string.library_constraint),
+                SettingsItemModel(titleId = R.string.library_material),
+                SettingsItemModel(titleId = R.string.library_retrofit),
+                SettingsItemModel(titleId = R.string.library_okhttp),
+                SettingsItemModel(titleId = R.string.library_joda),
+                SettingsItemModel(titleId = R.string.library_glide),
+                SettingsItemModel(titleId = R.string.library_junit),
+                SettingsItemModel(titleId = R.string.library_jacoco),
+                SettingsItemModel(titleId = R.string.library_hamcrest),
+                SettingsItemModel(titleId = R.string.library_mockito),
+                SettingsItemModel(titleId = R.string.library_mockk),
+                SettingsItemModel(titleId = R.string.library_jsr),
+                SettingsItemModel(titleId = R.string.library_ktlint),
+                SettingsItemModel(titleId = R.string.library_jlleitschuh),
+                SettingsItemModel(titleId = R.string.library_blur)
+            ))
         )
     }
 
     @Test
     @Throws(Exception::class)
-    fun onListItemClickTest_invalidParams() {
-        val presenter = createPresenter(viewContract = mockView)
-        presenter.onListItemClick()
+    fun onListItemClickTestCase1() {
+        //when
+        val testResult = ArrayList<Pair<Int, String>>()
+        viewModel.listItems.forEach {
+            viewModel.onListItemClick(itemId = it.titleId)
+            testResult.add(viewModel.licenseItemClickEvent.value!!.peekContent())
+        }
 
-        Mockito.verifyNoMoreInteractions(mockView)
-
-        presenter.viewContract = null
-        presenter.onListItemClick()
-        presenter.onListItemClick(itemCode = "Realm")
-
-        Mockito.verifyNoMoreInteractions(mockView)
+        //then
+        assertThat(
+            testResult,
+            equalTo(listOf<Pair<Int, String>>(
+                Pair(R.string.library_realm, apache2LicenseLink),
+                Pair(R.string.library_dagger, apache2LicenseLink),
+                Pair(R.string.library_compat, apache2LicenseLink),
+                Pair(R.string.library_constraint, apache2LicenseLink),
+                Pair(R.string.library_material, apache2LicenseLink),
+                Pair(R.string.library_retrofit, apache2LicenseLink),
+                Pair(R.string.library_okhttp, apache2LicenseLink),
+                Pair(R.string.library_joda, apache2LicenseLink),
+                Pair(R.string.library_glide, "https://raw.githubusercontent.com/bumptech/glide/master/LICENSE"),
+                Pair(R.string.library_junit, "https://junit.org/junit4/license.html"),
+                Pair(R.string.library_jacoco, "https://www.jacoco.org/jacoco/trunk/doc/license.html"),
+                Pair(R.string.library_hamcrest, "https://raw.githubusercontent.com/hamcrest/JavaHamcrest/master/LICENSE.txt"),
+                Pair(R.string.library_mockito, "https://raw.githubusercontent.com/mockito/mockito/release/2.x/LICENSE"),
+                Pair(R.string.library_mockk, apache2LicenseLink),
+                Pair(R.string.library_jsr, "https://raw.githubusercontent.com/findbugsproject/findbugs/master/findbugs/licenses/LICENSE-jsr305.txt"),
+                Pair(R.string.library_ktlint, "https://raw.githubusercontent.com/pinterest/ktlint/master/LICENSE"),
+                Pair(R.string.library_jlleitschuh, "https://raw.githubusercontent.com/JLLeitschuh/ktlint-gradle/master/LICENSE.txt"),
+                Pair(R.string.library_blur, "https://raw.githubusercontent.com/500px/500px-android-blur/master/LICENSE.txt")
+            ))
+        )
     }
 
-    private val mockView = Mockito.mock(LicensesContract.View::class.java)
-    private val apacheLicense = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+    @Test
+    @Throws(Exception::class)
+    fun onListItemClickTestCase2() {
+        viewModel.onListItemClick(itemId = R.string.app_name)
 
-    private fun createPresenter(viewContract: LicensesContract.View? = null): LicensesViewModel {
-        return LicensesViewModel().apply { this.viewContract = viewContract }
+        assertThat(viewModel.licenseItemClickEvent.value, equalTo(nullValue()))
     }
 }

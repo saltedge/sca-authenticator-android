@@ -46,6 +46,7 @@ class LanguageSelectViewModel(
             preferenceRepository.currentLocale = availableLocales[selectedItemIndex]
             onLanguageChangedEvent.postValue(ViewModelEvent(Unit))
         }
+        onCloseEvent.postValue(ViewModelEvent(Unit))
     }
 
     fun onCancelClick() {

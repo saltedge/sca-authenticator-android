@@ -20,11 +20,13 @@
  */
 package com.saltedge.authenticator.features.settings.language
 
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Assert
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
@@ -33,41 +35,40 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class LanguageSelectViewModelTest {
 
-    @Test
-    @Throws(Exception::class)
-    fun initTest() {
-        val presenterContract = createPresenter()
-
-        Assert.assertNull(presenterContract.viewContract)
-        assertThat(presenterContract.availableLanguages, equalTo(arrayOf("English")))
-        assertThat(presenterContract.currentItemIndex, equalTo(0))
-
-        presenterContract.viewContract = mockView
-
-        Assert.assertNotNull(presenterContract.viewContract)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun updateCurrentLanguageTest() {
-        val presenterContract = createPresenter()
-
-        presenterContract.onOkClick()
-
-        Mockito.verifyNoMoreInteractions(mockView)
-
-        presenterContract.viewContract = mockView
-
-        presenterContract.onOkClick()
-
-        Mockito.verify(mockView).closeView()
-    }
-
-    private val mockView = Mockito.mock(LanguageSelectContract.View::class.java)
     private val mockPreferenceRepository = Mockito.mock(PreferenceRepositoryAbs::class.java)
+    private lateinit var viewModel: LanguageSelectViewModel
 
-    private fun createPresenter(viewContract: LanguageSelectContract.View? = null): LanguageSelectViewModel {
-        return LanguageSelectViewModel(TestAppTools.applicationContext, mockPreferenceRepository)
-            .apply { this.viewContract = viewContract }
+    @Before
+    fun setUp() {
+        viewModel = LanguageSelectViewModel(TestAppTools.applicationContext, mockPreferenceRepository)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun listItemsTest() {
+        assertThat(viewModel.listItems, equalTo(arrayOf("English")))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun selectedItemIndexTest() {
+        assertThat(viewModel.selectedItemIndex, equalTo(0))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onOkClickTest() {//TODO add more cases with onLanguageChangedEvent when new languages will appear
+        viewModel.onOkClick()
+
+        assertThat(viewModel.onLanguageChangedEvent.value, equalTo(nullValue()))
+        assertThat(viewModel.onCloseEvent.value, equalTo(ViewModelEvent(Unit)))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onCancelClickTest() {
+        viewModel.onCancelClick()
+
+        assertThat(viewModel.onCloseEvent.value, equalTo(ViewModelEvent(Unit)))
     }
 }

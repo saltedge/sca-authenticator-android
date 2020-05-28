@@ -50,12 +50,12 @@ class LicensesViewModel : ViewModel(), ListItemClickListener {
         Pair(SettingsItemModel(titleId = R.string.library_blur), "https://raw.githubusercontent.com/500px/500px-android-blur/master/LICENSE.txt")
     )
 
-    val licenseItemClickEvent = MutableLiveData<ViewModelEvent<Pair<String, Int>>>()
+    val licenseItemClickEvent = MutableLiveData<ViewModelEvent<Pair<Int, String>>>()
     val listItems = data.map { it.first }
 
     override fun onListItemClick(itemId: Int) {
         data.firstOrNull { it.first.titleId == itemId }?.let {
-            licenseItemClickEvent.postValue(ViewModelEvent(Pair(it.second, it.first.titleId)))
+            licenseItemClickEvent.postValue(ViewModelEvent(Pair(it.first.titleId, it.second)))
         }
     }
 }
