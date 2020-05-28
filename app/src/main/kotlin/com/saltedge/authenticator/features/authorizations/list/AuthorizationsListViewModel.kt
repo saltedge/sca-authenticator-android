@@ -24,6 +24,8 @@ import android.content.Context
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.ConnectivityReceiverAbs
+import com.saltedge.authenticator.app.NetworkStateChangeListener
 import com.saltedge.authenticator.features.authorizations.common.*
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -52,15 +54,18 @@ class AuthorizationsListViewModel(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyStoreManagerAbs,
     private val cryptoTools: CryptoToolsAbs,
-    private val apiManager: AuthenticatorApiManagerAbs
+    private val apiManager: AuthenticatorApiManagerAbs,
+    private val connectivityReceiver: ConnectivityReceiverAbs
 ) : ViewModel(),
     LifecycleObserver,
     ListItemClickListener,
     FetchAuthorizationsContract,
     ConfirmAuthorizationListener,
     TimerUpdateListener,
-    CoroutineScope
+    CoroutineScope,
+    NetworkStateChangeListener
 {
+    private var noInternetConnection: Boolean = false
     private val decryptJob: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = decryptJob + Dispatchers.IO
@@ -71,8 +76,8 @@ class AuthorizationsListViewModel(
     val listVisibility = MutableLiveData<Int>(View.GONE)
     val emptyViewVisibility = MutableLiveData<Int>(View.VISIBLE)
     val emptyViewActionText = MutableLiveData<ResId>(R.string.actions_scan_qr)
-    val emptyViewTitleText = MutableLiveData<ResId>(R.string.authorizations_nothing_confirm)
-    val emptyViewDescriptionText = MutableLiveData<ResId>(R.string.authorizations_nothing_confirm_description)
+    val emptyViewTitleText = MutableLiveData<ResId>(R.string.authorizations_empty_title)
+    val emptyViewDescriptionText = MutableLiveData<ResId>(R.string.authorizations_empty_description)
     val listItems = MutableLiveData<List<AuthorizationViewModel>>()
     val listItemsValues: List<AuthorizationViewModel>
         get() = listItems.value ?: emptyList()
@@ -94,6 +99,12 @@ class AuthorizationsListViewModel(
     fun onResume() {
         connectionsAndKeys = collectConnectionsAndKeys(connectionsRepository, keyStoreManager)
         postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
+        connectivityReceiver.addNetworkStateChangeListener(this)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    fun onPause() {
+        connectivityReceiver.removeNetworkStateChangeListener(this)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -113,6 +124,10 @@ class AuthorizationsListViewModel(
         if (listItemsValues != joinedViewModels) postListItemsUpdate(newItems = joinedViewModels)
     }
 
+    fun onEmptyViewActionClick() {
+        onQrScanClickEvent.postValue(ViewModelEvent(Unit))
+    }
+
     override fun getCurrentConnectionsAndKeysForPolling(): List<ConnectionAndKey>? = collectAuthorizationRequestData()
 
     override fun onTimeUpdate() {
@@ -120,10 +135,6 @@ class AuthorizationsListViewModel(
             if (items.any { it.isExpired }) cleanExpiredItems()
             if (items.any { it.shouldBeDestroyed }) cleanDeadItems()
         }
-    }
-
-    fun onEmptyViewActionClick() {
-        onQrScanClickEvent.postValue(ViewModelEvent(Unit))
     }
 
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
@@ -157,6 +168,10 @@ class AuthorizationsListViewModel(
         findListItem(connectionID, authorizationID)?.let { item ->
             updateItemViewMode(listItem = item, newViewMode = ViewMode.ERROR)
         }
+    }
+
+    override fun onNetworkConnectionChanged(isConnected: Boolean) {
+        noInternetConnection = !isConnected
     }
 
     private fun collectAuthorizationRequestData(): List<ConnectionAndKey>? {
@@ -252,12 +267,18 @@ class AuthorizationsListViewModel(
             if (connectionsListIsEmpty) R.string.actions_connect else R.string.actions_scan_qr
         )
         emptyViewTitleText.postValue(
-            if (connectionsListIsEmpty) R.string.connections_list_no_connections
-            else R.string.authorizations_nothing_confirm
+            when {
+                noInternetConnection -> R.string.authorizations_no_internet_title
+                connectionsListIsEmpty -> R.string.connections_list_empty_title
+                else -> R.string.authorizations_empty_title
+            }
         )
         emptyViewDescriptionText.postValue(
-            if (connectionsListIsEmpty) R.string.connections_list_no_connections_description
-            else R.string.authorizations_nothing_confirm_description
+            when {
+                noInternetConnection -> R.string.authorizations_no_internet_description
+                connectionsListIsEmpty -> R.string.connections_list_empty_description
+                else -> R.string.authorizations_empty_description
+            }
         )
     }
 

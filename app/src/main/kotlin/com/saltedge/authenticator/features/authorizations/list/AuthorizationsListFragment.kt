@@ -134,6 +134,9 @@ class AuthorizationsListFragment : BaseFragment() {
         viewModel.emptyViewDescriptionText.observe(this, Observer<ResId> {
             emptyView.setDescription(it)
         })
+        viewModel.internetConnectionWarningVisibility.observe(this, Observer {
+            //TODO update internet connection warning visibility
+        })
     }
 
     private fun setupViews() {

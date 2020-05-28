@@ -46,10 +46,8 @@ import com.saltedge.authenticator.tools.applyPreferenceLocale
 class MainActivityViewModel(
     val appContext: Context,
     val realmManager: RealmManagerAbs,
-    val connectivityReceiver: ConnectivityReceiverAbs
 ) : ViewModel(),
     LifecycleObserver,
-    NetworkStateChangeListener,
     NewAuthorizationListener,
     ActivityComponentsContract
 {
@@ -65,7 +63,6 @@ class MainActivityViewModel(
     val onShowConnectEvent = MutableLiveData<ViewModelEvent<ConnectAppLinkData>>()
     val onShowSubmitActionEvent = MutableLiveData<ViewModelEvent<ActionAppLinkData>>()
 
-    val internetConnectionWarningVisibility = MutableLiveData<Int>()
     val appBarTitle = MutableLiveData<String>()
     val appBarBackActionImageResource = MutableLiveData<ResId>(R.drawable.ic_appbar_action_back)
     val appBarBackActionVisibility = MutableLiveData<Int>(View.GONE)
@@ -94,20 +91,7 @@ class MainActivityViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onLifeCycleResume() {
-        connectivityReceiver.addNetworkStateChangeListener(this)
         appContext.applyPreferenceLocale()
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    fun onLifeCyclePause() {
-        connectivityReceiver.removeNetworkStateChangeListener(this)
-    }
-
-    /**
-     * Handle Network connection changes
-     */
-    override fun onNetworkConnectionChanged(isConnected: Boolean) {
-        internetConnectionWarningVisibility.postValue(if (isConnected) View.GONE else View.VISIBLE)
     }
 
     /**

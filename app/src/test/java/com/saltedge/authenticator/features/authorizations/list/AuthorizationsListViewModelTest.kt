@@ -117,9 +117,9 @@ class AuthorizationsListViewModelTest {
         assertThat(viewModel.emptyViewActionText.value,
             equalTo(R.string.actions_connect))
         assertThat(viewModel.emptyViewTitleText.value,
-            equalTo(R.string.connections_list_no_connections))
+            equalTo(R.string.connections_list_empty_title))
         assertThat(viewModel.emptyViewDescriptionText.value,
-            equalTo(R.string.connections_list_no_connections_description))
+            equalTo(R.string.connections_list_empty_description))
     }
 
     @Test
@@ -138,9 +138,9 @@ class AuthorizationsListViewModelTest {
         assertThat(viewModel.emptyViewActionText.value,
             equalTo(R.string.actions_scan_qr))
         assertThat(viewModel.emptyViewTitleText.value,
-            equalTo(R.string.authorizations_nothing_confirm))
+            equalTo(R.string.authorizations_empty_title))
         assertThat(viewModel.emptyViewDescriptionText.value,
-            equalTo(R.string.authorizations_nothing_confirm_description))
+            equalTo(R.string.authorizations_empty_description))
     }
 
     @Test
@@ -160,9 +160,9 @@ class AuthorizationsListViewModelTest {
         assertThat(viewModel.emptyViewActionText.value,
             equalTo(R.string.actions_scan_qr))
         assertThat(viewModel.emptyViewTitleText.value,
-            equalTo(R.string.authorizations_nothing_confirm))
+            equalTo(R.string.authorizations_empty_title))
         assertThat(viewModel.emptyViewDescriptionText.value,
-            equalTo(R.string.authorizations_nothing_confirm_description))
+            equalTo(R.string.authorizations_empty_description))
     }
 
     @Test
