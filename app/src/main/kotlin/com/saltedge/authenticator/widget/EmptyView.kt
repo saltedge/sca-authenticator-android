@@ -58,7 +58,9 @@ class EmptyView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
         setDescription(context.getString(textResId))
     }
 
-    fun setActionText(@StringRes textId: Int) = setActionText(context.getString(textId))
+    fun setActionText(@StringRes textId: Int?) {
+        setActionText(textId?.let { context.getString(it) })
+    }
 
     fun setActionText(text: String?) {
         actionView?.setInvisible(text == null)
@@ -70,8 +72,8 @@ class EmptyView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
         emptyImageView?.setImageResource(resId)
     }
 
-    override fun setOnClickListener(l: OnClickListener?) {
-        super.setOnClickListener(l)
+    fun setActionOnClickListener(l: OnClickListener?) {
+//        super.setOnClickListener(l)
         actionView?.setOnClickListener(l)
     }
 

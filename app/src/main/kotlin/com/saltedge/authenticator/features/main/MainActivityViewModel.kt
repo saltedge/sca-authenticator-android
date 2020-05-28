@@ -27,8 +27,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.ConnectivityReceiverAbs
-import com.saltedge.authenticator.app.NetworkStateChangeListener
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.features.menu.MenuItemData
@@ -45,7 +43,7 @@ import com.saltedge.authenticator.tools.applyPreferenceLocale
 
 class MainActivityViewModel(
     val appContext: Context,
-    val realmManager: RealmManagerAbs,
+    val realmManager: RealmManagerAbs
 ) : ViewModel(),
     LifecycleObserver,
     NewAuthorizationListener,

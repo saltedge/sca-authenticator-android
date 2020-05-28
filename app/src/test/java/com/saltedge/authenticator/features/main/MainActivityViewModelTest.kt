@@ -217,65 +217,6 @@ class MainActivityViewModelTest {
 
     @Test
     @Throws(Exception::class)
-    fun onLifeCycleResumeTest() {
-        //given
-        val lifecycle = LifecycleRegistry(mock(LifecycleOwner::class.java))
-        val viewModel = createViewModel()
-        viewModel.bindLifecycleObserver(lifecycle)
-
-        //when
-        lifecycle.currentState = Lifecycle.State.RESUMED
-
-        //then
-        Mockito.verify(mockConnectivityReceiver).addNetworkStateChangeListener(viewModel)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onLifeCyclePauseTest() {
-        //given
-        val lifecycle = LifecycleRegistry(mock(LifecycleOwner::class.java))
-        val viewModel = createViewModel()
-        viewModel.bindLifecycleObserver(lifecycle)
-
-        //when
-        lifecycle.currentState = Lifecycle.State.RESUMED
-        lifecycle.currentState = Lifecycle.State.STARTED//move to pause state (possible only after RESUMED state)
-
-        //then
-        Mockito.verify(mockConnectivityReceiver).removeNetworkStateChangeListener(viewModel)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onNetworkConnectionChangedTestCase1() {
-        //given
-        val isConnected = false
-        val viewModel = createViewModel()
-
-        //when
-        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
-
-        //then
-        assertThat(viewModel.internetConnectionWarningVisibility.value, equalTo(View.VISIBLE))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onNetworkConnectionChangedTestCase2() {
-        //given
-        val isConnected = true
-        val viewModel = createViewModel()
-
-        //when
-        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
-
-        //then
-        assertThat(viewModel.internetConnectionWarningVisibility.value, equalTo(View.GONE))
-    }
-
-    @Test
-    @Throws(Exception::class)
     fun onActivityResultTestCase1() {
         /**
          * given unknown requestCode
@@ -628,14 +569,12 @@ class MainActivityViewModelTest {
     }
 
     private val mockRealmManager = Mockito.mock(RealmManagerAbs::class.java)
-    private val mockConnectivityReceiver = Mockito.mock(ConnectivityReceiverAbs::class.java)
     private val context: Context = ApplicationProvider.getApplicationContext()
 
     private fun createViewModel(): MainActivityViewModel {
         return MainActivityViewModel(
             appContext = context,
-            realmManager = mockRealmManager,
-            connectivityReceiver = mockConnectivityReceiver
+            realmManager = mockRealmManager
         )
     }
 }

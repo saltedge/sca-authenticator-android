@@ -75,7 +75,8 @@ class AuthorizationsListViewModel(
 
     val listVisibility = MutableLiveData<Int>(View.GONE)
     val emptyViewVisibility = MutableLiveData<Int>(View.VISIBLE)
-    val emptyViewActionText = MutableLiveData<ResId>(R.string.actions_scan_qr)
+    val emptyViewImage = MutableLiveData<ResId>(R.drawable.ic_authorizations_empty)
+    val emptyViewActionText = MutableLiveData<ResId?>(R.string.actions_scan_qr)
     val emptyViewTitleText = MutableLiveData<ResId>(R.string.authorizations_empty_title)
     val emptyViewDescriptionText = MutableLiveData<ResId>(R.string.authorizations_empty_description)
     val listItems = MutableLiveData<List<AuthorizationViewModel>>()
@@ -95,20 +96,30 @@ class AuthorizationsListViewModel(
         pollingService.contract = this
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onResume() {
-        connectionsAndKeys = collectConnectionsAndKeys(connectionsRepository, keyStoreManager)
-        postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onStart() {
+        event = Lifecycle.Event.ON_START
         connectivityReceiver.addNetworkStateChangeListener(this)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    fun onPause() {
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    fun onResume() {
+        event = Lifecycle.Event.ON_RESUME
+        connectionsAndKeys = collectConnectionsAndKeys(connectionsRepository, keyStoreManager)
+        postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onStop() {
+        event = Lifecycle.Event.ON_STOP
         connectivityReceiver.removeNetworkStateChangeListener(this)
     }
 
+    var event = Lifecycle.Event.ON_CREATE
+
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
+        event = Lifecycle.Event.ON_DESTROY
         decryptJob.cancel()
     }
 
@@ -172,6 +183,7 @@ class AuthorizationsListViewModel(
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         noInternetConnection = !isConnected
+        postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
     }
 
     private fun collectAuthorizationRequestData(): List<ConnectionAndKey>? {
@@ -263,8 +275,16 @@ class AuthorizationsListViewModel(
 
         emptyViewVisibility.postValue(if (emptyViewIsVisible) View.VISIBLE else View.GONE)
         listVisibility.postValue(if (emptyViewIsVisible) View.GONE else View.VISIBLE)
+        emptyViewImage.postValue(
+            if (noInternetConnection) R.drawable.ic_internet_connection
+            else R.drawable.ic_authorizations_empty
+        )
         emptyViewActionText.postValue(
-            if (connectionsListIsEmpty) R.string.actions_connect else R.string.actions_scan_qr
+            when {
+                noInternetConnection -> null
+                connectionsListIsEmpty -> R.string.actions_connect
+                else -> R.string.actions_scan_qr
+            }
         )
         emptyViewTitleText.postValue(
             when {
