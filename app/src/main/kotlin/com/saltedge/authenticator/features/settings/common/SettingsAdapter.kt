@@ -35,7 +35,7 @@ class SettingsAdapter(
 ) : AbstractListAdapter() {
 
     override fun getItemViewType(position: Int): Int {
-        return if (getItem(position) is SettingsHeaderModel) 0 else 1
+        return if (getItem(position) is SettingsHeaderViewModelModel) 0 else 1
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -56,7 +56,7 @@ class SettingsAdapter(
     }
 
     override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
-        if (holder is SettingsHeaderViewHolder) holder.bind(item as SettingsHeaderModel)
-        else (holder as SettingsItemViewHolder).bind(item as SettingsItemModel)
+        if (holder is SettingsHeaderViewHolder) holder.bind(item as SettingsHeaderViewModelModel)
+        else (holder as SettingsItemViewHolder).bind(item as SettingsItemViewModel)
     }
 }

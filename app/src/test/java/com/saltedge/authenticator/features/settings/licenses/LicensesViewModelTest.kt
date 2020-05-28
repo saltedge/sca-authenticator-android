@@ -22,7 +22,10 @@ package com.saltedge.authenticator.features.settings.licenses
 
 import androidx.lifecycle.Observer
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.settings.common.SettingsItemModel
+import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
+import com.saltedge.authenticator.sdk.constants.KEY_TITLE
+import com.saltedge.authenticator.testTools.TestAppTools
+import com.saltedge.authenticator.widget.fragment.WebViewFragment
 import junit.framework.TestCase.assertNull
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -38,7 +41,7 @@ class LicensesViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = LicensesViewModel()
+        viewModel = LicensesViewModel(TestAppTools.applicationContext)
     }
 
     @Test
@@ -47,24 +50,24 @@ class LicensesViewModelTest {
         assertThat(
             viewModel.listItems,
             equalTo(listOf(
-                SettingsItemModel(titleId = R.string.library_realm),
-                SettingsItemModel(titleId = R.string.library_dagger),
-                SettingsItemModel(titleId = R.string.library_compat),
-                SettingsItemModel(titleId = R.string.library_constraint),
-                SettingsItemModel(titleId = R.string.library_material),
-                SettingsItemModel(titleId = R.string.library_retrofit),
-                SettingsItemModel(titleId = R.string.library_okhttp),
-                SettingsItemModel(titleId = R.string.library_joda),
-                SettingsItemModel(titleId = R.string.library_glide),
-                SettingsItemModel(titleId = R.string.library_junit),
-                SettingsItemModel(titleId = R.string.library_jacoco),
-                SettingsItemModel(titleId = R.string.library_hamcrest),
-                SettingsItemModel(titleId = R.string.library_mockito),
-                SettingsItemModel(titleId = R.string.library_mockk),
-                SettingsItemModel(titleId = R.string.library_jsr),
-                SettingsItemModel(titleId = R.string.library_ktlint),
-                SettingsItemModel(titleId = R.string.library_jlleitschuh),
-                SettingsItemModel(titleId = R.string.library_blur)
+                SettingsItemViewModel(titleId = R.string.library_realm),
+                SettingsItemViewModel(titleId = R.string.library_dagger),
+                SettingsItemViewModel(titleId = R.string.library_compat),
+                SettingsItemViewModel(titleId = R.string.library_constraint),
+                SettingsItemViewModel(titleId = R.string.library_material),
+                SettingsItemViewModel(titleId = R.string.library_retrofit),
+                SettingsItemViewModel(titleId = R.string.library_okhttp),
+                SettingsItemViewModel(titleId = R.string.library_joda),
+                SettingsItemViewModel(titleId = R.string.library_glide),
+                SettingsItemViewModel(titleId = R.string.library_junit),
+                SettingsItemViewModel(titleId = R.string.library_jacoco),
+                SettingsItemViewModel(titleId = R.string.library_hamcrest),
+                SettingsItemViewModel(titleId = R.string.library_mockito),
+                SettingsItemViewModel(titleId = R.string.library_mockk),
+                SettingsItemViewModel(titleId = R.string.library_jsr),
+                SettingsItemViewModel(titleId = R.string.library_ktlint),
+                SettingsItemViewModel(titleId = R.string.library_jlleitschuh),
+                SettingsItemViewModel(titleId = R.string.library_blur)
             ))
         )
     }
@@ -73,34 +76,36 @@ class LicensesViewModelTest {
     @Throws(Exception::class)
     fun onListItemClickTestCase1() {
         //when
-        val testResult = ArrayList<Pair<Int, String>>()
+        val testResult = ArrayList<Pair<String, String>>()
         viewModel.licenseItemClickEvent.observeForever(Observer{
-            testResult.add(it.peekContent())
+            val title = it.peekContent().getString(KEY_TITLE)!!
+            val url = it.peekContent().getString(WebViewFragment.KEY_URL)!!
+            testResult.add(Pair(title, url))
         })
         viewModel.listItems.forEach { viewModel.onListItemClick(itemId = it.titleId) }
 
         //then
         assertThat(
             testResult,
-            equalTo(listOf<Pair<Int, String>>(
-                Pair(R.string.library_realm, apache2LicenseLink),
-                Pair(R.string.library_dagger, apache2LicenseLink),
-                Pair(R.string.library_compat, apache2LicenseLink),
-                Pair(R.string.library_constraint, apache2LicenseLink),
-                Pair(R.string.library_material, apache2LicenseLink),
-                Pair(R.string.library_retrofit, apache2LicenseLink),
-                Pair(R.string.library_okhttp, apache2LicenseLink),
-                Pair(R.string.library_joda, apache2LicenseLink),
-                Pair(R.string.library_glide, "https://raw.githubusercontent.com/bumptech/glide/master/LICENSE"),
-                Pair(R.string.library_junit, "https://junit.org/junit4/license.html"),
-                Pair(R.string.library_jacoco, "https://www.jacoco.org/jacoco/trunk/doc/license.html"),
-                Pair(R.string.library_hamcrest, "https://raw.githubusercontent.com/hamcrest/JavaHamcrest/master/LICENSE.txt"),
-                Pair(R.string.library_mockito, "https://raw.githubusercontent.com/mockito/mockito/release/2.x/LICENSE"),
-                Pair(R.string.library_mockk, apache2LicenseLink),
-                Pair(R.string.library_jsr, "https://raw.githubusercontent.com/findbugsproject/findbugs/master/findbugs/licenses/LICENSE-jsr305.txt"),
-                Pair(R.string.library_ktlint, "https://raw.githubusercontent.com/pinterest/ktlint/master/LICENSE"),
-                Pair(R.string.library_jlleitschuh, "https://raw.githubusercontent.com/JLLeitschuh/ktlint-gradle/master/LICENSE.txt"),
-                Pair(R.string.library_blur, "https://raw.githubusercontent.com/500px/500px-android-blur/master/LICENSE.txt")
+            equalTo(listOf<Pair<String, String>>(
+                Pair(TestAppTools.getString(R.string.library_realm), apache2LicenseLink),
+                Pair(TestAppTools.getString(R.string.library_dagger), apache2LicenseLink),
+                Pair(TestAppTools.getString(R.string.library_compat), apache2LicenseLink),
+                Pair(TestAppTools.getString(R.string.library_constraint), apache2LicenseLink),
+                Pair(TestAppTools.getString(R.string.library_material), apache2LicenseLink),
+                Pair(TestAppTools.getString(R.string.library_retrofit), apache2LicenseLink),
+                Pair(TestAppTools.getString(R.string.library_okhttp), apache2LicenseLink),
+                Pair(TestAppTools.getString(R.string.library_joda), apache2LicenseLink),
+                Pair(TestAppTools.getString(R.string.library_glide), "https://raw.githubusercontent.com/bumptech/glide/master/LICENSE"),
+                Pair(TestAppTools.getString(R.string.library_junit), "https://junit.org/junit4/license.html"),
+                Pair(TestAppTools.getString(R.string.library_jacoco), "https://www.jacoco.org/jacoco/trunk/doc/license.html"),
+                Pair(TestAppTools.getString(R.string.library_hamcrest), "https://raw.githubusercontent.com/hamcrest/JavaHamcrest/master/LICENSE.txt"),
+                Pair(TestAppTools.getString(R.string.library_mockito), "https://raw.githubusercontent.com/mockito/mockito/release/2.x/LICENSE"),
+                Pair(TestAppTools.getString(R.string.library_mockk), apache2LicenseLink),
+                Pair(TestAppTools.getString(R.string.library_jsr), "https://raw.githubusercontent.com/findbugsproject/findbugs/master/findbugs/licenses/LICENSE-jsr305.txt"),
+                Pair(TestAppTools.getString(R.string.library_ktlint), "https://raw.githubusercontent.com/pinterest/ktlint/master/LICENSE"),
+                Pair(TestAppTools.getString(R.string.library_jlleitschuh), "https://raw.githubusercontent.com/JLLeitschuh/ktlint-gradle/master/LICENSE.txt"),
+                Pair(TestAppTools.getString(R.string.library_blur), "https://raw.githubusercontent.com/500px/500px-android-blur/master/LICENSE.txt")
             ))
         )
     }

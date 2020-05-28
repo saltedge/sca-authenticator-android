@@ -134,7 +134,7 @@ class ViewModelsFactory @Inject constructor(
                 return AboutViewModel(appContext) as T
             }
             modelClass.isAssignableFrom(LicensesViewModel::class.java) -> {
-                return LicensesViewModel() as T
+                return LicensesViewModel(appContext) as T
             }
             modelClass.isAssignableFrom(LanguageSelectViewModel::class.java) -> {
                 return LanguageSelectViewModel(

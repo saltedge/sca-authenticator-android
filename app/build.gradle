@@ -122,7 +122,7 @@ androidExtensions {
     experimental = true
 }
 
-dependencies { // After changing dependencies list, review third-party libraries licenses list
+dependencies { //TODO After changing dependencies list, review third-party libraries licenses list
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     kapt 'com.google.dagger:dagger-compiler:2.24'

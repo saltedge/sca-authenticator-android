@@ -28,7 +28,7 @@
 
         <variable
             name="item"
-            type="com.saltedge.authenticator.features.settings.common.SettingsHeaderModel" />
+            type="com.saltedge.authenticator.features.settings.common.SettingsHeaderViewModelModel" />
     </data>
     <RelativeLayout
         android:layout_width="match_parent"

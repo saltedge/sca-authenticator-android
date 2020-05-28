@@ -72,9 +72,9 @@ class LicensesFragment : BaseFragment() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(LicensesViewModel::class.java)
 
-        viewModel.licenseItemClickEvent.observe(this, Observer<ViewModelEvent<Pair<Int, String>>> {
-            it.getContentIfNotHandled()?.let { (titleId, url) ->
-                activity?.addFragment(WebViewFragment.newInstance(url, getString(titleId)))
+        viewModel.licenseItemClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
+            it.getContentIfNotHandled()?.let { bundle ->
+                activity?.addFragment(WebViewFragment.newInstance(bundle))
             }
         })
     }

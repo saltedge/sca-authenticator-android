@@ -21,11 +21,10 @@
 package com.saltedge.authenticator.features.settings.list
 
 import android.app.Activity
-import androidx.core.content.ContextCompat
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
-import com.saltedge.authenticator.features.settings.common.SettingsHeaderModel
-import com.saltedge.authenticator.features.settings.common.SettingsItemModel
+import com.saltedge.authenticator.features.settings.common.SettingsHeaderViewModelModel
+import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -89,41 +88,41 @@ class SettingsListViewModelTest {
         assertThat(
             viewModel.listItems, equalTo(
             listOf(
-                SettingsHeaderModel(TestAppTools.getString(R.string.settings_general)),
-                SettingsItemModel(
+                SettingsHeaderViewModelModel(TestAppTools.getString(R.string.settings_general)),
+                SettingsItemViewModel(
                     iconId = R.drawable.ic_setting_passcode,
                     titleId = R.string.settings_passcode,
                     itemIsClickable = true
                 ),
-                SettingsItemModel(
+                SettingsItemViewModel(
                     iconId = R.drawable.ic_setting_language,
                     titleId = R.string.settings_language,
                     itemIsClickable = true
                 ),
-                SettingsItemModel(
+                SettingsItemViewModel(
                     iconId = R.drawable.ic_setting_screenshots,
                     titleId = R.string.settings_screenshot_lock,
                     switchIsChecked = true
                 ),
-                SettingsHeaderModel(TestAppTools.getString(R.string.settings_info)),
-                SettingsItemModel(
+                SettingsHeaderViewModelModel(TestAppTools.getString(R.string.settings_info)),
+                SettingsItemViewModel(
                     iconId = R.drawable.ic_setting_about,
                     titleId = R.string.about_feature_title,
                     itemIsClickable = true
                 ),
-                SettingsItemModel(
+                SettingsItemViewModel(
                     iconId = R.drawable.ic_setting_support,
                     titleId = R.string.settings_report_bug,
                     itemIsClickable = true
                 ),
-                SettingsHeaderModel(""),
-                SettingsItemModel(
+                SettingsHeaderViewModelModel(""),
+                SettingsItemViewModel(
                     iconId = R.drawable.ic_setting_clear,
                     titleId = R.string.settings_clear_data,
                     titleColorRes = R.color.red,
                     itemIsClickable = true
                 ),
-                SettingsHeaderModel("")
+                SettingsHeaderViewModelModel("")
             ))
         )
     }

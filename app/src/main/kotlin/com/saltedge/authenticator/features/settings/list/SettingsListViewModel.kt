@@ -26,8 +26,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
-import com.saltedge.authenticator.features.settings.common.SettingsHeaderModel
-import com.saltedge.authenticator.features.settings.common.SettingsItemModel
+import com.saltedge.authenticator.features.settings.common.SettingsHeaderViewModelModel
+import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -55,41 +55,41 @@ class SettingsListViewModel(
     val restartClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
     val listItems = listOf(
-            SettingsHeaderModel(appContext.getString(R.string.settings_general)),
-            SettingsItemModel(
+            SettingsHeaderViewModelModel(appContext.getString(R.string.settings_general)),
+            SettingsItemViewModel(
                 iconId = R.drawable.ic_setting_passcode,
                 titleId = R.string.settings_passcode,
                 itemIsClickable = true
             ),
-            SettingsItemModel(
+            SettingsItemViewModel(
                 iconId = R.drawable.ic_setting_language,
                 titleId = R.string.settings_language,
                 itemIsClickable = true
             ),
-            SettingsItemModel(
+            SettingsItemViewModel(
                 iconId = R.drawable.ic_setting_screenshots,
                 titleId = R.string.settings_screenshot_lock,
                 switchIsChecked = preferenceRepository.screenshotLockEnabled
             ),
-            SettingsHeaderModel(appContext.getString(R.string.settings_info)),
-            SettingsItemModel(
+            SettingsHeaderViewModelModel(appContext.getString(R.string.settings_info)),
+            SettingsItemViewModel(
                 iconId = R.drawable.ic_setting_about,
                 titleId = R.string.about_feature_title,
                 itemIsClickable = true
             ),
-            SettingsItemModel(
+            SettingsItemViewModel(
                 iconId = R.drawable.ic_setting_support,
                 titleId = R.string.settings_report_bug,
                 itemIsClickable = true
             ),
-            SettingsHeaderModel(""),
-            SettingsItemModel(
+            SettingsHeaderViewModelModel(""),
+            SettingsItemViewModel(
                 iconId = R.drawable.ic_setting_clear,
                 titleId = R.string.settings_clear_data,
                 titleColorRes = R.color.red,
                 itemIsClickable = true
             ),
-            SettingsHeaderModel("")
+            SettingsHeaderViewModelModel("")
         )
 
     fun onActivityResult(requestCode: Int, resultCode: Int) {

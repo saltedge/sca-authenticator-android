@@ -25,7 +25,7 @@ import com.saltedge.authenticator.databinding.SettingsItemBinding
 
 class SettingsItemViewHolder(val binding: SettingsItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(item: SettingsItemModel) {
+    fun bind(item: SettingsItemViewModel) {
         binding.item = item
         binding.executePendingBindings()
     }

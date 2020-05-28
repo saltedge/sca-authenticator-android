@@ -26,7 +26,7 @@ import androidx.annotation.StringRes
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.ResId
 
-data class SettingsItemModel(
+data class SettingsItemViewModel(
     @StringRes val titleId: ResId,
     val titleColorRes: Int = R.color.primary_text,
     @DrawableRes val iconId: ResId? = null,

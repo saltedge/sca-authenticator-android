@@ -25,7 +25,7 @@ import com.saltedge.authenticator.databinding.SettingsHeaderBinding
 
 class SettingsHeaderViewHolder(val binding: SettingsHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(item: SettingsHeaderModel) {
+    fun bind(item: SettingsHeaderViewModelModel) {
         binding.item = item
         binding.executePendingBindings()
     }

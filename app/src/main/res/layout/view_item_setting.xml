@@ -28,7 +28,7 @@
 
         <variable
             name="item"
-            type="com.saltedge.authenticator.features.settings.common.SettingsItemModel" />
+            type="com.saltedge.authenticator.features.settings.common.SettingsItemViewModel" />
 
         <variable
             name="listener"

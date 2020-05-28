@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.settings.about
 
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.settings.common.SettingsItemModel
+import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*
@@ -88,16 +88,16 @@ class AboutViewModelTest {
         assertThat(
             viewModel.listItems,
             equalTo(listOf(
-                SettingsItemModel(
+                SettingsItemViewModel(
                     titleId = R.string.about_app_version,
                     description = "2.3.2"
                 ),
-                SettingsItemModel(
+                SettingsItemViewModel(
                     titleId = R.string.about_copyright,
                     description = TestAppTools.getString(R.string.about_copyright_description)
                 ),
-                SettingsItemModel(titleId = R.string.about_terms_service),
-                SettingsItemModel(titleId = R.string.about_open_source_licenses)
+                SettingsItemViewModel(titleId = R.string.about_terms_service),
+                SettingsItemViewModel(titleId = R.string.about_open_source_licenses)
             ))
         )
     }
