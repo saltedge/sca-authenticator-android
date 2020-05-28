@@ -23,6 +23,7 @@ package com.saltedge.authenticator.features.settings.language
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.testTools.TestAppTools
+import junit.framework.TestCase.assertNull
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
@@ -60,7 +61,7 @@ class LanguageSelectViewModelTest {
     fun onOkClickTest() {//TODO add more cases with onLanguageChangedEvent when new languages will appear
         viewModel.onOkClick()
 
-        assertThat(viewModel.onLanguageChangedEvent.value, equalTo(nullValue()))
+        assertNull(viewModel.onLanguageChangedEvent.value)
         assertThat(viewModel.onCloseEvent.value, equalTo(ViewModelEvent(Unit)))
     }
 

@@ -20,14 +20,18 @@
  */
 package com.saltedge.authenticator.features.settings.licenses
 
+import androidx.lifecycle.Observer
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.settings.common.SettingsItemModel
+import junit.framework.TestCase.assertNull
 import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class LicensesViewModelTest {
     private val apache2LicenseLink = "https://www.apache.org/licenses/LICENSE-2.0.txt"
     private lateinit var viewModel: LicensesViewModel
@@ -70,10 +74,10 @@ class LicensesViewModelTest {
     fun onListItemClickTestCase1() {
         //when
         val testResult = ArrayList<Pair<Int, String>>()
-        viewModel.listItems.forEach {
-            viewModel.onListItemClick(itemId = it.titleId)
-            testResult.add(viewModel.licenseItemClickEvent.value!!.peekContent())
-        }
+        viewModel.licenseItemClickEvent.observeForever(Observer{
+            testResult.add(it.peekContent())
+        })
+        viewModel.listItems.forEach { viewModel.onListItemClick(itemId = it.titleId) }
 
         //then
         assertThat(
@@ -106,6 +110,6 @@ class LicensesViewModelTest {
     fun onListItemClickTestCase2() {
         viewModel.onListItemClick(itemId = R.string.app_name)
 
-        assertThat(viewModel.licenseItemClickEvent.value, equalTo(nullValue()))
+        assertNull(viewModel.licenseItemClickEvent.value)
     }
 }

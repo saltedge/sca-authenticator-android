@@ -210,8 +210,8 @@ class MainActivityViewModel(
         backActionImageResId?.let { appBarBackActionImageResource.postValue(it) }
         appBarBackActionVisibility.postValue(if (backActionImageResId == null) View.GONE else View.VISIBLE)
         appBarActionQRVisibility.postValue(if (showMenu.contains(MenuItem.SCAN_QR)) View.VISIBLE else View.GONE)
-        appBarActionThemeVisibility.postValue(if (showMenu.contains(MenuItem.SCAN_QR)) View.VISIBLE else View.GONE)
-        appBarActionMoreVisibility.postValue(if (showMenu.contains(MenuItem.SCAN_QR)) View.VISIBLE else View.GONE)
+        appBarActionThemeVisibility.postValue(if (showMenu.contains(MenuItem.THEME)) View.VISIBLE else View.GONE)
+        appBarActionMoreVisibility.postValue(if (showMenu.contains(MenuItem.MORE)) View.VISIBLE else View.GONE)
     }
 
     override fun onLanguageChanged() {

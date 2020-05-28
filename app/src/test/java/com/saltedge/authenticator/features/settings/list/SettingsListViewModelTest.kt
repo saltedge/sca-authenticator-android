@@ -35,8 +35,8 @@ import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.testTools.TestAppTools
+import junit.framework.TestCase.assertNull
 import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -70,6 +70,9 @@ class SettingsListViewModelTest {
 
     @Before
     fun setUp() {
+        Mockito.doReturn(true).`when`(mockPreferences).screenshotLockEnabled
+        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(mockConnection1))
+        given(mockKeyStoreManager.createConnectionAndKeyModel(mockConnection1)).willReturn(mockConnectionAndKey)
         viewModel = SettingsListViewModel(
             appContext = TestAppTools.applicationContext,
             keyStoreManager = mockKeyStoreManager,
@@ -82,10 +85,6 @@ class SettingsListViewModelTest {
     @Test
     @Throws(Exception::class)
     fun getListItemsTest() {
-        //given
-        val screenshotLockEnabled = true
-        Mockito.doReturn(screenshotLockEnabled).`when`(mockPreferences).screenshotLockEnabled
-
         //when
         assertThat(
             viewModel.listItems, equalTo(
@@ -104,7 +103,7 @@ class SettingsListViewModelTest {
                 SettingsItemModel(
                     iconId = R.drawable.ic_setting_screenshots,
                     titleId = R.string.settings_screenshot_lock,
-                    switchIsChecked = screenshotLockEnabled
+                    switchIsChecked = true
                 ),
                 SettingsHeaderModel(TestAppTools.getString(R.string.settings_info)),
                 SettingsItemModel(
@@ -133,7 +132,6 @@ class SettingsListViewModelTest {
     @Throws(Exception::class)
     fun onActivityResultTestCase1() {
         //given
-        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(mockConnection1))
         val requestCode = DELETE_ALL_REQUEST_CODE
         val resultCode = Activity.RESULT_OK
 
@@ -152,7 +150,6 @@ class SettingsListViewModelTest {
     @Throws(Exception::class)
     fun onActivityResultTestCase2() {
         //given
-        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(mockConnection1))
         val requestCode = DELETE_ALL_REQUEST_CODE
         val resultCode = Activity.RESULT_CANCELED
 
@@ -184,10 +181,10 @@ class SettingsListViewModelTest {
 
         //them
         assertThat(viewModel.passcodeClickEvent.value, equalTo(ViewModelEvent(Unit)))
-        assertThat(viewModel.languageClickEvent.value, equalTo(nullValue()))
-        assertThat(viewModel.aboutClickEvent.value, equalTo(nullValue()))
-        assertThat(viewModel.supportClickEvent.value, equalTo(nullValue()))
-        assertThat(viewModel.clearClickEvent.value, equalTo(nullValue()))
+        assertNull(viewModel.languageClickEvent.value)
+        assertNull(viewModel.aboutClickEvent.value)
+        assertNull(viewModel.supportClickEvent.value)
+        assertNull(viewModel.clearClickEvent.value)
     }
 
     @Test
@@ -200,11 +197,11 @@ class SettingsListViewModelTest {
         viewModel.onListItemClick(itemId = itemId)
 
         //them
-        assertThat(viewModel.passcodeClickEvent.value, equalTo(nullValue()))
+        assertNull(viewModel.passcodeClickEvent.value)
         assertThat(viewModel.languageClickEvent.value, equalTo(ViewModelEvent(Unit)))
-        assertThat(viewModel.aboutClickEvent.value, equalTo(nullValue()))
-        assertThat(viewModel.supportClickEvent.value, equalTo(nullValue()))
-        assertThat(viewModel.clearClickEvent.value, equalTo(nullValue()))
+        assertNull(viewModel.aboutClickEvent.value)
+        assertNull(viewModel.supportClickEvent.value)
+        assertNull(viewModel.clearClickEvent.value)
     }
 
     @Test
@@ -217,11 +214,11 @@ class SettingsListViewModelTest {
         viewModel.onListItemClick(itemId = itemId)
 
         //them
-        assertThat(viewModel.languageClickEvent.value, equalTo(nullValue()))
-        assertThat(viewModel.passcodeClickEvent.value, equalTo(nullValue()))
+        assertNull(viewModel.languageClickEvent.value)
+        assertNull(viewModel.passcodeClickEvent.value)
         assertThat(viewModel.aboutClickEvent.value, equalTo(ViewModelEvent(Unit)))
-        assertThat(viewModel.supportClickEvent.value, equalTo(nullValue()))
-        assertThat(viewModel.clearClickEvent.value, equalTo(nullValue()))
+        assertNull(viewModel.supportClickEvent.value)
+        assertNull(viewModel.clearClickEvent.value)
     }
 
     @Test
@@ -234,11 +231,11 @@ class SettingsListViewModelTest {
         viewModel.onListItemClick(itemId = itemId)
 
         //them
-        assertThat(viewModel.languageClickEvent.value, equalTo(nullValue()))
-        assertThat(viewModel.passcodeClickEvent.value, equalTo(nullValue()))
-        assertThat(viewModel.aboutClickEvent.value, equalTo(nullValue()))
+        assertNull(viewModel.languageClickEvent.value)
+        assertNull(viewModel.passcodeClickEvent.value)
+        assertNull(viewModel.aboutClickEvent.value)
         assertThat(viewModel.supportClickEvent.value, equalTo(ViewModelEvent(Unit)))
-        assertThat(viewModel.clearClickEvent.value, equalTo(nullValue()))
+        assertNull(viewModel.clearClickEvent.value)
     }
 
     @Test
@@ -251,10 +248,10 @@ class SettingsListViewModelTest {
         viewModel.onListItemClick(itemId = itemId)
 
         //them
-        assertThat(viewModel.languageClickEvent.value, equalTo(nullValue()))
-        assertThat(viewModel.passcodeClickEvent.value, equalTo(nullValue()))
-        assertThat(viewModel.aboutClickEvent.value, equalTo(nullValue()))
-        assertThat(viewModel.supportClickEvent.value, equalTo(nullValue()))
+        assertNull(viewModel.languageClickEvent.value)
+        assertNull(viewModel.passcodeClickEvent.value)
+        assertNull(viewModel.aboutClickEvent.value)
+        assertNull(viewModel.supportClickEvent.value)
         assertThat(viewModel.clearClickEvent.value, equalTo(ViewModelEvent(Unit)))
     }
 
@@ -268,11 +265,11 @@ class SettingsListViewModelTest {
         viewModel.onListItemClick(itemId = itemId)
 
         //them
-        assertThat(viewModel.languageClickEvent.value, equalTo(nullValue()))
-        assertThat(viewModel.passcodeClickEvent.value, equalTo(nullValue()))
-        assertThat(viewModel.aboutClickEvent.value, equalTo(nullValue()))
-        assertThat(viewModel.supportClickEvent.value, equalTo(nullValue()))
-        assertThat(viewModel.clearClickEvent.value, equalTo(nullValue()))
+        assertNull(viewModel.languageClickEvent.value)
+        assertNull(viewModel.passcodeClickEvent.value)
+        assertNull(viewModel.aboutClickEvent.value)
+        assertNull(viewModel.supportClickEvent.value)
+        assertNull(viewModel.clearClickEvent.value)
     }
 
     @Test
@@ -294,12 +291,13 @@ class SettingsListViewModelTest {
     fun onListItemCheckedStateChangedTestCase2() {
         //given
         val itemId = R.string.settings_clear_data
+        Mockito.clearInvocations(mockPreferences)
 
         //when
         viewModel.onListItemCheckedStateChanged(itemId = itemId, checked = true)
 
         //then
         Mockito.verifyNoMoreInteractions(mockPreferences)
-        assertThat(viewModel.screenshotClickEvent.value, equalTo(nullValue()))
+        assertNull(viewModel.screenshotClickEvent.value)
     }
 }
