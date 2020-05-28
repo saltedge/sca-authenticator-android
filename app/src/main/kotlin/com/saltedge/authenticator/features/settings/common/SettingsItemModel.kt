@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.settings.common
 
-import android.graphics.Color
 import android.view.View
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -29,7 +28,7 @@ import com.saltedge.authenticator.tools.ResId
 
 data class SettingsItemModel(
     @StringRes val titleId: ResId,
-    val titleColor: Int = Color.BLACK,
+    val titleColorRes: Int = R.color.primary_text,
     @DrawableRes val iconId: ResId? = null,
     val description: String = "",
     val switchIsChecked: Boolean? = null,

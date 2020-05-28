@@ -50,7 +50,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 android:background="?android:attr/selectableItemBackground"
-                android:onClick="@{(view) -> viewModel.onViewClick(view.id)}"
                 android:visibility="@{viewModel.appBarBackActionVisibility}">
 
                 <ImageView
@@ -58,7 +57,7 @@
                     android:layout_width="@dimen/dp_24"
                     android:layout_height="@dimen/dp_24"
                     android:layout_gravity="center"
-                    android:background="?android:attr/selectableItemBackground"
+                    android:onClick="@{(view) -> viewModel.onViewClick(view.id)}"
                     android:src="@{ContextCompat.getDrawable(context, viewModel.appBarBackActionImageResource)}" />
             </FrameLayout>
 

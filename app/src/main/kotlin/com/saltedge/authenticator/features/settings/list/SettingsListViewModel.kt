@@ -22,8 +22,6 @@ package com.saltedge.authenticator.features.settings.list
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
@@ -88,7 +86,7 @@ class SettingsListViewModel(
             SettingsItemModel(
                 iconId = R.drawable.ic_setting_clear,
                 titleId = R.string.settings_clear_data,
-                titleColor = ContextCompat.getColor(appContext, R.color.red),
+                titleColorRes = R.color.red,
                 itemIsClickable = true
             ),
             SettingsHeaderModel("")

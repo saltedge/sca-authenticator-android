@@ -23,8 +23,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data class="SettingsItemBinding">
-
         <import type="android.view.View" />
+        <import type="androidx.core.content.ContextCompat" />
 
         <variable
             name="item"
@@ -70,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:text="@{item.titleId}"
-                android:textColor="@{item.titleColor}"
+                android:textColor="@{ContextCompat.getColor(context, item.titleColorRes)}"
                 tools:text="Title" />
 
             <TextView

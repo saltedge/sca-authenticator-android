@@ -45,7 +45,7 @@ class LanguageSelectDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return AlertDialog.Builder(activity, R.style.MaterialThemeDialog)
+        return AlertDialog.Builder(activity, R.style.AlertDialogTheme)
             .setTitle(R.string.settings_language)
             .setSingleChoiceItems(viewModel.listItems, viewModel.selectedItemIndex) { _, which ->
                 viewModel.selectedItemIndex = which

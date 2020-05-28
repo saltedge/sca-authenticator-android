@@ -120,7 +120,7 @@ class SettingsListViewModelTest {
                 SettingsItemModel(
                     iconId = R.drawable.ic_setting_clear,
                     titleId = R.string.settings_clear_data,
-                    titleColor = ContextCompat.getColor(TestAppTools.applicationContext, R.color.red),
+                    titleColorRes = R.color.red,
                     itemIsClickable = true
                 ),
                 SettingsHeaderModel("")
