@@ -27,7 +27,7 @@ import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.inOrder
 
-class LicensesPresenterTest {
+class LicensesViewModelTest {
 
     @Test
     @Throws(Exception::class)

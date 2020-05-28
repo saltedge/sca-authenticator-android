@@ -31,7 +31,7 @@ import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class LanguageSelectPresenterTest {
+class LanguageSelectViewModelTest {
 
     @Test
     @Throws(Exception::class)

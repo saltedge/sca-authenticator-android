@@ -73,7 +73,7 @@ class SettingsListFragment : BaseFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        viewModel.onActivityResult(requestCode, resultCode, data)
+        viewModel.onActivityResult(requestCode, resultCode)
     }
 
     private fun setupViewModel() {

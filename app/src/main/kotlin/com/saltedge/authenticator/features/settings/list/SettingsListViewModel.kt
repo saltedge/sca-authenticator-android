@@ -94,10 +94,9 @@ class SettingsListViewModel(
             SettingsHeaderModel("")
         )
 
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (data == null || resultCode != Activity.RESULT_OK) return
-        when (requestCode) {
-            DELETE_ALL_REQUEST_CODE -> onUserConfirmedDeleteAllConnections()
+    fun onActivityResult(requestCode: Int, resultCode: Int) {
+        if (resultCode == Activity.RESULT_OK && requestCode == DELETE_ALL_REQUEST_CODE) {
+            onUserConfirmedDeleteAllConnections()
         }
     }
 
