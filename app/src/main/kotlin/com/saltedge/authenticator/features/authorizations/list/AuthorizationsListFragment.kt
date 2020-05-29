@@ -125,7 +125,10 @@ class AuthorizationsListFragment : BaseFragment() {
         viewModel.onQrScanClickEvent.observe(this, Observer {
             it.getContentIfNotHandled()?.let { activity?.showQrScannerActivity() }
         })
-        viewModel.emptyViewActionText.observe(this, Observer<ResId> {
+        viewModel.emptyViewImage.observe(this, Observer<ResId> {
+            emptyView.setImageResource(it)
+        })
+        viewModel.emptyViewActionText.observe(this, Observer<ResId?> {
             emptyView.setActionText(it)
         })
         viewModel.emptyViewTitleText.observe(this, Observer<ResId> {
@@ -146,6 +149,6 @@ class AuthorizationsListFragment : BaseFragment() {
             }
         }
         pagersScrollSynchronizer.initViews(headerViewPager, contentViewPager)
-        emptyView?.setOnClickListener { viewModel.onEmptyViewActionClick() }
+        emptyView?.setActionOnClickListener(View.OnClickListener { viewModel.onEmptyViewActionClick() })// { viewModel.onEmptyViewActionClick() }
     }
 }

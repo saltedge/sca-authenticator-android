@@ -46,9 +46,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="@{viewModel.emptyViewVisibility}"
-            app:description="@string/connections_list_no_connections_description"
+            app:description="@string/connections_list_empty_description"
             app:iconSrc="@drawable/ic_connections_empty"
             app:mainActionText="@string/actions_connect"
-            app:title="@string/connections_list_no_connections" />
+            app:title="@string/connections_list_empty_title" />
     </RelativeLayout>
 </layout>

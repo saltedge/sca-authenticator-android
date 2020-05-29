@@ -48,7 +48,9 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
+import kotlinx.android.synthetic.main.fragment_authorizations_list.*
 import kotlinx.android.synthetic.main.fragment_connections_list.*
+import kotlinx.android.synthetic.main.fragment_connections_list.emptyView
 import javax.inject.Inject
 
 class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnClickListener {
@@ -159,7 +161,7 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
     private fun setupViews() {
         connectionsListView?.layoutManager = LinearLayoutManager(activity ?: return)
         connectionsListView?.adapter = adapter
-        emptyView?.setOnClickListener(this)
+        emptyView?.setActionOnClickListener(this)
         headerDecorator = SpaceItemDecoration(
             context = activity ?: return
         ).apply {
