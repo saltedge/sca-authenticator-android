@@ -73,7 +73,6 @@ class EmptyView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
     }
 
     fun setActionOnClickListener(l: OnClickListener?) {
-//        super.setOnClickListener(l)
         actionView?.setOnClickListener(l)
     }
 

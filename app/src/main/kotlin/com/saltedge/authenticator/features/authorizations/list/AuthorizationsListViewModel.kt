@@ -98,28 +98,22 @@ class AuthorizationsListViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStart() {
-        event = Lifecycle.Event.ON_START
         connectivityReceiver.addNetworkStateChangeListener(this)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onResume() {
-        event = Lifecycle.Event.ON_RESUME
         connectionsAndKeys = collectConnectionsAndKeys(connectionsRepository, keyStoreManager)
         postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onStop() {
-        event = Lifecycle.Event.ON_STOP
         connectivityReceiver.removeNetworkStateChangeListener(this)
     }
 
-    var event = Lifecycle.Event.ON_CREATE
-
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
-        event = Lifecycle.Event.ON_DESTROY
         decryptJob.cancel()
     }
 
