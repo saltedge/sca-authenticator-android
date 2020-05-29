@@ -27,7 +27,7 @@ import android.view.View
 import android.widget.LinearLayout
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.setVisible
-import com.saltedge.authenticator.widget.passcode.PasscodeInputView
+import com.saltedge.authenticator.widget.passcode.PasscodeEditView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 import kotlinx.android.synthetic.main.view_unlock.view.*
 
@@ -60,8 +60,8 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
     }
 
     fun setSavedPasscode(currentPasscode: String) {
-        passcodeInputView?.initInputMode(
-            PasscodeInputView.InputMode.CHECK_PASSCODE,
+        passcodeInputView?.updateInputModeAndPasscode(
+            PasscodeEditView.InputMode.CHECK_PASSCODE,
             currentPasscode
         )
     }

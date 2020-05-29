@@ -36,7 +36,7 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.log
 import com.saltedge.authenticator.tools.showWarningDialog
-import com.saltedge.authenticator.widget.passcode.PasscodeInputView
+import com.saltedge.authenticator.widget.passcode.PasscodeEditView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
 import kotlinx.android.synthetic.main.activity_onboarding.*
@@ -83,7 +83,7 @@ class OnboardingSetupActivity : AppCompatActivity(),
         viewModel.reEnterPasscode()
     }
 
-    override fun onNewPasscodeEntered(mode: PasscodeInputView.InputMode, passcode: String) {
+    override fun onNewPasscodeEntered(mode: PasscodeEditView.InputMode, passcode: String) {
         viewModel.enteredNewPasscode(inputMode = mode)
     }
 
@@ -101,8 +101,8 @@ class OnboardingSetupActivity : AppCompatActivity(),
         viewModel.pageIndicator.observe(this, Observer<Int> { position ->
             pageIndicatorView?.selection = position
         })
-        viewModel.setPasscodeInputMode.observe(this, Observer<PasscodeInputView.InputMode> {
-            passcodeInputView?.initInputMode(inputMode = it)
+        viewModel.setPasscodeInputMode.observe(this, Observer<PasscodeEditView.InputMode> {
+            passcodeInputView?.updateInputModeAndPasscode(inputMode = it)
         })
         viewModel.showMainActivity.observe(this, Observer<ViewModelEvent<Unit>> {
             showMainActivity()

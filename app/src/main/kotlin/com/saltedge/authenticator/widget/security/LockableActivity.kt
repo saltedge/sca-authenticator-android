@@ -45,7 +45,7 @@ import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
-import com.saltedge.authenticator.widget.passcode.PasscodeInputView
+import com.saltedge.authenticator.widget.passcode.PasscodeEditView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 
 const val KEY_SKIP_PIN = "KEY_SKIP_PIN"
@@ -163,7 +163,7 @@ abstract class LockableActivity : AppCompatActivity(),
         presenter.onWrongPasscodeInput()
     }
 
-    override fun onNewPasscodeEntered(mode: PasscodeInputView.InputMode, passcode: String) {
+    override fun onNewPasscodeEntered(mode: PasscodeEditView.InputMode, passcode: String) {
         // REDUNDANT
     }
 

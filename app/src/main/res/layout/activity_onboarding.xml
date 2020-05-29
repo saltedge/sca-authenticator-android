@@ -64,7 +64,7 @@
                 android:text="@{onboardingSetupViewModel.headerTitle}"
                 tools:text="Create passcode" />
 
-            <com.saltedge.authenticator.widget.passcode.PasscodeInputView
+            <com.saltedge.authenticator.widget.passcode.PasscodeEditView
                 android:id="@+id/passcodeInputView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

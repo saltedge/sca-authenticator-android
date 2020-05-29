@@ -25,7 +25,7 @@ import androidx.core.content.ContextCompat
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.PasscodeTools
 import com.saltedge.authenticator.widget.fragment.BaseRoundedBottomDialogFragment
-import com.saltedge.authenticator.widget.passcode.PasscodeInputView
+import com.saltedge.authenticator.widget.passcode.PasscodeEditView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 
 class ConfirmPasscodeDialog : BaseRoundedBottomDialogFragment(), PasscodeInputViewListener {
@@ -33,8 +33,8 @@ class ConfirmPasscodeDialog : BaseRoundedBottomDialogFragment(), PasscodeInputVi
     var callback: PasscodePromptCallback? = null
 
     private val presenter = ConfirmPasscodePresenter(passcodeTools = PasscodeTools)
-    private val passcodeInputView: PasscodeInputView? by lazy {
-        dialog?.findViewById<PasscodeInputView>(R.id.passcodeInputView)
+    private val passcodeInputView: PasscodeEditView? by lazy {
+        dialog?.findViewById<PasscodeEditView>(R.id.passcodeInputView)
     }
     private val descriptionView: TextView? by lazy {
         dialog?.findViewById<TextView>(R.id.descriptionView)
@@ -64,14 +64,14 @@ class ConfirmPasscodeDialog : BaseRoundedBottomDialogFragment(), PasscodeInputVi
         context?.let { descriptionView?.setTextColor(ContextCompat.getColor(it, R.color.red)) }
     }
 
-    override fun onNewPasscodeEntered(mode: PasscodeInputView.InputMode, passcode: String) {}
+    override fun onNewPasscodeEntered(mode: PasscodeEditView.InputMode, passcode: String) {}
 
     override fun onNewPasscodeConfirmed(passcode: String) {}
 
     private fun setupDialogViews() {
         passcodeInputView?.biometricsActionIsAvailable = false
         passcodeInputView?.listener = this
-        passcodeInputView?.initInputMode(PasscodeInputView.InputMode.CHECK_PASSCODE, presenter.savedPasscode)
+        passcodeInputView?.updateInputModeAndPasscode(PasscodeEditView.InputMode.CHECK_PASSCODE, presenter.savedPasscode)
     }
 
     companion object {

@@ -39,7 +39,7 @@ import kotlinx.android.synthetic.main.view_passcode_input.view.*
  * @see PasscodeLabelView
  * @see KeypadView
  */
-class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
+class PasscodeEditView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
     PasscodeLabelView.PasscodeInputResultListener {
 
     private var vibrator: Vibrator? = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator?
@@ -49,7 +49,7 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
         setupViews()
     }
 
-    private var inputMode = InputMode.CHECK_PASSCODE
+    var inputMode = InputMode.CHECK_PASSCODE
     private var currentPasscode: String = ""
     var listener: PasscodeInputViewListener? = null
         set(value) {
@@ -62,9 +62,13 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
             pinpadView?.setupFingerAction(active = value)
         }
 
-    fun initInputMode(inputMode: InputMode, currentPasscode: String = "") {
+    fun updateInputModeAndPasscode(inputMode: InputMode, newCurrentPasscode: String = "") {
         this.inputMode = inputMode
-        this.currentPasscode = if (inputMode == InputMode.NEW_PASSCODE) "" else currentPasscode
+        newCurrentPasscode(newCurrentPasscode = newCurrentPasscode)
+    }
+
+    fun newCurrentPasscode(newCurrentPasscode: String) {
+        this.currentPasscode = if (inputMode == InputMode.NEW_PASSCODE) "" else newCurrentPasscode
         passcodeLabelView?.clearAll()
     }
 
@@ -83,9 +87,9 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
             InputMode.NEW_PASSCODE -> {
                 infoMessageView?.setVisible(show = false)
                 run {
-                    initInputMode(
+                    updateInputModeAndPasscode(
                         inputMode = InputMode.REPEAT_NEW_PASSCODE,
-                        currentPasscode = passcode
+                        newCurrentPasscode = passcode
                     )
                     listener?.onNewPasscodeEntered(
                         mode = InputMode.REPEAT_NEW_PASSCODE,
@@ -98,7 +102,7 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
                     listener?.onNewPasscodeConfirmed(passcode = currentPasscode)
                 } else {
                     errorVibrate()
-                    initInputMode(inputMode = InputMode.NEW_PASSCODE)
+                    updateInputModeAndPasscode(inputMode = InputMode.NEW_PASSCODE)
                     listener?.onEnteredPasscodeIsInvalid()
                     onInputError(R.string.errors_passcode_not_match)
                 }

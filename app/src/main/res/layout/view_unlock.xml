@@ -47,7 +47,7 @@
         android:text="@string/actions_enter_passcode_or_fingerprint"
         android:visibility="gone" />
 
-    <com.saltedge.authenticator.widget.passcode.PasscodeInputView
+    <com.saltedge.authenticator.widget.passcode.PasscodeEditView
         android:id="@+id/passcodeInputView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

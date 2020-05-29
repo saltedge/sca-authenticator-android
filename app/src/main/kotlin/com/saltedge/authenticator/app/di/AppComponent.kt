@@ -36,8 +36,7 @@ import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
 import com.saltedge.authenticator.features.settings.licenses.LicensesFragment
 import com.saltedge.authenticator.features.settings.list.SettingsListFragment
-import com.saltedge.authenticator.features.settings.passcode.di.PasscodeEditComponent
-import com.saltedge.authenticator.features.settings.passcode.di.PasscodeEditModule
+import com.saltedge.authenticator.features.settings.passcode.PasscodeEditFragment
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
@@ -63,7 +62,6 @@ interface AppComponent {
     fun viewModelsFactory() : ViewModelsFactory
 
     fun addActionModule(moduleSubmit: SubmitActionModule): SubmitActionComponent
-    fun addPasscodeEditModule(module: PasscodeEditModule): PasscodeEditComponent
 
     fun inject(activity: LockableActivity)
     fun inject(activity: OnboardingSetupActivity)
@@ -78,4 +76,5 @@ interface AppComponent {
     fun inject(fragment: AboutListFragment)
     fun inject(fragment: LicensesFragment)
     fun inject(fragment: LanguageSelectDialog)
+    fun inject(fragment: PasscodeEditFragment)
 }

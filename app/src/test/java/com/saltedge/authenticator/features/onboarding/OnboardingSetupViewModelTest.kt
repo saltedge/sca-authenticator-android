@@ -26,7 +26,7 @@ import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
-import com.saltedge.authenticator.widget.passcode.PasscodeInputView
+import com.saltedge.authenticator.widget.passcode.PasscodeEditView
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.*
@@ -145,7 +145,7 @@ class OnboardingSetupViewModelTest {
     @Test
     @Throws(Exception::class)
     fun enteredNewPasscodeTest() {
-        viewModel.enteredNewPasscode(PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE)
+        viewModel.enteredNewPasscode(PasscodeEditView.InputMode.REPEAT_NEW_PASSCODE)
 
         assertThat(
             viewModel.headerTitle.value,
@@ -171,7 +171,7 @@ class OnboardingSetupViewModelTest {
 
         assertThat(
             viewModel.setPasscodeInputMode.value,
-            equalTo(PasscodeInputView.InputMode.NEW_PASSCODE)
+            equalTo(PasscodeEditView.InputMode.NEW_PASSCODE)
         )
 
         assertThat(

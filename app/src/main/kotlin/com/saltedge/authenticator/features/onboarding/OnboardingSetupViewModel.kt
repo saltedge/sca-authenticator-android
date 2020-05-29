@@ -30,7 +30,7 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
-import com.saltedge.authenticator.widget.passcode.PasscodeInputView
+import com.saltedge.authenticator.widget.passcode.PasscodeEditView
 
 class OnboardingSetupViewModel(
     val appContext: Context,
@@ -49,7 +49,7 @@ class OnboardingSetupViewModel(
     var pageIndicator = MutableLiveData<Int>()
         private set
 
-    var setPasscodeInputMode = MutableLiveData<PasscodeInputView.InputMode>()
+    var setPasscodeInputMode = MutableLiveData<PasscodeEditView.InputMode>()
         private set
 
     var showWarningDialogWithMessage = MutableLiveData<String>()
@@ -99,10 +99,10 @@ class OnboardingSetupViewModel(
     }
 
     fun reEnterPasscode() {
-        updateSetupViews(inputMode = PasscodeInputView.InputMode.NEW_PASSCODE)
+        updateSetupViews(inputMode = PasscodeEditView.InputMode.NEW_PASSCODE)
     }
 
-    fun enteredNewPasscode(inputMode: PasscodeInputView.InputMode) {
+    fun enteredNewPasscode(inputMode: PasscodeEditView.InputMode) {
         updateSetupViews(inputMode)
     }
 
@@ -116,7 +116,7 @@ class OnboardingSetupViewModel(
     }
 
     fun passcodeInputCanceledByUser() {
-        val inputMode = PasscodeInputView.InputMode.NEW_PASSCODE
+        val inputMode = PasscodeEditView.InputMode.NEW_PASSCODE
         setPasscodeInputMode.postValue(inputMode)
         updateSetupViews(inputMode)
     }
@@ -125,21 +125,21 @@ class OnboardingSetupViewModel(
         position == onboardingViewModels.lastIndex
 
     private fun showPasscodeInput() {
-        val inputMode = PasscodeInputView.InputMode.NEW_PASSCODE
+        val inputMode = PasscodeEditView.InputMode.NEW_PASSCODE
         setupLayoutVisibility.value = View.VISIBLE
         onboardingLayoutVisibility.value = View.GONE
         setPasscodeInputMode.postValue(inputMode)
         updateSetupViews(inputMode)
     }
 
-    private fun updateSetupViews(inputMode: PasscodeInputView.InputMode) {
+    private fun updateSetupViews(inputMode: PasscodeEditView.InputMode) {
         headerTitle.value = getSetupTitleResId(inputMode)
     }
 
     private fun getSetupTitleResId(
-        passcodeInputMode: PasscodeInputView.InputMode?
+        passcodeInputMode: PasscodeEditView.InputMode?
     ): Int {
-        return if (passcodeInputMode == PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE) {
+        return if (passcodeInputMode == PasscodeEditView.InputMode.REPEAT_NEW_PASSCODE) {
             R.string.onboarding_secure_app_passcode_repeat
         } else R.string.onboarding_secure_app_passcode_create
     }

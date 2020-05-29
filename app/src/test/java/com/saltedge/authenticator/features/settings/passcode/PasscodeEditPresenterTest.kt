@@ -22,7 +22,7 @@ package com.saltedge.authenticator.features.settings.passcode
 
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
-import com.saltedge.authenticator.widget.passcode.PasscodeInputView
+import com.saltedge.authenticator.widget.passcode.PasscodeEditView
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -58,7 +58,7 @@ class PasscodeEditPresenterTest {
         presenter.onViewCreated()
 
         Mockito.verify(mockView).initInputMode(
-            mode = PasscodeInputView.InputMode.CHECK_PASSCODE,
+            mode = PasscodeEditView.InputMode.CHECK_PASSCODE,
             passcode = "1357"
         )
         Mockito.verify(mockView).updateViewContent(
@@ -79,7 +79,7 @@ class PasscodeEditPresenterTest {
         presenter.enteredCurrentPasscode()
 
         Mockito.verify(mockView).initInputMode(
-            mode = PasscodeInputView.InputMode.NEW_PASSCODE,
+            mode = PasscodeEditView.InputMode.NEW_PASSCODE,
             passcode = ""
         )
         Mockito.verify(mockView).updateViewContent(
@@ -92,12 +92,12 @@ class PasscodeEditPresenterTest {
     @Throws(Exception::class)
     fun enteredNewPasscodeTest() {
         val presenter = createPresenter(viewContract = null)
-        presenter.enteredNewPasscode(PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE)
+        presenter.enteredNewPasscode(PasscodeEditView.InputMode.REPEAT_NEW_PASSCODE)
 
         Mockito.verifyNoMoreInteractions(mockView)
 
         presenter.viewContract = mockView
-        presenter.enteredNewPasscode(PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE)
+        presenter.enteredNewPasscode(PasscodeEditView.InputMode.REPEAT_NEW_PASSCODE)
 
         Mockito.verify(mockView).updateViewContent(
             titleTextResId = R.string.settings_passcode_repeat_new,
@@ -112,7 +112,7 @@ class PasscodeEditPresenterTest {
         Mockito.doReturn(true).`when`(mockPasscodeTools).savePasscode(passcode = "9753")
         val presenter = createPresenter(viewContract = object : PasscodeEditContract.View {
             override fun showInfo(messageResId: Int) {}
-            override fun initInputMode(mode: PasscodeInputView.InputMode, passcode: String) {}
+            override fun initInputMode(mode: PasscodeEditView.InputMode, passcode: String) {}
             override fun updateViewContent(titleTextResId: Int, positiveActionTextResId: Int) {}
             override fun showProgress() {}
             override fun closeView() {}
@@ -149,7 +149,7 @@ class PasscodeEditPresenterTest {
         Mockito.verify(mockView).showWarning(R.string.errors_contact_support)
     }
 
-    private fun createPresenter(viewContract: PasscodeEditContract.View? = null): PasscodeEditPresenter {
-        return PasscodeEditPresenter(mockPasscodeTools).apply { this.viewContract = viewContract }
+    private fun createPresenter(viewContract: PasscodeEditContract.View? = null): PasscodeEditViewModel {
+        return PasscodeEditViewModel(mockPasscodeTools).apply { this.viewContract = viewContract }
     }
 }
