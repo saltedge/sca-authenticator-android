@@ -27,8 +27,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.ConnectivityReceiverAbs
-import com.saltedge.authenticator.app.NetworkStateChangeListener
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.features.menu.MenuItemData
@@ -46,11 +44,9 @@ import com.saltedge.authenticator.tools.applyPreferenceLocale
 
 class MainActivityViewModel(
     val appContext: Context,
-    val realmManager: RealmManagerAbs,
-    val connectivityReceiver: ConnectivityReceiverAbs
+    val realmManager: RealmManagerAbs
 ) : ViewModel(),
     LifecycleObserver,
-    NetworkStateChangeListener,
     NewAuthorizationListener,
     ActivityComponentsContract
 {
@@ -66,7 +62,6 @@ class MainActivityViewModel(
     val onShowConnectEvent = MutableLiveData<ViewModelEvent<ConnectAppLinkData>>()
     val onShowSubmitActionEvent = MutableLiveData<ViewModelEvent<ActionAppLinkData>>()
 
-    val internetConnectionWarningVisibility = MutableLiveData<Int>()
     val appBarTitle = MutableLiveData<String>()
     val appBarBackActionImageResource = MutableLiveData<ResId>(R.drawable.ic_appbar_action_back)
     val appBarBackActionVisibility = MutableLiveData<Int>(View.GONE)
@@ -97,20 +92,7 @@ class MainActivityViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onLifeCycleResume() {
-        connectivityReceiver.addNetworkStateChangeListener(this)
         appContext.applyPreferenceLocale()
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    fun onLifeCyclePause() {
-        connectivityReceiver.removeNetworkStateChangeListener(this)
-    }
-
-    /**
-     * Handle Network connection changes
-     */
-    override fun onNetworkConnectionChanged(isConnected: Boolean) {
-        internetConnectionWarningVisibility.postValue(if (isConnected) View.GONE else View.VISIBLE)
     }
 
     /**

@@ -149,10 +149,6 @@ class MainActivity : LockableActivity(),
                 //TODO show submit action
             }
         })
-
-        viewModel.internetConnectionWarningVisibility.observe(this, Observer {
-            //TODO update internet connection warning visibility
-        })
     }
 }
 

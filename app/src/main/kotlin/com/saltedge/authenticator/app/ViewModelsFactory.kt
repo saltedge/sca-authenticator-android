@@ -71,8 +71,7 @@ class ViewModelsFactory @Inject constructor(
             modelClass.isAssignableFrom(MainActivityViewModel::class.java) -> {
                 return MainActivityViewModel(
                     appContext = appContext,
-                    realmManager = realmManager,
-                    connectivityReceiver = connectivityReceiver
+                    realmManager = realmManager
                 ) as T
             }
             modelClass.isAssignableFrom(OnboardingSetupViewModel::class.java) -> {
@@ -92,7 +91,8 @@ class ViewModelsFactory @Inject constructor(
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,
                     cryptoTools = cryptoTools,
-                    apiManager = apiManager
+                    apiManager = apiManager,
+                    connectivityReceiver = connectivityReceiver
                 ) as T
             }
             modelClass.isAssignableFrom(AuthorizationDetailsViewModel::class.java) -> {

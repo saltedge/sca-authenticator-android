@@ -95,8 +95,8 @@
     <string name="connections_new_connection">New connection</string>
     <string name="connections_feature_title">Connections</string>
     <string name="choose_connection_feature_title">Choose connection</string>
-    <string name="connections_list_no_connections">No Connections</string>
-    <string name="connections_list_no_connections_description">Seems like you didn’t connect to your provider yet. Add new connection to securely authorize your actions.</string>
+    <string name="connections_list_empty_title">No Connections</string>
+    <string name="connections_list_empty_description">Seems like you didn’t connect to your provider yet. Add new connection to securely authorize your actions.</string>
     <string name="connections_list_delete_all_connections">Delete all connections and stop receiving confirmations until another Provider is connected.</string>
     <string name="connection_status_connected_on">Connected on</string>
     <string name="connection_status_inactive">Inactive connection. Remove or reconnect.</string>
@@ -115,8 +115,10 @@
 
     <string name="authorizations_feature_title">Authorizations</string>
     <string name="authorization_feature_title">Authorization</string>
-    <string name="authorizations_nothing_confirm">Nothing to authorize</string>
-    <string name="authorizations_nothing_confirm_description">You do not have any active authorization request yet. Once initiate an action, you will have a few minutes to authorize it.</string>
+    <string name="authorizations_empty_title">Nothing to authorize</string>
+    <string name="authorizations_empty_description">You do not have any active authorization request yet. Once initiate an action, you will have a few minutes to authorize it.</string>
+    <string name="authorizations_no_internet_title">You are offline</string>
+    <string name="authorizations_no_internet_description">Please check your network connection.</string>
     <string name="authorizations_loading">Loading…</string>
     <string name="authorizations_loading_description">Please wait while authorization is loading</string>
     <string name="authorizations_processing">Authorizing</string>
