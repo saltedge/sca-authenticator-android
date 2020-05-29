@@ -132,7 +132,6 @@ class AuthorizationsListViewModelTest {
         lifecycle.currentState = Lifecycle.State.CREATED//move to stop state (possible only after RESUMED state)
 
         //then
-        assertThat(viewModel.event, equalTo(Lifecycle.Event.ON_STOP))
         verify(mockConnectivityReceiver).removeNetworkStateChangeListener(viewModel)
     }
 
