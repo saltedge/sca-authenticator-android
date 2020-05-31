@@ -28,22 +28,21 @@ import com.saltedge.authenticator.features.settings.passcode.saver.PasscodeSaver
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.tools.ResId
-import com.saltedge.authenticator.widget.passcode.PasscodeEditView
-import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
+import com.saltedge.authenticator.widget.passcode.PasscodeInputListener
+import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
 
 class PasscodeEditViewModel(
     private val passcodeTools: PasscodeToolsAbs
 ) : ViewModel(),
     LifecycleObserver,
-    PasscodeInputViewListener,
+    PasscodeInputListener,
     PasscodeSaveResultListener
 {
     private val savedPasscode: String
         get() = passcodeTools.getPasscode()
     val titleRes = MutableLiveData<ResId>(R.string.settings_passcode_input_current)
-//    val positiveActionTextRes = MutableLiveData<ResId>(R.string.actions_next)//TODO check usage
-    val passcodeInputMode = MutableLiveData<PasscodeEditView.InputMode>(PasscodeEditView.InputMode.CHECK_PASSCODE)
-    val currentPasscode = MutableLiveData<String>("")
+    val passcodeInputMode = MutableLiveData<PasscodeInputMode>(PasscodeInputMode.CHECK_PASSCODE)
+    val initialPasscode = MutableLiveData<String>(savedPasscode)
     val loaderVisibility = MutableLiveData<Int>()
     val warningEvent = MutableLiveData<ViewModelEvent<ResId>>()
     val infoEvent = MutableLiveData<ViewModelEvent<ResId>>()
@@ -58,7 +57,23 @@ class PasscodeEditViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onLifecycleStart() {
-        updateModeAndPasscode(newMode = PasscodeEditView.InputMode.CHECK_PASSCODE, passcode = savedPasscode)
+        updateMode(newMode = PasscodeInputMode.CHECK_PASSCODE)
+        initialPasscode.postValue(savedPasscode)
+    }
+
+    override fun onInputValidPasscode() {
+        updateMode(newMode = PasscodeInputMode.NEW_PASSCODE)
+    }
+
+    override fun onInputInvalidPasscode(mode: PasscodeInputMode) {}
+
+    override fun onNewPasscodeEntered(mode: PasscodeInputMode, passcode: String) {
+        titleRes.postValue(getTitleTextResId(mode))
+    }
+
+    override fun onNewPasscodeConfirmed(passcode: String) {
+        loaderVisibility.postValue(View.VISIBLE)
+        PasscodeSaver(passcodeTools, callback = this).runNewTask(passcode)
     }
 
     override fun passcodeSavedWithResult(result: Boolean) {
@@ -75,41 +90,16 @@ class PasscodeEditViewModel(
         closeViewEvent.postValue(ViewModelEvent(Unit))
     }
 
-    override fun onEnteredPasscodeIsValid() {
-        updateModeAndPasscode(newMode = PasscodeEditView.InputMode.NEW_PASSCODE, passcode = "")
-    }
-
-    override fun onEnteredPasscodeIsInvalid() {}
-
-    override fun onNewPasscodeEntered(mode: PasscodeEditView.InputMode, passcode: String) {
-        titleRes.postValue(getTitleTextResId(mode))
-    }
-
-    override fun onNewPasscodeConfirmed(passcode: String) {
-        loaderVisibility.postValue(View.VISIBLE)
-        PasscodeSaver(passcodeTools, callback = this).runNewTask(passcode)
-    }
-
-    private fun updateModeAndPasscode(newMode: PasscodeEditView.InputMode, passcode: String) {
+    private fun updateMode(newMode: PasscodeInputMode) {
         passcodeInputMode.postValue(newMode)
-        currentPasscode.postValue(passcode)
         titleRes.postValue(getTitleTextResId(newMode))
     }
 
-    private fun getTitleTextResId(inputMode: PasscodeEditView.InputMode): ResId {
+    private fun getTitleTextResId(inputMode: PasscodeInputMode): ResId {
         return when (inputMode) {
-            PasscodeEditView.InputMode.CHECK_PASSCODE -> R.string.settings_passcode_input_current
-            PasscodeEditView.InputMode.NEW_PASSCODE -> R.string.settings_passcode_input_new
-            PasscodeEditView.InputMode.REPEAT_NEW_PASSCODE -> R.string.settings_passcode_repeat_new
+            PasscodeInputMode.CHECK_PASSCODE -> R.string.settings_passcode_input_current
+            PasscodeInputMode.NEW_PASSCODE -> R.string.passcode_input_new_passcode
+            PasscodeInputMode.CONFIRM_PASSCODE -> R.string.passcode_repeat_new_passcode
         }
     }
-
-//    private fun getPositiveTextResId(inputMode: PasscodeEditView.InputMode): Int {
-//        return when (inputMode) {
-//            PasscodeEditView.InputMode.CHECK_PASSCODE, PasscodeEditView.InputMode.NEW_PASSCODE -> {
-//                R.string.actions_next
-//            }
-//            PasscodeEditView.InputMode.REPEAT_NEW_PASSCODE -> android.R.string.ok
-//        }
-//    }
 }

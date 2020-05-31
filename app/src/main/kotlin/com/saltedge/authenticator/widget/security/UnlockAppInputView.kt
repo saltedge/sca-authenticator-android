@@ -27,19 +27,19 @@ import android.view.View
 import android.widget.LinearLayout
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.setVisible
-import com.saltedge.authenticator.widget.passcode.PasscodeEditView
-import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
+import com.saltedge.authenticator.widget.passcode.PasscodeInputListener
+import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
 import kotlinx.android.synthetic.main.view_unlock.view.*
 
 class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
-    View.OnClickListener {
-
+    View.OnClickListener
+{
     var biometricsActionIsAvailable: Boolean
         get() = passcodeInputView?.biometricsActionIsAvailable ?: false
         set(value) {
             passcodeInputView?.biometricsActionIsAvailable = value
         }
-    var passcodeInputViewListener: PasscodeInputViewListener?
+    var passcodeInputViewListener: PasscodeInputListener?
         get() = passcodeInputView?.listener
         set(value) {
             passcodeInputView?.listener = value
@@ -49,29 +49,27 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
         LayoutInflater.from(context).inflate(R.layout.view_unlock, this)
         clearView?.setOnClickListener(this)
         backActionImageView?.setOnClickListener(this)
+        passcodeInputView?.title = context.getString(R.string.settings_passcode_input_current)
     }
 
     override fun onClick(view: View?) {
         val viewId = view?.id ?: return
         when (viewId) {
             R.id.clearView -> passcodeInputViewListener?.onClearDataActionSelected()
-            R.id.backActionImageView -> setInputViewVisibility(show = true)
+            R.id.backActionImageView -> {
+                setInputViewVisibility(show = true)
+                setResetPasscodeViewVisibility(show = false)
+            }
         }
     }
 
     fun setSavedPasscode(currentPasscode: String) {
-        passcodeInputView?.updateInputModeAndPasscode(
-            PasscodeEditView.InputMode.CHECK_PASSCODE,
-            currentPasscode
-        )
+        passcodeInputView?.inputMode = PasscodeInputMode.CHECK_PASSCODE
+        passcodeInputView?.initialPasscode = currentPasscode
     }
 
-    fun setDescriptionText(text: String) {
-        descriptionView?.text = text
-    }
-
-    fun setDescriptionText(textResId: Int) {
-        descriptionView?.setText(textResId)
+    fun setErrorText(text: String) {
+        passcodeInputView?.error = text
     }
 
     fun setInputViewVisibility(show: Boolean) {
@@ -82,10 +80,5 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
     fun setResetPasscodeViewVisibility(show: Boolean) {
         appLogoView?.setVisible(!show)
         resetPasscodeLayout?.setVisible(show)
-        showErrorMessage(show)
-    }
-
-    fun showErrorMessage(show: Boolean) {
-        descriptionView?.setVisible(show)
     }
 }

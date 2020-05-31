@@ -32,31 +32,30 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.setVisible
-import kotlinx.android.synthetic.main.view_pinpad.view.*
+import kotlinx.android.synthetic.main.view_keypad.view.*
 
 /**
- * The class contains button panel for entering a passcode
+ * The class contains button panel for entering a passcode and extra actions
  */
 class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
     View.OnClickListener {
 
     var clickListener: KeypadClickListener? = null
-    var passcodeInputViewListener: PasscodeInputViewListener? = null
 
     private var vibrator: Vibrator? = context.getSystemService(VIBRATOR_SERVICE) as? Vibrator?
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_pinpad, this)
+        LayoutInflater.from(context).inflate(R.layout.view_keypad, this)
         for (i in 0..pinpadLayout.childCount) pinpadLayout.getChildAt(i)?.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {
-        if (view == null || !isEnabled) return
+        if (!isEnabled) return
         vibrateOnKeyClick()
-        when (view.id) {
-            R.id.fingerActionView -> passcodeInputViewListener?.onBiometricInputSelected()
+        when (view?.id ?: return) {
+            R.id.fingerActionView -> clickListener?.onFingerKeyClick()
             R.id.deleteActionView -> clickListener?.onDeleteKeyClick()
-            R.id.forgotActionView -> passcodeInputViewListener?.onForgotActionSelected()
+            R.id.forgotActionView -> clickListener?.onForgotKeyClick()
             else -> clickListener?.onDigitKeyClick((view as? TextView)?.text.toString())
         }
     }
@@ -70,7 +69,7 @@ class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
     @Suppress("DEPRECATION")
     private fun vibrateOnKeyClick() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator?.vibrate(VibrationEffect.createOneShot(40, 32))
+            vibrator?.vibrate(VibrationEffect.createOneShot(30, 32))
         } else vibrator?.vibrate(10)
     }
 
@@ -85,7 +84,9 @@ class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
     }
 
     interface KeypadClickListener {
-        fun onDeleteKeyClick()
         fun onDigitKeyClick(value: String = "")
+        fun onFingerKeyClick()
+        fun onForgotKeyClick()
+        fun onDeleteKeyClick()
     }
 }

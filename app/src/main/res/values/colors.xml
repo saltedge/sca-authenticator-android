@@ -75,7 +75,7 @@
     <!--New aliases-->
     <color name="system_bar_color">@color/primary</color>
     <color name="theme_background">@android:color/white</color>
-    <color name="info_message_background">@color/grey_light_extra</color>
+    <color name="passcode_label_background">@color/grey_light_extra</color>
     <color name="blue_text">@color/primary_dark</color>
     <color name="onboarding_dots_background">@color/primary</color>
     <color name="passcode_dots_background">@color/grey_40</color>

@@ -33,7 +33,6 @@ import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.finishFragment
 import com.saltedge.authenticator.tools.showWarningDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment
-import com.saltedge.authenticator.widget.passcode.PasscodeEditView
 import kotlinx.android.synthetic.main.fragment_edit_passcode.*
 import javax.inject.Inject
 
@@ -62,16 +61,16 @@ class PasscodeEditFragment : BaseFragment() {
             titleResId = R.string.settings_passcode,
             backActionImageResId = R.drawable.ic_appbar_action_back
         )
-        passcodeInputView?.biometricsActionIsAvailable = false
+        passcodeEditView?.biometricsActionIsAvailable = false
     }
 
     override fun onStart() {
         super.onStart()
-        passcodeInputView?.listener = viewModel
+        passcodeEditView?.listener = viewModel
     }
 
     override fun onStop() {
-        passcodeInputView?.listener = null
+        passcodeEditView?.listener = null
         super.onStop()
     }
 
@@ -80,19 +79,16 @@ class PasscodeEditFragment : BaseFragment() {
         viewModel.bindLifecycleObserver(lifecycle = lifecycle)
 
         viewModel.titleRes.observe(this, Observer {
-            titleView?.setText(it)
+            passcodeEditView?.title = getString(it)
         })
-//        viewModel.positiveActionTextRes.observe(this, Observer {
-//            passcodeInputView?.setPositiveActionText(it)
-//        })
         viewModel.loaderVisibility.observe(this, Observer {
             loaderView?.visibility = it
         })
         viewModel.passcodeInputMode.observe(this, Observer {
-            passcodeInputView?.inputMode = it
+            passcodeEditView?.inputMode = it
         })
-        viewModel.currentPasscode.observe(this, Observer {
-            passcodeInputView?.newCurrentPasscode(it)
+        viewModel.initialPasscode.observe(this, Observer {
+            passcodeEditView?.initialPasscode = it
         })
         viewModel.infoEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { messageRes ->

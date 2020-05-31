@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,13 @@
  */
 package com.saltedge.authenticator.features.settings.passcode
 
+import android.view.View
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
-import com.saltedge.authenticator.widget.passcode.PasscodeEditView
-import org.junit.Assert
+import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
+import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
@@ -34,95 +37,52 @@ import java.util.concurrent.TimeUnit
 @RunWith(RobolectricTestRunner::class)
 class PasscodeEditPresenterTest {
 
-    private val mockView = Mockito.mock(PasscodeEditContract.View::class.java)
     private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)
     private var doneSignal: CountDownLatch? = null
+    private var viewModel: PasscodeEditViewModel
 
-    @Test
-    @Throws(Exception::class)
-    fun constructorTest() {
-        Assert.assertNull(createPresenter(viewContract = null).viewContract)
-        Assert.assertNotNull(createPresenter(viewContract = mockView).viewContract)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onViewCreatedTest() {
+    init {
         Mockito.doReturn("1357").`when`(mockPasscodeTools).getPasscode()
-        val presenter = createPresenter(viewContract = null)
-        presenter.onViewCreated()
-
-        Mockito.verifyNoMoreInteractions(mockView)
-
-        presenter.viewContract = mockView
-        presenter.onViewCreated()
-
-        Mockito.verify(mockView).initInputMode(
-            mode = PasscodeEditView.InputMode.CHECK_PASSCODE,
-            passcode = "1357"
-        )
-        Mockito.verify(mockView).updateViewContent(
-            titleTextResId = R.string.settings_passcode_input_current,
-            positiveActionTextResId = R.string.actions_next
-        )
+        viewModel = PasscodeEditViewModel(mockPasscodeTools)
     }
 
     @Test
     @Throws(Exception::class)
-    fun enteredCurrentPasscodeTest() {
-        val presenter = createPresenter(viewContract = null)
-        presenter.enteredCurrentPasscode()
+    fun onLifecycleStartTest() {
+        viewModel.onLifecycleStart()
 
-        Mockito.verifyNoMoreInteractions(mockView)
-
-        presenter.viewContract = mockView
-        presenter.enteredCurrentPasscode()
-
-        Mockito.verify(mockView).initInputMode(
-            mode = PasscodeEditView.InputMode.NEW_PASSCODE,
-            passcode = ""
-        )
-        Mockito.verify(mockView).updateViewContent(
-            titleTextResId = R.string.settings_passcode_input_new,
-            positiveActionTextResId = R.string.actions_next
-        )
+        assertThat(viewModel.initialPasscode.value, equalTo("1357"))
+        assertThat(viewModel.passcodeInputMode.value, equalTo(PasscodeInputMode.CHECK_PASSCODE))
+        assertThat(viewModel.titleRes.value, equalTo(R.string.settings_passcode_input_current))
     }
 
     @Test
     @Throws(Exception::class)
-    fun enteredNewPasscodeTest() {
-        val presenter = createPresenter(viewContract = null)
-        presenter.enteredNewPasscode(PasscodeEditView.InputMode.REPEAT_NEW_PASSCODE)
+    fun onInputValidPasscodeTest() {
+        viewModel.onInputValidPasscode()
 
-        Mockito.verifyNoMoreInteractions(mockView)
-
-        presenter.viewContract = mockView
-        presenter.enteredNewPasscode(PasscodeEditView.InputMode.REPEAT_NEW_PASSCODE)
-
-        Mockito.verify(mockView).updateViewContent(
-            titleTextResId = R.string.settings_passcode_repeat_new,
-            positiveActionTextResId = android.R.string.ok
-        )
-        Mockito.verifyNoMoreInteractions(mockView)
+        assertThat(viewModel.passcodeInputMode.value, equalTo(PasscodeInputMode.NEW_PASSCODE))
+        assertThat(viewModel.titleRes.value, equalTo(R.string.passcode_input_new_passcode))
     }
 
     @Test
     @Throws(Exception::class)
-    fun newPasscodeConfirmedTest() {
+    fun onNewPasscodeEnteredTest() {
+        viewModel.onNewPasscodeEntered(PasscodeInputMode.CONFIRM_PASSCODE, "1111")
+
+        assertThat(viewModel.titleRes.value, equalTo(R.string.passcode_repeat_new_passcode))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onNewPasscodeConfirmedTest() {
         Mockito.doReturn(true).`when`(mockPasscodeTools).savePasscode(passcode = "9753")
-        val presenter = createPresenter(viewContract = object : PasscodeEditContract.View {
-            override fun showInfo(messageResId: Int) {}
-            override fun initInputMode(mode: PasscodeEditView.InputMode, passcode: String) {}
-            override fun updateViewContent(titleTextResId: Int, positiveActionTextResId: Int) {}
-            override fun showProgress() {}
-            override fun closeView() {}
-            override fun showWarning(messageResId: Int) {}
-            override fun hideProgress() {
-                doneSignal!!.countDown()
-            }
-        })
+        viewModel.loaderVisibility.observeForever {
+            if (viewModel.loaderVisibility.value == View.GONE) doneSignal!!.countDown()
+        }
+
         doneSignal = CountDownLatch(1)
-        presenter.newPasscodeConfirmed(passcode = "9753")
+        viewModel.onNewPasscodeConfirmed(passcode = "9753")
         doneSignal!!.await(3, TimeUnit.SECONDS)
 
         Mockito.verify(mockPasscodeTools).savePasscode(passcode = "9753")
@@ -130,26 +90,26 @@ class PasscodeEditPresenterTest {
 
     @Test
     @Throws(Exception::class)
-    fun passcodeSavedWithResultTest() {
-        val presenter = createPresenter(viewContract = null)
-        presenter.passcodeSavedWithResult(result = true)
+    fun passcodeSavedWithResultTestCase1() {
+        viewModel.passcodeSavedWithResult(result = true)
 
-        Mockito.verifyNoMoreInteractions(mockView)
-
-        presenter.viewContract = mockView
-        presenter.passcodeSavedWithResult(result = true)
-
-        Mockito.verify(mockView).hideProgress()
-        Mockito.verify(mockView).closeView()
-
-        Mockito.clearInvocations(mockView)
-        presenter.passcodeSavedWithResult(result = false)
-
-        Mockito.verify(mockView).hideProgress()
-        Mockito.verify(mockView).showWarning(R.string.errors_contact_support)
+        assertThat(viewModel.infoEvent.value, equalTo(ViewModelEvent(R.string.settings_passcode_success)))
+        assertThat(viewModel.closeViewEvent.value, equalTo(ViewModelEvent(Unit)))
     }
 
-    private fun createPresenter(viewContract: PasscodeEditContract.View? = null): PasscodeEditViewModel {
-        return PasscodeEditViewModel(mockPasscodeTools).apply { this.viewContract = viewContract }
+    @Test
+    @Throws(Exception::class)
+    fun passcodeSavedWithResultTestCase2() {
+        viewModel.passcodeSavedWithResult(result = false)
+
+        assertThat(viewModel.warningEvent.value, equalTo(ViewModelEvent(R.string.errors_contact_support)))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onPasscodeInputCanceledByUserTest() {
+        viewModel.onPasscodeInputCanceledByUser()
+
+        assertThat(viewModel.closeViewEvent.value, equalTo(ViewModelEvent(Unit)))
     }
 }

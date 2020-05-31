@@ -25,12 +25,12 @@ package com.saltedge.authenticator.widget.passcode
  *
  * @see PasscodeEditView
  */
-interface PasscodeInputViewListener {
-    fun onBiometricInputSelected() {}
+interface PasscodeInputListener {
+    fun onBiometricActionSelected() {}
     fun onPasscodeInputCanceledByUser()
-    fun onEnteredPasscodeIsValid()
-    fun onEnteredPasscodeIsInvalid()
-    fun onNewPasscodeEntered(mode: PasscodeEditView.InputMode, passcode: String)
+    fun onInputValidPasscode()
+    fun onInputInvalidPasscode(mode: PasscodeInputMode)
+    fun onNewPasscodeEntered(mode: PasscodeInputMode, passcode: String)
     fun onNewPasscodeConfirmed(passcode: String)
     fun onForgotActionSelected() {}
     fun onClearDataActionSelected() {}

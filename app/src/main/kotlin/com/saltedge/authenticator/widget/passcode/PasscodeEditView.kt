@@ -26,105 +26,129 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.LinearLayout
 import androidx.annotation.StringRes
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.setVisible
-import kotlinx.android.synthetic.main.view_passcode_input.view.*
+import kotlinx.android.synthetic.main.view_passcode_edit.view.*
+
+enum class PasscodeInputMode {
+    CHECK_PASSCODE, NEW_PASSCODE, CONFIRM_PASSCODE
+}
 
 /**
- * Class container for PasscodeLabelView and PinpadView
+ * Passcode input container
  *
- * @see PasscodeLabelView
  * @see KeypadView
  */
 class PasscodeEditView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
-    PasscodeLabelView.PasscodeInputResultListener {
-
+    KeypadView.KeypadClickListener
+{
     private var vibrator: Vibrator? = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator?
-
-    init {
-        LayoutInflater.from(context).inflate(R.layout.view_passcode_input, this)
-        setupViews()
-    }
-
-    var inputMode = InputMode.CHECK_PASSCODE
-    private var currentPasscode: String = ""
-    var listener: PasscodeInputViewListener? = null
+    var initialPasscode: String = ""
+    var title: String
+        get() = titleView?.text?.toString() ?: ""
+        set(value) {
+            titleView?.text = value
+        }
+    var error: String
+        get() = descriptionView?.text?.toString() ?: ""
+        set(value) {
+            showError(value)
+        }
+    var inputMode = PasscodeInputMode.CHECK_PASSCODE
         set(value) {
             field = value
-            pinpadView?.passcodeInputViewListener = value
+            updatePasscodeOutput("")
         }
+    var listener: PasscodeInputListener? = null
     var biometricsActionIsAvailable: Boolean = false
         set(value) {
             field = value
-            pinpadView?.setupFingerAction(active = value)
+            keypadView?.setupFingerAction(active = value)
         }
 
-    fun updateInputModeAndPasscode(inputMode: InputMode, newCurrentPasscode: String = "") {
-        this.inputMode = inputMode
-        newCurrentPasscode(newCurrentPasscode = newCurrentPasscode)
+    init {
+        LayoutInflater.from(context).inflate(R.layout.view_passcode_edit, this)
+        setupViews()
     }
 
-    fun newCurrentPasscode(newCurrentPasscode: String) {
-        this.currentPasscode = if (inputMode == InputMode.NEW_PASSCODE) "" else newCurrentPasscode
-        passcodeLabelView?.clearAll()
+    override fun onDigitKeyClick(value: String) {
+        val text: String = passcodeLabelView?.text?.toString() ?: return
+        updatePasscodeOutput(text + value)
     }
 
-    override fun onPasscodeInputFinished(passcode: String) {
-        if (passcode.isEmpty()) return
-        when (inputMode) {
-            InputMode.CHECK_PASSCODE -> {
-                if (currentPasscode == passcode) {
-                    listener?.onEnteredPasscodeIsValid()
-                } else {
-                    passcodeLabelView?.clearAll()
-                    onInputError(R.string.errors_wrong_passcode)
-                    listener?.onEnteredPasscodeIsInvalid()
-                }
-            }
-            InputMode.NEW_PASSCODE -> {
-                infoMessageView?.setVisible(show = false)
-                run {
-                    updateInputModeAndPasscode(
-                        inputMode = InputMode.REPEAT_NEW_PASSCODE,
-                        newCurrentPasscode = passcode
-                    )
-                    listener?.onNewPasscodeEntered(
-                        mode = InputMode.REPEAT_NEW_PASSCODE,
-                        passcode = currentPasscode
-                    )
-                }
-            }
-            InputMode.REPEAT_NEW_PASSCODE -> {
-                if (currentPasscode == passcode) {
-                    listener?.onNewPasscodeConfirmed(passcode = currentPasscode)
-                } else {
-                    errorVibrate()
-                    updateInputModeAndPasscode(inputMode = InputMode.NEW_PASSCODE)
-                    listener?.onEnteredPasscodeIsInvalid()
-                    onInputError(R.string.errors_passcode_not_match)
-                }
-            }
-        }
+    override fun onFingerKeyClick() {
+        listener?.onBiometricActionSelected()
     }
 
-    override fun onPasscodeLabelChanged(passcode: String) {
-        if (passcode.isEmpty()) pinpadView?.showFingerView() else pinpadView?.showDeleteView()
+    override fun onForgotKeyClick() {
+        listener?.onForgotActionSelected()
+    }
+
+    override fun onDeleteKeyClick() {
+        val text: String = passcodeLabelView?.text?.toString() ?: return
+        if (text.isNotEmpty()) updatePasscodeOutput(text.take(text.length - 1))
     }
 
     private fun setupViews() {
-        infoMessageView?.setVisible(show = false)
-        passcodeLabelView?.clearAll()
-        pinpadView?.setupFingerAction(active = biometricsActionIsAvailable)
-        passcodeLabelView?.resultListener = this
-        pinpadView?.clickListener = passcodeLabelView
+        descriptionView?.visibility= View.INVISIBLE
+        updatePasscodeOutput("")
+        keypadView?.setupFingerAction(active = biometricsActionIsAvailable)
+        keypadView?.clickListener = this
+        submitView?.setOnClickListener {
+            onPasscodeInputFinished(passcode = passcodeLabelView?.text?.toString() ?: "")
+        }
     }
 
-    private fun onInputError(@StringRes errorName: ResId) {
-        infoMessageView?.setVisible(show = true)
-        infoMessageView?.setText(errorName)
+    private fun updatePasscodeOutput(text: String) {
+        passcodeLabelView?.setText(text)
+        submitView?.setVisible(show = (4..16).contains(text.length))
+        keypadView?.let {
+            if (text.isEmpty() && biometricsActionIsAvailable) it.showFingerView() else it.showDeleteView()
+        }
+    }
+
+    private fun onPasscodeInputFinished(passcode: String) {
+        when (inputMode) {
+            PasscodeInputMode.CHECK_PASSCODE -> {
+                if (initialPasscode == passcode) listener?.onInputValidPasscode()
+                else {
+                    inputMode = PasscodeInputMode.CHECK_PASSCODE
+                    showError(R.string.errors_wrong_passcode)
+                    listener?.onInputInvalidPasscode(inputMode)
+                }
+            }
+            PasscodeInputMode.NEW_PASSCODE -> {
+                descriptionView?.visibility= View.INVISIBLE
+                initialPasscode = passcode
+                inputMode = PasscodeInputMode.CONFIRM_PASSCODE
+                listener?.onNewPasscodeEntered(inputMode, passcode)
+            }
+            PasscodeInputMode.CONFIRM_PASSCODE -> {
+                if (initialPasscode == passcode) listener?.onNewPasscodeConfirmed(passcode = passcode)
+                else {
+                    inputMode = PasscodeInputMode.NEW_PASSCODE
+                    showError(R.string.errors_passcode_not_match)
+                    listener?.onInputInvalidPasscode(inputMode)
+                }
+            }
+        }
+    }
+
+    private fun showError(@StringRes errorRes: ResId) {
+        showError(context.getString(errorRes))
+    }
+
+    private fun showError(error: String) {
+        descriptionView?.visibility= View.VISIBLE
+        descriptionView?.text = error
+        errorVibrate()
+        descriptionView?.animate()?.setStartDelay(3000L)?.withEndAction {
+            descriptionView?.visibility= View.INVISIBLE
+        }?.start()
     }
 
     @Suppress("DEPRECATION")
@@ -132,9 +156,5 @@ class PasscodeEditView(context: Context, attrs: AttributeSet) : LinearLayout(con
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator?.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 100, 100, 100), -1))
         } else vibrator?.vibrate(longArrayOf(0, 100, 100, 100), -1)
-    }
-
-    enum class InputMode {
-        CHECK_PASSCODE, NEW_PASSCODE, REPEAT_NEW_PASSCODE
     }
 }
