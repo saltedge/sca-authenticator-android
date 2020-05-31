@@ -62,7 +62,7 @@ abstract class LockableActivity : AppCompatActivity(),
     private val viewContract: LockableActivityContract = object : LockableActivityContract {
 
         override fun unBlockInput() {
-            enablePasscodeInput()
+            showPasscodeInputView()
         }
 
         override fun showLockWarning() {
@@ -96,7 +96,7 @@ abstract class LockableActivity : AppCompatActivity(),
         }
 
         override fun disableUnlockInput(inputAttempt: Int, remainedMinutes: Int) {
-            showWrongPasscodeErrorAndDisablePasscodeInput(remainedMinutes = remainedMinutes)
+            showWarningView(remainedMinutes = remainedMinutes)
         }
     }
 
@@ -161,10 +161,7 @@ abstract class LockableActivity : AppCompatActivity(),
     override fun onNewPasscodeConfirmed(passcode: String) {}
 
     override fun onForgotActionSelected() {
-        getUnlockAppInputView()?.let {
-            it.setInputViewVisibility(show = false)
-            it.setResetPasscodeViewVisibility(show = true)
-        }
+        showResetView()
     }
 
     override fun onClearDataActionSelected() {
@@ -218,22 +215,6 @@ abstract class LockableActivity : AppCompatActivity(),
         }
     }
 
-    private fun showWrongPasscodeErrorAndDisablePasscodeInput(remainedMinutes: Int) {
-        val wrongPasscodeMessage = getString(R.string.errors_wrong_passcode)
-        val retryMessage = resources.getQuantityString(
-            R.plurals.errors_passcode_try_again,
-            remainedMinutes,
-            remainedMinutes
-        )
-        getUnlockAppInputView()?.let {
-            //TODO set custom error view
-            it.setErrorText("$wrongPasscodeMessage\n$retryMessage")
-
-            it.setInputViewVisibility(show = false)
-            it.setResetPasscodeViewVisibility(show = false)
-        }
-    }
-
     private fun showLockWarningView() {
         snackbar = this@LockableActivity.buildWarning(
             getString(R.string.warning_application_was_locked),
@@ -252,14 +233,6 @@ abstract class LockableActivity : AppCompatActivity(),
     private fun dismissLockWarningView() {
         snackbar?.dismiss()
         snackbar = null
-    }
-
-    private fun enablePasscodeInput() {
-        getUnlockAppInputView()?.let {
-            it.biometricsActionIsAvailable = isBiometricInputReady()
-            it.setInputViewVisibility(show = true)
-            it.setResetPasscodeViewVisibility(show = false)
-        }
     }
 
     private fun unlockScreen() {
@@ -281,6 +254,37 @@ abstract class LockableActivity : AppCompatActivity(),
         presenter.clearAppData()
         finish()
         startActivity(Intent(this, OnboardingSetupActivity::class.java))
+    }
+
+    private fun showPasscodeInputView() {
+        getUnlockAppInputView()?.let {
+            it.biometricsActionIsAvailable = isBiometricInputReady()
+            it.setInputViewVisibility(show = true)
+            it.setResetPasscodeViewVisibility(show = false)
+            it.setWarningView(show = false)
+        }
+    }
+
+    private fun showResetView() {
+        getUnlockAppInputView()?.let {
+            it.setInputViewVisibility(show = false)
+            it.setResetPasscodeViewVisibility(show = true)
+            it.setWarningView(show = false)
+        }
+    }
+
+    private fun showWarningView(remainedMinutes: Int) {
+        val wrongPasscodeMessage = getString(R.string.errors_wrong_passcode)
+        val retryMessage = resources.getQuantityString(
+            R.plurals.errors_passcode_try_again,
+            remainedMinutes,
+            remainedMinutes
+        )
+        getUnlockAppInputView()?.let {
+            it.setWarningView(show = true, message = "$wrongPasscodeMessage\n$retryMessage")
+            it.setInputViewVisibility(show = false)
+            it.setResetPasscodeViewVisibility(show = false)
+        }
     }
 
     @Suppress("DEPRECATION")

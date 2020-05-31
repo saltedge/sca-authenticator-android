@@ -45,6 +45,21 @@
             android:src="@drawable/ic_app_logo" />
     </FrameLayout>
 
+    <TextView
+        android:id="@+id/warningView"
+        style="@style/Text24Primary"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topSpace"
+        app:layout_constraintVertical_weight="5"
+        android:gravity="center"
+        android:visibility="invisible"
+        android:text="@string/errors_wrong_passcode"
+        tools:text="@string/errors_wrong_passcode" />
+
     <com.saltedge.authenticator.widget.passcode.PasscodeEditView
         android:id="@+id/passcodeInputView"
         android:layout_width="match_parent"

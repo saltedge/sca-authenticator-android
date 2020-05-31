@@ -81,4 +81,9 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
         appLogoView?.setVisible(!show)
         resetPasscodeLayout?.setVisible(show)
     }
+
+    fun setWarningView(show: Boolean, message: String = "") {
+        warningView?.setVisible(show)
+        warningView?.text = message
+    }
 }
