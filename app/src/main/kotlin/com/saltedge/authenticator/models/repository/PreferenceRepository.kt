@@ -22,12 +22,13 @@ package com.saltedge.authenticator.models.repository
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
+import com.saltedge.authenticator.app.getDefaultSystemNightMode
 
 const val KEY_DATABASE_KEY = "KEY_DATABASE_KEY"
 const val KEY_LOCALE = "KEY_LOCALE"
 const val KEY_PASSCODE = "KEY_PASSCODE"
-const val KEY_FINGERPRINT = "KEY_FINGERPRINT"
+const val KEY_NIGHT_MODE = "KEY_DARK_MODE"
 const val KEY_NOTIFICATIONS = "KEY_NOTIFICATIONS"
 const val KEY_SCREENSHOT_LOCK = "KEY_SCREENSHOT_LOCK"
 const val KEY_PIN_INPUT_ATTEMPTS = "KEY_PIN_INPUT_ATTEMPTS"
@@ -37,7 +38,6 @@ const val KEY_CLOUD_MESSAGING_TOKEN = "KEY_CLOUD_MESSAGING_TOKEN"
 object PreferenceRepository : PreferenceRepositoryAbs {
 
     private var preferences: SharedPreferences? = null
-    private var fingerprintEnabledValue: Boolean? = null
 
     /**
      * Init object: PreferenceRepository
@@ -63,16 +63,17 @@ object PreferenceRepository : PreferenceRepositoryAbs {
         }
 
     /**
-     * Computed property that read the fingerprint state from preferences and saves to preferences
+     * Computed property that read/write the Dark mode state from preferences
+     * Light — MODE_NIGHT_NO
+     * Dark — MODE_NIGHT_YES
+     * System default — MODE_NIGHT_FOLLOW_SYSTEM
      *
-     * @return boolean, true if fingerprint is enabled
-     * @see saveValue
+     * @return stored night mode or default one
      */
-    override var fingerprintEnabled: Boolean
-        get() = fingerprintEnabledValue ?: preferences?.getBoolean(KEY_FINGERPRINT, false) ?: false
+    override var nightMode: Int
+        get() = preferences?.getInt(KEY_NIGHT_MODE, getDefaultSystemNightMode()) ?: getDefaultSystemNightMode()
         set(value) {
-            fingerprintEnabledValue = value
-            preferences?.saveValue(KEY_FINGERPRINT, value)
+            preferences?.saveValue(KEY_NIGHT_MODE, value)
         }
 
     /**
@@ -174,13 +175,12 @@ object PreferenceRepository : PreferenceRepositoryAbs {
     override fun clearUserPreferences() {
         preferences?.edit()
             ?.remove(KEY_PASSCODE)
-            ?.remove(KEY_FINGERPRINT)
+            ?.remove(KEY_NIGHT_MODE)
             ?.remove(KEY_NOTIFICATIONS)
             ?.remove(KEY_LOCALE)
             ?.remove(KEY_PIN_INPUT_ATTEMPTS)
             ?.remove(KEY_PIN_INPUT_TIME)
             ?.apply()
-        fingerprintEnabledValue = null
     }
 
     /**
