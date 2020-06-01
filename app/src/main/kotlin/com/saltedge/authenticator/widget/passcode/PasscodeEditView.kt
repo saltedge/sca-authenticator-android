@@ -44,8 +44,7 @@ enum class PasscodeInputMode {
  * @see KeypadView
  */
 class PasscodeEditView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
-    KeypadView.KeypadClickListener
-{
+    KeypadView.KeypadClickListener {
     private var vibrator: Vibrator? = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator?
     var initialPasscode: String = ""
     var title: String
@@ -94,7 +93,7 @@ class PasscodeEditView(context: Context, attrs: AttributeSet) : LinearLayout(con
     }
 
     private fun setupViews() {
-        descriptionView?.visibility= View.INVISIBLE
+        descriptionView?.visibility = View.INVISIBLE
         updatePasscodeOutput("")
         keypadView?.setupFingerAction(active = biometricsActionIsAvailable)
         keypadView?.clickListener = this
@@ -122,7 +121,7 @@ class PasscodeEditView(context: Context, attrs: AttributeSet) : LinearLayout(con
                 }
             }
             PasscodeInputMode.NEW_PASSCODE -> {
-                descriptionView?.visibility= View.INVISIBLE
+                descriptionView?.visibility = View.INVISIBLE
                 initialPasscode = passcode
                 inputMode = PasscodeInputMode.CONFIRM_PASSCODE
                 listener?.onNewPasscodeEntered(inputMode, passcode)
@@ -143,11 +142,11 @@ class PasscodeEditView(context: Context, attrs: AttributeSet) : LinearLayout(con
     }
 
     private fun showError(error: String) {
-        descriptionView?.visibility= View.VISIBLE
+        descriptionView?.visibility = View.VISIBLE
         descriptionView?.text = error
         errorVibrate()
         descriptionView?.animate()?.setStartDelay(3000L)?.withEndAction {
-            descriptionView?.visibility= View.INVISIBLE
+            descriptionView?.visibility = View.INVISIBLE
         }?.start()
     }
 
