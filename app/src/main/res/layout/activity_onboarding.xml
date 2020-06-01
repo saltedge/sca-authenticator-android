@@ -18,7 +18,10 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data class="OnboardingSetupBinding">
 
@@ -29,8 +32,7 @@
             type="com.saltedge.authenticator.features.onboarding.OnboardingSetupViewModel" />
     </data>
 
-    <FrameLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/theme_background">
@@ -39,7 +41,6 @@
             android:id="@+id/setupLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:visibility="@{onboardingSetupViewModel.setupLayoutVisibility}">
 
             <FrameLayout
@@ -73,22 +74,47 @@
                 android:visibility="@{onboardingSetupViewModel.passcodeInputViewVisibility}" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/onboardingLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="@{onboardingSetupViewModel.onboardingLayoutVisibility}">
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/onboardingPager"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/dp_48"
+                android:layout_marginStart="@dimen/dp_16"
+                android:layout_marginEnd="@dimen/dp_16"
+                android:layout_marginBottom="@dimen/dp_88"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:background="@color/red" />
+
+            <com.saltedge.authenticator.widget.pageindicator.DotsPageIndicatorView
+                android:id="@+id/pageIndicatorView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_16"
+                app:layout_constraintStart_toStartOf="@+id/onboardingPager"
+                app:layout_constraintTop_toTopOf="@+id/onboardingPager"
+                app:layout_constraintBottom_toBottomOf="@+id/onboardingPager"
+                app:selectedColor="@color/onboarding_dots_background" />
 
             <Button
                 android:id="@+id/proceedToSetup"
                 style="@style/BlueButton"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_48"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
                 android:layout_marginStart="@dimen/dp_32"
                 android:layout_marginEnd="@dimen/dp_32"
-                android:layout_marginBottom="@dimen/dp_40"
+                android:layout_marginBottom="40dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 android:text="@string/actions_get_started"
                 android:visibility="@{onboardingSetupViewModel.proceedViewVisibility}" />
 
@@ -96,10 +122,12 @@
                 android:id="@+id/actionLayout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_48"
-                android:layout_alignParentBottom="true"
                 android:layout_marginStart="@dimen/dp_32"
                 android:layout_marginEnd="@dimen/dp_32"
-                android:layout_marginBottom="@dimen/dp_40"
+                android:layout_marginBottom="40dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 android:gravity="bottom"
                 android:orientation="horizontal"
                 android:visibility="@{onboardingSetupViewModel.skipViewVisibility}">
@@ -127,23 +155,6 @@
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/text_14" />
             </LinearLayout>
-
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/onboardingPager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:layout_marginBottom="@dimen/dp_120"
-                tools:background="@color/red" />
-
-            <com.saltedge.authenticator.widget.pageindicator.DotsPageIndicatorView
-                android:id="@+id/pageIndicatorView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/dp_32"
-                android:layout_marginTop="@dimen/dp_325"
-                android:layout_marginBottom="@dimen/dp_124"
-                app:selectedColor="@color/onboarding_dots_background" />
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 </layout>
