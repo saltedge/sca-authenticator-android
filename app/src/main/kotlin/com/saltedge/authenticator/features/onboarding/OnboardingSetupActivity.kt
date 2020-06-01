@@ -73,7 +73,7 @@ class OnboardingSetupActivity : AppCompatActivity(),
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(OnboardingSetupViewModel::class.java)
-        binding.onboardingSetupViewModel = viewModel
+        binding.viewModel = viewModel
         binding.executePendingBindings()
         binding.lifecycleOwner = this
 
