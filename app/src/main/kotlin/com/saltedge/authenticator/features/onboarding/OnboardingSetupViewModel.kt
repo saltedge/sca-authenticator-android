@@ -40,18 +40,24 @@ class OnboardingSetupViewModel(
     val preferenceRepository: PreferenceRepositoryAbs,
     val biometricTools: BiometricToolsAbs
 ) : ViewModel(),
-    LifecycleObserver, PasscodeInputListener {
-    val headerTitle: MutableLiveData<ResId> = MutableLiveData(R.string.onboarding_secure_app_passcode_create)
+    LifecycleObserver,
+    PasscodeInputListener
+{
+    //onboarding frame
+    val onboardingLayoutVisibility: MutableLiveData<Int> = MutableLiveData(View.VISIBLE)
     val proceedViewVisibility: MutableLiveData<Int> = MutableLiveData(View.GONE)
     val skipViewVisibility: MutableLiveData<Int> = MutableLiveData(View.VISIBLE)
-    val setupLayoutVisibility: MutableLiveData<Int> = MutableLiveData(View.GONE)
-    val onboardingLayoutVisibility: MutableLiveData<Int> = MutableLiveData(View.VISIBLE)
-    val passcodeInputViewVisibility: MutableLiveData<Int> = MutableLiveData(View.VISIBLE)
     val pageIndicator = MutableLiveData<Int>()
+    val moveNext = MutableLiveData<ViewModelEvent<Unit>>()
+
+    //passcode frame
+    val setupLayoutVisibility: MutableLiveData<Int> = MutableLiveData(View.GONE)
+    val headerTitle: MutableLiveData<ResId> = MutableLiveData(R.string.onboarding_secure_app_passcode_create)
+    val passcodeInputViewVisibility: MutableLiveData<Int> = MutableLiveData(View.VISIBLE)
     val passcodeInputMode = MutableLiveData<PasscodeInputMode>()
     val showWarningDialogWithMessage = MutableLiveData<ResId>()
     val showMainActivity = MutableLiveData<ViewModelEvent<Unit>>()
-    val moveNext = MutableLiveData<ViewModelEvent<Unit>>()
+
     val onboardingViewModels: List<OnboardingPageViewModel> = listOf(
         OnboardingPageViewModel(
             titleResId = R.string.onboarding_carousel_one_title,
@@ -74,8 +80,8 @@ class OnboardingSetupViewModel(
         if (onboardingViewModels.getOrNull(position) != null) {
             pageIndicator.postValue(position)
             if (shouldShowProceedToSetupAction(position)) {
-                proceedViewVisibility.value = View.VISIBLE
-                skipViewVisibility.value = View.GONE
+                proceedViewVisibility.postValue(View.VISIBLE)
+                skipViewVisibility.postValue(View.GONE)
             }
         }
     }
@@ -105,7 +111,7 @@ class OnboardingSetupViewModel(
 
     override fun onNewPasscodeConfirmed(passcode: String) {
         if (passcodeTools.savePasscode(passcode)) {
-            passcodeInputViewVisibility.value = View.GONE
+            passcodeInputViewVisibility.postValue(View.GONE)
             showMainActivity.postValue(ViewModelEvent(Unit))
         } else {
             showWarningDialogWithMessage.postValue(R.string.errors_cant_save_passcode)
@@ -117,8 +123,8 @@ class OnboardingSetupViewModel(
 
     private fun showPasscodeInput() {
         val inputMode = PasscodeInputMode.NEW_PASSCODE
-        setupLayoutVisibility.value = View.VISIBLE
-        onboardingLayoutVisibility.value = View.GONE
+        setupLayoutVisibility.postValue(View.VISIBLE)
+        onboardingLayoutVisibility.postValue(View.GONE)
         passcodeInputMode.postValue(inputMode)
         headerTitle.postValue(getSetupTitleResId(inputMode))
     }
