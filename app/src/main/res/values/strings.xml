@@ -30,7 +30,6 @@
     <string name="actions_remove">Remove</string>
     <string name="actions_delete_all">Delete All</string>
     <string name="actions_deny">Deny</string>
-    <string name="actions_enter_passcode">Enter Passcode</string>
     <string name="actions_get_started">Get Started</string>
     <string name="actions_next">Next</string>
     <string name="actions_proceed">Proceed</string>
@@ -45,8 +44,12 @@
     <string name="actions_view_more">View More</string>
     <string name="actions_allow">Allow</string>
     <string name="actions_confirm">Confirm</string>
-    <string name="actions_enter_passcode_or_fingerprint">Enter Passcode or use Fingerprint</string>
     <string name="actions_clear">Clear</string>
+
+    <string name="passcode_enter_passcode_title">Enter Passcode</string>
+    <string name="passcode_enter_passcode_or_fingerprint_title">Enter Passcode or use Fingerprint</string>
+    <string name="passcode_input_new_passcode">Input new passcode</string>
+    <string name="passcode_repeat_new_passcode">Repeat new passcode</string>
 
     <string name="errors_touch_id_not_enrolled">No Fingerprint was enrolled.</string>
     <string name="errors_touch_id_not_supported">Fingerprint is not supported on your device</string>
@@ -95,8 +98,8 @@
     <string name="connections_new_connection">New connection</string>
     <string name="connections_feature_title">Connections</string>
     <string name="choose_connection_feature_title">Choose connection</string>
-    <string name="connections_list_no_connections">No Connections</string>
-    <string name="connections_list_no_connections_description">Seems like you didn’t connect to your provider yet. Add new connection to securely authorize your actions.</string>
+    <string name="connections_list_empty_title">No Connections</string>
+    <string name="connections_list_empty_description">Seems like you didn’t connect to your provider yet. Add new connection to securely authorize your actions.</string>
     <string name="connections_list_delete_all_connections">Delete all connections and stop receiving confirmations until another Provider is connected.</string>
     <string name="connection_status_connected_on">Connected on</string>
     <string name="connection_status_inactive">Inactive connection. Remove or reconnect.</string>
@@ -115,8 +118,10 @@
 
     <string name="authorizations_feature_title">Authorizations</string>
     <string name="authorization_feature_title">Authorization</string>
-    <string name="authorizations_nothing_confirm">Nothing to authorize</string>
-    <string name="authorizations_nothing_confirm_description">You do not have any active authorization request yet. Once initiate an action, you will have a few minutes to authorize it.</string>
+    <string name="authorizations_empty_title">Nothing to authorize</string>
+    <string name="authorizations_empty_description">You do not have any active authorization request yet. Once initiate an action, you will have a few minutes to authorize it.</string>
+    <string name="authorizations_no_internet_title">You are offline</string>
+    <string name="authorizations_no_internet_description">Please check your network connection.</string>
     <string name="authorizations_loading">Loading…</string>
     <string name="authorizations_loading_description">Please wait while authorization is loading</string>
     <string name="authorizations_processing">Authorizing</string>
@@ -137,17 +142,16 @@
     <string name="settings_feature_title">Settings</string>
     <string name="settings_report_bug">Report a bug</string>
     <string name="settings_language">Language</string>
-    <string name="settings_clear_data">Clear data</string>
+    <string name="settings_clear_data">Clear all data</string>
     <string name="settings_notifications">Notifications</string>
     <string name="settings_passcode">Passcode</string>
     <string name="settings_passcode_description">Change passcode</string>
     <string name="settings_passcode_input_current">Input current passcode</string>
-    <string name="settings_passcode_input_new">Input new passcode</string>
-    <string name="settings_passcode_repeat_new">Repeat new passcode</string>
     <string name="settings_passcode_success">New passcode successfully set</string>
-    <string name="settings_fingerprint">Fingerprint</string>
     <string name="settings_screenshot_lock">Screenshot lock</string>
     <string name="settings_restart_app">Restart app for these changes to take effect</string>
+    <string name="settings_general">General</string>
+    <string name="settings_info">Info</string>
 
     <string name="about_feature_title">About</string>
     <string name="about_app_version">App Version</string>
@@ -156,6 +160,7 @@
     <string name="about_terms_service">Terms of Service</string>
     <string name="about_open_source_licenses">Open-source licenses</string>
 
+    <string name="fingerprint_title">Fingerprint</string>
     <string name="fingerprint_confirmed">Fingerprint confirmed</string>
     <string name="fingerprint_scan_continue">Scan your Fingerprint to continue</string>
     <string name="fingerprint_scan_unlock">Unlock the app with biometrics</string>

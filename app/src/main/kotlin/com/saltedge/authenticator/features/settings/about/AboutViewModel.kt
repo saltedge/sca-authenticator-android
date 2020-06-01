@@ -25,41 +25,32 @@ import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.settings.about.common.AboutListItemViewModel
+import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
+import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.constants.TERMS_LINK
 import com.saltedge.authenticator.tools.AppTools
 import com.saltedge.authenticator.widget.fragment.WebViewFragment
 
-class AboutViewModel(val appContext: Context) : ViewModel() {
+class AboutViewModel(val appContext: Context) : ViewModel(), ListItemClickListener {
 
-    var termsOfServiceItemClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
-        private set
-
-    var licenseItemClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
-        private set
-
-    fun getListItems(): List<AboutListItemViewModel> {
-        return listOf(
-            AboutListItemViewModel(
+    val termsOfServiceItemClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
+    val licenseItemClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val listItems = listOf(
+            SettingsItemViewModel(
                 titleId = R.string.about_app_version,
-                value = AppTools.getAppVersionName(appContext)
+                description = AppTools.getAppVersionName(appContext)
             ),
-            AboutListItemViewModel(
+            SettingsItemViewModel(
                 titleId = R.string.about_copyright,
-                value = appContext.getString(R.string.about_copyright_description)
+                description = appContext.getString(R.string.about_copyright_description)
             ),
-            AboutListItemViewModel(
-                titleId = R.string.about_terms_service
-            ),
-            AboutListItemViewModel(
-                titleId = R.string.about_open_source_licenses
-            )
+            SettingsItemViewModel(titleId = R.string.about_terms_service),
+            SettingsItemViewModel(titleId = R.string.about_open_source_licenses)
         )
-    }
 
-    fun onTitleClick(titleName: Int) {
-        when (titleName) {
+    override fun onListItemClick(itemId: Int) {
+        when (itemId) {
             R.string.about_terms_service -> {
                 termsOfServiceItemClickEvent.postValue(
                     ViewModelEvent(

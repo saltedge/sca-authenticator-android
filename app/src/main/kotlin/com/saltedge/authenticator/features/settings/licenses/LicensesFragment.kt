@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,28 +24,41 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.features.settings.common.SettingsAdapter
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.addFragment
-import com.saltedge.authenticator.tools.log
+import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.fragment.WebViewFragment
 import kotlinx.android.synthetic.main.fragment_base_list.*
+import javax.inject.Inject
 
 /**
  * Show licenses list
  */
-class LicensesFragment : BaseFragment(), LicensesContract.View {
+class LicensesFragment : BaseFragment() {
 
-    private var presenter = LicensesPresenter()
+    @Inject lateinit var viewModelFactory: ViewModelsFactory
+    lateinit var viewModel: LicensesViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        authenticatorApp?.appComponent?.inject(this)
+        setupViewModel()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = inflater.inflate(R.layout.fragment_base_list, container, false)
+    ): View {
+        return inflater.inflate(R.layout.fragment_base_list, container, false)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -56,34 +69,19 @@ class LicensesFragment : BaseFragment(), LicensesContract.View {
         setupViews()
     }
 
-    override fun onStart() {
-        super.onStart()
-        presenter.viewContract = this
-    }
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(this, viewModelFactory).get(LicensesViewModel::class.java)
 
-    override fun onStop() {
-        presenter.viewContract = null
-        super.onStop()
-    }
-
-    override fun openLink(url: String, title: String) {
-        activity?.addFragment(WebViewFragment.newInstance(url, title))
+        viewModel.licenseItemClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
+            it.getContentIfNotHandled()?.let { bundle ->
+                activity?.addFragment(WebViewFragment.newInstance(bundle))
+            }
+        })
     }
 
     private fun setupViews() {
-        try {
-            val layoutManager = LinearLayoutManager(activity)
-            recyclerView?.layoutManager = layoutManager
-            val dividerItemDecoration = DividerItemDecoration(context, layoutManager.orientation)
-            ContextCompat.getDrawable(context ?: return, R.drawable.shape_full_divider)?.let {
-                dividerItemDecoration.setDrawable(it)
-            }
-            recyclerView?.addItemDecoration(dividerItemDecoration)
-            recyclerView?.adapter = LicensesAdapter(presenter).apply {
-                data = presenter.getListItems()
-            }
-        } catch (e: Exception) {
-            e.log()
-        }
+        recyclerView?.layoutManager = LinearLayoutManager(activity)
+        recyclerView?.adapter = SettingsAdapter(listener = viewModel)
+            .apply { data = viewModel.listItems }
     }
 }

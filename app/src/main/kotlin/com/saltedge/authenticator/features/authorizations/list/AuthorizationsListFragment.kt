@@ -36,6 +36,7 @@ import com.saltedge.authenticator.features.authorizations.common.AuthorizationVi
 import com.saltedge.authenticator.features.authorizations.list.pagers.AuthorizationsContentPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.pagers.AuthorizationsHeaderPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.pagers.PagersScrollSynchronizer
+import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.authenticatorApp
@@ -53,7 +54,6 @@ class AuthorizationsListFragment : BaseFragment() {
     private var headerAdapter: AuthorizationsHeaderPagerAdapter? = null
     private var contentAdapter: AuthorizationsContentPagerAdapter? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         authenticatorApp?.appComponent?.inject(this)
@@ -67,7 +67,7 @@ class AuthorizationsListFragment : BaseFragment() {
     ): View {
         activityComponents?.updateAppbar(
             titleResId = R.string.authorizations_feature_title,
-            showMenu = true
+            showMenu = arrayOf(MenuItem.SCAN_QR, MenuItem.MORE)
         )
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_authorizations_list, container, false)
         binding.viewModel = viewModel
@@ -125,7 +125,10 @@ class AuthorizationsListFragment : BaseFragment() {
         viewModel.onQrScanClickEvent.observe(this, Observer {
             it.getContentIfNotHandled()?.let { activity?.showQrScannerActivity() }
         })
-        viewModel.emptyViewActionText.observe(this, Observer<ResId> {
+        viewModel.emptyViewImage.observe(this, Observer<ResId> {
+            emptyView.setImageResource(it)
+        })
+        viewModel.emptyViewActionText.observe(this, Observer<ResId?> {
             emptyView.setActionText(it)
         })
         viewModel.emptyViewTitleText.observe(this, Observer<ResId> {
@@ -146,6 +149,6 @@ class AuthorizationsListFragment : BaseFragment() {
             }
         }
         pagersScrollSynchronizer.initViews(headerViewPager, contentViewPager)
-        emptyView?.setOnClickListener { viewModel.onEmptyViewActionClick() }
+        emptyView?.setActionOnClickListener(View.OnClickListener { viewModel.onEmptyViewActionClick() })// { viewModel.onEmptyViewActionClick() }
     }
 }

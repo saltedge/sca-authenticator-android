@@ -27,12 +27,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.ConnectivityReceiverAbs
-import com.saltedge.authenticator.app.NetworkStateChangeListener
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
+import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
@@ -45,11 +44,9 @@ import com.saltedge.authenticator.tools.applyPreferenceLocale
 
 class MainActivityViewModel(
     val appContext: Context,
-    val realmManager: RealmManagerAbs,
-    val connectivityReceiver: ConnectivityReceiverAbs
+    val realmManager: RealmManagerAbs
 ) : ViewModel(),
     LifecycleObserver,
-    NetworkStateChangeListener,
     NewAuthorizationListener,
     ActivityComponentsContract
 {
@@ -65,11 +62,12 @@ class MainActivityViewModel(
     val onShowConnectEvent = MutableLiveData<ViewModelEvent<ConnectAppLinkData>>()
     val onShowSubmitActionEvent = MutableLiveData<ViewModelEvent<ActionAppLinkData>>()
 
-    val internetConnectionWarningVisibility = MutableLiveData<Int>()
     val appBarTitle = MutableLiveData<String>()
     val appBarBackActionImageResource = MutableLiveData<ResId>(R.drawable.ic_appbar_action_back)
     val appBarBackActionVisibility = MutableLiveData<Int>(View.GONE)
-    val appBarMenuVisibility = MutableLiveData<Int>()
+    val appBarActionQRVisibility = MutableLiveData<Int>(View.GONE)
+    val appBarActionThemeVisibility = MutableLiveData<Int>(View.GONE)
+    val appBarActionMoreVisibility = MutableLiveData<Int>(View.GONE)
 
     init {
         if (!realmManager.initialized) realmManager.initRealm(context = appContext)
@@ -94,20 +92,7 @@ class MainActivityViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onLifeCycleResume() {
-        connectivityReceiver.addNetworkStateChangeListener(this)
         appContext.applyPreferenceLocale()
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    fun onLifeCyclePause() {
-        connectivityReceiver.removeNetworkStateChangeListener(this)
-    }
-
-    /**
-     * Handle Network connection changes
-     */
-    override fun onNetworkConnectionChanged(isConnected: Boolean) {
-        internetConnectionWarningVisibility.postValue(if (isConnected) View.GONE else View.VISIBLE)
     }
 
     /**
@@ -149,7 +134,10 @@ class MainActivityViewModel(
     fun onViewClick(viewId: Int) {
         when (viewId) {
             R.id.appBarActionQrCode -> onQrScanClickEvent.postValue(ViewModelEvent(Unit))
-            R.id.appBarActionMenu -> {
+            R.id.appBarActionTheme -> {
+                //TODO implement dark/light theme selector
+            }
+            R.id.appBarActionMore -> {
                 val menuItems = listOf<MenuItemData>(
                     MenuItemData(
                         id = R.string.connections_feature_title,
@@ -198,12 +186,14 @@ class MainActivityViewModel(
         titleResId: ResId?,
         title: String?,
         backActionImageResId: ResId?,
-        showMenu: Boolean
+        showMenu: Array<MenuItem>
     ) {
         appBarTitle.postValue(titleResId?.let { appContext.getString(it) } ?: title ?: "")
         backActionImageResId?.let { appBarBackActionImageResource.postValue(it) }
         appBarBackActionVisibility.postValue(if (backActionImageResId == null) View.GONE else View.VISIBLE)
-        appBarMenuVisibility.postValue(if (showMenu) View.VISIBLE else View.GONE)
+        appBarActionQRVisibility.postValue(if (showMenu.contains(MenuItem.SCAN_QR)) View.VISIBLE else View.GONE)
+        appBarActionThemeVisibility.postValue(if (showMenu.contains(MenuItem.THEME)) View.VISIBLE else View.GONE)
+        appBarActionMoreVisibility.postValue(if (showMenu.contains(MenuItem.MORE)) View.VISIBLE else View.GONE)
     }
 
     override fun onLanguageChanged() {

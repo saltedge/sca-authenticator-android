@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2020 Salt Edge Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:pathData="M5.8125,8.4375C5.8125,5.0202 8.5827,2.25 12,2.25C15.4173,2.25 18.1875,5.0202 18.1875,8.4375V10.0875H18.6C19.5113,10.0875 20.25,10.8262 20.25,11.7375V19.9875C20.25,20.8988 19.5113,21.6375 18.6,21.6375H5.4C4.4887,21.6375 3.75,20.8988 3.75,19.9875V11.7375C3.75,10.8262 4.4887,10.0875 5.4,10.0875H5.8125V8.4375ZM8.2875,10.0875H15.7125V8.4375C15.7125,6.3871 14.0504,4.725 12,4.725C9.9496,4.725 8.2875,6.3871 8.2875,8.4375V10.0875ZM12.99,16.2576C13.5817,15.9154 13.98,15.2753 13.98,14.5425C13.98,13.4487 13.0938,12.5625 12,12.5625C10.9062,12.5625 10.02,13.4487 10.02,14.5425C10.02,15.2753 10.4183,15.9154 11.01,16.2576V18.1725C11.01,18.7191 11.4534,19.1625 12,19.1625C12.5466,19.1625 12.99,18.7191 12.99,18.1725V16.2576Z"
+      android:fillColor="#0D93F8"
+      android:fillType="evenOdd"/>
+</vector>

@@ -74,17 +74,20 @@
         <item name="android:colorAccent">@color/blue</item>
     </style>
 
-    <style name="AlertDialogTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+    <style name="BaseAlertDialogTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="android:background">@color/dialog_background</item>
+    </style>
+
+    <style name="AlertDialogTheme" parent="BaseAlertDialogTheme">
         <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
         <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
-        <item name="android:background">@color/dialog_background</item>
     </style>
 
     <style name="MaterialThemeDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorAccent">@color/blue</item>
     </style>
 
-    <style name="CustomAlertDialogTheme">
+    <style name="CustomProgressDialogStyle">
         <item name="android:bottomBright">@android:color/transparent</item>
         <item name="android:bottomDark">@android:color/transparent</item>
         <item name="android:bottomMedium">@android:color/transparent</item>
@@ -98,7 +101,7 @@
     </style>
 
     <style name="ProgressDialogTheme" parent="android:Theme.Holo.Dialog">
-        <item name="android:alertDialogStyle">@style/CustomAlertDialogTheme</item>
+        <item name="android:alertDialogStyle">@style/CustomProgressDialogStyle</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:textColorPrimary">#FFFFFF</item>
         <item name="android:backgroundDimEnabled">false</item>

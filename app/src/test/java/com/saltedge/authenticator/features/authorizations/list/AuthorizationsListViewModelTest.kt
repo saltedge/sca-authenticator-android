@@ -27,6 +27,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.test.core.app.ApplicationProvider
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationViewModel
 import com.saltedge.authenticator.models.Connection
@@ -44,6 +45,8 @@ import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.polling.PollingServiceAbs
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import junit.framework.TestCase.assertNull
+import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.joda.time.DateTime
@@ -52,6 +55,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
+import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
 import java.security.PrivateKey
@@ -67,6 +71,7 @@ class AuthorizationsListViewModelTest {
     private val mockCryptoTools = mock(CryptoToolsAbs::class.java)
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockPollingService = mock(PollingServiceAbs::class.java)
+    private val mockConnectivityReceiver = Mockito.mock(ConnectivityReceiverAbs::class.java)
 
     private val mockConnection1 = Connection().apply {
         guid = "guid1"
@@ -96,8 +101,38 @@ class AuthorizationsListViewModelTest {
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
             cryptoTools = mockCryptoTools,
-            apiManager = mockApiManager
+            apiManager = mockApiManager,
+            connectivityReceiver = mockConnectivityReceiver
         )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onFragmentStartTest() {
+        //given
+        val lifecycle = LifecycleRegistry(mock(LifecycleOwner::class.java))
+        viewModel.bindLifecycleObserver(lifecycle)
+
+        //when
+        lifecycle.currentState = Lifecycle.State.STARTED
+
+        //then
+        verify(mockConnectivityReceiver).addNetworkStateChangeListener(viewModel)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onFragmentStopTest() {
+        //given
+        val lifecycle = LifecycleRegistry(mock(LifecycleOwner::class.java))
+        viewModel.bindLifecycleObserver(lifecycle)
+
+        //when
+        lifecycle.currentState = Lifecycle.State.RESUMED
+        lifecycle.currentState = Lifecycle.State.CREATED//move to stop state (possible only after RESUMED state)
+
+        //then
+        verify(mockConnectivityReceiver).removeNetworkStateChangeListener(viewModel)
     }
 
     @Test
@@ -117,9 +152,9 @@ class AuthorizationsListViewModelTest {
         assertThat(viewModel.emptyViewActionText.value,
             equalTo(R.string.actions_connect))
         assertThat(viewModel.emptyViewTitleText.value,
-            equalTo(R.string.connections_list_no_connections))
+            equalTo(R.string.connections_list_empty_title))
         assertThat(viewModel.emptyViewDescriptionText.value,
-            equalTo(R.string.connections_list_no_connections_description))
+            equalTo(R.string.connections_list_empty_description))
     }
 
     @Test
@@ -138,9 +173,9 @@ class AuthorizationsListViewModelTest {
         assertThat(viewModel.emptyViewActionText.value,
             equalTo(R.string.actions_scan_qr))
         assertThat(viewModel.emptyViewTitleText.value,
-            equalTo(R.string.authorizations_nothing_confirm))
+            equalTo(R.string.authorizations_empty_title))
         assertThat(viewModel.emptyViewDescriptionText.value,
-            equalTo(R.string.authorizations_nothing_confirm_description))
+            equalTo(R.string.authorizations_empty_description))
     }
 
     @Test
@@ -160,9 +195,9 @@ class AuthorizationsListViewModelTest {
         assertThat(viewModel.emptyViewActionText.value,
             equalTo(R.string.actions_scan_qr))
         assertThat(viewModel.emptyViewTitleText.value,
-            equalTo(R.string.authorizations_nothing_confirm))
+            equalTo(R.string.authorizations_empty_title))
         assertThat(viewModel.emptyViewDescriptionText.value,
-            equalTo(R.string.authorizations_nothing_confirm_description))
+            equalTo(R.string.authorizations_empty_description))
     }
 
     @Test
@@ -567,6 +602,51 @@ class AuthorizationsListViewModelTest {
             equalTo(listOf(viewModel1, viewModel2.copy(viewMode = ViewMode.DENY_PROCESSING)))
         )
         assertThat(viewModel.onConfirmErrorEvent.value, equalTo(ViewModelEvent("Request Error (404)")))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onNetworkConnectionChangedTestCase1() {
+        //given
+        val isConnected = false
+
+        //when
+        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
+
+        //then
+        assertThat(viewModel.emptyViewVisibility.value, equalTo(View.VISIBLE))
+        assertThat(viewModel.listVisibility.value, equalTo(View.GONE))
+
+        assertThat(viewModel.emptyViewImage.value,
+            equalTo(R.drawable.ic_internet_connection))
+        assertNull(viewModel.emptyViewActionText.value)
+        assertThat(viewModel.emptyViewTitleText.value,
+            equalTo(R.string.authorizations_no_internet_title))
+        assertThat(viewModel.emptyViewDescriptionText.value,
+            equalTo(R.string.authorizations_no_internet_description))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onNetworkConnectionChangedTestCase2() {
+        //given
+        val isConnected = true
+
+        //when
+        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
+
+        //then
+        assertThat(viewModel.emptyViewVisibility.value, equalTo(View.VISIBLE))
+        assertThat(viewModel.listVisibility.value, equalTo(View.GONE))
+
+        assertThat(viewModel.emptyViewImage.value,
+            equalTo(R.drawable.ic_authorizations_empty))
+        assertThat(viewModel.emptyViewActionText.value,
+            equalTo(R.string.actions_scan_qr))
+        assertThat(viewModel.emptyViewTitleText.value,
+            equalTo(R.string.authorizations_empty_title))
+        assertThat(viewModel.emptyViewDescriptionText.value,
+            equalTo(R.string.authorizations_empty_description))
     }
 
     private fun createAuthorization(id: Int): AuthorizationData {

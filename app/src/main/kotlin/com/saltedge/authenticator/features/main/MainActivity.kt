@@ -50,7 +50,6 @@ import javax.inject.Inject
 
 class MainActivity : LockableActivity(),
     ViewModelContract,
-    View.OnClickListener,
     SnackbarAnchorContainer,
     MenuItemSelectListener
 {
@@ -64,7 +63,6 @@ class MainActivity : LockableActivity(),
         authenticatorApp?.appComponent?.inject(this)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         setupViewModel()
-        setupViews()
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
     }
 
@@ -84,10 +82,6 @@ class MainActivity : LockableActivity(),
     override fun onBackPressed() {
         val onBackPressListener = currentFragmentInContainer() as? OnBackPressListener
         if (onBackPressListener?.onBackPress() != true) super.onBackPressed()
-    }
-
-    override fun onClick(v: View?) {
-        viewModel.onViewClick(v?.id ?: return)
     }
 
     override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView
@@ -156,16 +150,6 @@ class MainActivity : LockableActivity(),
                 this.addFragment(SubmitActionFragment.newInstance(actionAppLinkData = actionAppLinkData))
             }
         })
-
-        viewModel.internetConnectionWarningVisibility.observe(this, Observer {
-            //TODO update internet connection warning visibility
-        })
-    }
-
-    private fun setupViews() {
-        appBarActionQrCode?.setOnClickListener(this)
-        appBarActionMenu?.setOnClickListener(this)
-        appBarBackAction?.setOnClickListener(this)
     }
 }
 

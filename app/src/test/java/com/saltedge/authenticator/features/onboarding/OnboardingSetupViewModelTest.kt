@@ -22,14 +22,17 @@ package com.saltedge.authenticator.features.onboarding
 
 import android.view.View
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
-import com.saltedge.authenticator.widget.passcode.PasscodeInputView
+import com.saltedge.authenticator.widget.passcode.PasscodeEditView
+import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Assert.*
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -39,10 +42,10 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class OnboardingSetupViewModelTest {
 
-    private lateinit var viewModel: OnboardingSetupViewModel
     private val mockPreferenceRepository = Mockito.mock(PreferenceRepositoryAbs::class.java)
     private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)
     private val mockBiometricTools = Mockito.mock(BiometricToolsAbs::class.java)
+    private lateinit var viewModel: OnboardingSetupViewModel
 
     @Before
     fun setUp() {
@@ -91,7 +94,7 @@ class OnboardingSetupViewModelTest {
 
         assertThat(viewModel.setupLayoutVisibility.value, equalTo(View.VISIBLE))
         assertThat(viewModel.onboardingLayoutVisibility.value, equalTo(View.GONE))
-        assertNotNull(viewModel.setPasscodeInputMode.value)
+        assertNotNull(viewModel.passcodeInputMode.value)
 
         assertThat(
             viewModel.headerTitle.value,
@@ -109,7 +112,7 @@ class OnboardingSetupViewModelTest {
 
         assertThat(viewModel.setupLayoutVisibility.value, equalTo(View.VISIBLE))
         assertThat(viewModel.onboardingLayoutVisibility.value, equalTo(View.GONE))
-        assertNotNull(viewModel.setPasscodeInputMode.value)
+        assertNotNull(viewModel.passcodeInputMode.value)
 
         assertThat(
             viewModel.headerTitle.value,
@@ -139,13 +142,13 @@ class OnboardingSetupViewModelTest {
         assertNull(viewModel.moveNext.value)
         assertThat(viewModel.setupLayoutVisibility.value, equalTo(View.GONE))
         assertThat(viewModel.onboardingLayoutVisibility.value, equalTo(View.VISIBLE))
-        assertNull(viewModel.setPasscodeInputMode.value)
+        assertNull(viewModel.passcodeInputMode.value)
     }
 
     @Test
     @Throws(Exception::class)
-    fun enteredNewPasscodeTest() {
-        viewModel.enteredNewPasscode(PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE)
+    fun onNewPasscodeEnteredTest() {
+        viewModel.onNewPasscodeEntered(PasscodeInputMode.CONFIRM_PASSCODE, "passcode")
 
         assertThat(
             viewModel.headerTitle.value,
@@ -155,24 +158,10 @@ class OnboardingSetupViewModelTest {
 
     @Test
     @Throws(Exception::class)
-    fun reEnterPasscodeTest() {
-        viewModel.reEnterPasscode()
+    fun onPasscodeInputCanceledByUserTest() {
+        viewModel.onPasscodeInputCanceledByUser()
 
-        assertThat(
-            viewModel.headerTitle.value,
-            equalTo(R.string.onboarding_secure_app_passcode_create)
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun passcodeInputCanceledByUserTest() {
-        viewModel.passcodeInputCanceledByUser()
-
-        assertThat(
-            viewModel.setPasscodeInputMode.value,
-            equalTo(PasscodeInputView.InputMode.NEW_PASSCODE)
-        )
+        assertThat(viewModel.passcodeInputMode.value, equalTo(PasscodeInputMode.NEW_PASSCODE))
 
         assertThat(
             viewModel.headerTitle.value,
@@ -187,11 +176,11 @@ class OnboardingSetupViewModelTest {
     @Throws(Exception::class)
     fun newPasscodeConfirmedTestCase1() {
         Mockito.doReturn(false).`when`(mockPasscodeTools).savePasscode(Mockito.anyString())
-        viewModel.newPasscodeConfirmed(passcode = "1234")
+        viewModel.onNewPasscodeConfirmed(passcode = "1234")
 
         assertThat(
             viewModel.showWarningDialogWithMessage.value,
-            equalTo(TestAppTools.applicationContext.getString(R.string.errors_cant_save_passcode))
+            equalTo(R.string.errors_cant_save_passcode)
         )
     }
 
@@ -202,10 +191,10 @@ class OnboardingSetupViewModelTest {
     @Throws(Exception::class)
     fun newPasscodeConfirmedTestCase2() {
         Mockito.doReturn(true).`when`(mockPasscodeTools).savePasscode(Mockito.anyString())
-        viewModel.newPasscodeConfirmed(passcode = "1234")
+        viewModel.onNewPasscodeConfirmed(passcode = "1234")
 
         assertThat(viewModel.passcodeInputViewVisibility.value, equalTo(View.GONE))
-        assertNotNull(viewModel.showMainActivity.value)
+        assertThat(viewModel.showMainActivity.value, equalTo(ViewModelEvent(Unit)))
     }
 
     @Test

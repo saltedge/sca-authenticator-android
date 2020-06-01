@@ -30,36 +30,33 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
-import com.saltedge.authenticator.widget.passcode.PasscodeInputView
+import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.widget.passcode.PasscodeInputListener
+import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
 
 class OnboardingSetupViewModel(
     val appContext: Context,
     val passcodeTools: PasscodeToolsAbs,
     val preferenceRepository: PreferenceRepositoryAbs,
     val biometricTools: BiometricToolsAbs
-) : ViewModel(), LifecycleObserver {
-
-    val headerTitle: MutableLiveData<Int> = MutableLiveData(R.string.onboarding_secure_app_passcode_create)
+) : ViewModel(),
+    LifecycleObserver,
+    PasscodeInputListener
+{
+    //onboarding frame
+    val onboardingLayoutVisibility: MutableLiveData<Int> = MutableLiveData(View.VISIBLE)
     val proceedViewVisibility: MutableLiveData<Int> = MutableLiveData(View.GONE)
     val skipViewVisibility: MutableLiveData<Int> = MutableLiveData(View.VISIBLE)
+    val pageIndicator = MutableLiveData<Int>()
+    val moveNext = MutableLiveData<ViewModelEvent<Unit>>()
+
+    //passcode frame
     val setupLayoutVisibility: MutableLiveData<Int> = MutableLiveData(View.GONE)
-    val onboardingLayoutVisibility: MutableLiveData<Int> = MutableLiveData(View.VISIBLE)
+    val headerTitle: MutableLiveData<ResId> = MutableLiveData(R.string.onboarding_secure_app_passcode_create)
     val passcodeInputViewVisibility: MutableLiveData<Int> = MutableLiveData(View.VISIBLE)
-
-    var pageIndicator = MutableLiveData<Int>()
-        private set
-
-    var setPasscodeInputMode = MutableLiveData<PasscodeInputView.InputMode>()
-        private set
-
-    var showWarningDialogWithMessage = MutableLiveData<String>()
-        private set
-
-    var showMainActivity = MutableLiveData<ViewModelEvent<Unit>>()
-        private set
-
-    var moveNext = MutableLiveData<ViewModelEvent<Unit>>()
-        private set
+    val passcodeInputMode = MutableLiveData<PasscodeInputMode>()
+    val showWarningDialogWithMessage = MutableLiveData<ResId>()
+    val showMainActivity = MutableLiveData<ViewModelEvent<Unit>>()
 
     val onboardingViewModels: List<OnboardingPageViewModel> = listOf(
         OnboardingPageViewModel(
@@ -83,63 +80,57 @@ class OnboardingSetupViewModel(
         if (onboardingViewModels.getOrNull(position) != null) {
             pageIndicator.postValue(position)
             if (shouldShowProceedToSetupAction(position)) {
-                proceedViewVisibility.value = View.VISIBLE
-                skipViewVisibility.value = View.GONE
+                proceedViewVisibility.postValue(View.VISIBLE)
+                skipViewVisibility.postValue(View.GONE)
             }
         }
     }
 
     fun onViewClick(viewId: Int) {
         when (viewId) {
-            R.id.skipActionView, R.id.proceedToSetup -> {
-                showPasscodeInput()
-            }
+            R.id.skipActionView, R.id.proceedToSetup -> showPasscodeInput()
             R.id.nextActionView -> moveNext.postValue(ViewModelEvent(Unit))
         }
     }
 
-    fun reEnterPasscode() {
-        updateSetupViews(inputMode = PasscodeInputView.InputMode.NEW_PASSCODE)
+    override fun onPasscodeInputCanceledByUser() {
+        val inputMode = PasscodeInputMode.NEW_PASSCODE
+        passcodeInputMode.postValue(inputMode)
+        headerTitle.postValue(getSetupTitleResId(inputMode))
     }
 
-    fun enteredNewPasscode(inputMode: PasscodeInputView.InputMode) {
-        updateSetupViews(inputMode)
+    override fun onInputValidPasscode() {}
+
+    override fun onInputInvalidPasscode(mode: PasscodeInputMode) {
+        headerTitle.postValue(getSetupTitleResId(PasscodeInputMode.NEW_PASSCODE))
     }
 
-    fun newPasscodeConfirmed(passcode: String) {
+    override fun onNewPasscodeEntered(mode: PasscodeInputMode, passcode: String) {
+        headerTitle.postValue(getSetupTitleResId(mode))
+    }
+
+    override fun onNewPasscodeConfirmed(passcode: String) {
         if (passcodeTools.savePasscode(passcode)) {
-            passcodeInputViewVisibility.value = View.GONE
+            passcodeInputViewVisibility.postValue(View.GONE)
             showMainActivity.postValue(ViewModelEvent(Unit))
         } else {
-            showWarningDialogWithMessage.postValue(appContext.getString(R.string.errors_cant_save_passcode))
+            showWarningDialogWithMessage.postValue(R.string.errors_cant_save_passcode)
         }
-    }
-
-    fun passcodeInputCanceledByUser() {
-        val inputMode = PasscodeInputView.InputMode.NEW_PASSCODE
-        setPasscodeInputMode.postValue(inputMode)
-        updateSetupViews(inputMode)
     }
 
     private fun shouldShowProceedToSetupAction(position: Int): Boolean =
         position == onboardingViewModels.lastIndex
 
     private fun showPasscodeInput() {
-        val inputMode = PasscodeInputView.InputMode.NEW_PASSCODE
-        setupLayoutVisibility.value = View.VISIBLE
-        onboardingLayoutVisibility.value = View.GONE
-        setPasscodeInputMode.postValue(inputMode)
-        updateSetupViews(inputMode)
+        val inputMode = PasscodeInputMode.NEW_PASSCODE
+        setupLayoutVisibility.postValue(View.VISIBLE)
+        onboardingLayoutVisibility.postValue(View.GONE)
+        passcodeInputMode.postValue(inputMode)
+        headerTitle.postValue(getSetupTitleResId(inputMode))
     }
 
-    private fun updateSetupViews(inputMode: PasscodeInputView.InputMode) {
-        headerTitle.value = getSetupTitleResId(inputMode)
-    }
-
-    private fun getSetupTitleResId(
-        passcodeInputMode: PasscodeInputView.InputMode?
-    ): Int {
-        return if (passcodeInputMode == PasscodeInputView.InputMode.REPEAT_NEW_PASSCODE) {
+    private fun getSetupTitleResId(passcodeInputMode: PasscodeInputMode?): Int {
+        return if (passcodeInputMode == PasscodeInputMode.CONFIRM_PASSCODE) {
             R.string.onboarding_secure_app_passcode_repeat
         } else R.string.onboarding_secure_app_passcode_create
     }

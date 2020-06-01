@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <!--
+     This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2020 Salt Edge Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<resources>
+    <string name="library_realm">Realm</string>
+    <string name="library_dagger">Dagger</string>
+    <string name="library_compat">Android Compat Support Library</string>
+    <string name="library_constraint">Android Constraint Layout Library</string>
+    <string name="library_material">Android Material Components</string>
+    <string name="library_retrofit">Square/Retrofit2</string>
+    <string name="library_okhttp">Square/Okhttp3</string>
+    <string name="library_joda">JodaTime</string>
+    <string name="library_glide">Bumptech/Glide</string>
+    <string name="library_junit">JUnit</string>
+    <string name="library_jacoco">Jacoco</string>
+    <string name="library_hamcrest">Java Hamcrest</string>
+    <string name="library_mockito">Mockito</string>
+    <string name="library_mockk">MockK</string>
+    <string name="library_jsr">findbugs/jsr305</string>
+    <string name="library_ktlint">ktlint</string>
+    <string name="library_jlleitschuh">jlleitschuh/ktlint-gradle</string>
+    <string name="library_blur">500px-android-blur</string>
+</resources>

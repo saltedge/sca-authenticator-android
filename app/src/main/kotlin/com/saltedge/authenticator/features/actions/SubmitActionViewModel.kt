@@ -1,3 +1,23 @@
+/*
+ * This file is part of the Salt Edge Authenticator distribution
+ * (https://github.com/saltedge/sca-authenticator-android).
+ * Copyright (c) 2020 Salt Edge Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3 or later.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * For the additional permissions granted for Salt Edge Authenticator
+ * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+ */
 package com.saltedge.authenticator.features.actions
 
 import android.content.Context
@@ -8,6 +28,8 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.list.convertConnectionsToViewModels
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
@@ -38,6 +60,10 @@ class SubmitActionViewModel @Inject constructor(
         private set
     var onOpenLinkEvent = MutableLiveData<ViewModelEvent<String>>()
         private set
+    var showNoConnectionsErrorEvent = MutableLiveData<ViewModelEvent<String>>()
+        private set
+    var showConnectionsSelectorFragmentEvent = MutableLiveData<List<ConnectionViewModel>>()
+        private set
     var setResultAuthorizationIdentifier = MutableLiveData<AuthorizationIdentifier>()
 
     val iconResId: MutableLiveData<Int> = MutableLiveData(R.drawable.ic_status_error)
@@ -49,7 +75,6 @@ class SubmitActionViewModel @Inject constructor(
     var actionProcessingVisibility = MutableLiveData<Int>()
 
     override fun onActionInitFailure(error: ApiErrorData) {
-        Log.d("some", "onActionInitFailure")
         viewMode = ViewMode.ACTION_ERROR
         updateViewsContent()
         onShowErrorEvent.postValue(ViewModelEvent(error.getErrorMessage(appContext)))
@@ -81,14 +106,13 @@ class SubmitActionViewModel @Inject constructor(
             keyStoreManager.createConnectionAndKeyModel(it)
         }
         if (connectionAndKey == null) {
-            Log.d("some", "connectionAndKey == null")
             viewMode = ViewMode.ACTION_ERROR
         }
 
         when {
             connections.isEmpty() -> {
                 Log.d("some", "connections is empty")
-//                viewContract.showNoConnectionsError()
+                showNoConnectionsErrorEvent.postValue(ViewModelEvent("No connections"))
             }
             connections.size == 1 -> {
                 Log.d("some", "connections.size 1")
@@ -100,15 +124,12 @@ class SubmitActionViewModel @Inject constructor(
             }
             else -> {
                 Log.d("some", "connections.size more than 1")
-//                val result = connections.convertConnectionsToViewModels(
-//                    context = appContext
-//                )
-//                viewContract.showConnectionsSelectorFragment(result)
+                val result = connections.convertConnectionsToViewModels(
+                    context = appContext
+                )
+                showConnectionsSelectorFragmentEvent.postValue(result)
             }
         }
-
-        Log.d("some", "connectionGuid: $connectionGuid , actionAppLinkData: $actionAppLinkData")
-
     }
 
     fun onViewCreated() {

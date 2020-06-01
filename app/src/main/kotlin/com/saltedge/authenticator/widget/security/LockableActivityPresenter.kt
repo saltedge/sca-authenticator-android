@@ -23,7 +23,6 @@ package com.saltedge.authenticator.widget.security
 import android.content.Intent
 import android.os.CountDownTimer
 import android.os.SystemClock
-import com.saltedge.authenticator.R
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
@@ -33,8 +32,8 @@ import com.saltedge.authenticator.sdk.model.connection.isActive
 import com.saltedge.authenticator.sdk.tools.MILLIS_IN_MINUTE
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.tools.millisToRemainedMinutes
-import com.saltedge.authenticator.tools.log
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
+import com.saltedge.authenticator.tools.log
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -95,7 +94,6 @@ class LockableActivityPresenter(
                 wipeApplication()
                 viewContract.resetUser()
             }
-            else -> viewContract.clearOutputAndShowErrorWarning(R.string.errors_wrong_passcode_long)
         }
     }
 

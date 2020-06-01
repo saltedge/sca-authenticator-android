@@ -34,6 +34,7 @@ import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.menu.MenuItemData
+import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
@@ -217,65 +218,6 @@ class MainActivityViewModelTest {
 
     @Test
     @Throws(Exception::class)
-    fun onLifeCycleResumeTest() {
-        //given
-        val lifecycle = LifecycleRegistry(mock(LifecycleOwner::class.java))
-        val viewModel = createViewModel()
-        viewModel.bindLifecycleObserver(lifecycle)
-
-        //when
-        lifecycle.currentState = Lifecycle.State.RESUMED
-
-        //then
-        Mockito.verify(mockConnectivityReceiver).addNetworkStateChangeListener(viewModel)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onLifeCyclePauseTest() {
-        //given
-        val lifecycle = LifecycleRegistry(mock(LifecycleOwner::class.java))
-        val viewModel = createViewModel()
-        viewModel.bindLifecycleObserver(lifecycle)
-
-        //when
-        lifecycle.currentState = Lifecycle.State.RESUMED
-        lifecycle.currentState = Lifecycle.State.STARTED//move to pause state (possible only after RESUMED state)
-
-        //then
-        Mockito.verify(mockConnectivityReceiver).removeNetworkStateChangeListener(viewModel)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onNetworkConnectionChangedTestCase1() {
-        //given
-        val isConnected = false
-        val viewModel = createViewModel()
-
-        //when
-        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
-
-        //then
-        assertThat(viewModel.internetConnectionWarningVisibility.value, equalTo(View.VISIBLE))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onNetworkConnectionChangedTestCase2() {
-        //given
-        val isConnected = true
-        val viewModel = createViewModel()
-
-        //when
-        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
-
-        //then
-        assertThat(viewModel.internetConnectionWarningVisibility.value, equalTo(View.GONE))
-    }
-
-    @Test
-    @Throws(Exception::class)
     fun onActivityResultTestCase1() {
         /**
          * given unknown requestCode
@@ -415,7 +357,7 @@ class MainActivityViewModelTest {
          * given viewId = appBarActionMenu
          */
         val viewModel = createViewModel()
-        val viewId = R.id.appBarActionMenu
+        val viewId = R.id.appBarActionMore
 
         //when
         viewModel.onViewClick(viewId)
@@ -578,18 +520,20 @@ class MainActivityViewModelTest {
         val titleResId = R.string.app_name
         val title = null
         val backActionImageResId = null
-        val showMenu = true
+        val showMenu = arrayOf(MenuItem.SCAN_QR, MenuItem.MORE)
 
         assertThat(viewModel.appBarBackActionImageResource.value, equalTo(R.drawable.ic_appbar_action_back))
 
         //when
-        viewModel.updateAppbar(titleResId, title, backActionImageResId, showMenu)
+        viewModel.updateAppbar(titleResId, title, backActionImageResId, showMenu = showMenu)
 
         //then updated view
         assertThat(viewModel.appBarTitle.value, equalTo(context.getString(R.string.app_name)))
         assertThat(viewModel.appBarBackActionImageResource.value, equalTo(R.drawable.ic_appbar_action_back))
         assertThat(viewModel.appBarBackActionVisibility.value, equalTo(View.GONE))
-        assertThat(viewModel.appBarMenuVisibility.value, equalTo(View.VISIBLE))
+        assertThat(viewModel.appBarActionQRVisibility.value, equalTo(View.VISIBLE))
+        assertThat(viewModel.appBarActionMoreVisibility.value, equalTo(View.VISIBLE))
+        assertThat(viewModel.appBarActionThemeVisibility.value, equalTo(View.GONE))
     }
 
     @Test
@@ -602,7 +546,7 @@ class MainActivityViewModelTest {
         val titleResId = null
         val title = "Test"
         val actionImageResId = R.drawable.ic_appbar_action_close
-        val showMenu = false
+        val showMenu = emptyArray<MenuItem>()
 
         //when
         viewModel.updateAppbar(titleResId, title, actionImageResId, showMenu)
@@ -611,7 +555,9 @@ class MainActivityViewModelTest {
         assertThat(viewModel.appBarTitle.value, equalTo("Test"))
         assertThat(viewModel.appBarBackActionImageResource.value, equalTo(R.drawable.ic_appbar_action_close))
         assertThat(viewModel.appBarBackActionVisibility.value, equalTo(View.VISIBLE))
-        assertThat(viewModel.appBarMenuVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.appBarActionQRVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.appBarActionMoreVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.appBarActionThemeVisibility.value, equalTo(View.GONE))
     }
 
     @Test
@@ -628,14 +574,12 @@ class MainActivityViewModelTest {
     }
 
     private val mockRealmManager = Mockito.mock(RealmManagerAbs::class.java)
-    private val mockConnectivityReceiver = Mockito.mock(ConnectivityReceiverAbs::class.java)
     private val context: Context = ApplicationProvider.getApplicationContext()
 
     private fun createViewModel(): MainActivityViewModel {
         return MainActivityViewModel(
             appContext = context,
-            realmManager = mockRealmManager,
-            connectivityReceiver = mockConnectivityReceiver
+            realmManager = mockRealmManager
         )
     }
 }

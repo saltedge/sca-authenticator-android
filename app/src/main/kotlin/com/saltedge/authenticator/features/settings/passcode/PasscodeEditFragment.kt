@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,23 +24,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.settings.passcode.di.PasscodeEditModule
-import com.saltedge.authenticator.tools.*
+import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.finishFragment
+import com.saltedge.authenticator.tools.showWarningDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment
-import com.saltedge.authenticator.widget.passcode.PasscodeInputView
-import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
 import kotlinx.android.synthetic.main.fragment_edit_passcode.*
 import javax.inject.Inject
 
-class PasscodeEditFragment : BaseFragment(), PasscodeEditContract.View, PasscodeInputViewListener {
+class PasscodeEditFragment : BaseFragment() {
 
-    @Inject lateinit var presenterContract: PasscodeEditContract.Presenter
+    @Inject lateinit var viewModelFactory: ViewModelsFactory
+    lateinit var viewModel: PasscodeEditViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectDependencies()
+        authenticatorApp?.appComponent?.inject(this)
+        setupViewModel()
     }
 
     override fun onCreateView(
@@ -48,85 +52,56 @@ class PasscodeEditFragment : BaseFragment(), PasscodeEditContract.View, Passcode
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activityComponents?.updateAppbar(
-            titleResId = R.string.settings_passcode,
-            backActionImageResId = R.drawable.ic_appbar_action_back
-        )
         return inflater.inflate(R.layout.fragment_edit_passcode, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        try {
-            passcodeInputView?.biometricsActionIsAvailable = false
-            passcodeInputView?.listener = this
-        } catch (e: Exception) {
-            e.log()
-        }
+        activityComponents?.updateAppbar(
+            titleResId = R.string.settings_passcode,
+            backActionImageResId = R.drawable.ic_appbar_action_back
+        )
+        passcodeEditView?.biometricsActionIsAvailable = false
     }
 
     override fun onStart() {
         super.onStart()
-        presenterContract.viewContract = this
-        presenterContract.onViewCreated()
+        passcodeEditView?.listener = viewModel
     }
 
     override fun onStop() {
-        presenterContract.viewContract = null
+        passcodeEditView?.listener = null
         super.onStop()
     }
 
-    override fun initInputMode(mode: PasscodeInputView.InputMode, passcode: String) {
-        passcodeInputView?.initInputMode(mode, passcode)
-    }
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(this, viewModelFactory).get(PasscodeEditViewModel::class.java)
+        viewModel.bindLifecycleObserver(lifecycle = lifecycle)
 
-    override fun updateViewContent(titleTextResId: Int, positiveActionTextResId: Int) {
-        titleView?.setText(titleTextResId)
-    }
-
-    override fun showProgress() {
-        loaderView?.setVisible(show = true)
-    }
-
-    override fun hideProgress() {
-        if (isVisible) loaderView?.setVisible(show = false)
-    }
-
-    override fun closeView() {
-        if (isVisible) activity?.finishFragment()
-    }
-
-    override fun showWarning(messageResId: Int) {
-        if (isVisible) activity?.showWarningDialog(messageResId)
-    }
-
-    override fun showInfo(messageResId: Int) {
-        if (isVisible) view?.let {
-            Snackbar.make(it, messageResId, Snackbar.LENGTH_SHORT).show()
-        }
-    }
-
-    override fun onBiometricInputSelected() {}
-
-    override fun onPasscodeInputCanceledByUser() {
-        activity?.finishFragment()
-    }
-
-    override fun onEnteredPasscodeIsValid() {
-        presenterContract.enteredCurrentPasscode()
-    }
-
-    override fun onEnteredPasscodeIsInvalid() {}
-
-    override fun onNewPasscodeEntered(mode: PasscodeInputView.InputMode, passcode: String) {
-        presenterContract.enteredNewPasscode(mode)
-    }
-
-    override fun onNewPasscodeConfirmed(passcode: String) {
-        presenterContract.newPasscodeConfirmed(passcode)
-    }
-
-    private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addPasscodeEditModule(PasscodeEditModule())?.inject(this)
+        viewModel.titleRes.observe(this, Observer {
+            passcodeEditView?.title = getString(it)
+        })
+        viewModel.loaderVisibility.observe(this, Observer {
+            loaderView?.visibility = it
+        })
+        viewModel.passcodeInputMode.observe(this, Observer {
+            passcodeEditView?.inputMode = it
+        })
+        viewModel.initialPasscode.observe(this, Observer {
+            passcodeEditView?.initialPasscode = it
+        })
+        viewModel.infoEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { messageRes ->
+                view?.let { Snackbar.make(it, messageRes, Snackbar.LENGTH_SHORT).show() }
+            }
+        })
+        viewModel.warningEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { messageRes ->
+                if (isVisible) activity?.showWarningDialog(messageRes)
+            }
+        })
+        viewModel.closeViewEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { activity?.finishFragment() }
+        })
     }
 }

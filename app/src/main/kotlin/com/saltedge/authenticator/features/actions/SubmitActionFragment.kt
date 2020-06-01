@@ -24,6 +24,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +34,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.SubmitActionBinding
+import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment
 import com.saltedge.authenticator.features.main.newAuthorizationListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
@@ -128,6 +131,14 @@ class SubmitActionFragment : BaseFragment(), View.OnClickListener, DialogInterfa
         })
         viewModel.mainActionTextResId.observe(this, Observer<Int> { mainActionTextResId ->
             completeView?.setMainActionText(mainActionTextResId)
+        })
+        viewModel.showNoConnectionsErrorEvent.observe(this, Observer<ViewModelEvent<String>>  {
+            it.getContentIfNotHandled()?.let {
+                Log.d("some", "$it")
+            }
+        })
+        viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<List<ConnectionViewModel>> {
+            activity?.addFragment(SelectConnectionsFragment.newInstance(connections = it))
         })
     }
 

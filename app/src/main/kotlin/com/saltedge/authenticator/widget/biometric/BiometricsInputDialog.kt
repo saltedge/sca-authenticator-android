@@ -83,7 +83,7 @@ class BiometricsInputDialog(
 
     override fun onStart() {
         super.onStart()
-        arguments?.getInt(KEY_TITLE, R.string.settings_fingerprint)?.let {
+        arguments?.getInt(KEY_TITLE, R.string.fingerprint_title)?.let {
             titleView?.text = getString(it)
         }
         arguments?.getInt(KEY_DESCRIPTION, R.string.fingerprint_touch_sensor)?.let {

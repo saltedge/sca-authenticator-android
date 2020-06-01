@@ -95,6 +95,6 @@ fun BiometricPromptAbs.showAuthorizationConfirm(context: FragmentActivity) {
         context = context,
         titleResId = R.string.actions_confirm,
         descriptionResId = R.string.fingerprint_touch_sensor,
-        negativeActionTextResId = R.string.actions_enter_passcode
+        negativeActionTextResId = R.string.passcode_enter_passcode_title
     )
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
-    Copyright (c) 2019 Salt Edge Inc.
+    Copyright (c) 2020 Salt Edge Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,49 +18,72 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/theme_background"
-    android:orientation="vertical">
+    android:background="@color/theme_background">
 
-    <ImageView
-        android:id="@+id/appLogoView"
-        android:layout_width="@dimen/logo_image_size"
-        android:layout_height="@dimen/logo_image_size"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/dp_76"
-        android:src="@drawable/ic_app_logo" />
+    <FrameLayout
+        android:id="@+id/topSpace"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/passcodeInputView"
+        app:layout_constraintVertical_weight="2">
+
+        <ImageView
+            android:id="@+id/appLogoView"
+            android:contentDescription="@string/app_name_short"
+            android:layout_width="@dimen/logo_image_size"
+            android:layout_height="@dimen/logo_image_size"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_app_logo" />
+    </FrameLayout>
 
     <TextView
-        android:id="@+id/descriptionView"
-        style="@style/Text14GrayDarkRegular"
+        android:id="@+id/warningView"
+        style="@style/Text24Primary"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_32"
-        android:layout_marginTop="@dimen/dp_38"
-        android:layout_marginEnd="@dimen/dp_32"
-        android:gravity="center_horizontal"
-        android:lines="2"
-        android:maxLines="2"
-        android:text="@string/actions_enter_passcode_or_fingerprint"
-        android:visibility="gone" />
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topSpace"
+        app:layout_constraintVertical_weight="5"
+        android:gravity="center"
+        android:visibility="invisible"
+        android:text="@string/errors_wrong_passcode"
+        tools:text="@string/errors_wrong_passcode" />
 
-    <com.saltedge.authenticator.widget.passcode.PasscodeInputView
+    <com.saltedge.authenticator.widget.passcode.PasscodeEditView
         android:id="@+id/passcodeInputView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/dp_115" />
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topSpace"
+        app:layout_constraintVertical_weight="5"/>
 
     <LinearLayout
         android:id="@+id/resetPasscodeLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/backActionImageView"
+            android:contentDescription="@string/actions_cancel"
             android:layout_width="@dimen/dp_24"
             android:layout_height="@dimen/dp_24"
             android:layout_marginStart="@dimen/dp_16"
@@ -69,13 +92,13 @@
             android:src="@drawable/ic_back_24dp" />
 
         <ImageView
+            android:contentDescription="@string/forgot_passcode_title"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_200"
             android:layout_gravity="center_horizontal"
             android:layout_marginStart="@dimen/dp_16"
             android:layout_marginTop="@dimen/dp_125"
             android:layout_marginEnd="@dimen/dp_16"
-            android:contentDescription="@null"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_forgot_passcode"
             tools:background="@color/primary" />
@@ -94,7 +117,7 @@
 
         <TextView
             android:id="@+id/subTitleView"
-            style="@style/Text18DarkRegular"
+            style="@style/Text18Primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_32"
@@ -117,4 +140,4 @@
             android:text="@string/settings_clear_data"
             android:textSize="@dimen/text_18" />
     </LinearLayout>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

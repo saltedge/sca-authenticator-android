@@ -23,6 +23,7 @@
     <data class="MainActivityBinding">
         <import type="android.view.View" />
         <import type="androidx.core.content.ContextCompat" />
+
         <variable
             name="viewModel"
             type="com.saltedge.authenticator.features.main.MainActivityViewModel" />
@@ -56,6 +57,7 @@
                     android:layout_width="@dimen/dp_24"
                     android:layout_height="@dimen/dp_24"
                     android:layout_gravity="center"
+                    android:onClick="@{(view) -> viewModel.onViewClick(view.id)}"
                     android:src="@{ContextCompat.getDrawable(context, viewModel.appBarBackActionImageResource)}" />
             </FrameLayout>
 
@@ -80,32 +82,35 @@
 
                 <FrameLayout
                     android:id="@+id/appBarActionQrCode"
-                    android:layout_width="@dimen/action_bar_bottom_section_size"
-                    android:layout_height="@dimen/action_bar_bottom_section_size"
-                    android:layout_marginEnd="@dimen/dp_8"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:visibility="@{viewModel.appBarMenuVisibility}">
+                    style="@style/AppBarActionContainer"
+                    android:onClick="@{(view) -> viewModel.onViewClick(view.id)}"
+                    android:visibility="@{viewModel.appBarActionQRVisibility}">
 
                     <ImageView
-                        android:layout_width="@dimen/dp_24"
-                        android:layout_height="@dimen/dp_24"
-                        android:layout_gravity="center"
+                        style="@style/AppBarActionImage"
                         android:src="@drawable/ic_appbar_action_qr" />
                 </FrameLayout>
 
                 <FrameLayout
-                    android:id="@+id/appBarActionMenu"
-                    android:layout_width="@dimen/action_bar_bottom_section_size"
-                    android:layout_height="@dimen/action_bar_bottom_section_size"
-                    android:layout_marginEnd="@dimen/dp_8"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:visibility="@{viewModel.appBarMenuVisibility}">
+                    android:id="@+id/appBarActionTheme"
+                    style="@style/AppBarActionContainer"
+                    android:onClick="@{(view) -> viewModel.onViewClick(view.id)}"
+                    android:visibility="@{viewModel.appBarActionThemeVisibility}">
 
                     <ImageView
-                        android:layout_width="@dimen/dp_24"
-                        android:layout_height="@dimen/dp_24"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_appbar_action_menu" />
+                        style="@style/AppBarActionImage"
+                        android:src="@drawable/ic_appbar_action_theme" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/appBarActionMore"
+                    style="@style/AppBarActionContainer"
+                    android:onClick="@{(view) -> viewModel.onViewClick(view.id)}"
+                    android:visibility="@{viewModel.appBarActionMoreVisibility}">
+
+                    <ImageView
+                        style="@style/AppBarActionImage"
+                        android:src="@drawable/ic_appbar_action_more" />
                 </FrameLayout>
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
