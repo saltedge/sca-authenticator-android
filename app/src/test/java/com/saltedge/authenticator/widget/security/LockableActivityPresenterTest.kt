@@ -218,24 +218,11 @@ class LockableActivityPresenterTest {
     }
 
     /**
-     * test onWrongPasscodeInput when pinInputAttempts < 6
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onWrongPasscodeInputTestCase2() {
-        val presenter = createPresenter()
-        mockPreferenceRepository.pinInputAttempts = 3
-        presenter.onWrongPasscodeInput()
-
-        Mockito.verify(mockView).clearOutputAndShowErrorWarning(R.string.errors_wrong_passcode_long)
-    }
-
-    /**
      * test onWrongPasscodeInput when shouldBlockInput is true and blockTime > 0
      */
     @Test
     @Throws(Exception::class)
-    fun onWrongPasscodeInputTestCase3() {
+    fun onWrongPasscodeInputTestCase2() {
         val presenter = createPresenter()
 
         Mockito.doReturn(5).`when`(mockPreferenceRepository).pinInputAttempts

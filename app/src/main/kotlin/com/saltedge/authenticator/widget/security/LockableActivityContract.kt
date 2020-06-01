@@ -28,7 +28,6 @@ interface LockableActivityContract {
     fun vibrateAboutSuccess()
     fun closeLockView()
     fun resetUser()
-    fun clearOutputAndShowErrorWarning(errorTextResId: Int)
     fun unBlockInput()
     fun showLockWarning()
     fun dismissSnackbar()

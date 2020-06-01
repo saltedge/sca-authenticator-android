@@ -33,22 +33,21 @@ import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.OnboardingSetupBinding
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.log
 import com.saltedge.authenticator.tools.showWarningDialog
-import com.saltedge.authenticator.widget.passcode.PasscodeInputView
-import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
+import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
 import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
 import kotlinx.android.synthetic.main.activity_onboarding.*
 import javax.inject.Inject
 
 class OnboardingSetupActivity : AppCompatActivity(),
     ViewPager.OnPageChangeListener,
-    View.OnClickListener,
-    PasscodeInputViewListener {
-
-    lateinit var viewModel: OnboardingSetupViewModel
+    View.OnClickListener
+{
     @Inject lateinit var viewModelFactory: ViewModelsFactory
+    lateinit var viewModel: OnboardingSetupViewModel
     private lateinit var binding: OnboardingSetupBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,26 +70,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
         viewModel.onViewClick(v?.id ?: return)
     }
 
-    override fun onBiometricInputSelected() {}
-
-    override fun onPasscodeInputCanceledByUser() {
-        viewModel.passcodeInputCanceledByUser()
-    }
-
-    override fun onEnteredPasscodeIsValid() {}
-
-    override fun onEnteredPasscodeIsInvalid() {
-        viewModel.reEnterPasscode()
-    }
-
-    override fun onNewPasscodeEntered(mode: PasscodeInputView.InputMode, passcode: String) {
-        viewModel.enteredNewPasscode(inputMode = mode)
-    }
-
-    override fun onNewPasscodeConfirmed(passcode: String) {
-        viewModel.newPasscodeConfirmed(passcode)
-    }
-
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(OnboardingSetupViewModel::class.java)
@@ -101,14 +80,17 @@ class OnboardingSetupActivity : AppCompatActivity(),
         viewModel.pageIndicator.observe(this, Observer<Int> { position ->
             pageIndicatorView?.selection = position
         })
-        viewModel.setPasscodeInputMode.observe(this, Observer<PasscodeInputView.InputMode> {
-            passcodeInputView?.initInputMode(inputMode = it)
+        viewModel.passcodeInputMode.observe(this, Observer<PasscodeInputMode> {
+            passcodeEditView?.inputMode = it
+        })
+        viewModel.headerTitle.observe(this, Observer<ResId> {
+            passcodeEditView.title = getString(it)
         })
         viewModel.showMainActivity.observe(this, Observer<ViewModelEvent<Unit>> {
             showMainActivity()
         })
-        viewModel.showWarningDialogWithMessage.observe(this, Observer<String> { message ->
-            this.showWarningDialog(message = message)
+        viewModel.showWarningDialogWithMessage.observe(this, Observer<ResId> { message ->
+            this.showWarningDialog(message = getString(message))
         })
         viewModel.moveNext.observe(this, Observer<ViewModelEvent<Unit>> {
             onboardingPager.currentItem = onboardingPager.currentItem + 1
@@ -118,7 +100,8 @@ class OnboardingSetupActivity : AppCompatActivity(),
     private fun initViews() {
         try {
             initOnboardingViews()
-            initSetupViews()
+            passcodeEditView?.biometricsActionIsAvailable = false
+            passcodeEditView?.listener = viewModel
         } catch (e: Exception) {
             e.log()
         }
@@ -136,11 +119,6 @@ class OnboardingSetupActivity : AppCompatActivity(),
         skipActionView?.setOnClickListener(this)
         proceedToSetup?.setOnClickListener(this)
         nextActionView?.setOnClickListener(this)
-    }
-
-    private fun initSetupViews() {
-        passcodeInputView?.biometricsActionIsAvailable = false
-        passcodeInputView?.listener = this
     }
 
     private fun showMainActivity() {

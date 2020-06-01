@@ -18,24 +18,20 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.authorizations.confirm
+package com.saltedge.authenticator.widget.passcode
 
-import org.junit.Assert
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.Mockito
-import org.robolectric.RobolectricTestRunner
-
-@RunWith(RobolectricTestRunner::class)
-class ConfirmPasscodeDialogTest {
-
-    private val mockView = Mockito.mock(PasscodePromptCallback::class.java)
-
-    @Test
-    @Throws(Exception::class)
-    fun newInstanceTest() {
-        val arguments = ConfirmPasscodeDialog.newInstance(resultCallback = mockView).arguments
-
-        Assert.assertNull(arguments)
-    }
+/**
+ * Used for working with passcode
+ *
+ * @see PasscodeEditView
+ */
+interface PasscodeInputListener {
+    fun onBiometricActionSelected() {}
+    fun onPasscodeInputCanceledByUser()
+    fun onInputValidPasscode()
+    fun onInputInvalidPasscode(mode: PasscodeInputMode)
+    fun onNewPasscodeEntered(mode: PasscodeInputMode, passcode: String)
+    fun onNewPasscodeConfirmed(passcode: String)
+    fun onForgotActionSelected() {}
+    fun onClearDataActionSelected() {}
 }

@@ -20,6 +20,6 @@
 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <corners android:radius="@dimen/dp_52" />
-    <solid android:color="@color/info_message_background" />
+    <corners android:radius="@dimen/dp_6" />
+    <solid android:color="@color/passcode_label_background" />
 </shape>

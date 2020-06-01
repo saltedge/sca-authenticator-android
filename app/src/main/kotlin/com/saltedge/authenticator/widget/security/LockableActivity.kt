@@ -31,7 +31,6 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.MotionEvent
 import android.view.View
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
@@ -45,14 +44,14 @@ import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
-import com.saltedge.authenticator.widget.passcode.PasscodeInputView
-import com.saltedge.authenticator.widget.passcode.PasscodeInputViewListener
+import com.saltedge.authenticator.widget.passcode.PasscodeInputListener
+import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
 
 const val KEY_SKIP_PIN = "KEY_SKIP_PIN"
 
 @SuppressLint("Registered")
 abstract class LockableActivity : AppCompatActivity(),
-    PasscodeInputViewListener,
+    PasscodeInputListener,
     BiometricPromptCallback,
     DialogInterface.OnClickListener {
 
@@ -63,7 +62,7 @@ abstract class LockableActivity : AppCompatActivity(),
     private val viewContract: LockableActivityContract = object : LockableActivityContract {
 
         override fun unBlockInput() {
-            enablePasscodeInput()
+            showPasscodeInputView()
         }
 
         override fun showLockWarning() {
@@ -76,10 +75,6 @@ abstract class LockableActivity : AppCompatActivity(),
 
         override fun resetUser() {
             resetCurrentUser()
-        }
-
-        override fun clearOutputAndShowErrorWarning(errorTextResId: Int) {
-            clearPasscodeAndShowError(errorTextResId)
         }
 
         override fun vibrateAboutSuccess() {
@@ -101,7 +96,7 @@ abstract class LockableActivity : AppCompatActivity(),
         }
 
         override fun disableUnlockInput(inputAttempt: Int, remainedMinutes: Int) {
-            showWrongPasscodeErrorAndDisablePasscodeInput(remainedMinutes = remainedMinutes)
+            showWarningView(remainedMinutes = remainedMinutes)
         }
     }
 
@@ -147,33 +142,26 @@ abstract class LockableActivity : AppCompatActivity(),
         super.onStop()
     }
 
-    override fun onBiometricInputSelected() {
+    override fun onBiometricActionSelected() {
         displayBiometricPrompt()
     }
 
-    override fun onPasscodeInputCanceledByUser() {
-        // REDUNDANT
-    }
+    override fun onPasscodeInputCanceledByUser() {}
 
-    override fun onEnteredPasscodeIsValid() {
+    override fun onInputValidPasscode() {
         presenter.onSuccessAuthentication()
     }
 
-    override fun onEnteredPasscodeIsInvalid() {
+    override fun onInputInvalidPasscode(mode: PasscodeInputMode) {
         presenter.onWrongPasscodeInput()
     }
 
-    override fun onNewPasscodeEntered(mode: PasscodeInputView.InputMode, passcode: String) {
-        // REDUNDANT
-    }
+    override fun onNewPasscodeEntered(mode: PasscodeInputMode, passcode: String) {}
 
     override fun onNewPasscodeConfirmed(passcode: String) {}
 
     override fun onForgotActionSelected() {
-        getUnlockAppInputView()?.let {
-            it.setInputViewVisibility(show = false)
-            it.showErrorMessage(show = false)
-        }
+        showResetView()
     }
 
     override fun onClearDataActionSelected() {
@@ -202,7 +190,6 @@ abstract class LockableActivity : AppCompatActivity(),
     }
 
     fun resetCurrentUser() {
-        clearPasscodeAndShowError(R.string.errors_wrong_passcode)
         showResetUserDialog(DialogInterface.OnClickListener { _, _ -> this.restartApp() })
     }
 
@@ -228,21 +215,6 @@ abstract class LockableActivity : AppCompatActivity(),
         }
     }
 
-    private fun showWrongPasscodeErrorAndDisablePasscodeInput(remainedMinutes: Int) {
-        val wrongPasscodeMessage = getString(R.string.errors_wrong_passcode)
-        val retryMessage = resources.getQuantityString(
-            R.plurals.errors_passcode_try_again,
-            remainedMinutes,
-            remainedMinutes
-        )
-        getUnlockAppInputView()?.let {
-            it.setDescriptionText("$wrongPasscodeMessage\n$retryMessage")
-            it.setInputViewVisibility(show = false)
-            it.setResetPasscodeViewVisibility(show = false)
-            it.showErrorMessage(show = true)
-        }
-    }
-
     private fun showLockWarningView() {
         snackbar = this@LockableActivity.buildWarning(
             getString(R.string.warning_application_was_locked),
@@ -263,14 +235,6 @@ abstract class LockableActivity : AppCompatActivity(),
         snackbar = null
     }
 
-    private fun enablePasscodeInput() {
-        getUnlockAppInputView()?.let {
-            it.biometricsActionIsAvailable = isBiometricInputReady()
-            it.setInputViewVisibility(show = true)
-            it.showErrorMessage(show = false)
-        }
-    }
-
     private fun unlockScreen() {
         getUnlockAppInputView()?.setVisible(show = false)
         getAppBarLayout()?.setVisible(show = true)
@@ -286,19 +250,41 @@ abstract class LockableActivity : AppCompatActivity(),
         getAppBarLayout()?.setVisible(show = false)
     }
 
-    private fun clearPasscodeAndShowError(@StringRes messageResId: Int) {
-        errorVibrate()
-        showPasscodeErrorMessage(messageResId)
-    }
-
-    private fun showPasscodeErrorMessage(@StringRes messageResId: Int) {
-        getUnlockAppInputView()?.setDescriptionText(messageResId)
-    }
-
     private fun showOnboardingActivity() {
         presenter.clearAppData()
         finish()
         startActivity(Intent(this, OnboardingSetupActivity::class.java))
+    }
+
+    private fun showPasscodeInputView() {
+        getUnlockAppInputView()?.let {
+            it.biometricsActionIsAvailable = isBiometricInputReady()
+            it.setInputViewVisibility(show = true)
+            it.setResetPasscodeViewVisibility(show = false)
+            it.setWarningView(show = false)
+        }
+    }
+
+    private fun showResetView() {
+        getUnlockAppInputView()?.let {
+            it.setInputViewVisibility(show = false)
+            it.setResetPasscodeViewVisibility(show = true)
+            it.setWarningView(show = false)
+        }
+    }
+
+    private fun showWarningView(remainedMinutes: Int) {
+        val wrongPasscodeMessage = getString(R.string.errors_wrong_passcode)
+        val retryMessage = resources.getQuantityString(
+            R.plurals.errors_passcode_try_again,
+            remainedMinutes,
+            remainedMinutes
+        )
+        getUnlockAppInputView()?.let {
+            it.setWarningView(show = true, message = "$wrongPasscodeMessage\n$retryMessage")
+            it.setInputViewVisibility(show = false)
+            it.setResetPasscodeViewVisibility(show = false)
+        }
     }
 
     @Suppress("DEPRECATION")
@@ -306,12 +292,5 @@ abstract class LockableActivity : AppCompatActivity(),
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator?.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
         } else vibrator?.vibrate(50)
-    }
-
-    @Suppress("DEPRECATION")
-    private fun errorVibrate() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator?.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 100, 100, 100), -1))
-        } else vibrator?.vibrate(longArrayOf(0, 100, 100, 100), -1)
     }
 }
