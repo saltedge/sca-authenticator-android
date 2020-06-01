@@ -154,6 +154,6 @@ class SubmitActionPresenter @Inject constructor(
     }
 }
 
-enum class ViewMode {
-    START, PROCESSING, ACTION_SUCCESS, ACTION_ERROR
-}
+//enum class ViewMode {
+//    START, PROCESSING, ACTION_SUCCESS, ACTION_ERROR
+//}

@@ -18,17 +18,31 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <include
-        android:id="@+id/fragmentActionProcessingLayout"
-        layout="@layout/fragment_connect_processing" />
+    <data class="SubmitActionBinding">
 
-    <com.saltedge.authenticator.widget.CompleteView
-        android:id="@+id/completeView"
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.saltedge.authenticator.features.actions.SubmitActionViewModel" />
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white" />
-</FrameLayout>
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/fragmentActionProcessingLayout"
+            layout="@layout/fragment_connect_processing"
+            android:visibility="@{viewModel.actionProcessingVisibility}" />
+
+        <com.saltedge.authenticator.widget.CompleteView
+            android:id="@+id/completeView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:visibility="@{viewModel.completeViewVisibility}" />
+    </FrameLayout>
+</layout>
