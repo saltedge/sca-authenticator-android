@@ -24,6 +24,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,11 +50,7 @@ class SubmitActionFragment : BaseFragment(), SubmitActionContract.View, View.OnC
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectDependencies()
-        presenterContract.setInitialData(
-            connectionGuid = arguments?.getString(KEY_GUID) ?: return,
-            actionAppLinkData = arguments?.getSerializable(KEY_ACTION_DEEP_LINK_DATA) as? ActionAppLinkData
-                ?: return
-        )
+        presenterContract.setInitialData(actionAppLinkData = arguments?.getSerializable(KEY_ACTION_DEEP_LINK_DATA) as? ActionAppLinkData ?: return)
     }
 
     override fun onCreateView(
@@ -85,6 +82,7 @@ class SubmitActionFragment : BaseFragment(), SubmitActionContract.View, View.OnC
     }
 
     override fun showErrorAndFinish(message: String) {
+        Log.d("some", "showErrorAndFinish")
         activity?.showWarningDialog(
             message = message,
             listener = DialogInterface.OnClickListener { _: DialogInterface, _: Int ->
@@ -132,14 +130,10 @@ class SubmitActionFragment : BaseFragment(), SubmitActionContract.View, View.OnC
         const val KEY_ACTION_DEEP_LINK_DATA = "ACTION_DEEP_LINK_DATA"
 
         //TODO refactor new instance to exclude connection selection (in main activity)
-        fun newInstance(
-            connectionGuid: String,
-            actionAppLinkData: ActionAppLinkData
-        ): SubmitActionFragment {
+        fun newInstance(actionAppLinkData: ActionAppLinkData): SubmitActionFragment {
             return SubmitActionFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable(KEY_ACTION_DEEP_LINK_DATA, actionAppLinkData)
-                    putString(KEY_GUID, connectionGuid)
                 }
             }
         }

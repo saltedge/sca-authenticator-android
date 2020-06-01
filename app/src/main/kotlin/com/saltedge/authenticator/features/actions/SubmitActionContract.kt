@@ -41,7 +41,9 @@ interface SubmitActionContract {
 
     interface Presenter {
         var viewContract: View?
-        fun setInitialData(connectionGuid: String, actionAppLinkData: ActionAppLinkData)
+        fun setInitialData(
+//            connectionGuid: String,
+            actionAppLinkData: ActionAppLinkData)
         fun onViewCreated()
         fun onViewClick(viewId: Int)
     }

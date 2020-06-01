@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.network.connector
 
+import android.util.Log
 import com.saltedge.authenticator.sdk.constants.API_ACTIONS
 import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_PUT
 import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
@@ -47,6 +48,7 @@ internal class SubmitActionConnector(
             accessToken = connectionAndKey.connection.accessToken,
             signPrivateKey = connectionAndKey.key
         )
+        Log.d("some", "requestData : $requestData")
 
         apiInterface.updateAction(
             requestData.requestUrl,
@@ -57,6 +59,7 @@ internal class SubmitActionConnector(
 
     override fun onSuccessResponse(call: Call<SubmitActionResponse>, response: SubmitActionResponse) {
         val data = response.data
+        Log.d("some", "onSuccessResponse data : $data")
         if (data == null) {
             onFailureResponse(call, createInvalidResponseError())
         } else {

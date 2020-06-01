@@ -21,11 +21,11 @@
 package com.saltedge.authenticator.features.actions
 
 import android.content.Context
+import android.util.Log
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
-import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
@@ -47,12 +47,42 @@ class SubmitActionPresenter @Inject constructor(
     private var actionAppLinkData: ActionAppLinkData? = null
     private var connectionAndKey: ConnectionAndKey? = null
 
-    override fun setInitialData(connectionGuid: GUID, actionAppLinkData: ActionAppLinkData) {
+    override fun setInitialData(actionAppLinkData: ActionAppLinkData) {
+        val connections = connectionsRepository.getByConnectUrl(actionAppLinkData.connectUrl)
+        val connectionGuid = connections.first().guid
         this.connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
             this.actionAppLinkData = actionAppLinkData
             keyStoreManager.createConnectionAndKeyModel(it)
         }
-        if (connectionAndKey == null) viewMode = ViewMode.ACTION_ERROR
+        if (connectionAndKey == null) {
+            Log.d("some", "connectionAndKey == null")
+            viewMode = ViewMode.ACTION_ERROR
+        }
+
+                when {
+                    connections.isEmpty() -> {
+                        Log.d("some", "connections is empty")
+//                        viewContract.showNoConnectionsError()
+                    }
+                    connections.size == 1 -> {
+                        Log.d("some", "connections.size 1")
+
+                        //                        val connectionGuid = connections.first().guid
+//                        viewContract.showSubmitActionFragment(
+//                            connectionGuid = connectionGuid,
+//                            actionAppLinkData = actionAppLinkData
+//                        )
+                    }
+                    else -> {
+                        Log.d("some", "connections.size more than 1")
+//                        val result = connections.convertConnectionsToViewModels(
+//                            context = appContext
+//                        )
+//                        viewContract.showConnectionsSelectorFragment(result)
+                    }
+                }
+
+        Log.d("some", "connectionGuid: $connectionGuid , actionAppLinkData: $actionAppLinkData")
     }
 
     override fun onViewCreated() {
