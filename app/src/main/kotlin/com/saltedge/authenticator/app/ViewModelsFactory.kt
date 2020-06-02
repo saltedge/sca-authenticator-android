@@ -72,7 +72,8 @@ class ViewModelsFactory @Inject constructor(
             modelClass.isAssignableFrom(MainActivityViewModel::class.java) -> {
                 return MainActivityViewModel(
                     appContext = appContext,
-                    realmManager = realmManager
+                    realmManager = realmManager,
+                    preferenceRepository = preferenceRepository
                 ) as T
             }
             modelClass.isAssignableFrom(OnboardingSetupViewModel::class.java) -> {

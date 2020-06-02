@@ -28,12 +28,14 @@ import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
+import com.saltedge.authenticator.app.switchDarkLightMode
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
+import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
@@ -44,7 +46,8 @@ import com.saltedge.authenticator.tools.applyPreferenceLocale
 
 class MainActivityViewModel(
     val appContext: Context,
-    val realmManager: RealmManagerAbs
+    val realmManager: RealmManagerAbs,
+    val preferenceRepository: PreferenceRepositoryAbs
 ) : ViewModel(),
     LifecycleObserver,
     NewAuthorizationListener,
@@ -135,7 +138,8 @@ class MainActivityViewModel(
         when (viewId) {
             R.id.appBarActionQrCode -> onQrScanClickEvent.postValue(ViewModelEvent(Unit))
             R.id.appBarActionTheme -> {
-                //TODO implement dark/light theme selector
+                val nightMode = preferenceRepository.nightMode
+                preferenceRepository.nightMode = appContext.switchDarkLightMode(nightMode)
             }
             R.id.appBarActionMore -> {
                 val menuItems = listOf<MenuItemData>(

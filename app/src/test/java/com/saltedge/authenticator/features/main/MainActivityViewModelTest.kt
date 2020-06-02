@@ -25,18 +25,16 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.test.core.app.ApplicationProvider
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
+import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
@@ -49,6 +47,7 @@ import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
@@ -78,7 +77,7 @@ class MainActivityViewModelTest {
         createViewModel()
 
         //then
-        Mockito.verify(mockRealmManager).initRealm(context)
+        verify(mockRealmManager).initRealm(context)
     }
 
     @Test
@@ -354,7 +353,7 @@ class MainActivityViewModelTest {
     @Throws(Exception::class)
     fun onViewClickTestCase2() {
         /**
-         * given viewId = appBarActionMenu
+         * given viewId = appBarActionMore
          */
         val viewModel = createViewModel()
         val viewId = R.id.appBarActionMore
@@ -420,6 +419,57 @@ class MainActivityViewModelTest {
         assertThat(viewModel.onQrScanClickEvent.value, `is`(nullValue()))
         assertThat(viewModel.onAppBarMenuClickEvent.value, `is`(nullValue()))
         assertThat(viewModel.onBackActionClickEvent.value, `is`(nullValue()))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onViewClickTestCase5() {
+        /**
+         * given viewId = appBarActionTheme and night mode = AppCompatDelegate.MODE_NIGHT_YES
+         */
+        val viewModel = createViewModel()
+        val viewId = R.id.appBarActionTheme
+        given(mockPreferenceRepository.nightMode).willReturn(AppCompatDelegate.MODE_NIGHT_YES)
+
+        //when
+        viewModel.onViewClick(viewId)
+
+        //then
+        verify(mockPreferenceRepository).nightMode = AppCompatDelegate.MODE_NIGHT_NO
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onViewClickTestCase6() {
+        /**
+         * given viewId = appBarActionTheme and night mode = AppCompatDelegate.MODE_NIGHT_NO
+         */
+        val viewModel = createViewModel()
+        val viewId = R.id.appBarActionTheme
+        given(mockPreferenceRepository.nightMode).willReturn(AppCompatDelegate.MODE_NIGHT_NO)
+
+        //when
+        viewModel.onViewClick(viewId)
+
+        //then
+        verify(mockPreferenceRepository).nightMode = AppCompatDelegate.MODE_NIGHT_YES
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onViewClickTestCase7() {
+        /**
+         * given viewId = appBarActionTheme and system night mode
+         */
+        val viewModel = createViewModel()
+        val viewId = R.id.appBarActionTheme
+        given(mockPreferenceRepository.nightMode).willReturn(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
+
+        //when
+        viewModel.onViewClick(viewId)
+
+        //then
+        verify(mockPreferenceRepository).nightMode = AppCompatDelegate.MODE_NIGHT_YES
     }
 
     @Test
@@ -573,13 +623,15 @@ class MainActivityViewModelTest {
         assertThat(viewModel.onRestartActivityEvent.value, equalTo(ViewModelEvent(Unit)))
     }
 
-    private val mockRealmManager = Mockito.mock(RealmManagerAbs::class.java)
+    private val mockRealmManager = mock(RealmManagerAbs::class.java)
+    private val mockPreferenceRepository = mock(PreferenceRepositoryAbs::class.java)
     private val context: Context = ApplicationProvider.getApplicationContext()
 
     private fun createViewModel(): MainActivityViewModel {
         return MainActivityViewModel(
             appContext = context,
-            realmManager = mockRealmManager
+            realmManager = mockRealmManager,
+            preferenceRepository = mockPreferenceRepository
         )
     }
 }
