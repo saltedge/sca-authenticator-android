@@ -71,7 +71,7 @@ class LauncherActivity : AppCompatActivity() {
     }
 
     private fun proceedToNextScreen() {
-//        Handler().postDelayed({ startActivityWithPreset() }, LAUNCHER_SPLASH_DURATION)
+        Handler().postDelayed({ startActivityWithPreset() }, LAUNCHER_SPLASH_DURATION)
     }
 
 //  TODO: refactor when https://github.com/saltedge/sca-authenticator-android/issues/104 is completed
