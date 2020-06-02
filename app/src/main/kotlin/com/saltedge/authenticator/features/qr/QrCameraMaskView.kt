@@ -27,7 +27,8 @@ import android.view.View
 import com.saltedge.authenticator.tools.convertDpToPx
 
 class QrCameraMaskView : View {
-
+    private val rectHalfSize = convertDpToPx(232F) / 2
+    private val roundRadius = convertDpToPx(4F).toFloat()
     private var qrRect = RectF()
 
     constructor(context: Context?) : super(context)
@@ -45,7 +46,6 @@ class QrCameraMaskView : View {
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        val rectHalfSize = convertDpToPx(232F) / 2
         val centerX = w.toFloat() / 2
         val centerY = h.toFloat() / 2
         qrRect = RectF(
@@ -61,6 +61,6 @@ class QrCameraMaskView : View {
 
         paint.color = Color.TRANSPARENT
         paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
-        canvas.drawRect(qrRect, paint)
+        canvas.drawRoundRect(qrRect, roundRadius, roundRadius, paint)
     }
 }

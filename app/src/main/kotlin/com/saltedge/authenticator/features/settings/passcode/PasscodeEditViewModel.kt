@@ -99,7 +99,7 @@ class PasscodeEditViewModel(
         return when (inputMode) {
             PasscodeInputMode.CHECK_PASSCODE -> R.string.settings_passcode_input_current
             PasscodeInputMode.NEW_PASSCODE -> R.string.passcode_input_new_passcode
-            PasscodeInputMode.CONFIRM_PASSCODE -> R.string.passcode_repeat_new_passcode
+            PasscodeInputMode.CONFIRM_PASSCODE -> R.string.passcode_confirm_passcode
         }
     }
 }

@@ -149,11 +149,6 @@ class MainActivityViewModel(
                         textResId = R.string.connections_feature_title
                     ),
                     MenuItemData(
-                        id = R.string.consents_feature_title,
-                        iconResId = R.drawable.ic_menu_action_list,
-                        textResId = R.string.consents_feature_title
-                    ),
-                    MenuItemData(
                         id = R.string.settings_feature_title,
                         iconResId = R.drawable.ic_menu_action_settings,
                         textResId = R.string.settings_feature_title

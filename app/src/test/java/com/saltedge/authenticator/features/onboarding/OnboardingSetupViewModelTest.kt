@@ -152,7 +152,7 @@ class OnboardingSetupViewModelTest {
 
         assertThat(
             viewModel.headerTitle.value,
-            equalTo(R.string.onboarding_secure_app_passcode_repeat)
+            equalTo(R.string.passcode_confirm_passcode)
         )
     }
 

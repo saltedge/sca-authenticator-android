@@ -53,7 +53,7 @@ class BiometricsInputPresenterTest {
         Mockito.verify(mockView).updateStatusView(
             imageResId = R.drawable.ic_fingerprint_error,
             textColorResId = R.color.red,
-            textResId = R.string.error_fingerprint_not_recognized,
+            textResId = R.string.errors_fingerprint_not_recognized,
             animateText = true
         )
     }

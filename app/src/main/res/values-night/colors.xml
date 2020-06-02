@@ -22,6 +22,8 @@
     <color name="system_bar_color">@color/primary_dark</color>
     <color name="theme_background">@color/dark_theme_background</color>
     <color name="passcode_label_background">@color/blue_black</color>
+    <color name="passcode_description_background">@color/dark_100</color>
+    <color name="passcode_pressed_key_background">@color/dark_100</color>
     <color name="blue_text">@color/primary_light</color>
     <color name="onboarding_dots_background">@color/primary_light</color>
     <color name="passcode_dots_background">@color/dark_80</color>
@@ -36,7 +38,7 @@
     <color name="company_logo_background">@android:color/white</color>
     <color name="appbar_action_icon_fill_color">@android:color/white</color>
     <color name="menu_action_icon_fill_color">@color/dark_60</color>
-    <color name="qr_camera_mask_background">@color/black_87</color>
+    <color name="qr_camera_mask_background">#B2040411</color>
     <color name="bottom_menu_background">@color/dark_100</color>
     <color name="authorization_header_view_background">@color/blue_black</color>
     <color name="rounded_image_background">@color/dark_100</color>

@@ -99,11 +99,10 @@
 
     <Button
         android:id="@+id/actionView"
-        style="@style/LargeBlueButtonWithInset"
+        style="@style/LargeBlueButton"
         android:layout_marginTop="@dimen/dp_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/descriptionView"
-        tools:text="Button"
-        tools:textColor="@android:color/white" />
+        tools:text="Button" />
 </androidx.constraintlayout.widget.ConstraintLayout>

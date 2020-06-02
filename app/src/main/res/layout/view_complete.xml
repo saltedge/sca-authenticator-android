@@ -66,7 +66,6 @@
     <Button
         android:id="@+id/mainActionView"
         style="@style/LargeBlueButton"
-        android:layout_height="@dimen/dp_54"
         android:layout_marginTop="@dimen/dp_24"
         tools:text="Button"
         tools:textColor="@android:color/white" />

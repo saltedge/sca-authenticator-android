@@ -26,7 +26,6 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.LinearLayout
 import androidx.annotation.StringRes
 import com.saltedge.authenticator.R
@@ -37,6 +36,9 @@ import kotlinx.android.synthetic.main.view_passcode_edit.view.*
 enum class PasscodeInputMode {
     CHECK_PASSCODE, NEW_PASSCODE, CONFIRM_PASSCODE
 }
+
+private const val PASSCODE_MIN_SIZE = 4
+private const val PASSCODE_MAX_SIZE = 16
 
 /**
  * Passcode input container
@@ -76,7 +78,8 @@ class PasscodeEditView(context: Context, attrs: AttributeSet) : LinearLayout(con
 
     override fun onDigitKeyClick(value: String) {
         val text: String = passcodeLabelView?.text?.toString() ?: return
-        updatePasscodeOutput(text + value)
+        if (text.length < PASSCODE_MAX_SIZE) updatePasscodeOutput(text + value)
+        else showError(R.string.errors_max_passcode)
     }
 
     override fun onFingerKeyClick() {
@@ -93,7 +96,8 @@ class PasscodeEditView(context: Context, attrs: AttributeSet) : LinearLayout(con
     }
 
     private fun setupViews() {
-        descriptionView?.visibility = View.INVISIBLE
+        descriptionView?.alpha = 0f
+
         updatePasscodeOutput("")
         keypadView?.setupFingerAction(active = biometricsActionIsAvailable)
         keypadView?.clickListener = this
@@ -104,7 +108,7 @@ class PasscodeEditView(context: Context, attrs: AttributeSet) : LinearLayout(con
 
     private fun updatePasscodeOutput(text: String) {
         passcodeLabelView?.setText(text)
-        submitView?.setVisible(show = (4..16).contains(text.length))
+        submitView?.setVisible(show = (PASSCODE_MIN_SIZE..PASSCODE_MAX_SIZE).contains(text.length))
         keypadView?.let {
             if (text.isEmpty() && biometricsActionIsAvailable) it.showFingerView() else it.showDeleteView()
         }
@@ -121,7 +125,8 @@ class PasscodeEditView(context: Context, attrs: AttributeSet) : LinearLayout(con
                 }
             }
             PasscodeInputMode.NEW_PASSCODE -> {
-                descriptionView?.visibility = View.INVISIBLE
+                descriptionView?.alpha = 0f
+
                 initialPasscode = passcode
                 inputMode = PasscodeInputMode.CONFIRM_PASSCODE
                 listener?.onNewPasscodeEntered(inputMode, passcode)
@@ -142,12 +147,11 @@ class PasscodeEditView(context: Context, attrs: AttributeSet) : LinearLayout(con
     }
 
     private fun showError(error: String) {
-        descriptionView?.visibility = View.VISIBLE
         descriptionView?.text = error
         errorVibrate()
-        descriptionView?.animate()?.setStartDelay(3000L)?.withEndAction {
-            descriptionView?.visibility = View.INVISIBLE
-        }?.start()
+
+        descriptionView?.alpha = 1f
+        descriptionView?.animate()?.setStartDelay(3000L)?.alpha(0f)?.setDuration(500L)?.start()
     }
 
     @Suppress("DEPRECATION")

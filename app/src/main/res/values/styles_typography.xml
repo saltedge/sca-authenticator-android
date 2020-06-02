@@ -102,7 +102,7 @@
     <style name="app_bar_title">
         <item name="android:textColor">@color/primary_text</item>
         <item name="android:textSize">@dimen/text_30</item>
-        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:fontFamily">@font/roboto_bold</item>
     </style>
 
     <style name="TextPrimary">
