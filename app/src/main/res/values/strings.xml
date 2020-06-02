@@ -145,7 +145,8 @@
     <string name="settings_notifications">Notifications</string>
     <string name="settings_passcode">Passcode</string>
     <string name="settings_passcode_description">Change passcode</string>
-    <string name="settings_passcode_input_current">Input current passcode</string>
+    <string name="settings_passcode_input_current">Your current passcode</string>
+    <string name="settings_input_new_passcode">New passcode</string>
     <string name="settings_passcode_success">New passcode successfully set</string>
     <string name="settings_screenshot_lock">Screenshot lock</string>
     <string name="settings_restart_app">Restart app for these changes to take effect</string>

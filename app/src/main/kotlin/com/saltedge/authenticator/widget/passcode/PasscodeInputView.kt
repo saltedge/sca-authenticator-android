@@ -45,8 +45,9 @@ private const val PASSCODE_MAX_SIZE = 16
  *
  * @see KeypadView
  */
-class PasscodeEditView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
-    KeypadView.KeypadClickListener {
+class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
+    KeypadView.KeypadClickListener
+{
     private var vibrator: Vibrator? = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator?
     var initialPasscode: String = ""
     var title: String

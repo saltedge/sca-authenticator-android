@@ -62,7 +62,7 @@ class PasscodeEditPresenterTest {
         viewModel.onInputValidPasscode()
 
         assertThat(viewModel.passcodeInputMode.value, equalTo(PasscodeInputMode.NEW_PASSCODE))
-        assertThat(viewModel.titleRes.value, equalTo(R.string.passcode_input_new_passcode))
+        assertThat(viewModel.titleRes.value, equalTo(R.string.settings_input_new_passcode))
     }
 
     @Test

@@ -2,7 +2,7 @@
  <!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
-    Copyright (c) 2019 Salt Edge Inc.
+    Copyright (c) 2020 Salt Edge Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,6 +21,6 @@
 -->
 <selector
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="@color/switch_on" android:state_checked="true" />
-    <item android:color="@color/switch_off"/>
+    <item android:color="@color/switch_track_tint_on" android:state_checked="true" />
+    <item android:color="@color/switch_track_tint_off"/>
 </selector>

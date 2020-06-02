@@ -23,7 +23,7 @@ package com.saltedge.authenticator.widget.passcode
 /**
  * Used for working with passcode
  *
- * @see PasscodeEditView
+ * @see PasscodeInputView
  */
 interface PasscodeInputListener {
     fun onBiometricActionSelected() {}
