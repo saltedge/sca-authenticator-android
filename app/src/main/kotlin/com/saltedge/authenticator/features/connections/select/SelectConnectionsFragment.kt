@@ -42,7 +42,6 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(false)
         (arguments?.getSerializable(KEY_CONNECTIONS) as? List<ConnectionViewModel>)?.let {
             adapter.data = it
         }

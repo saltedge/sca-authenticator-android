@@ -22,7 +22,6 @@ package com.saltedge.authenticator.features.actions
 
 import android.content.Context
 import android.content.DialogInterface
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
@@ -60,9 +59,9 @@ class SubmitActionViewModel @Inject constructor(
         private set
     var onOpenLinkEvent = MutableLiveData<ViewModelEvent<String>>()
         private set
-    var showNoConnectionsErrorEvent = MutableLiveData<ViewModelEvent<String>>()
-        private set
     var showConnectionsSelectorFragmentEvent = MutableLiveData<List<ConnectionViewModel>>()
+        private set
+    var showSubmitActionFragmentEvent = MutableLiveData<ViewModelEvent<ActionAppLinkData>>()
         private set
     var setResultAuthorizationIdentifier = MutableLiveData<AuthorizationIdentifier>()
 
@@ -75,9 +74,7 @@ class SubmitActionViewModel @Inject constructor(
     var actionProcessingVisibility = MutableLiveData<Int>()
 
     override fun onActionInitFailure(error: ApiErrorData) {
-        viewMode = ViewMode.ACTION_ERROR
-        updateViewsContent()
-        onShowErrorEvent.postValue(ViewModelEvent(error.getErrorMessage(appContext)))
+        showActionError(error.getErrorMessage(appContext))
     }
 
     override fun onActionInitSuccess(response: SubmitActionResponseData) {
@@ -100,8 +97,7 @@ class SubmitActionViewModel @Inject constructor(
 
     fun setInitialData(actionAppLinkData: ActionAppLinkData) {
         val connections = connectionsRepository.getByConnectUrl(actionAppLinkData.connectUrl)
-        val connectionGuid = connections.first().guid
-        this.connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
+        this.connectionAndKey = connections.firstOrNull()?.let {
             this.actionAppLinkData = actionAppLinkData
             keyStoreManager.createConnectionAndKeyModel(it)
         }
@@ -111,19 +107,12 @@ class SubmitActionViewModel @Inject constructor(
 
         when {
             connections.isEmpty() -> {
-                Log.d("some", "connections is empty")
-                showNoConnectionsErrorEvent.postValue(ViewModelEvent("No connections"))
+                showActionError(appContext.getString(R.string.connections_list_empty_title))
             }
             connections.size == 1 -> {
-                Log.d("some", "connections.size 1")
-//                val connectionGuid = connections.first().guid
-//                viewContract.showSubmitActionFragment(
-//                    connectionGuid = connectionGuid,
-//                    actionAppLinkData = actionAppLinkData
-//                )
+                showSubmitActionFragmentEvent.postValue(ViewModelEvent(actionAppLinkData))
             }
             else -> {
-                Log.d("some", "connections.size more than 1")
                 val result = connections.convertConnectionsToViewModels(
                     context = appContext
                 )
@@ -145,10 +134,11 @@ class SubmitActionViewModel @Inject constructor(
     }
 
     fun onViewClick(viewId: Int) {
-        onCloseEvent.postValue(ViewModelEvent(Unit))
-        val returnToUrl: String? = actionAppLinkData?.returnTo
-        if (returnToUrl.isNullOrEmpty()) return
-        onOpenLinkEvent.postValue(ViewModelEvent(returnToUrl))
+        if (viewId == R.id.mainActionView) {
+            onCloseEvent.postValue(ViewModelEvent(Unit))
+            val returnToUrl: String? = actionAppLinkData?.returnTo
+            if (!returnToUrl.isNullOrEmpty()) onOpenLinkEvent.postValue(ViewModelEvent(returnToUrl))
+        }
     }
 
     fun onDialogActionIdClick(dialogActionId: Int) {
@@ -190,6 +180,12 @@ class SubmitActionViewModel @Inject constructor(
 
     private fun getProgressViewVisibility(): Int {
         return if (viewMode == ViewMode.PROCESSING) View.VISIBLE else View.GONE
+    }
+
+    private fun showActionError(errorMessage: String) {
+        viewMode = ViewMode.ACTION_ERROR
+        updateViewsContent()
+        onShowErrorEvent.postValue(ViewModelEvent(errorMessage))
     }
 }
 

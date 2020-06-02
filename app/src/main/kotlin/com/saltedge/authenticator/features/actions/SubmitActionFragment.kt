@@ -132,9 +132,9 @@ class SubmitActionFragment : BaseFragment(), View.OnClickListener, DialogInterfa
         viewModel.mainActionTextResId.observe(this, Observer<Int> { mainActionTextResId ->
             completeView?.setMainActionText(mainActionTextResId)
         })
-        viewModel.showNoConnectionsErrorEvent.observe(this, Observer<ViewModelEvent<String>>  {
-            it.getContentIfNotHandled()?.let {
-                Log.d("some", "$it")
+        viewModel.showSubmitActionFragmentEvent.observe(this, Observer<ViewModelEvent<ActionAppLinkData>> {
+            it.getContentIfNotHandled()?.let { actionAppLinkData ->
+                activity?.addFragment(newInstance(actionAppLinkData))
             }
         })
         viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<List<ConnectionViewModel>> {
