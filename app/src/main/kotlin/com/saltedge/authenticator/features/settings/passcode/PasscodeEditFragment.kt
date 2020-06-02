@@ -58,7 +58,7 @@ class PasscodeEditFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activityComponents?.updateAppbar(
-            titleResId = R.string.settings_passcode,
+            titleResId = R.string.settings_passcode_description,
             backActionImageResId = R.drawable.ic_appbar_action_back
         )
         passcodeEditView?.biometricsActionIsAvailable = false

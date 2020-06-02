@@ -169,7 +169,7 @@
     <string name="scan_qr_description">Scan the QR to make your \nfirst connection\n</string>
 
     <string name="ui_dialog_clear_data_title">Clear app data</string>
-    <string name="ui_dialog_clear_data_message">All app data including connected providers, user data and settings will be permanently deleted.</string>
+    <string name="ui_dialog_clear_data_message">App data including connected providers and user data will be permanently deleted.</string>
     <string name="ui_dialog_rename_title">Rename connection</string>
     <string name="ui_dialog_delete_title">Delete connection</string>
     <string name="ui_dialog_delete_message">You will stop receiving authorization requests from provider. Are you sure you want to delete this connection?</string>
