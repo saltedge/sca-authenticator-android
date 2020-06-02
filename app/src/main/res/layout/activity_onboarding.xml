@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2020 Salt Edge Inc.
@@ -46,18 +47,18 @@
                 android:id="@+id/topSpace"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/passcodeEditView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/passcodeEditView"
                 app:layout_constraintVertical_weight="2">
 
                 <ImageView
                     android:id="@+id/appLogoView"
-                    android:contentDescription="@string/app_name_short"
                     android:layout_width="@dimen/logo_image_size"
                     android:layout_height="@dimen/logo_image_size"
                     android:layout_gravity="center"
+                    android:contentDescription="@string/app_name_short"
                     android:src="@drawable/ic_app_logo" />
             </FrameLayout>
 
@@ -65,12 +66,12 @@
                 android:id="@+id/passcodeEditView"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:visibility="@{viewModel.passcodeInputViewVisibility}"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/topSpace"
-                app:layout_constraintVertical_weight="5"
-                android:visibility="@{viewModel.passcodeInputViewVisibility}" />
+                app:layout_constraintVertical_weight="5" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -83,8 +84,8 @@
                 android:id="@+id/onboardingPager"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="@dimen/dp_48"
                 android:layout_marginStart="@dimen/dp_16"
+                android:layout_marginTop="@dimen/dp_48"
                 android:layout_marginEnd="@dimen/dp_16"
                 android:layout_marginBottom="@dimen/dp_88"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -98,45 +99,46 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dp_16"
+                app:layout_constraintBottom_toBottomOf="@+id/onboardingPager"
                 app:layout_constraintStart_toStartOf="@+id/onboardingPager"
                 app:layout_constraintTop_toTopOf="@+id/onboardingPager"
-                app:layout_constraintBottom_toBottomOf="@+id/onboardingPager"
                 app:selectedColor="@color/onboarding_dots_background" />
 
             <Button
                 android:id="@+id/proceedToSetup"
                 style="@style/BlueButton"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_48"
+                android:layout_height="@dimen/dp_64"
                 android:layout_marginStart="@dimen/dp_32"
                 android:layout_marginEnd="@dimen/dp_32"
                 android:layout_marginBottom="@dimen/dp_40"
+                android:gravity="center"
+                android:text="@string/actions_get_started"
+                android:visibility="@{viewModel.proceedViewVisibility}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:text="@string/actions_get_started"
-                android:visibility="@{viewModel.proceedViewVisibility}" />
+                app:layout_constraintStart_toStartOf="parent" />
 
             <LinearLayout
                 android:id="@+id/actionLayout"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_48"
+                android:layout_height="@dimen/dp_64"
                 android:layout_marginStart="@dimen/dp_32"
                 android:layout_marginEnd="@dimen/dp_32"
                 android:layout_marginBottom="@dimen/dp_40"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="@{viewModel.skipViewVisibility}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:gravity="bottom"
-                android:orientation="horizontal"
-                android:visibility="@{viewModel.skipViewVisibility}">
+                app:layout_constraintStart_toStartOf="parent">
 
                 <TextView
                     android:id="@+id/skipActionView"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="9dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:gravity="center_vertical"
                     android:fontFamily="@font/roboto_medium"
                     android:text="@string/actions_skip"
                     android:textColor="@color/primary"
@@ -144,15 +146,16 @@
 
                 <Button
                     android:id="@+id/nextActionView"
-                    android:layout_width="@dimen/dp_120"
-                    android:layout_height="@dimen/dp_48"
+                    android:layout_width="@dimen/dp_160"
+                    android:layout_height="match_parent"
                     android:backgroundTint="@color/button_color_selector"
                     android:elevation="@dimen/dp_30"
                     android:fontFamily="@font/roboto_medium"
+                    android:gravity="center"
                     android:text="@string/actions_next"
                     android:textAllCaps="false"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/text_14" />
+                    android:textSize="@dimen/text_18" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>

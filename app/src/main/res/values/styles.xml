@@ -32,7 +32,7 @@
     </style>
 
     <style name="BlueButton" parent="@style/Widget.AppCompat.Button.Colored">
-        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:textSize">@dimen/text_18</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:backgroundTint">@color/button_color_selector</item>
