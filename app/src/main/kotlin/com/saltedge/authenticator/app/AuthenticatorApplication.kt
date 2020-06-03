@@ -23,6 +23,7 @@ package com.saltedge.authenticator.app
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.gms.security.ProviderInstaller
 import com.saltedge.android.security.BuildConfig
 import com.saltedge.android.security.RaspChecker
@@ -62,6 +63,8 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
         registerActivityLifecycleCallbacks(this)
 
         AuthenticatorApiManager.initializeSDK(applicationContext)
+
+        setupNightMode()
     }
 
     override fun onActivityPaused(activity: Activity?) {
@@ -98,5 +101,9 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
         } catch (e: Exception) {
             e.log()
         }
+    }
+
+    private fun setupNightMode() {
+        AppCompatDelegate.setDefaultNightMode(appComponent.preferenceRepository().nightMode)
     }
 }

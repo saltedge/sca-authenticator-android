@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.models.repository
 
 import android.preference.PreferenceManager
+import androidx.appcompat.app.AppCompatDelegate
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -78,20 +79,14 @@ class PreferenceRepositoryTest {
 
     @Test
     @Throws(Exception::class)
-    fun fingerPrintEnabledTest() {
-        PreferenceRepository.fingerprintEnabled = false
+    fun nightModeTest() {
+        PreferenceRepository.nightMode = AppCompatDelegate.MODE_NIGHT_NO
 
-        assertFalse(PreferenceRepository.fingerprintEnabled)
+        assertThat(PreferenceRepository.nightMode, equalTo(AppCompatDelegate.MODE_NIGHT_NO))
 
-        PreferenceRepository.fingerprintEnabled = true
+        PreferenceRepository.nightMode = AppCompatDelegate.MODE_NIGHT_YES
 
-        assertTrue(PreferenceRepository.fingerprintEnabled)
-        assertTrue(
-            PreferenceManager.getDefaultSharedPreferences(TestAppTools.applicationContext).getBoolean(
-                KEY_FINGERPRINT,
-                false
-            )
-        )
+        assertThat(PreferenceRepository.nightMode, equalTo(AppCompatDelegate.MODE_NIGHT_YES))
     }
 
     @Test
@@ -203,7 +198,7 @@ class PreferenceRepositoryTest {
     @Throws(Exception::class)
     fun clearUserPreferencesTest() {
         PreferenceRepository.encryptedPasscode = "test"
-        PreferenceRepository.fingerprintEnabled = true
+        PreferenceRepository.nightMode = 1
         PreferenceRepository.notificationsEnabled = true
         PreferenceRepository.currentLocale = "en"
         PreferenceRepository.pinInputAttempts = 9
@@ -211,7 +206,7 @@ class PreferenceRepositoryTest {
         PreferenceRepository.dbKey = "dbKey"
 
         assertThat(PreferenceRepository.encryptedPasscode, equalTo("test"))
-        assertTrue(PreferenceRepository.fingerprintEnabled)
+        assertThat(PreferenceRepository.nightMode, equalTo(1))
         assertTrue(PreferenceRepository.notificationsEnabled)
         assertThat(PreferenceRepository.currentLocale, equalTo("en"))
         assertThat(PreferenceRepository.pinInputAttempts, equalTo(9))
@@ -221,7 +216,7 @@ class PreferenceRepositoryTest {
         PreferenceRepository.clearUserPreferences()
 
         assertTrue(PreferenceRepository.encryptedPasscode.isEmpty())
-        assertFalse(PreferenceRepository.fingerprintEnabled)
+        assertThat(PreferenceRepository.nightMode, equalTo(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM))
         assertFalse(PreferenceRepository.notificationsEnabled)
         assertNull(PreferenceRepository.currentLocale)
         assertThat(PreferenceRepository.pinInputAttempts, equalTo(0))

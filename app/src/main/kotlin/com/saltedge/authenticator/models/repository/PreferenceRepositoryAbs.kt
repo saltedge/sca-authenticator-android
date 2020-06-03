@@ -27,7 +27,7 @@ package com.saltedge.authenticator.models.repository
 interface PreferenceRepositoryAbs {
     var dbKey: String
     var encryptedPasscode: String
-    var fingerprintEnabled: Boolean
+    var nightMode: Int
     var cloudMessagingToken: String
     var notificationsEnabled: Boolean
     var currentLocale: String?
