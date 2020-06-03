@@ -84,10 +84,9 @@ class MainActivityViewModel(
 
     fun onLifeCycleCreate(savedInstanceState: Bundle?, intent: Intent?) {
         if (savedInstanceState == null) {
+            onShowAuthorizationsListEvent.postValue(ViewModelEvent(Unit))
             if (intent != null && (intent.hasPendingAuthorizationData || intent.hasDeepLinkData)) {
                 onNewIntent(intent)
-            } else {
-                onShowAuthorizationsListEvent.postValue(ViewModelEvent(Unit))
             }
         }
     }
