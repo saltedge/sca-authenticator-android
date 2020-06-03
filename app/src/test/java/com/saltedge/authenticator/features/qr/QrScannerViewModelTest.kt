@@ -24,22 +24,28 @@ import android.util.SparseArray
 import com.google.android.gms.vision.barcode.Barcode
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class QrScannerViewModelTest {
 
+    private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
     private lateinit var viewModel: QrScannerViewModel
 
     @Before
     fun setUp() {
-        viewModel = QrScannerViewModel(appContext = TestAppTools.applicationContext)
+        viewModel = QrScannerViewModel(
+            appContext = TestAppTools.applicationContext,
+            connectionsRepository = mockConnectionsRepository
+        )
     }
 
     /**

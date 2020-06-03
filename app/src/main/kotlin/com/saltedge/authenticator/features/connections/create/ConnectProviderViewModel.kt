@@ -66,9 +66,9 @@ class ConnectProviderViewModel(
     val completeTitle: MutableLiveData<SpannableString> = MutableLiveData(SpannableString(""))
     val completeDescription: MutableLiveData<String> = MutableLiveData("")
     val mainActionTextRes: MutableLiveData<ResId> = MutableLiveData(R.string.actions_try_again)
-    val webViewVisibility = MutableLiveData<Int>()
-    val progressViewVisibility = MutableLiveData<Int>()
-    val completeViewVisibility = MutableLiveData<Int>()
+    val webViewVisibility = MutableLiveData<Int>(View.GONE)
+    val progressViewVisibility = MutableLiveData<Int>(View.VISIBLE)
+    val completeViewVisibility = MutableLiveData<Int>(View.GONE)
     var titleRes: ResId = R.string.connections_new_connection
         private set
 
@@ -211,21 +211,16 @@ class ConnectProviderViewModel(
 
     private val webViewIsVisible: Boolean
         get() = viewMode == ViewMode.WEB_ENROLL
-
     private val progressViewIsVisible: Boolean
         get() = viewMode == ViewMode.START_NEW_CONNECT || viewMode == ViewMode.START_RECONNECT
-
     private val completeViewIsVisible: Boolean
         get() = viewMode == ViewMode.COMPLETE_SUCCESS || viewMode == ViewMode.COMPLETE_ERROR
-
     private val ViewMode.isCompleteWithSuccess: Boolean
         get() = this == ViewMode.COMPLETE_SUCCESS
-
     private val completeIconRes: ResId
         get() = if (viewMode.isCompleteWithSuccess) R.drawable.ic_status_success else R.drawable.ic_status_error
-
     private val completeActionTextRes: ResId
-        get() = if (viewMode.isCompleteWithSuccess) R.string.actions_proceed else R.string.actions_try_again
+        get() = if (viewMode.isCompleteWithSuccess) R.string.actions_done else R.string.actions_try_again
 
     private fun performFetchConfigurationRequest() {
         initialConnectData?.configurationUrl?.let {

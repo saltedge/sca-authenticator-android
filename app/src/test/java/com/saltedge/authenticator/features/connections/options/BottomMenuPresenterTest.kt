@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.connections.options
 
-import com.saltedge.authenticator.features.connections.common.ConnectionOptions
 import com.saltedge.authenticator.features.menu.BottomMenuPresenter
 import com.saltedge.authenticator.features.menu.MenuItemData
 import org.hamcrest.CoreMatchers.*
