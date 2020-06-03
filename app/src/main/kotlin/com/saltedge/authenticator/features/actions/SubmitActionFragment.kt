@@ -45,7 +45,7 @@ import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_submit_action.*
 import javax.inject.Inject
 
-class SubmitActionFragment : BaseFragment(), View.OnClickListener, DialogInterface.OnClickListener {
+class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener {
 
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: SubmitActionViewModel
@@ -79,12 +79,8 @@ class SubmitActionFragment : BaseFragment(), View.OnClickListener, DialogInterfa
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        completeView?.setOnClickListener(this)
+        completeView?.setOnClickListener { viewModel.onViewClick(view.id) }
         viewModel.onViewCreated()
-    }
-
-    override fun onClick(v: View?) {
-        viewModel.onViewClick(view?.id ?: return)
     }
 
     override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
@@ -112,9 +108,9 @@ class SubmitActionFragment : BaseFragment(), View.OnClickListener, DialogInterfa
                     listener = this
                 )}
         })
-        viewModel.onOpenLinkEvent.observe(this, Observer<ViewModelEvent<String>> {
+        viewModel.onOpenLinkEvent.observe(this, Observer<ViewModelEvent<Uri>> {
             it.getContentIfNotHandled()?.let { url ->
-                context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                context?.startActivity(Intent(Intent.ACTION_VIEW, url))
             }
         })
         viewModel.setResultAuthorizationIdentifier.observe(this, Observer<AuthorizationIdentifier> {
@@ -132,12 +128,8 @@ class SubmitActionFragment : BaseFragment(), View.OnClickListener, DialogInterfa
         viewModel.mainActionTextResId.observe(this, Observer<Int> { mainActionTextResId ->
             completeView?.setMainActionText(mainActionTextResId)
         })
-        viewModel.showSubmitActionFragmentEvent.observe(this, Observer<ViewModelEvent<ActionAppLinkData>> {
-            it.getContentIfNotHandled()?.let { actionAppLinkData ->
-                activity?.addFragment(newInstance(actionAppLinkData))
-            }
-        })
         viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<List<ConnectionViewModel>> {
+            //add target fragment
             activity?.addFragment(SelectConnectionsFragment.newInstance(connections = it))
         })
     }

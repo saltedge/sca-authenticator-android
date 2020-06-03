@@ -77,7 +77,8 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener {
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
         val connectionGuid = (adapter.getItem(itemIndex) as ConnectionViewModel).guid
         activity?.finishFragment()
-        (activity as? ConnectionSelectorListener)?.onConnectionSelected(connectionGuid)
+//        (activity as? ConnectionSelectorListener)?.onConnectionSelected(connectionGuid) replace on target fragment, return result
+
     }
 
     companion object {

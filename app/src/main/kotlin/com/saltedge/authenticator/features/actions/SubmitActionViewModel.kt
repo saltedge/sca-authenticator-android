@@ -22,6 +22,8 @@ package com.saltedge.authenticator.features.actions
 
 import android.content.Context
 import android.content.DialogInterface
+import android.net.Uri
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
@@ -40,9 +42,9 @@ import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.error.getErrorMessage
 import com.saltedge.authenticator.sdk.model.response.SubmitActionResponseData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import javax.inject.Inject
+import com.saltedge.authenticator.tools.log
 
-class SubmitActionViewModel @Inject constructor(
+class SubmitActionViewModel(
     private val appContext: Context,
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyStoreManagerAbs,
@@ -57,11 +59,9 @@ class SubmitActionViewModel @Inject constructor(
         private set
     var onShowErrorEvent = MutableLiveData<ViewModelEvent<String>>()
         private set
-    var onOpenLinkEvent = MutableLiveData<ViewModelEvent<String>>()
+    var onOpenLinkEvent = MutableLiveData<ViewModelEvent<Uri>>()
         private set
     var showConnectionsSelectorFragmentEvent = MutableLiveData<List<ConnectionViewModel>>()
-        private set
-    var showSubmitActionFragmentEvent = MutableLiveData<ViewModelEvent<ActionAppLinkData>>()
         private set
     var setResultAuthorizationIdentifier = MutableLiveData<AuthorizationIdentifier>()
 
@@ -81,7 +81,6 @@ class SubmitActionViewModel @Inject constructor(
         val authorizationID = response.authorizationId ?: ""
         val connectionID = response.connectionId ?: ""
         if (response.success == true && authorizationID.isNotEmpty() && connectionID.isNotEmpty()) {
-            viewMode = ViewMode.ACTION_SUCCESS
             onCloseEvent.postValue(ViewModelEvent(Unit))
             setResultAuthorizationIdentifier.postValue(
                 AuthorizationIdentifier(
@@ -90,32 +89,31 @@ class SubmitActionViewModel @Inject constructor(
                 )
             )
         } else {
-            viewMode = if (response.success == true) ViewMode.ACTION_SUCCESS else ViewMode.ACTION_ERROR
+            viewMode = ViewMode.ACTION_ERROR
             updateViewsContent()
         }
     }
 
     fun setInitialData(actionAppLinkData: ActionAppLinkData) {
         val connections = connectionsRepository.getByConnectUrl(actionAppLinkData.connectUrl)
-        this.connectionAndKey = connections.firstOrNull()?.let {
-            this.actionAppLinkData = actionAppLinkData
-            keyStoreManager.createConnectionAndKeyModel(it)
-        }
-        if (connectionAndKey == null) {
-            viewMode = ViewMode.ACTION_ERROR
-        }
-
         when {
             connections.isEmpty() -> {
                 showActionError(appContext.getString(R.string.connections_list_empty_title))
             }
             connections.size == 1 -> {
-                showSubmitActionFragmentEvent.postValue(ViewModelEvent(actionAppLinkData))
+                this.connectionAndKey = connections.firstOrNull()?.let {
+                    this.actionAppLinkData = actionAppLinkData
+                    keyStoreManager.createConnectionAndKeyModel(it)
+                }
+                if (connectionAndKey == null) {
+                    viewMode = ViewMode.ACTION_ERROR
+                }
             }
             else -> {
                 val result = connections.convertConnectionsToViewModels(
                     context = appContext
                 )
+                viewMode = ViewMode.SELECT
                 showConnectionsSelectorFragmentEvent.postValue(result)
             }
         }
@@ -135,9 +133,14 @@ class SubmitActionViewModel @Inject constructor(
 
     fun onViewClick(viewId: Int) {
         if (viewId == R.id.mainActionView) {
+            Log.d("some", "click on main action")
             onCloseEvent.postValue(ViewModelEvent(Unit))
-            val returnToUrl: String? = actionAppLinkData?.returnTo
-            if (!returnToUrl.isNullOrEmpty()) onOpenLinkEvent.postValue(ViewModelEvent(returnToUrl))
+            try {
+                val returnToUrl: String? = actionAppLinkData?.returnTo
+                if (!returnToUrl.isNullOrEmpty()) onOpenLinkEvent.postValue(ViewModelEvent(Uri.parse(returnToUrl)))
+            } catch (e: Exception) {
+                e.log()
+            }
         }
     }
 
@@ -146,40 +149,18 @@ class SubmitActionViewModel @Inject constructor(
     }
 
     private fun updateViewsContent() {
-        iconResId.postValue(getIconResId())
-        completeTitleResId.postValue(getCompleteTitle())
-        completeDescriptionResId.postValue(getCompleteDescription())
-        mainActionTextResId.postValue(getActionTextResId())
+        iconResId.postValue(R.drawable.ic_status_error)
+        completeTitleResId.postValue(R.string.action_error_title)
+        completeDescriptionResId.postValue(R.string.action_error_description)
+        mainActionTextResId.postValue(R.string.actions_try_again)
 
-        completeViewVisibility.postValue(getCompleteViewVisibility())
-        actionProcessingVisibility.postValue(getProgressViewVisibility())
-    }
-
-    private val ViewMode.isCompleteWithSuccess: Boolean
-        get() = this == ViewMode.ACTION_SUCCESS
-
-    private fun getIconResId(): Int {
-        return if (viewMode.isCompleteWithSuccess) R.drawable.ic_status_success else R.drawable.ic_status_error
-    }
-
-    private fun getCompleteTitle(): Int {
-        return if (viewMode.isCompleteWithSuccess) R.string.action_feature_title else R.string.action_error_title
-    }
-
-    private fun getCompleteDescription(): Int {
-        return if (viewMode.isCompleteWithSuccess) R.string.action_feature_description else R.string.action_error_description
-    }
-
-    private fun getActionTextResId(): Int {
-        return if (viewMode.isCompleteWithSuccess) android.R.string.ok else R.string.actions_try_again
-    }
-
-    private fun getCompleteViewVisibility(): Int {
-        return if (viewMode == ViewMode.ACTION_SUCCESS || viewMode == ViewMode.ACTION_ERROR) View.VISIBLE else View.GONE
-    }
-
-    private fun getProgressViewVisibility(): Int {
-        return if (viewMode == ViewMode.PROCESSING) View.VISIBLE else View.GONE
+        if (viewMode == ViewMode.ACTION_ERROR) {
+            completeViewVisibility.postValue(View.VISIBLE)
+            actionProcessingVisibility.postValue(View.GONE)
+        } else {
+            completeViewVisibility.postValue(View.GONE)
+            actionProcessingVisibility.postValue(View.VISIBLE)
+        }
     }
 
     private fun showActionError(errorMessage: String) {
@@ -190,5 +171,5 @@ class SubmitActionViewModel @Inject constructor(
 }
 
 enum class ViewMode {
-    START, PROCESSING, ACTION_SUCCESS, ACTION_ERROR
+    START, PROCESSING, ACTION_ERROR, SELECT
 }
