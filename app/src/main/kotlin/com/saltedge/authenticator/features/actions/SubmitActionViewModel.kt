@@ -23,7 +23,6 @@ package com.saltedge.authenticator.features.actions
 import android.content.Context
 import android.content.DialogInterface
 import android.net.Uri
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
@@ -96,13 +95,13 @@ class SubmitActionViewModel(
 
     fun setInitialData(actionAppLinkData: ActionAppLinkData) {
         val connections = connectionsRepository.getByConnectUrl(actionAppLinkData.connectUrl)
+        this.actionAppLinkData = actionAppLinkData
         when {
             connections.isEmpty() -> {
                 showActionError(appContext.getString(R.string.connections_list_empty_title))
             }
             connections.size == 1 -> {
                 this.connectionAndKey = connections.firstOrNull()?.let {
-                    this.actionAppLinkData = actionAppLinkData
                     keyStoreManager.createConnectionAndKeyModel(it)
                 }
                 if (connectionAndKey == null) {
@@ -119,6 +118,18 @@ class SubmitActionViewModel(
         }
     }
 
+    fun selectConnection(connectionGuid: String?) {
+        this.connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
+            keyStoreManager.createConnectionAndKeyModel(it)
+        }
+        viewMode = if (connectionAndKey == null) {
+            ViewMode.ACTION_ERROR
+        } else {
+            ViewMode.START
+        }
+        onViewCreated()
+    }
+
     fun onViewCreated() {
         if (viewMode == ViewMode.START) {
             apiManager.sendAction(
@@ -131,21 +142,29 @@ class SubmitActionViewModel(
         updateViewsContent()
     }
 
+    //TODO Doesn't catch clicks on R.id.mainActionView
     fun onViewClick(viewId: Int) {
-        if (viewId == R.id.mainActionView) {
-            Log.d("some", "click on main action")
-            onCloseEvent.postValue(ViewModelEvent(Unit))
-            try {
-                val returnToUrl: String? = actionAppLinkData?.returnTo
-                if (!returnToUrl.isNullOrEmpty()) onOpenLinkEvent.postValue(ViewModelEvent(Uri.parse(returnToUrl)))
-            } catch (e: Exception) {
-                e.log()
-            }
+        onCloseEvent.postValue(ViewModelEvent(Unit))
+        try {
+            val returnToUrl: String? = actionAppLinkData?.returnTo
+            if (!returnToUrl.isNullOrEmpty()) onOpenLinkEvent.postValue(
+                ViewModelEvent(
+                    Uri.parse(
+                        returnToUrl
+                    )
+                )
+            )
+        } catch (e: Exception) {
+            e.log()
         }
     }
 
     fun onDialogActionIdClick(dialogActionId: Int) {
-        if (dialogActionId == DialogInterface.BUTTON_POSITIVE) onCloseEvent.postValue(ViewModelEvent(Unit))
+        if (dialogActionId == DialogInterface.BUTTON_POSITIVE) onCloseEvent.postValue(
+            ViewModelEvent(
+                Unit
+            )
+        )
     }
 
     private fun updateViewsContent() {

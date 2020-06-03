@@ -20,11 +20,11 @@
  */
 package com.saltedge.authenticator.features.actions
 
+import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +32,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.CONNECTIONS_REQUEST_CODE
+import com.saltedge.authenticator.app.KEY_CONNECTION_GUID
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.SubmitActionBinding
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
@@ -87,6 +89,14 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener {
         viewModel.onDialogActionIdClick(dialogActionId)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (data == null || resultCode != Activity.RESULT_OK) return
+        if (requestCode == CONNECTIONS_REQUEST_CODE) {
+            val connectionGuid = data.getStringExtra(KEY_CONNECTION_GUID)
+            viewModel.selectConnection(connectionGuid)
+        }
+    }
+
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(SubmitActionViewModel::class.java)
@@ -129,8 +139,9 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener {
             completeView?.setMainActionText(mainActionTextResId)
         })
         viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<List<ConnectionViewModel>> {
-            //add target fragment
-            activity?.addFragment(SelectConnectionsFragment.newInstance(connections = it))
+            val selectConnectionsFragment = SelectConnectionsFragment.newInstance(connections = it)
+            selectConnectionsFragment.setTargetFragment(this, CONNECTIONS_REQUEST_CODE)
+            activity?.addFragment(selectConnectionsFragment)
         })
     }
 
