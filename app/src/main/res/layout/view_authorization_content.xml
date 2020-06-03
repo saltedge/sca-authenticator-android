@@ -137,7 +137,7 @@
                 style="?android:attr/progressBarStyleLarge"
                 android:layout_width="@dimen/dp_56"
                 android:layout_height="@dimen/dp_56"
-                android:indeterminateTint="@color/blue"
+                android:indeterminateTint="@color/primary"
                 android:layout_gravity="center"
                 android:indeterminateTintMode="src_in" />
 

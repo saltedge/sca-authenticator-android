@@ -14,64 +14,85 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_centerInParent="true"
-    android:background="@color/theme_background"
-    android:gravity="center_horizontal"
-    android:orientation="vertical">
+    android:background="@color/theme_background">
 
     <FrameLayout
         android:id="@+id/statusProgressOrImageContainer"
         android:layout_width="@dimen/dp_76"
         android:layout_height="@dimen/dp_76"
-        android:layout_marginTop="@dimen/dp_106"
+        android:layout_marginBottom="@dimen/dp_24"
         android:background="@drawable/shape_bg_process_status"
-        android:elevation="@dimen/dp_40">
+        android:elevation="@dimen/dp_40"
+        app:layout_constraintBottom_toTopOf="@+id/hGuidLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <ImageView
             android:id="@+id/iconView"
             android:layout_width="@dimen/dp_56"
             android:layout_height="@dimen/dp_56"
             android:layout_gravity="center"
-            android:contentDescription="@null"
+            android:contentDescription="@string/connect_status_in_progress"
             tools:src="@drawable/ic_status_success" />
     </FrameLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/hGuidLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.33" />
 
     <TextView
         android:id="@+id/titleView"
         style="@style/Text22Primary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/dp_32"
-        android:layout_marginTop="@dimen/dp_26"
-        android:layout_marginRight="@dimen/dp_32"
+        android:layout_marginStart="@dimen/dp_32"
+        android:layout_marginEnd="@dimen/dp_32"
         android:gravity="center_horizontal"
-        android:maxLines="3"
-        tools:text="HSBC was successfully connected" />
+        android:maxLines="2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hGuidLine"
+        tools:text="Title text view" />
 
     <TextView
-        android:id="@+id/subTitleView"
+        android:id="@+id/descriptionView"
         style="@style/Text18Primary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/dp_32"
-        android:layout_marginTop="@dimen/dp_10"
-        android:layout_marginRight="@dimen/dp_32"
+        android:layout_marginStart="@dimen/dp_32"
+        android:layout_marginTop="@dimen/dp_12"
+        android:layout_marginEnd="@dimen/dp_32"
         android:gravity="center_horizontal"
-        tools:text="You will receive an authorization request every time you make an action." />
+        android:maxLines="5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleView"
+        tools:text="Made transaction? You will get push notification. Open application, verify the transaction details, and simply authorize your actions." />
 
     <Button
-        android:id="@+id/mainActionView"
+        android:id="@+id/actionView"
         style="@style/LargeBlueButton"
         android:layout_marginTop="@dimen/dp_24"
-        tools:text="Button"
-        tools:textColor="@android:color/white" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/descriptionView"
+        tools:text="Positive action" />
 
     <TextView
         android:id="@+id/altActionView"
         style="@style/WhiteLinkAction"
-        android:layout_marginTop="@dimen/dp_20" />
-</LinearLayout>
+        android:layout_marginTop="@dimen/dp_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/actionView"
+        tools:text="NEGATIVE action"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

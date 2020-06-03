@@ -48,7 +48,6 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
-import kotlinx.android.synthetic.main.fragment_authorizations_list.*
 import kotlinx.android.synthetic.main.fragment_connections_list.*
 import kotlinx.android.synthetic.main.fragment_connections_list.emptyView
 import javax.inject.Inject
@@ -111,8 +110,7 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
         lifecycle.addObserver(viewModel)
 
         viewModel.listItems.observe(this, Observer<List<ConnectionViewModel>> {
-            headerDecorator?.headerPositions =
-                it.mapIndexed { index, _ -> index }.toTypedArray()
+            headerDecorator?.headerPositions = it.mapIndexed { index, _ -> index }.toTypedArray()
             adapter.data = it
         })
         viewModel.onQrScanClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
@@ -159,13 +157,13 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
     }
 
     private fun setupViews() {
-        connectionsListView?.layoutManager = LinearLayoutManager(activity ?: return)
-        connectionsListView?.adapter = adapter
         emptyView?.setActionOnClickListener(this)
-        headerDecorator = SpaceItemDecoration(
-            context = activity ?: return
-        ).apply {
-            connectionsListView?.addItemDecoration(this)
+        activity?.let {
+            connectionsListView?.layoutManager = LinearLayoutManager(it)
+            connectionsListView?.adapter = adapter
+            headerDecorator = SpaceItemDecoration(context = it).apply {
+                connectionsListView?.addItemDecoration(this)
+            }
         }
         binding.executePendingBindings()
     }

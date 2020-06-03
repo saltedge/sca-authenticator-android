@@ -20,6 +20,6 @@
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/color_secondary">
+    android:color="@color/white_button_ripple">
     <item android:drawable="@drawable/shape_bg_button_white_default" />
 </ripple>

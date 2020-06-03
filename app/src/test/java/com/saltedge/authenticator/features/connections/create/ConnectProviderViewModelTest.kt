@@ -28,10 +28,8 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.constants.API_VERSION
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_API_RESPONSE
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
-import com.saltedge.authenticator.sdk.model.configuration.ProviderConfigurationData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.response.CreateConnectionResponseData
@@ -43,7 +41,6 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
@@ -128,7 +125,7 @@ class ConnectProviderViewModelTest {
 
         verify(mockConnectionsRepository).fixNameAndSave(connection)
 
-        assertThat(viewModel.statusIconResId.value, equalTo(R.drawable.ic_status_success))
+        assertThat(viewModel.statusIconRes.value, equalTo(R.drawable.ic_status_success))
         assertThat(
             viewModel.completeTitle.value,
             equalTo(TestAppTools.getString(R.string.connect_status_provider_success).format(connection.name))
@@ -137,11 +134,11 @@ class ConnectProviderViewModelTest {
             viewModel.completeDescription.value,
             equalTo(TestAppTools.getString(R.string.connect_status_provider_success_description))
         )
-        assertThat(viewModel.mainActionTextResId.value, equalTo(R.string.actions_proceed))
+        assertThat(viewModel.mainActionTextRes.value, equalTo(R.string.actions_proceed))
 
-        assertThat(viewModel.shouldShowWebViewVisibility.value, equalTo(View.GONE))
-        assertThat(viewModel.shouldShowProgressViewVisibility.value, equalTo(View.GONE))
-        assertThat(viewModel.shouldShowCompleteViewVisibility.value, equalTo(View.VISIBLE))
+        assertThat(viewModel.webViewVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.progressViewVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
     }
 
     /**
@@ -242,7 +239,7 @@ class ConnectProviderViewModelTest {
             equalTo(ViewModelEvent("https://www.fentury.com"))
         )
 
-        assertThat(viewModel.statusIconResId.value, equalTo(R.drawable.ic_status_error))
+        assertThat(viewModel.statusIconRes.value, equalTo(R.drawable.ic_status_error))
         assertThat(
             viewModel.completeTitle.value,
             equalTo(TestAppTools.getString(R.string.errors_connection_failed))
@@ -251,11 +248,11 @@ class ConnectProviderViewModelTest {
             viewModel.completeDescription.value,
             equalTo(TestAppTools.getString(R.string.errors_connection_failed_description))
         )
-        assertThat(viewModel.mainActionTextResId.value, equalTo(R.string.actions_try_again))
+        assertThat(viewModel.mainActionTextRes.value, equalTo(R.string.actions_try_again))
 
-        assertThat(viewModel.shouldShowWebViewVisibility.value, equalTo(View.VISIBLE))
-        assertThat(viewModel.shouldShowProgressViewVisibility.value, equalTo(View.GONE))
-        assertThat(viewModel.shouldShowCompleteViewVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.webViewVisibility.value, equalTo(View.VISIBLE))
+        assertThat(viewModel.progressViewVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.completeViewVisibility.value, equalTo(View.GONE))
     }
 
     @Test
@@ -372,17 +369,17 @@ class ConnectProviderViewModelTest {
     fun webAuthFinishErrorTest() {
         viewModel.webAuthFinishError(errorClass = "WRONG_URL", errorMessage = "not relevant url")
 
-        assertThat(viewModel.statusIconResId.value, equalTo(R.drawable.ic_status_error))
+        assertThat(viewModel.statusIconRes.value, equalTo(R.drawable.ic_status_error))
         assertThat(
             viewModel.completeTitle.value,
             equalTo(TestAppTools.getString(R.string.errors_connection_failed))
         )
         assertThat(viewModel.completeDescription.value, equalTo("not relevant url"))
-        assertThat(viewModel.mainActionTextResId.value, equalTo(R.string.actions_try_again))
+        assertThat(viewModel.mainActionTextRes.value, equalTo(R.string.actions_try_again))
 
-        assertThat(viewModel.shouldShowWebViewVisibility.value, equalTo(View.GONE))
-        assertThat(viewModel.shouldShowProgressViewVisibility.value, equalTo(View.GONE))
-        assertThat(viewModel.shouldShowCompleteViewVisibility.value, equalTo(View.VISIBLE))
+        assertThat(viewModel.webViewVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.progressViewVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
     }
 
     @Test
@@ -419,7 +416,7 @@ class ConnectProviderViewModelTest {
     @Test
     @Throws(Exception::class)
     fun getIconResIdTestCase1() {
-        assertThat(viewModel.statusIconResId.value, equalTo(R.drawable.ic_status_error))
+        assertThat(viewModel.statusIconRes.value, equalTo(R.drawable.ic_status_error))
     }
 
     /**
@@ -442,7 +439,7 @@ class ConnectProviderViewModelTest {
 
         viewModel.authFinishedWithSuccess(connectionId = "1", accessToken = "access_token")
 
-        assertThat(viewModel.statusIconResId.value, equalTo(R.drawable.ic_status_success))
+        assertThat(viewModel.statusIconRes.value, equalTo(R.drawable.ic_status_success))
     }
 
     /**
@@ -451,7 +448,7 @@ class ConnectProviderViewModelTest {
     @Test
     @Throws(Exception::class)
     fun mainActionTextResIdCase1() {
-        assertThat(viewModel.mainActionTextResId.value, equalTo(R.string.actions_try_again))
+        assertThat(viewModel.mainActionTextRes.value, equalTo(R.string.actions_try_again))
     }
 
     /**
@@ -473,7 +470,7 @@ class ConnectProviderViewModelTest {
         viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
         viewModel.authFinishedWithSuccess(connectionId = "1", accessToken = "access_token")
 
-        assertThat(viewModel.mainActionTextResId.value, equalTo(R.string.actions_proceed))
+        assertThat(viewModel.mainActionTextRes.value, equalTo(R.string.actions_proceed))
     }
 
     /**
@@ -674,7 +671,7 @@ class ConnectProviderViewModelTest {
     @Test
     @Throws(Exception::class)
     fun getShouldShowProgressView() {
-        assertNull(viewModel.shouldShowProgressViewVisibility.value)
+        assertNull(viewModel.progressViewVisibility.value)
 
         val connectUrlData = CreateConnectionResponseData(
             redirectUrl = "https://www.fentury.com",
@@ -682,7 +679,7 @@ class ConnectProviderViewModelTest {
         )
         viewModel.onConnectionCreateSuccess(response = connectUrlData)
 
-        assertNotNull(viewModel.shouldShowProgressViewVisibility.value)
+        assertNotNull(viewModel.progressViewVisibility.value)
     }
 
     /**
@@ -691,7 +688,7 @@ class ConnectProviderViewModelTest {
     @Test
     @Throws(Exception::class)
     fun shouldShowCompleteViewTestCase1() {
-        assertNull(viewModel.shouldShowCompleteViewVisibility.value)
+        assertNull(viewModel.completeViewVisibility.value)
 
         val connection = Connection().apply {
             guid = "guid1"
@@ -707,7 +704,7 @@ class ConnectProviderViewModelTest {
         viewModel.authFinishedWithSuccess(connectionId = "1", accessToken = "access_token")
         viewModel.onResume()
 
-        assertNotNull(viewModel.shouldShowCompleteViewVisibility.value)
+        assertNotNull(viewModel.completeViewVisibility.value)
     }
 
     /**
@@ -716,7 +713,7 @@ class ConnectProviderViewModelTest {
     @Test
     @Throws(Exception::class)
     fun shouldShowCompleteViewTestCase2() {
-        assertNull(viewModel.shouldShowCompleteViewVisibility.value)
+        assertNull(viewModel.completeViewVisibility.value)
 
         val connection = Connection().apply {
             guid = "guid1"
@@ -732,7 +729,7 @@ class ConnectProviderViewModelTest {
         viewModel.webAuthFinishError(errorClass = "ERROR", errorMessage = "ERROR")
         viewModel.onResume()
 
-        assertNotNull(viewModel.shouldShowCompleteViewVisibility.value)
+        assertNotNull(viewModel.completeViewVisibility.value)
     }
 
     /**
@@ -743,7 +740,7 @@ class ConnectProviderViewModelTest {
     @Test
     @Throws(Exception::class)
     fun getTitleResIdTest() {
-        assertThat(viewModel.getTitleResId(), equalTo(R.string.connections_new_connection))
+        assertThat(viewModel.getTitleRes(), equalTo(R.string.connections_new_connection))
 
         val connection = Connection().apply {
             guid = "guid1"
@@ -756,7 +753,7 @@ class ConnectProviderViewModelTest {
 
         viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
 
-        assertThat(viewModel.getTitleResId(), equalTo(R.string.actions_reconnect))
+        assertThat(viewModel.getTitleRes(), equalTo(R.string.actions_reconnect))
     }
 
     @Test

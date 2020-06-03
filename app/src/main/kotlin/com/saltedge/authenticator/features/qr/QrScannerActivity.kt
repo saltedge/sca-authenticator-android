@@ -53,7 +53,7 @@ import kotlinx.android.synthetic.main.activity_qr_scanner.*
 import java.io.IOException
 import javax.inject.Inject
 
-class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer, View.OnClickListener {
+class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
 
     private var barcodeDetector: BarcodeDetector? = null
     private var cameraSource: CameraSource? = null
@@ -96,10 +96,6 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer, View.OnCl
 
     override fun getSnackbarAnchorView(): View? = surfaceView
 
-    override fun onClick(view: View?) {
-        viewModel.onViewClick(view?.id ?: return)
-    }
-
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(QrScannerViewModel::class.java)
 
@@ -121,7 +117,8 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer, View.OnCl
     }
 
     private fun setupViews() {
-        closeImageView?.setOnClickListener(this)
+        closeImageView?.setOnClickListener { view -> viewModel.onViewClick(view.id) }
+        descriptionView?.setText(viewModel.descriptionRes)
         setupBarcodeDetector()
         setupCameraSource()
         setupSurface()

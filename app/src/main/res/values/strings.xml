@@ -103,8 +103,8 @@
     <string name="connection_status_connected_on">Connected on</string>
     <string name="connection_status_inactive">Inactive connection. Remove or reconnect.</string>
     <string name="connect_status_encrypted_connection">Your connection is encrypted and\nsecurely transmitted using SSL</string>
-    <string name="connect_status_in_progress">Connecting…</string>
-    <string name="connect_status_in_progress_description">This may take some time. Please wait.</string>
+    <string name="connect_status_in_progress">Processing…</string>
+    <string name="connect_status_in_progress_description">This may take some time.</string>
     <string name="connect_status_provider_success">\%s was successfully connected!</string>
     <string name="connect_status_provider_success_description">Your Service Provider has been successfully connected to the Authenticator App. You will receive an authorization request every time you make an action.</string>
 
@@ -167,7 +167,8 @@
     <string name="fingerprint_touch_sensor">Touch Sensor</string>
 
     <string name="scan_qr_title">Scan QR code</string>
-    <string name="scan_qr_description">Scan the QR to make your \nfirst connection\n</string>
+    <string name="scan_qr_description">Scan the QR to\nto take action</string>
+    <string name="scan_qr_description_first">Scan the QR\nto make your first connection</string>
 
     <string name="ui_dialog_clear_data_title">Clear app data</string>
     <string name="ui_dialog_clear_data_message">App data including connected providers and user data will be permanently deleted.</string>

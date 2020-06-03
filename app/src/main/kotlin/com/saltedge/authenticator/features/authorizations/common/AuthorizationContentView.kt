@@ -104,7 +104,7 @@ class AuthorizationContentView : LinearLayout {
         blurringView = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             View(context).apply {
                 layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT)
-                setBackgroundColor(ContextCompat.getColor(context, R.color.gray_extra_light_50))
+                setBackgroundColor(ContextCompat.getColor(context, R.color.grey_light_extra_50))
             }
         } else {
             BlurringView(context).apply {

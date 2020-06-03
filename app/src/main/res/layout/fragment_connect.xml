@@ -37,19 +37,19 @@
             android:id="@+id/connectWebView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="@{viewModel.shouldShowWebViewVisibility}" />
+            android:visibility="@{viewModel.webViewVisibility}" />
 
         <!--TODO: fragment_connect_processing and complete_view very similar-->
         <include
             android:id="@+id/fragmentConnectProcessingLayout"
             layout="@layout/fragment_connect_processing"
-            android:visibility="@{viewModel.shouldShowProgressViewVisibility}" />
+            android:visibility="@{viewModel.progressViewVisibility}" />
 
         <com.saltedge.authenticator.widget.CompleteView
             android:id="@+id/completeView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/white"
-            android:visibility="@{viewModel.shouldShowCompleteViewVisibility}" />
+            android:visibility="@{viewModel.completeViewVisibility}" />
     </FrameLayout>
 </layout>
