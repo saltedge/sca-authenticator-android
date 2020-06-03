@@ -131,7 +131,7 @@ class OnboardingSetupViewModel(
 
     private fun getSetupTitleResId(passcodeInputMode: PasscodeInputMode?): Int {
         return if (passcodeInputMode == PasscodeInputMode.CONFIRM_PASSCODE) {
-            R.string.onboarding_secure_app_passcode_repeat
+            R.string.passcode_confirm_passcode
         } else R.string.onboarding_secure_app_passcode_create
     }
 }

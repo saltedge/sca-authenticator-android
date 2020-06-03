@@ -45,7 +45,6 @@ class LockableActivityPresenter(
     val keyStoreManager: KeyStoreManagerAbs,
     val apiManager: AuthenticatorApiManagerAbs
 ) {
-
     private var returnFromOwnActivity = false
     val savedPasscode: String
         get() = passcodeTools.getPasscode()

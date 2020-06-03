@@ -270,8 +270,11 @@ class AuthorizationsListViewModel(
         emptyViewVisibility.postValue(if (emptyViewIsVisible) View.VISIBLE else View.GONE)
         listVisibility.postValue(if (emptyViewIsVisible) View.GONE else View.VISIBLE)
         emptyViewImage.postValue(
-            if (noInternetConnection) R.drawable.ic_internet_connection
-            else R.drawable.ic_authorizations_empty
+            when {
+                noInternetConnection -> R.drawable.ic_internet_connection
+                connectionsListIsEmpty -> R.drawable.ic_connections_empty
+                else -> R.drawable.ic_authorizations_empty
+            }
         )
         emptyViewActionText.postValue(
             when {

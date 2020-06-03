@@ -62,7 +62,7 @@ class PasscodeEditPresenterTest {
         viewModel.onInputValidPasscode()
 
         assertThat(viewModel.passcodeInputMode.value, equalTo(PasscodeInputMode.NEW_PASSCODE))
-        assertThat(viewModel.titleRes.value, equalTo(R.string.passcode_input_new_passcode))
+        assertThat(viewModel.titleRes.value, equalTo(R.string.settings_input_new_passcode))
     }
 
     @Test
@@ -70,7 +70,7 @@ class PasscodeEditPresenterTest {
     fun onNewPasscodeEnteredTest() {
         viewModel.onNewPasscodeEntered(PasscodeInputMode.CONFIRM_PASSCODE, "1111")
 
-        assertThat(viewModel.titleRes.value, equalTo(R.string.passcode_repeat_new_passcode))
+        assertThat(viewModel.titleRes.value, equalTo(R.string.passcode_confirm_passcode))
     }
 
     @Test

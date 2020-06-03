@@ -105,7 +105,7 @@ class BiometricsInputPresenter(
             val text = if (success) {
                 R.string.fingerprint_confirmed
             } else {
-                R.string.error_fingerprint_not_recognized
+                R.string.errors_fingerprint_not_recognized
             }
             contract?.updateStatusView(
                 imageResId = image,

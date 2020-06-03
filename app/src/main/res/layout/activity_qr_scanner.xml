@@ -23,6 +23,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/hCenterGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
+
     <SurfaceView
         android:id="@+id/surfaceView"
         android:layout_width="match_parent"
@@ -43,7 +50,7 @@
         android:fontFamily="@font/roboto_bold"
         android:text="@string/scan_qr_title"
         android:textColor="@color/primary_text"
-        android:textSize="@dimen/text_24"
+        android:textSize="@dimen/text_30"
         app:layout_constraintBottom_toTopOf="@+id/descriptionView"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
@@ -60,7 +67,7 @@
         android:textAlignment="center"
         android:textColor="@color/primary_text"
         android:textSize="@dimen/text_18"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
+        app:layout_constraintBottom_toTopOf="@+id/hCenterGuideline"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
@@ -75,13 +82,6 @@
         android:src="@drawable/ic_close_24dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
 
     <com.saltedge.authenticator.widget.security.UnlockAppInputView
         android:id="@+id/unlockAppInputView"

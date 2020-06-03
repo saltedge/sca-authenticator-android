@@ -91,7 +91,7 @@ class SettingsListViewModelTest {
                 SettingsHeaderViewModelModel(TestAppTools.getString(R.string.settings_general)),
                 SettingsItemViewModel(
                     iconId = R.drawable.ic_setting_passcode,
-                    titleId = R.string.settings_passcode,
+                    titleId = R.string.settings_passcode_description,
                     itemIsClickable = true
                 ),
                 SettingsItemViewModel(
@@ -173,7 +173,7 @@ class SettingsListViewModelTest {
     @Throws(Exception::class)
     fun onListItemClickTestCase1() {
         //given
-        val itemId = R.string.settings_passcode
+        val itemId = R.string.settings_passcode_description
 
         //when
         viewModel.onListItemClick(itemId = itemId)

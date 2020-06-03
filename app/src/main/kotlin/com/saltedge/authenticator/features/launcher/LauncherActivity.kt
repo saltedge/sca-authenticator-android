@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,18 +26,18 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.LAUNCHER_SPLASH_DURATION
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.cloud.registerNotificationChannels
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
 import com.saltedge.authenticator.tools.applyPreferenceLocale
 import com.saltedge.authenticator.tools.authenticatorApp
-import com.saltedge.authenticator.cloud.registerNotificationChannels
-import com.saltedge.authenticator.tools.updateScreenshotLocking
 import com.saltedge.authenticator.tools.showDbErrorDialog
+import com.saltedge.authenticator.tools.updateScreenshotLocking
 import javax.inject.Inject
 
 class LauncherActivity : AppCompatActivity() {
@@ -56,9 +56,7 @@ class LauncherActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        viewModel = ViewModelProviders
-            .of(this, viewModelFactory)
-            .get(LauncherViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(LauncherViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
         viewModel.onInitializationSuccess.observe(this, Observer {

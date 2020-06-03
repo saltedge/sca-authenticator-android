@@ -129,11 +129,6 @@ class MainActivity : LockableActivity(),
                 this.addFragment(ConnectionsListFragment())
             }
         })
-        viewModel.onShowConsentsListEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let {
-                // TODO show consents list
-            }
-        })
         viewModel.onShowSettingsListEvent.observe(this, Observer {
             it.getContentIfNotHandled()?.let {
                 this.addFragment(SettingsListFragment())

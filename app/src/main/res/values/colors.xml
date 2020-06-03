@@ -42,8 +42,6 @@
     <color name="button_blue_pressed">#132473</color>
     <color name="button_blue_disabled">#884354B3</color>
     <color name="divider_color">@color/gray_light</color>
-    <color name="switch_off">@color/gray_extra_light</color>
-    <color name="switch_on">@color/blue</color>
 
     <!--New palette-->
     <color name="primary">#0D93F8</color>
@@ -69,13 +67,13 @@
     <color name="green_light_extra">#88DCAB</color>
     <color name="dark_theme_background">#040411</color>
     <color name="blue_black">#161E2A</color>
-    <color name="white_87">#DDFFFFFF</color>
-    <color name="black_87">#DD000000</color>
 
-    <!--New aliases-->
+    <!--Aliases for Light mode-->
     <color name="system_bar_color">@color/primary</color>
     <color name="theme_background">@android:color/white</color>
     <color name="passcode_label_background">@color/grey_light_extra</color>
+    <color name="passcode_description_background">@color/grey_light_extra</color>
+    <color name="passcode_pressed_key_background">@color/grey_light_extra</color>
     <color name="blue_text">@color/primary_dark</color>
     <color name="onboarding_dots_background">@color/primary</color>
     <color name="passcode_dots_background">@color/grey_40</color>
@@ -90,9 +88,13 @@
     <color name="company_logo_background">@color/blue_black</color>
     <color name="appbar_action_icon_fill_color">@color/dark_100</color>
     <color name="menu_action_icon_fill_color">@color/dark_60</color>
-    <color name="qr_camera_mask_background">@color/white_87</color>
+    <color name="qr_camera_mask_background">#80FFFFFF</color>
     <color name="bottom_menu_background">@android:color/white</color>
     <color name="authorization_header_view_background">@android:color/white</color>
     <color name="rounded_image_background">@color/grey_20</color>
     <color name="negative_button_background">@android:color/white</color>
+    <color name="switch_thumb_tint_off">@android:color/white</color>
+    <color name="switch_thumb_tint_on">@color/primary</color>
+    <color name="switch_track_tint_off">@color/grey_100</color>
+    <color name="switch_track_tint_on">@color/primary_light_extra</color>
 </resources>
