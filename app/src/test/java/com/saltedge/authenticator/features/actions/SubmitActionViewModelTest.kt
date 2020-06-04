@@ -211,7 +211,7 @@ class SubmitActionViewModelTest {
         )
 
         //when
-        viewModel.onViewClick(R.id.mainActionView)
+        viewModel.onViewClick()
 
         //than
         assertNotNull(viewModel.onCloseEvent.value)
@@ -239,7 +239,7 @@ class SubmitActionViewModelTest {
         )
 
         //when
-        viewModel.onViewClick(R.id.mainActionView)
+        viewModel.onViewClick()
 
         //than
         assertNotNull(viewModel.onCloseEvent.value)

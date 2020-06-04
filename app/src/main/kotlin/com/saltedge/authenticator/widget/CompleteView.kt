@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.widget
 
 import android.content.Context
+import android.text.SpannableString
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
@@ -51,12 +52,16 @@ class CompleteView(context: Context, attrs: AttributeSet) : LinearLayout(context
         titleView?.text = context.getString(textResId)
     }
 
+    fun setTitleText(spannable: SpannableString) {
+        titleView?.text = spannable
+    }
+
     fun setDescription(text: String) {
-        subTitleView?.text = text
+        descriptionView?.text = text
     }
 
     fun setDescription(textResId: Int) {
-        subTitleView?.text = context.getString(textResId)
+        descriptionView?.text = context.getString(textResId)
     }
 
     fun setMainActionText(@StringRes textId: Int) = setMainActionText(context.getString(textId))
@@ -71,7 +76,7 @@ class CompleteView(context: Context, attrs: AttributeSet) : LinearLayout(context
 
     override fun setOnClickListener(l: OnClickListener?) {
         super.setOnClickListener(l)
-        mainActionView?.setOnClickListener(l)
+        actionView?.setOnClickListener(l)
         altActionView?.setOnClickListener(l)
     }
 
@@ -94,13 +99,13 @@ class CompleteView(context: Context, attrs: AttributeSet) : LinearLayout(context
     }
 
     private fun setupViews() {
-        mainActionView?.setFont(R.font.roboto_regular)
+        actionView?.setFont(R.font.roboto_regular)
     }
 
     private fun setMainActionText(text: String?) {
-        mainActionView?.setInvisible(text == null)
-        mainActionView?.isClickable = text != null
-        mainActionView?.text = text
+        actionView?.setInvisible(text == null)
+        actionView?.isClickable = text != null
+        actionView?.text = text
     }
 
     private fun setAltActionText(text: String?) {

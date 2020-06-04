@@ -65,7 +65,9 @@ class PasscodeEditViewModel(
         updateMode(newMode = PasscodeInputMode.NEW_PASSCODE)
     }
 
-    override fun onInputInvalidPasscode(mode: PasscodeInputMode) {}
+    override fun onInputInvalidPasscode(mode: PasscodeInputMode) {
+        titleRes.postValue(getTitleTextResId(mode))
+    }
 
     override fun onNewPasscodeEntered(mode: PasscodeInputMode, passcode: String) {
         titleRes.postValue(getTitleTextResId(mode))
@@ -98,8 +100,8 @@ class PasscodeEditViewModel(
     private fun getTitleTextResId(inputMode: PasscodeInputMode): ResId {
         return when (inputMode) {
             PasscodeInputMode.CHECK_PASSCODE -> R.string.settings_passcode_input_current
-            PasscodeInputMode.NEW_PASSCODE -> R.string.passcode_input_new_passcode
-            PasscodeInputMode.CONFIRM_PASSCODE -> R.string.passcode_repeat_new_passcode
+            PasscodeInputMode.NEW_PASSCODE -> R.string.settings_input_new_passcode
+            PasscodeInputMode.CONFIRM_PASSCODE -> R.string.passcode_confirm_passcode
         }
     }
 }

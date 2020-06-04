@@ -27,7 +27,6 @@ import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
-import com.saltedge.authenticator.widget.passcode.PasscodeEditView
 import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -152,7 +151,7 @@ class OnboardingSetupViewModelTest {
 
         assertThat(
             viewModel.headerTitle.value,
-            equalTo(R.string.onboarding_secure_app_passcode_repeat)
+            equalTo(R.string.passcode_confirm_passcode)
         )
     }
 

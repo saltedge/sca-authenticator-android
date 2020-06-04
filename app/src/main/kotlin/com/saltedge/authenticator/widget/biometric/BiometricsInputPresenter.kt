@@ -101,11 +101,11 @@ class BiometricsInputPresenter(
             } else {
                 R.drawable.ic_fingerprint_error
             }
-            val colorResId = if (success) R.color.color_primary else R.color.red
+            val colorResId = if (success) R.color.primary else R.color.red
             val text = if (success) {
                 R.string.fingerprint_confirmed
             } else {
-                R.string.error_fingerprint_not_recognized
+                R.string.errors_fingerprint_not_recognized
             }
             contract?.updateStatusView(
                 imageResId = image,

@@ -91,7 +91,8 @@
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:layout_marginStart="@dimen/dp_16"
-            android:thumbTint="@color/switch_thumb_color_selector"
+            android:thumbTint="@color/selector_switch_thumb_tint"
+            android:trackTint="@color/selector_switch_track_tint"
             android:checked="@{item.switchIsChecked}"
             android:onCheckedChanged="@{(switch, checked) -> listener.onListItemCheckedStateChanged(item.titleId, checked)}"
             android:visibility="@{item.switchVisibility}" />

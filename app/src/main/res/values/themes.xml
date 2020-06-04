@@ -20,7 +20,7 @@
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
 <resources>
-    <!--THEMES-->
+    <!--ACTIVITY THEMES-->
     <style name="LauncherScreenTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
@@ -33,9 +33,9 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="colorControlNormal">@color/blue</item>
-        <item name="colorControlActivated">@color/blue</item>
-        <item name="colorControlHighlight">@color/blue</item>
+        <item name="colorControlNormal">@color/primary</item>
+        <item name="colorControlActivated">@color/primary</item>
+        <item name="colorControlHighlight">@color/primary</item>
         <item name="android:colorButtonNormal">@color/button_blue_default</item>
         <item name="android:colorControlHighlight">@color/button_blue_pressed</item>
     </style>
@@ -47,19 +47,12 @@
         <item name="android:windowAnimationStyle">@null</item>
     </style>
 
-    <style name="ConnectScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimaryDark">@color/system_bar_color</item>
-        <item name="colorAccent">@color/blue</item>
-        <item name="colorControlNormal">@color/divider_color</item>
-        <item name="colorControlActivated">@color/blue</item>
-        <item name="android:colorButtonNormal">@color/button_blue_default</item>
-        <item name="android:colorControlHighlight">@color/button_blue_pressed</item>
-        <item name="android:alertDialogTheme">@style/AlertDialogCustom</item>
-    </style>
-
     <style name="MainScreenThemeBase" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="colorPrimaryDark">@color/system_bar_color</item>
-        <item name="colorAccent">@color/blue</item>
+        <item name="colorAccent">@color/primary</item>
+        <item name="colorControlNormal">@color/primary</item>
+        <item name="colorControlActivated">@color/primary</item>
+        <item name="colorControlHighlight">@color/primary</item>
         <item name="android:colorButtonNormal">@color/button_blue_default</item>
         <item name="android:colorControlHighlight">@color/button_blue_pressed</item>
         <item name="android:itemBackground">@android:color/white</item>
@@ -69,9 +62,11 @@
     <style name="MainScreenTheme" parent="MainScreenThemeBase">
     </style>
 
+
+    <!--ALERT DIALOG-->
     <style name="AlertDialogCustom" parent="android:Theme.Material.Light.Dialog.Alert">
-        <item name="android:colorPrimary">@color/blue</item>
-        <item name="android:colorAccent">@color/blue</item>
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorAccent">@color/primary</item>
     </style>
 
     <style name="BaseAlertDialogTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert">
@@ -81,10 +76,6 @@
     <style name="AlertDialogTheme" parent="BaseAlertDialogTheme">
         <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
         <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
-    </style>
-
-    <style name="MaterialThemeDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorAccent">@color/blue</item>
     </style>
 
     <style name="CustomProgressDialogStyle">

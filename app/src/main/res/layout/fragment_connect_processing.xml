@@ -43,7 +43,7 @@
             android:layout_height="@dimen/dp_56"
             android:layout_gravity="center"
             android:indeterminate="true"
-            android:indeterminateTint="@color/color_primary"
+            android:indeterminateTint="@color/primary"
             android:indeterminateTintMode="src_in" />
     </FrameLayout>
 
@@ -69,11 +69,4 @@
         android:gravity="center_horizontal"
         android:maxLines="2"
         android:text="@string/connect_status_in_progress_description" />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <include layout="@layout/fragment_connect_processing_footer" />
 </LinearLayout>

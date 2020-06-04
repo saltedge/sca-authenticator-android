@@ -116,7 +116,7 @@ class MainActivityViewModelTest {
         //when
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
 
-        //then onShowAuthorizationsListEvent is posted
+        //then onShowAuthorizationsListEvent only is posted
         assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
@@ -137,7 +137,7 @@ class MainActivityViewModelTest {
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
 
         //then onShowAuthorizationDetailsEvent is posted
-        assertThat(viewModel.onShowAuthorizationsListEvent.value, `is`(nullValue()))
+        assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
         assertThat(
             viewModel.onShowAuthorizationDetailsEvent.value,
             equalTo(ViewModelEvent(AuthorizationIdentifier(authorizationID = "2", connectionID = "1")))
@@ -159,8 +159,8 @@ class MainActivityViewModelTest {
         //when
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
 
-        //then onShowAuthorizationsListEvent is posted
-        assertThat(viewModel.onShowAuthorizationsListEvent.value, `is`(nullValue()))
+        //then onShowConnectEvent is posted
+        assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value,
             equalTo(ViewModelEvent(ConnectAppLinkData(
@@ -183,8 +183,8 @@ class MainActivityViewModelTest {
         //when
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
 
-        //then onShowAuthorizationsListEvent is posted
-        assertThat(viewModel.onShowAuthorizationsListEvent.value, `is`(nullValue()))
+        //then onShowSubmitActionEvent is posted
+        assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSubmitActionEvent.value,
@@ -371,11 +371,6 @@ class MainActivityViewModelTest {
                     textResId = R.string.connections_feature_title
                 ),
                 MenuItemData(
-                    id = R.string.consents_feature_title,
-                    iconResId = R.drawable.ic_menu_action_list,
-                    textResId = R.string.consents_feature_title
-                ),
-                MenuItemData(
                     id = R.string.settings_feature_title,
                     iconResId = R.drawable.ic_menu_action_settings,
                     textResId = R.string.settings_feature_title
@@ -486,7 +481,6 @@ class MainActivityViewModelTest {
 
         //then onShowConnectionsListEvent is posted
         assertThat(viewModel.onShowConnectionsListEvent.value, equalTo(ViewModelEvent(Unit)))
-        assertThat(viewModel.onShowConsentsListEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSettingsListEvent.value, `is`(nullValue()))
     }
 
@@ -504,7 +498,6 @@ class MainActivityViewModelTest {
 
         //then onShowConsentsListEvent is posted
         assertThat(viewModel.onShowConnectionsListEvent.value, `is`(nullValue()))
-        assertThat(viewModel.onShowConsentsListEvent.value, equalTo(ViewModelEvent(Unit)))
         assertThat(viewModel.onShowSettingsListEvent.value, `is`(nullValue()))
     }
 
@@ -522,26 +515,7 @@ class MainActivityViewModelTest {
 
         //then onShowSettingsListEvent is posted
         assertThat(viewModel.onShowConnectionsListEvent.value, `is`(nullValue()))
-        assertThat(viewModel.onShowConsentsListEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSettingsListEvent.value, equalTo(ViewModelEvent(Unit)))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onMenuItemSelectedTestCase4() {
-        /**
-         * given invalid viewId
-         */
-        val viewModel = createViewModel()
-        val selectedItemId = R.string.app_name
-
-        //when
-        viewModel.onMenuItemSelected("", selectedItemId)
-
-        //then no interactions with observable values
-        assertThat(viewModel.onShowConnectionsListEvent.value, `is`(nullValue()))
-        assertThat(viewModel.onShowConsentsListEvent.value, `is`(nullValue()))
-        assertThat(viewModel.onShowSettingsListEvent.value, `is`(nullValue()))
     }
 
     @Test

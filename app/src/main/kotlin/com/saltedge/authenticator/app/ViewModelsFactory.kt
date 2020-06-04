@@ -86,7 +86,10 @@ class ViewModelsFactory @Inject constructor(
                 ) as T
             }
             modelClass.isAssignableFrom(QrScannerViewModel::class.java) -> {
-                return QrScannerViewModel(appContext = appContext) as T
+                return QrScannerViewModel(
+                    appContext = appContext,
+                    connectionsRepository = connectionsRepository
+                ) as T
             }
             modelClass.isAssignableFrom(AuthorizationsListViewModel::class.java) -> {
                 return AuthorizationsListViewModel(

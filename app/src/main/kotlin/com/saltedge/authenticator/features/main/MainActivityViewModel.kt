@@ -61,7 +61,6 @@ class MainActivityViewModel(
     val onShowAuthorizationDetailsEvent = MutableLiveData<ViewModelEvent<AuthorizationIdentifier>>()
     val onShowConnectionsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowSettingsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onShowConsentsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowConnectEvent = MutableLiveData<ViewModelEvent<ConnectAppLinkData>>()
     val onShowSubmitActionEvent = MutableLiveData<ViewModelEvent<ActionAppLinkData>>()
 
@@ -85,10 +84,9 @@ class MainActivityViewModel(
 
     fun onLifeCycleCreate(savedInstanceState: Bundle?, intent: Intent?) {
         if (savedInstanceState == null) {
+            onShowAuthorizationsListEvent.postValue(ViewModelEvent(Unit))
             if (intent != null && (intent.hasPendingAuthorizationData || intent.hasDeepLinkData)) {
                 onNewIntent(intent)
-            } else {
-                onShowAuthorizationsListEvent.postValue(ViewModelEvent(Unit))
             }
         }
     }
@@ -149,11 +147,6 @@ class MainActivityViewModel(
                         textResId = R.string.connections_feature_title
                     ),
                     MenuItemData(
-                        id = R.string.consents_feature_title,
-                        iconResId = R.drawable.ic_menu_action_list,
-                        textResId = R.string.consents_feature_title
-                    ),
-                    MenuItemData(
                         id = R.string.settings_feature_title,
                         iconResId = R.drawable.ic_menu_action_settings,
                         textResId = R.string.settings_feature_title
@@ -171,7 +164,6 @@ class MainActivityViewModel(
     fun onMenuItemSelected(menuId: String, selectedItemId: Int) {
         when (selectedItemId) {
             R.string.connections_feature_title -> onShowConnectionsListEvent.postValue(ViewModelEvent(Unit))
-            R.string.consents_feature_title -> onShowConsentsListEvent.postValue(ViewModelEvent(Unit))
             R.string.settings_feature_title -> onShowSettingsListEvent.postValue(ViewModelEvent(Unit))
         }
     }

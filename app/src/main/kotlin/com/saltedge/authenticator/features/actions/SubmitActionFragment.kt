@@ -81,7 +81,7 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        completeView?.setOnClickListener { viewModel.onViewClick(view.id) }
+        completeView?.setOnClickListener { viewModel.onViewClick() }
         viewModel.onViewCreated()
     }
 

@@ -60,7 +60,7 @@
         android:text="@string/errors_wrong_passcode"
         tools:text="@string/errors_wrong_passcode" />
 
-    <com.saltedge.authenticator.widget.passcode.PasscodeEditView
+    <com.saltedge.authenticator.widget.passcode.PasscodeInputView
         android:id="@+id/passcodeInputView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -70,6 +70,7 @@
         app:layout_constraintTop_toBottomOf="@+id/topSpace"
         app:layout_constraintVertical_weight="5"/>
 
+    <!--//TODO Unify with empty view or complete view-->
     <LinearLayout
         android:id="@+id/resetPasscodeLayout"
         android:layout_width="match_parent"
@@ -89,6 +90,7 @@
             android:layout_marginStart="@dimen/dp_16"
             android:layout_marginTop="@dimen/dp_16"
             android:scaleType="fitCenter"
+            android:background="?android:attr/selectableItemBackground"
             android:src="@drawable/ic_back_24dp" />
 
         <ImageView
@@ -105,7 +107,7 @@
 
         <TextView
             android:id="@+id/titleView"
-            style="@style/Text22DarkRegular"
+            style="@style/Text22Primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_32"
@@ -131,13 +133,9 @@
 
         <Button
             android:id="@+id/clearView"
-            style="@style/BlueButton"
+            style="@style/LargeBlueButton"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_54"
-            android:layout_marginStart="@dimen/dp_58"
-            android:layout_marginTop="@dimen/dp_28"
-            android:layout_marginEnd="@dimen/dp_58"
-            android:text="@string/settings_clear_data"
-            android:textSize="@dimen/text_18" />
+            android:layout_marginTop="@dimen/dp_24"
+            android:text="@string/forgot_passcode_clear_data" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

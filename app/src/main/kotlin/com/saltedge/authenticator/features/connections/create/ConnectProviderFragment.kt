@@ -22,6 +22,7 @@ package com.saltedge.authenticator.features.connections.create
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.text.SpannableString
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -69,8 +70,8 @@ class ConnectProviderFragment : BaseFragment(),
         savedInstanceState: Bundle?
     ): View {
         activityComponents?.updateAppbar(
-            titleResId = viewModel.getTitleResId(),
-            backActionImageResId = R.drawable.ic_appbar_action_close
+            titleResId = viewModel.titleRes,
+            backActionImageResId = viewModel.backActionIconRes.value
         )
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_connect, container, false)
         binding.viewModel = viewModel
@@ -122,8 +123,7 @@ class ConnectProviderFragment : BaseFragment(),
     }
 
     private fun setupViewModel() {
-        viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(ConnectProviderViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(ConnectProviderViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
         viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
@@ -131,35 +131,34 @@ class ConnectProviderFragment : BaseFragment(),
         })
         viewModel.onShowErrorEvent.observe(this, Observer<ViewModelEvent<String>> {
             it.getContentIfNotHandled()?.let { message ->
-                activity?.showErrorDialog(
-                    message = message,
-                    listener = this
-                )
+                activity?.showErrorDialog(message = message, listener = this)
             }
         })
         viewModel.onUrlChangedEvent.observe(this, Observer<ViewModelEvent<String?>> {
-            it.getContentIfNotHandled()?.let { url ->
-                connectWebView?.loadUrl(url)
-            }
+            it.getContentIfNotHandled()?.let { url -> connectWebView?.loadUrl(url) }
         })
-        viewModel.shouldGoBackEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it.getContentIfNotHandled()?.let {
-                connectWebView.goBack()
-                true
-            }
+        viewModel.goBackEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let { connectWebView.goBack() }
         })
-        viewModel.statusIconResId.observe(this, Observer<Int> {
+        viewModel.statusIconRes.observe(this, Observer<ResId> {
             completeView?.setIconResource(it)
         })
-        viewModel.completeTitle.observe(this, Observer<String> {
+        viewModel.completeTitle.observe(this, Observer<SpannableString> {
             completeView?.setTitleText(it)
         })
         viewModel.completeDescription.observe(this, Observer<String> {
             completeView?.setDescription(it)
         })
-        viewModel.mainActionTextResId.observe(this, Observer<Int> {
+        viewModel.mainActionTextRes.observe(this, Observer<ResId> {
             completeView?.setMainActionText(it)
         })
+        viewModel.backActionIconRes.observe(this, Observer<ResId?> {
+            activityComponents?.updateAppbar(
+                titleResId = viewModel.titleRes,
+                backActionImageResId = it
+            )
+        })
+
         viewModel.setInitialData(
             initialConnectData = arguments?.getSerializable(KEY_CONNECT_DATA) as? ConnectAppLinkData,
             connectionGuid = arguments?.getString(KEY_GUID)

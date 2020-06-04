@@ -62,7 +62,7 @@
 
     <!--first row-->
     <TextView
-        style="@style/PinpadAction"
+        style="@style/KeypadAction"
         android:text="1"
         app:layout_constraintBottom_toTopOf="@id/line_horizontal_1"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -71,7 +71,7 @@
 
 
     <TextView
-        style="@style/PinpadAction"
+        style="@style/KeypadAction"
         android:text="2"
         app:layout_constraintBottom_toTopOf="@id/line_horizontal_1"
         app:layout_constraintLeft_toRightOf="@id/line_vertical_1"
@@ -79,7 +79,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        style="@style/PinpadAction"
+        style="@style/KeypadAction"
         android:text="3"
         app:layout_constraintBottom_toTopOf="@id/line_horizontal_1"
         app:layout_constraintLeft_toRightOf="@id/line_vertical_2"
@@ -88,7 +88,7 @@
 
     <!--second row-->
     <TextView
-        style="@style/PinpadAction"
+        style="@style/KeypadAction"
         android:text="4"
         app:layout_constraintBottom_toTopOf="@id/line_horizontal_2"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -96,7 +96,7 @@
         app:layout_constraintTop_toBottomOf="@id/line_horizontal_1" />
 
     <TextView
-        style="@style/PinpadAction"
+        style="@style/KeypadAction"
         android:text="5"
         app:layout_constraintBottom_toTopOf="@id/line_horizontal_2"
         app:layout_constraintLeft_toRightOf="@id/line_vertical_1"
@@ -104,7 +104,7 @@
         app:layout_constraintTop_toBottomOf="@id/line_horizontal_1" />
 
     <TextView
-        style="@style/PinpadAction"
+        style="@style/KeypadAction"
         android:text="6"
         app:layout_constraintBottom_toTopOf="@id/line_horizontal_2"
         app:layout_constraintLeft_toRightOf="@id/line_vertical_2"
@@ -113,7 +113,7 @@
 
     <!--third row-->
     <TextView
-        style="@style/PinpadAction"
+        style="@style/KeypadAction"
         android:text="7"
         app:layout_constraintBottom_toTopOf="@id/line_horizontal_3"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -121,7 +121,7 @@
         app:layout_constraintTop_toBottomOf="@id/line_horizontal_2" />
 
     <TextView
-        style="@style/PinpadAction"
+        style="@style/KeypadAction"
         android:text="8"
         app:layout_constraintBottom_toTopOf="@id/line_horizontal_3"
         app:layout_constraintLeft_toRightOf="@id/line_vertical_1"
@@ -129,7 +129,7 @@
         app:layout_constraintTop_toBottomOf="@id/line_horizontal_2" />
 
     <TextView
-        style="@style/PinpadAction"
+        style="@style/KeypadAction"
         android:text="9"
         app:layout_constraintBottom_toTopOf="@id/line_horizontal_3"
         app:layout_constraintLeft_toRightOf="@id/line_vertical_2"
@@ -137,27 +137,27 @@
         app:layout_constraintTop_toBottomOf="@id/line_horizontal_2" />
 
     <!--fourth row-->
-    <FrameLayout
+    <TextView
         android:id="@+id/forgotActionView"
-        style="@style/PinpadAction"
+        style="@style/KeypadAction"
+        android:textSize="@dimen/text_18"
+        android:text="@string/forgot_passcode"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/line_vertical_1"
-        app:layout_constraintTop_toBottomOf="@id/line_horizontal_3">
+        app:layout_constraintTop_toBottomOf="@id/line_horizontal_3"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_18"
-            android:fontFamily="@font/roboto_medium"
-            android:textColor="@color/primary_text"
-            android:layout_gravity="center"
-            android:text="@string/forgot_passcode" />
-    </FrameLayout>
+    <TextView
+        style="@style/KeypadAction"
+        android:text="0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/line_vertical_1"
+        app:layout_constraintRight_toLeftOf="@id/line_vertical_2"
+        app:layout_constraintTop_toBottomOf="@id/line_horizontal_3" />
 
     <FrameLayout
         android:id="@+id/fingerActionView"
-        style="@style/PinpadAction"
+        style="@style/KeypadAction"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/line_vertical_2"
         app:layout_constraintRight_toRightOf="parent"
@@ -172,17 +172,9 @@
             android:src="@drawable/ic_numpad_fingerprint" />
     </FrameLayout>
 
-    <TextView
-        style="@style/PinpadAction"
-        android:text="0"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/line_vertical_1"
-        app:layout_constraintRight_toLeftOf="@id/line_vertical_2"
-        app:layout_constraintTop_toBottomOf="@id/line_horizontal_3" />
-
     <FrameLayout
         android:id="@+id/deleteActionView"
-        style="@style/PinpadAction"
+        style="@style/KeypadAction"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/line_vertical_2"
         app:layout_constraintRight_toRightOf="parent"

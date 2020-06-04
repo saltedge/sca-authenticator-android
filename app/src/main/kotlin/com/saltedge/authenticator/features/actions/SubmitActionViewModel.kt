@@ -143,7 +143,7 @@ class SubmitActionViewModel(
     }
 
     //TODO Doesn't catch clicks on R.id.mainActionView
-    fun onViewClick(viewId: Int) {
+    fun onViewClick() {
         onCloseEvent.postValue(ViewModelEvent(Unit))
         try {
             val returnToUrl: String? = actionAppLinkData?.returnTo

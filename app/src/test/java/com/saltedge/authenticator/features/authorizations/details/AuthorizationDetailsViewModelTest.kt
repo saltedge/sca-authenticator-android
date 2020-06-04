@@ -354,7 +354,7 @@ class AuthorizationDetailsViewModelTest {
     @Throws(Exception::class)
     fun onViewClickTest_case3() {
         //given unknown action
-        val id = R.id.mainActionView
+        val id = R.id.actionView
         viewModel.setInitialData(AuthorizationIdentifier(authorizationID = "1", connectionID = "1"))
         viewModel.authorizationModel.value = viewModel1
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)

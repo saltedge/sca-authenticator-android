@@ -49,7 +49,7 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
         LayoutInflater.from(context).inflate(R.layout.view_unlock, this)
         clearView?.setOnClickListener(this)
         backActionImageView?.setOnClickListener(this)
-        passcodeInputView?.title = context.getString(R.string.settings_passcode_input_current)
+        passcodeInputView?.title = context.getString(R.string.passcode_enter_passcode_title)
     }
 
     override fun onClick(view: View?) {

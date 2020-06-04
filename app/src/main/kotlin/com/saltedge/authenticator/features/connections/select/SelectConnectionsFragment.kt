@@ -64,16 +64,15 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        emptyView?.setVisible(false)
+        connectionsListView?.setVisible(true)
         activity?.let {
-            emptyView?.setVisible(false)
-            connectionsListView?.setVisible(true)
             connectionsListView?.layoutManager = LinearLayoutManager(it)
             connectionsListView?.adapter = adapter
-            headerDecorator = SpaceItemDecoration(
-                context = it
-            ).apply { connectionsListView?.addItemDecoration(this) }
-            headerDecorator?.headerPositions =
-                adapter.data.mapIndexed { index, _ -> index }.toTypedArray()
+            headerDecorator = SpaceItemDecoration(context = it).apply {
+                connectionsListView?.addItemDecoration(this)
+            }
+            headerDecorator?.headerPositions = adapter.data.mapIndexed { index, _ -> index }.toTypedArray()
         }
     }
 

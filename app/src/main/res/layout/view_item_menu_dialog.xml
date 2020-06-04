@@ -21,7 +21,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/dp_48"
+    android:layout_height="@dimen/dp_56"
     android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:orientation="horizontal">
@@ -33,11 +33,11 @@
         android:layout_marginStart="@dimen/dp_16"
         android:contentDescription="@null"
         android:scaleType="fitCenter"
-        tools:src="@drawable/ic_about_black54_24dp" />
+        tools:src="@drawable/ic_menu_action_connections" />
 
     <TextView
         android:id="@+id/menuItemTitleView"
-        style="@style/Text16Primary"
+        style="@style/Text18Primary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_24"

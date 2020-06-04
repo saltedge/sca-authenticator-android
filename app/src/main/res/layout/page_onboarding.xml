@@ -44,7 +44,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:contentDescription="@string/onboarding_carousel_one_title"
         android:scaleType="fitCenter"
-        tools:background="@color/blue" />
+        tools:background="@color/primary" />
 
     <TextView
         android:id="@+id/titleView"
@@ -61,7 +61,7 @@
         android:maxLines="2"
         android:textColor="@color/primary_text"
         android:textSize="@dimen/text_30"
-        tools:background="@color/blue"
+        tools:background="@color/primary"
         tools:text="Full control" />
 
     <TextView
@@ -76,7 +76,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleView"
         android:lines="4"
-        tools:background="@color/blue"
+        tools:background="@color/primary"
         tools:text="Made transaction? You will get push notification. Open application, verify the
         transaction details, and simply authorize your actions." />
 </androidx.constraintlayout.widget.ConstraintLayout>

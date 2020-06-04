@@ -43,7 +43,6 @@
             android:id="@+id/negativeActionView"
             style="@style/WhiteButton"
             android:layout_width="0dp"
-            android:layout_height="@dimen/dp_54"
             android:layout_marginStart="@dimen/dp_16"
             android:layout_marginEnd="@dimen/dp_4"
             android:layout_marginBottom="@dimen/dp_16"
@@ -56,7 +55,6 @@
             android:id="@+id/positiveActionView"
             style="@style/BlueButton"
             android:layout_width="0dp"
-            android:layout_height="@dimen/dp_54"
             android:layout_marginStart="@dimen/dp_4"
             android:layout_marginEnd="@dimen/dp_16"
             android:layout_marginBottom="@dimen/dp_16"
@@ -139,7 +137,7 @@
                 style="?android:attr/progressBarStyleLarge"
                 android:layout_width="@dimen/dp_56"
                 android:layout_height="@dimen/dp_56"
-                android:indeterminateTint="@color/blue"
+                android:indeterminateTint="@color/primary"
                 android:layout_gravity="center"
                 android:indeterminateTintMode="src_in" />
 

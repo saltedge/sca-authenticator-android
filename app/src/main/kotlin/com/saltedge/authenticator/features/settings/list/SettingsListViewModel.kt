@@ -58,7 +58,7 @@ class SettingsListViewModel(
             SettingsHeaderViewModelModel(appContext.getString(R.string.settings_general)),
             SettingsItemViewModel(
                 iconId = R.drawable.ic_setting_passcode,
-                titleId = R.string.settings_passcode,
+                titleId = R.string.settings_passcode_description,
                 itemIsClickable = true
             ),
             SettingsItemViewModel(
@@ -104,7 +104,7 @@ class SettingsListViewModel(
 
     override fun onListItemClick(itemId: Int) {
         when (itemId) {
-            R.string.settings_passcode -> passcodeClickEvent.postValue(ViewModelEvent(Unit))
+            R.string.settings_passcode_description -> passcodeClickEvent.postValue(ViewModelEvent(Unit))
             R.string.settings_language -> languageClickEvent.postValue(ViewModelEvent(Unit))
             R.string.about_feature_title -> aboutClickEvent.postValue(ViewModelEvent(Unit))
             R.string.settings_report_bug -> supportClickEvent.postValue(ViewModelEvent(Unit))

@@ -68,11 +68,11 @@ private fun getConnectionDeleteTextResId(connection: ConnectionAbs): Int {
 }
 
 private fun getConnectionDeleteImageResId(connection: ConnectionAbs): Int {
-    return if (connection.getStatus() === ConnectionStatus.ACTIVE) R.drawable.ic_delete_24dp else R.drawable.ic_remove_24dp
+    return if (connection.getStatus() === ConnectionStatus.ACTIVE) R.drawable.ic_menu_delete_24dp else R.drawable.ic_menu_remove_24dp
 }
 
 private fun getConnectionStateColorResId(connection: ConnectionAbs): Int {
-    return if (connection.getStatus() === ConnectionStatus.ACTIVE) R.color.gray_dark else R.color.red
+    return if (connection.getStatus() === ConnectionStatus.ACTIVE) R.color.secondary_text else R.color.red
 }
 
 private fun getConnectionStatusDescription(context: Context, connection: Connection): String {
