@@ -21,7 +21,7 @@
 -->
 <resources>
     <!--ACTIVITY THEMES-->
-    <style name="LauncherScreenTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="LauncherScreenThemeBase" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimaryDark">@color/system_bar_color</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
@@ -29,11 +29,15 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <style name="LauncherScreenTheme" parent="LauncherScreenThemeBase"/>
+
     <style name="SetupScreenThemeBase" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <item name="colorPrimaryDark">@color/system_bar_color</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowContentOverlay">@null</item>
+
+        <item name="colorPrimaryDark">@color/system_bar_color</item>
+        <item name="colorAccent">@color/primary</item>
         <item name="colorControlNormal">@color/primary</item>
         <item name="colorControlActivated">@color/primary</item>
         <item name="colorControlHighlight">@color/primary</item>
@@ -41,8 +45,7 @@
         <item name="android:colorControlHighlight">@color/button_blue_pressed</item>
     </style>
 
-    <style name="SetupScreenTheme" parent="SetupScreenThemeBase">
-    </style>
+    <style name="SetupScreenTheme" parent="SetupScreenThemeBase"/>
 
     <style name="UnlockScreenTheme" parent="SetupScreenTheme">
         <item name="android:windowAnimationStyle">@null</item>
@@ -56,12 +59,9 @@
         <item name="colorControlHighlight">@color/primary</item>
         <item name="android:colorButtonNormal">@color/button_blue_default</item>
         <item name="android:colorControlHighlight">@color/button_blue_pressed</item>
-        <item name="android:itemBackground">@android:color/white</item>
-        <item name="android:itemTextAppearance">@style/MenuItemTextAppearance</item>
     </style>
 
-    <style name="MainScreenTheme" parent="MainScreenThemeBase">
-    </style>
+    <style name="MainScreenTheme" parent="MainScreenThemeBase"/>
 
     <!--ALERT DIALOG-->
     <style name="BaseAlertDialogTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert">

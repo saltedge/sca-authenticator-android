@@ -71,6 +71,7 @@
     <TextView
         android:id="@+id/titleView"
         style="@style/Title22"
+        android:fontFamily="@font/roboto_medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hCenterLine"

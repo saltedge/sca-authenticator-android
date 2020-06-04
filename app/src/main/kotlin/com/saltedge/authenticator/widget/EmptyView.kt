@@ -39,7 +39,6 @@ class EmptyView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
     init {
         LayoutInflater.from(context).inflate(R.layout.view_empty, this)
         initAttributes(context, attrs)
-        actionView?.setFont(R.font.roboto_regular)
     }
 
     fun setTitle(title: String) {
