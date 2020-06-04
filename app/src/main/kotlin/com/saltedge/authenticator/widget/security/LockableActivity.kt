@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ import android.os.Vibrator
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.main.buildWarning
@@ -39,7 +40,6 @@ import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.models.repository.ConnectionsRepository
 import com.saltedge.authenticator.models.repository.PreferenceRepository
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
@@ -53,89 +53,57 @@ const val KEY_SKIP_PIN = "KEY_SKIP_PIN"
 abstract class LockableActivity : AppCompatActivity(),
     PasscodeInputListener,
     BiometricPromptCallback,
-    DialogInterface.OnClickListener {
-
-    abstract fun getUnlockAppInputView(): UnlockAppInputView?
-    protected var snackbar: Snackbar? = null
-
-    private val viewContract: LockableActivityContract = object : LockableActivityContract {
-
-        override fun unBlockInput() {
-            showPasscodeInputView()
-        }
-
-        override fun showLockWarning() {
-            showLockWarningView()
-        }
-
-        override fun dismissSnackbar() {
-            dismissLockWarningView()
-        }
-
-        override fun resetUser() {
-            onAppCleared()
-        }
-
-        override fun vibrateAboutSuccess() {
-            successVibrate()
-        }
-
-        override fun closeLockView() {
-            unlockScreen()
-        }
-
-        override fun displayBiometricPromptView() {
-            displayBiometricPrompt()
-        }
-
-        override fun isBiometricReady(): Boolean = isBiometricInputReady()
-
-        override fun lockScreen() {
-            setupViewsAndLockScreen()
-        }
-
-        override fun disableUnlockInput(inputAttempt: Int, remainedMinutes: Int) {
-            showWarningView(remainedMinutes = remainedMinutes)
-        }
-    }
-
-    private var presenter = LockableActivityPresenter(
-        viewContract = viewContract,
+    DialogInterface.OnClickListener
+{
+    private var inactivityWarningSnackbar: Snackbar? = null
+    private var viewModel = LockableActivityViewModel(
         connectionsRepository = ConnectionsRepository,
         preferenceRepository = PreferenceRepository,
         passcodeTools = PasscodeTools,
         keyStoreManager = KeyStoreManager,
         apiManager = AuthenticatorApiManager
     )
-
-    private var biometricTools: BiometricToolsAbs? = null
     private var biometricPrompt: BiometricPromptAbs? = null
     private var vibrator: Vibrator? = null
+
+    abstract fun getUnlockAppInputView(): UnlockAppInputView?
+
+    fun restartLockableActivity() {
+        startActivity(Intent(this, this.javaClass).apply { putExtra(KEY_SKIP_PIN, true) })
+        finish()
+    }
+
+    abstract fun onUnlockActivity()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         authenticatorApp?.appComponent?.let {
-            biometricTools = authenticatorApp?.appComponent?.biometricTools()
+            viewModel.biometricTools = authenticatorApp?.appComponent?.biometricTools()
             biometricPrompt = authenticatorApp?.appComponent?.biometricPrompt()
         }
-        presenter.onActivityCreate()
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        setupViewModel()
+        viewModel.onActivityCreate()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        presenter.onActivityResult()
+        viewModel.onActivityResult()
     }
 
     override fun onStart() {
         super.onStart()
         biometricPrompt?.resultCallback = this
-        getUnlockAppInputView()?.passcodeInputViewListener = this
-        presenter.onActivityStart(intent)
+        getUnlockAppInputView()?.let {
+            it.biometricsActionIsAvailable = viewModel.isBiometricInputReady
+            it.setSavedPasscode(viewModel.savedPasscode)
+            it.passcodeInputViewListener = this
+        }
+        viewModel.onActivityStart(intent)
     }
 
     override fun onStop() {
-        presenter.destroyTimer()
+        viewModel.destroyTimer()
         biometricPrompt?.resultCallback = null
         getUnlockAppInputView()?.passcodeInputViewListener = null
         super.onStop()
@@ -148,11 +116,11 @@ abstract class LockableActivity : AppCompatActivity(),
     override fun onPasscodeInputCanceledByUser() {}
 
     override fun onInputValidPasscode() {
-        presenter.onSuccessAuthentication()
+        viewModel.onSuccessAuthentication()
     }
 
     override fun onInputInvalidPasscode(mode: PasscodeInputMode) {
-        presenter.onWrongPasscodeInput()
+        viewModel.onWrongPasscodeInput()
     }
 
     override fun onNewPasscodeEntered(mode: PasscodeInputMode, passcode: String) {}
@@ -170,7 +138,7 @@ abstract class LockableActivity : AppCompatActivity(),
     override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
         when (dialogActionId) {
             DialogInterface.BUTTON_POSITIVE -> {
-                presenter.clearAppData()
+                viewModel.clearAppData()
                 showOnboardingActivity()
             }
             DialogInterface.BUTTON_NEGATIVE -> listener?.dismiss()
@@ -178,29 +146,94 @@ abstract class LockableActivity : AppCompatActivity(),
     }
 
     override fun biometricAuthFinished() {
-        presenter.onSuccessAuthentication()
+        viewModel.onSuccessAuthentication()
     }
 
     override fun biometricsCanceledByUser() {}
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        if (ev?.action == MotionEvent.ACTION_DOWN
-            && getUnlockAppInputView()?.visibility != View.VISIBLE) {
-            presenter.restartLockTimer()
+        if (ev?.action == MotionEvent.ACTION_DOWN) {
+            viewModel.onTouch(lockViewIsNotVisible = getUnlockAppInputView()?.visibility != View.VISIBLE)
         }
         return super.dispatchTouchEvent(ev)
     }
 
-    fun onAppCleared() {
-        showDialogAboutUserReset(DialogInterface.OnClickListener { _, _ -> this.restartApp() })
+    private fun setupViewModel() {
+        viewModel.appContext = this.applicationContext
+
+        viewModel.lockViewVisibility.observe(this, Observer {
+            getUnlockAppInputView()?.visibility = it
+        })
+
+        viewModel.onUnlockEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { showLockWarningEvent() }
+        })
+        viewModel.dismissLockWarningEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let {
+                inactivityWarningSnackbar?.dismiss()
+                inactivityWarningSnackbar = null
+            }
+        })
+        viewModel.showAppClearWarningEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let {
+                showDialogAboutUserReset(DialogInterface.OnClickListener { _, _ -> this.restartApp() })
+            }
+        })
+        viewModel.showLockWarningEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { showLockWarningEvent() }
+        })
+        viewModel.enablePasscodeInputEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { showPasscodeInputView()
+            }
+        })
+        viewModel.disablePasscodeInputEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { minutes -> showWarningAndHidePasscodeView(minutes) }
+        })
+        viewModel.successVibrateEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { successVibrate() }
+        })
+        viewModel.showBiometricPromptEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { displayBiometricPrompt() }
+        })
     }
 
-    fun restartLockableActivity() {
-        startActivity(Intent(this, this.javaClass).apply { putExtra(KEY_SKIP_PIN, true) })
-        finish()
+    private fun showLockWarningEvent() {
+        inactivityWarningSnackbar = this@LockableActivity.buildWarning(
+            getString(R.string.warning_application_was_locked),
+            snackBarDuration = 5000,
+            actionResId = R.string.actions_cancel
+        )
+        inactivityWarningSnackbar?.addCallback(object : Snackbar.Callback() {
+            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                super.onDismissed(transientBottomBar, event)
+                if (event == DISMISS_EVENT_TIMEOUT) viewModel.onLockWarningIgnored()
+            }
+        })
+        inactivityWarningSnackbar?.show()
     }
 
-    private fun isBiometricInputReady(): Boolean = biometricTools?.isBiometricReady(context = this) == true
+    private fun showPasscodeInputView() {
+        getUnlockAppInputView()?.let {
+            it.biometricsActionIsAvailable = viewModel.isBiometricInputReady
+            it.setInputViewVisibility(show = true)
+            it.setResetPasscodeViewVisibility(show = false)
+            it.setWarningView(show = false)
+        }
+    }
+
+    private fun showWarningAndHidePasscodeView(remainedMinutes: Int) {
+        val wrongPasscodeMessage = getString(R.string.errors_wrong_passcode)
+        val retryMessage = resources.getQuantityString(
+            R.plurals.errors_passcode_try_again,
+            remainedMinutes,
+            remainedMinutes
+        )
+        getUnlockAppInputView()?.let {
+            it.setWarningView(show = true, message = "$wrongPasscodeMessage\n$retryMessage")
+            it.setInputViewVisibility(show = false)
+            it.setResetPasscodeViewVisibility(show = false)
+        }
+    }
 
     /**
      * Display biometric prompt if resultCallback is already set on Activity start
@@ -217,51 +250,9 @@ abstract class LockableActivity : AppCompatActivity(),
         }
     }
 
-    private fun showLockWarningView() {
-        snackbar = this@LockableActivity.buildWarning(
-            getString(R.string.warning_application_was_locked),
-            snackBarDuration = 5000,
-            actionResId = R.string.actions_cancel
-        )
-        snackbar?.addCallback(object : Snackbar.Callback() {
-            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                super.onDismissed(transientBottomBar, event)
-                if (event == DISMISS_EVENT_TIMEOUT) presenter.onSnackbarDismissed()
-            }
-        })
-        snackbar?.show()
-    }
-
-    private fun dismissLockWarningView() {
-        snackbar?.dismiss()
-        snackbar = null
-    }
-
-    private fun unlockScreen() {
-        getUnlockAppInputView()?.setVisible(show = false)
-        presenter.restartLockTimer()
-    }
-
-    private fun setupViewsAndLockScreen() {
-        getUnlockAppInputView()?.let {
-            it.biometricsActionIsAvailable = isBiometricInputReady()
-            it.setSavedPasscode(presenter.savedPasscode)
-            it.setVisible(show = true)
-        }
-    }
-
     private fun showOnboardingActivity() {
         finish()
         startActivity(Intent(this, OnboardingSetupActivity::class.java))
-    }
-
-    private fun showPasscodeInputView() {
-        getUnlockAppInputView()?.let {
-            it.biometricsActionIsAvailable = isBiometricInputReady()
-            it.setInputViewVisibility(show = true)
-            it.setResetPasscodeViewVisibility(show = false)
-            it.setWarningView(show = false)
-        }
     }
 
     private fun showResetView() {
@@ -269,20 +260,6 @@ abstract class LockableActivity : AppCompatActivity(),
             it.setInputViewVisibility(show = false)
             it.setResetPasscodeViewVisibility(show = true)
             it.setWarningView(show = false)
-        }
-    }
-
-    private fun showWarningView(remainedMinutes: Int) {
-        val wrongPasscodeMessage = getString(R.string.errors_wrong_passcode)
-        val retryMessage = resources.getQuantityString(
-            R.plurals.errors_passcode_try_again,
-            remainedMinutes,
-            remainedMinutes
-        )
-        getUnlockAppInputView()?.let {
-            it.setWarningView(show = true, message = "$wrongPasscodeMessage\n$retryMessage")
-            it.setInputViewVisibility(show = false)
-            it.setResetPasscodeViewVisibility(show = false)
         }
     }
 

@@ -89,6 +89,8 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
         super.onDestroy()
     }
 
+    override fun onUnlockActivity() {}
+
     override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView
 
     override fun getSnackbarAnchorView(): View? = surfaceView

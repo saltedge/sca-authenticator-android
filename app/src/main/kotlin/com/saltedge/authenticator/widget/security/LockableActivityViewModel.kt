@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,37 +20,56 @@
  */
 package com.saltedge.authenticator.widget.security
 
+import android.content.Context
 import android.content.Intent
 import android.os.CountDownTimer
 import android.os.SystemClock
+import android.view.View
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.models.Connection
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.isActive
 import com.saltedge.authenticator.sdk.tools.MILLIS_IN_MINUTE
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.tools.millisToRemainedMinutes
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.tools.log
+import com.saltedge.authenticator.tools.postEvent
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class LockableActivityPresenter(
-    val viewContract: LockableActivityContract,
+class LockableActivityViewModel(
     val connectionsRepository: ConnectionsRepositoryAbs,
     val preferenceRepository: PreferenceRepositoryAbs,
     val passcodeTools: PasscodeToolsAbs,
     val keyStoreManager: KeyStoreManagerAbs,
     val apiManager: AuthenticatorApiManagerAbs
-) {
+): ViewModel() {
     private var returnFromOwnActivity = false
+    private var countDownTimer: CountDownTimer? = null // enabled when user set passcode incorrect several times
+    private val inactivityTimerDuration = TimeUnit.MINUTES.toMillis(1)
+    private var timer: Timer? = null // enabled when user does not interact with the app for 1 minute
+    var appContext: Context? = null
+    var biometricTools: BiometricToolsAbs? = null
     val savedPasscode: String
         get() = passcodeTools.getPasscode()
-    private var countDownTimer: CountDownTimer? = null // enabled when user set passcode incorrect several times
-    private val timerDuration = TimeUnit.MINUTES.toMillis(1)
-    private var timer: Timer? = null // enabled when user does not interact with the app for 1 minute
+    val lockViewVisibility = MutableLiveData<Int>(View.VISIBLE)
+    val onUnlockEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val dismissLockWarningEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val showLockWarningEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val enablePasscodeInputEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val disablePasscodeInputEvent = MutableLiveData<ViewModelEvent<Int>>()
+    val showAppClearWarningEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val successVibrateEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val showBiometricPromptEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val isBiometricInputReady: Boolean
+        get() = appContext?.let { biometricTools?.isBiometricReady(context = it) == true } ?: false
 
     fun onActivityCreate() {
         returnFromOwnActivity = false
@@ -61,14 +80,16 @@ class LockableActivityPresenter(
     }
 
     fun onActivityStart(intent: Intent?) {
+        lockViewVisibility
         when {
             returnFromOwnActivity -> {  // when app has result from started activity
                 returnFromOwnActivity = false
-                viewContract.closeLockView()
+                unlockScreen()
+
             }
             intent?.getBooleanExtra(KEY_SKIP_PIN, false) == true -> { // when we start with SKIP_PIN
                 intent.removeExtra(KEY_SKIP_PIN)
-                viewContract.closeLockView()
+                unlockScreen()
             }
             else -> lockScreen()
         }
@@ -77,8 +98,8 @@ class LockableActivityPresenter(
     fun onSuccessAuthentication() {
         preferenceRepository.pinInputAttempts = 0
         preferenceRepository.blockPinInputTillTime = 0L
-        viewContract.vibrateAboutSuccess()
-        viewContract.closeLockView()
+        successVibrateEvent.postEvent()
+        unlockScreen()
     }
 
     fun onWrongPasscodeInput() {
@@ -91,20 +112,8 @@ class LockableActivityPresenter(
             shouldBlockInput(inputAttempt) -> disableUnlockInput(inputAttempt)
             shouldWipeApplication(inputAttempt) -> {
                 wipeApplication()
-                viewContract.resetUser()
+                showAppClearWarningEvent.postEvent()
             }
-        }
-    }
-
-    fun restartLockTimer() {
-        viewContract.dismissSnackbar()
-        timer?.cancel()
-        timer = Timer().apply {
-            schedule(object : TimerTask() {
-                override fun run() {
-                    viewContract.showLockWarning()
-                }
-            }, timerDuration)
         }
     }
 
@@ -114,7 +123,7 @@ class LockableActivityPresenter(
         timer = null
     }
 
-    fun onSnackbarDismissed() {
+    fun onLockWarningIgnored() {
         lockScreen()
     }
 
@@ -123,28 +132,52 @@ class LockableActivityPresenter(
         wipeApplication()
     }
 
+    fun onTouch(lockViewIsNotVisible: Boolean) {
+        if (lockViewIsNotVisible) restartInactivityTimer()
+    }
+
     private fun lockScreen() {
-        viewContract.lockScreen()
+        lockViewVisibility.postValue(View.VISIBLE)
         val inputAttempt = preferenceRepository.pinInputAttempts
         if (shouldBlockInput(inputAttempt)) disableUnlockInput(inputAttempt)
-        else if (viewContract.isBiometricReady()) viewContract.displayBiometricPromptView()
+        else if (isBiometricInputReady) showBiometricPromptEvent.postEvent()
+    }
+
+    private fun unlockScreen() {
+        lockViewVisibility.postValue(View.GONE)
+        onUnlockEvent.postEvent()
+        restartInactivityTimer()
+    }
+
+    private fun restartInactivityTimer() {
+        dismissLockWarningEvent.postEvent()
+        timer?.cancel()
+        timer = Timer().apply {
+            schedule(object : TimerTask() {
+                override fun run() { showLockWarningEvent.postEvent() }
+            }, inactivityTimerDuration)
+        }
     }
 
     private fun disableUnlockInput(inputAttempt: Int) {
         val blockTime = preferenceRepository.blockPinInputTillTime - SystemClock.elapsedRealtime()
         if (blockTime > 0) {
-            viewContract.disableUnlockInput(inputAttempt, millisToRemainedMinutes(blockTime))
-            startInactivityTimer(blockTime)
+            disablePasscodeInputEvent.postValue(ViewModelEvent(millisToRemainedMinutes(blockTime)))
+//            viewContract.disableUnlockInput(inputAttempt, millisToRemainedMinutes(blockTime))
+            startDisableUnlockInputTimer(blockTime)
         }
     }
 
-    private fun startInactivityTimer(blockTime: Long) {
+    /**
+     * Start timer which counts time while passcode input is inactive
+     */
+    private fun startDisableUnlockInputTimer(blockTime: Long) {
         try {
             resetTimer()
             countDownTimer = object : CountDownTimer(blockTime, blockTime) {
                 override fun onFinish() {
                     resetTimer()
-                    viewContract.unBlockInput()
+                    enablePasscodeInputEvent.postEvent()
                 }
 
                 override fun onTick(millisUntilFinished: Long) {}
