@@ -96,12 +96,12 @@
     </style>
 
     <!--DIALOG BUTTONS-->
-    <style name="NegativeButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">@color/cancel_button_background</item>
+    <style name="DialogBaseButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/dialog_base_action</item>
     </style>
 
-    <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">@color/clear_button_background</item>
+    <style name="DialogRedButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/dialog_red_action</item>
     </style>
 
     <style name="AppBarActionContainer">

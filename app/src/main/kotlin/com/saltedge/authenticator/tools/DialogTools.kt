@@ -28,21 +28,6 @@ import androidx.fragment.app.FragmentActivity
 import com.saltedge.authenticator.R
 
 /**
- * Show warning dialog with given message
- *
- * @receiver FragmentActivity
- * @param messageId - the message that appears in the dialog
- * @see showWarningDialog
- */
-fun FragmentActivity.showWarningDialog(@StringRes messageId: Int) {
-    try {
-        showWarningDialog(message = getString(messageId))
-    } catch (e: Exception) {
-        e.log()
-    }
-}
-
-/**
  * Show dialog with given title and message
  *
  * @receiver FragmentActivity
@@ -62,6 +47,21 @@ fun FragmentActivity.showDialogWithTitleAndMessage(
             .setMessage(message)
             .setPositiveButton(android.R.string.ok, listener)
             .show()
+    } catch (e: Exception) {
+        e.log()
+    }
+}
+
+/**
+ * Show warning dialog with given message
+ *
+ * @receiver FragmentActivity
+ * @param messageId - the message that appears in the dialog
+ * @see showWarningDialog
+ */
+fun FragmentActivity.showWarningDialog(@StringRes messageId: Int) {
+    try {
+        showWarningDialog(message = getString(messageId))
     } catch (e: Exception) {
         e.log()
     }
@@ -134,15 +134,15 @@ fun FragmentActivity.showResetDataDialog(listener: DialogInterface.OnClickListen
     }
 }
 
-/**
- * Change the text color of the buttons for the dialog
- *
- * @receiver alert dialog
- * @param colorResId - the color set for buttons of the dialogue
- */
-fun AlertDialog.setButtonsColor(colorResId: Int) {
-    ContextCompat.getColor(this.context, colorResId).also {
-        getButton(DialogInterface.BUTTON_POSITIVE)?.setTextColor(it)
-        getButton(DialogInterface.BUTTON_NEGATIVE)?.setTextColor(it)
-    }
-}
+///**
+// * Change the text color of the buttons for the dialog
+// *
+// * @receiver alert dialog
+// * @param colorResId - the color set for buttons of the dialogue
+// */
+//fun AlertDialog.setButtonsColor(colorResId: Int) {
+//    ContextCompat.getColor(this.context, colorResId).also {
+//        getButton(DialogInterface.BUTTON_POSITIVE)?.setTextColor(it)
+//        getButton(DialogInterface.BUTTON_NEGATIVE)?.setTextColor(it)
+//    }
+//}

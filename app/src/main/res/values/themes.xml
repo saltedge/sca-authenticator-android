@@ -62,22 +62,27 @@
     <style name="MainScreenTheme" parent="MainScreenThemeBase">
     </style>
 
-
     <!--ALERT DIALOG-->
-    <style name="AlertDialogCustom" parent="android:Theme.Material.Light.Dialog.Alert">
-        <item name="android:colorPrimary">@color/primary</item>
-        <item name="android:colorAccent">@color/primary</item>
-    </style>
-
     <style name="BaseAlertDialogTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert">
         <item name="android:background">@color/dialog_background</item>
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorAccent">@color/primary</item>
+        <item name="android:colorControlNormal">@color/primary</item>
+        <item name="android:colorControlActivated">@color/primary</item>
+        <item name="android:colorControlHighlight">@color/primary</item>
     </style>
 
     <style name="AlertDialogTheme" parent="BaseAlertDialogTheme">
-        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
-        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/DialogBaseButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/DialogRedButtonStyle</item>
     </style>
 
+    <style name="InfoDialogTheme" parent="BaseAlertDialogTheme">
+        <item name="buttonBarNegativeButtonStyle">@style/DialogBaseButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/DialogBaseButtonStyle</item>
+    </style>
+
+    <!--PROGRESS DIALOG-->
     <style name="CustomProgressDialogStyle">
         <item name="android:bottomBright">@android:color/transparent</item>
         <item name="android:bottomDark">@android:color/transparent</item>
