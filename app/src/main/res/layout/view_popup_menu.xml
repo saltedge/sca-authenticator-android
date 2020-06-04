@@ -28,8 +28,8 @@
 <RelativeLayout
     android:layout_width="@dimen/dp_200"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/dp_12"
-    android:layout_marginBottom="@dimen/dp_12"
+    android:paddingTop="@dimen/dp_12"
+    android:paddingBottom="@dimen/dp_12"
     android:background="@color/dialog_background">
 
     <LinearLayout

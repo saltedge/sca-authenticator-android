@@ -29,7 +29,7 @@
     android:clipToPadding="false"
     android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="@dimen/dp_6"
-    app:cardElevation="@dimen/dp_12">
+    app:cardElevation="@dimen/dp_10">
 
     <!--TODO: use actual naming for background color-->
     <RelativeLayout

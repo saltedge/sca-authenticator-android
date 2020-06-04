@@ -70,28 +70,16 @@
 
     <TextView
         android:id="@+id/titleView"
-        style="@style/Text22Primary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_32"
-        android:layout_marginEnd="@dimen/dp_32"
-        android:gravity="center_horizontal"
-        android:maxLines="3"
+        style="@style/Title22"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hCenterLine"
-        tools:text="Title text view" />
+        tools:text="No entries" />
 
     <TextView
         android:id="@+id/descriptionView"
-        style="@style/Text18Primary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_32"
+        style="@style/Description18"
         android:layout_marginTop="@dimen/dp_12"
-        android:layout_marginEnd="@dimen/dp_32"
-        android:gravity="center_horizontal"
-        android:maxLines="5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleView"

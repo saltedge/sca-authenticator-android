@@ -33,8 +33,8 @@ import com.saltedge.authenticator.app.KEY_GUID
 class DeleteConnectionDialog :
     DialogFragment(),
     DeleteConnectionContract.View,
-    DialogInterface.OnClickListener {
-
+    DialogInterface.OnClickListener
+{
     private var presenter = DeleteConnectionPresenter(viewContract = this)
 
     override fun onCreate(savedInstanceState: Bundle?) {

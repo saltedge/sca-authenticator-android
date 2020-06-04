@@ -70,20 +70,22 @@
         <item name="android:textColor">#000000</item>
     </style>
 
-    <!--SETUP SCREEN-->
-    <style name="SetupLogoImage">
-        <item name="android:layout_width">@dimen/dp_100</item>
-        <item name="android:layout_height">@dimen/dp_100</item>
-        <item name="android:layout_marginTop">@dimen/dp_46</item>
-        <item name="android:layout_centerHorizontal">true</item>
-        <item name="android:scaleType">fitCenter</item>
+    <style name="Title22" parent="Text22Primary">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/dp_32</item>
+        <item name="android:layout_marginEnd">@dimen/dp_32</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:maxLines">2</item>
     </style>
 
-    <style name="SetupSkipAction" parent="@style/WhiteLinkAction">
-        <item name="android:layout_marginBottom">@dimen/dp_40</item>
-        <item name="android:layout_alignParentBottom">true</item>
-        <item name="android:layout_centerHorizontal">true</item>
-        <item name="android:text">@string/actions_skip</item>
+    <style name="Description18" parent="Text18Primary">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/dp_32</item>
+        <item name="android:layout_marginEnd">@dimen/dp_32</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:maxLines">5</item>
     </style>
 
     <!--CONNECTIONS LIST-->

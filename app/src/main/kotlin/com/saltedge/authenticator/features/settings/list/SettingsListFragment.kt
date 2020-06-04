@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.features.settings.list
 
-import android.content.Intent
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,9 +30,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
 import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
@@ -71,11 +69,6 @@ class SettingsListFragment : BaseFragment() {
         setupViews()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        viewModel.onActivityResult(requestCode, resultCode)
-    }
-
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(SettingsListViewModel::class.java)
 
@@ -93,9 +86,9 @@ class SettingsListFragment : BaseFragment() {
         })
         viewModel.clearClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let {
-                val dialog = DeleteConnectionDialog.newInstance(null)
-                    .also { dialog -> dialog.setTargetFragment(this, DELETE_ALL_REQUEST_CODE) }
-                activity?.showDialogFragment(dialog)
+                activity?.showResetDataAndSettingsDialog(DialogInterface.OnClickListener { _, _ ->
+                    viewModel.onUserConfirmedDeleteAllConnections()
+                })
             }
         })
         viewModel.screenshotClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {

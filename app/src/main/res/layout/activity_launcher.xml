@@ -28,7 +28,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/dp_137"
         android:contentDescription="@string/app_name"
-        android:elevation="@dimen/dp_40"
+        android:elevation="@dimen/dp_10"
         android:scaleType="center"
         android:background="@drawable/shape_bg_app_logo"
         android:src="@drawable/ic_logo_application" />

@@ -120,7 +120,7 @@ class LockableActivityPresenter(
 
     fun clearAppData() {
         sendRevokeRequestForConnections(connectionsRepository.getAllActiveConnections())
-        deleteAllConnectionsAndKeys()
+        wipeApplication()
     }
 
     private fun lockScreen() {
@@ -161,11 +161,19 @@ class LockableActivityPresenter(
 
     private fun shouldBlockInput(inputAttempt: Int): Boolean = inputAttempt in 6..10
 
+    //User exceeded passcode input attempts
     private fun shouldWipeApplication(inputAttempt: Int): Boolean = inputAttempt >= 11
 
     private fun wipeApplication() {
         preferenceRepository.clearUserPreferences()
+        keyStoreManager.deleteKeyPairs(connectionsRepository.getAllConnections().map { it.guid })
         connectionsRepository.deleteAllConnections()
+    }
+
+    private fun sendRevokeRequestForConnections(connections: List<Connection>) {//TODO move connections interactor
+        val connectionsAndKeys: List<ConnectionAndKey> = connections.filter { it.isActive() }
+            .mapNotNull { keyStoreManager.createConnectionAndKeyModel(it) }
+        apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = null)
     }
 
     private fun calculateWrongAttemptWaitTime(attemptNumber: Int): Long = when {
@@ -176,17 +184,5 @@ class LockableActivityPresenter(
         attemptNumber == 9 -> 60L * MILLIS_IN_MINUTE
         attemptNumber == 10 -> 60L * MILLIS_IN_MINUTE
         else -> Long.MAX_VALUE
-    }
-
-    private fun sendRevokeRequestForConnections(connections: List<Connection>) {//TODO move connections interactor
-        val connectionsAndKeys: List<ConnectionAndKey> = connections.filter { it.isActive() }
-            .mapNotNull { keyStoreManager.createConnectionAndKeyModel(it) }
-        apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = null)
-    }
-
-    private fun deleteAllConnectionsAndKeys() {
-        val connectionGuids = connectionsRepository.getAllConnections().map { it.guid }
-        keyStoreManager.deleteKeyPairs(connectionGuids)
-        connectionsRepository.deleteAllConnections()
     }
 }

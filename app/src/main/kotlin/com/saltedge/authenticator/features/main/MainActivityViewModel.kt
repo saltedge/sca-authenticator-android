@@ -88,9 +88,10 @@ class MainActivityViewModel(
     fun onLifeCycleCreate(savedInstanceState: Bundle?, intent: Intent?) {
         if (savedInstanceState == null) {
             onShowAuthorizationsListEvent.postValue(ViewModelEvent(Unit))
-            if (connectionsRepository.isEmpty()) {
-                onFirstQrScanClickEvent.postValue(ViewModelEvent(Unit))
-            } else if (intent != null && (intent.hasPendingAuthorizationData || intent.hasDeepLinkData)) {
+//            if (connectionsRepository.isEmpty()) {//TODO INVESTIGATE RUNNING OF QR scan
+//                onFirstQrScanClickEvent.postValue(ViewModelEvent(Unit))
+//            } else
+            if (intent != null && (intent.hasPendingAuthorizationData || intent.hasDeepLinkData)) {
                 onNewIntent(intent)
             }
         }

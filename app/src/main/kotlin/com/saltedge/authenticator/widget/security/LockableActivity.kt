@@ -57,7 +57,7 @@ abstract class LockableActivity : AppCompatActivity(),
 
     abstract fun getUnlockAppInputView(): UnlockAppInputView?
     abstract fun getAppBarLayout(): View?
-    var snackbar: Snackbar? = null
+    protected var snackbar: Snackbar? = null
 
     private val viewContract: LockableActivityContract = object : LockableActivityContract {
 
@@ -74,7 +74,7 @@ abstract class LockableActivity : AppCompatActivity(),
         }
 
         override fun resetUser() {
-            resetCurrentUser()
+            onAppCleared()
         }
 
         override fun vibrateAboutSuccess() {
@@ -170,7 +170,10 @@ abstract class LockableActivity : AppCompatActivity(),
 
     override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
         when (dialogActionId) {
-            DialogInterface.BUTTON_POSITIVE -> showOnboardingActivity()
+            DialogInterface.BUTTON_POSITIVE -> {
+                presenter.clearAppData()
+                showOnboardingActivity()
+            }
             DialogInterface.BUTTON_NEGATIVE -> listener?.dismiss()
         }
     }
@@ -189,8 +192,8 @@ abstract class LockableActivity : AppCompatActivity(),
         return super.dispatchTouchEvent(ev)
     }
 
-    fun resetCurrentUser() {
-        showResetUserDialog(DialogInterface.OnClickListener { _, _ -> this.restartApp() })
+    fun onAppCleared() {
+        showDialogAboutUserReset(DialogInterface.OnClickListener { _, _ -> this.restartApp() })
     }
 
     fun restartLockableActivity() {
@@ -251,7 +254,6 @@ abstract class LockableActivity : AppCompatActivity(),
     }
 
     private fun showOnboardingActivity() {
-        presenter.clearAppData()
         finish()
         startActivity(Intent(this, OnboardingSetupActivity::class.java))
     }

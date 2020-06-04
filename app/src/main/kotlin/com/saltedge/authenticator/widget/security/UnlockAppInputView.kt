@@ -31,9 +31,7 @@ import com.saltedge.authenticator.widget.passcode.PasscodeInputListener
 import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
 import kotlinx.android.synthetic.main.view_unlock.view.*
 
-class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
-    View.OnClickListener
-{
+class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
     var biometricsActionIsAvailable: Boolean
         get() = passcodeInputView?.biometricsActionIsAvailable ?: false
         set(value) {
@@ -47,20 +45,12 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_unlock, this)
-        clearView?.setOnClickListener(this)
-        backActionImageView?.setOnClickListener(this)
-        passcodeInputView?.title = context.getString(R.string.passcode_enter_passcode_title)
-    }
-
-    override fun onClick(view: View?) {
-        val viewId = view?.id ?: return
-        when (viewId) {
-            R.id.clearView -> passcodeInputViewListener?.onClearDataActionSelected()
-            R.id.backActionImageView -> {
-                setInputViewVisibility(show = true)
-                setResetPasscodeViewVisibility(show = false)
-            }
+        resetContentView?.setActionOnClickListener(OnClickListener { passcodeInputViewListener?.onClearDataActionSelected() })
+        resetBackActionImageView?.setOnClickListener {
+            setInputViewVisibility(show = true)
+            setResetPasscodeViewVisibility(show = false)
         }
+        passcodeInputView?.title = context.getString(R.string.passcode_enter_passcode_title)
     }
 
     fun setSavedPasscode(currentPasscode: String) {

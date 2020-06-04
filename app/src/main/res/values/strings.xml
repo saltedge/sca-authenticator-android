@@ -47,12 +47,12 @@
     <string name="actions_confirm">Confirm</string>
     <string name="actions_clear">Clear</string>
 
-    <string name="passcode_enter_passcode_title">Enter Passcode</string>
-    <string name="passcode_enter_passcode_or_fingerprint_title">Enter Passcode or use Fingerprint</string>
+    <string name="passcode_enter_passcode_title">Enter passcode</string>
+    <string name="passcode_enter_passcode_or_fingerprint_title">Enter passcode or use fingerprint</string>
     <string name="passcode_input_new_passcode">Input new passcode</string>
     <string name="passcode_confirm_passcode">Confirm passcode</string>
 
-    <string name="errors_touch_id_not_enrolled">No Fingerprint was enrolled.</string>
+    <string name="errors_touch_id_not_enrolled">No fingerprint was enrolled.</string>
     <string name="errors_touch_id_not_supported">Fingerprint is not supported on your device</string>
     <string name="errors_fingerprint_not_recognized">Fingerprint not recognized. Please try again.</string>
     <string name="errors_activate_touch_id">Fingerprint is not activated on your device, please proceed to settings.</string>
@@ -153,6 +153,7 @@
     <string name="settings_restart_app">Restart app for these changes to take effect</string>
     <string name="settings_general">General</string>
     <string name="settings_info">Info</string>
+    <string name="settings_clear_message">App data including connected providers and user data will be permanently deleted.</string>
 
     <string name="about_feature_title">About</string>
     <string name="about_app_version">App Version</string>
@@ -168,14 +169,14 @@
     <string name="fingerprint_touch_sensor">Touch Sensor</string>
 
     <string name="scan_qr_title">Scan QR code</string>
-    <string name="scan_qr_description">Scan the QR to\nto take action</string>
+    <string name="scan_qr_description">Scan the QR\nto take action</string>
     <string name="scan_qr_description_first">Scan the QR\nto make your first connection</string>
 
-    <string name="ui_dialog_clear_data_title">Clear app data</string>
-    <string name="ui_dialog_clear_data_message">App data including connected providers and user data will be permanently deleted.</string>
+    <string name="delete_connections_title">Clear app data</string>
+    <string name="delete_connections_message">App data including connected providers and user data will be permanently deleted.</string>
+    <string name="delete_connection_title">Delete connection</string>
+    <string name="delete_connection_message">Are you sure you want to delete connection to your provider? This action cannot be undone.</string>
     <string name="ui_dialog_rename_title">Rename connection</string>
-    <string name="ui_dialog_delete_title">Delete connection</string>
-    <string name="ui_dialog_delete_message">Are you sure you want to delete connection to your provider?</string>
 
     <string name="warning_no_internet_connection">No internet connection</string>
     <string name="warning_application_was_locked">Application will be locked due to inactivity</string>
@@ -184,6 +185,8 @@
     <string name="forgot_passcode_title">Forgot passcode?</string>
     <string name="forgot_passcode_description">Please clear app data and establish new connection with your provider.</string>
     <string name="forgot_passcode_clear_data">Clear data</string>
+    <string name="forgot_passcode_clear_title">Clear app data</string>
+    <string name="forgot_passcode_clear_message">All app data including connected providers, user data and settings will be permanently deleted</string>
 
     <string name="consents_feature_title">Consent management</string>
 </resources>

@@ -83,4 +83,5 @@
     <color name="switch_thumb_tint_on">@color/primary</color>
     <color name="switch_track_tint_off">@color/grey_100</color>
     <color name="switch_track_tint_on">@color/primary_light_extra</color>
+    <color name="company_logo_fill">#051539</color>
 </resources>
