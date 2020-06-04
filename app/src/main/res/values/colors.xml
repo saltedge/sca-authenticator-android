@@ -64,6 +64,7 @@
     <color name="clear_button_background">@color/red</color>
     <color name="cancel_button_background">@color/primary</color>
     <color name="dialog_background">@android:color/white</color>
+    <color name="connection_item_background">@android:color/white</color>
     <color name="app_logo_background">@android:color/white</color>
     <color name="company_logo_background">@color/blue_black</color>
     <color name="appbar_action_icon_fill_color">@color/dark_100</color>

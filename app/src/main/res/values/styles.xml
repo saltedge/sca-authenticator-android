@@ -116,4 +116,26 @@
         <item name="android:layout_height">@dimen/dp_24</item>
         <item name="android:layout_gravity">center</item>
     </style>
+
+    <!--POPUP MENU-->
+    <style name="PopupMenuRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/dp_48</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="PopupMenuImage">
+        <item name="android:layout_width">@dimen/dp_24</item>
+        <item name="android:layout_height">@dimen/dp_24</item>
+        <item name="android:layout_marginStart">@dimen/dp_16</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+
+    <style name="PopupMenuText" parent="Text16Primary">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/dp_12</item>
+        <item name="android:layout_marginEnd">@dimen/dp_16</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
 </resources>

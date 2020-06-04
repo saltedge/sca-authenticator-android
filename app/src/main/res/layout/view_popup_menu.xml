@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+     This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2020 Salt Edge Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clipToPadding="false"
+    app:cardCornerRadius="@dimen/dp_6">
+
+<RelativeLayout
+    android:layout_width="@dimen/dp_200"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/dp_12"
+    android:layout_marginBottom="@dimen/dp_12"
+    android:background="@color/dialog_background">
+
+    <LinearLayout
+        android:id="@+id/reconnectView"
+        style="@style/PopupMenuRow"
+        android:background="?android:attr/selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/reconnectImageView"
+            style="@style/PopupMenuImage"
+            android:contentDescription="@string/actions_reconnect"
+            android:src="@drawable/ic_menu_reconnect_24dp" />
+
+        <TextView
+            android:id="@+id/reconnectTextView"
+            style="@style/PopupMenuText"
+            android:text="@string/actions_reconnect" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/renameView"
+        style="@style/PopupMenuRow"
+        android:layout_below="@+id/reconnectView">
+
+        <ImageView
+            android:id="@+id/renameImageView"
+            style="@style/PopupMenuImage"
+            android:contentDescription="@string/actions_rename"
+            android:src="@drawable/ic_menu_edit_24dp" />
+
+        <TextView
+            android:id="@+id/renameTextView"
+            style="@style/PopupMenuText"
+            android:text="@string/actions_rename" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/contactSupportView"
+        style="@style/PopupMenuRow"
+        android:layout_below="@+id/renameView">
+
+        <ImageView
+            android:id="@+id/contactSupportImageView"
+            style="@style/PopupMenuImage"
+            android:contentDescription="@string/actions_contact_support"
+            android:src="@drawable/ic_contact_support_24dp" />
+
+        <TextView
+            android:id="@+id/contactSupportTextView"
+            style="@style/PopupMenuText"
+            android:text="@string/actions_contact_support" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/deleteView"
+        style="@style/PopupMenuRow"
+        android:layout_below="@+id/contactSupportView">
+
+        <ImageView
+            android:id="@+id/deleteImageView"
+            style="@style/PopupMenuImage"
+            android:contentDescription="@string/actions_delete"
+            android:src="@drawable/ic_menu_delete_24dp" />
+
+        <TextView
+            android:id="@+id/deleteTextView"
+            style="@style/PopupMenuText"
+            android:text="@string/actions_delete" />
+    </LinearLayout>
+</RelativeLayout>
+</androidx.cardview.widget.CardView>

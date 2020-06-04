@@ -18,7 +18,8 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
@@ -28,7 +29,7 @@
     android:clipToPadding="false"
     android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="@dimen/dp_6"
-    app:cardElevation="@dimen/dp_20">
+    app:cardElevation="@dimen/dp_12">
 
     <!--TODO: use actual naming for background color-->
     <RelativeLayout

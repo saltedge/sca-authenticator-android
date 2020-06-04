@@ -22,6 +22,9 @@ package com.saltedge.authenticator.features.connections.list
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -42,7 +45,7 @@ import com.saltedge.authenticator.databinding.ConnectionsListBinding
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
-import com.saltedge.authenticator.features.connections.edit.name.EditConnectionNameDialog
+import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.*
@@ -59,6 +62,7 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
     private lateinit var binding: ConnectionsListBinding
     private val adapter = ConnectionsListAdapter(clickListener = this)
     private var headerDecorator: SpaceItemDecoration? = null
+    private var popupWindow: PopupWindow? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,6 +108,11 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
         viewModel.onListItemClick(itemIndex)
     }
 
+    override fun onStop() {
+        popupWindow?.dismiss()
+        super.onStop()
+    }
+
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(ConnectionsListViewModel::class.java)
@@ -114,21 +123,19 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
             adapter.data = it
         })
         viewModel.onQrScanClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it.getContentIfNotHandled()?.let {
-                activity?.showQrScannerActivity()
-            }
+            it.getContentIfNotHandled()?.let { activity?.showQrScannerActivity() }
         })
-        viewModel.onRenameClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
-            it.getContentIfNotHandled()?.let {
-                val dialog = EditConnectionNameDialog.newInstance(it).also {
+        viewModel.onRenameClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
+            event.getContentIfNotHandled()?.let { bundle ->
+                val dialog = EditConnectionNameDialog.newInstance(bundle).also {
                     it.setTargetFragment(this, RENAME_REQUEST_CODE)
                 }
                 activity?.showDialogFragment(dialog)
             }
         })
-        viewModel.onDeleteClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
-            it.getContentIfNotHandled()?.let {
-                val dialog = DeleteConnectionDialog.newInstance(it).also {
+        viewModel.onDeleteClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
+            event.getContentIfNotHandled()?.let { bundle ->
+                val dialog = DeleteConnectionDialog.newInstance(bundle).also {
                     it.setTargetFragment(this, DELETE_REQUEST_CODE)
                 }
                 activity?.showDialogFragment(dialog)
@@ -141,18 +148,18 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
                 }
             }
         })
-        viewModel.onReconnectClickEvent.observe(this, Observer<ViewModelEvent<String>> {
-            it.getContentIfNotHandled()?.let {
+        viewModel.onReconnectClickEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
+            event.getContentIfNotHandled()?.let {
                 activity?.addFragment(ConnectProviderFragment.newInstance(connectionGuid = it))
             }
         })
-        viewModel.onSupportClickEvent.observe(this, Observer<ViewModelEvent<String?>> {
-            it.getContentIfNotHandled()?.let { supportEmail ->
+        viewModel.onSupportClickEvent.observe(this, Observer<ViewModelEvent<String?>> { event ->
+            event.getContentIfNotHandled()?.let { supportEmail ->
                 activity?.startMailApp(supportEmail)
             }
         })
         viewModel.updateListItemEvent.observe(this, Observer<ConnectionViewModel> { itemIndex ->
-                adapter.updateListItem(itemIndex)
+            adapter.updateListItem(itemIndex)
         })
     }
 
@@ -169,43 +176,50 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
     }
 
     private fun showPopupMenu(view: View?, item: ConnectionViewModel) {
-        val layoutInflater = context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val popupView = layoutInflater.inflate(R.layout.popup_menu_layout, null)
-        val popupWindow = PopupWindow(
-            popupView,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        popupWindow.isOutsideTouchable = true
-        popupWindow.isFocusable = true
-        popupWindow.showAsDropDown(view)
+        try {
+            val layoutInflater = context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val popupView = layoutInflater.inflate(R.layout.view_popup_menu, null)
+            popupWindow = PopupWindow(
+                popupView,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                true
+            )
 
-        val renameView = popupView.findViewById<LinearLayout>(R.id.renameView)
-        val reconnectView = popupView.findViewById<LinearLayout>(R.id.reconnectView)
-        val contactSupportView = popupView.findViewById<LinearLayout>(R.id.contactSupportView)
-        val deleteView = popupView.findViewById<LinearLayout>(R.id.deleteView)
-        val deleteImageView = popupView.findViewById<ImageView>(R.id.deleteImageView)
-        val deleteTextView = popupView.findViewById<TextView>(R.id.deleteTextView)
+            val renameView = popupView.findViewById<LinearLayout>(R.id.renameView)
+            val reconnectView = popupView.findViewById<LinearLayout>(R.id.reconnectView)
+            val contactSupportView = popupView.findViewById<LinearLayout>(R.id.contactSupportView)
+            val deleteView = popupView.findViewById<LinearLayout>(R.id.deleteView)
+            val deleteImageView = popupView.findViewById<ImageView>(R.id.deleteImageView)
+            val deleteTextView = popupView.findViewById<TextView>(R.id.deleteTextView)
 
-        reconnectView.setVisible(item.reconnectOptionIsVisible)
-        deleteTextView.setText(item.deleteMenuItemText)
-        deleteImageView.setImageResource(item.deleteMenuItemImage)
+            reconnectView.setVisible(item.reconnectOptionIsVisible)
+            deleteTextView.setText(item.deleteMenuItemText)
+            deleteImageView.setImageResource(item.deleteMenuItemImage)
 
-        reconnectView.setOnClickListener {
-            popupWindow.dismiss()
-            viewModel.onReconnectOptionSelected()
-        }
-        renameView.setOnClickListener {
-            popupWindow.dismiss()
-            viewModel.onRenameOptionSelected()
-        }
-        contactSupportView.setOnClickListener {
-            popupWindow.dismiss()
-            viewModel.onContactSupportOptionSelected()
-        }
-        deleteView.setOnClickListener {
-            popupWindow.dismiss()
-            viewModel.onDeleteOptionsSelected()
+            reconnectView.setOnClickListener {
+                popupWindow?.dismiss()
+                viewModel.onReconnectOptionSelected()
+            }
+            renameView.setOnClickListener {
+                popupWindow?.dismiss()
+                viewModel.onRenameOptionSelected()
+            }
+            contactSupportView.setOnClickListener {
+                popupWindow?.dismiss()
+                viewModel.onContactSupportOptionSelected()
+            }
+            deleteView.setOnClickListener {
+                popupWindow?.dismiss()
+                viewModel.onDeleteOptionsSelected()
+            }
+
+            popupWindow?.isOutsideTouchable = true
+            popupWindow?.elevation = convertDpToPx(30f).toFloat()
+            val y = view?.height ?: 0
+            popupWindow?.showAsDropDown(view, 0, -y)
+        } catch (e: Exception) {
+            e.log()
         }
     }
 }
