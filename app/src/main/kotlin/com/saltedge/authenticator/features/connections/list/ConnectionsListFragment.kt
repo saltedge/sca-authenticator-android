@@ -216,8 +216,9 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
 
             popupWindow?.isOutsideTouchable = true
             popupWindow?.elevation = convertDpToPx(30f).toFloat()
-            val y = view?.height ?: 0
-            popupWindow?.showAsDropDown(view, 0, -y)
+            val x = view?.width ?: 0
+            val y = (view?.height ?: 0) / 2
+            popupWindow?.showAsDropDown(view, x, -y)
         } catch (e: Exception) {
             e.log()
         }
