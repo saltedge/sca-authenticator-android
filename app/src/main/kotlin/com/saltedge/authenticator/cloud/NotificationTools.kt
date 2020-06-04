@@ -76,7 +76,7 @@ fun Context.showAuthNotification(
     val contentText = notificationBody
         ?: this.getString(R.string.authorizations_notification_description)
     val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
-        .setSmallIcon(R.drawable.ic_app_logo_notifications)
+        .setSmallIcon(R.drawable.ic_logo_app_notifications)
         .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.mipmap.ic_launcher))
         .setContentTitle(contentTitle)
         .setContentText(contentText)

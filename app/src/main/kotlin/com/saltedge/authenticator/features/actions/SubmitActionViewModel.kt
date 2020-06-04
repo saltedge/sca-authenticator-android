@@ -176,6 +176,6 @@ class SubmitActionViewModel(
     }
 }
 
-private enum class ViewMode {
+enum class ViewMode {
     START, PROCESSING, ACTION_ERROR, SELECT
 }

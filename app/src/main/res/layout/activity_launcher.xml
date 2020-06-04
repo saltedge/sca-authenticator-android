@@ -31,7 +31,7 @@
         android:elevation="@dimen/dp_40"
         android:scaleType="center"
         android:background="@drawable/shape_bg_app_logo"
-        android:src="@drawable/ic_app_logo" />
+        android:src="@drawable/ic_logo_application" />
 
     <TextView
         android:id="@+id/appNameView"
@@ -57,5 +57,5 @@
         android:layout_marginBottom="@dimen/dp_30"
         android:contentDescription="@string/app_name"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_company_logo" />
+        android:src="@drawable/ic_logo_salt_edge" />
 </RelativeLayout>

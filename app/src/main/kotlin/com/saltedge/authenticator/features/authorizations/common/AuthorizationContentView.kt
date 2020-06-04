@@ -109,7 +109,6 @@ class AuthorizationContentView : LinearLayout {
         } else {
             BlurringView(context).apply {
                 layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT)
-                setBlurRadius(11)
                 setOverlayColor(ContextCompat.getColor(context, R.color.theme_background))
                 setDownsampleFactor(6)
             }

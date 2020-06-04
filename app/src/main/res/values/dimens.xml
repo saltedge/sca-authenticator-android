@@ -126,7 +126,7 @@
     <dimen name="splash_bg_logo_image_size">@dimen/dp_106</dimen>
     <dimen name="splash_power_image_height">@dimen/dp_24</dimen>
     <dimen name="splash_power_image_width">@dimen/dp_115</dimen>
-    <dimen name="logo_image_size">@dimen/dp_72</dimen>
+    <dimen name="app_logo_image_size">@dimen/dp_72</dimen>
     <dimen name="button_corner_radius">@dimen/dp_2</dimen>
     <dimen name="button_height">@dimen/dp_64</dimen>
     <dimen name="action_bar_top_section_size">@dimen/dp_56</dimen>
@@ -135,4 +135,5 @@
     <dimen name="info_view_big_icon">@dimen/dp_96</dimen>
     <dimen name="authorizations_headers_pager_height">@dimen/dp_96</dimen>
     <dimen name="connections_list_logo_radius">@dimen/dp_12</dimen>
+    <dimen name="authorizations_list_logo_radius">@dimen/dp_6</dimen>
 </resources>
