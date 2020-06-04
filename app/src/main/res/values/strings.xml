@@ -112,8 +112,8 @@
     <string name="action_new_action_title">New action</string>
     <string name="action_feature_title">Successful action</string>
     <string name="action_feature_description">Action was successfully processed</string>
-    <string name="action_error_title">Action error</string>
-    <string name="action_error_description">Please try again</string>
+    <string name="action_error_title">Something went wrong</string>
+    <string name="action_error_description">Error occurred. Please try again later or contact support.</string>
     <string name="action_status_in_progress">Authenticating for action</string>
 
     <string name="authorizations_feature_title">Authorizations</string>

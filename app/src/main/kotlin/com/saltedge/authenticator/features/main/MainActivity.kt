@@ -31,6 +31,7 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.MainActivityBinding
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
+import com.saltedge.authenticator.features.actions.SubmitActionFragment
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
@@ -140,8 +141,8 @@ class MainActivity : LockableActivity(),
             }
         })
         viewModel.onShowSubmitActionEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let {
-                //TODO show submit action
+            it.getContentIfNotHandled()?.let { actionAppLinkData ->
+                this.addFragment(SubmitActionFragment.newInstance(actionAppLinkData = actionAppLinkData))
             }
         })
     }

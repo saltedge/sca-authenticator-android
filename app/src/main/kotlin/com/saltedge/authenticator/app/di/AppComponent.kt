@@ -22,8 +22,7 @@ package com.saltedge.authenticator.app.di
 
 import android.content.Context
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.features.actions.di.SubmitActionComponent
-import com.saltedge.authenticator.features.actions.di.SubmitActionModule
+import com.saltedge.authenticator.features.actions.SubmitActionFragment
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
@@ -61,8 +60,6 @@ interface AppComponent {
     fun realmManager() : RealmManagerAbs
     fun viewModelsFactory() : ViewModelsFactory
 
-    fun addActionModule(moduleSubmit: SubmitActionModule): SubmitActionComponent
-
     fun inject(activity: LockableActivity)
     fun inject(activity: OnboardingSetupActivity)
     fun inject(activity: LauncherActivity)
@@ -72,6 +69,7 @@ interface AppComponent {
     fun inject(fragment: AuthorizationDetailsFragment)
     fun inject(fragment: ConnectProviderFragment)
     fun inject(fragment: ConnectionsListFragment)
+    fun inject(fragment: SubmitActionFragment)
     fun inject(fragment: SettingsListFragment)
     fun inject(fragment: AboutListFragment)
     fun inject(fragment: LicensesFragment)
