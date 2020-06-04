@@ -32,6 +32,7 @@ import com.saltedge.authenticator.app.KEY_CONNECTION_GUID
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.list.ConnectionsListAdapter
 import com.saltedge.authenticator.interfaces.ListItemClickListener
+import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.tools.finishFragment
 import com.saltedge.authenticator.tools.setVisible
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -74,10 +75,20 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener {
             }
             headerDecorator?.headerPositions = adapter.data.mapIndexed { index, _ -> index }.toTypedArray()
         }
+        proceedView.isEnabled = false
+        proceedView.setVisible(true)
     }
 
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
-        val connectionGuid = (adapter.getItem(itemIndex) as ConnectionViewModel).guid
+        val item = (adapter.getItem(itemIndex) as ConnectionViewModel)
+        adapter.data.filter { (it as ConnectionViewModel).isChecked }.forEach { (it as ConnectionViewModel).isChecked = false }
+        item.isChecked = true
+        adapter.notifyDataSetChanged()
+        proceedView.isEnabled = true
+        proceedView.setOnClickListener { proceedConnection(item.guid) }
+    }
+
+    private fun proceedConnection(connectionGuid: GUID) {
         activity?.finishFragment()
         val resultIntent = Intent()
         resultIntent.putExtra(KEY_CONNECTION_GUID, connectionGuid)

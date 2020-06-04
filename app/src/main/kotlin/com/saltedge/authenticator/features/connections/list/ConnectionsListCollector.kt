@@ -54,7 +54,8 @@ fun List<Connection>.convertConnectionsToViewModels(context: Context): List<Conn
             logoUrl = connection.logoUrl,
             reconnectOptionIsVisible = isActiveConnection(connection),
             deleteMenuItemText = getConnectionDeleteTextResId(connection),
-            deleteMenuItemImage = getConnectionDeleteImageResId(connection)
+            deleteMenuItemImage = getConnectionDeleteImageResId(connection),
+            isChecked = false
         )
     }
 }
