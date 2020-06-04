@@ -116,7 +116,7 @@ class MainActivityViewModelTest {
         //when
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
 
-        //then onShowAuthorizationsListEvent is posted
+        //then onShowAuthorizationsListEvent only is posted
         assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
@@ -137,7 +137,7 @@ class MainActivityViewModelTest {
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
 
         //then onShowAuthorizationDetailsEvent is posted
-        assertThat(viewModel.onShowAuthorizationsListEvent.value, `is`(nullValue()))
+        assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
         assertThat(
             viewModel.onShowAuthorizationDetailsEvent.value,
             equalTo(ViewModelEvent(AuthorizationIdentifier(authorizationID = "2", connectionID = "1")))
@@ -159,8 +159,8 @@ class MainActivityViewModelTest {
         //when
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
 
-        //then onShowAuthorizationsListEvent is posted
-        assertThat(viewModel.onShowAuthorizationsListEvent.value, `is`(nullValue()))
+        //then onShowConnectEvent is posted
+        assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value,
             equalTo(ViewModelEvent(ConnectAppLinkData(
@@ -183,8 +183,8 @@ class MainActivityViewModelTest {
         //when
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
 
-        //then onShowAuthorizationsListEvent is posted
-        assertThat(viewModel.onShowAuthorizationsListEvent.value, `is`(nullValue()))
+        //then onShowSubmitActionEvent is posted
+        assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSubmitActionEvent.value,

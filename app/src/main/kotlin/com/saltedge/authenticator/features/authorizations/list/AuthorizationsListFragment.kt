@@ -66,7 +66,7 @@ class AuthorizationsListFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         activityComponents?.updateAppbar(
-            titleResId = R.string.authorizations_feature_title,
+            titleResId = R.string.app_name_short,
             showMenu = arrayOf(MenuItem.SCAN_QR, MenuItem.MORE)
         )
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_authorizations_list, container, false)

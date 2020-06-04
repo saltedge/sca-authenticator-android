@@ -148,21 +148,6 @@ fun FragmentActivity.startMailApp(supportEmail: String? = null) {
 }
 
 /**
- * Show system settings
- *
- * @receiver fragment activity
- */
-fun FragmentActivity.startSystemSettings() {
-    try {
-        this.startActivityForResult(Intent(Settings.ACTION_SETTINGS), 0)
-    } catch (ignored: IllegalStateException) {
-    } catch (ignored: ActivityNotFoundException) {
-    } catch (e: Exception) {
-        e.log()
-    }
-}
-
-/**
  * Show QrScannerActivity
  *
  * @receiver fragment activity

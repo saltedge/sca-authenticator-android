@@ -29,17 +29,18 @@ import androidx.lifecycle.ViewModel
 import com.google.android.gms.vision.barcode.Barcode
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.isValidDeeplink
 import com.saltedge.authenticator.tools.ResId
 
-class QrScannerViewModel(val appContext: Context) : ViewModel(), LifecycleObserver {
-
-    var onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()
-        private set
-    var setActivityResult = MutableLiveData<String>()
-        private set
-    var errorMessageResId = MutableLiveData<Int?>()
-        private set
+class QrScannerViewModel(
+    val appContext: Context,
+    val connectionsRepository: ConnectionsRepositoryAbs
+) : ViewModel(), LifecycleObserver {
+    val onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val setActivityResult = MutableLiveData<String>()
+    val errorMessageResId = MutableLiveData<ResId?>()
+    val descriptionRes: ResId = if (connectionsRepository.isEmpty()) R.string.scan_qr_description_first else R.string.scan_qr_description
 
     fun onViewClick(viewId: Int) {
         when (viewId) {

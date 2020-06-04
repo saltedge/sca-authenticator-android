@@ -22,8 +22,12 @@ package com.saltedge.authenticator.features.connections.create
 
 import android.content.Context
 import android.content.DialogInterface
+import android.graphics.Typeface.BOLD
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.view.View
 import android.webkit.URLUtil
+import androidx.core.text.set
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.models.Connection
@@ -47,9 +51,9 @@ import com.saltedge.authenticator.sdk.model.error.getErrorMessage
 import com.saltedge.authenticator.sdk.model.response.CreateConnectionResponseData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.tools.parseRedirect
-import javax.inject.Inject
+import com.saltedge.authenticator.tools.ResId
 
-class ConnectProviderViewModel @Inject constructor(
+class ConnectProviderViewModel(
     private val appContext: Context,
     private val preferenceRepository: PreferenceRepositoryAbs,
     private val connectionsRepository: ConnectionsRepositoryAbs,
@@ -57,13 +61,16 @@ class ConnectProviderViewModel @Inject constructor(
     private val apiManager: AuthenticatorApiManagerAbs
 ) : ViewModel(), LifecycleObserver, ConnectionCreateListener, FetchProviderConfigurationListener {
 
-    val statusIconResId: MutableLiveData<Int> = MutableLiveData(R.drawable.ic_status_error)
-    val completeTitle: MutableLiveData<String> = MutableLiveData("")
+    val backActionIconRes: MutableLiveData<ResId?> = MutableLiveData(R.drawable.ic_appbar_action_close)
+    val statusIconRes: MutableLiveData<ResId> = MutableLiveData(R.drawable.ic_status_error)
+    val completeTitle: MutableLiveData<SpannableString> = MutableLiveData(SpannableString(""))
     val completeDescription: MutableLiveData<String> = MutableLiveData("")
-    val mainActionTextResId: MutableLiveData<Int> = MutableLiveData(R.string.actions_try_again)
-    val shouldShowWebViewVisibility = MutableLiveData<Int>()
-    val shouldShowProgressViewVisibility = MutableLiveData<Int>()
-    val shouldShowCompleteViewVisibility = MutableLiveData<Int>()
+    val mainActionTextRes: MutableLiveData<ResId> = MutableLiveData(R.string.actions_try_again)
+    val webViewVisibility = MutableLiveData<Int>(View.GONE)
+    val progressViewVisibility = MutableLiveData<Int>(View.VISIBLE)
+    val completeViewVisibility = MutableLiveData<Int>(View.GONE)
+    var titleRes: ResId = R.string.connections_new_connection
+        private set
 
     private var connection = Connection()
     private var initialConnectData: ConnectAppLinkData? = null
@@ -77,8 +84,49 @@ class ConnectProviderViewModel @Inject constructor(
         private set
     var onUrlChangedEvent = MutableLiveData<ViewModelEvent<String>>()
         private set
-    var shouldGoBackEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    var goBackEvent = MutableLiveData<ViewModelEvent<Unit>>()
         private set
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    fun onResume() {
+        when (viewMode) {
+            ViewMode.START_NEW_CONNECT -> performFetchConfigurationRequest()
+            ViewMode.START_RECONNECT -> performCreateConnectionRequest()
+            ViewMode.WEB_ENROLL -> loadWebRedirectUrl()
+            else -> Unit
+        }
+        updateViewsContent()
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    fun onDestroy() {
+        if (connection.guid.isNotEmpty() && connection.accessToken.isEmpty()) {
+            keyStoreManager.deleteKeyPair(connection.guid)
+        }
+    }
+
+    override fun fetchProviderConfigurationDataResult(
+        result: ProviderConfigurationData?,
+        error: ApiErrorData?
+    ) {
+        when {
+            error != null -> onShowErrorEvent.postValue(
+                ViewModelEvent(
+                    error.getErrorMessage(
+                        appContext
+                    )
+                )
+            )
+            result != null && result.isValid() -> {
+                result.toConnection()?.let {
+                    this.connection = it
+                    performCreateConnectionRequest()
+                }
+                    ?: onShowErrorEvent.postValue(ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider)))
+            }
+            else -> onShowErrorEvent.postValue(ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider)))
+        }
+    }
 
     override fun onConnectionCreateSuccess(response: CreateConnectionResponseData) {
         val accessToken = response.accessToken
@@ -113,48 +161,6 @@ class ConnectProviderViewModel @Inject constructor(
         onShowErrorEvent.postValue(ViewModelEvent(error.getErrorMessage(appContext)))
     }
 
-    override fun fetchProviderConfigurationDataResult(
-        result: ProviderConfigurationData?,
-        error: ApiErrorData?
-    ) {
-        when {
-            error != null -> onShowErrorEvent.postValue(
-                ViewModelEvent(
-                    error.getErrorMessage(
-                        appContext
-                    )
-                )
-            )
-            result != null && result.isValid() -> {
-                result.toConnection()?.let {
-                    this.connection = it
-                    performCreateConnectionRequest()
-                }
-                    ?: onShowErrorEvent.postValue(ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider)))
-            }
-            else -> onShowErrorEvent.postValue(ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider)))
-        }
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onResume() {
-        when (viewMode) {
-            ViewMode.START_NEW_CONNECT -> performFetchConfigurationRequest()
-            ViewMode.START_RECONNECT -> performCreateConnectionRequest()
-            ViewMode.WEB_ENROLL -> loadWebRedirectUrl()
-            ViewMode.COMPLETE_SUCCESS -> Unit
-            ViewMode.COMPLETE_ERROR -> Unit
-        }
-        updateViewsContent()
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun onDestroy() {
-        if (connection.guid.isNotEmpty() && connection.accessToken.isEmpty()) {
-            keyStoreManager.deleteKeyPair(connection.guid)
-        }
-    }
-
     fun setInitialData(initialConnectData: ConnectAppLinkData?, connectionGuid: GUID?) {
         if (initialConnectData == null && connectionGuid == null) {
             viewMode = ViewMode.COMPLETE_ERROR
@@ -165,15 +171,13 @@ class ConnectProviderViewModel @Inject constructor(
             this.initialConnectData = initialConnectData
             viewMode = ViewMode.START_NEW_CONNECT
         }
-    }
 
-    fun getTitleResId(): Int {
-        return if (this.connection.guid.isEmpty()) R.string.connections_new_connection
+        titleRes = if (this.connection.guid.isEmpty()) R.string.connections_new_connection
         else R.string.actions_reconnect
     }
 
     fun onViewClick(viewId: Int) {
-        if (viewId == R.id.mainActionView) onCloseEvent.postValue(ViewModelEvent(Unit))
+        if (viewId == R.id.actionView) onCloseEvent.postValue(ViewModelEvent(Unit))
     }
 
     fun onDialogActionIdClick(dialogActionId: Int) {
@@ -199,21 +203,31 @@ class ConnectProviderViewModel @Inject constructor(
         updateViewsContent()
     }
 
-    fun shouldShowWebView(): Boolean {
-        return viewMode == ViewMode.WEB_ENROLL
+    fun onBackPress(webViewCanGoBack: Boolean?): Boolean {
+        return (webViewIsVisible && webViewCanGoBack == true).apply {
+            goBackEvent.postValue(ViewModelEvent(Unit))
+        }
     }
 
-    fun onBackPress(webViewCanGoBack: Boolean?): Boolean {
-        val result = shouldShowWebView() && webViewCanGoBack == true
-        if (result) shouldGoBackEvent.postValue(ViewModelEvent(Unit))
-        return result
-    }
+    private val webViewIsVisible: Boolean
+        get() = viewMode == ViewMode.WEB_ENROLL
+    private val progressViewIsVisible: Boolean
+        get() = viewMode == ViewMode.START_NEW_CONNECT || viewMode == ViewMode.START_RECONNECT
+    private val completeViewIsVisible: Boolean
+        get() = viewMode == ViewMode.COMPLETE_SUCCESS || viewMode == ViewMode.COMPLETE_ERROR
+    private val ViewMode.isCompleteWithSuccess: Boolean
+        get() = this == ViewMode.COMPLETE_SUCCESS
+    private val completeIconRes: ResId
+        get() = if (viewMode.isCompleteWithSuccess) R.drawable.ic_status_success else R.drawable.ic_status_error
+    private val completeActionTextRes: ResId
+        get() = if (viewMode.isCompleteWithSuccess) R.string.actions_done else R.string.actions_try_again
 
     private fun performFetchConfigurationRequest() {
         initialConnectData?.configurationUrl?.let {
             apiManager.getProviderConfigurationData(it, resultCallback = this)
-        }
-            ?: onShowErrorEvent.postValue(ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider)))
+        } ?: onShowErrorEvent.postValue(
+            ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider))
+        )
     }
 
     private fun performCreateConnectionRequest() {
@@ -225,38 +239,38 @@ class ConnectProviderViewModel @Inject constructor(
                 connectQueryParam = initialConnectData?.connectQuery,
                 resultCallback = this
             )
-        } else {
-            onShowErrorEvent.postValue(ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider)))
-        }
+        } else onShowErrorEvent.postValue(
+            ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider))
+        )
     }
 
     private fun loadWebRedirectUrl() {
         onUrlChangedEvent.postValue(ViewModelEvent(authenticateData?.redirectUrl ?: ""))
     }
 
-    private val ViewMode.isCompleteWithSuccess: Boolean
-        get() = this == ViewMode.COMPLETE_SUCCESS
-
     private fun updateViewsContent() {
-        statusIconResId.postValue(getIconResId())
+        statusIconRes.postValue(completeIconRes)
         completeTitle.postValue(getCompleteTitle())
         completeDescription.postValue(getCompleteDescription())
-        mainActionTextResId.postValue(getActionTextResId())
+        mainActionTextRes.postValue(completeActionTextRes)
 
-        shouldShowWebViewVisibility.postValue(getWebViewVisibility())
-        shouldShowProgressViewVisibility.postValue(getProgressViewVisibility())
-        shouldShowCompleteViewVisibility.postValue(getCompleteViewVisibility())
+        webViewVisibility.postValue(if (webViewIsVisible) View.VISIBLE else View.GONE)
+        completeViewVisibility.postValue(if (completeViewIsVisible) View.VISIBLE else View.GONE)
+        progressViewVisibility.postValue(if (progressViewIsVisible) View.VISIBLE else View.GONE)
+        backActionIconRes.postValue(if (progressViewIsVisible || completeViewIsVisible) null else R.drawable.ic_appbar_action_close)
     }
 
-    private fun getIconResId(): Int {
-        return if (viewMode.isCompleteWithSuccess) R.drawable.ic_status_success else R.drawable.ic_status_error
-    }
-
-    private fun getCompleteTitle(): String {
+    private fun getCompleteTitle(): SpannableString {
         return if (viewMode.isCompleteWithSuccess) {
-            appContext.getString(R.string.connect_status_provider_success).format(connection.name)
+            val connectionName = connection.name
+            val resultString = appContext.getString(R.string.connect_status_provider_success).format(connectionName)
+            val start = resultString.indexOf(connectionName)
+            val end = start + connectionName.length
+            val result = SpannableString(resultString)
+            result[start, end] = StyleSpan(BOLD)
+            result
         } else {
-            appContext.getString(R.string.errors_connection_failed)
+            SpannableString(appContext.getString(R.string.errors_connection_failed))
         }
     }
 
@@ -268,22 +282,6 @@ class ConnectProviderViewModel @Inject constructor(
                 R.string.errors_connection_failed_description
             ) ?: ""
         }
-    }
-
-    private fun getActionTextResId(): Int {
-        return if (viewMode.isCompleteWithSuccess) R.string.actions_proceed else R.string.actions_try_again
-    }
-
-    private fun getWebViewVisibility(): Int {
-        return if (viewMode == ViewMode.WEB_ENROLL) View.VISIBLE else View.GONE
-    }
-
-    private fun getProgressViewVisibility(): Int {
-        return if (viewMode == ViewMode.START_NEW_CONNECT || viewMode == ViewMode.START_RECONNECT) View.VISIBLE else View.GONE
-    }
-
-    private fun getCompleteViewVisibility(): Int {
-        return if (viewMode == ViewMode.COMPLETE_SUCCESS || viewMode == ViewMode.COMPLETE_ERROR) View.VISIBLE else View.GONE
     }
 }
 

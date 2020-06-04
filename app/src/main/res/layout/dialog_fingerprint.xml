@@ -30,14 +30,14 @@
 
     <TextView
         android:id="@+id/titleView"
-        style="@style/Text20BlackMedium"
+        style="@style/Text22PrimaryMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/fingerprint_title" />
 
     <TextView
         android:id="@+id/subtitleView"
-        style="@style/Text16GrayDarkRegular"
+        style="@style/Text16Secondary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/titleView"

@@ -166,7 +166,7 @@ class SubmitActionPresenterTest {
                 returnTo = "https://www.saltedge.com/"
             )
         )
-        presenter.onViewClick(R.id.mainActionView)
+        presenter.onViewClick(R.id.actionView)
 
         Mockito.verify(mockView).closeView()
         Mockito.verify(mockView).openLink("https://www.saltedge.com/")
@@ -197,7 +197,7 @@ class SubmitActionPresenterTest {
                 returnTo = ""
             )
         )
-        presenter.onViewClick(R.id.mainActionView)
+        presenter.onViewClick(R.id.actionView)
 
         Mockito.verify(mockView).closeView()
         Mockito.verifyNoMoreInteractions(mockView)
