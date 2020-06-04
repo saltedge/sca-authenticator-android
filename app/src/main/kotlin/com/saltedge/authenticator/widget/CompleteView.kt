@@ -74,8 +74,7 @@ class CompleteView(context: Context, attrs: AttributeSet) : LinearLayout(context
         iconView?.setImageResource(resId)
     }
 
-    override fun setOnClickListener(l: OnClickListener?) {
-        super.setOnClickListener(l)
+    fun setClickListener(l: OnClickListener?) {
         actionView?.setOnClickListener(l)
         altActionView?.setOnClickListener(l)
     }

@@ -104,9 +104,7 @@ class SubmitActionViewModel(
                 this.connectionAndKey = connections.firstOrNull()?.let {
                     keyStoreManager.createConnectionAndKeyModel(it)
                 }
-                if (connectionAndKey == null) {
-                    viewMode = ViewMode.ACTION_ERROR
-                }
+                if (connectionAndKey == null) viewMode = ViewMode.ACTION_ERROR
             }
             else -> {
                 val result = connections.convertConnectionsToViewModels(
@@ -122,11 +120,7 @@ class SubmitActionViewModel(
         this.connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
             keyStoreManager.createConnectionAndKeyModel(it)
         }
-        viewMode = if (connectionAndKey == null) {
-            ViewMode.ACTION_ERROR
-        } else {
-            ViewMode.START
-        }
+        viewMode = if (connectionAndKey == null) ViewMode.ACTION_ERROR else ViewMode.START
         onViewCreated()
     }
 
@@ -146,25 +140,18 @@ class SubmitActionViewModel(
     fun onViewClick() {
         onCloseEvent.postValue(ViewModelEvent(Unit))
         try {
-            val returnToUrl: String? = actionAppLinkData?.returnTo
-            if (!returnToUrl.isNullOrEmpty()) onOpenLinkEvent.postValue(
-                ViewModelEvent(
-                    Uri.parse(
-                        returnToUrl
-                    )
-                )
-            )
+            actionAppLinkData?.returnTo?.let {
+                if (it.isNotEmpty()) onOpenLinkEvent.postValue(ViewModelEvent(Uri.parse(it)))
+            }
         } catch (e: Exception) {
             e.log()
         }
     }
 
     fun onDialogActionIdClick(dialogActionId: Int) {
-        if (dialogActionId == DialogInterface.BUTTON_POSITIVE) onCloseEvent.postValue(
-            ViewModelEvent(
-                Unit
-            )
-        )
+        if (dialogActionId == DialogInterface.BUTTON_POSITIVE) {
+            onCloseEvent.postValue(ViewModelEvent(Unit))
+        }
     }
 
     private fun updateViewsContent() {
@@ -189,6 +176,6 @@ class SubmitActionViewModel(
     }
 }
 
-enum class ViewMode {
+private enum class ViewMode {
     START, PROCESSING, ACTION_ERROR, SELECT
 }

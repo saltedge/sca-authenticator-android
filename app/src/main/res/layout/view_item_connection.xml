@@ -37,6 +37,12 @@
         android:layout_height="match_parent"
         android:background="@color/app_logo_background">
 
+        <ImageView
+            android:id="@+id/logoImageView"
+            style="@style/ConnectionLogoImage"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/connections_feature_title" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -64,11 +70,5 @@
                 android:maxLines="1"
                 tools:text="Connected on 12 sept. 2019, 18:02" />
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/logoImageView"
-            style="@style/ConnectionLogoImage"
-            android:layout_centerVertical="true"
-            android:contentDescription="@null" />
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

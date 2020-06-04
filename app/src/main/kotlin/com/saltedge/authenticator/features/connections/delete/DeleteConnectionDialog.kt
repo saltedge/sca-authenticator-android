@@ -43,9 +43,9 @@ class DeleteConnectionDialog :
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return AlertDialog.Builder(activity!!, R.style.AlertDialogTheme)
+        return AlertDialog.Builder(requireActivity(), R.style.AlertDialogTheme)
             .setTitle(presenter.viewTitle(targetRequestCode))
-            .setPositiveButton(android.R.string.ok, this)
+            .setPositiveButton(R.string.actions_delete, this)
             .setNegativeButton(R.string.actions_cancel, this)
             .setMessage(presenter.viewMessage(targetRequestCode))
             .create()

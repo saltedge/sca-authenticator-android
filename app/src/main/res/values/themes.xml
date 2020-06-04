@@ -22,6 +22,7 @@
 <resources>
     <!--ACTIVITY THEMES-->
     <style name="LauncherScreenTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimaryDark">@color/system_bar_color</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>

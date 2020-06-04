@@ -45,11 +45,12 @@ import com.saltedge.authenticator.sdk.web.ConnectWebClientContract
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_connect.*
+import kotlinx.android.synthetic.main.fragment_connect.completeView
+import kotlinx.android.synthetic.main.fragment_submit_action.*
 import javax.inject.Inject
 
 class ConnectProviderFragment : BaseFragment(),
     ConnectWebClientContract,
-    View.OnClickListener,
     OnBackPressListener,
     DialogInterface.OnClickListener {
 
@@ -82,16 +83,12 @@ class ConnectProviderFragment : BaseFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         connectWebView?.webViewClient = webViewClient
-        completeView?.setOnClickListener(this)
+        completeView?.setClickListener(View.OnClickListener { v -> viewModel.onViewClick(v.id) })
     }
 
     override fun onDestroyView() {
         connectWebView?.destroy()
         super.onDestroyView()
-    }
-
-    override fun onClick(view: View?) {
-        viewModel.onViewClick(view?.id ?: return)
     }
 
     override fun onClick(listener: DialogInterface?, dialogActionId: Int) {

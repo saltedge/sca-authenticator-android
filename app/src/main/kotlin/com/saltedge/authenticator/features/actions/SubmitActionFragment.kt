@@ -39,6 +39,7 @@ import com.saltedge.authenticator.databinding.SubmitActionBinding
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment
 import com.saltedge.authenticator.features.main.newAuthorizationListener
+import com.saltedge.authenticator.generated.callback.OnClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
@@ -81,7 +82,7 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        completeView?.setOnClickListener { viewModel.onViewClick() }
+        completeView?.setClickListener(View.OnClickListener { viewModel.onViewClick() })
         viewModel.onViewCreated()
     }
 
