@@ -35,6 +35,7 @@ import com.saltedge.authenticator.interfaces.ActivityComponentsContract
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
@@ -47,13 +48,15 @@ import com.saltedge.authenticator.tools.applyPreferenceLocale
 class MainActivityViewModel(
     val appContext: Context,
     val realmManager: RealmManagerAbs,
-    val preferenceRepository: PreferenceRepositoryAbs
+    val preferenceRepository: PreferenceRepositoryAbs,
+    val connectionsRepository: ConnectionsRepositoryAbs
 ) : ViewModel(),
     LifecycleObserver,
     NewAuthorizationListener,
     ActivityComponentsContract
 {
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onFirstQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onAppBarMenuClickEvent = MutableLiveData<ViewModelEvent<List<MenuItemData>>>()
     val onBackActionClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onRestartActivityEvent = MutableLiveData<ViewModelEvent<Unit>>()
@@ -85,7 +88,9 @@ class MainActivityViewModel(
     fun onLifeCycleCreate(savedInstanceState: Bundle?, intent: Intent?) {
         if (savedInstanceState == null) {
             onShowAuthorizationsListEvent.postValue(ViewModelEvent(Unit))
-            if (intent != null && (intent.hasPendingAuthorizationData || intent.hasDeepLinkData)) {
+            if (connectionsRepository.isEmpty()) {
+                onFirstQrScanClickEvent.postValue(ViewModelEvent(Unit))
+            } else if (intent != null && (intent.hasPendingAuthorizationData || intent.hasDeepLinkData)) {
                 onNewIntent(intent)
             }
         }

@@ -34,6 +34,7 @@ import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
@@ -52,6 +53,20 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class MainActivityViewModelTest {
+
+    private val mockRealmManager = mock(RealmManagerAbs::class.java)
+    private val mockPreferenceRepository = mock(PreferenceRepositoryAbs::class.java)
+    private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
+    private val context: Context = ApplicationProvider.getApplicationContext()
+
+    private fun createViewModel(): MainActivityViewModel {
+        return MainActivityViewModel(
+            appContext = context,
+            realmManager = mockRealmManager,
+            preferenceRepository = mockPreferenceRepository,
+            connectionsRepository = mockConnectionsRepository
+        )
+    }
 
     @Test
     @Throws(Exception::class)
@@ -84,11 +99,12 @@ class MainActivityViewModelTest {
     @Throws(Exception::class)
     fun onLifeCycleCreateTestCase1() {
         /**
-         * given null savedInstanceState, null intent
+         * given null savedInstanceState, null intent, no connections
          */
         val viewModel = createViewModel()
         val savedInstanceState: Bundle? = null
         val intent: Intent? = null
+        given(mockConnectionsRepository.isEmpty()).willReturn(true)
 
         assertThat(viewModel.onShowAuthorizationsListEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
@@ -98,6 +114,7 @@ class MainActivityViewModelTest {
 
         //then onShowAuthorizationsListEvent is posted
         assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
+        assertThat(viewModel.onFirstQrScanClickEvent.value, equalTo(ViewModelEvent(Unit)))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
@@ -107,17 +124,19 @@ class MainActivityViewModelTest {
     @Throws(Exception::class)
     fun onLifeCycleCreateTestCase2() {
         /**
-         * given null savedInstanceState, empty intent
+         * given null savedInstanceState, empty intent, no empty repository
          */
         val viewModel = createViewModel()
         val savedInstanceState: Bundle? = null
         val intent: Intent? = Intent()
+        given(mockConnectionsRepository.isEmpty()).willReturn(false)
 
         //when
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
 
         //then onShowAuthorizationsListEvent only is posted
         assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
+        assertThat(viewModel.onFirstQrScanClickEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
@@ -132,12 +151,14 @@ class MainActivityViewModelTest {
         val viewModel = createViewModel()
         val savedInstanceState: Bundle? = null
         val intent: Intent? = Intent().putExtra(KEY_CONNECTION_ID, "1").putExtra(KEY_AUTHORIZATION_ID, "2")
+        given(mockConnectionsRepository.isEmpty()).willReturn(false)
 
         //when
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
 
         //then onShowAuthorizationDetailsEvent is posted
         assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
+        assertThat(viewModel.onFirstQrScanClickEvent.value, `is`(nullValue()))
         assertThat(
             viewModel.onShowAuthorizationDetailsEvent.value,
             equalTo(ViewModelEvent(AuthorizationIdentifier(authorizationID = "2", connectionID = "1")))
@@ -155,12 +176,14 @@ class MainActivityViewModelTest {
         val viewModel = createViewModel()
         val savedInstanceState: Bundle? = null
         val intent: Intent? = Intent().putExtra(KEY_DEEP_LINK, "authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration&connect_query=1234567890")
+        given(mockConnectionsRepository.isEmpty()).willReturn(false)
 
         //when
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
 
         //then onShowConnectEvent is posted
         assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
+        assertThat(viewModel.onFirstQrScanClickEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value,
             equalTo(ViewModelEvent(ConnectAppLinkData(
@@ -179,12 +202,14 @@ class MainActivityViewModelTest {
         val viewModel = createViewModel()
         val savedInstanceState: Bundle? = null
         val intent: Intent? = Intent().putExtra(KEY_DEEP_LINK, "authenticator://saltedge.com/action?action_uuid=123456&return_to=https://return.com&connect_url=https://someurl.com")
+        given(mockConnectionsRepository.isEmpty()).willReturn(false)
 
         //when
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
 
         //then onShowSubmitActionEvent is posted
         assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
+        assertThat(viewModel.onFirstQrScanClickEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSubmitActionEvent.value,
@@ -204,12 +229,14 @@ class MainActivityViewModelTest {
         val viewModel = createViewModel()
         val savedInstanceState: Bundle? = Bundle()
         val intent: Intent? = Intent().putExtra(KEY_DEEP_LINK, "authenticator://saltedge.com")
+        given(mockConnectionsRepository.isEmpty()).willReturn(false)
 
         //when
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
 
         //then no interactions with observable values
         assertThat(viewModel.onShowAuthorizationsListEvent.value, `is`(nullValue()))
+        assertThat(viewModel.onFirstQrScanClickEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
@@ -595,17 +622,5 @@ class MainActivityViewModelTest {
 
         //then onRestartActivityEvent is posted
         assertThat(viewModel.onRestartActivityEvent.value, equalTo(ViewModelEvent(Unit)))
-    }
-
-    private val mockRealmManager = mock(RealmManagerAbs::class.java)
-    private val mockPreferenceRepository = mock(PreferenceRepositoryAbs::class.java)
-    private val context: Context = ApplicationProvider.getApplicationContext()
-
-    private fun createViewModel(): MainActivityViewModel {
-        return MainActivityViewModel(
-            appContext = context,
-            realmManager = mockRealmManager,
-            preferenceRepository = mockPreferenceRepository
-        )
     }
 }

@@ -166,6 +166,24 @@ fun FragmentActivity.showQrScannerActivity() {
 }
 
 /**
+ * Show QrScannerActivity
+ *
+ * @receiver fragment activity
+ */
+fun FragmentActivity.showLockedQrScannerActivity() {
+    try {
+        this.startActivityForResult(
+            Intent(this, QrScannerActivity::class.java),
+            QR_SCAN_REQUEST_CODE
+        )
+    } catch (ignored: IllegalStateException) {
+    } catch (ignored: ActivityNotFoundException) {
+    } catch (e: Exception) {
+        e.log()
+    }
+}
+
+/**
  * Restart application
  *
  * @receiver fragment activity
