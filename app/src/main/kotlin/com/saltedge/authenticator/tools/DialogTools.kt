@@ -57,7 +57,7 @@ fun FragmentActivity.showDialogWithTitleAndMessage(
 ) {
     if (message?.isBlank() != false) return
     try {
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(this, R.style.AlertDialogTheme)
             .setTitle(titleResId)
             .setMessage(message)
             .setPositiveButton(android.R.string.ok, listener)

@@ -171,7 +171,7 @@ class SubmitActionViewModel(
         iconResId.postValue(R.drawable.ic_status_error)
         completeTitleResId.postValue(R.string.action_error_title)
         completeDescriptionResId.postValue(R.string.action_error_description)
-        mainActionTextResId.postValue(R.string.actions_try_again)
+        mainActionTextResId.postValue(R.string.actions_done)
 
         if (viewMode == ViewMode.ACTION_ERROR) {
             completeViewVisibility.postValue(View.VISIBLE)

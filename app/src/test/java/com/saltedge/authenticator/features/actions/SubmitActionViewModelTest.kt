@@ -163,7 +163,7 @@ class SubmitActionViewModelTest {
             viewModel.completeDescriptionResId.value,
             equalTo(R.string.action_error_description)
         )
-        assertThat(viewModel.mainActionTextResId.value, equalTo(R.string.actions_try_again))
+        assertThat(viewModel.mainActionTextResId.value, equalTo(R.string.actions_done))
         assertThat(
             viewModel.onShowErrorEvent.value,
             equalTo(ViewModelEvent("test error"))
@@ -176,12 +176,14 @@ class SubmitActionViewModelTest {
         val targetArray = arrayOf(
             ViewMode.START,
             ViewMode.PROCESSING,
-            ViewMode.ACTION_ERROR
+            ViewMode.ACTION_ERROR,
+            ViewMode.SELECT
         )
         assertThat(ViewMode.values(), equalTo(targetArray))
         assertThat(ViewMode.valueOf("START"), equalTo(ViewMode.START))
         assertThat(ViewMode.valueOf("PROCESSING"), equalTo(ViewMode.PROCESSING))
         assertThat(ViewMode.valueOf("ACTION_ERROR"), equalTo(ViewMode.ACTION_ERROR))
+        assertThat(ViewMode.valueOf("SELECT"), equalTo(ViewMode.SELECT))
     }
 
     /**
@@ -270,7 +272,7 @@ class SubmitActionViewModelTest {
             viewModel.completeDescriptionResId.value,
             equalTo(R.string.action_error_description)
         )
-        assertThat(viewModel.mainActionTextResId.value, equalTo(R.string.actions_try_again))
+        assertThat(viewModel.mainActionTextResId.value, equalTo(R.string.actions_done))
     }
 
     /**
