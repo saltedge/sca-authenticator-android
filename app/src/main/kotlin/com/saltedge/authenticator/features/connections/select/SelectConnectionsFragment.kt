@@ -20,12 +20,15 @@
  */
 package com.saltedge.authenticator.features.connections.select
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.KEY_CONNECTION_GUID
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.list.ConnectionsListAdapter
 import com.saltedge.authenticator.interfaces.ListItemClickListener
@@ -42,7 +45,6 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(false)
         (arguments?.getSerializable(KEY_CONNECTIONS) as? List<ConnectionViewModel>)?.let {
             adapter.data = it
         }
@@ -77,7 +79,9 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener {
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
         val connectionGuid = (adapter.getItem(itemIndex) as ConnectionViewModel).guid
         activity?.finishFragment()
-        (activity as? ConnectionSelectorListener)?.onConnectionSelected(connectionGuid)
+        val resultIntent = Intent()
+        resultIntent.putExtra(KEY_CONNECTION_GUID, connectionGuid)
+        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, resultIntent)
     }
 
     companion object {
