@@ -688,7 +688,7 @@ class ConnectProviderViewModelTest {
     @Test
     @Throws(Exception::class)
     fun progressViewVisibilityTestCase1() {
-        assertThat(viewModel.progressViewVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.progressViewVisibility.value, equalTo(View.VISIBLE))
 
         val connection = Connection().apply {
             guid = "guid1"
