@@ -57,8 +57,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
 
     private var barcodeDetector: BarcodeDetector? = null
     private var cameraSource: CameraSource? = null
-    @Inject
-    lateinit var viewModelFactory: ViewModelsFactory
+    @Inject lateinit var viewModelFactory: ViewModelsFactory
     lateinit var viewModel: QrScannerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,8 +90,6 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
     }
 
     override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView
-
-    override fun getAppBarLayout(): View? = null
 
     override fun getSnackbarAnchorView(): View? = surfaceView
 

@@ -56,7 +56,6 @@ abstract class LockableActivity : AppCompatActivity(),
     DialogInterface.OnClickListener {
 
     abstract fun getUnlockAppInputView(): UnlockAppInputView?
-    abstract fun getAppBarLayout(): View?
     protected var snackbar: Snackbar? = null
 
     private val viewContract: LockableActivityContract = object : LockableActivityContract {
@@ -240,7 +239,6 @@ abstract class LockableActivity : AppCompatActivity(),
 
     private fun unlockScreen() {
         getUnlockAppInputView()?.setVisible(show = false)
-        getAppBarLayout()?.setVisible(show = true)
         presenter.restartLockTimer()
     }
 
@@ -250,7 +248,6 @@ abstract class LockableActivity : AppCompatActivity(),
             it.setSavedPasscode(presenter.savedPasscode)
             it.setVisible(show = true)
         }
-        getAppBarLayout()?.setVisible(show = false)
     }
 
     private fun showOnboardingActivity() {

@@ -114,7 +114,6 @@ class MainActivityViewModelTest {
 
         //then onShowAuthorizationsListEvent is posted
         assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
-        assertThat(viewModel.onFirstQrScanClickEvent.value, equalTo(ViewModelEvent(Unit)))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
@@ -136,7 +135,6 @@ class MainActivityViewModelTest {
 
         //then onShowAuthorizationsListEvent only is posted
         assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
-        assertThat(viewModel.onFirstQrScanClickEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
@@ -158,7 +156,6 @@ class MainActivityViewModelTest {
 
         //then onShowAuthorizationDetailsEvent is posted
         assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
-        assertThat(viewModel.onFirstQrScanClickEvent.value, `is`(nullValue()))
         assertThat(
             viewModel.onShowAuthorizationDetailsEvent.value,
             equalTo(ViewModelEvent(AuthorizationIdentifier(authorizationID = "2", connectionID = "1")))
@@ -183,7 +180,6 @@ class MainActivityViewModelTest {
 
         //then onShowConnectEvent is posted
         assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
-        assertThat(viewModel.onFirstQrScanClickEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value,
             equalTo(ViewModelEvent(ConnectAppLinkData(
@@ -209,7 +205,6 @@ class MainActivityViewModelTest {
 
         //then onShowSubmitActionEvent is posted
         assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
-        assertThat(viewModel.onFirstQrScanClickEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSubmitActionEvent.value,
@@ -236,7 +231,6 @@ class MainActivityViewModelTest {
 
         //then no interactions with observable values
         assertThat(viewModel.onShowAuthorizationsListEvent.value, `is`(nullValue()))
-        assertThat(viewModel.onFirstQrScanClickEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))

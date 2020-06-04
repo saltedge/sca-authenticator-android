@@ -92,12 +92,12 @@ class DeleteConnectionPresenterTest : DeleteConnectionContract.View {
 
         assertThat(
             presenter.viewTitle(DELETE_ALL_REQUEST_CODE),
-            equalTo(R.string.ui_dialog_clear_data_title)
+            equalTo(R.string.delete_connections_title)
         )
 
         presenter.guid = "guid1"
 
-        assertThat(presenter.viewTitle(0), equalTo(R.string.ui_dialog_delete_title))
+        assertThat(presenter.viewTitle(0), equalTo(R.string.delete_connection_title))
     }
 
     @Test
@@ -108,11 +108,11 @@ class DeleteConnectionPresenterTest : DeleteConnectionContract.View {
 
         assertThat(
             presenter.viewMessage(DELETE_ALL_REQUEST_CODE),
-            equalTo(R.string.ui_dialog_clear_data_message)
+            equalTo(R.string.delete_connections_message)
         )
 
         presenter.guid = "guid1"
 
-        assertThat(presenter.viewMessage(0), equalTo(R.string.ui_dialog_delete_message))
+        assertThat(presenter.viewMessage(0), equalTo(R.string.delete_connection_message))
     }
 }

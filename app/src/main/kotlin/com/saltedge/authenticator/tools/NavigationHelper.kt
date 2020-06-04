@@ -23,7 +23,6 @@ package com.saltedge.authenticator.tools
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
-import android.provider.Settings
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -31,9 +30,9 @@ import androidx.fragment.app.FragmentManager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.qr.QrScannerActivity
-import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
 import com.saltedge.authenticator.sdk.constants.DEFAULT_SUPPORT_EMAIL_LINK
 import com.saltedge.authenticator.widget.fragment.BaseFragment
+import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
 
 /**
  * Check fragment navigation level
@@ -156,24 +155,6 @@ fun FragmentActivity.showQrScannerActivity() {
     try {
         this.startActivityForResult(
             Intent(this, QrScannerActivity::class.java).apply { putExtra(KEY_SKIP_PIN, true) },
-            QR_SCAN_REQUEST_CODE
-        )
-    } catch (ignored: IllegalStateException) {
-    } catch (ignored: ActivityNotFoundException) {
-    } catch (e: Exception) {
-        e.log()
-    }
-}
-
-/**
- * Show QrScannerActivity
- *
- * @receiver fragment activity
- */
-fun FragmentActivity.showLockedQrScannerActivity() {
-    try {
-        this.startActivityForResult(
-            Intent(this, QrScannerActivity::class.java),
             QR_SCAN_REQUEST_CODE
         )
     } catch (ignored: IllegalStateException) {

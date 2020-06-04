@@ -28,7 +28,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.MainActivityBinding
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
@@ -39,13 +38,11 @@ import com.saltedge.authenticator.features.connections.create.ConnectProviderFra
 import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
 import com.saltedge.authenticator.features.menu.BottomMenuDialog
 import com.saltedge.authenticator.features.menu.MenuItemSelectListener
-import com.saltedge.authenticator.features.qr.QrScannerActivity
 import com.saltedge.authenticator.features.settings.list.SettingsListFragment
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.interfaces.ViewModelContract
 import com.saltedge.authenticator.tools.*
-import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
 import com.saltedge.authenticator.widget.security.LockableActivity
 import com.saltedge.authenticator.widget.security.UnlockAppInputView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -89,8 +86,6 @@ class MainActivity : LockableActivity(),
 
     override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView
 
-    override fun getAppBarLayout(): View? = appBarLayout
-
     override fun getSnackbarAnchorView(): View? = container
 
     override fun onMenuItemSelected(menuId: String, selectedItemId: Int) {
@@ -106,9 +101,6 @@ class MainActivity : LockableActivity(),
 
         viewModel.onQrScanClickEvent.observe(this, Observer {
             it.getContentIfNotHandled()?.let { this.showQrScannerActivity() }
-        })
-        viewModel.onFirstQrScanClickEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { this.showLockedQrScannerActivity() }
         })
         viewModel.onAppBarMenuClickEvent.observe(this, Observer {
             it.getContentIfNotHandled()?.let { menuItems ->
