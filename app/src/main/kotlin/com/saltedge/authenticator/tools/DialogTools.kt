@@ -28,21 +28,6 @@ import androidx.fragment.app.FragmentActivity
 import com.saltedge.authenticator.R
 
 /**
- * Show warning dialog with given message
- *
- * @receiver FragmentActivity
- * @param messageId - the message that appears in the dialog
- * @see showWarningDialog
- */
-fun FragmentActivity.showWarningDialog(@StringRes messageId: Int) {
-    try {
-        showWarningDialog(message = getString(messageId))
-    } catch (e: Exception) {
-        e.log()
-    }
-}
-
-/**
  * Show dialog with given title and message
  *
  * @receiver FragmentActivity
@@ -62,6 +47,21 @@ fun FragmentActivity.showDialogWithTitleAndMessage(
             .setMessage(message)
             .setPositiveButton(android.R.string.ok, listener)
             .show()
+    } catch (e: Exception) {
+        e.log()
+    }
+}
+
+/**
+ * Show warning dialog with given message
+ *
+ * @receiver FragmentActivity
+ * @param messageId - the message that appears in the dialog
+ * @see showWarningDialog
+ */
+fun FragmentActivity.showWarningDialog(@StringRes messageId: Int) {
+    try {
+        showWarningDialog(message = getString(messageId))
     } catch (e: Exception) {
         e.log()
     }
@@ -106,12 +106,12 @@ fun FragmentActivity.showDbErrorDialog(listener: DialogInterface.OnClickListener
 }
 
 /**
- * Show warning about reseting of all user data
+ * Show warning about reset of all user data
  *
  * @receiver FragmentActivity
  * @param listener - on dialog action click listener
  */
-fun FragmentActivity.showResetUserDialog(listener: DialogInterface.OnClickListener) {
+fun FragmentActivity.showDialogAboutUserReset(listener: DialogInterface.OnClickListener) {
     showWarningDialog(message = getString(R.string.errors_account_reset), listener = listener)
 }
 
@@ -124,10 +124,10 @@ fun FragmentActivity.showResetUserDialog(listener: DialogInterface.OnClickListen
 fun FragmentActivity.showResetDataDialog(listener: DialogInterface.OnClickListener) {
     try {
         AlertDialog.Builder(this, R.style.AlertDialogTheme)
-            .setTitle(R.string.ui_dialog_clear_data_title)
+            .setTitle(R.string.forgot_passcode_clear_title)
+            .setMessage(R.string.forgot_passcode_clear_message)
             .setPositiveButton(R.string.actions_clear, listener)
             .setNegativeButton(R.string.actions_cancel, listener)
-            .setMessage(R.string.ui_dialog_clear_data_message)
             .show()
     } catch (e: java.lang.Exception) {
         e.log()
@@ -135,14 +135,20 @@ fun FragmentActivity.showResetDataDialog(listener: DialogInterface.OnClickListen
 }
 
 /**
- * Change the text color of the buttons for the dialog
+ * Show reset data and settings dialog
  *
- * @receiver alert dialog
- * @param colorResId - the color set for buttons of the dialogue
+ * @receiver FragmentActivity
+ * @param listener - on dialog action click listener
  */
-fun AlertDialog.setButtonsColor(colorResId: Int) {
-    ContextCompat.getColor(this.context, colorResId).also {
-        getButton(DialogInterface.BUTTON_POSITIVE)?.setTextColor(it)
-        getButton(DialogInterface.BUTTON_NEGATIVE)?.setTextColor(it)
+fun FragmentActivity.showResetDataAndSettingsDialog(listener: DialogInterface.OnClickListener) {
+    try {
+        AlertDialog.Builder(this, R.style.AlertDialogTheme)
+            .setTitle(R.string.forgot_passcode_clear_title)
+            .setMessage(R.string.settings_clear_message)
+            .setPositiveButton(R.string.actions_clear, listener)
+            .setNegativeButton(R.string.actions_cancel, listener)
+            .show()
+    } catch (e: java.lang.Exception) {
+        e.log()
     }
 }

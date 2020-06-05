@@ -27,6 +27,7 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.setFont
 import com.saltedge.authenticator.tools.setInvisible
@@ -71,11 +72,10 @@ class CompleteView(context: Context, attrs: AttributeSet) : LinearLayout(context
     }
 
     fun setIconResource(@DrawableRes resId: Int) {
-        iconView?.setImageResource(resId)
+        iconView?.setImageDrawable(ContextCompat.getDrawable(context, resId))
     }
 
-    override fun setOnClickListener(l: OnClickListener?) {
-        super.setOnClickListener(l)
+    fun setClickListener(l: OnClickListener?) {
         actionView?.setOnClickListener(l)
         altActionView?.setOnClickListener(l)
     }

@@ -35,6 +35,7 @@ import com.saltedge.authenticator.interfaces.ActivityComponentsContract
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
@@ -47,7 +48,8 @@ import com.saltedge.authenticator.tools.applyPreferenceLocale
 class MainActivityViewModel(
     val appContext: Context,
     val realmManager: RealmManagerAbs,
-    val preferenceRepository: PreferenceRepositoryAbs
+    val preferenceRepository: PreferenceRepositoryAbs,
+    val connectionsRepository: ConnectionsRepositoryAbs
 ) : ViewModel(),
     LifecycleObserver,
     NewAuthorizationListener,

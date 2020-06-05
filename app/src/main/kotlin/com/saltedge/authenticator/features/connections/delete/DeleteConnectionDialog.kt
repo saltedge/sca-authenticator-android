@@ -33,8 +33,8 @@ import com.saltedge.authenticator.app.KEY_GUID
 class DeleteConnectionDialog :
     DialogFragment(),
     DeleteConnectionContract.View,
-    DialogInterface.OnClickListener {
-
+    DialogInterface.OnClickListener
+{
     private var presenter = DeleteConnectionPresenter(viewContract = this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,9 +43,9 @@ class DeleteConnectionDialog :
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return AlertDialog.Builder(activity!!, R.style.AlertDialogTheme)
+        return AlertDialog.Builder(requireActivity(), R.style.AlertDialogTheme)
             .setTitle(presenter.viewTitle(targetRequestCode))
-            .setPositiveButton(android.R.string.ok, this)
+            .setPositiveButton(R.string.actions_delete, this)
             .setNegativeButton(R.string.actions_cancel, this)
             .setMessage(presenter.viewMessage(targetRequestCode))
             .create()

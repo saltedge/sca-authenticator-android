@@ -66,42 +66,41 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
-    <style name="MenuItemTextAppearance">
-        <item name="android:textColor">#000000</item>
+    <style name="Title22" parent="Text22Primary">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/dp_32</item>
+        <item name="android:layout_marginEnd">@dimen/dp_32</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:maxLines">2</item>
     </style>
 
-    <!--SETUP SCREEN-->
-    <style name="SetupLogoImage">
-        <item name="android:layout_width">@dimen/dp_100</item>
-        <item name="android:layout_height">@dimen/dp_100</item>
-        <item name="android:layout_marginTop">@dimen/dp_46</item>
-        <item name="android:layout_centerHorizontal">true</item>
-        <item name="android:scaleType">fitCenter</item>
+    <style name="Description18" parent="Text18Primary">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/dp_32</item>
+        <item name="android:layout_marginEnd">@dimen/dp_32</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:maxLines">5</item>
     </style>
 
-    <style name="SetupSkipAction" parent="@style/WhiteLinkAction">
-        <item name="android:layout_marginBottom">@dimen/dp_40</item>
-        <item name="android:layout_alignParentBottom">true</item>
-        <item name="android:layout_centerHorizontal">true</item>
-        <item name="android:text">@string/actions_skip</item>
-    </style>
-
-    <!--BANKS LIST-->
+    <!--CONNECTIONS LIST-->
     <style name="ConnectionLogoImage">
         <item name="android:layout_width">@dimen/dp_48</item>
         <item name="android:layout_height">@dimen/dp_48</item>
         <item name="android:layout_marginStart">@dimen/dp_15</item>
         <item name="android:layout_marginEnd">@dimen/dp_15</item>
         <item name="android:scaleType">fitCenter</item>
+        <item name="android:background">@drawable/shape_bg_connection_list_logo</item>
     </style>
 
     <!--DIALOG BUTTONS-->
-    <style name="NegativeButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">@color/cancel_button_background</item>
+    <style name="DialogBaseButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/dialog_base_action</item>
     </style>
 
-    <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">@color/clear_button_background</item>
+    <style name="DialogRedButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/dialog_red_action</item>
     </style>
 
     <style name="AppBarActionContainer">
@@ -115,5 +114,27 @@
         <item name="android:layout_width">@dimen/dp_24</item>
         <item name="android:layout_height">@dimen/dp_24</item>
         <item name="android:layout_gravity">center</item>
+    </style>
+
+    <!--POPUP MENU-->
+    <style name="PopupMenuRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/dp_48</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="PopupMenuImage">
+        <item name="android:layout_width">@dimen/dp_24</item>
+        <item name="android:layout_height">@dimen/dp_24</item>
+        <item name="android:layout_marginStart">@dimen/dp_16</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+
+    <style name="PopupMenuText" parent="Text16Primary">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/dp_12</item>
+        <item name="android:layout_marginEnd">@dimen/dp_16</item>
+        <item name="android:scaleType">fitCenter</item>
     </style>
 </resources>

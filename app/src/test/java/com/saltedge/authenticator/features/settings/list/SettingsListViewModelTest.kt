@@ -20,9 +20,7 @@
  */
 package com.saltedge.authenticator.features.settings.list
 
-import android.app.Activity
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
 import com.saltedge.authenticator.features.settings.common.SettingsHeaderViewModelModel
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.models.Connection
@@ -129,13 +127,9 @@ class SettingsListViewModelTest {
 
     @Test
     @Throws(Exception::class)
-    fun onActivityResultTestCase1() {
-        //given
-        val requestCode = DELETE_ALL_REQUEST_CODE
-        val resultCode = Activity.RESULT_OK
-
+    fun onUserConfirmedDeleteAllConnectionsTest() {
         //when
-        viewModel.onActivityResult(requestCode = requestCode, resultCode = resultCode)
+        viewModel.onUserConfirmedDeleteAllConnections()
 
         //then
         Mockito.verify(mockConnectionsRepository).deleteAllConnections()
@@ -143,20 +137,6 @@ class SettingsListViewModelTest {
             connectionsAndKeys = listOf(mockConnectionAndKey),
             resultCallback = null
         )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onActivityResultTestCase2() {
-        //given
-        val requestCode = DELETE_ALL_REQUEST_CODE
-        val resultCode = Activity.RESULT_CANCELED
-
-        //when
-        viewModel.onActivityResult(requestCode = requestCode, resultCode = resultCode)
-
-        //then
-        Mockito.verifyNoMoreInteractions(mockConnectionsRepository, mockApiManager)
     }
 
     @Test

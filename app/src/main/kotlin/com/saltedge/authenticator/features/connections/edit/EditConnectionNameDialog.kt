@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.edit.name
+package com.saltedge.authenticator.features.connections.edit
 
 import android.app.Activity
 import android.app.Dialog
@@ -46,7 +46,7 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
     private var positiveButton: Button? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val adb = AlertDialog.Builder(activity!!, R.style.AlertDialogTheme)
+        val adb = AlertDialog.Builder(activity!!, R.style.InfoDialogTheme)
             .setTitle(R.string.ui_dialog_rename_title)
             .setPositiveButton(android.R.string.ok, this)
             .setNegativeButton(R.string.actions_cancel, this)

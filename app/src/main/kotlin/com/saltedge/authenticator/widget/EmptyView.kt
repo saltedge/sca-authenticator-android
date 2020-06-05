@@ -26,6 +26,7 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.setFont
 import com.saltedge.authenticator.tools.setInvisible
@@ -39,7 +40,6 @@ class EmptyView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
     init {
         LayoutInflater.from(context).inflate(R.layout.view_empty, this)
         initAttributes(context, attrs)
-        actionView?.setFont(R.font.roboto_regular)
     }
 
     fun setTitle(title: String) {

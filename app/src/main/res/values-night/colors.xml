@@ -30,11 +30,13 @@
     <color name="passcode_dots_background">@color/dark_80</color>
     <color name="primary_text">@color/grey_40</color>
     <color name="secondary_text">@color/grey_100</color>
+    <color name="red_text">@color/red_light</color>
     <color name="inner_circle_of_the_logo">@color/primary_light</color>
     <color name="finger_icon_fill_color">@color/primary_light</color>
-    <color name="clear_button_background">@color/red_light</color>
-    <color name="cancel_button_background">@color/primary_light</color>
+    <color name="dialog_red_action">@color/red_light</color>
+    <color name="dialog_base_action">@color/primary_light</color>
     <color name="dialog_background">@color/dark_100</color>
+    <color name="connection_item_background">@color/blue_black</color>
     <color name="app_logo_background">@color/blue_black</color>
     <color name="company_logo_background">@android:color/white</color>
     <color name="appbar_action_icon_fill_color">@android:color/white</color>
@@ -42,10 +44,11 @@
     <color name="qr_camera_mask_background">#B2040411</color>
     <color name="bottom_menu_background">@color/dark_100</color>
     <color name="authorization_header_view_background">@color/blue_black</color>
-    <color name="rounded_image_background">@color/dark_100</color>
+    <color name="connections_list_logo">@color/dark_100</color>
     <color name="negative_button_background">@color/blue_black</color>
     <color name="switch_thumb_tint_off">@android:color/white</color>
     <color name="switch_thumb_tint_on">@color/primary_dark</color>
     <color name="switch_track_tint_off">@color/grey_100</color>
     <color name="switch_track_tint_on">@color/primary_light</color>
+    <color name="company_logo_fill">@android:color/white</color>
 </resources>

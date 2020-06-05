@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,29 +22,33 @@ package com.saltedge.authenticator.widget.security
 
 import android.content.Intent
 import android.os.SystemClock
-import com.saltedge.authenticator.R
+import android.view.View
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
+import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.testTools.TestAppTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
-import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class LockableActivityPresenterTest {
+class LockableActivityViewModelTest {
 
-    private val mockView = Mockito.mock(LockableActivityContract::class.java)
     private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
     private val mockPreferenceRepository = Mockito.mock(PreferenceRepositoryAbs::class.java)
     private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)
     private val mockKeyStoreManager = Mockito.mock(KeyStoreManagerAbs::class.java)
     private val mockAuthenticatorApiManager = Mockito.mock(AuthenticatorApiManagerAbs::class.java)
+    private val mockBiometricTools = Mockito.mock(BiometricToolsAbs::class.java)
 
     @Before
     fun setUp() {
@@ -54,30 +58,29 @@ class LockableActivityPresenterTest {
     @Test
     @Throws(Exception::class)
     fun getViewContractTest() {
-        assertThat(createPresenter().viewContract, equalTo(mockView))
-        assertThat(createPresenter().connectionsRepository, equalTo(mockConnectionsRepository))
-        assertThat(createPresenter().preferenceRepository, equalTo(mockPreferenceRepository))
-        assertThat(createPresenter().passcodeTools, equalTo(mockPasscodeTools))
+        assertThat(createViewModel().connectionsRepository, equalTo(mockConnectionsRepository))
+        assertThat(createViewModel().preferenceRepository, equalTo(mockPreferenceRepository))
+        assertThat(createViewModel().passcodeTools, equalTo(mockPasscodeTools))
     }
 
     @Test
     @Throws(Exception::class)
     fun getSavedPasscodeTest() {
-        val presenter = createPresenter()
+        val viewModel = createViewModel()
 
         Mockito.`when`(mockPasscodeTools.getPasscode()).thenReturn("1234")
 
-        assertThat(presenter.savedPasscode, equalTo("1234"))
+        assertThat(viewModel.savedPasscode, equalTo("1234"))
     }
 
     @Test
     @Throws(Exception::class)
     fun onActivityCreateTest() {
-        val presenter = createPresenter()
-        presenter.onActivityCreate()
-        presenter.onActivityStart(Intent())
+        val viewModel = createViewModel()
+        viewModel.onActivityCreate()
+        viewModel.onActivityStart(Intent())
 
-        Mockito.verify(mockView).lockScreen()
+        assertThat(viewModel.lockViewVisibility.value, equalTo(View.VISIBLE))
     }
 
     /**
@@ -86,11 +89,11 @@ class LockableActivityPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onActivityStartTestCase1() {
-        val presenter = createPresenter()
-        presenter.onActivityResult()
-        presenter.onActivityStart(Intent())
+        val viewModel = createViewModel()
+        viewModel.onActivityResult()
+        viewModel.onActivityStart(Intent())
 
-        Mockito.verify(mockView).closeLockView()
+        assertThat(viewModel.lockViewVisibility.value, equalTo(View.GONE))
     }
 
     /**
@@ -99,11 +102,11 @@ class LockableActivityPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onActivityStartTestCase2() {
-        val presenter = createPresenter()
-        presenter.onActivityResult()
-        presenter.onActivityStart(Intent())
+        val viewModel = createViewModel()
+        viewModel.onActivityResult()
+        viewModel.onActivityStart(Intent())
 
-        Mockito.verify(mockView).closeLockView()
+        assertThat(viewModel.lockViewVisibility.value, equalTo(View.GONE))
     }
 
     /**
@@ -112,10 +115,10 @@ class LockableActivityPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onActivityStartTestCase3() {
-        val presenter = createPresenter()
-        presenter.onActivityStart(Intent())
+        val viewModel = createViewModel()
+        viewModel.onActivityStart(Intent())
 
-        Mockito.verify(mockView).lockScreen()
+        assertThat(viewModel.lockViewVisibility.value, equalTo(View.VISIBLE))
     }
 
     /**
@@ -124,10 +127,10 @@ class LockableActivityPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onActivityStartTestCase4() {
-        val presenter = createPresenter()
-        presenter.onActivityStart(Intent().putExtra(KEY_SKIP_PIN, true))
+        val viewModel = createViewModel()
+        viewModel.onActivityStart(Intent().putExtra(KEY_SKIP_PIN, true))
 
-        Mockito.verify(mockView).closeLockView()
+        assertThat(viewModel.lockViewVisibility.value, equalTo(View.GONE))
     }
 
     /**
@@ -136,10 +139,10 @@ class LockableActivityPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onActivityStartTestCase5() {
-        val presenter = createPresenter()
-        presenter.onActivityStart(Intent().putExtra(KEY_SKIP_PIN, false))
+        val viewModel = createViewModel()
+        viewModel.onActivityStart(Intent().putExtra(KEY_SKIP_PIN, false))
 
-        Mockito.verify(mockView).lockScreen()
+        assertThat(viewModel.lockViewVisibility.value, equalTo(View.VISIBLE))
     }
 
     /**
@@ -149,13 +152,12 @@ class LockableActivityPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onActivityStartTestCase6() {
-        Mockito.doReturn(true).`when`(mockView).isBiometricReady()
+        given(mockBiometricTools.isBiometricReady(TestAppTools.applicationContext)).willReturn(true)
 
-        val presenter = createPresenter()
-        presenter.onActivityStart(Intent())
+        val viewModel = createViewModel()
+        viewModel.onActivityStart(Intent())
 
-        Mockito.verify(mockView).isBiometricReady()
-        Mockito.verify(mockView).displayBiometricPromptView()
+        assertThat(viewModel.showBiometricPromptEvent.value, equalTo(ViewModelEvent(Unit)))
     }
 
     /**
@@ -164,14 +166,13 @@ class LockableActivityPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onActivityStartTestCase7() {
-        val presenter = createPresenter()
-
         Mockito.doReturn(6).`when`(mockPreferenceRepository).pinInputAttempts
         Mockito.doReturn(999L + SystemClock.elapsedRealtime()).`when`(mockPreferenceRepository).blockPinInputTillTime
 
-        presenter.onActivityStart(Intent())
+        val viewModel = createViewModel()
+        viewModel.onActivityStart(Intent())
 
-        Mockito.verify(mockView).disableUnlockInput(inputAttempt = 6, remainedMinutes = 1)
+        assertThat(viewModel.disablePasscodeInputEvent.value, equalTo(ViewModelEvent(1)))
     }
 
     /**
@@ -180,26 +181,27 @@ class LockableActivityPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onActivityStartTestCase8() {
-        val presenter = createPresenter()
+        val viewModel = createViewModel()
         mockPreferenceRepository.pinInputAttempts = 7
         mockPreferenceRepository.blockPinInputTillTime = 0L
-        presenter.onActivityStart(Intent())
+        viewModel.onActivityStart(Intent())
 
-        Mockito.never()
+        assertThat(viewModel.disablePasscodeInputEvent.value, `is`(nullValue()))
     }
 
     @Test
     @Throws(Exception::class)
     fun onSuccessAuthenticationTest() {
-        val presenter = createPresenter()
+        val viewModel = createViewModel()
         mockPreferenceRepository.pinInputAttempts = 7
         mockPreferenceRepository.blockPinInputTillTime = 999L + SystemClock.elapsedRealtime()
-        presenter.onSuccessAuthentication()
+
+        viewModel.onSuccessAuthentication()
 
         assertThat(mockPreferenceRepository.pinInputAttempts, equalTo(0))
         assertThat(mockPreferenceRepository.blockPinInputTillTime, equalTo(0L))
-        Mockito.verify(mockView).vibrateAboutSuccess()
-        Mockito.verify(mockView).closeLockView()
+        assertThat(viewModel.successVibrateEvent.value, equalTo(ViewModelEvent(Unit)))
+        assertThat(viewModel.lockViewVisibility.value, equalTo(View.GONE))
     }
 
     /**
@@ -208,13 +210,12 @@ class LockableActivityPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onWrongPasscodeInputTestCase1() {
-        val presenter = createPresenter()
-
         Mockito.doReturn(11).`when`(mockPreferenceRepository).pinInputAttempts
+        val viewModel = createViewModel()
 
-        presenter.onWrongPasscodeInput()
+        viewModel.onWrongPasscodeInput()
 
-        Mockito.verify(mockView).resetUser()
+        assertThat(viewModel.showAppClearWarningEvent.value, equalTo(ViewModelEvent(Unit)))
     }
 
     /**
@@ -223,53 +224,74 @@ class LockableActivityPresenterTest {
     @Test
     @Throws(Exception::class)
     fun onWrongPasscodeInputTestCase2() {
-        val presenter = createPresenter()
+        val viewModel = createViewModel()
 
         Mockito.doReturn(5).`when`(mockPreferenceRepository).pinInputAttempts
         Mockito.doReturn(1000L + SystemClock.elapsedRealtime()).`when`(mockPreferenceRepository).blockPinInputTillTime
 
-        presenter.onWrongPasscodeInput()
+        viewModel.onWrongPasscodeInput()
 
-        Mockito.verify(mockView).disableUnlockInput(inputAttempt = 6, remainedMinutes = 1)
-        Mockito.clearInvocations(mockView)
+        assertThat(viewModel.disablePasscodeInputEvent.value, equalTo(ViewModelEvent(1)))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onWrongPasscodeInputTestCase3() {
+        val viewModel = createViewModel()
         Mockito.doReturn(6).`when`(mockPreferenceRepository).pinInputAttempts
         Mockito.doReturn(300000L + SystemClock.elapsedRealtime()).`when`(mockPreferenceRepository).blockPinInputTillTime
 
-        presenter.onWrongPasscodeInput()
+        viewModel.onWrongPasscodeInput()
 
-        Mockito.verify(mockView).disableUnlockInput(inputAttempt = 7, remainedMinutes = 5)
-        Mockito.clearInvocations(mockView)
+        assertThat(viewModel.disablePasscodeInputEvent.value, equalTo(ViewModelEvent(5)))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onWrongPasscodeInputTestCase4() {
+        val viewModel = createViewModel()
         Mockito.doReturn(7).`when`(mockPreferenceRepository).pinInputAttempts
         Mockito.doReturn(900000L + SystemClock.elapsedRealtime()).`when`(mockPreferenceRepository).blockPinInputTillTime
 
-        presenter.onWrongPasscodeInput()
+        viewModel.onWrongPasscodeInput()
 
-        Mockito.verify(mockView).disableUnlockInput(inputAttempt = 8, remainedMinutes = 15)
-        Mockito.clearInvocations(mockView)
+        assertThat(viewModel.disablePasscodeInputEvent.value, equalTo(ViewModelEvent(15)))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onWrongPasscodeInputTestCase5() {
+        val viewModel = createViewModel()
         Mockito.doReturn(8).`when`(mockPreferenceRepository).pinInputAttempts
         Mockito.doReturn(3600000L + SystemClock.elapsedRealtime()).`when`(mockPreferenceRepository).blockPinInputTillTime
 
-        presenter.onWrongPasscodeInput()
+        viewModel.onWrongPasscodeInput()
 
-        Mockito.verify(mockView).disableUnlockInput(inputAttempt = 9, remainedMinutes = 60)
-        Mockito.clearInvocations(mockView)
+        assertThat(viewModel.disablePasscodeInputEvent.value, equalTo(ViewModelEvent(60)))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onWrongPasscodeInputTestCase6() {
+        val viewModel = createViewModel()
         Mockito.doReturn(9).`when`(mockPreferenceRepository).pinInputAttempts
         Mockito.doReturn(3600000L + SystemClock.elapsedRealtime()).`when`(mockPreferenceRepository).blockPinInputTillTime
 
-        presenter.onWrongPasscodeInput()
+        viewModel.onWrongPasscodeInput()
 
-        Mockito.verify(mockView).disableUnlockInput(inputAttempt = 10, remainedMinutes = 60)
-        Mockito.clearInvocations(mockView)
+        assertThat(viewModel.disablePasscodeInputEvent.value, equalTo(ViewModelEvent(60)))
     }
 
-    private fun createPresenter(): LockableActivityPresenter {
-        return LockableActivityPresenter(
-            viewContract = mockView,
+    private fun createViewModel(): LockableActivityViewModel {
+        return LockableActivityViewModel(
             connectionsRepository = mockConnectionsRepository,
             preferenceRepository = mockPreferenceRepository,
             passcodeTools = mockPasscodeTools,
             keyStoreManager = mockKeyStoreManager,
             apiManager =  mockAuthenticatorApiManager
-        )
+        ).apply {
+            appContext = TestAppTools.applicationContext
+            biometricTools = mockBiometricTools
+        }
     }
 }

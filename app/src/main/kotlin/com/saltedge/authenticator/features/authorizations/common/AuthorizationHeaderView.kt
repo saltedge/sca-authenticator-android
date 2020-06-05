@@ -49,12 +49,12 @@ class AuthorizationHeaderView : LinearLayout, TimerUpdateListener {
         titleView?.text = title
 
         if (logoUrl?.isEmpty() == true) {
-            logoView?.setImageResource(R.drawable.ic_logo_bank_placeholder)
+            logoView?.setImageResource(R.drawable.shape_bg_connection_list_logo)
         } else {
             logoView?.loadRoundedImage(
                 imageUrl = logoUrl,
-                placeholderId = R.drawable.ic_logo_bank_placeholder,
-                cornerRadius = resources.getDimension(R.dimen.dp_6)
+                placeholderId = R.drawable.shape_bg_authorizations_list_logo,
+                cornerRadius = resources.getDimension(R.dimen.authorizations_list_logo_radius)
             )
         }
     }

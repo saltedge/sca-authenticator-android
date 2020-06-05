@@ -88,7 +88,8 @@
 
                     <ImageView
                         style="@style/AppBarActionImage"
-                        android:src="@drawable/ic_appbar_action_qr" />
+                        android:contentDescription="@string/scan_qr_code"
+                        app:srcCompat="@drawable/ic_appbar_action_qr" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -99,7 +100,8 @@
 
                     <ImageView
                         style="@style/AppBarActionImage"
-                        android:src="@drawable/ic_appbar_action_theme" />
+                        android:contentDescription="@string/settings_feature_title"
+                        app:srcCompat="@drawable/ic_appbar_action_theme" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -110,7 +112,8 @@
 
                     <ImageView
                         style="@style/AppBarActionImage"
-                        android:src="@drawable/ic_appbar_action_more" />
+                        android:contentDescription="@string/actions_view_more"
+                        app:srcCompat="@drawable/ic_appbar_action_more" />
                 </FrameLayout>
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

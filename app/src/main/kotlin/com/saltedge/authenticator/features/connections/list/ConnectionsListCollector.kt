@@ -73,7 +73,7 @@ private fun getConnectionDeleteImageResId(connection: ConnectionAbs): Int {
 }
 
 private fun getConnectionStateColorResId(connection: ConnectionAbs): Int {
-    return if (connection.getStatus() === ConnectionStatus.ACTIVE) R.color.secondary_text else R.color.red
+    return if (connection.getStatus() === ConnectionStatus.ACTIVE) R.color.secondary_text else R.color.red_text
 }
 
 private fun getConnectionStatusDescription(context: Context, connection: Connection): String {

@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.connections.editName
 
 import com.saltedge.authenticator.app.KEY_GUID
-import com.saltedge.authenticator.features.connections.edit.name.EditConnectionNameDialog
+import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
 import com.saltedge.authenticator.sdk.constants.KEY_NAME
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat

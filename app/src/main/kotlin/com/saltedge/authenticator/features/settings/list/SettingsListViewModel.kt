@@ -20,12 +20,10 @@
  */
 package com.saltedge.authenticator.features.settings.list
 
-import android.app.Activity
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
 import com.saltedge.authenticator.features.settings.common.SettingsHeaderViewModelModel
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
@@ -92,12 +90,6 @@ class SettingsListViewModel(
             SettingsHeaderViewModelModel("")
         )
 
-    fun onActivityResult(requestCode: Int, resultCode: Int) {
-        if (resultCode == Activity.RESULT_OK && requestCode == DELETE_ALL_REQUEST_CODE) {
-            onUserConfirmedDeleteAllConnections()
-        }
-    }
-
     fun restartConfirmed() {
         restartClickEvent.postValue(ViewModelEvent(Unit))
     }
@@ -121,7 +113,7 @@ class SettingsListViewModel(
         }
     }
 
-    private fun onUserConfirmedDeleteAllConnections() {
+    fun onUserConfirmedDeleteAllConnections() {
         sendRevokeRequestForConnections(connectionsRepository.getAllActiveConnections())
         deleteAllConnectionsAndKeys()
     }

@@ -84,9 +84,11 @@ class MainActivity : LockableActivity(),
         if (onBackPressListener?.onBackPress() != true) super.onBackPressed()
     }
 
-    override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView
+    override fun onUnlockActivity() {
 
-    override fun getAppBarLayout(): View? = appBarLayout
+    }
+
+    override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView
 
     override fun getSnackbarAnchorView(): View? = container
 

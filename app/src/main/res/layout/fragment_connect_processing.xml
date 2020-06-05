@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-     This file is part of the Salt Edge Authenticator distribution
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
-    Copyright (c) 2019 Salt Edge Inc.
+    Copyright (c) 2020 Salt Edge Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,23 +19,24 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/theme_background"
-    android:focusableInTouchMode="true"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:paddingLeft="@dimen/dp_15"
-    android:paddingRight="@dimen/dp_15">
+    android:background="@color/theme_background">
 
     <FrameLayout
         android:id="@+id/statusProgressOrImageContainer"
         android:layout_width="@dimen/dp_76"
         android:layout_height="@dimen/dp_76"
-        android:layout_marginTop="@dimen/dp_106"
+        android:layout_marginBottom="@dimen/dp_24"
         android:background="@drawable/shape_bg_process_status"
-        android:elevation="@dimen/dp_40">
+        android:elevation="@dimen/dp_10"
+        app:layout_constraintBottom_toTopOf="@+id/hGuidLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <ProgressBar
             android:id="@+id/progressBarView"
@@ -47,26 +49,27 @@
             android:indeterminateTintMode="src_in" />
     </FrameLayout>
 
-    <TextView
-        android:id="@+id/titleView"
-        style="@style/Text22Primary"
-        android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/hGuidLine"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/dp_32"
-        android:layout_marginTop="@dimen/dp_26"
-        android:layout_marginRight="@dimen/dp_32"
-        android:gravity="center_horizontal"
-        android:maxLines="1"
-        android:text="@string/connect_status_in_progress" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.33" />
 
     <TextView
-        style="@style/Text18Primary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/dp_32"
-        android:layout_marginTop="@dimen/dp_10"
-        android:layout_marginRight="@dimen/dp_32"
-        android:gravity="center_horizontal"
-        android:maxLines="2"
-        android:text="@string/connect_status_in_progress_description" />
-</LinearLayout>
+        android:id="@+id/titleView"
+        style="@style/Title22"
+        android:text="@string/connect_status_in_progress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hGuidLine" />
+
+    <TextView
+        android:id="@+id/descriptionView"
+        style="@style/Description18"
+        android:layout_marginTop="@dimen/dp_12"
+        android:text="@string/connect_status_in_progress_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleView" />
+</androidx.constraintlayout.widget.ConstraintLayout>

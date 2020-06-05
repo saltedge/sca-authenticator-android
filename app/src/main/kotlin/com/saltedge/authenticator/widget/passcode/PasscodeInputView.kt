@@ -31,7 +31,7 @@ import androidx.annotation.StringRes
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.setVisible
-import kotlinx.android.synthetic.main.view_passcode_edit.view.*
+import kotlinx.android.synthetic.main.view_passcode_input.view.*
 
 enum class PasscodeInputMode {
     CHECK_PASSCODE, NEW_PASSCODE, CONFIRM_PASSCODE
@@ -73,7 +73,7 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
         }
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_passcode_edit, this)
+        LayoutInflater.from(context).inflate(R.layout.view_passcode_input, this)
         setupViews()
     }
 
