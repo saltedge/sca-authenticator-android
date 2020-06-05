@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.connections.select
 
-import android.content.Context
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -28,7 +27,7 @@ import com.saltedge.authenticator.features.connections.common.ConnectionViewMode
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.model.GUID
 
-class SelectConnectionsViewModel() : ViewModel(), LifecycleObserver {
+class SelectConnectionsViewModel : ViewModel(), LifecycleObserver {
 
     val listItems = MutableLiveData<List<ConnectionViewModel>>()
     val listItemsValues: List<ConnectionViewModel>

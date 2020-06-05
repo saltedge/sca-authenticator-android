@@ -45,7 +45,8 @@ class SelectConnectionsFragmentTest {
                 statusColorResId = 1,
                 reconnectOptionIsVisible = false,
                 deleteMenuItemText = R.string.actions_delete,
-                deleteMenuItemImage = R.drawable.ic_menu_delete_24dp
+                deleteMenuItemImage = R.drawable.ic_menu_delete_24dp,
+                isChecked = false
             )
         )
         val arguments = SelectConnectionsFragment.newInstance(
