@@ -28,6 +28,7 @@ import com.saltedge.authenticator.features.authorizations.details.AuthorizationD
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListViewModel
 import com.saltedge.authenticator.features.connections.create.ConnectProviderViewModel
 import com.saltedge.authenticator.features.connections.list.ConnectionsListViewModel
+import com.saltedge.authenticator.features.connections.select.SelectConnectionsViewModel
 import com.saltedge.authenticator.features.launcher.LauncherViewModel
 import com.saltedge.authenticator.features.main.MainActivityViewModel
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupViewModel
@@ -135,6 +136,9 @@ class ViewModelsFactory @Inject constructor(
                     keyStoreManager = keyStoreManager,
                     apiManager = apiManager
                 ) as T
+            }
+            modelClass.isAssignableFrom(SelectConnectionsViewModel::class.java) -> {
+                return SelectConnectionsViewModel() as T
             }
             modelClass.isAssignableFrom(SettingsListViewModel::class.java) -> {
                 return SettingsListViewModel(
