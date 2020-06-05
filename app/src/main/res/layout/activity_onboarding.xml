@@ -59,7 +59,7 @@
                     android:layout_height="@dimen/app_logo_image_size"
                     android:layout_gravity="center"
                     android:contentDescription="@string/app_name_short"
-                    android:src="@drawable/ic_logo_application" />
+                    app:srcCompat="@drawable/ic_logo_application" />
             </FrameLayout>
 
             <com.saltedge.authenticator.widget.passcode.PasscodeInputView

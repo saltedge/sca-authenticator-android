@@ -41,7 +41,7 @@
             android:id="@+id/reconnectImageView"
             style="@style/PopupMenuImage"
             android:contentDescription="@string/actions_reconnect"
-            android:src="@drawable/ic_menu_reconnect_24dp" />
+            app:srcCompat="@drawable/ic_menu_reconnect_24dp" />
 
         <TextView
             android:id="@+id/reconnectTextView"
@@ -58,7 +58,7 @@
             android:id="@+id/renameImageView"
             style="@style/PopupMenuImage"
             android:contentDescription="@string/actions_rename"
-            android:src="@drawable/ic_menu_edit_24dp" />
+            app:srcCompat="@drawable/ic_menu_edit_24dp" />
 
         <TextView
             android:id="@+id/renameTextView"
@@ -75,7 +75,7 @@
             android:id="@+id/contactSupportImageView"
             style="@style/PopupMenuImage"
             android:contentDescription="@string/actions_contact_support"
-            android:src="@drawable/ic_contact_support_24dp" />
+            app:srcCompat="@drawable/ic_contact_support_24dp" />
 
         <TextView
             android:id="@+id/contactSupportTextView"
@@ -92,7 +92,7 @@
             android:id="@+id/deleteImageView"
             style="@style/PopupMenuImage"
             android:contentDescription="@string/actions_delete"
-            android:src="@drawable/ic_menu_delete_24dp" />
+            app:srcCompat="@drawable/ic_menu_delete_24dp" />
 
         <TextView
             android:id="@+id/deleteTextView"

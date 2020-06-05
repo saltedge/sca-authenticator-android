@@ -42,7 +42,7 @@
             android:layout_width="@dimen/app_logo_image_size"
             android:layout_height="@dimen/app_logo_image_size"
             android:layout_gravity="center"
-            android:src="@drawable/ic_logo_application" />
+            app:srcCompat="@drawable/ic_logo_application" />
     </FrameLayout>
 
     <TextView
@@ -90,7 +90,7 @@
             android:layout_marginTop="@dimen/dp_16"
             android:scaleType="fitCenter"
             android:background="?android:attr/selectableItemBackground"
-            android:src="@drawable/ic_appbar_action_back" />
+            app:srcCompat="@drawable/ic_appbar_action_back" />
 
         <com.saltedge.authenticator.widget.EmptyView
             android:id="@+id/resetContentView"

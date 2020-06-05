@@ -136,15 +136,16 @@ class SubmitActionViewModel(
         updateViewsContent()
     }
 
-    //TODO Doesn't catch clicks on R.id.mainActionView
-    fun onViewClick() {
-        onCloseEvent.postValue(ViewModelEvent(Unit))
-        try {
-            actionAppLinkData?.returnTo?.let {
-                if (it.isNotEmpty()) onOpenLinkEvent.postValue(ViewModelEvent(Uri.parse(it)))
+    fun onViewClick(viewId: Int) {
+        if (viewId == R.id.actionView) {
+            onCloseEvent.postValue(ViewModelEvent(Unit))
+            try {
+                actionAppLinkData?.returnTo?.let {
+                    if (it.isNotEmpty()) onOpenLinkEvent.postValue(ViewModelEvent(Uri.parse(it)))
+                }
+            } catch (e: Exception) {
+                e.log()
             }
-        } catch (e: Exception) {
-            e.log()
         }
     }
 

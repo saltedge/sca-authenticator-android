@@ -26,6 +26,7 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.setFont
 import com.saltedge.authenticator.tools.setInvisible
