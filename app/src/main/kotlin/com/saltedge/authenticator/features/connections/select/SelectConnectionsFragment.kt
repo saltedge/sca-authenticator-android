@@ -90,8 +90,7 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener {
     }
 
     private fun setupViewModel() {
-        viewModel =
-            ViewModelProvider(this, viewModelFactory).get(SelectConnectionsViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(SelectConnectionsViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
         viewModel.setInitialData(arguments?.getSerializable(KEY_CONNECTIONS) as List<ConnectionViewModel>)
