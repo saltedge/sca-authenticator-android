@@ -36,8 +36,7 @@ import com.saltedge.authenticator.sdk.model.response.SubmitActionResponseData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.testTools.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertThat
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -211,7 +210,7 @@ class SubmitActionViewModelTest {
         )
 
         //when
-        viewModel.onViewClick()
+        viewModel.onViewClick(R.id.actionView)
 
         //than
         assertNotNull(viewModel.onCloseEvent.value)
@@ -239,10 +238,29 @@ class SubmitActionViewModelTest {
         )
 
         //when
-        viewModel.onViewClick()
+        viewModel.onViewClick(R.id.actionView)
 
         //than
         assertNotNull(viewModel.onCloseEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onViewClickTestCase3() {
+        //given invalid viewId
+        viewModel.setInitialData(
+            actionAppLinkData = ActionAppLinkData(
+                actionUUID = "123456",
+                connectUrl = "https://www.fentury.com/",
+                returnTo = ""
+            )
+        )
+
+        //when
+        viewModel.onViewClick(R.id.altActionView)
+
+        //than
+        assertNull(viewModel.onCloseEvent.value)
     }
 
     /**
