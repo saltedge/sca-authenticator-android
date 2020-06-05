@@ -163,7 +163,6 @@ class LockableActivityViewModel(
         val blockTime = preferenceRepository.blockPinInputTillTime - SystemClock.elapsedRealtime()
         if (blockTime > 0) {
             disablePasscodeInputEvent.postValue(ViewModelEvent(millisToRemainedMinutes(blockTime)))
-//            viewContract.disableUnlockInput(inputAttempt, millisToRemainedMinutes(blockTime))
             startDisableUnlockInputTimer(blockTime)
         }
     }
