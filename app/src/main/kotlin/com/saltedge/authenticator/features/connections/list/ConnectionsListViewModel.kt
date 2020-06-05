@@ -27,7 +27,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.*
+import com.saltedge.authenticator.app.DELETE_REQUEST_CODE
+import com.saltedge.authenticator.app.KEY_GUID
+import com.saltedge.authenticator.app.RENAME_REQUEST_CODE
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -38,8 +40,6 @@ import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.Token
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
-import com.saltedge.authenticator.sdk.model.connection.getStatus
 import com.saltedge.authenticator.sdk.model.connection.isActive
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
@@ -135,12 +135,19 @@ class ConnectionsListViewModel @Inject constructor(
     }
 
     fun onDeleteOptionsSelected() {
-        val index = onListItemClickEvent.value?.peekContent() ?: return
-        val connectionGuid = listItemsValues.getOrNull(index)?.guid ?: return
+        val item = listItemsValues.getOrNull(onListItemClickEvent.value?.peekContent() ?: return) ?: return
+        connectionsRepository.getByGuid(item.guid)?.let { connection ->
+            if (connection.isActive()) {
+                onDeleteClickEvent.postValue(ViewModelEvent(Bundle()
+                    .apply { putString(KEY_GUID, connection.guid) }
+                ))
+            } else {
+                deleteConnectionsAndKeys(connection.guid)
+                updateViewsContent()
+            }
+        }
 
-        onDeleteClickEvent.postValue(ViewModelEvent(Bundle()
-            .apply { putString(KEY_GUID, connectionGuid) }
-        ))
+
     }
 
     private fun onUserRenamedConnection(listItem: ConnectionViewModel, newConnectionName: String) {

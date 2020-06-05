@@ -15,7 +15,9 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -28,10 +30,10 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/dp_137"
         android:contentDescription="@string/app_name"
-        android:elevation="@dimen/dp_40"
+        android:elevation="@dimen/dp_10"
         android:scaleType="center"
-        android:background="@drawable/shape_bg_logo"
-        android:src="@drawable/ic_app_logo" />
+        android:background="@drawable/shape_bg_app_logo"
+        app:srcCompat="@drawable/ic_logo_application" />
 
     <TextView
         android:id="@+id/appNameView"
@@ -57,5 +59,5 @@
         android:layout_marginBottom="@dimen/dp_30"
         android:contentDescription="@string/app_name"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_company_logo" />
+        app:srcCompat="@drawable/ic_logo_salt_edge" />
 </RelativeLayout>

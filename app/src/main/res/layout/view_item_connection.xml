@@ -18,7 +18,8 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
@@ -28,13 +29,19 @@
     android:clipToPadding="false"
     android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="@dimen/dp_6"
-    app:cardElevation="@dimen/dp_20">
+    app:cardElevation="@dimen/dp_10">
 
     <!--TODO: use actual naming for background color-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/app_logo_background">
+
+        <ImageView
+            android:id="@+id/logoImageView"
+            style="@style/ConnectionLogoImage"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/connections_feature_title" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -63,11 +70,5 @@
                 android:maxLines="1"
                 tools:text="Connected on 12 sept. 2019, 18:02" />
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/logoImageView"
-            style="@style/ConnectionLogoImage"
-            android:layout_centerVertical="true"
-            android:contentDescription="@null" />
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

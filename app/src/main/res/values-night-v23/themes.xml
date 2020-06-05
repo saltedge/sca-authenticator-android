@@ -20,6 +20,10 @@
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
 <resources>
+    <style name="LauncherScreenTheme" parent="LauncherScreenThemeBase">
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
     <style name="SetupScreenTheme" parent="SetupScreenThemeBase">
         <item name="android:windowLightStatusBar">false</item>
     </style>
