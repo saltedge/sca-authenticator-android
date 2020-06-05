@@ -51,6 +51,7 @@
     <color name="color_accent">@color/primary</color>
     <color name="system_bar_color">@color/primary</color>
     <color name="theme_background">@android:color/white</color>
+    <color name="colorControlHighlight">@color/dark_60</color>
     <color name="passcode_label_background">@color/grey_light_extra</color>
     <color name="passcode_description_background">@color/grey_light_extra</color>
     <color name="passcode_pressed_key_background">@color/grey_light_extra</color>

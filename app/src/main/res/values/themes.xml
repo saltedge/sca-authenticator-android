@@ -58,7 +58,7 @@
         <item name="colorControlActivated">@color/primary</item>
         <item name="colorControlHighlight">@color/primary</item>
         <item name="android:colorButtonNormal">@color/button_blue_default</item>
-        <item name="android:colorControlHighlight">@color/button_blue_pressed</item>
+        <item name="android:colorControlHighlight">@color/colorControlHighlight</item><!--ripple effect color-->
     </style>
 
     <style name="MainScreenTheme" parent="MainScreenThemeBase"/>
