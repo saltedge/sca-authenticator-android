@@ -104,6 +104,7 @@ class AuthorizationsListViewModel(
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onResume() {
         connectionsAndKeys = collectConnectionsAndKeys(connectionsRepository, keyStoreManager)
+        if (listItemsValues.isNotEmpty()) postListItemsUpdate(listItemsValues)
         postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
     }
 

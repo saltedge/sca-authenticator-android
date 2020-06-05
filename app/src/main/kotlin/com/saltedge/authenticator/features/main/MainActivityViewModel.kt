@@ -44,6 +44,7 @@ import com.saltedge.authenticator.sdk.tools.extractActionAppLinkData
 import com.saltedge.authenticator.sdk.tools.extractConnectAppLinkData
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.applyPreferenceLocale
+import com.saltedge.authenticator.tools.postEvent
 
 class MainActivityViewModel(
     val appContext: Context,
@@ -72,6 +73,8 @@ class MainActivityViewModel(
     val appBarActionQRVisibility = MutableLiveData<Int>(View.GONE)
     val appBarActionThemeVisibility = MutableLiveData<Int>(View.GONE)
     val appBarActionMoreVisibility = MutableLiveData<Int>(View.GONE)
+
+    private var initialQrScanWasStarted = false
 
     init {
         if (!realmManager.initialized) realmManager.initRealm(context = appContext)
@@ -167,6 +170,13 @@ class MainActivityViewModel(
         when (selectedItemId) {
             R.string.connections_feature_title -> onShowConnectionsListEvent.postValue(ViewModelEvent(Unit))
             R.string.settings_feature_title -> onShowSettingsListEvent.postValue(ViewModelEvent(Unit))
+        }
+    }
+
+    fun onUnlock() {
+        if (!initialQrScanWasStarted && connectionsRepository.isEmpty()) {
+            onQrScanClickEvent.postEvent()
+            initialQrScanWasStarted = true
         }
     }
 
