@@ -33,5 +33,6 @@ data class ConnectionViewModel(
     @ColorRes val statusColorResId: Int,
     val reconnectOptionIsVisible: Boolean,
     @StringRes var deleteMenuItemText: Int,
-    @DrawableRes var deleteMenuItemImage: Int
+    @DrawableRes var deleteMenuItemImage: Int,
+    var isChecked: Boolean
 )
