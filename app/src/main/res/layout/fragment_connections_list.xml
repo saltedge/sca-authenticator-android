@@ -38,8 +38,20 @@
             android:id="@+id/connectionsListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_above="@+id/proceedView"
             android:scrollbars="vertical"
             android:visibility="@{viewModel.listVisibility}" />
+
+        <Button
+            android:id="@+id/proceedView"
+            style="@style/BlueButton"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginEnd="@dimen/dp_32"
+            android:layout_marginBottom="@dimen/dp_40"
+            android:text="@string/actions_proceed"
+            android:visibility="gone" />
 
         <com.saltedge.authenticator.widget.EmptyView
             android:id="@+id/emptyView"

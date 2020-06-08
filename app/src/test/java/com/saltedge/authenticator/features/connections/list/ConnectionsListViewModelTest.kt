@@ -144,16 +144,18 @@ class ConnectionsListViewModelTest {
 
     @Test
     @Throws(Exception::class)
-    fun onListItemClick() {
+    fun onListItemClickTest() {
+        //given
         val connection: List<ConnectionViewModel> =
             connections.convertConnectionsToViewModels(context)
         viewModel.listItems.postValue(connection)
 
         assertNull(viewModel.onListItemClickEvent.value)
 
-        viewModel.listItems.value = connection
-        viewModel.onListItemClickEvent.value = ViewModelEvent<Int>(1)
+        //when
+        viewModel.onListItemClick(1)
 
+        //than
         assertThat(viewModel.onListItemClickEvent.value, equalTo(ViewModelEvent(content = 1)))
     }
 

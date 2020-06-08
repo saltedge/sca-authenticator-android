@@ -45,6 +45,7 @@
     <color name="qr_camera_mask_background">#B2040411</color>
     <color name="bottom_menu_background">@color/dark_100</color>
     <color name="authorization_header_view_background">@color/blue_black</color>
+    <color name="connections_list_item">@color/blue_black</color>
     <color name="connections_list_logo">@color/dark_100</color>
     <color name="negative_button_background">@color/blue_black</color>
     <color name="switch_thumb_tint_off">@android:color/white</color>
