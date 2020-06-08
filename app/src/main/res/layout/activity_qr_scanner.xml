@@ -73,10 +73,9 @@
 
     <ImageView
         android:id="@+id/closeImageView"
-        android:layout_width="@dimen/dp_24"
-        android:layout_height="@dimen/dp_24"
-        android:layout_marginStart="@dimen/dp_16"
-        android:layout_marginTop="@dimen/dp_16"
+        android:layout_width="@dimen/dp_56"
+        android:layout_height="@dimen/dp_56"
+        android:padding="@dimen/dp_16"
         android:contentDescription="@string/fingerprint_touch_sensor"
         android:scaleType="fitCenter"
         app:srcCompat="@drawable/ic_appbar_action_close"
