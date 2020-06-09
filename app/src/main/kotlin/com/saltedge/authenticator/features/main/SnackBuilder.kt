@@ -24,22 +24,20 @@ import android.app.Activity
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
-import androidx.annotation.ColorRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.setFont
 
-fun AppCompatActivity.buildWarning(
-    text: String,
+fun FragmentActivity.buildWarning(
+    textResId: Int,
     snackBarDuration: Int = Snackbar.LENGTH_INDEFINITE,
     actionResId: Int? = null
-) = getSnackbarAnchorView()?.buildWarning(text, snackBarDuration, actionResId)
+) = getSnackbarAnchorView()?.buildWarning(textResId, snackBarDuration, actionResId)
 
-fun View.buildWarning(text: String, snackBarDuration: Int, actionResId: Int?) = buildSnackbar(
-    messageText = text,
-    bgColorResId = android.R.color.holo_orange_dark,
+fun View.buildWarning(textResId: Int, snackBarDuration: Int, actionResId: Int?) = buildSnackbar(
+    textResId = textResId,
     snackBarDuration = snackBarDuration,
     actionResId = actionResId
 )
@@ -49,20 +47,21 @@ private fun Activity.getSnackbarAnchorView(): View? {
 }
 
 private fun View.buildSnackbar(
-    messageText: String,
-    @ColorRes bgColorResId: Int,
+    textResId: Int,
     snackBarDuration: Int,
     actionResId: Int? = null
 ): Snackbar {
-    val snackbar = Snackbar.make(this, messageText, snackBarDuration)
+    val snackbar = Snackbar
+        .make(this, textResId, snackBarDuration)
+        .setActionTextColor(ContextCompat.getColor(context, R.color.primary_light))
     if (actionResId != null) snackbar.setAction(actionResId) { snackbar.dismiss() }
-    snackbar.setActionTextColor(ContextCompat.getColor(context, android.R.color.white))
     val textView = snackbar.view.findViewById<TextView>(R.id.snackbar_text)
     textView.minimumHeight = context.resources.getDimension(R.dimen.action_bar_size).toInt()
     textView.gravity = Gravity.CENTER_VERTICAL
     textView.setFont(R.font.roboto_regular)
+    textView.setTextColor(ContextCompat.getColor(context, R.color.grey_40))
     textView.maxLines = 7
-    snackbar.view.setBackgroundColor(ContextCompat.getColor(context, bgColorResId))
+    snackbar.view.setBackgroundColor(ContextCompat.getColor(context, R.color.snackbar_background))
     snackbar.view.setOnTouchListener { _, _ ->
         snackbar.dismiss()
         true

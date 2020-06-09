@@ -29,6 +29,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.features.main.buildWarning
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.finishFragment
 import com.saltedge.authenticator.tools.showWarningDialog
@@ -92,7 +93,9 @@ class PasscodeEditFragment : BaseFragment() {
         })
         viewModel.infoEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { messageRes ->
-                view?.let { Snackbar.make(it, messageRes, Snackbar.LENGTH_SHORT).show() }
+                view?.let {
+                    activity?.buildWarning(textResId = messageRes, snackBarDuration = Snackbar.LENGTH_SHORT)?.show()
+                }
             }
         })
         viewModel.warningEvent.observe(this, Observer { event ->
