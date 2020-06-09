@@ -73,7 +73,10 @@ abstract class LockableActivity : AppCompatActivity(),
         finish()
     }
 
-    abstract fun onUnlockActivity()
+    /**
+     * override if activity need to receive event when Activity is unlocked
+     */
+    open fun onUnlockActivity() {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -166,7 +169,7 @@ abstract class LockableActivity : AppCompatActivity(),
         })
 
         viewModel.onUnlockEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { showLockWarningEvent() }
+            event.getContentIfNotHandled()?.let { onUnlockActivity() }
         })
         viewModel.dismissLockWarningEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {

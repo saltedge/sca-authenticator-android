@@ -31,12 +31,11 @@
     app:cardCornerRadius="@dimen/dp_6"
     app:cardElevation="@dimen/dp_10">
 
-    <!--TODO: use actual naming for background color-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:id="@+id/listItemView"
         android:layout_height="match_parent"
-        android:background="@color/app_logo_background">
+        android:background="@color/connections_list_item">
 
         <ImageView
             android:id="@+id/logoImageView"

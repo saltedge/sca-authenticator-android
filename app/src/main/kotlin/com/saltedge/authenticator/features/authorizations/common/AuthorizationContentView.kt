@@ -32,6 +32,7 @@ import androidx.core.view.isVisible
 import com.fivehundredpx.android.blur.BlurringView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.sdk.tools.hasHTMLTags
+import com.saltedge.authenticator.tools.applyAlphaToColor
 import com.saltedge.authenticator.tools.setVisible
 import kotlinx.android.synthetic.main.view_authorization_content.view.*
 
@@ -101,16 +102,22 @@ class AuthorizationContentView : LinearLayout {
     }
 
     private fun initBlurringView() {
+        val viewLayoutParams = ConstraintLayout.LayoutParams(
+            ConstraintLayout.LayoutParams.MATCH_PARENT,
+            ConstraintLayout.LayoutParams.MATCH_PARENT
+        )
+        val overlayColor = ContextCompat.getColor(context, R.color.theme_background).applyAlphaToColor(0.8f)
         blurringView = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             View(context).apply {
-                layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT)
-                setBackgroundColor(ContextCompat.getColor(context, R.color.grey_light_extra_50))
+                layoutParams = viewLayoutParams
+                setBackgroundColor(overlayColor)
             }
         } else {
             BlurringView(context).apply {
-                layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT)
-                setOverlayColor(ContextCompat.getColor(context, R.color.theme_background))
-                setDownsampleFactor(6)
+                layoutParams = viewLayoutParams
+                setOverlayColor(overlayColor)
+                setBlurRadius(24)
+                setDownsampleFactor(4)
             }
         }
     }

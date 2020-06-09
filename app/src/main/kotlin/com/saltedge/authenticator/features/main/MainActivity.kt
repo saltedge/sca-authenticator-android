@@ -85,7 +85,7 @@ class MainActivity : LockableActivity(),
     }
 
     override fun onUnlockActivity() {
-
+        viewModel.onUnlock()
     }
 
     override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView

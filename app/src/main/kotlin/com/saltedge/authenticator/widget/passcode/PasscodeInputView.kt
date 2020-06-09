@@ -118,8 +118,10 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
     private fun onPasscodeInputFinished(passcode: String) {
         when (inputMode) {
             PasscodeInputMode.CHECK_PASSCODE -> {
-                if (initialPasscode == passcode) listener?.onInputValidPasscode()
-                else {
+                if (initialPasscode == passcode) {
+                    listener?.onInputValidPasscode()
+                    updatePasscodeOutput("")
+                } else {
                     inputMode = PasscodeInputMode.CHECK_PASSCODE
                     showError(R.string.errors_wrong_passcode)
                     listener?.onInputInvalidPasscode(inputMode)
@@ -133,8 +135,10 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
                 listener?.onNewPasscodeEntered(inputMode, passcode)
             }
             PasscodeInputMode.CONFIRM_PASSCODE -> {
-                if (initialPasscode == passcode) listener?.onNewPasscodeConfirmed(passcode = passcode)
-                else {
+                if (initialPasscode == passcode) {
+                    listener?.onNewPasscodeConfirmed(passcode = passcode)
+                    updatePasscodeOutput("")
+                } else {
                     inputMode = PasscodeInputMode.NEW_PASSCODE
                     showError(R.string.errors_passcode_not_match)
                     listener?.onInputInvalidPasscode(inputMode)

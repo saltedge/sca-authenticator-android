@@ -149,6 +149,6 @@ class AuthorizationsListFragment : BaseFragment() {
             }
         }
         pagersScrollSynchronizer.initViews(headerViewPager, contentViewPager)
-        emptyView?.setActionOnClickListener(View.OnClickListener { viewModel.onEmptyViewActionClick() })// { viewModel.onEmptyViewActionClick() }
+        emptyView?.setActionOnClickListener(View.OnClickListener { viewModel.onEmptyViewActionClick() })
     }
 }

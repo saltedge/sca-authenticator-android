@@ -51,6 +51,7 @@
     <color name="color_accent">@color/primary</color>
     <color name="system_bar_color">@color/primary</color>
     <color name="theme_background">@android:color/white</color>
+    <color name="colorControlHighlight">@color/dark_60</color>
     <color name="passcode_label_background">@color/grey_light_extra</color>
     <color name="passcode_description_background">@color/grey_light_extra</color>
     <color name="passcode_pressed_key_background">@color/grey_light_extra</color>
@@ -73,6 +74,7 @@
     <color name="qr_camera_mask_background">#80FFFFFF</color>
     <color name="bottom_menu_background">@android:color/white</color>
     <color name="authorization_header_view_background">@android:color/white</color>
+    <color name="connections_list_item">@android:color/white</color>
     <color name="connections_list_logo">@color/grey_light_extra</color>
     <color name="negative_button_background">@android:color/white</color>
     <color name="white_button_ripple">#85CDCF</color>
