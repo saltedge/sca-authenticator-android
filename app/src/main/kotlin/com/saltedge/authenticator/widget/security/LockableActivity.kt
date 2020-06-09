@@ -202,7 +202,7 @@ abstract class LockableActivity : AppCompatActivity(),
 
     private fun showLockWarningEvent() {
         inactivityWarningSnackbar = this@LockableActivity.buildWarning(
-            getString(R.string.warning_application_was_locked),
+            textResId = R.string.warning_application_was_locked,
             snackBarDuration = 5000,
             actionResId = R.string.actions_cancel
         )
