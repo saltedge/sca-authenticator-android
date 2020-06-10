@@ -220,7 +220,7 @@ abstract class LockableActivity : AppCompatActivity(),
             it.biometricsActionIsAvailable = viewModel.isBiometricInputReady
             it.setInputViewVisibility(show = true)
             it.setResetPasscodeViewVisibility(show = false)
-            it.setWarningView(show = false)
+            it.showWarning()
         }
     }
 
@@ -232,8 +232,8 @@ abstract class LockableActivity : AppCompatActivity(),
             remainedMinutes
         )
         getUnlockAppInputView()?.let {
-            it.setWarningView(show = true, message = "$wrongPasscodeMessage\n$retryMessage")
-            it.setInputViewVisibility(show = false)
+            it.showWarning("$wrongPasscodeMessage\n$retryMessage")
+            it.setInputViewVisibility(show = true)
             it.setResetPasscodeViewVisibility(show = false)
         }
     }
@@ -262,7 +262,7 @@ abstract class LockableActivity : AppCompatActivity(),
         getUnlockAppInputView()?.let {
             it.setInputViewVisibility(show = false)
             it.setResetPasscodeViewVisibility(show = true)
-            it.setWarningView(show = false)
+            it.showWarning()
         }
     }
 
