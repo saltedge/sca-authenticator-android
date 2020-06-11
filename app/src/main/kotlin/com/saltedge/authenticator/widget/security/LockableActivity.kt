@@ -186,8 +186,7 @@ abstract class LockableActivity : AppCompatActivity(),
             event.getContentIfNotHandled()?.let { showLockWarningEvent() }
         })
         viewModel.enablePasscodeInputEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { showPasscodeInputView()
-            }
+            event.getContentIfNotHandled()?.let { showPasscodeInputView() }
         })
         viewModel.disablePasscodeInputEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { minutes -> showWarningAndHidePasscodeView(minutes) }
@@ -220,7 +219,7 @@ abstract class LockableActivity : AppCompatActivity(),
             it.biometricsActionIsAvailable = viewModel.isBiometricInputReady
             it.setInputViewVisibility(show = true)
             it.setResetPasscodeViewVisibility(show = false)
-            it.showWarning()
+            it.enableInput()
         }
     }
 

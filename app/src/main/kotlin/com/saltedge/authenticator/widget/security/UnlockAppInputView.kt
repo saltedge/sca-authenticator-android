@@ -71,4 +71,8 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
         passcodeInputView?.lockInput = true
         passcodeInputView?.setConstantError(message)
     }
+
+    fun enableInput() {
+        passcodeInputView?.lockInput = false
+    }
 }
