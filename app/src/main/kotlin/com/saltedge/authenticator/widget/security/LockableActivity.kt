@@ -261,7 +261,6 @@ abstract class LockableActivity : AppCompatActivity(),
         getUnlockAppInputView()?.let {
             it.setInputViewVisibility(show = false)
             it.setResetPasscodeViewVisibility(show = true)
-            it.showWarning()
         }
     }
 
