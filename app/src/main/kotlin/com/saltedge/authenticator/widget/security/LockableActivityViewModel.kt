@@ -109,7 +109,7 @@ class LockableActivityViewModel(
             SystemClock.elapsedRealtime() + calculateWrongAttemptWaitTime(inputAttempt)
 
         when {
-            shouldBlockInput(inputAttempt) -> disableUnlockInput(inputAttempt)
+            shouldBlockInput(inputAttempt) -> disableUnlockInput()
             shouldWipeApplication(inputAttempt) -> {
                 wipeApplication()
                 showAppClearWarningEvent.postEvent()
@@ -139,7 +139,7 @@ class LockableActivityViewModel(
     private fun lockScreen() {
         lockViewVisibility.postValue(View.VISIBLE)
         val inputAttempt = preferenceRepository.pinInputAttempts
-        if (shouldBlockInput(inputAttempt)) disableUnlockInput(inputAttempt)
+        if (shouldBlockInput(inputAttempt)) disableUnlockInput()
         else if (isBiometricInputReady) showBiometricPromptEvent.postEvent()
     }
 
@@ -159,7 +159,7 @@ class LockableActivityViewModel(
         }
     }
 
-    private fun disableUnlockInput(inputAttempt: Int) {
+    private fun disableUnlockInput() {
         val blockTime = preferenceRepository.blockPinInputTillTime - SystemClock.elapsedRealtime()
         if (blockTime > 0) {
             disablePasscodeInputEvent.postValue(ViewModelEvent(millisToRemainedMinutes(blockTime)))
@@ -211,10 +211,7 @@ class LockableActivityViewModel(
     private fun calculateWrongAttemptWaitTime(attemptNumber: Int): Long = when {
         attemptNumber < 6 -> 0L
         attemptNumber == 6 -> 1L * MILLIS_IN_MINUTE
-        attemptNumber == 7 -> 5L * MILLIS_IN_MINUTE
-        attemptNumber == 8 -> 15L * MILLIS_IN_MINUTE
-        attemptNumber == 9 -> 60L * MILLIS_IN_MINUTE
-        attemptNumber == 10 -> 60L * MILLIS_IN_MINUTE
-        else -> Long.MAX_VALUE
+        attemptNumber == 7 -> 3L * MILLIS_IN_MINUTE
+        else -> 5L * MILLIS_IN_MINUTE
     }
 }

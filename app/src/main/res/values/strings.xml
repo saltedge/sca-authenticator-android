@@ -72,7 +72,6 @@
     <string name="errors_request_error">Request error</string>
     <string name="errors_warning">Warning</string>
     <string name="errors_error">Error</string>
-    <string name="errors_wrong_passcode_long">You entered the wrong Passcode, please try again.</string>
     <string name="errors_connection_failed">Connection Failed</string>
     <string name="errors_connection_failed_description">Provider not found. Please create connection to your service provider and try again.</string>
     <string name="errors_permission_denied">Permission Denied</string>

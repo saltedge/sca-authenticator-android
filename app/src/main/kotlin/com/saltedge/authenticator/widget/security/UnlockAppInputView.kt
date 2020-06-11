@@ -23,7 +23,6 @@ package com.saltedge.authenticator.widget.security
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.LinearLayout
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.setVisible
@@ -58,10 +57,6 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
         passcodeInputView?.initialPasscode = currentPasscode
     }
 
-    fun setErrorText(text: String) {
-        passcodeInputView?.error = text
-    }
-
     fun setInputViewVisibility(show: Boolean) {
         passcodeInputView?.setVisible(show)
         appLogoView?.setVisible(show)
@@ -72,8 +67,12 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
         resetPasscodeLayout?.setVisible(show)
     }
 
-    fun setWarningView(show: Boolean, message: String = "") {
-        warningView?.setVisible(show)
-        warningView?.text = message
+    fun showWarning(message: String = "") {
+        passcodeInputView?.lockInput = true
+        passcodeInputView?.setConstantError(message)
+    }
+
+    fun enableInput() {
+        passcodeInputView?.lockInput = false
     }
 }
