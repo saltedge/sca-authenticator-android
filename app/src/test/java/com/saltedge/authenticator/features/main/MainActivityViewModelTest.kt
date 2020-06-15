@@ -552,7 +552,7 @@ class MainActivityViewModelTest {
         viewModel.onNewAuthorization(authorizationIdentifier)
 
         //then onShowAuthorizationDetailsEvent is posted
-        assertThat(viewModel.onShowAuthorizationDetailsEvent.value, equalTo(ViewModelEvent(authorizationIdentifier)))
+        assertThat(viewModel.onShowActionAuthorizationEvent.value, equalTo(ViewModelEvent(authorizationIdentifier)))
     }
 
     @Test

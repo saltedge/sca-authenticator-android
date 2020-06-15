@@ -23,11 +23,13 @@ package com.saltedge.authenticator.sdk.web
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
+import android.webkit.WebView
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 
-class SEWebView : SEFrameWebView {
+class SEWebView : WebView {
 
     constructor(context: Context) : super(context.applicationContext) {
         setupView()
@@ -57,6 +59,7 @@ class SEWebView : SEFrameWebView {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupView() {
+        this.setLayerType(View.LAYER_TYPE_HARDWARE, null)
         settings?.javaScriptEnabled = true
         settings?.domStorageEnabled = true
         settings?.allowFileAccess = true

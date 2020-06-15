@@ -35,9 +35,10 @@ import com.saltedge.authenticator.cloud.clearNotifications
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.sdk.constants.KEY_TITLE
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
+import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.authenticatorApp
-import com.saltedge.authenticator.tools.finishFragment
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_authorization_details.*
 import java.util.*
@@ -62,8 +63,9 @@ class AuthorizationDetailsFragment : BaseFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val titleRes = arguments?.getInt(KEY_TITLE, R.string.authorization_feature_title) ?: R.string.authorization_feature_title
         activityComponents?.updateAppbar(
-            titleResId = R.string.authorization_feature_title,
+            titleResId = titleRes,
             backActionImageResId = R.drawable.ic_appbar_action_close
         )
         return inflater.inflate(R.layout.fragment_authorization_details, container, false)
@@ -141,9 +143,15 @@ class AuthorizationDetailsFragment : BaseFragment(),
          * @param identifier - wrapper for ID of Connection and ID of Authorization
          * @return AuthorizationDetailsFragment
          */
-        fun newInstance(identifier: AuthorizationIdentifier): AuthorizationDetailsFragment {
+        fun newInstance(
+            identifier: AuthorizationIdentifier,
+            titleRes: ResId? = null
+        ): AuthorizationDetailsFragment {
             return AuthorizationDetailsFragment().apply {
-                arguments = Bundle().apply { putSerializable(KEY_ID, identifier) }
+                arguments = Bundle().apply {
+                    putSerializable(KEY_ID, identifier)
+                    titleRes?.let { putInt(KEY_TITLE, it) }
+                }
             }
         }
     }

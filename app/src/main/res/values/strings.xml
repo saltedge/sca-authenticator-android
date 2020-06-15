@@ -118,7 +118,7 @@
     <string name="authorizations_feature_title">Authorizations</string>
     <string name="authorization_feature_title">Authorization</string>
     <string name="authorizations_empty_title">Nothing to authorize</string>
-    <string name="authorizations_empty_description">You do not have any active authorization request yet. Once initiate an action, you will have a few minutes to authorize it.</string>
+    <string name="authorizations_empty_description">You don’t have any active authorization requests yet. Scan QR code for instant action or to connect new provider.</string>
     <string name="authorizations_no_internet_title">You are offline</string>
     <string name="authorizations_no_internet_description">Please check your network connection.</string>
     <string name="authorizations_loading">Loading…</string>

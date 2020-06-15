@@ -62,6 +62,7 @@ class MainActivityViewModel(
     val onRestartActivityEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowAuthorizationsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowAuthorizationDetailsEvent = MutableLiveData<ViewModelEvent<AuthorizationIdentifier>>()
+    val onShowActionAuthorizationEvent = MutableLiveData<ViewModelEvent<AuthorizationIdentifier>>()
     val onShowConnectionsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowSettingsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowConnectEvent = MutableLiveData<ViewModelEvent<ConnectAppLinkData>>()
@@ -184,7 +185,7 @@ class MainActivityViewModel(
      * Handle new authorization event (e.g. from ActionSubmit)
      */
     override fun onNewAuthorization(authorizationIdentifier: AuthorizationIdentifier) {
-        onShowAuthorizationDetailsEvent.postValue(ViewModelEvent(authorizationIdentifier))
+        onShowActionAuthorizationEvent.postValue(ViewModelEvent(authorizationIdentifier))
     }
 
     /**

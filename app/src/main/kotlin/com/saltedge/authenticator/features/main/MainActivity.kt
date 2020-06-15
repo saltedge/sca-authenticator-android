@@ -124,7 +124,21 @@ class MainActivity : LockableActivity(),
         })
         viewModel.onShowAuthorizationDetailsEvent.observe(this, Observer {
             it.getContentIfNotHandled()?.let { authorizationIdentifier ->
-                this.addFragment(AuthorizationDetailsFragment.newInstance(authorizationIdentifier))
+                this.addFragment(
+                    fragment = AuthorizationDetailsFragment.newInstance(authorizationIdentifier),
+                    animateTransition = true
+                )
+            }
+        })
+        viewModel.onShowActionAuthorizationEvent.observe(this, Observer {
+            it.getContentIfNotHandled()?.let { authorizationIdentifier ->
+                this.addFragment(
+                    fragment = AuthorizationDetailsFragment.newInstance(
+                        identifier = authorizationIdentifier,
+                        titleRes = R.string.action_new_action_title
+                    ),
+                    animateTransition = false
+                )
             }
         })
         viewModel.onShowConnectionsListEvent.observe(this, Observer {
