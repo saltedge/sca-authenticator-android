@@ -91,11 +91,7 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (data == null || resultCode != Activity.RESULT_OK) return
-        if (requestCode == CONNECTIONS_REQUEST_CODE) {
-            val connectionGuid = data.getStringExtra(KEY_CONNECTION_GUID)
-            viewModel.selectConnection(connectionGuid)
-        }
+        viewModel.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun setupViewModel() {
@@ -142,7 +138,10 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener {
         viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<List<ConnectionViewModel>> {
             val selectConnectionsFragment = SelectConnectionsFragment.newInstance(connections = it)
             selectConnectionsFragment.setTargetFragment(this, CONNECTIONS_REQUEST_CODE)
-            activity?.addFragment(selectConnectionsFragment)
+            activity?.addFragment(
+                fragment = selectConnectionsFragment,
+                animateTransition = false
+            )
         })
     }
 
