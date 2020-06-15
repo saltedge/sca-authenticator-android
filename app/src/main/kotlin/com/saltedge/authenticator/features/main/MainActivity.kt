@@ -139,12 +139,18 @@ class MainActivity : LockableActivity(),
         })
         viewModel.onShowConnectEvent.observe(this, Observer {
             it.getContentIfNotHandled()?.let { connectAppLinkData ->
-                this.addFragment(ConnectProviderFragment.newInstance(connectAppLinkData = connectAppLinkData))
+                this.addFragment(
+                    fragment = ConnectProviderFragment.newInstance(connectAppLinkData = connectAppLinkData),
+                    animateTransition = false
+                )
             }
         })
         viewModel.onShowSubmitActionEvent.observe(this, Observer {
             it.getContentIfNotHandled()?.let { actionAppLinkData ->
-                this.addFragment(SubmitActionFragment.newInstance(actionAppLinkData = actionAppLinkData))
+                this.addFragment(
+                    fragment = SubmitActionFragment.newInstance(actionAppLinkData = actionAppLinkData),
+                    animateTransition = false
+                )
             }
         })
     }

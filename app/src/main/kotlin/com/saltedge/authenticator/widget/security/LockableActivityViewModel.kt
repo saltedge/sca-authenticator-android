@@ -60,6 +60,7 @@ class LockableActivityViewModel(
     val savedPasscode: String
         get() = passcodeTools.getPasscode()
     val lockViewVisibility = MutableLiveData<Int>(View.VISIBLE)
+    val onLockEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onUnlockEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val dismissLockWarningEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val showLockWarningEvent = MutableLiveData<ViewModelEvent<Unit>>()
@@ -138,6 +139,7 @@ class LockableActivityViewModel(
 
     private fun lockScreen() {
         lockViewVisibility.postValue(View.VISIBLE)
+        onLockEvent.postEvent()
         val inputAttempt = preferenceRepository.pinInputAttempts
         if (shouldBlockInput(inputAttempt)) disableUnlockInput()
         else if (isBiometricInputReady) showBiometricPromptEvent.postEvent()
