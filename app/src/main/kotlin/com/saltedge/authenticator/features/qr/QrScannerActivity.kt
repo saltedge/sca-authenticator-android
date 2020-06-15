@@ -59,6 +59,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
     private var cameraSource: CameraSource? = null
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     lateinit var viewModel: QrScannerViewModel
+    private var errorDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +67,10 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
         setContentView(R.layout.activity_qr_scanner)
         setupViewModel()
         setupViews()
+    }
+
+    override fun onLockActivity() {
+        errorDialog?.let { if (it.isShowing) it.dismiss() }
     }
 
     override fun onRequestPermissionsResult(
@@ -106,7 +111,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
             )
         })
         viewModel.errorMessageResId.observe(this, Observer { errorMessageResId ->
-            AlertDialog.Builder(this)
+            errorDialog = AlertDialog.Builder(this)
                 .setTitle(android.R.string.dialog_alert_title)
                 .setMessage(getString(errorMessageResId ?: R.string.errors_invalid_qr))
                 .show()

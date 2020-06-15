@@ -120,7 +120,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
             }
         })
         viewModel.onCloseViewEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
-            event.getContentIfNotHandled()?.let { activity?.finishFragment() }
+            event.getContentIfNotHandled()?.let { activity?.finish() }
         })
         viewModel.authorizationModel.observe(this, Observer<AuthorizationViewModel> {
             headerView?.setTitleAndLogo(title = it.connectionName, logoUrl = it.connectionLogoUrl ?: "")

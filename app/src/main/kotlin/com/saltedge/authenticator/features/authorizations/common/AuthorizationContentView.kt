@@ -31,13 +31,14 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.fivehundredpx.android.blur.BlurringView
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.isDarkThemeSet
 import com.saltedge.authenticator.sdk.tools.hasHTMLTags
 import com.saltedge.authenticator.tools.applyAlphaToColor
 import com.saltedge.authenticator.tools.setVisible
 import kotlinx.android.synthetic.main.view_authorization_content.view.*
 
 class AuthorizationContentView : LinearLayout {
-
+    private val darkModeWebBackgroundCSS: String = "<style>body { background-color: #040411;}</style>"
     private var blurringView: View? = null
 
     constructor(context: Context) : super(context)
@@ -87,7 +88,8 @@ class AuthorizationContentView : LinearLayout {
             descriptionTextView?.setVisible(show = !showWebView)
             descriptionWebView?.setVisible(show = showWebView)
             if (showWebView) {
-                val encodedHtml = android.util.Base64.encodeToString(description.toByteArray(), android.util.Base64.NO_PADDING)
+                val content = if (context.isDarkThemeSet()) description + darkModeWebBackgroundCSS else description
+                val encodedHtml = android.util.Base64.encodeToString(content.toByteArray(), android.util.Base64.NO_PADDING)
                 descriptionWebView?.loadData(encodedHtml, "text/html", "base64")
             } else {
                 descriptionTextView?.movementMethod = ScrollingMovementMethod()

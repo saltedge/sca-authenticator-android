@@ -74,6 +74,11 @@ abstract class LockableActivity : AppCompatActivity(),
     }
 
     /**
+     * override if activity need to receive event when Activity is locked
+     */
+    open fun onLockActivity() {}
+
+    /**
      * override if activity need to receive event when Activity is unlocked
      */
     open fun onUnlockActivity() {}
@@ -167,7 +172,9 @@ abstract class LockableActivity : AppCompatActivity(),
         viewModel.lockViewVisibility.observe(this, Observer {
             getUnlockAppInputView()?.visibility = it
         })
-
+        viewModel.onLockEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { onLockActivity() }
+        })
         viewModel.onUnlockEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { onUnlockActivity() }
         })
