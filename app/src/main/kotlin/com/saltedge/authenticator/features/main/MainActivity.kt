@@ -125,7 +125,10 @@ class MainActivity : LockableActivity(),
         viewModel.onShowAuthorizationDetailsEvent.observe(this, Observer {
             it.getContentIfNotHandled()?.let { authorizationIdentifier ->
                 this.addFragment(
-                    fragment = AuthorizationDetailsFragment.newInstance(authorizationIdentifier),
+                    fragment = AuthorizationDetailsFragment.newInstance(
+                        identifier = authorizationIdentifier,
+                        closeAppOnBackPress = true
+                    ),
                     animateTransition = true
                 )
             }
@@ -135,6 +138,7 @@ class MainActivity : LockableActivity(),
                 this.addFragment(
                     fragment = AuthorizationDetailsFragment.newInstance(
                         identifier = authorizationIdentifier,
+                        closeAppOnBackPress = false,
                         titleRes = R.string.action_new_action_title
                     ),
                     animateTransition = false

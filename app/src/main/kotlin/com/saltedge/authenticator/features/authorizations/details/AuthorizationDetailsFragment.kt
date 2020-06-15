@@ -39,6 +39,7 @@ import com.saltedge.authenticator.sdk.constants.KEY_TITLE
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.finishFragment
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_authorization_details.*
 import java.util.*
@@ -87,8 +88,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
     }
 
     override fun onBackPress(): Boolean {
-        activity?.finish()
-        return true
+        return viewModel.onBackPress()
     }
 
     override fun onClick(view: View?) {
@@ -121,8 +121,11 @@ class AuthorizationDetailsFragment : BaseFragment(),
                 view?.let { anchor -> Snackbar.make(anchor, message, Snackbar.LENGTH_LONG).show() }
             }
         })
-        viewModel.onCloseViewEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
+        viewModel.onCloseAppEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
             event.getContentIfNotHandled()?.let { activity?.finish() }
+        })
+        viewModel.onCloseViewEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
+            event.getContentIfNotHandled()?.let { activity?.finishFragment() }
         })
         viewModel.authorizationModel.observe(this, Observer<AuthorizationViewModel> {
             headerView?.setTitleAndLogo(title = it.connectionName, logoUrl = it.connectionLogoUrl ?: "")
@@ -133,10 +136,14 @@ class AuthorizationDetailsFragment : BaseFragment(),
             contentView?.setViewMode(it.viewMode)
         })
 
-        viewModel.setInitialData(identifier = arguments?.getSerializable(KEY_ID) as? AuthorizationIdentifier)
+        viewModel.setInitialData(
+            identifier = arguments?.getSerializable(KEY_ID) as? AuthorizationIdentifier,
+            destroyOnBackPress = arguments?.getBoolean(KEY_CLOSE_APP, true) ?: true
+        )
     }
 
     companion object {
+        private const val KEY_CLOSE_APP = "KEY_DESTROY_ON_BACK"
         /**
          * Create new instance of AuthorizationDetailsFragment
          *
@@ -145,11 +152,13 @@ class AuthorizationDetailsFragment : BaseFragment(),
          */
         fun newInstance(
             identifier: AuthorizationIdentifier,
+            closeAppOnBackPress: Boolean = true,
             titleRes: ResId? = null
         ): AuthorizationDetailsFragment {
             return AuthorizationDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable(KEY_ID, identifier)
+                    putBoolean(KEY_CLOSE_APP, closeAppOnBackPress)
                     titleRes?.let { putInt(KEY_TITLE, it) }
                 }
             }
