@@ -44,7 +44,7 @@ data class AuthorizationViewModel(
     val connectionLogoUrl: String?,
     var viewMode: ViewMode = ViewMode.DEFAULT
 ) : Serializable {
-
+    private val secondsOfLifeOfFinalModel = 4
     var destroyAt: DateTime? = null
 
     /**
@@ -52,7 +52,7 @@ data class AuthorizationViewModel(
      */
     fun setNewViewMode(newViewMode: ViewMode) {
         this.viewMode = newViewMode
-        this.destroyAt = if (newViewMode.isFinalMode()) DateTime.now().plusSeconds(3) else null
+        this.destroyAt = if (newViewMode.isFinalMode()) DateTime.now().plusSeconds(secondsOfLifeOfFinalModel) else null
     }
 
     /**
