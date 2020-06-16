@@ -128,7 +128,7 @@ class LockableActivityViewModel(
         lockScreen()
     }
 
-    fun clearAppData() {
+    fun onUserConfirmedClearAppData() {
         sendRevokeRequestForConnections(connectionsRepository.getAllActiveConnections())
         wipeApplication()
     }

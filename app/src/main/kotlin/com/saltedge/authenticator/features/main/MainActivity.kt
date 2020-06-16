@@ -138,7 +138,7 @@ class MainActivity : LockableActivity(),
                 this.addFragment(
                     fragment = AuthorizationDetailsFragment.newInstance(
                         identifier = authorizationIdentifier,
-                        closeAppOnBackPress = false,
+                        closeAppOnBackPress = true,
                         titleRes = R.string.action_new_action_title
                     ),
                     animateTransition = false

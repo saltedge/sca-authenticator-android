@@ -30,7 +30,6 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.testTools.TestAppTools
 import junit.framework.TestCase.assertNull
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -123,7 +122,7 @@ class SettingsListViewModelTest {
     @Throws(Exception::class)
     fun onUserConfirmedDeleteAllConnectionsTest() {
         //when
-        viewModel.onUserConfirmedDeleteAllConnections()
+        viewModel.onUserConfirmedClearAppData()
 
         //then
         Mockito.verify(mockConnectionsRepository).deleteAllConnections()

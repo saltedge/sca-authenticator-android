@@ -146,7 +146,7 @@ abstract class LockableActivity : AppCompatActivity(),
     override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
         when (dialogActionId) {
             DialogInterface.BUTTON_POSITIVE -> {
-                viewModel.clearAppData()
+                viewModel.onUserConfirmedClearAppData()
                 showOnboardingActivity()
             }
             DialogInterface.BUTTON_NEGATIVE -> listener?.dismiss()

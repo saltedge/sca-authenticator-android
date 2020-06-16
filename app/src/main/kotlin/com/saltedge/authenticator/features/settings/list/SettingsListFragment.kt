@@ -88,8 +88,16 @@ class SettingsListFragment : BaseFragment() {
         viewModel.clearClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let {
                 activity?.showResetDataAndSettingsDialog(DialogInterface.OnClickListener { _, _ ->
-                    viewModel.onUserConfirmedDeleteAllConnections()
+                    viewModel.onUserConfirmedClearAppData()
                 })
+            }
+        })
+        viewModel.clearSuccessEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let {
+                activity?.buildWarning(
+                    textResId = R.string.settings_clear_success,
+                    snackBarDuration = Snackbar.LENGTH_SHORT
+                )?.show()
             }
         })
         viewModel.screenshotClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
@@ -99,7 +107,7 @@ class SettingsListFragment : BaseFragment() {
                         textResId = R.string.settings_restart_app,
                         snackBarDuration = Snackbar.LENGTH_LONG
                     )?.setAction(getString(android.R.string.ok)) { viewModel.restartConfirmed() }
-                        ?.show()
+                    ?.show()
                 }
             }
         })

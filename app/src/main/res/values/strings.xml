@@ -151,11 +151,12 @@
     <string name="settings_screenshot_lock">Screenshot lock</string>
     <string name="settings_restart_app">Restart app for these changes to take effect</string>
     <string name="settings_clear_message">App data including connected providers and user data will be permanently deleted.</string>
+    <string name="settings_clear_success">App data cleared successfully</string>
 
     <string name="about_feature_title">About</string>
     <string name="about_app_version">App Version</string>
     <string name="about_copyright">Copyright</string>
-    <string name="about_copyright_description">Salt Edge Authenticator © 2019 Salt Edge Inc.</string>
+    <string name="about_copyright_description">Salt Edge Authenticator © 2020 Salt Edge Inc.</string>
     <string name="about_terms_service">Terms of Service</string>
     <string name="about_open_source_licenses">Open-source licenses</string>
 

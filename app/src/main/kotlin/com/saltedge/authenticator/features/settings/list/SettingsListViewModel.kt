@@ -48,6 +48,7 @@ class SettingsListViewModel(
     val aboutClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val supportClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val clearClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val clearSuccessEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val restartClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
     val listItems = listOf(
@@ -107,9 +108,10 @@ class SettingsListViewModel(
         }
     }
 
-    fun onUserConfirmedDeleteAllConnections() {
+    fun onUserConfirmedClearAppData() {
         sendRevokeRequestForConnections(connectionsRepository.getAllActiveConnections())
         deleteAllConnectionsAndKeys()
+        clearSuccessEvent.postUnitEvent()
     }
 
     private fun sendRevokeRequestForConnections(connections: List<Connection>) {
