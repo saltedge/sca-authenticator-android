@@ -147,6 +147,9 @@ class MainActivity : LockableActivity(),
                 this.addFragment(SubmitActionFragment.newInstance(actionAppLinkData = actionAppLinkData))
             }
         })
+        viewModel.recreateEvent.observe(this, Observer {
+            it.getContentIfNotHandled()?.let { super.restartLockableActivity() }
+        })
     }
 }
 

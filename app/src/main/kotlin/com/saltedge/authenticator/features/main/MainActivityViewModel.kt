@@ -66,6 +66,7 @@ class MainActivityViewModel(
     val onShowSettingsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowConnectEvent = MutableLiveData<ViewModelEvent<ConnectAppLinkData>>()
     val onShowSubmitActionEvent = MutableLiveData<ViewModelEvent<ActionAppLinkData>>()
+    var recreateEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
     val appBarTitle = MutableLiveData<String>()
     val appBarBackActionImageResource = MutableLiveData<ResId>(R.drawable.ic_appbar_action_back)
@@ -143,6 +144,7 @@ class MainActivityViewModel(
             R.id.appBarActionTheme -> {
                 val nightMode = preferenceRepository.nightMode
                 preferenceRepository.nightMode = appContext.switchDarkLightMode(nightMode)
+                recreateEvent.postValue(ViewModelEvent(Unit))
             }
             R.id.appBarActionMore -> {
                 val menuItems = listOf<MenuItemData>(
@@ -164,7 +166,7 @@ class MainActivityViewModel(
     }
 
     /**
-     * Handle clicks on menu
+     * Handle clicks on bottom navigation menu
      */
     fun onMenuItemSelected(menuId: String, selectedItemId: Int) {
         when (selectedItemId) {

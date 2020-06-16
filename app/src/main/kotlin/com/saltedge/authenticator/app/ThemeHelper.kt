@@ -39,7 +39,7 @@ fun Context.switchDarkLightMode(currentMode: Int): Int {
             else AppCompatDelegate.MODE_NIGHT_YES
         }
     }
-    AppCompatDelegate.setDefaultNightMode(newMode)
+    AppCompatDelegate.setDefaultNightMode(newMode) //TODO: try to move it LockableActivity().onCreate()
     return newMode
 }
 
