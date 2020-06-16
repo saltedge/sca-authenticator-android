@@ -139,7 +139,7 @@
     <string name="authorizations_unavailable_description">Authorization request was either processed, canceled or expired.</string>
 
     <string name="settings_feature_title">Settings</string>
-    <string name="settings_report_bug">Report a bug</string>
+    <string name="settings_report">Report an issue</string>
     <string name="settings_language">Language</string>
     <string name="settings_clear_data">Clear all data</string>
     <string name="settings_notifications">Notifications</string>
@@ -150,8 +150,6 @@
     <string name="settings_passcode_success">New passcode successfully set</string>
     <string name="settings_screenshot_lock">Screenshot lock</string>
     <string name="settings_restart_app">Restart app for these changes to take effect</string>
-    <string name="settings_general">General</string>
-    <string name="settings_info">Info</string>
     <string name="settings_clear_message">App data including connected providers and user data will be permanently deleted.</string>
 
     <string name="about_feature_title">About</string>

@@ -46,7 +46,7 @@ import com.saltedge.authenticator.sdk.model.error.getErrorMessage
 import com.saltedge.authenticator.sdk.model.response.SubmitActionResponseData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.log
-import com.saltedge.authenticator.tools.postEvent
+import com.saltedge.authenticator.tools.postUnitEvent
 
 class SubmitActionViewModel(
     private val appContext: Context,
@@ -85,7 +85,7 @@ class SubmitActionViewModel(
         val authorizationID = response.authorizationId ?: ""
         val connectionID = response.connectionId ?: ""
         if (response.success == true && authorizationID.isNotEmpty() && connectionID.isNotEmpty()) {
-            onCloseEvent.postEvent()
+            onCloseEvent.postUnitEvent()
             setResultAuthorizationIdentifier.postValue(
                 AuthorizationIdentifier(
                     authorizationID = authorizationID,
@@ -130,7 +130,7 @@ class SubmitActionViewModel(
             viewMode = if (connectionAndKey == null) ViewMode.ACTION_ERROR else ViewMode.START
             onViewCreated()
         } else {
-            onCloseEvent.postEvent()
+            onCloseEvent.postUnitEvent()
         }
     }
 
@@ -148,7 +148,7 @@ class SubmitActionViewModel(
 
     fun onViewClick(viewId: Int) {
         if (viewId == R.id.actionView) {
-            onCloseEvent.postEvent()
+            onCloseEvent.postUnitEvent()
             try {
                 actionAppLinkData?.returnTo?.let {
                     if (it.isNotEmpty()) onOpenLinkEvent.postValue(ViewModelEvent(Uri.parse(it)))
@@ -161,7 +161,7 @@ class SubmitActionViewModel(
 
     fun onDialogActionIdClick(dialogActionId: Int) {
         if (dialogActionId == DialogInterface.BUTTON_POSITIVE) {
-            onCloseEvent.postEvent()
+            onCloseEvent.postUnitEvent()
         }
     }
 

@@ -43,7 +43,7 @@ import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.ResId
-import com.saltedge.authenticator.tools.postEvent
+import com.saltedge.authenticator.tools.postUnitEvent
 import org.joda.time.DateTime
 
 class AuthorizationDetailsViewModel(
@@ -138,7 +138,7 @@ class AuthorizationDetailsViewModel(
             when {
                 model.shouldBeSetTimeOutMode -> updateToFinalViewMode(ViewMode.TIME_OUT)
                 model.shouldBeDestroyed -> closeView()
-                !model.ignoreTimeUpdate -> onTimeUpdateEvent.postEvent()
+                !model.ignoreTimeUpdate -> onTimeUpdateEvent.postUnitEvent()
             }
         }
     }
@@ -270,7 +270,7 @@ class AuthorizationDetailsViewModel(
     }
 
     private fun closeView() {
-        if (closeAppOnBackPress) onCloseAppEvent.postEvent()
-        else onCloseViewEvent.postEvent()
+        if (closeAppOnBackPress) onCloseAppEvent.postUnitEvent()
+        else onCloseViewEvent.postUnitEvent()
     }
 }

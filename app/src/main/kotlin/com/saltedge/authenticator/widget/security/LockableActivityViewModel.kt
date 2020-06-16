@@ -40,7 +40,7 @@ import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.tools.millisToRemainedMinutes
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.tools.log
-import com.saltedge.authenticator.tools.postEvent
+import com.saltedge.authenticator.tools.postUnitEvent
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -99,7 +99,7 @@ class LockableActivityViewModel(
     fun onSuccessAuthentication() {
         preferenceRepository.pinInputAttempts = 0
         preferenceRepository.blockPinInputTillTime = 0L
-        successVibrateEvent.postEvent()
+        successVibrateEvent.postUnitEvent()
         unlockScreen()
     }
 
@@ -113,7 +113,7 @@ class LockableActivityViewModel(
             shouldBlockInput(inputAttempt) -> disableUnlockInput()
             shouldWipeApplication(inputAttempt) -> {
                 wipeApplication()
-                showAppClearWarningEvent.postEvent()
+                showAppClearWarningEvent.postUnitEvent()
             }
         }
     }
@@ -139,24 +139,24 @@ class LockableActivityViewModel(
 
     private fun lockScreen() {
         lockViewVisibility.postValue(View.VISIBLE)
-        onLockEvent.postEvent()
+        onLockEvent.postUnitEvent()
         val inputAttempt = preferenceRepository.pinInputAttempts
         if (shouldBlockInput(inputAttempt)) disableUnlockInput()
-        else if (isBiometricInputReady) showBiometricPromptEvent.postEvent()
+        else if (isBiometricInputReady) showBiometricPromptEvent.postUnitEvent()
     }
 
     private fun unlockScreen() {
         lockViewVisibility.postValue(View.GONE)
-        onUnlockEvent.postEvent()
+        onUnlockEvent.postUnitEvent()
         restartInactivityTimer()
     }
 
     private fun restartInactivityTimer() {
-        dismissLockWarningEvent.postEvent()
+        dismissLockWarningEvent.postUnitEvent()
         timer?.cancel()
         timer = Timer().apply {
             schedule(object : TimerTask() {
-                override fun run() { showLockWarningEvent.postEvent() }
+                override fun run() { showLockWarningEvent.postUnitEvent() }
             }, inactivityTimerDuration)
         }
     }
@@ -178,7 +178,7 @@ class LockableActivityViewModel(
             countDownTimer = object : CountDownTimer(blockTime, blockTime) {
                 override fun onFinish() {
                     resetTimer()
-                    enablePasscodeInputEvent.postEvent()
+                    enablePasscodeInputEvent.postUnitEvent()
                 }
 
                 override fun onTick(millisUntilFinished: Long) {}

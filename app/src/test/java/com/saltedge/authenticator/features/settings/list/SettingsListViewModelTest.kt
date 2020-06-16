@@ -21,7 +21,6 @@
 package com.saltedge.authenticator.features.settings.list
 
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.settings.common.SettingsHeaderViewModelModel
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -71,7 +70,6 @@ class SettingsListViewModelTest {
         given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(mockConnection1))
         given(mockKeyStoreManager.createConnectionAndKeyModel(mockConnection1)).willReturn(mockConnectionAndKey)
         viewModel = SettingsListViewModel(
-            appContext = TestAppTools.applicationContext,
             keyStoreManager = mockKeyStoreManager,
             apiManager = mockApiManager,
             connectionsRepository = mockConnectionsRepository,
@@ -86,7 +84,6 @@ class SettingsListViewModelTest {
         assertThat(
             viewModel.listItems, equalTo(
             listOf(
-                SettingsHeaderViewModelModel(TestAppTools.getString(R.string.settings_general)),
                 SettingsItemViewModel(
                     iconId = R.drawable.ic_setting_passcode,
                     titleId = R.string.settings_passcode_description,
@@ -102,7 +99,6 @@ class SettingsListViewModelTest {
                     titleId = R.string.settings_screenshot_lock,
                     switchIsChecked = true
                 ),
-                SettingsHeaderViewModelModel(TestAppTools.getString(R.string.settings_info)),
                 SettingsItemViewModel(
                     iconId = R.drawable.ic_setting_about,
                     titleId = R.string.about_feature_title,
@@ -110,17 +106,15 @@ class SettingsListViewModelTest {
                 ),
                 SettingsItemViewModel(
                     iconId = R.drawable.ic_setting_support,
-                    titleId = R.string.settings_report_bug,
+                    titleId = R.string.settings_report,
                     itemIsClickable = true
                 ),
-                SettingsHeaderViewModelModel(""),
                 SettingsItemViewModel(
                     iconId = R.drawable.ic_setting_clear,
                     titleId = R.string.settings_clear_data,
                     titleColorRes = R.color.red,
                     itemIsClickable = true
-                ),
-                SettingsHeaderViewModelModel("")
+                )
             ))
         )
     }
@@ -204,7 +198,7 @@ class SettingsListViewModelTest {
     @Throws(Exception::class)
     fun onListItemClickTestCase4() {
         //given
-        val itemId = R.string.settings_report_bug
+        val itemId = R.string.settings_report
 
         //when
         viewModel.onListItemClick(itemId = itemId)
