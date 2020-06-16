@@ -64,9 +64,8 @@ class AuthorizationDetailsFragment : BaseFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val titleRes = arguments?.getInt(KEY_TITLE, R.string.authorization_feature_title) ?: R.string.authorization_feature_title
         activityComponents?.updateAppbar(
-            titleResId = titleRes,
+            titleResId = viewModel.titleRes,
             backActionImageResId = R.drawable.ic_appbar_action_close
         )
         return inflater.inflate(R.layout.fragment_authorization_details, container, false)
@@ -138,7 +137,8 @@ class AuthorizationDetailsFragment : BaseFragment(),
 
         viewModel.setInitialData(
             identifier = arguments?.getSerializable(KEY_ID) as? AuthorizationIdentifier,
-            destroyOnBackPress = arguments?.getBoolean(KEY_CLOSE_APP, true) ?: true
+            destroyOnBackPress = arguments?.getBoolean(KEY_CLOSE_APP, true),
+            titleRes = arguments?.getInt(KEY_TITLE, R.string.authorization_feature_title)
         )
     }
 

@@ -147,7 +147,7 @@ class AuthorizationDetailsViewModelTest {
         val identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1")
 
         //when
-        viewModel.setInitialData(identifier, true)
+        viewModel.setInitialData(identifier = identifier, destroyOnBackPress = true, titleRes = null)
 
         //then
         assertThat(viewModel.authorizationModel.value, equalTo(AuthorizationViewModel(
@@ -164,7 +164,7 @@ class AuthorizationDetailsViewModelTest {
             viewMode = ViewMode.LOADING
         )))
 
-        viewModel.setInitialData(AuthorizationIdentifier("1", ""), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier("1", ""), destroyOnBackPress = true, titleRes = null)
 
         assertThat(viewModel.authorizationModel.value, equalTo(AuthorizationViewModel(
             authorizationID = "1",
@@ -180,7 +180,7 @@ class AuthorizationDetailsViewModelTest {
             viewMode = ViewMode.UNAVAILABLE
         )))
 
-        viewModel.setInitialData(AuthorizationIdentifier("1", ""), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier("1", ""), destroyOnBackPress = true, titleRes = null)
 
         assertThat(viewModel.authorizationModel.value, equalTo(AuthorizationViewModel(
             authorizationID = "1",
@@ -204,7 +204,7 @@ class AuthorizationDetailsViewModelTest {
         val identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "")
 
         //when
-        viewModel.setInitialData(identifier, true)
+        viewModel.setInitialData(identifier = identifier, destroyOnBackPress = true, titleRes = null)
 
         //then
         assertThat(viewModel.authorizationModel.value, equalTo(AuthorizationViewModel(
@@ -229,7 +229,7 @@ class AuthorizationDetailsViewModelTest {
         val identifier = AuthorizationIdentifier(authorizationID = "", connectionID = "1")
 
         //when
-        viewModel.setInitialData(identifier, true)
+        viewModel.setInitialData(identifier = identifier, destroyOnBackPress = true, titleRes = null)
 
         //then
         assertThat(viewModel.authorizationModel.value, equalTo(AuthorizationViewModel(
@@ -254,7 +254,7 @@ class AuthorizationDetailsViewModelTest {
         val identifier = null
 
         //when
-        viewModel.setInitialData(identifier, true)
+        viewModel.setInitialData(identifier = identifier, destroyOnBackPress = true, titleRes = null)
 
         //then
         assertThat(viewModel.authorizationModel.value, equalTo(AuthorizationViewModel(
@@ -279,7 +279,7 @@ class AuthorizationDetailsViewModelTest {
         val identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1")
         val lifecycle = LifecycleRegistry(mock(LifecycleOwner::class.java))
         viewModel.bindLifecycleObserver(lifecycle)
-        viewModel.setInitialData(identifier, true)
+        viewModel.setInitialData(identifier = identifier, destroyOnBackPress = true, titleRes = null)
         clearInvocations(mockPollingService)
 
         //when
@@ -311,7 +311,7 @@ class AuthorizationDetailsViewModelTest {
     fun onViewClickTest_case1() {
         //given positive action
         val id = R.id.positiveActionView
-        viewModel.setInitialData(AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1
 
         //when
@@ -333,7 +333,7 @@ class AuthorizationDetailsViewModelTest {
     fun onViewClickTest_case2() {
         //given negative action
         val id = R.id.negativeActionView
-        viewModel.setInitialData(AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1
 
         //when
@@ -355,7 +355,7 @@ class AuthorizationDetailsViewModelTest {
     fun onViewClickTest_case3() {
         //given unknown action
         val id = R.id.actionView
-        viewModel.setInitialData(AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
@@ -385,7 +385,7 @@ class AuthorizationDetailsViewModelTest {
     @Throws(Exception::class)
     fun onTimerTickTest_case2() {
         //given expired authorization that should marked as TIME_OUT
-        viewModel.setInitialData(AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1
             .copy(endTime = DateTime.now().minusMinutes(1), viewMode = ViewMode.DEFAULT)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
@@ -404,7 +404,7 @@ class AuthorizationDetailsViewModelTest {
     @Throws(Exception::class)
     fun onTimerTickTest_case3() {
         //given authorization that should be destroyed (has destroyAt param)
-        viewModel.setInitialData(AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.TIME_OUT).apply {
             destroyAt = DateTime.now().minusMinutes(1)
         }
@@ -422,7 +422,7 @@ class AuthorizationDetailsViewModelTest {
     @Throws(Exception::class)
     fun onTimerTickTest_case4() {
         //given DEFAULT authorization
-        viewModel.setInitialData(AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.DEFAULT)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
@@ -438,7 +438,7 @@ class AuthorizationDetailsViewModelTest {
     @Throws(Exception::class)
     fun onTimerTickTest_case5() {
         //given LOADING authorization
-        viewModel.setInitialData(AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.LOADING)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
@@ -454,7 +454,7 @@ class AuthorizationDetailsViewModelTest {
     @Throws(Exception::class)
     fun onTimerTickTest_case6() {
         //given CONFIRM_PROCESSING authorization
-        viewModel.setInitialData(AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.CONFIRM_PROCESSING)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
@@ -470,7 +470,7 @@ class AuthorizationDetailsViewModelTest {
     @Throws(Exception::class)
     fun onTimerTickTest_case7() {
         //given DENY_PROCESSING authorization
-        viewModel.setInitialData(AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.DENY_PROCESSING)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
@@ -486,7 +486,7 @@ class AuthorizationDetailsViewModelTest {
     @Throws(Exception::class)
     fun onTimerTickTest_case8() {
         //given CONFIRM_SUCCESS authorization
-        viewModel.setInitialData(AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.CONFIRM_SUCCESS)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
@@ -502,7 +502,7 @@ class AuthorizationDetailsViewModelTest {
     @Throws(Exception::class)
     fun onTimerTickTest_case9() {
         //given DENY_SUCCESS authorization
-        viewModel.setInitialData(AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.DENY_SUCCESS)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
@@ -518,7 +518,7 @@ class AuthorizationDetailsViewModelTest {
     @Throws(Exception::class)
     fun onTimerTickTest_case10() {
         //given ERROR authorization
-        viewModel.setInitialData(AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.ERROR)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
@@ -534,7 +534,7 @@ class AuthorizationDetailsViewModelTest {
     @Throws(Exception::class)
     fun onTimerTickTest_case11() {
         //given TIME_OUT authorization
-        viewModel.setInitialData(AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.TIME_OUT)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
@@ -550,7 +550,7 @@ class AuthorizationDetailsViewModelTest {
     @Throws(Exception::class)
     fun onTimerTickTest_case12() {
         //given UNAVAILABLE authorization
-        viewModel.setInitialData(AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.UNAVAILABLE)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
@@ -567,11 +567,11 @@ class AuthorizationDetailsViewModelTest {
     fun getConnectionDataForAuthorizationPollingTest() {
         Assert.assertNull(viewModel.getConnectionDataForAuthorizationPolling())
 
-        viewModel.setInitialData(AuthorizationIdentifier(connectionID = "2_noKey", authorizationID = ""), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(connectionID = "2_noKey", authorizationID = ""), destroyOnBackPress = true, titleRes = null)
 
         Assert.assertNull(viewModel.getConnectionDataForAuthorizationPolling())
 
-        viewModel.setInitialData(AuthorizationIdentifier(connectionID = "1", authorizationID = "2_noKey"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(connectionID = "1", authorizationID = "2_noKey"), destroyOnBackPress = true, titleRes = null)
 
         assertThat(
             viewModel.getConnectionDataForAuthorizationPolling(),
@@ -583,7 +583,7 @@ class AuthorizationDetailsViewModelTest {
     @Throws(Exception::class)
     fun onFetchAuthorizationResultTest_case1() {
         //given initial authorization and success result
-        viewModel.setInitialData(AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), destroyOnBackPress = true, titleRes = null)
 
         //when
         viewModel.onFetchAuthorizationResult(result = encryptedData1, error = null)
@@ -599,7 +599,7 @@ class AuthorizationDetailsViewModelTest {
     @Throws(Exception::class)
     fun onFetchAuthorizationResultTest_case2() {
         //given DENY_PROCESSING authorization and success result
-        viewModel.setInitialData(AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.DENY_PROCESSING)
 
         //when
@@ -614,7 +614,7 @@ class AuthorizationDetailsViewModelTest {
     fun onFetchAuthorizationResultTest_case3() {
         //given 404 error
         val error = createRequestError(404)
-        viewModel.setInitialData(AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), destroyOnBackPress = true, titleRes = null)
         clearInvocations(mockConnectionsRepository)
 
         //when
@@ -630,7 +630,7 @@ class AuthorizationDetailsViewModelTest {
     fun onFetchAuthorizationResultTest_case4() {
         //given Connectivity error
         val error = ApiErrorData(errorClassName = ERROR_CLASS_SSL_HANDSHAKE, errorMessage = "ErrorMessage")
-        viewModel.setInitialData(AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), destroyOnBackPress = true, titleRes = null)
         clearInvocations(mockConnectionsRepository)
 
         //when
@@ -649,7 +649,7 @@ class AuthorizationDetailsViewModelTest {
             errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND,
             errorMessage = "Not found"
         )
-        viewModel.setInitialData(AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1
         clearInvocations(mockConnectionsRepository)
 
@@ -668,7 +668,7 @@ class AuthorizationDetailsViewModelTest {
     fun onConfirmDenyFailureTest() {
         //given 404 error
         val error = createRequestError(404)
-        viewModel.setInitialData(AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), destroyOnBackPress = true, titleRes = null)
 
         //when
         viewModel.onConfirmDenyFailure(error = error, connectionID = "333", authorizationID = "444")
@@ -683,7 +683,7 @@ class AuthorizationDetailsViewModelTest {
     @Throws(Exception::class)
     fun onConfirmDenySuccessTest_case1() {
         //given invalid result
-        viewModel.setInitialData(AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1
         clearInvocations(mockPollingService)
 
@@ -699,7 +699,7 @@ class AuthorizationDetailsViewModelTest {
     @Throws(Exception::class)
     fun onConfirmDenySuccessTest_case2() {
         //given TIME_OUT result
-        viewModel.setInitialData(AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.TIME_OUT)
         clearInvocations(mockPollingService)
 
@@ -718,7 +718,7 @@ class AuthorizationDetailsViewModelTest {
     @Throws(Exception::class)
     fun onConfirmDenySuccessTest_case3() {
         //given CONFIRM_PROCESSING authorization
-        viewModel.setInitialData(AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.CONFIRM_PROCESSING)
 
         //when
@@ -735,7 +735,7 @@ class AuthorizationDetailsViewModelTest {
     @Throws(Exception::class)
     fun onConfirmDenySuccessTest_case4() {
         //given DENY_PROCESSING authorization
-        viewModel.setInitialData(AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), true)
+        viewModel.setInitialData(identifier = AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), destroyOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.DENY_PROCESSING)
 
         //when
