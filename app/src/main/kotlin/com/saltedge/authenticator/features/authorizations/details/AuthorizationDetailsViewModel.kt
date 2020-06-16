@@ -42,6 +42,8 @@ import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.postEvent
 import org.joda.time.DateTime
 
 class AuthorizationDetailsViewModel(
@@ -56,9 +58,13 @@ class AuthorizationDetailsViewModel(
     ConfirmAuthorizationListener
 {
     val onErrorEvent = MutableLiveData<ViewModelEvent<String>>()
+    val onCloseAppEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onCloseViewEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onTimeUpdateEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val authorizationModel = MutableLiveData<AuthorizationViewModel>()
+    private var closeAppOnBackPress: Boolean = true
+    var titleRes: ResId = R.string.authorization_feature_title//TODO TEST
+        private set
 
     private var connectionAndKey: ConnectionAndKey? = null
     private var pollingService: SingleAuthorizationPollingService = apiManager.createSingleAuthorizationPollingService()
@@ -77,7 +83,14 @@ class AuthorizationDetailsViewModel(
         pollingService.contract = this
     }
 
-    fun setInitialData(identifier: AuthorizationIdentifier?) {
+    fun setInitialData(
+        identifier: AuthorizationIdentifier?,
+        destroyOnBackPress: Boolean?,
+        titleRes: ResId?
+    ) {
+        this.closeAppOnBackPress = destroyOnBackPress ?: true
+        this.titleRes = titleRes ?: R.string.authorization_feature_title
+        if (this.titleRes == 0) this.titleRes = R.string.authorization_feature_title
         connectionAndKey = createConnectionAndKey(
             connectionID = identifier?.connectionID ?: "",
             repository = connectionsRepository,
@@ -124,10 +137,15 @@ class AuthorizationDetailsViewModel(
         authorizationModel.value?.also { model ->
             when {
                 model.shouldBeSetTimeOutMode -> updateToFinalViewMode(ViewMode.TIME_OUT)
-                model.shouldBeDestroyed -> onCloseViewEvent.postValue(ViewModelEvent(Unit))
-                !model.ignoreTimeUpdate -> onTimeUpdateEvent.postValue(ViewModelEvent(Unit))
+                model.shouldBeDestroyed -> closeView()
+                !model.ignoreTimeUpdate -> onTimeUpdateEvent.postEvent()
             }
         }
+    }
+
+    fun onBackPress(): Boolean {//TODO TEST
+        closeView()
+        return false
     }
 
     override fun getConnectionDataForAuthorizationPolling(): ConnectionAndKey? = this.connectionAndKey
@@ -249,5 +267,10 @@ class AuthorizationDetailsViewModel(
     private fun stopPolling() {
         pollingService.contract = null
         pollingService.stop()
+    }
+
+    private fun closeView() {
+        if (closeAppOnBackPress) onCloseAppEvent.postEvent()
+        else onCloseViewEvent.postEvent()
     }
 }

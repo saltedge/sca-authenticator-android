@@ -45,6 +45,7 @@
     <color name="green_light_extra">#88DCAB</color>
     <color name="dark_theme_background">#040411</color>
     <color name="blue_black">#161E2A</color>
+    <color name="white_50">#88FFFFFF</color>
 
     <!--Aliases for Light mode-->
     <color name="color_accent">@color/primary</color>

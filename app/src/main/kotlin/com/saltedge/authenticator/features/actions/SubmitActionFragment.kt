@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.actions
 
-import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
@@ -33,17 +32,18 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CONNECTIONS_REQUEST_CODE
-import com.saltedge.authenticator.app.KEY_CONNECTION_GUID
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.SubmitActionBinding
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment
 import com.saltedge.authenticator.features.main.newAuthorizationListener
-import com.saltedge.authenticator.generated.callback.OnClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.tools.*
+import com.saltedge.authenticator.tools.addFragment
+import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.finishFragment
+import com.saltedge.authenticator.tools.showWarningDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_submit_action.*
 import javax.inject.Inject
@@ -107,7 +107,6 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener {
         viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let { activity?.finishFragment() }
         })
-
         viewModel.onShowErrorEvent.observe(this, Observer<ViewModelEvent<String>> {
             it.getContentIfNotHandled()?.let { message ->
                 activity?.showWarningDialog(
