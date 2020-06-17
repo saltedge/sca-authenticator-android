@@ -35,7 +35,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.main.buildWarning
+import com.saltedge.authenticator.features.main.buildWarningSnack
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.models.repository.ConnectionsRepository
 import com.saltedge.authenticator.models.repository.PreferenceRepository
@@ -207,7 +207,7 @@ abstract class LockableActivity : AppCompatActivity(),
     }
 
     private fun showLockWarningEvent() {
-        inactivityWarningSnackbar = this@LockableActivity.buildWarning(
+        inactivityWarningSnackbar = this@LockableActivity.buildWarningSnack(
             textResId = R.string.warning_application_was_locked,
             snackBarDuration = 5000,
             actionResId = R.string.actions_cancel

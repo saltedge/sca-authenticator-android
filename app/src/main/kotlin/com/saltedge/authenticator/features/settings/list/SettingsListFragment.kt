@@ -25,17 +25,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.features.main.buildWarning
+import com.saltedge.authenticator.features.main.buildWarningSnack
 import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
 import com.saltedge.authenticator.features.settings.passcode.PasscodeEditFragment
+import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.*
@@ -43,10 +46,12 @@ import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
 
-class SettingsListFragment : BaseFragment() {
+class SettingsListFragment : BaseFragment(), DialogHandlerListener {
 
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: SettingsListViewModel
+    private var dialogFragment: DialogFragment? = null
+    private var alertDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,31 +75,38 @@ class SettingsListFragment : BaseFragment() {
         setupViews()
     }
 
+    override fun closeActiveDialogs() {
+        if (dialogFragment?.isVisible == true) dialogFragment?.dismiss()
+        if (alertDialog?.isShowing == true) alertDialog?.dismiss()
+    }
+
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(SettingsListViewModel::class.java)
 
-        viewModel.languageClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it.getContentIfNotHandled()?.let { activity?.showDialogFragment(LanguageSelectDialog()) }
+        viewModel.languageClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
+            event.getContentIfNotHandled()?.let {
+                dialogFragment = LanguageSelectDialog().apply { activity?.showDialogFragment(this) }
+            }
         })
-        viewModel.passcodeClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it.getContentIfNotHandled()?.let { activity?.addFragment(PasscodeEditFragment()) }
+        viewModel.passcodeClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
+            event.getContentIfNotHandled()?.let { activity?.addFragment(PasscodeEditFragment()) }
         })
-        viewModel.aboutClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it.getContentIfNotHandled()?.let { activity?.addFragment(AboutListFragment()) }
+        viewModel.aboutClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
+            event.getContentIfNotHandled()?.let { activity?.addFragment(AboutListFragment()) }
         })
-        viewModel.supportClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it.getContentIfNotHandled()?.let { activity?.startMailApp() }
+        viewModel.supportClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
+            event.getContentIfNotHandled()?.let { activity?.startMailApp() }
         })
-        viewModel.clearClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it.getContentIfNotHandled()?.let {
-                activity?.showResetDataAndSettingsDialog(DialogInterface.OnClickListener { _, _ ->
+        viewModel.clearClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
+            event.getContentIfNotHandled()?.let {
+                alertDialog = activity?.showResetDataAndSettingsDialog(DialogInterface.OnClickListener { _, _ ->
                     viewModel.onUserConfirmedClearAppData()
                 })
             }
         })
         viewModel.clearSuccessEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let {
-                activity?.buildWarning(
+                activity?.buildWarningSnack(
                     textResId = R.string.settings_clear_success,
                     snackBarDuration = Snackbar.LENGTH_SHORT
                 )?.show()
@@ -103,7 +115,7 @@ class SettingsListFragment : BaseFragment() {
         viewModel.screenshotClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let {
                 view?.let {
-                    activity?.buildWarning(
+                    activity?.buildWarningSnack(
                         textResId = R.string.settings_restart_app,
                         snackBarDuration = Snackbar.LENGTH_LONG
                     )?.setAction(getString(android.R.string.ok)) { viewModel.restartConfirmed() }

@@ -34,7 +34,7 @@
     <color name="grey_40">#D8E5EE</color>
     <color name="grey_20">#EFF4F8</color>
     <color name="grey_light_extra">#F4F8FA</color>
-    <color name="grey_light_extra_50">#88F4F8FA</color>
+    <color name="grey_light_extra_50">#80F4F8FA</color>
     <color name="red">#FA5B5B</color>
     <color name="red_dark">#D54B4B</color>
     <color name="red_light">#FF7979</color>
@@ -45,7 +45,7 @@
     <color name="green_light_extra">#88DCAB</color>
     <color name="dark_theme_background">#040411</color>
     <color name="blue_black">#161E2A</color>
-    <color name="white_50">#88FFFFFF</color>
+    <color name="white_50">#80FFFFFF</color>
 
     <!--Aliases for Light mode-->
     <color name="color_accent">@color/primary</color>
@@ -71,7 +71,7 @@
     <color name="company_logo_background">@color/blue_black</color>
     <color name="appbar_action_icon_fill_color">@color/dark_100</color>
     <color name="menu_action_icon_fill_color">@color/dark_60</color>
-    <color name="qr_camera_mask_background">#80FFFFFF</color>
+    <color name="qr_camera_mask_background">#A6FFFFFF</color>
     <color name="bottom_menu_background">@android:color/white</color>
     <color name="authorization_header_view_background">@android:color/white</color>
     <color name="connections_list_item">@android:color/white</color>

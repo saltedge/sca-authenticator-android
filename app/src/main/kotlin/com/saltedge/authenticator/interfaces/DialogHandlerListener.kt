@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,6 @@
  */
 package com.saltedge.authenticator.interfaces
 
-interface BaseViewContract {
-    fun updateViewsContent() {}
+interface DialogHandlerListener {
+    fun closeActiveDialogs()
 }
