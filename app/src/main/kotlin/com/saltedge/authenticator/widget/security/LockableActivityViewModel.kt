@@ -211,9 +211,9 @@ class LockableActivityViewModel(
     }
 
     private fun calculateWrongAttemptWaitTime(attemptNumber: Int): Long = when {
-        attemptNumber < 6 -> 0L
-        attemptNumber == 6 -> 1L * MILLIS_IN_MINUTE
-        attemptNumber == 7 -> 3L * MILLIS_IN_MINUTE
+        attemptNumber < 4 -> 0L
+        attemptNumber == 5 -> 1L * MILLIS_IN_MINUTE
+        attemptNumber == 6 -> 3L * MILLIS_IN_MINUTE
         else -> 5L * MILLIS_IN_MINUTE
     }
 }
