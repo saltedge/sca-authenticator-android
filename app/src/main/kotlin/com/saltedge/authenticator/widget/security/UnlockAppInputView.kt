@@ -23,11 +23,13 @@ package com.saltedge.authenticator.widget.security
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.LinearLayout
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.setVisible
 import com.saltedge.authenticator.widget.passcode.PasscodeInputListener
 import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
+import kotlinx.android.synthetic.main.view_passcode_input.view.*
 import kotlinx.android.synthetic.main.view_unlock.view.*
 
 class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
@@ -67,12 +69,7 @@ class UnlockAppInputView(context: Context, attrs: AttributeSet) : LinearLayout(c
         resetPasscodeLayout?.setVisible(show)
     }
 
-    fun showWarning(message: String = "") {
-        passcodeInputView?.lockInput = true
-        passcodeInputView?.setConstantError(message)
-    }
-
-    fun enableInput() {
-        passcodeInputView?.lockInput = false
+    fun hideWarning() {
+        passcodeInputView?.descriptionView?.visibility = View.GONE
     }
 }
