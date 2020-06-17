@@ -22,15 +22,12 @@ package com.saltedge.authenticator.features.connections.list
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
@@ -52,7 +49,6 @@ import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
 import kotlinx.android.synthetic.main.fragment_connections_list.*
-import kotlinx.android.synthetic.main.fragment_connections_list.emptyView
 import javax.inject.Inject
 
 class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnClickListener {
@@ -119,7 +115,8 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
         lifecycle.addObserver(viewModel)
 
         viewModel.listItems.observe(this, Observer<List<ConnectionViewModel>> {
-            headerDecorator?.headerPositions = it.mapIndexed { index, _ -> index }.toTypedArray()
+            headerDecorator?.setHeaderForAllItems(it.count())
+            headerDecorator?.footerPositions = arrayOf(it.count() - 1)
             adapter.data = it
         })
         viewModel.onQrScanClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
@@ -144,7 +141,9 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
         viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<Int>> { event ->
             event.getContentIfNotHandled()?.let { itemIndex ->
                 viewModel.listItemsValues.getOrNull(itemIndex)?.let { item ->
-                    showPopupMenu(view = connectionsListView?.getChildAt(itemIndex), item = item)
+                    connectionsListView?.layoutManager?.findViewByPosition(itemIndex)?.let { anchorView ->
+                        showPopupMenu(parentView = connectionsListView, anchorView = anchorView, item = item)
+                    }
                 }
             }
         })
@@ -175,21 +174,22 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
         binding.executePendingBindings()
     }
 
-    private fun showPopupMenu(view: View?, item: ConnectionViewModel) {
+    private fun showPopupMenu(parentView: View?, anchorView: View?, item: ConnectionViewModel) {//TODO REFACTOR TO STANDALONE CLASS WITH RECYCLERVIEW
+        if (parentView == null || anchorView == null) return
         try {
             val layoutInflater = context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val popupView = layoutInflater.inflate(R.layout.view_popup_menu, null)
-            popupWindow = PopupWindow(
+            val popup = PopupWindow(
                 popupView,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 true
             )
 
-            val renameView = popupView.findViewById<LinearLayout>(R.id.renameView)
-            val reconnectView = popupView.findViewById<LinearLayout>(R.id.reconnectView)
-            val contactSupportView = popupView.findViewById<LinearLayout>(R.id.contactSupportView)
-            val deleteView = popupView.findViewById<LinearLayout>(R.id.deleteView)
+            val renameView = popupView.findViewById<ViewGroup>(R.id.renameView)
+            val reconnectView = popupView.findViewById<ViewGroup>(R.id.reconnectView)
+            val contactSupportView = popupView.findViewById<ViewGroup>(R.id.contactSupportView)
+            val deleteView = popupView.findViewById<ViewGroup>(R.id.deleteView)
             val deleteImageView = popupView.findViewById<ImageView>(R.id.deleteImageView)
             val deleteTextView = popupView.findViewById<TextView>(R.id.deleteTextView)
 
@@ -214,11 +214,18 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
                 viewModel.onDeleteOptionsSelected()
             }
 
-            popupWindow?.isOutsideTouchable = true
-            popupWindow?.elevation = convertDpToPx(30f).toFloat()
-            val x = view?.width ?: 0
-            val y = (view?.height ?: 0) / 2
-            popupWindow?.showAsDropDown(view, x, -y)
+            popup.isOutsideTouchable = true
+            popup.elevation = convertDpToPx(30f).toFloat()
+
+            val itemsCount = if (item.reconnectOptionIsVisible) 4 else 3
+            val popupMenuItemHeight = anchorView.context.resources.getDimensionPixelSize(R.dimen.popupMenuItemHeight)
+            val popupMenuTpBottomPadding = anchorView.context.resources.getDimensionPixelSize(R.dimen.popupMenuTpBottomPadding)
+            val popupHeight = popupMenuItemHeight * itemsCount + popupMenuTpBottomPadding * 2
+            val y = if (anchorView.bottom + popupHeight > parentView.bottom ) {
+                if (anchorView.bottom > parentView.bottom) popupHeight + anchorView.height else popupHeight
+            } else 0
+            popup.showAsDropDown(anchorView, 0, -y, Gravity.TOP or Gravity.END)
+            popupWindow = popup
         } catch (e: Exception) {
             e.log()
         }
