@@ -25,38 +25,21 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.databinding.SettingsHeaderBinding
 import com.saltedge.authenticator.databinding.SettingsItemBinding
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.widget.list.AbstractListAdapter
 
-class SettingsAdapter(
-    private val listener: ListItemClickListener
-) : AbstractListAdapter() {
-
-    override fun getItemViewType(position: Int): Int {
-        return if (getItem(position) is SettingsHeaderViewModelModel) 0 else 1
-    }
+class SettingsAdapter(private val listener: ListItemClickListener) : AbstractListAdapter() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return when (viewType) {
-            0 -> {
-                val binding: SettingsHeaderBinding = DataBindingUtil
-                    .inflate(inflater, R.layout.view_item_setting_header, parent, false)
-                SettingsHeaderViewHolder(binding)
-            }
-            else -> {
-                val binding: SettingsItemBinding = DataBindingUtil
-                    .inflate(inflater, R.layout.view_item_setting, parent, false)
-                binding.listener = listener
-                SettingsItemViewHolder(binding)
-            }
-        }
+        val binding: SettingsItemBinding = DataBindingUtil
+            .inflate(inflater, R.layout.view_item_setting, parent, false)
+        binding.listener = listener
+        return SettingsItemViewHolder(binding)
     }
 
     override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
-        if (holder is SettingsHeaderViewHolder) holder.bind(item as SettingsHeaderViewModelModel)
-        else (holder as SettingsItemViewHolder).bind(item as SettingsItemViewModel)
+        (holder as SettingsItemViewHolder).bind(item as SettingsItemViewModel)
     }
 }

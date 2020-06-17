@@ -27,6 +27,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.CookieManager
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -34,30 +35,35 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.ConnectProviderBinding
+import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.Token
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import com.saltedge.authenticator.sdk.web.ConnectWebClient
 import com.saltedge.authenticator.sdk.web.ConnectWebClientContract
-import com.saltedge.authenticator.tools.*
+import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.finishFragment
+import com.saltedge.authenticator.tools.showErrorDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_connect.*
-import kotlinx.android.synthetic.main.fragment_connect.completeView
-import kotlinx.android.synthetic.main.fragment_submit_action.*
 import javax.inject.Inject
 
 class ConnectProviderFragment : BaseFragment(),
     ConnectWebClientContract,
     OnBackPressListener,
-    DialogInterface.OnClickListener {
-
+    DialogInterface.OnClickListener,
+    DialogHandlerListener
+{
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: ConnectProviderViewModel
     private val webViewClient = ConnectWebClient(contract = this)
     private lateinit var binding: ConnectProviderBinding
+    private var alertDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,6 +125,10 @@ class ConnectProviderFragment : BaseFragment(),
         dismissLoadProgress()
     }
 
+    override fun closeActiveDialogs() {
+        if (alertDialog?.isShowing == true) alertDialog?.dismiss()
+    }
+
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(ConnectProviderViewModel::class.java)
         lifecycle.addObserver(viewModel)
@@ -128,7 +138,7 @@ class ConnectProviderFragment : BaseFragment(),
         })
         viewModel.onShowErrorEvent.observe(this, Observer<ViewModelEvent<String>> {
             it.getContentIfNotHandled()?.let { message ->
-                activity?.showErrorDialog(message = message, listener = this)
+                alertDialog = activity?.showErrorDialog(message = message, listener = this)
             }
         })
         viewModel.onUrlChangedEvent.observe(this, Observer<ViewModelEvent<String?>> {
@@ -157,17 +167,15 @@ class ConnectProviderFragment : BaseFragment(),
         })
 
         viewModel.setInitialData(
-            initialConnectData = arguments?.getSerializable(KEY_CONNECT_DATA) as? ConnectAppLinkData,
+            initialConnectData = arguments?.getSerializable(KEY_DATA) as? ConnectAppLinkData,
             connectionGuid = arguments?.getString(KEY_GUID)
         )
     }
 
     companion object {
-        const val KEY_CONNECT_DATA = "KEY_CONNECT_DATA"
-
         fun newInstance(connectAppLinkData: ConnectAppLinkData): ConnectProviderFragment {
             return ConnectProviderFragment().apply {
-                arguments = Bundle().apply { putSerializable(KEY_CONNECT_DATA, connectAppLinkData) }
+                arguments = Bundle().apply { putSerializable(KEY_DATA, connectAppLinkData) }
             }
         }
 

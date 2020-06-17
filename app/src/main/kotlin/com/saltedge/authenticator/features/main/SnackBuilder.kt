@@ -30,13 +30,13 @@ import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.setFont
 
-fun FragmentActivity.buildWarning(
+fun FragmentActivity.buildWarningSnack(
     textResId: Int,
     snackBarDuration: Int = Snackbar.LENGTH_INDEFINITE,
     actionResId: Int? = null
-) = getSnackbarAnchorView()?.buildWarning(textResId, snackBarDuration, actionResId)
+) = getSnackbarAnchorView()?.buildWarningSnack(textResId, snackBarDuration, actionResId)
 
-fun View.buildWarning(textResId: Int, snackBarDuration: Int, actionResId: Int?) = buildSnackbar(
+fun View.buildWarningSnack(textResId: Int, snackBarDuration: Int, actionResId: Int?) = buildSnackbar(
     textResId = textResId,
     snackBarDuration = snackBarDuration,
     actionResId = actionResId

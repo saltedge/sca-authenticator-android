@@ -134,6 +134,9 @@
     <dimen name="info_view_small_icon">@dimen/dp_70</dimen>
     <dimen name="info_view_big_icon">@dimen/dp_96</dimen>
     <dimen name="authorizations_headers_pager_height">@dimen/dp_96</dimen>
-    <dimen name="connections_list_logo_radius">@dimen/dp_12</dimen>
     <dimen name="authorizations_list_logo_radius">@dimen/dp_6</dimen>
+    <dimen name="connections_list_logo_radius">@dimen/dp_12</dimen>
+    <dimen name="connections_list_item_h_margin">@dimen/dp_16</dimen>
+    <dimen name="popupMenuItemHeight">@dimen/dp_48</dimen>
+    <dimen name="popupMenuTpBottomPadding">@dimen/dp_12</dimen>
 </resources>

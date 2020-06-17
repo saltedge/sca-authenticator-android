@@ -24,12 +24,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.features.main.buildWarning
+import com.saltedge.authenticator.features.main.buildWarningSnack
+import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.finishFragment
 import com.saltedge.authenticator.tools.showWarningDialog
@@ -37,10 +39,11 @@ import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_edit_passcode.*
 import javax.inject.Inject
 
-class PasscodeEditFragment : BaseFragment() {
+class PasscodeEditFragment : BaseFragment(), DialogHandlerListener {
 
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     lateinit var viewModel: PasscodeEditViewModel
+    private var alertDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +78,10 @@ class PasscodeEditFragment : BaseFragment() {
         super.onStop()
     }
 
+    override fun closeActiveDialogs() {
+        if (alertDialog?.isShowing == true) alertDialog?.dismiss()
+    }
+
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(PasscodeEditViewModel::class.java)
         viewModel.bindLifecycleObserver(lifecycle = lifecycle)
@@ -94,13 +101,16 @@ class PasscodeEditFragment : BaseFragment() {
         viewModel.infoEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { messageRes ->
                 view?.let {
-                    activity?.buildWarning(textResId = messageRes, snackBarDuration = Snackbar.LENGTH_SHORT)?.show()
+                    activity?.buildWarningSnack(
+                        textResId = messageRes,
+                        snackBarDuration = Snackbar.LENGTH_SHORT
+                    )?.show()
                 }
             }
         })
         viewModel.warningEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { messageRes ->
-                if (isVisible) activity?.showWarningDialog(messageRes)
+                alertDialog = activity?.showWarningDialog(messageRes)
             }
         })
         viewModel.closeViewEvent.observe(this, Observer { event ->

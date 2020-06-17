@@ -102,7 +102,8 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
         viewModel.setInitialData(arguments?.getSerializable(KEY_CONNECTIONS) as List<ConnectionViewModel>)
 
         viewModel.listItems.observe(this, Observer<List<ConnectionViewModel>> {
-            headerDecorator?.headerPositions = it.mapIndexed { index, _ -> index }.toTypedArray()
+            headerDecorator?.setHeaderForAllItems(it.count())
+            headerDecorator?.footerPositions = arrayOf(it.count() - 1)
             it?.let { adapter.data = it }
         })
 

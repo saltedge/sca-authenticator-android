@@ -44,7 +44,7 @@ import com.saltedge.authenticator.sdk.tools.extractActionAppLinkData
 import com.saltedge.authenticator.sdk.tools.extractConnectAppLinkData
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.applyPreferenceLocale
-import com.saltedge.authenticator.tools.postEvent
+import com.saltedge.authenticator.tools.postUnitEvent
 
 class MainActivityViewModel(
     val appContext: Context,
@@ -176,7 +176,7 @@ class MainActivityViewModel(
 
     fun onUnlock() {
         if (!initialQrScanWasStarted && connectionsRepository.isEmpty()) {
-            onQrScanClickEvent.postEvent()
+            onQrScanClickEvent.postUnitEvent()
             initialQrScanWasStarted = true
         }
     }

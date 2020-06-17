@@ -18,15 +18,8 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.settings.common
+package com.saltedge.authenticator.interfaces
 
-import androidx.recyclerview.widget.RecyclerView
-import com.saltedge.authenticator.databinding.SettingsHeaderBinding
-
-class SettingsHeaderViewHolder(val binding: SettingsHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
-
-    fun bind(item: SettingsHeaderViewModelModel) {
-        binding.item = item
-        binding.executePendingBindings()
-    }
+interface DialogHandlerListener {
+    fun closeActiveDialogs()
 }
