@@ -71,7 +71,6 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
             field = value
             keypadView?.setupFingerAction(active = value)
         }
-    var lockInput: Boolean = false
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_passcode_input, this)
@@ -79,24 +78,20 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
     }
 
     override fun onDigitKeyClick(value: String) {
-        if (lockInput) return
         val text: String = passcodeLabelView?.text?.toString() ?: return
         if (text.length < PASSCODE_MAX_SIZE) updatePasscodeOutput(text + value)
         else showError(R.string.errors_max_passcode)
     }
 
     override fun onFingerKeyClick() {
-        if (lockInput) return
         listener?.onBiometricActionSelected()
     }
 
     override fun onForgotKeyClick() {
-        if (lockInput) return
         listener?.onForgotActionSelected()
     }
 
     override fun onDeleteKeyClick() {
-        if (lockInput) return
         val text: String = passcodeLabelView?.text?.toString() ?: return
         if (text.isNotEmpty()) updatePasscodeOutput(text.take(text.length - 1))
     }
@@ -162,10 +157,6 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
 
         descriptionView?.alpha = 1f
         descriptionView?.animate()?.setStartDelay(3000L)?.alpha(0f)?.setDuration(500L)?.start()
-    }
-
-    fun setConstantError(error: String) {
-        descriptionView?.text = error
     }
 
     @Suppress("DEPRECATION")

@@ -20,9 +20,13 @@
  */
 package com.saltedge.authenticator.features.actions
 
+import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import android.view.View
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.CONNECTIONS_REQUEST_CODE
+import com.saltedge.authenticator.app.KEY_CONNECTION_GUID
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -110,7 +114,6 @@ class SubmitActionViewModelTest {
         viewModel.onActionInitSuccess(response = connectUrlData)
 
         //than
-        assertNotNull(viewModel.onCloseEvent.value)
         assertThat(
             viewModel.setResultAuthorizationIdentifier.value,
             equalTo(
@@ -343,7 +346,6 @@ class SubmitActionViewModelTest {
         )
         viewModel.onActionInitSuccess(response = connectUrlData)
 
-        assertNotNull(viewModel.onCloseEvent.value)
         assertThat(
             viewModel.setResultAuthorizationIdentifier.value,
             equalTo(
@@ -396,6 +398,105 @@ class SubmitActionViewModelTest {
         viewModel.onViewCreated()
 
         //than
+        Mockito.verify(mockApiManager).sendAction(
+            actionUUID = "123456",
+            connectionAndKey = ConnectionAndKey(
+                connection = connection,
+                key = mockPrivateKey
+            ),
+            resultCallback = viewModel
+        )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onActivityResultTestCase1() {
+        //given wrong requestCode
+        val requestCode = 0
+        val resultCode = Activity.RESULT_OK
+        val intent: Intent = Intent().putExtra(KEY_CONNECTION_GUID, "1")
+
+        //when
+        viewModel.onActivityResult(requestCode, resultCode, intent)
+
+        //than
+        assertNotNull(viewModel.onCloseEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onActivityResultTestCase2() {
+        //given wrong resultCode
+        val requestCode = CONNECTIONS_REQUEST_CODE
+        val resultCode = Activity.RESULT_CANCELED
+        val intent: Intent = Intent().putExtra(KEY_CONNECTION_GUID, "1")
+
+        //when
+        viewModel.onActivityResult(requestCode, resultCode, intent)
+
+        //than
+        assertNotNull(viewModel.onCloseEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onActivityResultTestCase3() {
+        //given wrong Intent
+        val requestCode = CONNECTIONS_REQUEST_CODE
+        val resultCode = Activity.RESULT_OK
+        val intent: Intent? = null
+
+        //when
+        viewModel.onActivityResult(requestCode, resultCode, intent)
+
+        //than
+        assertNotNull(viewModel.onCloseEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onActivityResultTestCase4() {
+        //given wrong connection guid
+        val requestCode = CONNECTIONS_REQUEST_CODE
+        val resultCode = Activity.RESULT_OK
+        val intent: Intent = Intent().putExtra(KEY_CONNECTION_GUID, "")
+
+        //when
+        viewModel.onActivityResult(requestCode, resultCode, intent)
+
+        //than
+        assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onActivityResultTestCase5() {
+        //given
+        val connection = Connection().apply {
+            guid = "guid1"
+            accessToken = ""
+            code = "demobank1"
+            name = "Demobank1"
+        }
+        Mockito.`when`(mockConnectionsRepository.getByConnectUrl("https://www.fentury.com/")).thenReturn(listOf(connection))
+        Mockito.`when`(mockConnectionsRepository.getByGuid("guid1")).thenReturn(connection)
+        Mockito.`when`(mockKeyStoreManager.createConnectionAndKeyModel(connection)).thenReturn(ConnectionAndKey(connection, mockPrivateKey))
+        viewModel.setInitialData(
+            actionAppLinkData = ActionAppLinkData(
+                actionUUID = "123456",
+                connectUrl = "https://www.fentury.com/",
+                returnTo = "https://www.saltedge.com/"
+            )
+        )
+        val requestCode = CONNECTIONS_REQUEST_CODE
+        val resultCode = Activity.RESULT_OK
+        val intent: Intent = Intent().putExtra(KEY_CONNECTION_GUID, "guid1")
+
+        //when
+        viewModel.onActivityResult(requestCode, resultCode, intent)
+
+        //than
+        assertThat(viewModel.actionProcessingVisibility.value, equalTo(View.VISIBLE))
         Mockito.verify(mockApiManager).sendAction(
             actionUUID = "123456",
             connectionAndKey = ConnectionAndKey(

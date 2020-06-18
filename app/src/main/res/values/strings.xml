@@ -78,6 +78,8 @@
     <string name="errors_invalid_qr">Invalid QR code, please try again</string>
     <string name="errors_unable_connect_provider">Something went wrong. Unable connect to service provider.</string>
     <string name="errors_max_passcode">You reached passcode\nmaximum length</string>
+    <string name="errors_app_launch_title">App launch interrupted</string>
+    <string name="errors_app_launch_message">Application cannot be launched due to security breach. You may contact our technical support for clarification.</string>
 
     <string name="onboarding_allow_notifications_description">Enable notifications, to receive useful alerts and always be up to speed with your transactions.</string>
     <string name="onboarding_allow_notifications_title">Allow Notifications</string>
@@ -118,7 +120,7 @@
     <string name="authorizations_feature_title">Authorizations</string>
     <string name="authorization_feature_title">Authorization</string>
     <string name="authorizations_empty_title">Nothing to authorize</string>
-    <string name="authorizations_empty_description">You do not have any active authorization request yet. Once initiate an action, you will have a few minutes to authorize it.</string>
+    <string name="authorizations_empty_description">You don’t have any active authorization requests yet. Scan QR code for instant action or to connect new provider.</string>
     <string name="authorizations_no_internet_title">You are offline</string>
     <string name="authorizations_no_internet_description">Please check your network connection.</string>
     <string name="authorizations_loading">Loading…</string>
@@ -139,7 +141,7 @@
     <string name="authorizations_unavailable_description">Authorization request was either processed, canceled or expired.</string>
 
     <string name="settings_feature_title">Settings</string>
-    <string name="settings_report_bug">Report a bug</string>
+    <string name="settings_report">Report an issue</string>
     <string name="settings_language">Language</string>
     <string name="settings_clear_data">Clear all data</string>
     <string name="settings_notifications">Notifications</string>
@@ -150,14 +152,13 @@
     <string name="settings_passcode_success">New passcode successfully set</string>
     <string name="settings_screenshot_lock">Screenshot lock</string>
     <string name="settings_restart_app">Restart app for these changes to take effect</string>
-    <string name="settings_general">General</string>
-    <string name="settings_info">Info</string>
     <string name="settings_clear_message">App data including connected providers and user data will be permanently deleted.</string>
+    <string name="settings_clear_success">App data cleared successfully</string>
 
     <string name="about_feature_title">About</string>
     <string name="about_app_version">App Version</string>
     <string name="about_copyright">Copyright</string>
-    <string name="about_copyright_description">Salt Edge Authenticator © 2019 Salt Edge Inc.</string>
+    <string name="about_copyright_description">Salt Edge Authenticator © 2020 Salt Edge Inc.</string>
     <string name="about_terms_service">Terms of Service</string>
     <string name="about_open_source_licenses">Open-source licenses</string>
 

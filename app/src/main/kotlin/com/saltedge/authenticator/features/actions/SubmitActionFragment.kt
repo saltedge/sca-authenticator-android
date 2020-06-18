@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.actions
 
-import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
@@ -28,31 +27,35 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CONNECTIONS_REQUEST_CODE
-import com.saltedge.authenticator.app.KEY_CONNECTION_GUID
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.SubmitActionBinding
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment
 import com.saltedge.authenticator.features.main.newAuthorizationListener
-import com.saltedge.authenticator.generated.callback.OnClickListener
+import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.tools.*
+import com.saltedge.authenticator.tools.addFragment
+import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.finishFragment
+import com.saltedge.authenticator.tools.showWarningDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_submit_action.*
 import javax.inject.Inject
 
-class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener {
+class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, DialogHandlerListener {
 
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: SubmitActionViewModel
     private lateinit var binding: SubmitActionBinding
+    private var alertDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,18 +94,17 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (data == null || resultCode != Activity.RESULT_OK) return
-        if (requestCode == CONNECTIONS_REQUEST_CODE) {
-            val connectionGuid = data.getStringExtra(KEY_CONNECTION_GUID)
-            viewModel.selectConnection(connectionGuid)
-        }
+        viewModel.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun closeActiveDialogs() {
+        if (alertDialog?.isShowing == true) alertDialog?.dismiss()
     }
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(SubmitActionViewModel::class.java)
         lifecycle.addObserver(viewModel)
-
         viewModel.setInitialData(
             actionAppLinkData = arguments?.getSerializable(KEY_ACTION_DEEP_LINK_DATA) as? ActionAppLinkData
                 ?: return
@@ -111,13 +113,10 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener {
         viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let { activity?.finishFragment() }
         })
-
         viewModel.onShowErrorEvent.observe(this, Observer<ViewModelEvent<String>> {
             it.getContentIfNotHandled()?.let { message ->
-                activity?.showWarningDialog(
-                    message = message,
-                    listener = this
-                )}
+                alertDialog = activity?.showWarningDialog(message = message, listener = this)
+            }
         })
         viewModel.onOpenLinkEvent.observe(this, Observer<ViewModelEvent<Uri>> {
             it.getContentIfNotHandled()?.let { url ->
@@ -139,10 +138,11 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener {
         viewModel.mainActionTextResId.observe(this, Observer<Int> { mainActionTextResId ->
             completeView?.setMainActionText(mainActionTextResId)
         })
-        viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<List<ConnectionViewModel>> {
-            val selectConnectionsFragment = SelectConnectionsFragment.newInstance(connections = it)
-            selectConnectionsFragment.setTargetFragment(this, CONNECTIONS_REQUEST_CODE)
-            activity?.addFragment(selectConnectionsFragment)
+        viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<List<ConnectionViewModel>> { list ->
+            SelectConnectionsFragment.newInstance(connections = list).also {
+                it.setTargetFragment(this, CONNECTIONS_REQUEST_CODE)
+                activity?.addFragment(fragment = it, animateTransition = false)
+            }
         })
     }
 

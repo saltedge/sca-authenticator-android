@@ -37,7 +37,6 @@ import com.saltedge.authenticator.tools.setVisible
 import kotlinx.android.synthetic.main.view_authorization_content.view.*
 
 class AuthorizationContentView : LinearLayout {
-
     private var blurringView: View? = null
 
     constructor(context: Context) : super(context)

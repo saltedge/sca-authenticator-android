@@ -35,7 +35,9 @@ import com.saltedge.authenticator.cloud.clearNotifications
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.sdk.constants.KEY_TITLE
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
+import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.finishFragment
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -63,7 +65,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
         savedInstanceState: Bundle?
     ): View? {
         activityComponents?.updateAppbar(
-            titleResId = R.string.authorization_feature_title,
+            titleResId = viewModel.titleRes,
             backActionImageResId = R.drawable.ic_appbar_action_close
         )
         return inflater.inflate(R.layout.fragment_authorization_details, container, false)
@@ -85,8 +87,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
     }
 
     override fun onBackPress(): Boolean {
-        activity?.finish()
-        return true
+        return viewModel.onBackPress()
     }
 
     override fun onClick(view: View?) {
@@ -119,6 +120,9 @@ class AuthorizationDetailsFragment : BaseFragment(),
                 view?.let { anchor -> Snackbar.make(anchor, message, Snackbar.LENGTH_LONG).show() }
             }
         })
+        viewModel.onCloseAppEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
+            event.getContentIfNotHandled()?.let { activity?.finish() }
+        })
         viewModel.onCloseViewEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
             event.getContentIfNotHandled()?.let { activity?.finishFragment() }
         })
@@ -131,19 +135,32 @@ class AuthorizationDetailsFragment : BaseFragment(),
             contentView?.setViewMode(it.viewMode)
         })
 
-        viewModel.setInitialData(identifier = arguments?.getSerializable(KEY_ID) as? AuthorizationIdentifier)
+        viewModel.setInitialData(
+            identifier = arguments?.getSerializable(KEY_ID) as? AuthorizationIdentifier,
+            closeAppOnBackPress = arguments?.getBoolean(KEY_CLOSE_APP, true),
+            titleRes = arguments?.getInt(KEY_TITLE, R.string.authorization_feature_title)
+        )
     }
 
     companion object {
+        private const val KEY_CLOSE_APP = "KEY_DESTROY_ON_BACK"
         /**
          * Create new instance of AuthorizationDetailsFragment
          *
          * @param identifier - wrapper for ID of Connection and ID of Authorization
          * @return AuthorizationDetailsFragment
          */
-        fun newInstance(identifier: AuthorizationIdentifier): AuthorizationDetailsFragment {
+        fun newInstance(
+            identifier: AuthorizationIdentifier,
+            closeAppOnBackPress: Boolean = true,
+            titleRes: ResId? = null
+        ): AuthorizationDetailsFragment {
             return AuthorizationDetailsFragment().apply {
-                arguments = Bundle().apply { putSerializable(KEY_ID, identifier) }
+                arguments = Bundle().apply {
+                    putSerializable(KEY_ID, identifier)
+                    putBoolean(KEY_CLOSE_APP, closeAppOnBackPress)
+                    titleRes?.let { putInt(KEY_TITLE, it) }
+                }
             }
         }
     }

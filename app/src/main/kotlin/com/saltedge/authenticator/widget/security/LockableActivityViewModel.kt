@@ -40,7 +40,7 @@ import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.tools.millisToRemainedMinutes
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.tools.log
-import com.saltedge.authenticator.tools.postEvent
+import com.saltedge.authenticator.tools.postUnitEvent
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -60,6 +60,7 @@ class LockableActivityViewModel(
     val savedPasscode: String
         get() = passcodeTools.getPasscode()
     val lockViewVisibility = MutableLiveData<Int>(View.VISIBLE)
+    val onLockEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onUnlockEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val dismissLockWarningEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val showLockWarningEvent = MutableLiveData<ViewModelEvent<Unit>>()
@@ -98,7 +99,7 @@ class LockableActivityViewModel(
     fun onSuccessAuthentication() {
         preferenceRepository.pinInputAttempts = 0
         preferenceRepository.blockPinInputTillTime = 0L
-        successVibrateEvent.postEvent()
+        successVibrateEvent.postUnitEvent()
         unlockScreen()
     }
 
@@ -112,7 +113,7 @@ class LockableActivityViewModel(
             shouldBlockInput(inputAttempt) -> disableUnlockInput()
             shouldWipeApplication(inputAttempt) -> {
                 wipeApplication()
-                showAppClearWarningEvent.postEvent()
+                showAppClearWarningEvent.postUnitEvent()
             }
         }
     }
@@ -127,7 +128,7 @@ class LockableActivityViewModel(
         lockScreen()
     }
 
-    fun clearAppData() {
+    fun onUserConfirmedClearAppData() {
         sendRevokeRequestForConnections(connectionsRepository.getAllActiveConnections())
         wipeApplication()
     }
@@ -138,23 +139,24 @@ class LockableActivityViewModel(
 
     private fun lockScreen() {
         lockViewVisibility.postValue(View.VISIBLE)
+        onLockEvent.postUnitEvent()
         val inputAttempt = preferenceRepository.pinInputAttempts
         if (shouldBlockInput(inputAttempt)) disableUnlockInput()
-        else if (isBiometricInputReady) showBiometricPromptEvent.postEvent()
+        else if (isBiometricInputReady) showBiometricPromptEvent.postUnitEvent()
     }
 
     private fun unlockScreen() {
         lockViewVisibility.postValue(View.GONE)
-        onUnlockEvent.postEvent()
+        onUnlockEvent.postUnitEvent()
         restartInactivityTimer()
     }
 
     private fun restartInactivityTimer() {
-        dismissLockWarningEvent.postEvent()
+        dismissLockWarningEvent.postUnitEvent()
         timer?.cancel()
         timer = Timer().apply {
             schedule(object : TimerTask() {
-                override fun run() { showLockWarningEvent.postEvent() }
+                override fun run() { showLockWarningEvent.postUnitEvent() }
             }, inactivityTimerDuration)
         }
     }
@@ -176,7 +178,7 @@ class LockableActivityViewModel(
             countDownTimer = object : CountDownTimer(blockTime, blockTime) {
                 override fun onFinish() {
                     resetTimer()
-                    enablePasscodeInputEvent.postEvent()
+                    enablePasscodeInputEvent.postUnitEvent()
                 }
 
                 override fun onTick(millisUntilFinished: Long) {}
@@ -209,9 +211,9 @@ class LockableActivityViewModel(
     }
 
     private fun calculateWrongAttemptWaitTime(attemptNumber: Int): Long = when {
-        attemptNumber < 6 -> 0L
-        attemptNumber == 6 -> 1L * MILLIS_IN_MINUTE
-        attemptNumber == 7 -> 3L * MILLIS_IN_MINUTE
+        attemptNumber < 4 -> 0L
+        attemptNumber == 5 -> 1L * MILLIS_IN_MINUTE
+        attemptNumber == 6 -> 3L * MILLIS_IN_MINUTE
         else -> 5L * MILLIS_IN_MINUTE
     }
 }

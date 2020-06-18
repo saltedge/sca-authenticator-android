@@ -23,34 +23,8 @@ package com.saltedge.authenticator.tools
 import android.content.DialogInterface
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.saltedge.authenticator.R
-
-/**
- * Show dialog with given title and message
- *
- * @receiver FragmentActivity
- * @param titleResId - the title that appears in the dialog
- * @param message - the message that appears in the dialog
- * @param listener - on dialog action click listener
- */
-fun FragmentActivity.showDialogWithTitleAndMessage(
-    titleResId: Int,
-    message: String?,
-    listener: DialogInterface.OnClickListener? = null
-) {
-    if (message?.isBlank() != false) return
-    try {
-        AlertDialog.Builder(this, R.style.AlertDialogTheme)
-            .setTitle(titleResId)
-            .setMessage(message)
-            .setPositiveButton(android.R.string.ok, listener)
-            .show()
-    } catch (e: Exception) {
-        e.log()
-    }
-}
 
 /**
  * Show warning dialog with given message
@@ -59,11 +33,12 @@ fun FragmentActivity.showDialogWithTitleAndMessage(
  * @param messageId - the message that appears in the dialog
  * @see showWarningDialog
  */
-fun FragmentActivity.showWarningDialog(@StringRes messageId: Int) {
-    try {
+fun FragmentActivity.showWarningDialog(@StringRes messageId: Int): AlertDialog? {
+    return try {
         showWarningDialog(message = getString(messageId))
     } catch (e: Exception) {
         e.log()
+        null
     }
 }
 
@@ -77,8 +52,8 @@ fun FragmentActivity.showWarningDialog(@StringRes messageId: Int) {
 fun FragmentActivity.showWarningDialog(
     message: String?,
     listener: DialogInterface.OnClickListener? = null
-) {
-    showDialogWithTitleAndMessage(titleResId = R.string.errors_warning, message = message, listener = listener)
+): AlertDialog? {
+    return showDialogWithTitleAndMessage(titleResId = R.string.errors_warning, message = message, listener = listener)
 }
 
 /**
@@ -87,12 +62,13 @@ fun FragmentActivity.showWarningDialog(
  * @receiver FragmentActivity
  * @param message - the message that appears in the dialog
  * @param listener - on dialog action click listener
+ * @return AlertDialog object or null
  */
 fun FragmentActivity.showErrorDialog(
     message: String?,
     listener: DialogInterface.OnClickListener? = null
-) {
-    showDialogWithTitleAndMessage(titleResId = R.string.errors_error, message = message, listener = listener)
+): AlertDialog? {
+    return showDialogWithTitleAndMessage(titleResId = R.string.errors_error, message = message, listener = listener)
 }
 
 /**
@@ -100,9 +76,10 @@ fun FragmentActivity.showErrorDialog(
  *
  * @receiver FragmentActivity
  * @param listener - on dialog action click listener
+ * @return AlertDialog object or null
  */
-fun FragmentActivity.showDbErrorDialog(listener: DialogInterface.OnClickListener) {
-    showWarningDialog(message = getString(R.string.errors_db_init), listener = listener)
+fun FragmentActivity.showDbErrorDialog(listener: DialogInterface.OnClickListener): AlertDialog? {
+    return showWarningDialog(message = getString(R.string.errors_db_init), listener = listener)
 }
 
 /**
@@ -110,9 +87,10 @@ fun FragmentActivity.showDbErrorDialog(listener: DialogInterface.OnClickListener
  *
  * @receiver FragmentActivity
  * @param listener - on dialog action click listener
+ * @return AlertDialog object or null
  */
-fun FragmentActivity.showDialogAboutUserReset(listener: DialogInterface.OnClickListener) {
-    showWarningDialog(message = getString(R.string.errors_account_reset), listener = listener)
+fun FragmentActivity.showDialogAboutUserReset(listener: DialogInterface.OnClickListener): AlertDialog? {
+    return showWarningDialog(message = getString(R.string.errors_account_reset), listener = listener)
 }
 
 /**
@@ -120,9 +98,10 @@ fun FragmentActivity.showDialogAboutUserReset(listener: DialogInterface.OnClickL
  *
  * @receiver FragmentActivity
  * @param listener - on dialog action click listener
+ * @return AlertDialog object or null
  */
-fun FragmentActivity.showResetDataDialog(listener: DialogInterface.OnClickListener) {
-    try {
+fun FragmentActivity.showResetDataDialog(listener: DialogInterface.OnClickListener): AlertDialog? {
+    return try {
         AlertDialog.Builder(this, R.style.AlertDialogTheme)
             .setTitle(R.string.forgot_passcode_clear_title)
             .setMessage(R.string.forgot_passcode_clear_message)
@@ -131,6 +110,7 @@ fun FragmentActivity.showResetDataDialog(listener: DialogInterface.OnClickListen
             .show()
     } catch (e: java.lang.Exception) {
         e.log()
+        null
     }
 }
 
@@ -139,9 +119,10 @@ fun FragmentActivity.showResetDataDialog(listener: DialogInterface.OnClickListen
  *
  * @receiver FragmentActivity
  * @param listener - on dialog action click listener
+ * @return AlertDialog object or null
  */
-fun FragmentActivity.showResetDataAndSettingsDialog(listener: DialogInterface.OnClickListener) {
-    try {
+fun FragmentActivity.showResetDataAndSettingsDialog(listener: DialogInterface.OnClickListener): AlertDialog? {
+    return try {
         AlertDialog.Builder(this, R.style.AlertDialogTheme)
             .setTitle(R.string.forgot_passcode_clear_title)
             .setMessage(R.string.settings_clear_message)
@@ -150,5 +131,72 @@ fun FragmentActivity.showResetDataAndSettingsDialog(listener: DialogInterface.On
             .show()
     } catch (e: java.lang.Exception) {
         e.log()
+        null
+    }
+}
+
+/**
+ * Show dialog for lock screen with warning message. Dialog will block user interaction.
+ *
+ * @receiver FragmentActivity
+ * @param message - the message that appears in the dialog
+ * @return AlertDialog object or null
+ */
+fun FragmentActivity.showLockWarningDialog(message: String?): AlertDialog? {
+    return try {
+        AlertDialog.Builder(this, R.style.LockAlertDialog)
+            .setMessage(message)
+            .setCancelable(false)
+            .show()
+    } catch (e: java.lang.Exception) {
+        e.log()
+        null
+    }
+}
+
+/**
+ * Show dialog for launcher screen about Security breach
+ *
+ * @receiver FragmentActivity
+ * @param listener - on dialog action click listener
+ * @return AlertDialog object or null
+ */
+fun FragmentActivity.showSecurityAlertDialog(listener: DialogInterface.OnClickListener): AlertDialog? {
+    return try {
+        AlertDialog.Builder(this, R.style.AlertDialogTheme)
+            .setTitle(R.string.errors_app_launch_title)
+            .setMessage(R.string.errors_app_launch_message)
+            .setCancelable(false)
+            .setPositiveButton(R.string.actions_contact_support, listener)
+            .show()
+    } catch (e: java.lang.Exception) {
+        e.log()
+        null
+    }
+}
+
+/**
+ * Show dialog with given title and message
+ *
+ * @receiver FragmentActivity
+ * @param titleResId - the title that appears in the dialog
+ * @param message - the message that appears in the dialog
+ * @param listener - on dialog action click listener
+ */
+private fun FragmentActivity.showDialogWithTitleAndMessage(
+    titleResId: Int,
+    message: String?,
+    listener: DialogInterface.OnClickListener? = null
+): AlertDialog? {
+    if (message?.isBlank() != false) return null
+    return try {
+        AlertDialog.Builder(this, R.style.AlertDialogTheme)
+            .setTitle(titleResId)
+            .setMessage(message)
+            .setPositiveButton(android.R.string.ok, listener)
+            .show()
+    } catch (e: Exception) {
+        e.log()
+        null
     }
 }

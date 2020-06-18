@@ -31,11 +31,12 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.MotionEvent
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.main.buildWarning
+import com.saltedge.authenticator.features.main.buildWarningSnack
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.models.repository.ConnectionsRepository
 import com.saltedge.authenticator.models.repository.PreferenceRepository
@@ -65,6 +66,7 @@ abstract class LockableActivity : AppCompatActivity(),
     )
     private var biometricPrompt: BiometricPromptAbs? = null
     private var vibrator: Vibrator? = null
+    private var alertDialog: AlertDialog? = null
 
     abstract fun getUnlockAppInputView(): UnlockAppInputView?
 
@@ -73,6 +75,11 @@ abstract class LockableActivity : AppCompatActivity(),
         startActivity(Intent(this, this.javaClass).apply { putExtra(KEY_SKIP_PIN, true) })
         biometricPrompt?.resultCallback = null //TODO: biometrics must be hidden without this line
     }
+
+    /**
+     * override if activity need to receive event when Activity is locked
+     */
+    open fun onLockActivity() {}
 
     /**
      * override if activity need to receive event when Activity is unlocked
@@ -142,7 +149,7 @@ abstract class LockableActivity : AppCompatActivity(),
     override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
         when (dialogActionId) {
             DialogInterface.BUTTON_POSITIVE -> {
-                viewModel.clearAppData()
+                viewModel.onUserConfirmedClearAppData()
                 showOnboardingActivity()
             }
             DialogInterface.BUTTON_NEGATIVE -> listener?.dismiss()
@@ -168,7 +175,9 @@ abstract class LockableActivity : AppCompatActivity(),
         viewModel.lockViewVisibility.observe(this, Observer {
             getUnlockAppInputView()?.visibility = it
         })
-
+        viewModel.onLockEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { onLockActivity() }
+        })
         viewModel.onUnlockEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { onUnlockActivity() }
         })
@@ -201,7 +210,7 @@ abstract class LockableActivity : AppCompatActivity(),
     }
 
     private fun showLockWarningEvent() {
-        inactivityWarningSnackbar = this@LockableActivity.buildWarning(
+        inactivityWarningSnackbar = this@LockableActivity.buildWarningSnack(
             textResId = R.string.warning_application_was_locked,
             snackBarDuration = 5000,
             actionResId = R.string.actions_cancel
@@ -220,8 +229,8 @@ abstract class LockableActivity : AppCompatActivity(),
             it.biometricsActionIsAvailable = viewModel.isBiometricInputReady
             it.setInputViewVisibility(show = true)
             it.setResetPasscodeViewVisibility(show = false)
-            it.enableInput()
         }
+        alertDialog?.dismiss()
     }
 
     private fun showWarningAndHidePasscodeView(remainedMinutes: Int) {
@@ -232,10 +241,11 @@ abstract class LockableActivity : AppCompatActivity(),
             remainedMinutes
         )
         getUnlockAppInputView()?.let {
-            it.showWarning("$wrongPasscodeMessage\n$retryMessage")
+            it.hideWarning()
             it.setInputViewVisibility(show = true)
             it.setResetPasscodeViewVisibility(show = false)
         }
+        alertDialog = showLockWarningDialog(message = "$wrongPasscodeMessage\n$retryMessage")
     }
 
     /**

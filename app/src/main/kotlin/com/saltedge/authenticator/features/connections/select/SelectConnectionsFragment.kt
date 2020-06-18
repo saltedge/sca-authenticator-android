@@ -35,6 +35,7 @@ import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.list.ConnectionsListAdapter
 import com.saltedge.authenticator.interfaces.ListItemClickListener
+import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.tools.authenticatorApp
@@ -45,7 +46,7 @@ import com.saltedge.authenticator.widget.list.SpaceItemDecoration
 import kotlinx.android.synthetic.main.fragment_connections_list.*
 import javax.inject.Inject
 
-class SelectConnectionsFragment : BaseFragment(), ListItemClickListener {
+class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemClickListener {
 
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: SelectConnectionsViewModel
@@ -85,6 +86,11 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener {
         proceedView.setVisible(true)
     }
 
+    override fun onBackPress(): Boolean {
+        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, Intent())
+        return false
+    }
+
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
         viewModel.onListItemClick(itemIndex)
     }
@@ -96,7 +102,8 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener {
         viewModel.setInitialData(arguments?.getSerializable(KEY_CONNECTIONS) as List<ConnectionViewModel>)
 
         viewModel.listItems.observe(this, Observer<List<ConnectionViewModel>> {
-            headerDecorator?.headerPositions = it.mapIndexed { index, _ -> index }.toTypedArray()
+            headerDecorator?.setHeaderForAllItems(it.count())
+            headerDecorator?.footerPositions = arrayOf(it.count() - 1)
             it?.let { adapter.data = it }
         })
 
@@ -111,10 +118,9 @@ class SelectConnectionsFragment : BaseFragment(), ListItemClickListener {
             }
         })
         viewModel.onProceedClickEvent.observe(this, Observer<GUID> { connectionGuid ->
-            activity?.finishFragment()
-            val resultIntent = Intent()
-            resultIntent.putExtra(KEY_CONNECTION_GUID, connectionGuid)
+            val resultIntent = Intent().putExtra(KEY_CONNECTION_GUID, connectionGuid)
             targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, resultIntent)
+            activity?.finishFragment()
         })
     }
 

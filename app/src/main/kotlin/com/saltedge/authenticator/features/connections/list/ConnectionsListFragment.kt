@@ -22,18 +22,17 @@ package com.saltedge.authenticator.features.connections.list
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
+import androidx.core.view.marginRight
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,23 +45,27 @@ import com.saltedge.authenticator.features.connections.common.ConnectionViewMode
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
 import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
+import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
 import kotlinx.android.synthetic.main.fragment_connections_list.*
-import kotlinx.android.synthetic.main.fragment_connections_list.emptyView
 import javax.inject.Inject
 
-class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnClickListener {
-
+class ConnectionsListFragment : BaseFragment(),
+    ListItemClickListener,
+    View.OnClickListener,
+    DialogHandlerListener
+{
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: ConnectionsListViewModel
     private lateinit var binding: ConnectionsListBinding
     private val adapter = ConnectionsListAdapter(clickListener = this)
     private var headerDecorator: SpaceItemDecoration? = null
     private var popupWindow: PopupWindow? = null
+    private var dialogFragment: DialogFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -113,13 +116,19 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
         super.onStop()
     }
 
+    override fun closeActiveDialogs() {
+        if (dialogFragment?.isVisible == true) dialogFragment?.dismiss()
+        if (popupWindow?.isShowing == true) popupWindow?.dismiss()
+    }
+
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(ConnectionsListViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
         viewModel.listItems.observe(this, Observer<List<ConnectionViewModel>> {
-            headerDecorator?.headerPositions = it.mapIndexed { index, _ -> index }.toTypedArray()
+            headerDecorator?.setHeaderForAllItems(it.count())
+            headerDecorator?.footerPositions = arrayOf(it.count() - 1)
             adapter.data = it
         })
         viewModel.onQrScanClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
@@ -127,24 +136,31 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
         })
         viewModel.onRenameClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                val dialog = EditConnectionNameDialog.newInstance(bundle).also {
+                dialogFragment = EditConnectionNameDialog.newInstance(bundle).also {
                     it.setTargetFragment(this, RENAME_REQUEST_CODE)
+                    activity?.showDialogFragment(it)
                 }
-                activity?.showDialogFragment(dialog)
+
             }
         })
         viewModel.onDeleteClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                val dialog = DeleteConnectionDialog.newInstance(bundle).also {
+                dialogFragment = DeleteConnectionDialog.newInstance(bundle).also {
                     it.setTargetFragment(this, DELETE_REQUEST_CODE)
+                    activity?.showDialogFragment(it)
                 }
-                activity?.showDialogFragment(dialog)
             }
         })
         viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<Int>> { event ->
             event.getContentIfNotHandled()?.let { itemIndex ->
                 viewModel.listItemsValues.getOrNull(itemIndex)?.let { item ->
-                    showPopupMenu(view = connectionsListView?.getChildAt(itemIndex), item = item)
+                    connectionsListView?.layoutManager?.findViewByPosition(itemIndex)?.let { anchorView ->
+                        popupWindow = showPopupMenu(
+                            parentView = connectionsListView,
+                            anchorView = anchorView,
+                            item = item
+                        )
+                    }
                 }
             }
         })
@@ -175,21 +191,23 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
         binding.executePendingBindings()
     }
 
-    private fun showPopupMenu(view: View?, item: ConnectionViewModel) {
+    //TODO REFACTOR TO STANDALONE CLASS (example https://github.com/zawadz88/MaterialPopupMenu)
+    private fun showPopupMenu(parentView: View?, anchorView: View?, item: ConnectionViewModel): PopupWindow? {
+        if (parentView == null || anchorView == null) return null
         try {
             val layoutInflater = context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val popupView = layoutInflater.inflate(R.layout.view_popup_menu, null)
-            popupWindow = PopupWindow(
+            val popupWindow = PopupWindow(
                 popupView,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 true
             )
 
-            val renameView = popupView.findViewById<LinearLayout>(R.id.renameView)
-            val reconnectView = popupView.findViewById<LinearLayout>(R.id.reconnectView)
-            val contactSupportView = popupView.findViewById<LinearLayout>(R.id.contactSupportView)
-            val deleteView = popupView.findViewById<LinearLayout>(R.id.deleteView)
+            val renameView = popupView.findViewById<ViewGroup>(R.id.renameView)
+            val reconnectView = popupView.findViewById<ViewGroup>(R.id.reconnectView)
+            val contactSupportView = popupView.findViewById<ViewGroup>(R.id.contactSupportView)
+            val deleteView = popupView.findViewById<ViewGroup>(R.id.deleteView)
             val deleteImageView = popupView.findViewById<ImageView>(R.id.deleteImageView)
             val deleteTextView = popupView.findViewById<TextView>(R.id.deleteTextView)
 
@@ -198,29 +216,37 @@ class ConnectionsListFragment : BaseFragment(), ListItemClickListener, View.OnCl
             deleteImageView.setImageResource(item.deleteMenuItemImage)
 
             reconnectView.setOnClickListener {
-                popupWindow?.dismiss()
+                this.popupWindow?.dismiss()
                 viewModel.onReconnectOptionSelected()
             }
             renameView.setOnClickListener {
-                popupWindow?.dismiss()
+                this.popupWindow?.dismiss()
                 viewModel.onRenameOptionSelected()
             }
             contactSupportView.setOnClickListener {
-                popupWindow?.dismiss()
+                this.popupWindow?.dismiss()
                 viewModel.onContactSupportOptionSelected()
             }
             deleteView.setOnClickListener {
-                popupWindow?.dismiss()
+                this.popupWindow?.dismiss()
                 viewModel.onDeleteOptionsSelected()
             }
 
-            popupWindow?.isOutsideTouchable = true
-            popupWindow?.elevation = convertDpToPx(30f).toFloat()
-            val x = view?.width ?: 0
-            val y = (view?.height ?: 0) / 2
-            popupWindow?.showAsDropDown(view, x, -y)
+            popupWindow.isOutsideTouchable = true
+            popupWindow.elevation = convertDpToPx(30f).toFloat()
+
+            val itemsCount = if (item.reconnectOptionIsVisible) 4 else 3
+            val popupMenuItemHeight = anchorView.context.resources.getDimensionPixelSize(R.dimen.popupMenuItemHeight)
+            val popupMenuTpBottomPadding = anchorView.context.resources.getDimensionPixelSize(R.dimen.popupMenuTpBottomPadding)
+            val popupHeight = popupMenuItemHeight * itemsCount + popupMenuTpBottomPadding * 2
+            val y = if (anchorView.bottom + popupHeight > parentView.bottom ) {
+                if (anchorView.bottom > parentView.bottom) popupHeight + anchorView.height else popupHeight
+            } else 0
+            popupWindow.showAsDropDown(anchorView, 0, -y, Gravity.TOP or Gravity.END)
+            return popupWindow
         } catch (e: Exception) {
             e.log()
+            return null
         }
     }
 }

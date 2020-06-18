@@ -142,7 +142,6 @@ class ViewModelsFactory @Inject constructor(
             }
             modelClass.isAssignableFrom(SettingsListViewModel::class.java) -> {
                 return SettingsListViewModel(
-                    appContext = appContext,
                     preferenceRepository = preferenceRepository,
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,

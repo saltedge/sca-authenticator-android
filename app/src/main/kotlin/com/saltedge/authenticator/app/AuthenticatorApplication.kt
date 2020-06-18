@@ -26,7 +26,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.gms.security.ProviderInstaller
 import com.saltedge.android.security.BuildConfig
-import com.saltedge.android.security.RaspChecker
 import com.saltedge.authenticator.app.di.AppComponent
 import com.saltedge.authenticator.app.di.AppModule
 import com.saltedge.authenticator.app.di.DaggerAppComponent
@@ -73,12 +72,6 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
 
     override fun onActivityResumed(activity: Activity?) {
         currentActivityName = activity?.javaClass?.name ?: ""
-
-        val raspFailReport = RaspChecker.collectFailsReport(this)
-        if ("release" == BuildConfig.BUILD_TYPE && raspFailReport.isNotEmpty()) {
-            val errorMessage = "App Is Tempered:[$raspFailReport]"
-            throw Exception(errorMessage)
-        }
     }
 
     override fun onActivityStarted(activity: Activity?) {}

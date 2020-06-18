@@ -24,6 +24,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -32,18 +33,17 @@ import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.LAUNCHER_SPLASH_DURATION
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.cloud.registerNotificationChannels
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
-import com.saltedge.authenticator.tools.applyPreferenceLocale
-import com.saltedge.authenticator.tools.authenticatorApp
-import com.saltedge.authenticator.tools.showDbErrorDialog
-import com.saltedge.authenticator.tools.updateScreenshotLocking
+import com.saltedge.authenticator.tools.*
 import javax.inject.Inject
 
 class LauncherActivity : AppCompatActivity() {
 
     lateinit var viewModel: LauncherViewModel
     @Inject lateinit var viewModelFactory: ViewModelsFactory
+    private var dialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +55,11 @@ class LauncherActivity : AppCompatActivity() {
         setContentView(R.layout.activity_launcher)
     }
 
+    override fun onStop() {
+        if (dialog?.isShowing == true) dialog?.dismiss()
+        super.onStop()
+    }
+
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(LauncherViewModel::class.java)
         lifecycle.addObserver(viewModel)
@@ -63,10 +68,16 @@ class LauncherActivity : AppCompatActivity() {
             it?.let { proceedToNextScreen() }
         })
         viewModel.onDbInitializationFail.observe(this, Observer {
-            it?.let { showDbError() }
+            it?.let { showDbErrorAlert() }
         })
-        viewModel.buttonClickEvent.observe(this, Observer {
+        viewModel.onSecurityCheckFail.observe(this, Observer {
+            it?.let { showSecurityErrorAlert() }
+        })
+        viewModel.closeEvent.observe(this, Observer {
             it?.let { finishAffinity() }
+        })
+        viewModel.supportClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
+            event.getContentIfNotHandled()?.let { startMailApp() }
         })
     }
 
@@ -85,9 +96,15 @@ class LauncherActivity : AppCompatActivity() {
             })
     }
 
-    private fun showDbError() {
-        this.showDbErrorDialog(listener = DialogInterface.OnClickListener { _, _ ->
-            viewModel.onOkClick()
+    private fun showDbErrorAlert() {
+        dialog = this.showDbErrorDialog(listener = DialogInterface.OnClickListener { _, _ ->
+            viewModel.dbErrorCheckedByUser()
+        })
+    }
+
+    private fun showSecurityErrorAlert() {
+        dialog = this.showSecurityAlertDialog(listener = DialogInterface.OnClickListener { _, _ ->
+            viewModel.securityErrorCheckedByUser()
         })
     }
 }

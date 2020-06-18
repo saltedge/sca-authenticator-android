@@ -29,7 +29,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tools.setFont
 import com.saltedge.authenticator.tools.setInvisible
 import com.saltedge.authenticator.tools.setVisible
 import kotlinx.android.synthetic.main.view_complete.view.*
@@ -42,7 +41,6 @@ class CompleteView(context: Context, attrs: AttributeSet) : LinearLayout(context
     init {
         LayoutInflater.from(context).inflate(R.layout.view_complete, this)
         initAttributes(context, attrs)
-        setupViews()
     }
 
     fun setTitleText(text: String) {
@@ -96,10 +94,6 @@ class CompleteView(context: Context, attrs: AttributeSet) : LinearLayout(context
         } finally {
             attributes.recycle()
         }
-    }
-
-    private fun setupViews() {
-        actionView?.setFont(R.font.roboto_regular)
     }
 
     private fun setMainActionText(text: String?) {

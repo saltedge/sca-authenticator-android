@@ -24,6 +24,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -40,6 +41,7 @@ import com.saltedge.authenticator.features.menu.BottomMenuDialog
 import com.saltedge.authenticator.features.menu.MenuItemSelectListener
 import com.saltedge.authenticator.features.settings.list.SettingsListFragment
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
+import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.interfaces.ViewModelContract
 import com.saltedge.authenticator.tools.*
@@ -56,6 +58,7 @@ class MainActivity : LockableActivity(),
     override lateinit var viewModel: MainActivityViewModel
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var binding: MainActivityBinding
+    private var dialogFragment: DialogFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,6 +87,14 @@ class MainActivity : LockableActivity(),
         if (onBackPressListener?.onBackPress() != true) super.onBackPressed()
     }
 
+    /**
+     * on security lock of Activity ask current Fragment to close all active dialogs
+     */
+    override fun onLockActivity() {
+        (currentFragmentInContainer() as? DialogHandlerListener)?.closeActiveDialogs()
+        if (dialogFragment?.isVisible == true) dialogFragment?.dismiss()
+    }
+
     override fun onUnlockActivity() {
         viewModel.onUnlock()
     }
@@ -103,48 +114,70 @@ class MainActivity : LockableActivity(),
         binding.executePendingBindings()
         binding.lifecycleOwner = this
 
-        viewModel.onQrScanClickEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { this.showQrScannerActivity() }
+        viewModel.onQrScanClickEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { this.showQrScannerActivity() }
         })
-        viewModel.onAppBarMenuClickEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { menuItems ->
-                this.showDialogFragment(BottomMenuDialog.newInstance(menuItems = menuItems))
+        viewModel.onAppBarMenuClickEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { menuItems ->
+                dialogFragment = BottomMenuDialog.newInstance(menuItems = menuItems).also {
+                    this.showDialogFragment(it)
+                }
             }
         })
-        viewModel.onBackActionClickEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { onBackPressed() }
+        viewModel.onBackActionClickEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { onBackPressed() }
         })
-        viewModel.onRestartActivityEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { super.restartLockableActivity() }
+        viewModel.onRestartActivityEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { super.restartLockableActivity() }
         })
-        viewModel.onShowAuthorizationsListEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let {
+        viewModel.onShowAuthorizationsListEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let {
                 this.replaceFragmentInContainer(AuthorizationsListFragment())
             }
         })
-        viewModel.onShowAuthorizationDetailsEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { authorizationIdentifier ->
-                this.addFragment(AuthorizationDetailsFragment.newInstance(authorizationIdentifier))
+        viewModel.onShowAuthorizationDetailsEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { authorizationIdentifier ->
+                this.addFragment(
+                    fragment = AuthorizationDetailsFragment.newInstance(
+                        identifier = authorizationIdentifier,
+                        closeAppOnBackPress = true
+                    ),
+                    animateTransition = true
+                )
             }
         })
-        viewModel.onShowConnectionsListEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let {
-                this.addFragment(ConnectionsListFragment())
+        viewModel.onShowActionAuthorizationEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { authorizationIdentifier ->
+                this.addFragment(
+                    fragment = AuthorizationDetailsFragment.newInstance(
+                        identifier = authorizationIdentifier,
+                        closeAppOnBackPress = true,
+                        titleRes = R.string.action_new_action_title
+                    ),
+                    animateTransition = false
+                )
             }
         })
-        viewModel.onShowSettingsListEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let {
-                this.addFragment(SettingsListFragment())
+        viewModel.onShowConnectionsListEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { this.addFragment(ConnectionsListFragment()) }
+        })
+        viewModel.onShowSettingsListEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { this.addFragment(SettingsListFragment()) }
+        })
+        viewModel.onShowConnectEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { connectAppLinkData ->
+                this.addFragment(
+                    fragment = ConnectProviderFragment.newInstance(connectAppLinkData = connectAppLinkData),
+                    animateTransition = false
+                )
             }
         })
-        viewModel.onShowConnectEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { connectAppLinkData ->
-                this.addFragment(ConnectProviderFragment.newInstance(connectAppLinkData = connectAppLinkData))
-            }
-        })
-        viewModel.onShowSubmitActionEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { actionAppLinkData ->
-                this.addFragment(SubmitActionFragment.newInstance(actionAppLinkData = actionAppLinkData))
+        viewModel.onShowSubmitActionEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { actionAppLinkData ->
+                this.addFragment(
+                    fragment = SubmitActionFragment.newInstance(actionAppLinkData = actionAppLinkData),
+                    animateTransition = false
+                )
             }
         })
         viewModel.recreateEvent.observe(this, Observer {

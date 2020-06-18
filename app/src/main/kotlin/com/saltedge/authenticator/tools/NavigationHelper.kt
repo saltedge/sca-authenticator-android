@@ -48,11 +48,20 @@ fun FragmentActivity?.isTopNavigationLevel(): Boolean =
  *
  * @receiver fragment activity
  */
-fun FragmentActivity.addFragment(fragment: Fragment) {
+fun FragmentActivity.addFragment(fragment: Fragment, animateTransition: Boolean = true) {
     try {
         supportFragmentManager
             .beginTransaction()
-            .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+            .apply {
+                if (animateTransition) {
+                    setCustomAnimations(
+                        R.anim.enter_from_right,
+                        R.anim.exit_to_left,
+                        R.anim.enter_from_left,
+                        R.anim.exit_to_right
+                    )
+                }
+            }
             .replace(R.id.container, fragment, fragment.createTagName())
             .addToBackStack(null)
             .commit()

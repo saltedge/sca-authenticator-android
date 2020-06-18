@@ -20,14 +20,18 @@
  */
 package com.saltedge.authenticator.features.actions
 
+import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.net.Uri
 import android.view.View
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.CONNECTIONS_REQUEST_CODE
+import com.saltedge.authenticator.app.KEY_CONNECTION_GUID
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.list.convertConnectionsToViewModels
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -42,6 +46,7 @@ import com.saltedge.authenticator.sdk.model.error.getErrorMessage
 import com.saltedge.authenticator.sdk.model.response.SubmitActionResponseData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.log
+import com.saltedge.authenticator.tools.postUnitEvent
 
 class SubmitActionViewModel(
     private val appContext: Context,
@@ -80,7 +85,6 @@ class SubmitActionViewModel(
         val authorizationID = response.authorizationId ?: ""
         val connectionID = response.connectionId ?: ""
         if (response.success == true && authorizationID.isNotEmpty() && connectionID.isNotEmpty()) {
-            onCloseEvent.postValue(ViewModelEvent(Unit))
             setResultAuthorizationIdentifier.postValue(
                 AuthorizationIdentifier(
                     authorizationID = authorizationID,
@@ -116,12 +120,17 @@ class SubmitActionViewModel(
         }
     }
 
-    fun selectConnection(connectionGuid: String?) {
-        this.connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
-            keyStoreManager.createConnectionAndKeyModel(it)
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val connectionGuid = data?.getStringExtra(KEY_CONNECTION_GUID)
+        if (requestCode == CONNECTIONS_REQUEST_CODE && resultCode == Activity.RESULT_OK && connectionGuid != null) {
+            this.connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
+                keyStoreManager.createConnectionAndKeyModel(it)
+            }
+            viewMode = if (connectionAndKey == null) ViewMode.ACTION_ERROR else ViewMode.START
+            onViewCreated()
+        } else {
+            onCloseEvent.postUnitEvent()
         }
-        viewMode = if (connectionAndKey == null) ViewMode.ACTION_ERROR else ViewMode.START
-        onViewCreated()
     }
 
     fun onViewCreated() {
@@ -138,7 +147,7 @@ class SubmitActionViewModel(
 
     fun onViewClick(viewId: Int) {
         if (viewId == R.id.actionView) {
-            onCloseEvent.postValue(ViewModelEvent(Unit))
+            onCloseEvent.postUnitEvent()
             try {
                 actionAppLinkData?.returnTo?.let {
                     if (it.isNotEmpty()) onOpenLinkEvent.postValue(ViewModelEvent(Uri.parse(it)))
@@ -151,7 +160,7 @@ class SubmitActionViewModel(
 
     fun onDialogActionIdClick(dialogActionId: Int) {
         if (dialogActionId == DialogInterface.BUTTON_POSITIVE) {
-            onCloseEvent.postValue(ViewModelEvent(Unit))
+            onCloseEvent.postUnitEvent()
         }
     }
 
