@@ -73,7 +73,6 @@ abstract class LockableActivity : AppCompatActivity(),
     fun restartLockableActivity() {
         finish()
         startActivity(Intent(this, this.javaClass).apply { putExtra(KEY_SKIP_PIN, true) })
-        biometricPrompt?.resultCallback = null //TODO: biometrics must be hidden without this line
     }
 
     /**

@@ -23,6 +23,7 @@ package com.saltedge.authenticator.features.main
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
@@ -45,6 +46,7 @@ import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.interfaces.ViewModelContract
 import com.saltedge.authenticator.tools.*
+import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
 import com.saltedge.authenticator.widget.security.LockableActivity
 import com.saltedge.authenticator.widget.security.UnlockAppInputView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -180,8 +182,11 @@ class MainActivity : LockableActivity(),
                 )
             }
         })
-        viewModel.recreateEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { super.restartLockableActivity() }
+        viewModel.onSetNightMode.observe(this, Observer {
+            it.getContentIfNotHandled()?.let { nightMode ->
+                this.intent.putExtra(KEY_SKIP_PIN, true)
+                AppCompatDelegate.setDefaultNightMode(nightMode)
+            }
         })
     }
 }
