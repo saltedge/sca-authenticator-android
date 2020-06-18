@@ -43,6 +43,7 @@ import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
+import com.saltedge.authenticator.widget.list.SpaceItemDecoration
 import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
 
@@ -85,7 +86,8 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener {
 
         viewModel.languageClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
             event.getContentIfNotHandled()?.let {
-                dialogFragment = LanguageSelectDialog().apply { activity?.showDialogFragment(this) }
+                dialogFragment = LanguageSelectDialog()
+                dialogFragment?.let { activity?.showDialogFragment(it) }
             }
         })
         viewModel.passcodeClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
@@ -129,8 +131,10 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener {
     }
 
     private fun setupViews() {
-        recyclerView?.layoutManager = LinearLayoutManager(activity)
-        recyclerView?.adapter = SettingsAdapter(listener = viewModel)
-            .apply { data = viewModel.listItems }
+        activity?.let {
+            recyclerView?.layoutManager = LinearLayoutManager(it)
+            recyclerView?.addItemDecoration(SpaceItemDecoration(context = it, headerPositions = arrayOf(0)))
+        }
+        recyclerView?.adapter = SettingsAdapter(listener = viewModel).apply { data = viewModel.listItems }
     }
 }

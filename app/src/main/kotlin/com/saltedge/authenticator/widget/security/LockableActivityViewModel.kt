@@ -59,7 +59,7 @@ class LockableActivityViewModel(
     var biometricTools: BiometricToolsAbs? = null
     val savedPasscode: String
         get() = passcodeTools.getPasscode()
-    val lockViewVisibility = MutableLiveData<Int>(View.VISIBLE)
+    val lockViewVisibility = MutableLiveData<Int>(View.GONE)
     val onLockEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onUnlockEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val dismissLockWarningEvent = MutableLiveData<ViewModelEvent<Unit>>()
