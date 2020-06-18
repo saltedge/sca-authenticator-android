@@ -244,7 +244,7 @@ abstract class LockableActivity : AppCompatActivity(),
             it.setInputViewVisibility(show = true)
             it.setResetPasscodeViewVisibility(show = false)
         }
-        alertDialog = showInfoDialog(message = "$wrongPasscodeMessage\n$retryMessage")
+        alertDialog = showLockWarningDialog(message = "$wrongPasscodeMessage\n$retryMessage")
     }
 
     /**

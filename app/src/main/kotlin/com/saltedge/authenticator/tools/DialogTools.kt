@@ -136,9 +136,9 @@ fun FragmentActivity.showResetDataAndSettingsDialog(listener: DialogInterface.On
  * @receiver FragmentActivity
  * @param message - the message that appears in the dialog
  */
-fun FragmentActivity.showInfoDialog(message: String?): AlertDialog? {
+fun FragmentActivity.showLockWarningDialog(message: String?): AlertDialog? {
     return try {
-        AlertDialog.Builder(this, R.style.CustomAlertDialog)
+        AlertDialog.Builder(this, R.style.LockAlertDialog)
             .setMessage(message)
             .setCancelable(false)
             .show()
