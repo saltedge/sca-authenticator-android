@@ -114,7 +114,6 @@ class SubmitActionViewModelTest {
         viewModel.onActionInitSuccess(response = connectUrlData)
 
         //than
-        assertNotNull(viewModel.onCloseEvent.value)
         assertThat(
             viewModel.setResultAuthorizationIdentifier.value,
             equalTo(
@@ -347,7 +346,6 @@ class SubmitActionViewModelTest {
         )
         viewModel.onActionInitSuccess(response = connectUrlData)
 
-        assertNotNull(viewModel.onCloseEvent.value)
         assertThat(
             viewModel.setResultAuthorizationIdentifier.value,
             equalTo(

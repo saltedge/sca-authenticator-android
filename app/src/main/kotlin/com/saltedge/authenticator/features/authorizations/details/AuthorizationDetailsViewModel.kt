@@ -143,9 +143,9 @@ class AuthorizationDetailsViewModel(
         }
     }
 
-    fun onBackPress(): Boolean {//TODO TEST
+    fun onBackPress(): Boolean {
         closeView()
-        return false
+        return true
     }
 
     override fun getConnectionDataForAuthorizationPolling(): ConnectionAndKey? = this.connectionAndKey
