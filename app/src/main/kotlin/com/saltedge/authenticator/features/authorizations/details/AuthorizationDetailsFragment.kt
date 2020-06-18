@@ -137,7 +137,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
 
         viewModel.setInitialData(
             identifier = arguments?.getSerializable(KEY_ID) as? AuthorizationIdentifier,
-            destroyOnBackPress = arguments?.getBoolean(KEY_CLOSE_APP, true),
+            closeAppOnBackPress = arguments?.getBoolean(KEY_CLOSE_APP, true),
             titleRes = arguments?.getInt(KEY_TITLE, R.string.authorization_feature_title)
         )
     }

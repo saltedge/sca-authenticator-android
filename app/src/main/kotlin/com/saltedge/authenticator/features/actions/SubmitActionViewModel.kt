@@ -85,7 +85,6 @@ class SubmitActionViewModel(
         val authorizationID = response.authorizationId ?: ""
         val connectionID = response.connectionId ?: ""
         if (response.success == true && authorizationID.isNotEmpty() && connectionID.isNotEmpty()) {
-            onCloseEvent.postUnitEvent()
             setResultAuthorizationIdentifier.postValue(
                 AuthorizationIdentifier(
                     authorizationID = authorizationID,

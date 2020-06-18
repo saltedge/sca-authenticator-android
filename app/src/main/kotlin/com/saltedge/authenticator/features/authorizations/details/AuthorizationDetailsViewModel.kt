@@ -85,10 +85,10 @@ class AuthorizationDetailsViewModel(
 
     fun setInitialData(
         identifier: AuthorizationIdentifier?,
-        destroyOnBackPress: Boolean?,
+        closeAppOnBackPress: Boolean?,
         titleRes: ResId?
     ) {
-        this.closeAppOnBackPress = destroyOnBackPress ?: true
+        this.closeAppOnBackPress = closeAppOnBackPress ?: true
         this.titleRes = titleRes ?: R.string.authorization_feature_title
         if (this.titleRes == 0) this.titleRes = R.string.authorization_feature_title
         connectionAndKey = createConnectionAndKey(
@@ -143,9 +143,9 @@ class AuthorizationDetailsViewModel(
         }
     }
 
-    fun onBackPress(): Boolean {//TODO TEST
+    fun onBackPress(): Boolean {
         closeView()
-        return false
+        return true
     }
 
     override fun getConnectionDataForAuthorizationPolling(): ConnectionAndKey? = this.connectionAndKey
