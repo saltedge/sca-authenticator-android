@@ -31,6 +31,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.MotionEvent
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
@@ -65,6 +66,7 @@ abstract class LockableActivity : AppCompatActivity(),
     )
     private var biometricPrompt: BiometricPromptAbs? = null
     private var vibrator: Vibrator? = null
+    private var alertDialog: AlertDialog? = null
 
     abstract fun getUnlockAppInputView(): UnlockAppInputView?
 
@@ -226,8 +228,8 @@ abstract class LockableActivity : AppCompatActivity(),
             it.biometricsActionIsAvailable = viewModel.isBiometricInputReady
             it.setInputViewVisibility(show = true)
             it.setResetPasscodeViewVisibility(show = false)
-            it.enableInput()
         }
+        alertDialog?.dismiss()
     }
 
     private fun showWarningAndHidePasscodeView(remainedMinutes: Int) {
@@ -238,10 +240,11 @@ abstract class LockableActivity : AppCompatActivity(),
             remainedMinutes
         )
         getUnlockAppInputView()?.let {
-            it.showWarning("$wrongPasscodeMessage\n$retryMessage")
+            it.hideWarning()
             it.setInputViewVisibility(show = true)
             it.setResetPasscodeViewVisibility(show = false)
         }
+        alertDialog = showLockWarningDialog(message = "$wrongPasscodeMessage\n$retryMessage")
     }
 
     /**
