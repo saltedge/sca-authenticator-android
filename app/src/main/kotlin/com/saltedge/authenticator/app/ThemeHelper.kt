@@ -39,7 +39,6 @@ fun Context.switchDarkLightMode(currentMode: Int): Int {
             else AppCompatDelegate.MODE_NIGHT_YES
         }
     }
-    AppCompatDelegate.setDefaultNightMode(newMode)
     return newMode
 }
 

@@ -71,8 +71,8 @@ abstract class LockableActivity : AppCompatActivity(),
     abstract fun getUnlockAppInputView(): UnlockAppInputView?
 
     fun restartLockableActivity() {
-        startActivity(Intent(this, this.javaClass).apply { putExtra(KEY_SKIP_PIN, true) })
         finish()
+        startActivity(Intent(this, this.javaClass).apply { putExtra(KEY_SKIP_PIN, true) })
     }
 
     /**

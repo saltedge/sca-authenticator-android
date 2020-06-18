@@ -28,7 +28,6 @@ import android.os.CancellationSignal
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.fragment.app.FragmentActivity
-import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.log
 
@@ -88,13 +87,4 @@ class BiometricPromptManagerV28 : BiometricPromptAbs, DialogInterface.OnClickLis
         dialog?.dismiss()
         resultCallback?.biometricsCanceledByUser()
     }
-}
-
-fun BiometricPromptAbs.showAuthorizationConfirm(context: FragmentActivity) {
-    this.showBiometricPrompt(
-        context = context,
-        titleResId = R.string.actions_confirm,
-        descriptionResId = R.string.fingerprint_touch_sensor,
-        negativeActionTextResId = R.string.passcode_enter_passcode_title
-    )
 }
