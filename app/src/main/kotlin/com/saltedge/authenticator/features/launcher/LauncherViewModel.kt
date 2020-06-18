@@ -23,13 +23,17 @@ package com.saltedge.authenticator.features.launcher
 import android.app.Activity
 import android.content.Context
 import androidx.lifecycle.*
-import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.android.security.RaspChecker
+import com.saltedge.authenticator.BuildConfig
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tools.AppTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
+import com.saltedge.authenticator.tools.log
+import com.saltedge.authenticator.tools.postUnitEvent
 
 class LauncherViewModel(
     val appContext: Context,
@@ -38,35 +42,61 @@ class LauncherViewModel(
     val realmManager: RealmManagerAbs
 ) : ViewModel(), LifecycleObserver {
 
-    var onDbInitializationFail = MutableLiveData<ViewModelEvent<Unit>>()
-        private set
+    val onDbInitializationFail = MutableLiveData<ViewModelEvent<Unit>>()
+    val onInitializationSuccess = MutableLiveData<ViewModelEvent<Unit>>()
+    val onSecurityCheckFail = MutableLiveData<ViewModelEvent<Unit>>()
+    val closeEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val supportClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    private val shouldSetupApplication: Boolean
+        get() = !preferenceRepository.passcodeExist()
 
-    var onInitializationSuccess = MutableLiveData<ViewModelEvent<Unit>>()
-        private set
-
-    var buttonClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
-        private set
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onLifeCycleResume() {
+        val securityCheckNotPassed = !checkAppSecurity()
         if (!AppTools.isTestsSuite(appContext)) realmManager.initRealm(context = appContext)
-        if (realmManager.errorOccurred) {
-            onInitializationSuccess.value = null
-            onDbInitializationFail.postValue(ViewModelEvent(Unit))
-        } else {
-            if (shouldSetupApplication()) passcodeTools.replacePasscodeKey(appContext)
-            onDbInitializationFail.value = null
-            onInitializationSuccess.postValue(ViewModelEvent(Unit))
+
+        when {
+            securityCheckNotPassed -> {
+                onSecurityCheckFail.postUnitEvent()
+            }
+            realmManager.errorOccurred -> {
+                onInitializationSuccess.value = null
+                onDbInitializationFail.postUnitEvent()
+            }
+            else -> {
+                if (shouldSetupApplication) passcodeTools.replacePasscodeKey(appContext)
+                onDbInitializationFail.value = null
+                onInitializationSuccess.postUnitEvent()
+            }
         }
     }
 
     fun getNextActivityClass(): Class<out Activity> =
-        if (shouldSetupApplication()) OnboardingSetupActivity::class.java else MainActivity::class.java
+        if (shouldSetupApplication) OnboardingSetupActivity::class.java else MainActivity::class.java
 
-    fun onOkClick() {
+    fun dbErrorCheckedByUser() {
         realmManager.resetError()
-        buttonClickEvent.postValue(ViewModelEvent(Unit))
+        closeEvent.postUnitEvent()
     }
 
-    private fun shouldSetupApplication(): Boolean = !preferenceRepository.passcodeExist()
+    fun securityErrorCheckedByUser() {
+        supportClickEvent.postUnitEvent()
+    }
+
+    /**
+     * Check security breaches. Generated report is logged.
+     *
+     * @return true if security report is empty or false
+     */
+    private fun checkAppSecurity(): Boolean {
+        return if ("release" == BuildConfig.BUILD_TYPE) {
+            val raspFailReport = RaspChecker.collectFailsReport(appContext)
+
+            if (raspFailReport.isNotEmpty()) {
+                val errorMessage = "App Is Tempered:[$raspFailReport]"
+                Exception(errorMessage).log()
+            }
+            raspFailReport.isEmpty()
+        } else true
+    }
 }

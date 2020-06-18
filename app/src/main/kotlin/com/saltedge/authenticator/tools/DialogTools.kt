@@ -62,6 +62,7 @@ fun FragmentActivity.showWarningDialog(
  * @receiver FragmentActivity
  * @param message - the message that appears in the dialog
  * @param listener - on dialog action click listener
+ * @return AlertDialog object or null
  */
 fun FragmentActivity.showErrorDialog(
     message: String?,
@@ -75,6 +76,7 @@ fun FragmentActivity.showErrorDialog(
  *
  * @receiver FragmentActivity
  * @param listener - on dialog action click listener
+ * @return AlertDialog object or null
  */
 fun FragmentActivity.showDbErrorDialog(listener: DialogInterface.OnClickListener): AlertDialog? {
     return showWarningDialog(message = getString(R.string.errors_db_init), listener = listener)
@@ -85,6 +87,7 @@ fun FragmentActivity.showDbErrorDialog(listener: DialogInterface.OnClickListener
  *
  * @receiver FragmentActivity
  * @param listener - on dialog action click listener
+ * @return AlertDialog object or null
  */
 fun FragmentActivity.showDialogAboutUserReset(listener: DialogInterface.OnClickListener): AlertDialog? {
     return showWarningDialog(message = getString(R.string.errors_account_reset), listener = listener)
@@ -95,6 +98,7 @@ fun FragmentActivity.showDialogAboutUserReset(listener: DialogInterface.OnClickL
  *
  * @receiver FragmentActivity
  * @param listener - on dialog action click listener
+ * @return AlertDialog object or null
  */
 fun FragmentActivity.showResetDataDialog(listener: DialogInterface.OnClickListener): AlertDialog? {
     return try {
@@ -115,6 +119,7 @@ fun FragmentActivity.showResetDataDialog(listener: DialogInterface.OnClickListen
  *
  * @receiver FragmentActivity
  * @param listener - on dialog action click listener
+ * @return AlertDialog object or null
  */
 fun FragmentActivity.showResetDataAndSettingsDialog(listener: DialogInterface.OnClickListener): AlertDialog? {
     return try {
@@ -131,16 +136,38 @@ fun FragmentActivity.showResetDataAndSettingsDialog(listener: DialogInterface.On
 }
 
 /**
- * Show dialog with given message
+ * Show dialog for lock screen with warning message. Dialog will block user interaction.
  *
  * @receiver FragmentActivity
  * @param message - the message that appears in the dialog
+ * @return AlertDialog object or null
  */
 fun FragmentActivity.showLockWarningDialog(message: String?): AlertDialog? {
     return try {
         AlertDialog.Builder(this, R.style.LockAlertDialog)
             .setMessage(message)
             .setCancelable(false)
+            .show()
+    } catch (e: java.lang.Exception) {
+        e.log()
+        null
+    }
+}
+
+/**
+ * Show dialog for launcher screen about Security breach
+ *
+ * @receiver FragmentActivity
+ * @param listener - on dialog action click listener
+ * @return AlertDialog object or null
+ */
+fun FragmentActivity.showSecurityAlertDialog(listener: DialogInterface.OnClickListener): AlertDialog? {
+    return try {
+        AlertDialog.Builder(this, R.style.AlertDialogTheme)
+            .setTitle(R.string.errors_app_launch_title)
+            .setMessage(R.string.errors_app_launch_message)
+            .setCancelable(false)
+            .setPositiveButton(R.string.actions_contact_support, listener)
             .show()
     } catch (e: java.lang.Exception) {
         e.log()
