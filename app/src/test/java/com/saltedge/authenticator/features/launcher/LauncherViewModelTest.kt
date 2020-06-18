@@ -136,9 +136,9 @@ class LauncherViewModelTest {
     @Test
     @Throws(Exception::class)
     fun onOkClickTest() {
-        viewModel.onOkClick()
+        viewModel.dbErrorCheckedByUser()
 
         Mockito.verify(mockRealmManager).resetError()
-        assertNotNull(viewModel.buttonClickEvent.value)
+        assertNotNull(viewModel.closeEvent.value)
     }
 }

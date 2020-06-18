@@ -39,15 +39,17 @@ object RealmManager: RealmManagerAbs {
         get() = initErrorOccurred == true
 
     override fun initRealm(context: Context) {
-        Realm.init(context)
-        val builder = RealmConfiguration.Builder()
-            .schemaVersion(DB_SCHEMA_VERSION)
-            .name(DB_NAME)
-        builder.migration(runMigrations())
-        if (AppTools.isTestsSuite(context)) builder.inMemory()
-        else builder.encryptionKey(getOrCreateDatabaseKey())
-        Realm.setDefaultConfiguration(builder.build())
-        checkDbInstance()
+        if (!initialized) {
+            Realm.init(context)
+            val builder = RealmConfiguration.Builder()
+                .schemaVersion(DB_SCHEMA_VERSION)
+                .name(DB_NAME)
+            builder.migration(runMigrations())
+            if (AppTools.isTestsSuite(context)) builder.inMemory()
+            else builder.encryptionKey(getOrCreateDatabaseKey())
+            Realm.setDefaultConfiguration(builder.build())
+            checkDbInstance()
+        }
     }
 
     override fun getDefaultInstance(): Realm = Realm.getDefaultInstance()
