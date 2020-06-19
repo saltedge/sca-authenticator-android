@@ -79,11 +79,11 @@ class ViewModeTest {
         Assert.assertNull(ViewMode.DEFAULT.statusImageResId)
         Assert.assertNull(ViewMode.CONFIRM_PROCESSING.statusImageResId)
         Assert.assertNull(ViewMode.DENY_PROCESSING.statusImageResId)
-        assertThat(ViewMode.CONFIRM_SUCCESS.statusImageResId, equalTo(R.drawable.ic_success_70))
-        assertThat(ViewMode.DENY_SUCCESS.statusImageResId, equalTo(R.drawable.ic_auth_denied_70))
-        assertThat(ViewMode.ERROR.statusImageResId, equalTo(R.drawable.ic_auth_error_70))
-        assertThat(ViewMode.TIME_OUT.statusImageResId, equalTo(R.drawable.ic_auth_timeout_70))
-        assertThat(ViewMode.UNAVAILABLE.statusImageResId, equalTo(R.drawable.ic_auth_error_70))
+        assertThat(ViewMode.CONFIRM_SUCCESS.statusImageResId, equalTo(R.drawable.ic_status_success))
+        assertThat(ViewMode.DENY_SUCCESS.statusImageResId, equalTo(R.drawable.ic_status_denied))
+        assertThat(ViewMode.ERROR.statusImageResId, equalTo(R.drawable.ic_status_error))
+        assertThat(ViewMode.TIME_OUT.statusImageResId, equalTo(R.drawable.ic_status_timeout))
+        assertThat(ViewMode.UNAVAILABLE.statusImageResId, equalTo(R.drawable.ic_status_unavailable))
     }
 
     @Test
@@ -117,14 +117,14 @@ class ViewModeTest {
     @Test
     @Throws(Exception::class)
     fun showProgressTest() {
-        Assert.assertTrue(ViewMode.LOADING.showProgress)
-        Assert.assertFalse(ViewMode.DEFAULT.showProgress)
-        Assert.assertTrue(ViewMode.CONFIRM_PROCESSING.showProgress)
-        Assert.assertTrue(ViewMode.DENY_PROCESSING.showProgress)
-        Assert.assertFalse(ViewMode.CONFIRM_SUCCESS.showProgress)
-        Assert.assertFalse(ViewMode.DENY_SUCCESS.showProgress)
-        Assert.assertFalse(ViewMode.ERROR.showProgress)
-        Assert.assertFalse(ViewMode.TIME_OUT.showProgress)
-        Assert.assertFalse(ViewMode.UNAVAILABLE.showProgress)
+        Assert.assertTrue(ViewMode.LOADING.processingMode)
+        Assert.assertFalse(ViewMode.DEFAULT.processingMode)
+        Assert.assertTrue(ViewMode.CONFIRM_PROCESSING.processingMode)
+        Assert.assertTrue(ViewMode.DENY_PROCESSING.processingMode)
+        Assert.assertFalse(ViewMode.CONFIRM_SUCCESS.processingMode)
+        Assert.assertFalse(ViewMode.DENY_SUCCESS.processingMode)
+        Assert.assertFalse(ViewMode.ERROR.processingMode)
+        Assert.assertFalse(ViewMode.TIME_OUT.processingMode)
+        Assert.assertFalse(ViewMode.UNAVAILABLE.processingMode)
     }
 }

@@ -20,65 +20,78 @@
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
 <resources>
-    <!--THEMES-->
-    <style name="LauncherScreenTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+    <!--ACTIVITY THEMES-->
+    <style name="LauncherScreenThemeBase" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimaryDark">@color/system_bar_color</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
-    <style name="SetupScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimaryDark">@color/color_primary_dark</item>
+    <style name="LauncherScreenTheme" parent="LauncherScreenThemeBase"/>
+
+    <style name="SetupScreenThemeBase" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="colorControlNormal">@color/blue</item>
-        <item name="colorControlActivated">@color/blue</item>
-        <item name="colorControlHighlight">@color/blue</item>
+
+        <item name="colorPrimaryDark">@color/system_bar_color</item>
+        <item name="colorAccent">@color/primary</item>
+        <item name="colorControlNormal">@color/primary</item>
+        <item name="colorControlActivated">@color/primary</item>
+        <item name="colorControlHighlight">@color/primary</item>
         <item name="android:colorButtonNormal">@color/button_blue_default</item>
         <item name="android:colorControlHighlight">@color/button_blue_pressed</item>
     </style>
+
+    <style name="SetupScreenTheme" parent="SetupScreenThemeBase"/>
 
     <style name="UnlockScreenTheme" parent="SetupScreenTheme">
         <item name="android:windowAnimationStyle">@null</item>
     </style>
 
-    <style name="ConnectScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/blue</item>
-        <item name="colorPrimaryDark">@color/color_primary_dark</item>
-        <item name="colorAccent">@color/blue</item>
-        <item name="colorControlNormal">@color/divider_color</item>
-        <item name="colorControlActivated">@color/blue</item>
+    <style name="MainScreenThemeBase" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="colorPrimaryDark">@color/system_bar_color</item>
+        <item name="colorAccent">@color/primary</item>
+        <item name="colorControlNormal">@color/primary</item>
+        <item name="colorControlActivated">@color/primary</item>
+        <item name="colorControlHighlight">@color/primary</item>
         <item name="android:colorButtonNormal">@color/button_blue_default</item>
-        <item name="android:colorControlHighlight">@color/button_blue_pressed</item>
-        <item name="android:alertDialogTheme">@style/AlertDialogCustom</item>
+        <item name="android:colorControlHighlight">@color/colorControlHighlight</item><!--ripple effect color-->
     </style>
 
-    <style name="MainScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/blue</item>
-        <item name="colorPrimaryDark">@color/color_primary_dark</item>
-        <item name="colorAccent">@color/blue</item>
-        <item name="android:colorButtonNormal">@color/button_blue_default</item>
-        <item name="android:colorControlHighlight">@color/button_blue_pressed</item>
-        <item name="android:itemBackground">@android:color/white</item>
-        <item name="android:itemTextAppearance">@style/MenuItemTextAppearance</item>
+    <style name="MainScreenTheme" parent="MainScreenThemeBase"/>
+
+    <!--ALERT DIALOG-->
+    <style name="BaseAlertDialogTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="android:background">@color/dialog_background</item>
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorAccent">@color/primary</item>
+        <item name="android:colorControlNormal">@color/primary</item>
+        <item name="android:colorControlActivated">@color/primary</item>
+        <item name="android:colorControlHighlight">@color/primary</item>
     </style>
 
-    <style name="AlertDialogCustom" parent="android:Theme.Material.Light.Dialog.Alert">
-        <item name="android:colorPrimary">@color/blue</item>
-        <item name="android:colorAccent">@color/blue</item>
+    <style name="LockAlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/lock_dialog_background</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textColorPrimary">@color/primary_text</item>
+        <item name="android:textAlignment">center</item>
     </style>
 
-    <style name="MenuItemTextAppearance">
-        <item name="android:textColor">#000000</item>
+    <style name="AlertDialogTheme" parent="BaseAlertDialogTheme">
+        <item name="buttonBarNegativeButtonStyle">@style/DialogBaseButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/DialogRedButtonStyle</item>
     </style>
 
-    <style name="MaterialThemeDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorAccent">@color/blue</item>
+    <style name="InfoDialogTheme" parent="BaseAlertDialogTheme">
+        <item name="buttonBarNegativeButtonStyle">@style/DialogBaseButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/DialogBaseButtonStyle</item>
     </style>
 
-    <style name="CustomAlertDialogTheme">
+    <!--PROGRESS DIALOG-->
+    <style name="CustomProgressDialogStyle">
         <item name="android:bottomBright">@android:color/transparent</item>
         <item name="android:bottomDark">@android:color/transparent</item>
         <item name="android:bottomMedium">@android:color/transparent</item>
@@ -92,7 +105,7 @@
     </style>
 
     <style name="ProgressDialogTheme" parent="android:Theme.Holo.Dialog">
-        <item name="android:alertDialogStyle">@style/CustomAlertDialogTheme</item>
+        <item name="android:alertDialogStyle">@style/CustomProgressDialogStyle</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:textColorPrimary">#FFFFFF</item>
         <item name="android:backgroundDimEnabled">false</item>
@@ -113,6 +126,5 @@
 
     <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog">
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
     </style>
 </resources>

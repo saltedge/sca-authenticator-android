@@ -25,8 +25,8 @@ import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.error.createInvalidResponseError
-import com.saltedge.authenticator.sdk.model.response.SubmitActionData
 import com.saltedge.authenticator.sdk.model.response.SubmitActionResponseData
+import com.saltedge.authenticator.sdk.model.response.SubmitActionResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.testTools.get404Response
 import com.saltedge.authenticator.sdk.testTools.getDefaultTestConnection
@@ -50,8 +50,8 @@ class SubmitActionConnectorTest {
 
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
     private val mockCallback = mockkClass(ActionSubmitListener::class)
-    private val mockCall: Call<SubmitActionResponseData> =
-        mockkClass(Call::class) as Call<SubmitActionResponseData>
+    private val mockCall: Call<SubmitActionResponse> =
+        mockkClass(Call::class) as Call<SubmitActionResponse>
     private val requestUrl = "https://localhost/api/authenticator/v1/actions/uuid-1234"
     private val requestConnection: ConnectionAbs = getDefaultTestConnection()
     private var privateKey: PrivateKey = this.getTestPrivateKey()
@@ -92,7 +92,7 @@ class SubmitActionConnectorTest {
 
         verify { mockCall.enqueue(connector) }
 
-        connector.onResponse(mockCall, Response.success(SubmitActionResponseData()))
+        connector.onResponse(mockCall, Response.success(SubmitActionResponse()))
 
         verify { mockCallback.onActionInitFailure(createInvalidResponseError()) }
         confirmVerified(mockCallback)
@@ -136,8 +136,8 @@ class SubmitActionConnectorTest {
 
         connector.onResponse(
             mockCall, Response.success(
-            SubmitActionResponseData(
-                SubmitActionData(
+            SubmitActionResponse(
+                SubmitActionResponseData(
                     success = true,
                     connectionId = "connectionId",
                     authorizationId = "authorizationId"
@@ -148,7 +148,7 @@ class SubmitActionConnectorTest {
 
         verify {
             mockCallback.onActionInitSuccess(
-                SubmitActionData(
+                SubmitActionResponseData(
                     success = true,
                     connectionId = "connectionId",
                     authorizationId = "authorizationId"

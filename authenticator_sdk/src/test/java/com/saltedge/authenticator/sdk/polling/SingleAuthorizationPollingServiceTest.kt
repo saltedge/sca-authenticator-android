@@ -1,18 +1,18 @@
-/* 
- * This file is part of the Salt Edge Authenticator distribution 
+/*
+ * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2019 Salt Edge Inc.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3 or later.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * For the additional permissions granted for Salt Edge Authenticator
@@ -23,7 +23,7 @@ package com.saltedge.authenticator.sdk.polling
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.response.AuthorizationShowResponseData
+import com.saltedge.authenticator.sdk.model.response.AuthorizationShowResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.RestClient
 import com.saltedge.authenticator.sdk.testTools.TestConnection
@@ -58,7 +58,7 @@ class SingleAuthorizationPollingServiceTest {
     fun startTest() {
         val service = SingleAuthorizationPollingService()
         service.contract = mockContract
-        every { mockContract.getConnectionData() } returns ConnectionAndKey(
+        every { mockContract.getConnectionDataForAuthorizationPolling() } returns ConnectionAndKey(
             requestConnection,
             privateKey
         )
@@ -73,13 +73,13 @@ class SingleAuthorizationPollingServiceTest {
     fun forcedFetchTest() {
         val service = SingleAuthorizationPollingService()
         service.contract = mockContract
-        every { mockContract.getConnectionData() } returns ConnectionAndKey(
+        every { mockContract.getConnectionDataForAuthorizationPolling() } returns ConnectionAndKey(
             requestConnection,
             privateKey
         )
         service.forcedFetch()
 
-        verify(atLeast = 1) { mockContract.getConnectionData() }
+        verify(atLeast = 1) { mockContract.getConnectionDataForAuthorizationPolling() }
     }
 
     @Test
@@ -87,27 +87,27 @@ class SingleAuthorizationPollingServiceTest {
     fun stopTest() {
         val service = SingleAuthorizationPollingService()
         service.contract = mockContract
-        every { mockContract.getConnectionData() } returns ConnectionAndKey(
+        every { mockContract.getConnectionDataForAuthorizationPolling() } returns ConnectionAndKey(
             requestConnection,
             privateKey
         )
         service.stop()
         service.forcedFetch()
 
-        verify(atLeast = 0) { mockContract.getConnectionData() }
+        verify(atLeast = 0) { mockContract.getConnectionDataForAuthorizationPolling() }
 
         service.start()
         service.stop()
         service.forcedFetch()
 
-        verify(atLeast = 0) { mockContract.getConnectionData() }
+        verify(atLeast = 0) { mockContract.getConnectionDataForAuthorizationPolling() }
     }
 
     private var privateKey: PrivateKey = this.getTestPrivateKey()
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
     private val mockContract: FetchAuthorizationContract =
         mockkClass(FetchAuthorizationContract::class)
-    private val mockCall = mockkClass(Call::class) as Call<AuthorizationShowResponseData>
+    private val mockCall = mockkClass(Call::class) as Call<AuthorizationShowResponse>
     private val requestConnection: ConnectionAbs =
         TestConnection(id = "333", guid = "test", connectUrl = "/", accessToken = "accessToken")
 

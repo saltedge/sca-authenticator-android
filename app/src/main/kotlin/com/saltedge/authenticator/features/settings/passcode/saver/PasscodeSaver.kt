@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.settings.passcode.saver
 
 import android.os.AsyncTask
-import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
+import com.saltedge.authenticator.tools.PasscodeToolsAbs
 
 class PasscodeSaver(
     private val passcodeTools: PasscodeToolsAbs,

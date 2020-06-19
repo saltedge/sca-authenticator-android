@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+     This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2019 Salt Edge Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/pinpadLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/theme_background">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/line_vertical_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.33" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/line_vertical_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.67" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/line_horizontal_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.25" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/line_horizontal_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.50" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/line_horizontal_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <!--first row-->
+    <TextView
+        style="@style/KeypadAction"
+        android:text="1"
+        app:layout_constraintBottom_toTopOf="@id/line_horizontal_1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/line_vertical_1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        style="@style/KeypadAction"
+        android:text="2"
+        app:layout_constraintBottom_toTopOf="@id/line_horizontal_1"
+        app:layout_constraintLeft_toRightOf="@id/line_vertical_1"
+        app:layout_constraintRight_toLeftOf="@id/line_vertical_2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        style="@style/KeypadAction"
+        android:text="3"
+        app:layout_constraintBottom_toTopOf="@id/line_horizontal_1"
+        app:layout_constraintLeft_toRightOf="@id/line_vertical_2"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!--second row-->
+    <TextView
+        style="@style/KeypadAction"
+        android:text="4"
+        app:layout_constraintBottom_toTopOf="@id/line_horizontal_2"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/line_vertical_1"
+        app:layout_constraintTop_toBottomOf="@id/line_horizontal_1" />
+
+    <TextView
+        style="@style/KeypadAction"
+        android:text="5"
+        app:layout_constraintBottom_toTopOf="@id/line_horizontal_2"
+        app:layout_constraintLeft_toRightOf="@id/line_vertical_1"
+        app:layout_constraintRight_toLeftOf="@id/line_vertical_2"
+        app:layout_constraintTop_toBottomOf="@id/line_horizontal_1" />
+
+    <TextView
+        style="@style/KeypadAction"
+        android:text="6"
+        app:layout_constraintBottom_toTopOf="@id/line_horizontal_2"
+        app:layout_constraintLeft_toRightOf="@id/line_vertical_2"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/line_horizontal_1" />
+
+    <!--third row-->
+    <TextView
+        style="@style/KeypadAction"
+        android:text="7"
+        app:layout_constraintBottom_toTopOf="@id/line_horizontal_3"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/line_vertical_1"
+        app:layout_constraintTop_toBottomOf="@id/line_horizontal_2" />
+
+    <TextView
+        style="@style/KeypadAction"
+        android:text="8"
+        app:layout_constraintBottom_toTopOf="@id/line_horizontal_3"
+        app:layout_constraintLeft_toRightOf="@id/line_vertical_1"
+        app:layout_constraintRight_toLeftOf="@id/line_vertical_2"
+        app:layout_constraintTop_toBottomOf="@id/line_horizontal_2" />
+
+    <TextView
+        style="@style/KeypadAction"
+        android:text="9"
+        app:layout_constraintBottom_toTopOf="@id/line_horizontal_3"
+        app:layout_constraintLeft_toRightOf="@id/line_vertical_2"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/line_horizontal_2" />
+
+    <!--fourth row-->
+    <TextView
+        android:id="@+id/forgotActionView"
+        style="@style/KeypadAction"
+        android:textSize="@dimen/text_18"
+        android:text="@string/forgot_passcode"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/line_vertical_1"
+        app:layout_constraintTop_toBottomOf="@id/line_horizontal_3"/>
+
+    <TextView
+        style="@style/KeypadAction"
+        android:text="0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/line_vertical_1"
+        app:layout_constraintRight_toLeftOf="@id/line_vertical_2"
+        app:layout_constraintTop_toBottomOf="@id/line_horizontal_3" />
+
+    <FrameLayout
+        android:id="@+id/fingerActionView"
+        style="@style/KeypadAction"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/line_vertical_2"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/line_horizontal_3">
+
+        <ImageView
+            android:layout_width="@dimen/dp_34"
+            android:layout_height="@dimen/dp_34"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_numpad_fingerprint" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/deleteActionView"
+        style="@style/KeypadAction"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/line_vertical_2"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/line_horizontal_3">
+
+        <ImageView
+            android:layout_width="@dimen/dp_24"
+            android:layout_height="@dimen/dp_24"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_numpad_clear" />
+    </FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,8 +20,9 @@
  */
 package com.saltedge.authenticator.sdk.tools
 
+import com.saltedge.authenticator.sdk.model.ConsentData
+import com.saltedge.authenticator.sdk.model.EncryptedData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
-import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
 import com.saltedge.authenticator.sdk.testTools.TestTools
 import com.saltedge.authenticator.sdk.testTools.getTestPrivateKey
 import com.saltedge.authenticator.sdk.testTools.getTestPublicKey
@@ -29,6 +30,7 @@ import com.saltedge.authenticator.sdk.testTools.toJsonString
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools.aesDecrypt
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools.aesEncrypt
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools.decryptAuthorizationData
+import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools.decryptConsentData
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools.rsaDecrypt
 import net.danlew.android.joda.JodaTimeAndroid
 import org.hamcrest.CoreMatchers.equalTo
@@ -143,7 +145,7 @@ class CryptoToolsTest {
         assertThat(aesKey.size, equalTo(32)) // AES-256
         assertThat(aesIV.size, equalTo(16))
 
-        val encryptedData = EncryptedAuthorizationData(
+        val encryptedData = EncryptedData(
             id = authData.id,
             connectionId = authData.connectionId,
             algorithm = "AES-256-CBC",
@@ -203,6 +205,72 @@ class CryptoToolsTest {
         )
     }
 
+    @Test
+    @Throws(Exception::class)
+    fun decryptConsentDataTest() {
+        assertThat(aesKey.size, equalTo(32)) // AES-256
+        assertThat(aesIV.size, equalTo(16))
+
+        val encryptedData = EncryptedData(
+            id = consentData.id,
+            connectionId = consentData.connectionId,
+            algorithm = "AES-256-CBC",
+            key = rsaEncrypt(aesKey, publicKey)!!,
+            iv = rsaEncrypt(aesIV, publicKey)!!,
+            data = encryptAesCBCString(consentData.toJsonString(), aesKey, aesIV)!!
+        )
+
+        assertThat(
+            decryptConsentData(
+                encryptedData = encryptedData,
+                rsaPrivateKey = privateKey
+            ),
+            equalTo(consentData)
+        )
+        Assert.assertNull(
+            decryptConsentData(
+                encryptedData = encryptedData,
+                rsaPrivateKey = null
+            )
+        )
+        Assert.assertNull(
+            decryptAuthorizationData(
+                encryptedData = encryptedData.copy(key = null),
+                rsaPrivateKey = privateKey
+            )
+        )
+        Assert.assertNull(
+            decryptConsentData(
+                encryptedData = encryptedData.copy(iv = null),
+                rsaPrivateKey = privateKey
+            )
+        )
+        Assert.assertNull(
+            decryptAuthorizationData(
+                encryptedData = encryptedData.copy(data = null),
+                rsaPrivateKey = privateKey
+            )
+        )
+        Assert.assertNull(
+            decryptConsentData(
+                encryptedData = encryptedData.copy(key = ""),
+                rsaPrivateKey = privateKey
+            )
+        )
+        Assert.assertNull(
+            decryptAuthorizationData(
+                encryptedData = encryptedData.copy(iv = ""),
+                rsaPrivateKey = privateKey
+            )
+        )
+        Assert.assertNull(
+            decryptConsentData(
+                encryptedData = encryptedData.copy(data = ""),
+                rsaPrivateKey = privateKey
+            )
+        )
+    }
+
     private val aesKey = byteArrayOf(
         65, 1, 2, 23, 4, 5, 6, 7, 32, 21, 10, 11, 12, 13, 84, 45,
         65, 1, 2, 23, 4, 5, 6, 7, 32, 21, 10, 11, 12, 13, 84, 45
@@ -215,6 +283,14 @@ class CryptoToolsTest {
         connectionId = "333",
         expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
         authorizationCode = "111"
+    )
+    private val consentData = ConsentData(
+        id = "555",
+        title = "title",
+        description = "description",
+        connectionId = "333",
+        expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
+        createdAt = DateTime(0).withZone(DateTimeZone.UTC)
     )
     private var privateKey: PrivateKey = this.getTestPrivateKey()
     private var publicKey: PublicKey = this.getTestPublicKey()

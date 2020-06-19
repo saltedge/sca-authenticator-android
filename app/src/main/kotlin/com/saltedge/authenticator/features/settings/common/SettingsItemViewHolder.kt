@@ -20,55 +20,13 @@
  */
 package com.saltedge.authenticator.features.settings.common
 
-import android.view.View
-import android.view.ViewGroup
-import android.widget.CompoundButton
-import android.widget.Switch
-import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.saltedge.authenticator.R
-import com.saltedge.authenticator.interfaces.CheckableListItemClickListener
-import com.saltedge.authenticator.tool.inflateListItemView
-import com.saltedge.authenticator.tool.setVisible
+import com.saltedge.authenticator.databinding.SettingsItemBinding
 
-class SettingsItemViewHolder(
-    parent: ViewGroup,
-    var listener: CheckableListItemClickListener?
-) : RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_setting)),
-    View.OnClickListener, CompoundButton.OnCheckedChangeListener {
-
-    private val titleView = itemView.findViewById<TextView>(R.id.titleView)
-    private val valueView = itemView.findViewById<TextView>(R.id.valueView)
-    private var checkView = itemView.findViewById<Switch>(R.id.checkView)
-    private var code = -1
-
-    override fun onClick(v: View?) {
-        if (adapterPosition > RecyclerView.NO_POSITION) listener?.onListItemClick(itemViewId = code)
-    }
-
-    override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
-        if (adapterPosition > RecyclerView.NO_POSITION)
-            listener?.onListItemCheckedStateChanged(itemId = code, checked = isChecked)
-    }
+class SettingsItemViewHolder(val binding: SettingsItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: SettingsItemViewModel) {
-        code = item.titleId
-        titleView.setText(item.titleId)
-        titleView.setTextColor(ContextCompat.getColor(titleView.context, item.colorResId))
-        valueView.setVisible(item.value != null)
-        if (item.value != null) {
-            valueView.text = item.value
-        }
-        checkView.setVisible(item.switchEnabled != null)
-        if (item.switchEnabled != null) {
-            checkView.isEnabled = item.switchEnabled
-        }
-
-        checkView.setOnCheckedChangeListener(null)
-        checkView.isChecked = item.isChecked
-        checkView.setOnCheckedChangeListener(this)
-
-        itemView.setOnClickListener(if (item.itemIsClickable) this else null)
+        binding.item = item
+        binding.executePendingBindings()
     }
 }

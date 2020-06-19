@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2020 Salt Edge Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:pathData="M12,22.5C12.8086,22.5 13.5951,22.4027 14.3492,22.2187L14.9501,20.4084C15.3245,19.2807 16.4481,18.6113 17.5817,18.8406L19.3982,19.208C20.4741,18.0322 21.2897,16.6 21.75,15.0096L20.5316,13.5678C19.7724,12.6694 19.7724,11.3306 20.5316,10.4322L21.75,8.9904C21.2897,7.4 20.4741,5.9678 19.3982,4.792L17.5817,5.1594C16.4481,5.3887 15.3245,4.7193 14.9501,3.5916L14.3492,1.7813C13.5951,1.5973 12.8086,1.5 12,1.5C11.1914,1.5 10.4049,1.5973 9.6508,1.7813L9.0499,3.5916C8.6755,4.7193 7.5519,5.3887 6.4183,5.1594L4.6018,4.792C3.5259,5.9678 2.7102,7.4 2.25,8.9904L3.4684,10.4322C4.2276,11.3306 4.2276,12.6694 3.4684,13.5678L2.25,15.0096C2.7102,16.6 3.5259,18.0322 4.6018,19.208L6.4183,18.8406C7.5519,18.6113 8.6755,19.2807 9.0499,20.4084L9.6508,22.2187C10.4049,22.4027 11.1915,22.5 12,22.5ZM12,16.5405C14.4298,16.5405 16.3996,14.5077 16.3996,12C16.3996,9.4923 14.4298,7.4595 12,7.4595C9.5702,7.4595 7.6004,9.4923 7.6004,12C7.6004,14.5077 9.5702,16.5405 12,16.5405Z"
+      android:fillColor="@color/menu_action_icon_fill_color"
+      android:fillType="evenOdd"/>
+</vector>

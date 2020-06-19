@@ -21,22 +21,25 @@
 package com.saltedge.authenticator.features.connections.list
 
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
-import com.saltedge.authenticator.features.connections.common.RoundedImageView
 import com.saltedge.authenticator.interfaces.ListItemClickListener
-import com.saltedge.authenticator.tool.inflateListItemView
-import com.saltedge.authenticator.tool.loadImage
-import com.saltedge.authenticator.tool.setTextColorResId
+import com.saltedge.authenticator.tools.inflateListItemView
+import com.saltedge.authenticator.tools.loadRoundedImage
+import com.saltedge.authenticator.tools.setTextColorResId
 
 class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClickListener?) :
     RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_connection)) {
 
-    private val logoImageView = itemView.findViewById<RoundedImageView>(R.id.logoImageView)
+    private val logoImageView = itemView.findViewById<ImageView>(R.id.logoImageView)
     private val titleView = itemView.findViewById<TextView>(R.id.titleView)
     private val subTitleView = itemView.findViewById<TextView>(R.id.subTitleView)
+    private val listItemView = itemView.findViewById<RelativeLayout>(R.id.listItemView)
 
     init {
         itemView.setOnClickListener {
@@ -46,10 +49,13 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
     }
 
     fun bind(item: ConnectionViewModel) {
-        logoImageView.loadImage(
+        logoImageView.loadRoundedImage(
             imageUrl = item.logoUrl,
-            placeholderId = R.drawable.ic_logo_bank_placeholder
+            placeholderId = R.drawable.shape_bg_app_logo,
+            cornerRadius = itemView.resources.getDimension(R.dimen.connections_list_logo_radius)
         )
+        if (item.isChecked) listItemView.setBackgroundResource(R.drawable.stroke_background)
+        else listItemView.setBackgroundColor(ContextCompat.getColor(listItemView.context, R.color.app_logo_background))
         titleView.text = item.name
         subTitleView.text = item.statusDescription
         subTitleView.setTextColorResId(item.statusColorResId)

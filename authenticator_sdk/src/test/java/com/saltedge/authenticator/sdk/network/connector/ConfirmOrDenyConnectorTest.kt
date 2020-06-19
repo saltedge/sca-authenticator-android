@@ -20,14 +20,14 @@
  */
 package com.saltedge.authenticator.sdk.network.connector
 
-import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationResult
+import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.error.createInvalidResponseError
-import com.saltedge.authenticator.sdk.model.request.ConfirmDenyData
+import com.saltedge.authenticator.sdk.model.request.ConfirmDenyRequestData
+import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponse
 import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData
-import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResultData
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.testTools.get404Response
@@ -69,7 +69,7 @@ class ConfirmOrDenyConnectorTest {
         connector.updateAuthorization(
             connectionAndKey = ConnectionAndKey(requestConnection, privateKey),
             authorizationId = requestAuthorizationId,
-            payloadData = ConfirmDenyData(confirm = true, authorizationCode = "authorizationCode")
+            payloadData = ConfirmDenyRequestData(confirm = true, authorizationCode = "authorizationCode")
         )
 
         verify { mockCall.enqueue(connector) }
@@ -77,10 +77,10 @@ class ConfirmOrDenyConnectorTest {
         connector.onResponse(
             mockCall,
             Response.success(
-                ConfirmDenyResponseData(
-                    ConfirmDenyResultData(
+                ConfirmDenyResponse(
+                    ConfirmDenyResponseData(
                         success = true,
-                        authorizationId = requestAuthorizationId
+                        authorizationID = requestAuthorizationId
                     )
                 )
             )
@@ -88,9 +88,9 @@ class ConfirmOrDenyConnectorTest {
 
         verify {
             mockCallback.onConfirmDenySuccess(
-                ConfirmDenyResultData(
+                ConfirmDenyResponseData(
                     success = true,
-                    authorizationId = requestAuthorizationId
+                    authorizationID = requestAuthorizationId
                 ),
                 connectionID = "333"
             )
@@ -105,12 +105,12 @@ class ConfirmOrDenyConnectorTest {
         connector.updateAuthorization(
             connectionAndKey = ConnectionAndKey(requestConnection, privateKey),
             authorizationId = requestAuthorizationId,
-            payloadData = ConfirmDenyData(confirm = true, authorizationCode = "authorizationCode")
+            payloadData = ConfirmDenyRequestData(confirm = true, authorizationCode = "authorizationCode")
         )
 
         verify { mockCall.enqueue(connector) }
 
-        connector.onResponse(mockCall, Response.success(ConfirmDenyResponseData()))
+        connector.onResponse(mockCall, Response.success(ConfirmDenyResponse()))
 
         verify { mockCallback.onConfirmDenyFailure(createInvalidResponseError(), authorizationID = "444", connectionID = "333") }
         confirmVerified(mockCallback)
@@ -123,7 +123,7 @@ class ConfirmOrDenyConnectorTest {
         connector.updateAuthorization(
             connectionAndKey = ConnectionAndKey(requestConnection, privateKey),
             authorizationId = requestAuthorizationId,
-            payloadData = ConfirmDenyData(confirm = true, authorizationCode = "authorizationCode")
+            payloadData = ConfirmDenyRequestData(confirm = true, authorizationCode = "authorizationCode")
         )
 
         verify { mockCall.enqueue(connector) }
@@ -145,10 +145,10 @@ class ConfirmOrDenyConnectorTest {
     }
 
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
-    private val mockCallback: ConfirmAuthorizationResult =
-        mockkClass(ConfirmAuthorizationResult::class)
-    private val mockCall: Call<ConfirmDenyResponseData> =
-        mockkClass(Call::class) as Call<ConfirmDenyResponseData>
+    private val mockCallback: ConfirmAuthorizationListener =
+        mockkClass(ConfirmAuthorizationListener::class)
+    private val mockCall: Call<ConfirmDenyResponse> =
+        mockkClass(Call::class) as Call<ConfirmDenyResponse>
     private val requestConnection: ConnectionAbs = getDefaultTestConnection()
     private val requestAuthorizationId = "444"
     private val requestUrl = "https://localhost/api/authenticator/v1/authorizations/444"

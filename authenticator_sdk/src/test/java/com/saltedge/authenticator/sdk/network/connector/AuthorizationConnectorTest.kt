@@ -24,8 +24,8 @@ import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
-import com.saltedge.authenticator.sdk.model.response.AuthorizationShowResponseData
+import com.saltedge.authenticator.sdk.model.EncryptedData
+import com.saltedge.authenticator.sdk.model.response.AuthorizationShowResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.testTools.get404Response
@@ -75,8 +75,8 @@ class AuthorizationConnectorTest {
 
         connector.onResponse(
             mockCall, Response.success(
-            AuthorizationShowResponseData(
-                EncryptedAuthorizationData(
+            AuthorizationShowResponse(
+                EncryptedData(
                     id = "444",
                     connectionId = "333",
                     algorithm = "AES-256-CBC",
@@ -90,7 +90,7 @@ class AuthorizationConnectorTest {
 
         verify {
             mockCallback.onFetchAuthorizationResult(
-                result = EncryptedAuthorizationData(
+                result = EncryptedData(
                     id = "444",
                     connectionId = "333",
                     algorithm = "AES-256-CBC",
@@ -142,8 +142,8 @@ class AuthorizationConnectorTest {
     private val requestAuthorizationId = "authId"
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
     private val mockCallback = mockkClass(FetchAuthorizationContract::class)
-    private val mockCall: Call<AuthorizationShowResponseData> =
-        mockkClass(Call::class) as Call<AuthorizationShowResponseData>
+    private val mockCall: Call<AuthorizationShowResponse> =
+        mockkClass(Call::class) as Call<AuthorizationShowResponse>
     private var capturedHeaders: MutableList<Map<String, String>> = mutableListOf()
     private var privateKey: PrivateKey = this.getTestPrivateKey()
 
@@ -159,7 +159,7 @@ class AuthorizationConnectorTest {
             HEADER_KEY_ACCESS_TOKEN,
             "accessToken"
         ).build()
-        every { mockCallback.getConnectionData() } returns null
+        every { mockCallback.getConnectionDataForAuthorizationPolling() } returns null
         every { mockCallback.onFetchAuthorizationResult(any(), any()) } returns Unit
     }
 }

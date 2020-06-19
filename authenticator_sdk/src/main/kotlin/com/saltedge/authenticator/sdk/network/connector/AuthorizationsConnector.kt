@@ -22,36 +22,36 @@ package com.saltedge.authenticator.sdk.network.connector
 
 import com.saltedge.authenticator.sdk.constants.API_AUTHORIZATIONS
 import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_GET
-import com.saltedge.authenticator.sdk.contract.FetchAuthorizationsResult
+import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
-import com.saltedge.authenticator.sdk.model.authorization.isValid
-import com.saltedge.authenticator.sdk.model.request.AuthenticatedRequestData
-import com.saltedge.authenticator.sdk.model.response.AuthorizationsResponseData
+import com.saltedge.authenticator.sdk.model.EncryptedData
+import com.saltedge.authenticator.sdk.model.isValid
+import com.saltedge.authenticator.sdk.model.request.SignedRequest
+import com.saltedge.authenticator.sdk.model.response.EncryptedListResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import retrofit2.Call
 
 /**
- * Connector query server for Authorizations list
+ * Connector make request to API to get Authorizations list
  *
  * @param apiInterface - instance of ApiInterface
- * @param resultCallback - instance of ConnectionsRevokeResult for returning query result
+ * @param resultCallback - instance of FetchEncryptedDataResult for returning query result
  * @see QueueConnector
  */
 internal class AuthorizationsConnector(
     val apiInterface: ApiInterface,
-    var resultCallback: FetchAuthorizationsResult?
-) : QueueConnector<AuthorizationsResponseData>() {
+    var resultCallback: FetchEncryptedDataListener?
+) : QueueConnector<EncryptedListResponse>() {
 
-    private var result = mutableListOf<EncryptedAuthorizationData>()
+    private var result = mutableListOf<EncryptedData>()
     private var errors = mutableListOf<ApiErrorData>()
 
     fun fetchAuthorizations(connectionsAndKeys: List<ConnectionAndKey>) {
         if (super.queueIsEmpty()) {
-            val requestData: List<AuthenticatedRequestData> =
+            val requestData: List<SignedRequest> =
                 connectionsAndKeys.map { (connection, key) ->
-                    createAuthenticatedRequestData<Nothing>(
+                    createSignedRequestData<Nothing>(
                         requestMethod = REQUEST_METHOD_GET,
                         baseUrl = connection.connectUrl,
                         apiRoutePath = API_AUTHORIZATIONS,
@@ -69,23 +69,23 @@ internal class AuthorizationsConnector(
     }
 
     override fun onQueueFinished() {
-        resultCallback?.onFetchAuthorizationsResult(result, errors)
+        resultCallback?.onFetchEncryptedDataResult(result, errors)
     }
 
     override fun onSuccessResponse(
-        call: Call<AuthorizationsResponseData>,
-        response: AuthorizationsResponseData
+        call: Call<EncryptedListResponse>,
+        response: EncryptedListResponse
     ) {
         response.data?.filter { it.isValid() }?.let { result.addAll(it) }
         super.onResponseReceived()
     }
 
-    override fun onFailureResponse(call: Call<AuthorizationsResponseData>, error: ApiErrorData) {
+    override fun onFailureResponse(call: Call<EncryptedListResponse>, error: ApiErrorData) {
         errors.add(error)
         super.onResponseReceived()
     }
 
-    private fun sendRequest(requestData: AuthenticatedRequestData) {
+    private fun sendRequest(requestData: SignedRequest) {
         apiInterface.getAuthorizations(
             requestUrl = requestData.requestUrl,
             headersMap = requestData.headersMap

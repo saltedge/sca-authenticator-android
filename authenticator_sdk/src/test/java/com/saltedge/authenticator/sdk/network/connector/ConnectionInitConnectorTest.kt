@@ -1,18 +1,18 @@
-/* 
- * This file is part of the Salt Edge Authenticator distribution 
+/*
+ * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2019 Salt Edge Inc.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3 or later.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * For the additional permissions granted for Salt Edge Authenticator
@@ -20,12 +20,12 @@
  */
 package com.saltedge.authenticator.sdk.network.connector
 
-import com.saltedge.authenticator.sdk.contract.ConnectionCreateResult
+import com.saltedge.authenticator.sdk.contract.ConnectionCreateListener
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.error.createInvalidResponseError
-import com.saltedge.authenticator.sdk.model.request.CreateConnectionData
 import com.saltedge.authenticator.sdk.model.request.CreateConnectionRequestData
-import com.saltedge.authenticator.sdk.model.response.CreateConnectionResponseData
+import com.saltedge.authenticator.sdk.model.request.CreateConnectionRequest
+import com.saltedge.authenticator.sdk.model.response.CreateConnectionResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.testTools.get404Response
 import io.mockk.confirmVerified
@@ -72,15 +72,15 @@ class ConnectionInitConnectorTest {
 
         connector.onResponse(
             mockCall, Response.success(
-            CreateConnectionResponseData(
-                com.saltedge.authenticator.sdk.model.response.CreateConnectionData(connectionId = "333", redirectUrl = "url")
+            CreateConnectionResponse(
+                com.saltedge.authenticator.sdk.model.response.CreateConnectionResponseData(connectionId = "333", redirectUrl = "url")
             )
         )
         )
 
         verify {
             mockCallback.onConnectionCreateSuccess(
-                com.saltedge.authenticator.sdk.model.response.CreateConnectionData(
+                com.saltedge.authenticator.sdk.model.response.CreateConnectionResponseData(
                     connectionId = "333",
                     redirectUrl = "url"
                 )
@@ -103,7 +103,7 @@ class ConnectionInitConnectorTest {
 
         verify { mockCall.enqueue(connector) }
 
-        connector.onResponse(mockCall, Response.success(CreateConnectionResponseData()))
+        connector.onResponse(mockCall, Response.success(CreateConnectionResponse()))
 
         verify { mockCallback.onConnectionCreateFailure(createInvalidResponseError()) }
         confirmVerified(mockCallback)
@@ -121,7 +121,7 @@ class ConnectionInitConnectorTest {
             connectQueryParam = "1234567890"
         )
 
-        verify { mockApi.postNewConnectionData(requestUrl = requestUrl, body = requestData) }
+        verify { mockApi.createConnection(requestUrl = requestUrl, body = requestData) }
         verify { mockCall.enqueue(connector) }
 
         connector.onResponse(mockCall, get404Response())
@@ -138,11 +138,11 @@ class ConnectionInitConnectorTest {
     }
 
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
-    private val mockCallback = mockkClass(ConnectionCreateResult::class)
-    private val mockCall: Call<CreateConnectionResponseData> =
-        mockkClass(Call::class) as Call<CreateConnectionResponseData>
-    private val requestData = CreateConnectionRequestData(
-        data = CreateConnectionData(
+    private val mockCallback = mockkClass(ConnectionCreateListener::class)
+    private val mockCall: Call<CreateConnectionResponse> =
+        mockkClass(Call::class) as Call<CreateConnectionResponse>
+    private val requestData = CreateConnectionRequest(
+        data = CreateConnectionRequestData(
             publicKey = "key",
             pushToken = "pushToken",
             providerCode = "demobank",
@@ -155,7 +155,7 @@ class ConnectionInitConnectorTest {
     @Throws(Exception::class)
     fun setUp() {
         every {
-            mockApi.postNewConnectionData(requestUrl = requestUrl, body = any())
+            mockApi.createConnection(requestUrl = requestUrl, body = any())
         } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
         every { mockCall.request() } returns Request.Builder().url(requestUrl).build()

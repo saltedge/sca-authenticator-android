@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,44 +22,53 @@ package com.saltedge.authenticator.features.connections.create
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.text.SpannableString
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.CookieManager
+import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
-import com.saltedge.authenticator.features.connections.create.di.ConnectProviderModule
+import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.databinding.ConnectProviderBinding
+import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.OnBackPressListener
-import com.saltedge.authenticator.interfaces.UpActionImageListener
+import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.Token
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import com.saltedge.authenticator.sdk.web.ConnectWebClient
 import com.saltedge.authenticator.sdk.web.ConnectWebClientContract
-import com.saltedge.authenticator.tool.*
+import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.finishFragment
+import com.saltedge.authenticator.tools.showErrorDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_connect.*
 import javax.inject.Inject
 
 class ConnectProviderFragment : BaseFragment(),
-    ConnectProviderContract.View,
     ConnectWebClientContract,
-    View.OnClickListener,
     OnBackPressListener,
-    UpActionImageListener {
-
-    @Inject
-    lateinit var presenterContract: ConnectProviderContract.Presenter
+    DialogInterface.OnClickListener,
+    DialogHandlerListener
+{
+    @Inject lateinit var viewModelFactory: ViewModelsFactory
+    private lateinit var viewModel: ConnectProviderViewModel
     private val webViewClient = ConnectWebClient(contract = this)
+    private lateinit var binding: ConnectProviderBinding
+    private var alertDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectDependencies()
-        presenterContract.setInitialData(
-            initialConnectData = arguments?.getSerializable(KEY_CONNECT_DATA) as? ConnectAppLinkData,
-            connectionGuid = arguments?.getString(KEY_GUID)
-        )
+        authenticatorApp?.appComponent?.inject(this)
+        setupViewModel()
     }
 
     override fun onCreateView(
@@ -67,71 +76,45 @@ class ConnectProviderFragment : BaseFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activityComponents?.updateAppbarTitleWithFabAction(getString(presenterContract.getTitleResId()))
-        return inflater.inflate(R.layout.fragment_connect, container, false)
+        activityComponents?.updateAppbar(
+            titleResId = viewModel.titleRes,
+            backActionImageResId = viewModel.backActionIconRes.value
+        )
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_connect, container, false)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         connectWebView?.webViewClient = webViewClient
-        completeView?.setOnClickListener(this)
-        updateViewsContent()
-        presenterContract.viewContract = this
-        presenterContract.onViewCreated()
+        completeView?.setClickListener(View.OnClickListener { v -> viewModel.onViewClick(v.id) })
     }
 
     override fun onDestroyView() {
         connectWebView?.destroy()
-        presenterContract.viewContract = null
         super.onDestroyView()
     }
 
-    override fun onDestroy() {
-        presenterContract.onDestroyView()
-        super.onDestroy()
+    override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
+        viewModel.onDialogActionIdClick(dialogActionId)
     }
 
     override fun onBackPress(): Boolean {
-        return if (presenterContract.shouldShowWebView && connectWebView?.canGoBack() == true) {
-            connectWebView.goBack()
-            true
-        } else {
-            false
-        }
-    }
-
-    override fun onClick(view: View?) {
-        presenterContract.onViewClick(view?.id ?: return)
-    }
-
-    override fun closeView() {
-        activity?.finishFragment()
-    }
-
-    override fun updateViewsContent() {
-        completeView?.setIconResource(presenterContract.iconResId)
-        completeView?.setTitleText(presenterContract.completeTitle)
-        completeView?.setSubtitleText(presenterContract.completeMessage)
-        completeView?.setMainActionText(presenterContract.mainActionTextResId)
-        completeView?.setAltActionText(presenterContract.reportProblemActionText)
-
-        updateLayoutsVisibility()
-    }
-
-    override fun loadUrlInWebView(url: String) {
-        connectWebView?.loadUrl(url)
+        return viewModel.onBackPress(webViewCanGoBack = connectWebView?.canGoBack())
     }
 
     override fun webAuthFinishError(errorClass: String, errorMessage: String?) {
         connectWebView?.clearCache(true)
         CookieManager.getInstance().removeSessionCookies(null)
-        presenterContract.webAuthFinishError(errorClass, errorMessage)
+        viewModel.webAuthFinishError(errorClass, errorMessage)
     }
 
     override fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token) {
         connectWebView?.clearCache(true)
         CookieManager.getInstance().removeSessionCookies(null)
-        presenterContract.webAuthFinishSuccess(id, accessToken)
+        viewModel.authFinishedWithSuccess(id, accessToken)
     }
 
     override fun onPageLoadStarted() {
@@ -142,35 +125,57 @@ class ConnectProviderFragment : BaseFragment(),
         dismissLoadProgress()
     }
 
-    override fun showErrorAndFinish(message: String) {
-        activity?.showErrorDialog(
-            message = message,
-            listener = DialogInterface.OnClickListener { _: DialogInterface, _: Int ->
-                activity?.finishFragment()
+    override fun closeActiveDialogs() {
+        if (alertDialog?.isShowing == true) alertDialog?.dismiss()
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(this, viewModelFactory).get(ConnectProviderViewModel::class.java)
+        lifecycle.addObserver(viewModel)
+
+        viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let { activity?.finishFragment() }
+        })
+        viewModel.onShowErrorEvent.observe(this, Observer<ViewModelEvent<String>> {
+            it.getContentIfNotHandled()?.let { message ->
+                alertDialog = activity?.showErrorDialog(message = message, listener = this)
             }
-        )
-    }
+        })
+        viewModel.onUrlChangedEvent.observe(this, Observer<ViewModelEvent<String?>> {
+            it.getContentIfNotHandled()?.let { url -> connectWebView?.loadUrl(url) }
+        })
+        viewModel.goBackEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let { connectWebView.goBack() }
+        })
+        viewModel.statusIconRes.observe(this, Observer<ResId> {
+            completeView?.setIconResource(it)
+        })
+        viewModel.completeTitle.observe(this, Observer<SpannableString> {
+            completeView?.setTitleText(it)
+        })
+        viewModel.completeDescription.observe(this, Observer<String> {
+            completeView?.setDescription(it)
+        })
+        viewModel.mainActionTextRes.observe(this, Observer<ResId> {
+            completeView?.setMainActionText(it)
+        })
+        viewModel.backActionIconRes.observe(this, Observer<ResId?> {
+            activityComponents?.updateAppbar(
+                titleResId = viewModel.titleRes,
+                backActionImageResId = it
+            )
+        })
 
-    override fun getUpActionImageResId(): ResId? = R.drawable.ic_close_white_24dp
-
-    private fun updateLayoutsVisibility() {
-        fragmentConnectProcessingLayout?.setVisible(show = presenterContract.shouldShowProgressView)
-        completeView?.setVisible(show = presenterContract.shouldShowCompleteView)
-        connectWebView?.setVisible(show = presenterContract.shouldShowWebView)
-    }
-
-    private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addConnectProviderModule(ConnectProviderModule())?.inject(
-            this
+        viewModel.setInitialData(
+            initialConnectData = arguments?.getSerializable(KEY_DATA) as? ConnectAppLinkData,
+            connectionGuid = arguments?.getString(KEY_GUID)
         )
     }
 
     companion object {
-        const val KEY_CONNECT_DATA = "KEY_CONNECT_DATA"
-
         fun newInstance(connectAppLinkData: ConnectAppLinkData): ConnectProviderFragment {
             return ConnectProviderFragment().apply {
-                arguments = Bundle().apply { putSerializable(KEY_CONNECT_DATA, connectAppLinkData) }
+                arguments = Bundle().apply { putSerializable(KEY_DATA, connectAppLinkData) }
             }
         }
 

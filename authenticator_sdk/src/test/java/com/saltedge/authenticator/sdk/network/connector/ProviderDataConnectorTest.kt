@@ -20,10 +20,10 @@
  */
 package com.saltedge.authenticator.sdk.network.connector
 
-import com.saltedge.authenticator.sdk.contract.FetchProviderConfigurationDataResult
+import com.saltedge.authenticator.sdk.contract.FetchProviderConfigurationListener
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.model.ProviderData
-import com.saltedge.authenticator.sdk.model.ProviderResponseData
+import com.saltedge.authenticator.sdk.model.configuration.ProviderConfigurationData
+import com.saltedge.authenticator.sdk.model.response.ProviderConfigurationResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.testTools.get404Response
 import io.mockk.confirmVerified
@@ -65,8 +65,8 @@ class ProviderDataConnectorTest {
         connector.onResponse(
             mockCall,
             Response.success(
-                ProviderResponseData(
-                    ProviderData(
+                ProviderConfigurationResponse(
+                    ProviderConfigurationData(
                         connectUrl = "connectUrl",
                         name = "name",
                         code = "code",
@@ -80,7 +80,7 @@ class ProviderDataConnectorTest {
 
         verify {
             mockCallback.fetchProviderConfigurationDataResult(
-                result = ProviderData(
+                result = ProviderConfigurationData(
                     connectUrl = "connectUrl",
                     name = "name",
                     code = "code",
@@ -101,7 +101,7 @@ class ProviderDataConnectorTest {
         connector.fetchProviderData(requestUrl)
 
         verify(exactly = 1) {
-            mockApi.getProviderData(requestUrl = requestUrl)
+            mockApi.getProviderConfiguration(requestUrl = requestUrl)
         }
         verify { mockCall.enqueue(connector) }
 
@@ -121,15 +121,15 @@ class ProviderDataConnectorTest {
 
     private val requestUrl = "https://localhost/api/authenticator/v1/authorizations/authId"
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
-    private val mockCallback = mockkClass(FetchProviderConfigurationDataResult::class)
-    private val mockCall: Call<ProviderResponseData> =
-        mockkClass(Call::class) as Call<ProviderResponseData>
+    private val mockCallback = mockkClass(FetchProviderConfigurationListener::class)
+    private val mockCall: Call<ProviderConfigurationResponse> =
+        mockkClass(Call::class) as Call<ProviderConfigurationResponse>
 
     @Before
     @Throws(Exception::class)
     fun setUp() {
         every {
-            mockApi.getProviderData(requestUrl = requestUrl)
+            mockApi.getProviderConfiguration(requestUrl = requestUrl)
         } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
         every { mockCall.request() } returns Request.Builder().url(requestUrl).build()

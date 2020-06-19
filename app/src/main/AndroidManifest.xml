@@ -95,7 +95,7 @@
             android:launchMode="singleInstance"/>
 
         <activity
-            android:name=".features.connections.qr.QrScannerActivity"
+            android:name="com.saltedge.authenticator.features.qr.QrScannerActivity"
             android:theme="@style/SetupScreenTheme"
             android:label="@string/scan_qr_code"
             android:screenOrientation="portrait"
@@ -112,7 +112,7 @@
 
         <!-- The below code is for android OS version below N -->
         <receiver
-            android:name=".features.main.ConnectivityReceiver"
+            android:name=".app.ConnectivityReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
@@ -121,7 +121,7 @@
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_app_logo_notifications" />
+            android:resource="@drawable/ic_logo_app_notifications" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"

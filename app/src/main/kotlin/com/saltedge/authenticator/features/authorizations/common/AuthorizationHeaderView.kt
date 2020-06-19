@@ -27,11 +27,11 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.sdk.tools.remainedSeconds
 import com.saltedge.authenticator.sdk.tools.remainedTimeDescription
 import com.saltedge.authenticator.sdk.tools.secondsBetweenDates
-import com.saltedge.authenticator.tool.loadImage
+import com.saltedge.authenticator.tools.loadRoundedImage
 import kotlinx.android.synthetic.main.view_authorization_header.view.*
 import org.joda.time.DateTime
 
-class AuthorizationHeaderView : LinearLayout, TimeUpdateListener {
+class AuthorizationHeaderView : LinearLayout, TimerUpdateListener {
 
     private var startTime: DateTime? = null
     private var endTime: DateTime? = null
@@ -49,11 +49,12 @@ class AuthorizationHeaderView : LinearLayout, TimeUpdateListener {
         titleView?.text = title
 
         if (logoUrl?.isEmpty() == true) {
-            logoView?.setImageResource(R.drawable.ic_logo_bank_placeholder)
+            logoView?.setImageResource(R.drawable.shape_bg_connection_list_logo)
         } else {
-            logoView?.loadImage(
+            logoView?.loadRoundedImage(
                 imageUrl = logoUrl,
-                placeholderId = R.drawable.ic_logo_bank_placeholder
+                placeholderId = R.drawable.shape_bg_authorizations_list_logo,
+                cornerRadius = resources.getDimension(R.dimen.authorizations_list_logo_radius)
             )
         }
     }

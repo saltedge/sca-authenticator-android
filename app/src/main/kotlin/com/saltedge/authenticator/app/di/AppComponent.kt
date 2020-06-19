@@ -21,33 +21,30 @@
 package com.saltedge.authenticator.app.di
 
 import android.content.Context
-import com.saltedge.authenticator.features.authorizations.details.di.AuthorizationDetailsComponent
-import com.saltedge.authenticator.features.authorizations.details.di.AuthorizationDetailsModule
-import com.saltedge.authenticator.features.authorizations.list.di.AuthorizationsListComponent
-import com.saltedge.authenticator.features.authorizations.list.di.AuthorizationsListModule
-import com.saltedge.authenticator.features.actions.di.SubmitActionComponent
-import com.saltedge.authenticator.features.actions.di.SubmitActionModule
-import com.saltedge.authenticator.features.connections.create.di.ConnectProviderComponent
-import com.saltedge.authenticator.features.connections.create.di.ConnectProviderModule
-import com.saltedge.authenticator.features.connections.list.di.ConnectionsListComponent
-import com.saltedge.authenticator.features.connections.list.di.ConnectionsListModule
-import com.saltedge.authenticator.features.launcher.di.LauncherComponent
-import com.saltedge.authenticator.features.launcher.di.LauncherModule
-import com.saltedge.authenticator.features.onboarding.di.OnboardingSetupComponent
-import com.saltedge.authenticator.features.onboarding.di.OnboardingSetupModule
-import com.saltedge.authenticator.features.security.LockableActivity
-import com.saltedge.authenticator.features.settings.language.di.LanguageSelectComponent
-import com.saltedge.authenticator.features.settings.language.di.LanguageSelectModule
-import com.saltedge.authenticator.features.settings.list.di.SettingsListComponent
-import com.saltedge.authenticator.features.settings.list.di.SettingsListModule
-import com.saltedge.authenticator.features.settings.passcode.di.PasscodeEditComponent
-import com.saltedge.authenticator.features.settings.passcode.di.PasscodeEditModule
-import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.features.actions.SubmitActionFragment
+import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
+import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
+import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
+import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
+import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment
+import com.saltedge.authenticator.features.launcher.LauncherActivity
+import com.saltedge.authenticator.features.main.MainActivity
+import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
+import com.saltedge.authenticator.features.qr.QrScannerActivity
+import com.saltedge.authenticator.features.settings.about.AboutListFragment
+import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
+import com.saltedge.authenticator.features.settings.licenses.LicensesFragment
+import com.saltedge.authenticator.features.settings.list.SettingsListFragment
+import com.saltedge.authenticator.features.settings.passcode.PasscodeEditFragment
+import com.saltedge.authenticator.models.realm.RealmManagerAbs
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
+import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
+import com.saltedge.authenticator.widget.security.LockableActivity
 import dagger.Component
 import javax.inject.Singleton
 
@@ -61,17 +58,23 @@ interface AppComponent {
     fun passcodeTools(): PasscodeToolsAbs
     fun biometricTools(): BiometricToolsAbs
     fun biometricPrompt(): BiometricPromptAbs?
-
-    fun addLauncherModule(module: LauncherModule): LauncherComponent
-    fun addOnboardingSetupModule(module: OnboardingSetupModule): OnboardingSetupComponent
-    fun addConnectionsListModule(module: ConnectionsListModule): ConnectionsListComponent
-    fun addConnectProviderModule(module: ConnectProviderModule): ConnectProviderComponent
-    fun addActionModule(moduleSubmit: SubmitActionModule): SubmitActionComponent
-    fun addAuthorizationsListModule(module: AuthorizationsListModule): AuthorizationsListComponent
-    fun addAuthorizationDetailsModule(module: AuthorizationDetailsModule): AuthorizationDetailsComponent
-    fun addSettingsListModule(module: SettingsListModule): SettingsListComponent
-    fun addLanguageSelectModule(module: LanguageSelectModule): LanguageSelectComponent
-    fun addPasscodeEditModule(module: PasscodeEditModule): PasscodeEditComponent
+    fun realmManager() : RealmManagerAbs
+    fun viewModelsFactory() : ViewModelsFactory
 
     fun inject(activity: LockableActivity)
+    fun inject(activity: OnboardingSetupActivity)
+    fun inject(activity: LauncherActivity)
+    fun inject(activity: MainActivity)
+    fun inject(activity: QrScannerActivity)
+    fun inject(fragment: AuthorizationsListFragment)
+    fun inject(fragment: AuthorizationDetailsFragment)
+    fun inject(fragment: ConnectProviderFragment)
+    fun inject(fragment: ConnectionsListFragment)
+    fun inject(fragment: SubmitActionFragment)
+    fun inject(fragment: SelectConnectionsFragment)
+    fun inject(fragment: SettingsListFragment)
+    fun inject(fragment: AboutListFragment)
+    fun inject(fragment: LicensesFragment)
+    fun inject(fragment: LanguageSelectDialog)
+    fun inject(fragment: PasscodeEditFragment)
 }

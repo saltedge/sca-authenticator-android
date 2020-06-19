@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.connections.create
 
 import com.saltedge.authenticator.app.KEY_GUID
+import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
@@ -38,7 +39,7 @@ class ConnectProviderFragmentTest {
         val arguments = ConnectProviderFragment.newInstance(connectionGuid = "guid1").arguments!!
 
         assertThat(arguments.getString(KEY_GUID), equalTo("guid1"))
-        assertNull(arguments.getSerializable(ConnectProviderFragment.KEY_CONNECT_DATA))
+        assertNull(arguments.getSerializable(KEY_DATA))
     }
 
     @Test
@@ -50,7 +51,7 @@ class ConnectProviderFragmentTest {
 
         assertNull(arguments.getString(KEY_GUID))
         assertThat(
-            arguments.getSerializable(ConnectProviderFragment.KEY_CONNECT_DATA) as ConnectAppLinkData,
+            arguments.getSerializable(KEY_DATA) as ConnectAppLinkData,
             equalTo(ConnectAppLinkData("https://www.my_host.com/configuration"))
         )
     }

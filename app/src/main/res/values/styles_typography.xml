@@ -20,85 +20,70 @@
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
 <resources>
-    <style name="Text20BlackMedium">
+    <style name="app_bar_title">
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textSize">@dimen/text_30</item>
+        <item name="android:fontFamily">@font/roboto_bold</item>
+    </style>
+
+    <style name="TextPrimary">
         <item name="android:ellipsize">end</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">@dimen/text_20</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
+
+    <style name="TextSecondary">
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/secondary_text</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
+
+    <style name="Text24Primary" parent="TextPrimary">
+        <item name="android:textSize">@dimen/text_24</item>
+    </style>
+
+    <style name="Text22Primary" parent="TextPrimary">
+        <item name="android:textSize">@dimen/text_22</item>
+    </style>
+
+    <style name="Text22PrimaryMedium" parent="TextPrimary">
+        <item name="android:textSize">@dimen/text_22</item>
         <item name="android:fontFamily">@font/roboto_medium</item>
     </style>
 
-    <style name="Text20BlackRegular">
-        <item name="android:ellipsize">end</item>
-        <item name="android:textColor">@color/black</item>
+    <style name="Text20Primary" parent="TextPrimary">
         <item name="android:textSize">@dimen/text_20</item>
-        <item name="android:fontFamily">@font/roboto_regular</item>
     </style>
 
-    <style name="Text16BlackRegular">
-        <item name="android:ellipsize">end</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">@dimen/text_16</item>
-        <item name="android:fontFamily">@font/roboto_regular</item>
-    </style>
-
-    <style name="Text16GrayDarkRegular">
-        <item name="android:ellipsize">end</item>
-        <item name="android:textColor">@color/gray_dark</item>
-        <item name="android:textSize">@dimen/text_16</item>
+    <style name="Text18Primary" parent="TextPrimary">
+        <item name="android:textSize">@dimen/text_18</item>
         <item name="android:lineSpacingExtra">@dimen/text_4</item>
-        <item name="android:fontFamily">@font/roboto_regular</item>
     </style>
 
-    <style name="Text16GrayRegular">
-        <item name="android:ellipsize">end</item>
-        <item name="android:textColor">@color/gray</item>
+    <style name="Text18Secondary" parent="TextSecondary">
+        <item name="android:textSize">@dimen/text_18</item>
+    </style>
+
+    <style name="Text16Primary" parent="TextPrimary">
         <item name="android:textSize">@dimen/text_16</item>
-        <item name="android:fontFamily">@font/roboto_regular</item>
     </style>
 
-    <style name="Text14BlackRegular">
-        <item name="android:ellipsize">end</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">@dimen/text_14</item>
-        <item name="android:fontFamily">@font/roboto_regular</item>
-    </style>
-
-    <style name="Text14GrayDarkRegular">
-        <item name="android:ellipsize">end</item>
-        <item name="android:textColor">@color/gray_dark</item>
-        <item name="android:textSize">@dimen/text_14</item>
-        <item name="android:fontFamily">@font/roboto_regular</item>
-    </style>
-
-    <style name="Text14GrayRegular">
-        <item name="android:ellipsize">end</item>
-        <item name="android:textColor">@color/gray</item>
-        <item name="android:textSize">@dimen/text_14</item>
-        <item name="android:fontFamily">@font/roboto_regular</item>
-    </style>
-
-    <style name="Text14BlackMedium">
-        <item name="android:ellipsize">end</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">@dimen/text_14</item>
-        <item name="android:fontFamily">@font/roboto_medium</item>
-    </style>
-
-    <style name="Text14CyanMedium">
-        <item name="android:textColor">@color/color_secondary</item>
-        <item name="android:textSize">@dimen/text_14</item>
-        <item name="android:fontFamily">@font/roboto_medium</item>
+    <style name="Text16Secondary" parent="TextSecondary">
+        <item name="android:textSize">@dimen/text_16</item>
     </style>
 
     <style name="Text14BlueMedium">
-        <item name="android:textColor">@color/blue</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/blue_text</item>
         <item name="android:textSize">@dimen/text_14</item>
         <item name="android:fontFamily">@font/roboto_medium</item>
     </style>
 
-    <style name="Text14WhiteMedium">
-        <item name="android:textColor">@android:color/white</item>
+    <style name="Text14Primary" parent="TextPrimary">
         <item name="android:textSize">@dimen/text_14</item>
-        <item name="android:fontFamily">@font/roboto_medium</item>
+    </style>
+
+    <style name="Text14Secondary" parent="TextSecondary">
+        <item name="android:textSize">@dimen/text_14</item>
     </style>
 </resources>

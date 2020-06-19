@@ -20,16 +20,10 @@
  */
 package com.saltedge.authenticator.sdk
 
-import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationResult
-import com.saltedge.authenticator.sdk.contract.ConnectionCreateResult
-import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeResult
-import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
+import com.saltedge.authenticator.sdk.contract.*
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.response.AuthorizationShowResponseData
-import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData
-import com.saltedge.authenticator.sdk.model.response.CreateConnectionResponseData
-import com.saltedge.authenticator.sdk.model.response.RevokeAccessTokenResponseData
+import com.saltedge.authenticator.sdk.model.response.*
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.RestClient
 import com.saltedge.authenticator.sdk.testTools.TestConnection
@@ -51,10 +45,10 @@ class AuthenticatorApiManagerTest {
     @Test
     @Throws(Exception::class)
     fun initConnectionRequestTest() {
-        val mockCallback = mockkClass(ConnectionCreateResult::class)
-        val mockCall: Call<CreateConnectionResponseData> =
-            mockkClass(Call::class) as Call<CreateConnectionResponseData>
-        every { mockApi.postNewConnectionData(requestUrl = any(), body = any()) } returns mockCall
+        val mockCallback = mockkClass(ConnectionCreateListener::class)
+        val mockCall: Call<CreateConnectionResponse> =
+            mockkClass(Call::class) as Call<CreateConnectionResponse>
+        every { mockApi.createConnection(requestUrl = any(), body = any()) } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
         AuthenticatorApiManager.createConnectionRequest(
             baseUrl = "",
@@ -71,10 +65,10 @@ class AuthenticatorApiManagerTest {
     @Test
     @Throws(Exception::class)
     fun revokeConnectionsTest() {
-        val mockCallback = mockkClass(ConnectionsRevokeResult::class)
-        val mockCall: Call<RevokeAccessTokenResponseData> =
-            mockkClass(Call::class) as Call<RevokeAccessTokenResponseData>
-        every { mockApi.deleteAccessToken(requestUrl = any(), headersMap = any()) } returns mockCall
+        val mockCallback = mockkClass(ConnectionsRevokeListener::class)
+        val mockCall: Call<RevokeAccessTokenResponse> =
+            mockkClass(Call::class) as Call<RevokeAccessTokenResponse>
+        every { mockApi.revokeConnection(requestUrl = any(), headersMap = any()) } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
         AuthenticatorApiManager.revokeConnections(
             connectionsAndKeys = listOf(
@@ -102,9 +96,26 @@ class AuthenticatorApiManagerTest {
 
     @Test
     @Throws(Exception::class)
+    fun getAuthorizationsTest() {
+        val mockCallback = mockkClass(FetchEncryptedDataListener::class)
+        val mockCall = mockkClass(Call::class) as Call<EncryptedListResponse>
+        every { mockApi.getAuthorizations(requestUrl = any(), headersMap = any()) } returns mockCall
+        every { mockCall.enqueue(any()) } returns Unit
+        AuthenticatorApiManager.getAuthorizations(
+            connectionsAndKeys = listOf(
+                ConnectionAndKey(requestConnection, privateKey)
+            ),
+            resultCallback = mockCallback
+        )
+
+        verify { mockCall.enqueue(any()) }
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun getAuthorizationTest() {
         val mockCallback = mockkClass(FetchAuthorizationContract::class)
-        val mockCall = mockkClass(Call::class) as Call<AuthorizationShowResponseData>
+        val mockCall = mockkClass(Call::class) as Call<AuthorizationShowResponse>
         every { mockApi.getAuthorization(requestUrl = any(), headersMap = any()) } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
         AuthenticatorApiManager.getAuthorization(
@@ -120,8 +131,8 @@ class AuthenticatorApiManagerTest {
     @Test
     @Throws(Exception::class)
     fun confirmAuthorizationTest() {
-        val mockCallback = mockkClass(ConfirmAuthorizationResult::class)
-        val mockCall = mockkClass(Call::class) as Call<ConfirmDenyResponseData>
+        val mockCallback = mockkClass(ConfirmAuthorizationListener::class)
+        val mockCall = mockkClass(Call::class) as Call<ConfirmDenyResponse>
         every {
             mockApi.updateAuthorization(
                 requestUrl = any(),
@@ -143,8 +154,8 @@ class AuthenticatorApiManagerTest {
     @Test
     @Throws(Exception::class)
     fun denyAuthorizationTest() {
-        val mockCallback = mockkClass(ConfirmAuthorizationResult::class)
-        val mockCall = mockkClass(Call::class) as Call<ConfirmDenyResponseData>
+        val mockCallback = mockkClass(ConfirmAuthorizationListener::class)
+        val mockCall = mockkClass(Call::class) as Call<ConfirmDenyResponse>
         every {
             mockApi.updateAuthorization(
                 requestUrl = any(),
@@ -158,6 +169,71 @@ class AuthenticatorApiManagerTest {
                 requestConnection,
                 privateKey
             ), authorizationId = "444", authorizationCode = "code", resultCallback = mockCallback
+        )
+
+        verify { mockCall.enqueue(any()) }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun sendActionTest() {
+        val mockCallback = mockkClass(ActionSubmitListener::class)
+        val mockCall = mockkClass(Call::class) as Call<SubmitActionResponse>
+        every {
+            mockApi.updateAction(
+                requestUrl = any(),
+                headersMap = any()
+            )
+        } returns mockCall
+        every { mockCall.enqueue(any()) } returns Unit
+        AuthenticatorApiManager.sendAction(
+            actionUUID = "actionUUID",
+            connectionAndKey = ConnectionAndKey(
+                requestConnection,
+                privateKey
+            ),
+            resultCallback = mockCallback
+        )
+
+        verify { mockCall.enqueue(any()) }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun getConsentsTest() {
+        val mockCallback = mockkClass(FetchEncryptedDataListener::class)
+        val mockCall = mockkClass(Call::class) as Call<EncryptedListResponse>
+        every { mockApi.getConsents(requestUrl = any(), headersMap = any()) } returns mockCall
+        every { mockCall.enqueue(any()) } returns Unit
+        AuthenticatorApiManager.getConsents(
+            connectionsAndKeys = listOf(
+                ConnectionAndKey(requestConnection, privateKey)
+            ),
+            resultCallback = mockCallback
+        )
+
+        verify { mockCall.enqueue(any()) }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun revokeConsentTest() {
+        val mockCallback = mockkClass(ConsentRevokeListener::class)
+        val mockCall = mockkClass(Call::class) as Call<ConsentRevokeResponse>
+        every {
+            mockApi.revokeConsent(
+                requestUrl = any(),
+                headersMap = any()
+            )
+        } returns mockCall
+        every { mockCall.enqueue(any()) } returns Unit
+        AuthenticatorApiManager.revokeConsent(
+            consentId = "consentId",
+            connectionAndKey = ConnectionAndKey(
+                requestConnection,
+                privateKey
+            ),
+            resultCallback = mockCallback
         )
 
         verify { mockCall.enqueue(any()) }

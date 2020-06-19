@@ -34,7 +34,7 @@ import android.util.Pair
 import android.view.View
 import androidx.viewpager.widget.ViewPager
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tool.applyAlphaToColor
+import com.saltedge.authenticator.tools.applyAlphaToColor
 
 const val DOTS_INDICATOR_ANIMATION_TIME = 350L
 
@@ -49,7 +49,7 @@ class DotsPageIndicatorView : View, ViewPager.OnPageChangeListener, ValueAnimati
     private val DEFAULT_PADDING_DP = 4f
 
     private var radiusPx: Int = context.resources.getDimension(R.dimen.dp_4).toInt()
-    private var paddingPx: Int = radiusPx * 2
+    private var paddingPx: Int = radiusPx * 3//Padding between dots
 
     private var count = DEFAULT_CIRCLES_COUNT
     private var isCountSet: Boolean = false

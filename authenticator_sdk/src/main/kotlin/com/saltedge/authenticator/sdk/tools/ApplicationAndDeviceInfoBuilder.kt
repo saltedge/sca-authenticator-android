@@ -26,7 +26,7 @@ import android.os.Build
 
 /**
  * Build application and device info:
- * e.g.: Salt Edge Authenticator / 2.3.0(39); StandaloneInstall; (Xiaomi; Redmi Note 8; SDK 28; Android 9)
+ * e.g.: Salt Edge Authenticator / 2.3.0(39); StandaloneInstall; (Xiaomi; Redmi Note 8; SDK 28)
  */
 fun buildUserAgent(context: Context): String {
     with(context.packageManager) {

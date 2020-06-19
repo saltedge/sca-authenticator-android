@@ -22,8 +22,8 @@ package com.saltedge.authenticator.unitTests.model.db
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.saltedge.authenticator.instrumentationTestTools.*
-import com.saltedge.authenticator.model.db.Connection
-import com.saltedge.authenticator.model.db.ConnectionsRepository
+import com.saltedge.authenticator.models.Connection
+import com.saltedge.authenticator.models.repository.ConnectionsRepository
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
