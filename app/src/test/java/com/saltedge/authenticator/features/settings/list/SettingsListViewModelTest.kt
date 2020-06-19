@@ -30,6 +30,7 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.testTools.TestAppTools
 import junit.framework.TestCase.assertNull
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -69,6 +70,7 @@ class SettingsListViewModelTest {
         given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(mockConnection1))
         given(mockKeyStoreManager.createConnectionAndKeyModel(mockConnection1)).willReturn(mockConnectionAndKey)
         viewModel = SettingsListViewModel(
+            appContext = TestAppTools.applicationContext,
             keyStoreManager = mockKeyStoreManager,
             apiManager = mockApiManager,
             connectionsRepository = mockConnectionsRepository,
@@ -81,7 +83,7 @@ class SettingsListViewModelTest {
     fun getListItemsTest() {
         //when
         assertThat(
-            viewModel.listItems, equalTo(
+            viewModel.getListItems(), equalTo(
             listOf(
                 SettingsItemViewModel(
                     iconId = R.drawable.ic_setting_passcode,

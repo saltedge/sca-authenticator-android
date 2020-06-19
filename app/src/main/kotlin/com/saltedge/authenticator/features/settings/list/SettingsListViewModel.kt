@@ -58,7 +58,7 @@ class SettingsListViewModel(
     var onSetNightMode = MutableLiveData<ViewModelEvent<Int>>()
 
     fun getListItems(): List<SettingsItemViewModel> {
-        val listItems = listOf(
+        val listItems = mutableListOf<SettingsItemViewModel>(
             SettingsItemViewModel(
                 iconId = R.drawable.ic_setting_passcode,
                 titleId = R.string.settings_passcode_description,
@@ -91,16 +91,16 @@ class SettingsListViewModel(
                 itemIsClickable = true
             )
         )
-        val isSystemDarkMode = isSystemDarkMode()
-        return if (isSystemDarkMode) listItems +  SettingsItemViewModel(
+        val darkModeItem = SettingsItemViewModel(
             iconId = R.drawable.ic_settings_dark_mode,
             titleId = R.string.settings_system_dark_mode,
             switchIsChecked = preferenceRepository.screenshotLockEnabled
-        ) else listItems
+        )
+        return if (isSystemDarkMode()) listItems.apply { add(3, darkModeItem) } else listItems
     }
 
-    fun isSystemDarkMode(): Boolean {
-        return Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q  //change on >=
+    fun setPositionForSpaces(): Array<Int> {
+        return if (isSystemDarkMode()) arrayOf(0, 6) else arrayOf(0, 5)
     }
 
     fun restartConfirmed() {
@@ -153,5 +153,9 @@ class SettingsListViewModel(
         val connectionGuids = connectionsRepository.getAllConnections().map { it.guid }
         keyStoreManager.deleteKeyPairs(connectionGuids)
         connectionsRepository.deleteAllConnections()
+    }
+
+    private fun isSystemDarkMode(): Boolean {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
     }
 }
