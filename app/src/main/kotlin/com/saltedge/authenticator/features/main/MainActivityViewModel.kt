@@ -67,7 +67,7 @@ class MainActivityViewModel(
     val onShowSettingsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowConnectEvent = MutableLiveData<ViewModelEvent<ConnectAppLinkData>>()
     val onShowSubmitActionEvent = MutableLiveData<ViewModelEvent<ActionAppLinkData>>()
-    var onSetNightMode = MutableLiveData<ViewModelEvent<Int>>()
+    val onSetNightMode = MutableLiveData<ViewModelEvent<Int>>()
 
     val appBarTitle = MutableLiveData<String>()
     val appBarBackActionImageResource = MutableLiveData<ResId>(R.drawable.ic_appbar_action_back)
