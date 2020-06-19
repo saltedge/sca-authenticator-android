@@ -151,6 +151,18 @@ object PreferenceRepository : PreferenceRepositoryAbs {
         }
 
     /**
+     * Computed property that read dark mode state from preferences and saves to preferences.
+     *
+     * @return boolean, true if dark mode is enabled
+     * @see saveValue
+     */
+    override var darkModeEnabled: Boolean
+        get() = preferences?.getBoolean("KEY_ENABLE_DARK_MODE", true) ?: true
+        set(value) {
+            preferences?.saveValue("KEY_ENABLE_DARK_MODE", value)
+        }
+
+    /**
      * Computed property that read encrypted passcode from preferences and saves to preferences.
      *
      * @return encrypted key passcode

@@ -20,9 +20,12 @@
  */
 package com.saltedge.authenticator.features.settings.list
 
+import android.content.Context
+import android.os.Build
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.switchDarkLightMode
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.Connection
@@ -36,6 +39,7 @@ import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.postUnitEvent
 
 class SettingsListViewModel(
+    private val appContext: Context,
     private val keyStoreManager: KeyStoreManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
     private val connectionsRepository: ConnectionsRepositoryAbs,
@@ -50,8 +54,11 @@ class SettingsListViewModel(
     val clearClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val clearSuccessEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val restartClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val darkModeClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    var onSetNightMode = MutableLiveData<ViewModelEvent<Int>>()
 
-    val listItems = listOf(
+    fun getListItems(): List<SettingsItemViewModel> {
+        val listItems = listOf(
             SettingsItemViewModel(
                 iconId = R.drawable.ic_setting_passcode,
                 titleId = R.string.settings_passcode_description,
@@ -84,6 +91,17 @@ class SettingsListViewModel(
                 itemIsClickable = true
             )
         )
+        val isSystemDarkMode = isSystemDarkMode()
+        return if (isSystemDarkMode) listItems +  SettingsItemViewModel(
+            iconId = R.drawable.ic_settings_dark_mode,
+            titleId = R.string.settings_system_dark_mode,
+            switchIsChecked = preferenceRepository.screenshotLockEnabled
+        ) else listItems
+    }
+
+    fun isSystemDarkMode(): Boolean {
+        return Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q  //change on >=
+    }
 
     fun restartConfirmed() {
         restartClickEvent.postValue(ViewModelEvent(Unit))
@@ -105,7 +123,17 @@ class SettingsListViewModel(
                 preferenceRepository.screenshotLockEnabled = checked
                 screenshotClickEvent.postValue(ViewModelEvent(Unit))
             }
+            R.string.settings_system_dark_mode -> {
+                preferenceRepository.darkModeEnabled = checked
+                darkModeClickEvent.postValue(ViewModelEvent(Unit))
+            }
         }
+    }
+
+    fun changeDarkThemeMode() {
+        val nightMode = preferenceRepository.nightMode
+        preferenceRepository.nightMode = appContext.switchDarkLightMode(nightMode)
+        onSetNightMode.postValue(ViewModelEvent(preferenceRepository.nightMode))
     }
 
     fun onUserConfirmedClearAppData() {

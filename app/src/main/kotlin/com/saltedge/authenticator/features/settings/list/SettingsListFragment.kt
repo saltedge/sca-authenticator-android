@@ -26,6 +26,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -44,6 +45,7 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
+import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
 import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
 
@@ -128,13 +130,24 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener {
         viewModel.restartClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let { activity?.restartApp() }
         })
+        viewModel.darkModeClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let {
+                viewModel.changeDarkThemeMode()
+            }
+        })
+        viewModel.onSetNightMode.observe(this, Observer<ViewModelEvent<Int>> {
+            it.getContentIfNotHandled()?.let { nightMode ->
+                activity?.intent?.putExtra(KEY_SKIP_PIN, true)
+                AppCompatDelegate.setDefaultNightMode(nightMode)
+            }
+        })
     }
 
     private fun setupViews() {
         activity?.let {
             recyclerView?.layoutManager = LinearLayoutManager(it)
-            recyclerView?.addItemDecoration(SpaceItemDecoration(context = it, headerPositions = arrayOf(0)))
+            recyclerView?.addItemDecoration(SpaceItemDecoration(context = it, headerPositions = arrayOf(0, 5)))
         }
-        recyclerView?.adapter = SettingsAdapter(listener = viewModel).apply { data = viewModel.listItems }
+        recyclerView?.adapter = SettingsAdapter(listener = viewModel).apply { data = viewModel.getListItems() }
     }
 }
