@@ -34,6 +34,7 @@ const val KEY_SCREENSHOT_LOCK = "KEY_SCREENSHOT_LOCK"
 const val KEY_PIN_INPUT_ATTEMPTS = "KEY_PIN_INPUT_ATTEMPTS"
 const val KEY_PIN_INPUT_TIME = "KEY_PIN_INPUT_TIME"
 const val KEY_CLOUD_MESSAGING_TOKEN = "KEY_CLOUD_MESSAGING_TOKEN"
+const val KEY_SYSTEM_DARK_MODE = "KEY_SYSTEM_DARK_MODE"
 
 object PreferenceRepository : PreferenceRepositoryAbs {
 
@@ -157,9 +158,9 @@ object PreferenceRepository : PreferenceRepositoryAbs {
      * @see saveValue
      */
     override var darkModeEnabled: Boolean
-        get() = preferences?.getBoolean("KEY_ENABLE_DARK_MODE", true) ?: true
+        get() = preferences?.getBoolean(KEY_SYSTEM_DARK_MODE, true) ?: true
         set(value) {
-            preferences?.saveValue("KEY_ENABLE_DARK_MODE", value)
+            preferences?.saveValue(KEY_SYSTEM_DARK_MODE, value)
         }
 
     /**

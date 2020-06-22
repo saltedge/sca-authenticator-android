@@ -240,6 +240,24 @@ class PreferenceRepositoryTest {
         )
     }
 
+    @Test
+    @Throws(Exception::class)
+    fun darkModeEnabledTest() {
+        clearPreferences()
+
+        assertTrue(PreferenceRepository.darkModeEnabled)
+
+        PreferenceRepository.darkModeEnabled = false
+
+        assertFalse(PreferenceRepository.darkModeEnabled)
+        assertFalse(
+            PreferenceManager.getDefaultSharedPreferences(TestAppTools.applicationContext).getBoolean(
+                KEY_SYSTEM_DARK_MODE,
+                true
+            )
+        )
+    }
+
     private fun clearPreferences() {
         PreferenceManager.getDefaultSharedPreferences(TestAppTools.applicationContext).edit().clear().apply()
     }

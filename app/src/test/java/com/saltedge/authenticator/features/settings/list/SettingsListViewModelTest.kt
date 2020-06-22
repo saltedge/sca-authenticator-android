@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.settings.list
 
+import android.os.Build
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.models.Connection
@@ -81,7 +82,6 @@ class SettingsListViewModelTest {
     @Test
     @Throws(Exception::class)
     fun getListItemsTest() {
-        //when
         assertThat(
             viewModel.getListItems(), equalTo(
             listOf(
@@ -98,6 +98,56 @@ class SettingsListViewModelTest {
                 SettingsItemViewModel(
                     iconId = R.drawable.ic_setting_screenshots,
                     titleId = R.string.settings_screenshot_lock,
+                    switchIsChecked = true
+                ),
+                SettingsItemViewModel(
+                    iconId = R.drawable.ic_setting_about,
+                    titleId = R.string.about_feature_title,
+                    itemIsClickable = true
+                ),
+                SettingsItemViewModel(
+                    iconId = R.drawable.ic_setting_support,
+                    titleId = R.string.settings_report,
+                    itemIsClickable = true
+                ),
+                SettingsItemViewModel(
+                    iconId = R.drawable.ic_setting_clear,
+                    titleId = R.string.settings_clear_data,
+                    titleColorRes = R.color.red,
+                    itemIsClickable = true
+                )
+            ))
+        )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun getListItemsTestCase2() {
+        //when
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return
+
+        //then
+        assertThat(
+            viewModel.getListItems(), equalTo(
+            listOf(
+                SettingsItemViewModel(
+                    iconId = R.drawable.ic_setting_passcode,
+                    titleId = R.string.settings_passcode_description,
+                    itemIsClickable = true
+                ),
+                SettingsItemViewModel(
+                    iconId = R.drawable.ic_setting_language,
+                    titleId = R.string.settings_language,
+                    itemIsClickable = true
+                ),
+                SettingsItemViewModel(
+                    iconId = R.drawable.ic_setting_screenshots,
+                    titleId = R.string.settings_screenshot_lock,
+                    switchIsChecked = true
+                ),
+                SettingsItemViewModel(
+                    iconId = R.drawable.ic_settings_dark_mode,
+                    titleId = R.string.settings_system_dark_mode,
                     switchIsChecked = true
                 ),
                 SettingsItemViewModel(
@@ -273,5 +323,21 @@ class SettingsListViewModelTest {
         //then
         Mockito.verifyNoMoreInteractions(mockPreferences)
         assertNull(viewModel.screenshotClickEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun setPositionForSpacesTestCase1() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return
+
+        assertThat(viewModel.setPositionForSpaces(), equalTo(arrayOf(0, 6)))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun setPositionForSpacesTestCase2() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) return
+
+        assertThat(viewModel.setPositionForSpaces(), equalTo(arrayOf(0, 5)))
     }
 }

@@ -25,7 +25,6 @@ import android.os.Build
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.switchDarkLightMode
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.Connection
@@ -55,7 +54,6 @@ class SettingsListViewModel(
     val clearSuccessEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val restartClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val darkModeClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    var onSetNightMode = MutableLiveData<ViewModelEvent<Int>>()
 
     fun getListItems(): List<SettingsItemViewModel> {
         val listItems = mutableListOf<SettingsItemViewModel>(
@@ -94,7 +92,7 @@ class SettingsListViewModel(
         val darkModeItem = SettingsItemViewModel(
             iconId = R.drawable.ic_settings_dark_mode,
             titleId = R.string.settings_system_dark_mode,
-            switchIsChecked = preferenceRepository.screenshotLockEnabled
+            switchIsChecked = preferenceRepository.darkModeEnabled
         )
         return if (isSystemDarkMode()) listItems.apply { add(3, darkModeItem) } else listItems
     }
@@ -128,12 +126,6 @@ class SettingsListViewModel(
                 darkModeClickEvent.postValue(ViewModelEvent(Unit))
             }
         }
-    }
-
-    fun changeDarkThemeMode() {
-        val nightMode = preferenceRepository.nightMode
-        preferenceRepository.nightMode = appContext.switchDarkLightMode(nightMode)
-        onSetNightMode.postValue(ViewModelEvent(preferenceRepository.nightMode))
     }
 
     fun onUserConfirmedClearAppData() {
