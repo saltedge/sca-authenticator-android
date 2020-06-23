@@ -20,11 +20,11 @@
  */
 package com.saltedge.authenticator.features.settings.list
 
-import android.content.Context
 import android.os.Build
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.getDefaultSystemNightMode
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.Connection
@@ -38,7 +38,6 @@ import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.postUnitEvent
 
 class SettingsListViewModel(
-    private val appContext: Context,
     private val keyStoreManager: KeyStoreManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
     private val connectionsRepository: ConnectionsRepositoryAbs,
@@ -53,53 +52,10 @@ class SettingsListViewModel(
     val clearClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val clearSuccessEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val restartClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val darkModeClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
-    fun getListItems(): List<SettingsItemViewModel> {
-        val listItems = mutableListOf<SettingsItemViewModel>(
-            SettingsItemViewModel(
-                iconId = R.drawable.ic_setting_passcode,
-                titleId = R.string.settings_passcode_description,
-                itemIsClickable = true
-            ),
-            SettingsItemViewModel(
-                iconId = R.drawable.ic_setting_language,
-                titleId = R.string.settings_language,
-                itemIsClickable = true
-            ),
-            SettingsItemViewModel(
-                iconId = R.drawable.ic_setting_screenshots,
-                titleId = R.string.settings_screenshot_lock,
-                switchIsChecked = preferenceRepository.screenshotLockEnabled
-            ),
-            SettingsItemViewModel(
-                iconId = R.drawable.ic_setting_about,
-                titleId = R.string.about_feature_title,
-                itemIsClickable = true
-            ),
-            SettingsItemViewModel(
-                iconId = R.drawable.ic_setting_support,
-                titleId = R.string.settings_report,
-                itemIsClickable = true
-            ),
-            SettingsItemViewModel(
-                iconId = R.drawable.ic_setting_clear,
-                titleId = R.string.settings_clear_data,
-                titleColorRes = R.color.red,
-                itemIsClickable = true
-            )
-        )
-        val darkModeItem = SettingsItemViewModel(
-            iconId = R.drawable.ic_settings_dark_mode,
-            titleId = R.string.settings_system_dark_mode,
-            switchIsChecked = preferenceRepository.darkModeEnabled
-        )
-        return if (isSystemDarkMode()) listItems.apply { add(3, darkModeItem) } else listItems
-    }
-
-    fun setPositionForSpaces(): Array<Int> {
-        return if (isSystemDarkMode()) arrayOf(0, 6) else arrayOf(0, 5)
-    }
+    val listItems = collectListItems()
+    val spacesPositions: Array<Int>
+        get() = arrayOf(0, listItems.lastIndex)
 
     fun restartConfirmed() {
         restartClickEvent.postValue(ViewModelEvent(Unit))
@@ -122,8 +78,8 @@ class SettingsListViewModel(
                 screenshotClickEvent.postValue(ViewModelEvent(Unit))
             }
             R.string.settings_system_dark_mode -> {
-                preferenceRepository.darkModeEnabled = checked
-                darkModeClickEvent.postValue(ViewModelEvent(Unit))
+                preferenceRepository.systemDarkMode = checked
+                getDefaultSystemNightMode()
             }
         }
     }
@@ -132,6 +88,54 @@ class SettingsListViewModel(
         sendRevokeRequestForConnections(connectionsRepository.getAllActiveConnections())
         deleteAllConnectionsAndKeys()
         clearSuccessEvent.postUnitEvent()
+    }
+
+    private fun collectListItems(): List<SettingsItemViewModel> {
+        val listItems = mutableListOf<SettingsItemViewModel>(
+            SettingsItemViewModel(
+                iconId = R.drawable.ic_setting_passcode,
+                titleId = R.string.settings_passcode_description,
+                itemIsClickable = true
+            ),
+            SettingsItemViewModel(
+                iconId = R.drawable.ic_setting_language,
+                titleId = R.string.settings_language,
+                itemIsClickable = true
+            ),
+            SettingsItemViewModel(
+                iconId = R.drawable.ic_setting_screenshots,
+                titleId = R.string.settings_screenshot_lock,
+                switchIsChecked = preferenceRepository.screenshotLockEnabled
+            )
+        )
+        if (isSystemDarkModeSupported()) listItems.add(
+            SettingsItemViewModel(
+                iconId = R.drawable.ic_settings_dark_mode,
+                titleId = R.string.settings_system_dark_mode,
+                switchIsChecked = preferenceRepository.systemDarkMode
+            )
+        )
+        listItems.addAll(
+            listOf<SettingsItemViewModel>(
+                SettingsItemViewModel(
+                    iconId = R.drawable.ic_setting_about,
+                    titleId = R.string.about_feature_title,
+                    itemIsClickable = true
+                ),
+                SettingsItemViewModel(
+                    iconId = R.drawable.ic_setting_support,
+                    titleId = R.string.settings_report,
+                    itemIsClickable = true
+                ),
+                SettingsItemViewModel(
+                    iconId = R.drawable.ic_setting_clear,
+                    titleId = R.string.settings_clear_data,
+                    titleColorRes = R.color.red,
+                    itemIsClickable = true
+                )
+            )
+        )
+        return listItems
     }
 
     private fun sendRevokeRequestForConnections(connections: List<Connection>) {
@@ -147,7 +151,7 @@ class SettingsListViewModel(
         connectionsRepository.deleteAllConnections()
     }
 
-    private fun isSystemDarkMode(): Boolean {
+    private fun isSystemDarkModeSupported(): Boolean {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
     }
 }

@@ -34,7 +34,7 @@ interface PreferenceRepositoryAbs {
     var pinInputAttempts: Int
     var blockPinInputTillTime: Long
     var screenshotLockEnabled: Boolean
-    var darkModeEnabled: Boolean
+    var systemDarkMode: Boolean
     fun passcodeExist(): Boolean
     fun clearUserPreferences()
 }

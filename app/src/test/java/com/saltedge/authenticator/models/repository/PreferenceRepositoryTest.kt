@@ -245,11 +245,11 @@ class PreferenceRepositoryTest {
     fun darkModeEnabledTest() {
         clearPreferences()
 
-        assertTrue(PreferenceRepository.darkModeEnabled)
+        assertTrue(PreferenceRepository.systemDarkMode)
 
-        PreferenceRepository.darkModeEnabled = false
+        PreferenceRepository.systemDarkMode = false
 
-        assertFalse(PreferenceRepository.darkModeEnabled)
+        assertFalse(PreferenceRepository.systemDarkMode)
         assertFalse(
             PreferenceManager.getDefaultSharedPreferences(TestAppTools.applicationContext).getBoolean(
                 KEY_SYSTEM_DARK_MODE,

@@ -157,7 +157,7 @@ object PreferenceRepository : PreferenceRepositoryAbs {
      * @return boolean, true if dark mode is enabled
      * @see saveValue
      */
-    override var darkModeEnabled: Boolean
+    override var systemDarkMode: Boolean
         get() = preferences?.getBoolean(KEY_SYSTEM_DARK_MODE, true) ?: true
         set(value) {
             preferences?.saveValue(KEY_SYSTEM_DARK_MODE, value)

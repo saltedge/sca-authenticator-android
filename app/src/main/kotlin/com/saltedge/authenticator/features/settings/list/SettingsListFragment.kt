@@ -33,7 +33,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.app.getDefaultSystemNightMode
 import com.saltedge.authenticator.features.main.buildWarningSnack
 import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
@@ -129,11 +128,6 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener {
         viewModel.restartClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let { activity?.restartApp() }
         })
-        viewModel.darkModeClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it.getContentIfNotHandled()?.let {
-                getDefaultSystemNightMode()
-            }
-        })
     }
 
     private fun setupViews() {
@@ -141,9 +135,9 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener {
             recyclerView?.layoutManager = LinearLayoutManager(it)
             recyclerView?.addItemDecoration(SpaceItemDecoration(
                 context = it,
-                headerPositions = viewModel.setPositionForSpaces())
+                headerPositions = viewModel.spacesPositions)
             )
         }
-        recyclerView?.adapter = SettingsAdapter(listener = viewModel).apply { data = viewModel.getListItems() }
+        recyclerView?.adapter = SettingsAdapter(listener = viewModel).apply { data = viewModel.listItems }
     }
 }

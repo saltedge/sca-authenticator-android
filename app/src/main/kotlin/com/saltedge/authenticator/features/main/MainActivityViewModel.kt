@@ -145,6 +145,7 @@ class MainActivityViewModel(
             R.id.appBarActionTheme -> {
                 val nightMode = preferenceRepository.nightMode
                 preferenceRepository.nightMode = appContext.switchDarkLightMode(nightMode)
+                preferenceRepository.systemDarkMode = false
                 onSetNightMode.postValue(ViewModelEvent(preferenceRepository.nightMode))
             }
             R.id.appBarActionMore -> {
