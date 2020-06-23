@@ -80,8 +80,6 @@ class SettingsListViewModelTest {
     @Test
     @Throws(Exception::class)
     fun getListItemsTest() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) return
-
         assertThat(
             viewModel.listItems, equalTo(
             listOf(

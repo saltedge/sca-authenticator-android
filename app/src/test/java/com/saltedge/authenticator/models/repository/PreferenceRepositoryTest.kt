@@ -258,7 +258,7 @@ class PreferenceRepositoryTest {
 //            )
 //        )
 //    }
-    
+
         @Test
         @Throws(Exception::class)
         fun systemDarkModeTest() {
