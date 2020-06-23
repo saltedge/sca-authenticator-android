@@ -20,11 +20,12 @@
  */
 package com.saltedge.authenticator.features.settings.list
 
-import android.os.Build
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.getDefaultSystemNightMode
+import com.saltedge.authenticator.app.isSystemDarkModeSupported
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.Connection
@@ -78,8 +79,10 @@ class SettingsListViewModel(
                 screenshotClickEvent.postValue(ViewModelEvent(Unit))
             }
             R.string.settings_system_dark_mode -> {
-                preferenceRepository.systemDarkMode = checked
-                getDefaultSystemNightMode()
+                preferenceRepository.systemNightMode = checked
+                if (preferenceRepository.nightMode != getDefaultSystemNightMode() && checked) {
+                    AppCompatDelegate.setDefaultNightMode(getDefaultSystemNightMode())
+                }
             }
         }
     }
@@ -112,7 +115,7 @@ class SettingsListViewModel(
             SettingsItemViewModel(
                 iconId = R.drawable.ic_settings_dark_mode,
                 titleId = R.string.settings_system_dark_mode,
-                switchIsChecked = preferenceRepository.systemDarkMode
+                switchIsChecked = preferenceRepository.systemNightMode
             )
         )
         listItems.addAll(
@@ -149,9 +152,5 @@ class SettingsListViewModel(
         val connectionGuids = connectionsRepository.getAllConnections().map { it.guid }
         keyStoreManager.deleteKeyPairs(connectionGuids)
         connectionsRepository.deleteAllConnections()
-    }
-
-    private fun isSystemDarkModeSupported(): Boolean {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
     }
 }

@@ -444,7 +444,7 @@ class MainActivityViewModelTest {
          * given viewId = appBarActionTheme and night mode = AppCompatDelegate.MODE_NIGHT_YES
          */
         val viewModel = createViewModel()
-        val viewId = R.id.appBarActionTheme
+        val viewId = R.id.appBarActionSwitchTheme
         given(mockPreferenceRepository.nightMode).willReturn(AppCompatDelegate.MODE_NIGHT_YES)
 
         //when
@@ -461,7 +461,7 @@ class MainActivityViewModelTest {
          * given viewId = appBarActionTheme and night mode = AppCompatDelegate.MODE_NIGHT_NO
          */
         val viewModel = createViewModel()
-        val viewId = R.id.appBarActionTheme
+        val viewId = R.id.appBarActionSwitchTheme
         given(mockPreferenceRepository.nightMode).willReturn(AppCompatDelegate.MODE_NIGHT_NO)
 
         //when
@@ -478,7 +478,7 @@ class MainActivityViewModelTest {
          * given viewId = appBarActionTheme and system night mode
          */
         val viewModel = createViewModel()
-        val viewId = R.id.appBarActionTheme
+        val viewId = R.id.appBarActionSwitchTheme
         given(mockPreferenceRepository.nightMode).willReturn(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
 
         //when

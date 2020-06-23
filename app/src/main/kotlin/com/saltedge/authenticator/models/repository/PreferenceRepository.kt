@@ -24,6 +24,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.saltedge.authenticator.app.getDefaultSystemNightMode
+import com.saltedge.authenticator.app.isSystemDarkModeSupported
 
 const val KEY_DATABASE_KEY = "KEY_DATABASE_KEY"
 const val KEY_LOCALE = "KEY_LOCALE"
@@ -72,7 +73,8 @@ object PreferenceRepository : PreferenceRepositoryAbs {
      * @return stored night mode or default one
      */
     override var nightMode: Int
-        get() = preferences?.getInt(KEY_NIGHT_MODE, getDefaultSystemNightMode()) ?: getDefaultSystemNightMode()
+        get() = preferences?.getInt(KEY_NIGHT_MODE, getDefaultSystemNightMode())
+            ?: getDefaultSystemNightMode()
         set(value) {
             preferences?.saveValue(KEY_NIGHT_MODE, value)
         }
@@ -157,8 +159,11 @@ object PreferenceRepository : PreferenceRepositoryAbs {
      * @return boolean, true if dark mode is enabled
      * @see saveValue
      */
-    override var systemDarkMode: Boolean
-        get() = preferences?.getBoolean(KEY_SYSTEM_DARK_MODE, true) ?: true
+    override var systemNightMode: Boolean
+        get() = preferences?.getBoolean(
+            KEY_SYSTEM_DARK_MODE,
+            isSystemDarkModeSupported() && nightMode == getDefaultSystemNightMode()
+        ) ?: true
         set(value) {
             preferences?.saveValue(KEY_SYSTEM_DARK_MODE, value)
         }

@@ -142,10 +142,10 @@ class MainActivityViewModel(
     fun onViewClick(viewId: Int) {
         when (viewId) {
             R.id.appBarActionQrCode -> onQrScanClickEvent.postValue(ViewModelEvent(Unit))
-            R.id.appBarActionTheme -> {
+            R.id.appBarActionSwitchTheme -> {
                 val nightMode = preferenceRepository.nightMode
                 preferenceRepository.nightMode = appContext.switchDarkLightMode(nightMode)
-                preferenceRepository.systemDarkMode = false
+                preferenceRepository.systemNightMode = false
                 onSetNightMode.postValue(ViewModelEvent(preferenceRepository.nightMode))
             }
             R.id.appBarActionMore -> {
