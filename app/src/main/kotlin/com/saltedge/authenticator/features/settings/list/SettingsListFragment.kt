@@ -133,7 +133,10 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener {
     private fun setupViews() {
         activity?.let {
             recyclerView?.layoutManager = LinearLayoutManager(it)
-            recyclerView?.addItemDecoration(SpaceItemDecoration(context = it, headerPositions = arrayOf(0)))
+            recyclerView?.addItemDecoration(SpaceItemDecoration(
+                context = it,
+                headerPositions = viewModel.spacesPositions)
+            )
         }
         recyclerView?.adapter = SettingsAdapter(listener = viewModel).apply { data = viewModel.listItems }
     }
