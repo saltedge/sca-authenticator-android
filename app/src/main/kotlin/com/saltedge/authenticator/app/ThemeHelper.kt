@@ -43,11 +43,11 @@ fun Context.switchDarkLightMode(currentMode: Int): Int {
 }
 
 fun getDefaultSystemNightMode(): Int {
-    return if (isSystemDarkModeSupported()) AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+    return if (isSystemNightModeSupported()) AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
     else AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
 }
 
-fun isSystemDarkModeSupported(): Boolean {
+fun isSystemNightModeSupported(): Boolean {
     return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 }
 

@@ -25,7 +25,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.getDefaultSystemNightMode
-import com.saltedge.authenticator.app.isSystemDarkModeSupported
+import com.saltedge.authenticator.app.isSystemNightModeSupported
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.Connection
@@ -111,7 +111,7 @@ class SettingsListViewModel(
                 switchIsChecked = preferenceRepository.screenshotLockEnabled
             )
         )
-        if (isSystemDarkModeSupported()) listItems.add(
+        if (isSystemNightModeSupported()) listItems.add(
             SettingsItemViewModel(
                 iconId = R.drawable.ic_settings_dark_mode,
                 titleId = R.string.settings_system_dark_mode,

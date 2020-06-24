@@ -243,7 +243,7 @@ class PreferenceRepositoryTest {
 //    TODO: test on Android Q version http://robolectric.org/configuring/
 //    @Test
 //    @Throws(Exception::class)
-//    fun systemDarkModeTest() {
+//    fun systemNightModeTest() {
 //        clearPreferences()
 //
 //        assertTrue(PreferenceRepository.systemNightMode)
@@ -261,14 +261,14 @@ class PreferenceRepositoryTest {
 
         @Test
         @Throws(Exception::class)
-        fun systemDarkModeTest() {
+        fun systemNightModeTest() {
             clearPreferences()
             PreferenceRepository.systemNightMode = false
 
             assertFalse(PreferenceRepository.systemNightMode)
             assertFalse(
                 PreferenceManager.getDefaultSharedPreferences(TestAppTools.applicationContext).getBoolean(
-                    KEY_SYSTEM_DARK_MODE,
+                    KEY_SYSTEM_NIGHT_MODE,
                     true
                 )
             )

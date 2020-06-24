@@ -24,18 +24,18 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.saltedge.authenticator.app.getDefaultSystemNightMode
-import com.saltedge.authenticator.app.isSystemDarkModeSupported
+import com.saltedge.authenticator.app.isSystemNightModeSupported
 
 const val KEY_DATABASE_KEY = "KEY_DATABASE_KEY"
 const val KEY_LOCALE = "KEY_LOCALE"
 const val KEY_PASSCODE = "KEY_PASSCODE"
-const val KEY_NIGHT_MODE = "KEY_DARK_MODE"
+const val KEY_NIGHT_MODE = "KEY_NIGHT_MODE"
 const val KEY_NOTIFICATIONS = "KEY_NOTIFICATIONS"
 const val KEY_SCREENSHOT_LOCK = "KEY_SCREENSHOT_LOCK"
 const val KEY_PIN_INPUT_ATTEMPTS = "KEY_PIN_INPUT_ATTEMPTS"
 const val KEY_PIN_INPUT_TIME = "KEY_PIN_INPUT_TIME"
 const val KEY_CLOUD_MESSAGING_TOKEN = "KEY_CLOUD_MESSAGING_TOKEN"
-const val KEY_SYSTEM_DARK_MODE = "KEY_SYSTEM_DARK_MODE"
+const val KEY_SYSTEM_NIGHT_MODE = "KEY_SYSTEM_NIGHT_MODE"
 
 object PreferenceRepository : PreferenceRepositoryAbs {
 
@@ -161,11 +161,11 @@ object PreferenceRepository : PreferenceRepositoryAbs {
      */
     override var systemNightMode: Boolean
         get() = preferences?.getBoolean(
-            KEY_SYSTEM_DARK_MODE,
-            isSystemDarkModeSupported() && nightMode == getDefaultSystemNightMode()
+            KEY_SYSTEM_NIGHT_MODE,
+            isSystemNightModeSupported() && nightMode == getDefaultSystemNightMode()
         ) ?: true
         set(value) {
-            preferences?.saveValue(KEY_SYSTEM_DARK_MODE, value)
+            preferences?.saveValue(KEY_SYSTEM_NIGHT_MODE, value)
         }
 
     /**
