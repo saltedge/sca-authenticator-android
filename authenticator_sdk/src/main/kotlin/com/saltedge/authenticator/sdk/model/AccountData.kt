@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +18,21 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.model.configuration
+package com.saltedge.authenticator.sdk.model
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.constants.*
+import com.saltedge.authenticator.sdk.constants.KEY_ACCOUNT_NUMBER
+import com.saltedge.authenticator.sdk.constants.KEY_IBAN
+import com.saltedge.authenticator.sdk.constants.KEY_NAME
+import com.saltedge.authenticator.sdk.constants.KEY_SORT_CODE
 import java.io.Serializable
 
 /**
- * Model of provider data
+ * Account POJO model with annotation for GSON parsing
  */
-data class ProviderConfigurationData(
-    @SerializedName(KEY_CONNECT_URL) var connectUrl: String,
-    @SerializedName(KEY_CODE) var code: String,
+data class AccountData(
     @SerializedName(KEY_NAME) var name: String,
-    @SerializedName(KEY_LOGO_URL) var logoUrl: String?,
-    @SerializedName(KEY_VERSION) var version: String,
-    @SerializedName(KEY_SUPPORT_EMAIL) var supportEmail: String?,
-    @SerializedName(KEY_CONSENT_MANAGEMENT) var consentManagementIsSupported: Boolean? = false
+    @SerializedName(KEY_ACCOUNT_NUMBER) var accountNumber: String? = null,
+    @SerializedName(KEY_SORT_CODE) var sortCode: String? = null,
+    @SerializedName(KEY_IBAN) var iban: String? = null
 ) : Serializable
