@@ -126,7 +126,8 @@ class ViewModelsFactory @Inject constructor(
                     appContext = appContext,
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,
-                    apiManager = apiManager
+                    apiManager = apiManager,
+                    cryptoTools = cryptoTools
                 ) as T
             }
             modelClass.isAssignableFrom(SubmitActionViewModel::class.java) -> {

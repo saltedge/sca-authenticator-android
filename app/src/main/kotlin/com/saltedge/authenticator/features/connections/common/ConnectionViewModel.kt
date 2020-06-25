@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.connections.common
 
-import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 
@@ -29,8 +28,8 @@ data class ConnectionViewModel(
     val code: String,
     var name: String,
     val logoUrl: String,
+//    val statusDescription: SpannableString,
     val statusDescription: String,
-    @ColorRes val statusColorResId: Int,
     val reconnectOptionIsVisible: Boolean,
     @StringRes var deleteMenuItemText: Int,
     @DrawableRes var deleteMenuItemImage: Int,

@@ -50,7 +50,6 @@ fun List<Connection>.convertConnectionsToViewModels(context: Context): List<Conn
                 context = context,
                 connection = connection
             ),
-            statusColorResId = getConnectionStateColorResId(connection),
             logoUrl = connection.logoUrl,
             reconnectOptionIsVisible = isActiveConnection(connection),
             deleteMenuItemText = getConnectionDeleteTextResId(connection),
@@ -72,16 +71,13 @@ private fun getConnectionDeleteImageResId(connection: ConnectionAbs): Int {
     return if (connection.getStatus() === ConnectionStatus.ACTIVE) R.drawable.ic_menu_delete_24dp else R.drawable.ic_menu_remove_24dp
 }
 
-private fun getConnectionStateColorResId(connection: ConnectionAbs): Int {
-    return if (connection.getStatus() === ConnectionStatus.ACTIVE) R.color.secondary_text else R.color.red_text
-}
-
 private fun getConnectionStatusDescription(context: Context, connection: Connection): String {
     return when (connection.getStatus()) {
         ConnectionStatus.INACTIVE -> context.getString(R.string.connection_status_inactive)
         ConnectionStatus.ACTIVE -> {
+            val consentSizeWithDescription = "3 consents"
             val date = connection.updatedAt.toDateTime().toLongDateString(context)
-            "${context.getString(R.string.connection_status_connected_on)} $date"
+            "$consentSizeWithDescription  $date"
         }
     }
 }
