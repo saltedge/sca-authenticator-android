@@ -99,9 +99,7 @@ class ConnectionsListViewModel(
         }
     }
 
-    private fun collectConsentRequestData(): List<ConnectionAndKey>? {
-        return if (connectionsAndKeys.isEmpty()) null else connectionsAndKeys.values.toList()
-    }
+    override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?) {}
 
     override fun onFetchEncryptedDataResult(
         result: List<EncryptedData>,
@@ -109,41 +107,6 @@ class ConnectionsListViewModel(
     ) {
         processOfEncryptedConsentsResult(encryptedList = result)
     }
-
-    private fun processOfEncryptedConsentsResult(encryptedList: List<EncryptedData>) {
-        launch {
-            val data = decryptConsents(encryptedList = encryptedList)
-            withContext(Dispatchers.Main) { processDecryptedConsentsResult(result = data) }
-        }
-    }
-
-    private fun decryptConsents(encryptedList: List<EncryptedData>): List<ConsentData> {
-        return encryptedList.mapNotNull {
-            cryptoTools.decryptConsentData(
-                encryptedData = it,
-                rsaPrivateKey = connectionsAndKeys[it.connectionId]?.key
-            )
-        }
-    }
-
-    private fun processDecryptedConsentsResult(result: List<ConsentData>) {
-        this.consents = result.groupBy { it.connectionId ?: "" }
-        val newListItems = listItemsValues.apply {
-            forEach {
-                val consentsSize = consents[it.connectionId]?.size ?: 0
-                it.consentDescription = if (consentsSize > 0)  {
-                    appContext.resources.getQuantityString(
-                        R.plurals.ui_consents,
-                        consentsSize,
-                        consentsSize
-                    ) + " ·"
-                } else ""
-            }
-        }
-        listItems.postValue(newListItems)
-    }
-
-    override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?) {}
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data == null || resultCode != Activity.RESULT_OK) return
@@ -211,8 +174,43 @@ class ConnectionsListViewModel(
                 updateViewsContent()
             }
         }
+    }
 
+    private fun collectConsentRequestData(): List<ConnectionAndKey>? {
+        return if (connectionsAndKeys.isEmpty()) null else connectionsAndKeys.values.toList()
+    }
 
+    private fun processOfEncryptedConsentsResult(encryptedList: List<EncryptedData>) {
+        launch {
+            val data = decryptConsents(encryptedList = encryptedList)
+            withContext(Dispatchers.Main) { processDecryptedConsentsResult(result = data) }
+        }
+    }
+
+    private fun decryptConsents(encryptedList: List<EncryptedData>): List<ConsentData> {
+        return encryptedList.mapNotNull {
+            cryptoTools.decryptConsentData(
+                encryptedData = it,
+                rsaPrivateKey = connectionsAndKeys[it.connectionId]?.key
+            )
+        }
+    }
+
+    private fun processDecryptedConsentsResult(result: List<ConsentData>) {
+        this.consents = result.groupBy { it.connectionId ?: "" }
+        val newListItems = listItemsValues.apply {
+            forEach {
+                val consentsSize = consents[it.connectionId]?.size ?: 0
+                it.consentDescription = if (consentsSize > 0)  {
+                    appContext.resources.getQuantityString(
+                        R.plurals.ui_consents,
+                        consentsSize,
+                        consentsSize
+                    ) + " ·"
+                } else ""
+            }
+        }
+        listItems.postValue(newListItems)
     }
 
     private fun onUserRenamedConnection(listItem: ConnectionViewModel, newConnectionName: String) {
