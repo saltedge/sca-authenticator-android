@@ -286,9 +286,10 @@ class CryptoToolsTest {
     )
     private val consentData = ConsentData(
         id = "555",
-        title = "title",
-        description = "description",
-        connectionId = "333",
+        userId = "1",
+        tppName = "title",
+        consentType = "aisp",
+        accounts = emptyList(),
         expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
         createdAt = DateTime(0).withZone(DateTimeZone.UTC)
     )

@@ -25,8 +25,8 @@ apply plugin: 'idea'
 apply from: './jacoco.gradle'
 apply plugin: 'maven'
 
-def libVersionCode = 1
-def libVersionName = "1.1.1"
+def libVersionCode = 2
+def libVersionName = "1.2.0"
 
 android {
     defaultConfig {
