@@ -76,9 +76,12 @@ const val KEY_CONSENT_MANAGEMENT = "consent_management"
 const val KEY_CONSENT_TYPE = "consent_type"
 const val KEY_TPP_NAME = "tpp_name"
 const val KEY_ACCOUNTS = "accounts"
+const val KEY_SHARED_DATA = "shared_data"
 const val KEY_ACCOUNT_NUMBER = "account_number"
 const val KEY_SORT_CODE = "sort_code"
 const val KEY_IBAN = "iban"
+const val KEY_BALANCE = "balance"
+const val KEY_TRANSACTIONS = "transactions"
 
 // Error classes
 const val ERROR_CLASS_AUTHENTICATION_RESPONSE = "AuthenticationError"
