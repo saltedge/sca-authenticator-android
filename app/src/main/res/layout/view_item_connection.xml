@@ -63,7 +63,7 @@
 
             <TextView
                 android:id="@+id/subTitleView"
-                style="@style/Text14Secondary"
+                style="@style/Text14GreyMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_3"

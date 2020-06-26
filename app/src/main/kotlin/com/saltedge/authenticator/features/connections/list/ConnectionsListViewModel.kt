@@ -46,7 +46,6 @@ import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import kotlinx.coroutines.*
-import org.joda.time.DateTime
 import kotlin.coroutines.CoroutineContext
 
 class ConnectionsListViewModel(
@@ -66,7 +65,7 @@ class ConnectionsListViewModel(
         collectConnectionsAndKeys(
             connectionsRepository,
             keyStoreManager
-        ) //TODO: investigate type usage mb ConnectionID is redundant
+        )
 
     var onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
         private set
@@ -128,18 +127,14 @@ class ConnectionsListViewModel(
     }
 
     private fun processDecryptedConsentsResult(result: List<ConsentData>) {
-        val result = listOf<ConsentData>(
-            ConsentData(
-                id = "444",
-                connectionId = "333",
-                description = "some",
-                title = "title",
-                createdAt = null,
-                expiresAt =  DateTime.now().plusMinutes(60)
-            )
-        )
-        this.consents = result.groupBy { it.connectionId }
-        updateViewsContent()
+        this.consents = result.groupBy { it.connectionId ?: "" }
+        val newListItems = listItemsValues.apply {
+            forEach {
+                val consentsSize = consents[it.connectionId]?.size ?: 0
+                it.consentDescription = if (consentsSize > 0)  "$consentsSize ${appContext.getString(R.string.consents)} ·" else ""
+            }
+        }
+        listItems.postValue(newListItems)
     }
 
     override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?) {}

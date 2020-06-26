@@ -44,6 +44,7 @@ fun List<Connection>.convertConnectionsToViewModels(context: Context): List<Conn
     return this.map { connection ->
         ConnectionViewModel(
             guid = connection.guid,
+            connectionId = connection.id,
             code = connection.code,
             name = connection.name,
             statusDescription = getConnectionStatusDescription(
@@ -75,9 +76,8 @@ private fun getConnectionStatusDescription(context: Context, connection: Connect
     return when (connection.getStatus()) {
         ConnectionStatus.INACTIVE -> context.getString(R.string.connection_status_inactive)
         ConnectionStatus.ACTIVE -> {
-            val consentSizeWithDescription = "3 consents"
             val date = connection.updatedAt.toDateTime().toLongDateString(context)
-            "$consentSizeWithDescription  $date"
+            "$date"
         }
     }
 }

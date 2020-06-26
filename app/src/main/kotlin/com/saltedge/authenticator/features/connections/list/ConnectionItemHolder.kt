@@ -65,16 +65,16 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
             )
         )
         titleView.text = item.name
-        val typeface = ResourcesCompat.getFont(listItemView.context, R.font.roboto_bold)
-        val spannable = SpannableStringBuilder(item.statusDescription).apply {
-            setSpan(StyleSpan(typeface!!.style), 0, 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        val typeface = ResourcesCompat.getFont(listItemView.context, R.font.roboto_regular)
+        val consentDescription = SpannableStringBuilder(item.consentDescription)
+        val statusDescription = SpannableStringBuilder(item.statusDescription)
+        val spannable = SpannableStringBuilder("$consentDescription $statusDescription")
+        spannable.apply {
             setSpan(
-                ForegroundColorSpan(
-                    ContextCompat.getColor(
-                        listItemView.context,
-                        R.color.grey_100
-                    )
-                ), 0, 11, Spannable.SPAN_EXCLUSIVE_INCLUSIVE
+                StyleSpan(typeface!!.style),
+                spannable.indexOf(item.statusDescription, 0),
+                spannable.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
         subTitleView.text = spannable

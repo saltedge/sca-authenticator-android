@@ -25,10 +25,11 @@ import androidx.annotation.StringRes
 
 data class ConnectionViewModel(
     val guid: String,
+    val connectionId: String,
     val code: String,
     var name: String,
     val logoUrl: String,
-//    val statusDescription: SpannableString,
+    var consentDescription: String = "",
     val statusDescription: String,
     val reconnectOptionIsVisible: Boolean,
     @StringRes var deleteMenuItemText: Int,

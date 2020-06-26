@@ -190,4 +190,5 @@
     <string name="forgot_passcode_clear_message">All app data including connected providers, user data and settings will be permanently deleted</string>
 
     <string name="consents_feature_title">Consent management</string>
+    <string name="consents">consents</string>
 </resources>
