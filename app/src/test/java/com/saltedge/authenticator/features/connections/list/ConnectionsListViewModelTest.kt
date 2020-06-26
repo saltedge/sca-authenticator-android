@@ -37,6 +37,7 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.KEY_NAME
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
+import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import org.hamcrest.Matchers.equalTo
 import org.junit.Assert.*
@@ -57,6 +58,7 @@ class ConnectionsListViewModelTest {
     private val mockKeyStoreManager = mock(KeyStoreManagerAbs::class.java)
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
+    private val mockCryptoTools = mock(CryptoToolsAbs::class.java)
     private val connections = listOf(
         Connection().apply {
             guid = "guid1"
@@ -89,7 +91,8 @@ class ConnectionsListViewModelTest {
             appContext = context,
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
-            apiManager = mockApiManager
+            apiManager = mockApiManager,
+            cryptoTools = mockCryptoTools
         )
     }
 
