@@ -131,7 +131,13 @@ class ConnectionsListViewModel(
         val newListItems = listItemsValues.apply {
             forEach {
                 val consentsSize = consents[it.connectionId]?.size ?: 0
-                it.consentDescription = if (consentsSize > 0)  "$consentsSize ${appContext.getString(R.string.consents)} ·" else ""
+                it.consentDescription = if (consentsSize > 0)  {
+                    appContext.resources.getQuantityString(
+                        R.plurals.ui_consents,
+                        consentsSize,
+                        consentsSize
+                    ) + " ·"
+                } else ""
             }
         }
         listItems.postValue(newListItems)
