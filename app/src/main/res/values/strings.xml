@@ -102,7 +102,7 @@
     <string name="connections_list_empty_title">No connections</string>
     <string name="connections_list_empty_description">Seems like you didn’t connect to your provider yet. Add new connection to securely authorize your actions.</string>
     <string name="connections_list_delete_all_connections">Delete all connections and stop receiving confirmations until another Provider is connected.</string>
-    <string name="connection_status_connected_on">Connected on</string>
+    <string name="connection_status_linked_on">Linked on</string>
     <string name="connection_status_inactive">Inactive. Please reconnect.</string>
     <string name="connect_status_encrypted_connection">Your connection is encrypted and\nsecurely transmitted using SSL</string>
     <string name="connect_status_in_progress">Processing…</string>

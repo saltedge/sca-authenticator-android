@@ -31,4 +31,4 @@ import org.joda.time.DateTime
  * @return the date as a string
  */
 fun DateTime.toLongDateString(appContext: Context): String =
-    this.toString("d MMM yyyy, HH:mm", appContext.getCurrentAppLocale()) ?: ""
+    this.toString("d MMMM yyyy", appContext.getCurrentAppLocale()) ?: ""

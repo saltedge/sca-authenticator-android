@@ -77,7 +77,7 @@ private fun getConnectionStatusDescription(context: Context, connection: Connect
         ConnectionStatus.INACTIVE -> context.getString(R.string.connection_status_inactive)
         ConnectionStatus.ACTIVE -> {
             val date = connection.updatedAt.toDateTime().toLongDateString(context)
-            "$date"
+            "${context.getString(R.string.connection_status_linked_on)} $date"
         }
     }
 }
