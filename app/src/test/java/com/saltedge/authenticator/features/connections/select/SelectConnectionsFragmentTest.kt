@@ -43,7 +43,6 @@ class SelectConnectionsFragmentTest {
                 name = "name",
                 logoUrl = "logoUrl",
                 statusDescription = "statusDescription",
-                consentDescription = "consentDescription",
                 reconnectOptionIsVisible = false,
                 deleteMenuItemText = R.string.actions_delete,
                 deleteMenuItemImage = R.drawable.ic_menu_delete_24dp,

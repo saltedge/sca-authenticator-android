@@ -99,6 +99,11 @@ class ConnectionsListViewModel(
         }
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onDestroy() {
+        decryptJob.cancel()
+    }
+
     override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?) {}
 
     override fun onFetchEncryptedDataResult(

@@ -29,7 +29,7 @@ import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.connection.getStatus
 import com.saltedge.authenticator.sdk.tools.toDateTime
-import com.saltedge.authenticator.tools.toLongDateString
+import com.saltedge.authenticator.tools.toDateFormatString
 
 fun collectAllConnectionsViewModels(
     repository: ConnectionsRepositoryAbs,
@@ -76,7 +76,7 @@ private fun getConnectionStatusDescription(context: Context, connection: Connect
     return when (connection.getStatus()) {
         ConnectionStatus.INACTIVE -> context.getString(R.string.connection_status_inactive)
         ConnectionStatus.ACTIVE -> {
-            val date = connection.updatedAt.toDateTime().toLongDateString(context)
+            val date = connection.updatedAt.toDateTime().toDateFormatString(context)
             "${context.getString(R.string.connection_status_linked_on)} $date"
         }
     }

@@ -65,13 +65,25 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
             )
         )
         titleView.text = item.name
-        val typeface = ResourcesCompat.getFont(listItemView.context, R.font.roboto_regular)
-        val consentDescription = SpannableStringBuilder(item.consentDescription)
         val statusDescription = SpannableStringBuilder(item.statusDescription)
-        val spannable = SpannableStringBuilder("$consentDescription $statusDescription")
+        val spannable = SpannableStringBuilder("${item.consentDescription} $statusDescription")
         spannable.apply {
             setSpan(
-                StyleSpan(typeface!!.style),
+                ResourcesCompat.getFont(listItemView.context, R.font.roboto_medium)?.style?.let {
+                    StyleSpan(
+                        it
+                    )
+                },
+                spannable.indexOf(item.consentDescription, 0),
+                item.consentDescription.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            setSpan(
+                ResourcesCompat.getFont(listItemView.context, R.font.roboto_regular)?.style?.let {
+                    StyleSpan(
+                        it
+                    )
+                },
                 spannable.indexOf(item.statusDescription, 0),
                 spannable.length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE

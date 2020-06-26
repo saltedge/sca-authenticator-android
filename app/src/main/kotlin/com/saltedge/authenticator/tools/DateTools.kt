@@ -30,5 +30,5 @@ import org.joda.time.DateTime
  * @param appContext - application context
  * @return the date as a string
  */
-fun DateTime.toLongDateString(appContext: Context): String =
+fun DateTime.toDateFormatString(appContext: Context): String =
     this.toString("d MMMM yyyy", appContext.getCurrentAppLocale()) ?: ""
