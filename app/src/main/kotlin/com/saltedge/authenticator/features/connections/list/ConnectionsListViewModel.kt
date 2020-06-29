@@ -201,7 +201,8 @@ class ConnectionsListViewModel(
         }
     }
 
-    private fun processDecryptedConsentsResult(result: List<ConsentData>) {
+    //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
+    fun processDecryptedConsentsResult(result: List<ConsentData>) {
         this.consents = result.groupBy { it.connectionId ?: "" }
         val newListItems = listItemsValues.apply {
             forEach {
