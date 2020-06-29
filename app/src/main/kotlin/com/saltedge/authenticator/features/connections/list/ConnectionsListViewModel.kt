@@ -92,12 +92,7 @@ class ConnectionsListViewModel(
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStart() {
         updateViewsContent()
-        collectConsentRequestData()?.let {
-            apiManager.getConsents(
-                connectionsAndKeys = it,
-                resultCallback = this
-            )
-        }
+        getConsents()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
@@ -182,8 +177,13 @@ class ConnectionsListViewModel(
         }
     }
 
+    //TODO: Display list of active Consents
     fun onViewConsentsOptionSelected() {
         Log.d("some", "click view consents")
+    }
+
+    fun refreshConsents() {
+        getConsents()
     }
 
     //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
@@ -203,6 +203,15 @@ class ConnectionsListViewModel(
             }
         }
         listItems.postValue(newListItems)
+    }
+
+    private fun getConsents() {
+        collectConsentRequestData()?.let {
+            apiManager.getConsents(
+                connectionsAndKeys = it,
+                resultCallback = this
+            )
+        }
     }
 
     private fun collectConsentRequestData(): List<ConnectionAndKey>? {

@@ -176,6 +176,24 @@ class ConnectionsListViewModelTest {
 
     @Test
     @Throws(Exception::class)
+    fun refreshConsentsTest() {
+        //given
+        val connection: List<ConnectionViewModel> =
+            listOf(connections[1]).convertConnectionsToViewModels(context)
+        viewModel.listItems.value = connection
+
+        //when
+        viewModel.refreshConsents()
+
+        //than
+        Mockito.verify(mockApiManager).getConsents(
+            connectionsAndKeys = listOf(ConnectionAndKey(connections[1], mockPrivateKey)),
+            resultCallback = viewModel
+        )
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun processDecryptedConsentsResultTestCase1() {
         //given
         viewModel.listItems.postValue(emptyList())
@@ -225,7 +243,8 @@ class ConnectionsListViewModelTest {
                     reconnectOptionIsVisible = true,
                     deleteMenuItemText = R.string.actions_remove,
                     deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
-                    isChecked = false
+                    isChecked = false,
+                    hasConsents = true
                 )
             )
         )
