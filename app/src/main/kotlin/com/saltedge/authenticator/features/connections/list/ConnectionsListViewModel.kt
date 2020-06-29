@@ -181,6 +181,24 @@ class ConnectionsListViewModel(
         }
     }
 
+    //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
+    fun processDecryptedConsentsResult(result: List<ConsentData>) {
+        this.consents = result.groupBy { it.connectionId ?: "" }
+        val newListItems = listItemsValues.apply {
+            forEach {
+                val consentsSize = consents[it.connectionId]?.size ?: 0
+                it.consentDescription = if (consentsSize > 0)  {
+                    appContext.resources.getQuantityString(
+                        R.plurals.ui_consents,
+                        consentsSize,
+                        consentsSize
+                    ) + " ·"
+                } else ""
+            }
+        }
+        listItems.postValue(newListItems)
+    }
+
     private fun collectConsentRequestData(): List<ConnectionAndKey>? {
         return if (connectionsAndKeys.isEmpty()) null else connectionsAndKeys.values.toList()
     }
@@ -199,24 +217,6 @@ class ConnectionsListViewModel(
                 rsaPrivateKey = connectionsAndKeys[it.connectionId]?.key
             )
         }
-    }
-
-    //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
-    fun processDecryptedConsentsResult(result: List<ConsentData>) {
-        this.consents = result.groupBy { it.connectionId ?: "" }
-        val newListItems = listItemsValues.apply {
-            forEach {
-                val consentsSize = consents[it.connectionId]?.size ?: 0
-                it.consentDescription = if (consentsSize > 0)  {
-                    appContext.resources.getQuantityString(
-                        R.plurals.ui_consents,
-                        consentsSize,
-                        consentsSize
-                    ) + " ·"
-                } else ""
-            }
-        }
-        listItems.postValue(newListItems)
     }
 
     private fun onUserRenamedConnection(listItem: ConnectionViewModel, newConnectionName: String) {
