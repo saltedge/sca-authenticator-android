@@ -24,6 +24,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
@@ -181,6 +182,10 @@ class ConnectionsListViewModel(
         }
     }
 
+    fun onViewConsentsOptionSelected() {
+        Log.d("some", "click view consents")
+    }
+
     //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
     fun processDecryptedConsentsResult(result: List<ConsentData>) {
         this.consents = result.groupBy { it.connectionId ?: "" }
@@ -188,6 +193,7 @@ class ConnectionsListViewModel(
             forEach {
                 val consentsSize = consents[it.connectionId]?.size ?: 0
                 it.consentDescription = if (consentsSize > 0)  {
+                    it.hasConsents = true
                     appContext.resources.getQuantityString(
                         R.plurals.ui_consents,
                         consentsSize,

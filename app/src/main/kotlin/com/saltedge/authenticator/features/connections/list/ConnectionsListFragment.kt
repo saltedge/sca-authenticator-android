@@ -209,7 +209,9 @@ class ConnectionsListFragment : BaseFragment(),
             val deleteView = popupView.findViewById<ViewGroup>(R.id.deleteView)
             val deleteImageView = popupView.findViewById<ImageView>(R.id.deleteImageView)
             val deleteTextView = popupView.findViewById<TextView>(R.id.deleteTextView)
+            val consentView = popupView.findViewById<ViewGroup>(R.id.consentView)
 
+            consentView.setVisible(item.hasConsents)
             reconnectView.setVisible(item.reconnectOptionIsVisible)
             deleteTextView.setText(item.deleteMenuItemText)
             deleteImageView.setImageResource(item.deleteMenuItemImage)
@@ -229,6 +231,10 @@ class ConnectionsListFragment : BaseFragment(),
             deleteView.setOnClickListener {
                 this.popupWindow?.dismiss()
                 viewModel.onDeleteOptionsSelected()
+            }
+            consentView.setOnClickListener {
+                this.popupWindow?.dismiss()
+                viewModel.onViewConsentsOptionSelected()
             }
 
             popupWindow.isOutsideTouchable = true

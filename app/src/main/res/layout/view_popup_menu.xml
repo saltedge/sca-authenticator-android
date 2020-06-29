@@ -25,79 +25,96 @@
     android:clipToPadding="false"
     app:cardCornerRadius="@dimen/dp_6">
 
-<RelativeLayout
-    android:layout_width="@dimen/dp_200"
-    android:layout_height="wrap_content"
-    android:paddingTop="@dimen/popupMenuTpBottomPadding"
-    android:paddingBottom="@dimen/popupMenuTpBottomPadding"
-    android:background="@color/dialog_background">
+    <RelativeLayout
+        android:layout_width="@dimen/dp_200"
+        android:layout_height="wrap_content"
+        android:background="@color/dialog_background"
+        android:paddingTop="@dimen/popupMenuTpBottomPadding"
+        android:paddingBottom="@dimen/popupMenuTpBottomPadding">
 
-    <LinearLayout
-        android:id="@+id/reconnectView"
-        style="@style/PopupMenuRow"
-        android:background="?android:attr/selectableItemBackground">
+        <LinearLayout
+            android:id="@+id/reconnectView"
+            style="@style/PopupMenuRow"
+            android:background="?android:attr/selectableItemBackground">
 
-        <ImageView
-            android:id="@+id/reconnectImageView"
-            style="@style/PopupMenuImage"
-            android:contentDescription="@string/actions_reconnect"
-            app:srcCompat="@drawable/ic_menu_reconnect_24dp" />
+            <ImageView
+                android:id="@+id/reconnectImageView"
+                style="@style/PopupMenuImage"
+                android:contentDescription="@string/actions_reconnect"
+                app:srcCompat="@drawable/ic_menu_reconnect_24dp" />
 
-        <TextView
-            android:id="@+id/reconnectTextView"
-            style="@style/PopupMenuText"
-            android:text="@string/actions_reconnect" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/reconnectTextView"
+                style="@style/PopupMenuText"
+                android:text="@string/actions_reconnect" />
+        </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/renameView"
-        style="@style/PopupMenuRow"
-        android:layout_below="@+id/reconnectView">
+        <LinearLayout
+            android:id="@+id/renameView"
+            style="@style/PopupMenuRow"
+            android:layout_below="@+id/reconnectView">
 
-        <ImageView
-            android:id="@+id/renameImageView"
-            style="@style/PopupMenuImage"
-            android:contentDescription="@string/actions_rename"
-            app:srcCompat="@drawable/ic_menu_edit_24dp" />
+            <ImageView
+                android:id="@+id/renameImageView"
+                style="@style/PopupMenuImage"
+                android:contentDescription="@string/actions_rename"
+                app:srcCompat="@drawable/ic_menu_edit_24dp" />
 
-        <TextView
-            android:id="@+id/renameTextView"
-            style="@style/PopupMenuText"
-            android:text="@string/actions_rename" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/renameTextView"
+                style="@style/PopupMenuText"
+                android:text="@string/actions_rename" />
+        </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/contactSupportView"
-        style="@style/PopupMenuRow"
-        android:layout_below="@+id/renameView">
+        <LinearLayout
+            android:id="@+id/contactSupportView"
+            style="@style/PopupMenuRow"
+            android:layout_below="@+id/renameView">
 
-        <ImageView
-            android:id="@+id/contactSupportImageView"
-            style="@style/PopupMenuImage"
-            android:contentDescription="@string/actions_contact_support"
-            app:srcCompat="@drawable/ic_contact_support_24dp" />
+            <ImageView
+                android:id="@+id/contactSupportImageView"
+                style="@style/PopupMenuImage"
+                android:contentDescription="@string/actions_contact_support"
+                app:srcCompat="@drawable/ic_contact_support_24dp" />
 
-        <TextView
-            android:id="@+id/contactSupportTextView"
-            style="@style/PopupMenuText"
-            android:text="@string/actions_contact_support" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/contactSupportTextView"
+                style="@style/PopupMenuText"
+                android:text="@string/actions_contact_support" />
+        </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/deleteView"
-        style="@style/PopupMenuRow"
-        android:layout_below="@+id/contactSupportView">
+        <LinearLayout
+            android:id="@+id/consentView"
+            style="@style/PopupMenuRow"
+            android:layout_below="@+id/contactSupportView">
 
-        <ImageView
-            android:id="@+id/deleteImageView"
-            style="@style/PopupMenuImage"
-            android:contentDescription="@string/actions_delete"
-            app:srcCompat="@drawable/ic_menu_delete_24dp" />
+            <ImageView
+                android:id="@+id/consentImageView"
+                style="@style/PopupMenuImage"
+                android:contentDescription="@string/actions_view_consents"
+                app:srcCompat="@drawable/ic_view_consents_24dp" />
 
-        <TextView
-            android:id="@+id/deleteTextView"
-            style="@style/PopupMenuText"
-            android:text="@string/actions_delete" />
-    </LinearLayout>
-</RelativeLayout>
+            <TextView
+                android:id="@+id/consentTextView"
+                style="@style/PopupMenuText"
+                android:text="@string/actions_view_consents" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/deleteView"
+            style="@style/PopupMenuRow"
+            android:layout_below="@+id/consentView">
+
+            <ImageView
+                android:id="@+id/deleteImageView"
+                style="@style/PopupMenuImage"
+                android:contentDescription="@string/actions_delete"
+                app:srcCompat="@drawable/ic_menu_delete_24dp" />
+
+            <TextView
+                android:id="@+id/deleteTextView"
+                style="@style/PopupMenuText"
+                android:text="@string/actions_delete" />
+        </LinearLayout>
+    </RelativeLayout>
 </androidx.cardview.widget.CardView>
