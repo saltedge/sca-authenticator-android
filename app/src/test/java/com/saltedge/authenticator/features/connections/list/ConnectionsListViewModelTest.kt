@@ -36,6 +36,7 @@ import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.KEY_NAME
 import com.saltedge.authenticator.sdk.model.ConsentData
+import com.saltedge.authenticator.sdk.model.ConsentSharedData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
@@ -93,7 +94,8 @@ class ConnectionsListViewModelTest {
             consentType = "aisp",
             accounts = emptyList(),
             expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
-            createdAt = DateTime(0).withZone(DateTimeZone.UTC)
+            createdAt = DateTime(0).withZone(DateTimeZone.UTC),
+            sharedData = ConsentSharedData(balance = true, transactions = true)
         )
     )
 
