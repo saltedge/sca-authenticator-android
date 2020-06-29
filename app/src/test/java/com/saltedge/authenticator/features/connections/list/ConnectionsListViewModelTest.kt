@@ -35,14 +35,20 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.KEY_NAME
+import com.saltedge.authenticator.sdk.model.ConsentData
+import com.saltedge.authenticator.sdk.model.ConsentSharedData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
+import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import org.hamcrest.Matchers.equalTo
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.robolectric.RobolectricTestRunner
@@ -57,6 +63,7 @@ class ConnectionsListViewModelTest {
     private val mockKeyStoreManager = mock(KeyStoreManagerAbs::class.java)
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
+    private val mockCryptoTools = mock(CryptoToolsAbs::class.java)
     private val connections = listOf(
         Connection().apply {
             guid = "guid1"
@@ -78,18 +85,37 @@ class ConnectionsListViewModelTest {
             updatedAt = 300L
         }
     )
+    private val mockConnectionAndKey = ConnectionAndKey(connections[1], mockPrivateKey)
+    private val consentData: List<ConsentData> = listOf(
+        ConsentData(
+            id = "555",
+            userId = "1",
+            tppName = "title",
+            consentType = "aisp",
+            accounts = emptyList(),
+            expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
+            createdAt = DateTime(0).withZone(DateTimeZone.UTC),
+            sharedData = ConsentSharedData(balance = true, transactions = true)
+        )
+    )
+
 
     @Before
     fun setUp() {
         Mockito.doReturn(connections).`when`(mockConnectionsRepository).getAllConnections()
         Mockito.doReturn(connections[0]).`when`(mockConnectionsRepository).getByGuid("guid1")
         Mockito.doReturn(connections[1]).`when`(mockConnectionsRepository).getByGuid("guid2")
+        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(connections[1]))
+        given(mockKeyStoreManager.createConnectionAndKeyModel(connections[1])).willReturn(
+            mockConnectionAndKey
+        )
 
         viewModel = ConnectionsListViewModel(
             appContext = context,
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
-            apiManager = mockApiManager
+            apiManager = mockApiManager,
+            cryptoTools = mockCryptoTools
         )
     }
 
@@ -128,6 +154,185 @@ class ConnectionsListViewModelTest {
         assertThat(viewModel.listItemsValues, equalTo(connection))
         assertThat(viewModel.emptyViewVisibility.value, equalTo(View.GONE))
         assertThat(viewModel.listVisibility.value, equalTo(View.VISIBLE))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onStartTestCase3() {
+        //given
+        val connection: List<ConnectionViewModel> =
+            listOf(connections[1]).convertConnectionsToViewModels(context)
+        viewModel.listItems.value = connection
+
+        //when
+        viewModel.onStart()
+
+        //than
+        Mockito.verify(mockApiManager).getConsents(
+            connectionsAndKeys = listOf(ConnectionAndKey(connections[1], mockPrivateKey)),
+            resultCallback = viewModel
+        )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun processDecryptedConsentsResultTestCase1() {
+        //given
+        viewModel.listItems.postValue(emptyList())
+
+        //when
+        viewModel.processDecryptedConsentsResult(result = consentData)
+
+        //then
+        assertThat(viewModel.listItems.value, equalTo(emptyList()))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun processDecryptedConsentsResultTestCase2() {
+        //given
+        val connection: List<ConnectionViewModel> = listOf(
+            ConnectionViewModel(
+                guid = "guid1",
+                connectionId = "",
+                code = "demobank1",
+                name = "Demobank1",
+                statusDescription = "Inactive. Please reconnect.",
+                logoUrl = "",
+                reconnectOptionIsVisible = true,
+                deleteMenuItemText = R.string.actions_remove,
+                deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
+                isChecked = false
+            )
+        )
+        viewModel.listItems.value = connection
+
+        //when
+        viewModel.processDecryptedConsentsResult(result = consentData)
+
+        //then
+        assertThat(
+            viewModel.listItems.value, equalTo(
+            listOf(
+                ConnectionViewModel(
+                    guid = "guid1",
+                    connectionId = "",
+                    code = "demobank1",
+                    name = "Demobank1",
+                    statusDescription = "Inactive. Please reconnect.",
+                    logoUrl = "",
+                    consentDescription = "1 consent ·",
+                    reconnectOptionIsVisible = true,
+                    deleteMenuItemText = R.string.actions_remove,
+                    deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
+                    isChecked = false
+                )
+            )
+        )
+        )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun processDecryptedConsentsResultTestCase3() {
+        //given
+        val connection: List<ConnectionViewModel> = listOf(
+            ConnectionViewModel(
+                guid = "guid1",
+                connectionId = "",
+                code = "demobank1",
+                name = "Demobank1",
+                statusDescription = "Inactive. Please reconnect.",
+                logoUrl = "",
+                reconnectOptionIsVisible = true,
+                deleteMenuItemText = R.string.actions_remove,
+                deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
+                isChecked = false
+            )
+        )
+        viewModel.listItems.value = connection
+
+        //when
+        viewModel.processDecryptedConsentsResult(result = emptyList())
+
+        //then
+        assertThat(
+            viewModel.listItems.value, equalTo(
+            listOf(
+                ConnectionViewModel(
+                    guid = "guid1",
+                    connectionId = "",
+                    code = "demobank1",
+                    name = "Demobank1",
+                    statusDescription = "Inactive. Please reconnect.",
+                    logoUrl = "",
+                    consentDescription = "",
+                    reconnectOptionIsVisible = true,
+                    deleteMenuItemText = R.string.actions_remove,
+                    deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
+                    isChecked = false
+                )
+            )
+        )
+        )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun getConnectionStatusDescriptionTestCase1() {
+        //given
+        val connection: List<ConnectionViewModel> =
+            listOf(connections[0]).convertConnectionsToViewModels(context)
+        viewModel.listItems.value = connection
+
+        //than
+        assertThat(
+            viewModel.listItems.value, equalTo(
+            listOf(
+                ConnectionViewModel(
+                    guid = "guid1",
+                    connectionId = "",
+                    code = "demobank1",
+                    name = "Demobank1",
+                    statusDescription = "Inactive. Please reconnect.",
+                    logoUrl = "",
+                    reconnectOptionIsVisible = true,
+                    deleteMenuItemText = R.string.actions_remove,
+                    deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
+                    isChecked = false
+                )
+            )
+        )
+        )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun getConnectionStatusDescriptionTestCase2() {
+        //given
+        val connection: List<ConnectionViewModel> =
+            listOf(connections[1]).convertConnectionsToViewModels(context)
+        viewModel.listItems.value = connection
+
+        //than
+        assertThat(
+            viewModel.listItems.value, equalTo(
+            listOf(
+                ConnectionViewModel(
+                    guid = "guid2",
+                    connectionId = "",
+                    code = "demobank2",
+                    name = "Demobank2",
+                    statusDescription = "Linked on 1 January 1970",
+                    logoUrl = "",
+                    reconnectOptionIsVisible = false,
+                    deleteMenuItemText = R.string.actions_delete,
+                    deleteMenuItemImage = R.drawable.ic_menu_delete_24dp,
+                    isChecked = false
+                )
+            )
+        )
+        )
     }
 
     @Test
@@ -221,23 +426,23 @@ class ConnectionsListViewModelTest {
         )
     }
 
-        @Test
-        @Throws(Exception::class)
-        fun onReconnectOptionSelectedTest() {
-            //given
-            val connection: List<ConnectionViewModel> =
-                connections.convertConnectionsToViewModels(context)
+    @Test
+    @Throws(Exception::class)
+    fun onReconnectOptionSelectedTest() {
+        //given
+        val connection: List<ConnectionViewModel> =
+            connections.convertConnectionsToViewModels(context)
 
-            viewModel.listItems.value = connection
-            viewModel.onListItemClickEvent.value = ViewModelEvent<Int>(1)
+        viewModel.listItems.value = connection
+        viewModel.onListItemClickEvent.value = ViewModelEvent<Int>(1)
 
-            //when
-            viewModel.onReconnectOptionSelected()
+        //when
+        viewModel.onReconnectOptionSelected()
 
-            //than
-            assertThat(viewModel.onReconnectClickEvent.value, equalTo(ViewModelEvent("guid2")))
-            assertNotNull(viewModel.onReconnectClickEvent.value)
-        }
+        //than
+        assertThat(viewModel.onReconnectClickEvent.value, equalTo(ViewModelEvent("guid2")))
+        assertNotNull(viewModel.onReconnectClickEvent.value)
+    }
 
     /**
      * test onActivityResult,

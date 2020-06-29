@@ -20,18 +20,21 @@
  */
 package com.saltedge.authenticator.features.connections.list
 
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.*
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tools.inflateListItemView
 import com.saltedge.authenticator.tools.loadRoundedImage
-import com.saltedge.authenticator.tools.setTextColorResId
 
 class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClickListener?) :
     RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_connection)) {
@@ -55,9 +58,37 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
             cornerRadius = itemView.resources.getDimension(R.dimen.connections_list_logo_radius)
         )
         if (item.isChecked) listItemView.setBackgroundResource(R.drawable.stroke_background)
-        else listItemView.setBackgroundColor(ContextCompat.getColor(listItemView.context, R.color.app_logo_background))
+        else listItemView.setBackgroundColor(
+            ContextCompat.getColor(
+                listItemView.context,
+                R.color.app_logo_background
+            )
+        )
         titleView.text = item.name
-        subTitleView.text = item.statusDescription
-        subTitleView.setTextColorResId(item.statusColorResId)
+        val statusDescription = SpannableStringBuilder(item.statusDescription)
+        val spannable = SpannableStringBuilder("${item.consentDescription} $statusDescription")
+        spannable.apply {
+            setSpan(
+                ResourcesCompat.getFont(listItemView.context, R.font.roboto_medium)?.style?.let {
+                    StyleSpan(
+                        it
+                    )
+                },
+                spannable.indexOf(item.consentDescription, 0),
+                item.consentDescription.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            setSpan(
+                ResourcesCompat.getFont(listItemView.context, R.font.roboto_regular)?.style?.let {
+                    StyleSpan(
+                        it
+                    )
+                },
+                spannable.indexOf(item.statusDescription, 0),
+                spannable.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        subTitleView.text = spannable
     }
 }

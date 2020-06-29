@@ -38,11 +38,11 @@ class SelectConnectionsFragmentTest {
         val connections: List<ConnectionViewModel> = listOf(
             ConnectionViewModel(
                 guid = "guid",
+                connectionId = "connectionId",
                 code = "code",
                 name = "name",
                 logoUrl = "logoUrl",
                 statusDescription = "statusDescription",
-                statusColorResId = 1,
                 reconnectOptionIsVisible = false,
                 deleteMenuItemText = R.string.actions_delete,
                 deleteMenuItemImage = R.drawable.ic_menu_delete_24dp,

@@ -30,6 +30,7 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.DELETE_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.RENAME_REQUEST_CODE
+import com.saltedge.authenticator.features.authorizations.common.collectConnectionsAndKeys
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -37,20 +38,34 @@ import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.KEY_NAME
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener
-import com.saltedge.authenticator.sdk.model.GUID
-import com.saltedge.authenticator.sdk.model.Token
+import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
+import com.saltedge.authenticator.sdk.model.*
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.isActive
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import javax.inject.Inject
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
-class ConnectionsListViewModel @Inject constructor(
+class ConnectionsListViewModel(
     private val appContext: Context,
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyStoreManagerAbs,
-    private val apiManager: AuthenticatorApiManagerAbs
-) : ViewModel(), LifecycleObserver, ConnectionsRevokeListener {
+    private val apiManager: AuthenticatorApiManagerAbs,
+    private val cryptoTools: CryptoToolsAbs
+) : ViewModel(), LifecycleObserver, ConnectionsRevokeListener, FetchEncryptedDataListener,
+    CoroutineScope {
+
+    private var consents: Map<String, List<ConsentData>> = emptyMap()
+    private val decryptJob: Job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = decryptJob + Dispatchers.IO
+    private var connectionsAndKeys: Map<ConnectionID, ConnectionAndKey> =
+        collectConnectionsAndKeys(
+            connectionsRepository,
+            keyStoreManager
+        )
 
     var onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
         private set
@@ -76,9 +91,27 @@ class ConnectionsListViewModel @Inject constructor(
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStart() {
         updateViewsContent()
+        collectConsentRequestData()?.let {
+            apiManager.getConsents(
+                connectionsAndKeys = it,
+                resultCallback = this
+            )
+        }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onDestroy() {
+        decryptJob.cancel()
     }
 
     override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?) {}
+
+    override fun onFetchEncryptedDataResult(
+        result: List<EncryptedData>,
+        errors: List<ApiErrorData>
+    ) {
+        processOfEncryptedConsentsResult(encryptedList = result)
+    }
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data == null || resultCode != Activity.RESULT_OK) return
@@ -146,8 +179,44 @@ class ConnectionsListViewModel @Inject constructor(
                 updateViewsContent()
             }
         }
+    }
 
+    //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
+    fun processDecryptedConsentsResult(result: List<ConsentData>) {
+        this.consents = result.groupBy { it.connectionId ?: "" }
+        val newListItems = listItemsValues.apply {
+            forEach {
+                val consentsSize = consents[it.connectionId]?.size ?: 0
+                it.consentDescription = if (consentsSize > 0)  {
+                    appContext.resources.getQuantityString(
+                        R.plurals.ui_consents,
+                        consentsSize,
+                        consentsSize
+                    ) + " ·"
+                } else ""
+            }
+        }
+        listItems.postValue(newListItems)
+    }
 
+    private fun collectConsentRequestData(): List<ConnectionAndKey>? {
+        return if (connectionsAndKeys.isEmpty()) null else connectionsAndKeys.values.toList()
+    }
+
+    private fun processOfEncryptedConsentsResult(encryptedList: List<EncryptedData>) {
+        launch {
+            val data = decryptConsents(encryptedList = encryptedList)
+            withContext(Dispatchers.Main) { processDecryptedConsentsResult(result = data) }
+        }
+    }
+
+    private fun decryptConsents(encryptedList: List<EncryptedData>): List<ConsentData> {
+        return encryptedList.mapNotNull {
+            cryptoTools.decryptConsentData(
+                encryptedData = it,
+                rsaPrivateKey = connectionsAndKeys[it.connectionId]?.key
+            )
+        }
     }
 
     private fun onUserRenamedConnection(listItem: ConnectionViewModel, newConnectionName: String) {

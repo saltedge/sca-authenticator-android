@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,14 +21,25 @@
 package com.saltedge.authenticator.tools
 
 import android.content.Context
+import androidx.test.core.app.ApplicationProvider
+import org.hamcrest.CoreMatchers.equalTo
 import org.joda.time.DateTime
+import org.junit.Assert.assertThat
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
-/**
- * Converts the current date time to a string presentation
- *
- * @receiver millis
- * @param appContext - application context
- * @return the date as a string
- */
-fun DateTime.toDateFormatString(appContext: Context): String =
-    this.toString("d MMMM yyyy", appContext.getCurrentAppLocale()) ?: ""
+@RunWith(RobolectricTestRunner::class)
+class DateToolsTest {
+
+    private val context: Context = ApplicationProvider.getApplicationContext()
+
+    @Test
+    @Throws(Exception::class)
+    fun toDateFormatStringTest() {
+        val testDate: DateTime = DateTime(2020, 9, 12, 10, 10 ,10)
+
+        assertThat(testDate.toDateFormatString(context), equalTo("12 September 2020"))
+        assertThat(testDate.plusDays(1).toDateFormatString(context), equalTo("13 September 2020"))
+    }
+}

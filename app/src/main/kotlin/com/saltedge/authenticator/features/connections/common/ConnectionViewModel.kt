@@ -20,17 +20,17 @@
  */
 package com.saltedge.authenticator.features.connections.common
 
-import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 
 data class ConnectionViewModel(
     val guid: String,
+    val connectionId: String,
     val code: String,
     var name: String,
     val logoUrl: String,
+    var consentDescription: String = "",
     val statusDescription: String,
-    @ColorRes val statusColorResId: Int,
     val reconnectOptionIsVisible: Boolean,
     @StringRes var deleteMenuItemText: Int,
     @DrawableRes var deleteMenuItemImage: Int,
