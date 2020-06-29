@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.sdk.tools
 
 import com.saltedge.authenticator.sdk.model.ConsentData
+import com.saltedge.authenticator.sdk.model.ConsentSharedData
 import com.saltedge.authenticator.sdk.model.EncryptedData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.testTools.TestTools
@@ -290,6 +291,7 @@ class CryptoToolsTest {
         tppName = "title",
         consentType = "aisp",
         accounts = emptyList(),
+        sharedData = ConsentSharedData(balance = true, transactions = true),
         expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
         createdAt = DateTime(0).withZone(DateTimeZone.UTC)
     )
