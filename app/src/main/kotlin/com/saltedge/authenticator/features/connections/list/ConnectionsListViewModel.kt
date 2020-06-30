@@ -24,6 +24,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
@@ -57,7 +58,6 @@ class ConnectionsListViewModel(
 ) : ViewModel(), LifecycleObserver, ConnectionsRevokeListener, FetchEncryptedDataListener,
     CoroutineScope {
 
-    private var consents: Map<String, List<ConsentData>> = emptyMap()
     private val decryptJob: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = decryptJob + Dispatchers.IO
@@ -66,6 +66,7 @@ class ConnectionsListViewModel(
             connectionsRepository,
             keyStoreManager
         )
+    private var consents: Map<ConnectionID, List<ConsentData>> = emptyMap()
 
     var onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
         private set
@@ -78,6 +79,8 @@ class ConnectionsListViewModel(
     var onRenameClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
         private set
     var onDeleteClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
+        private set
+    var onViewConsentsClickEvent = MutableLiveData<ViewModelEvent<String>>()
         private set
 
     val listVisibility = MutableLiveData<Int>()
@@ -97,6 +100,16 @@ class ConnectionsListViewModel(
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onDestroy() {
         decryptJob.cancel()
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    fun onResume() {
+        Log.d("some", "onResume")
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    fun onPause() {
+        Log.d("some", "onPause")
     }
 
     override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?) {}
@@ -149,6 +162,13 @@ class ConnectionsListViewModel(
         }
     }
 
+    fun onViewConsentsOptionSelected() {
+        val index = onListItemClickEvent.value?.peekContent() ?: return
+        val connectionGuid = listItemsValues.getOrNull(index)?.guid ?: return
+
+        onViewConsentsClickEvent.postValue(ViewModelEvent(connectionGuid))
+    }
+
     fun onContactSupportOptionSelected() {
         val index = onListItemClickEvent.value?.peekContent() ?: return
         val connectionGuid = listItemsValues.getOrNull(index)?.guid ?: return
@@ -163,7 +183,8 @@ class ConnectionsListViewModel(
     }
 
     fun onDeleteOptionsSelected() {
-        val item = listItemsValues.getOrNull(onListItemClickEvent.value?.peekContent() ?: return) ?: return
+        val item =
+            listItemsValues.getOrNull(onListItemClickEvent.value?.peekContent() ?: return) ?: return
         connectionsRepository.getByGuid(item.guid)?.let { connection ->
             if (connection.isActive()) {
                 onDeleteClickEvent.postValue(ViewModelEvent(Bundle()
@@ -174,10 +195,6 @@ class ConnectionsListViewModel(
                 updateViewsContent()
             }
         }
-    }
-
-    fun onViewConsentsOptionSelected() {
-        //TODO: Display list of active Consents
     }
 
     fun refreshConsents() {
@@ -192,20 +209,7 @@ class ConnectionsListViewModel(
     //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
     fun processDecryptedConsentsResult(result: List<ConsentData>) {
         this.consents = result.groupBy { it.connectionId ?: "" }
-        val newListItems = listItemsValues.apply {
-            forEach {
-                val consentsSize = consents[it.connectionId]?.size ?: 0
-                it.consentDescription = if (consentsSize > 0)  {
-                    appContext.resources.getQuantityString(
-                        R.plurals.ui_consents,
-                        consentsSize,
-                        consentsSize
-                    ) + " ·"
-                } else {
-                    ""
-                }
-            }
-        }
+        val newListItems = updateConsentData(listItemsValues, consents)
         listItems.postValue(newListItems)
     }
 
@@ -250,13 +254,33 @@ class ConnectionsListViewModel(
 
     private fun updateViewsContent() {
         val newListItems = collectAllConnectionsViewModels(connectionsRepository, appContext)
-        listItems.postValue(newListItems)
+        listItems.postValue(updateConsentData(newListItems, consents))
         if (newListItems.isEmpty()) {
             emptyViewVisibility.postValue(View.VISIBLE)
             listVisibility.postValue(View.GONE)
         } else {
             listVisibility.postValue(View.VISIBLE)
             emptyViewVisibility.postValue(View.GONE)
+        }
+    }
+
+    fun updateConsentData(
+        items: List<ConnectionViewModel>,
+        consents: Map<ConnectionID, List<ConsentData>>
+    ): List<ConnectionViewModel> {
+        return items.apply {
+            forEach {
+                val consentsSize = consents[it.connectionId]?.size ?: 0
+                it.consentDescription = if (consentsSize > 0) {
+                    appContext.resources.getQuantityString(
+                        R.plurals.ui_consents,
+                        consentsSize,
+                        consentsSize
+                    ) + " ·"
+                } else {
+                    ""
+                }
+            }
         }
     }
 

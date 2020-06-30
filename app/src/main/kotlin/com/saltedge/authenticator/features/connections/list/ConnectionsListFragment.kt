@@ -45,6 +45,7 @@ import com.saltedge.authenticator.features.connections.common.ConnectionViewMode
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
 import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
+import com.saltedge.authenticator.features.consents.ConsentsListFragment
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -168,6 +169,11 @@ class ConnectionsListFragment : BaseFragment(),
         viewModel.onReconnectClickEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
             event.getContentIfNotHandled()?.let {
                 activity?.addFragment(ConnectProviderFragment.newInstance(connectionGuid = it))
+            }
+        })
+        viewModel.onViewConsentsClickEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
+            event.getContentIfNotHandled()?.let { connectionGuid ->
+                activity?.addFragment(ConsentsListFragment.newInstance(connectionGuid = connectionGuid))
             }
         })
         viewModel.onSupportClickEvent.observe(this, Observer<ViewModelEvent<String?>> { event ->
