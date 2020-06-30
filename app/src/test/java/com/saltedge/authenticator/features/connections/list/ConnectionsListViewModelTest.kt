@@ -243,8 +243,7 @@ class ConnectionsListViewModelTest {
                     reconnectOptionIsVisible = true,
                     deleteMenuItemText = R.string.actions_remove,
                     deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
-                    isChecked = false,
-                    hasConsents = true
+                    isChecked = false
                 )
             )
         )

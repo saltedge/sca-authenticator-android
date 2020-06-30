@@ -24,7 +24,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
@@ -92,7 +91,7 @@ class ConnectionsListViewModel(
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStart() {
         updateViewsContent()
-        getConsents()
+        refreshConsents()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
@@ -177,13 +176,17 @@ class ConnectionsListViewModel(
         }
     }
 
-    //TODO: Display list of active Consents
     fun onViewConsentsOptionSelected() {
-        Log.d("some", "click view consents")
+        //TODO: Display list of active Consents
     }
 
     fun refreshConsents() {
-        getConsents()
+        collectConsentRequestData()?.let {
+            apiManager.getConsents(
+                connectionsAndKeys = it,
+                resultCallback = this
+            )
+        }
     }
 
     //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
@@ -193,25 +196,17 @@ class ConnectionsListViewModel(
             forEach {
                 val consentsSize = consents[it.connectionId]?.size ?: 0
                 it.consentDescription = if (consentsSize > 0)  {
-                    it.hasConsents = true
                     appContext.resources.getQuantityString(
                         R.plurals.ui_consents,
                         consentsSize,
                         consentsSize
                     ) + " ·"
-                } else ""
+                } else {
+                    ""
+                }
             }
         }
         listItems.postValue(newListItems)
-    }
-
-    private fun getConsents() {
-        collectConsentRequestData()?.let {
-            apiManager.getConsents(
-                connectionsAndKeys = it,
-                resultCallback = this
-            )
-        }
     }
 
     private fun collectConsentRequestData(): List<ConnectionAndKey>? {

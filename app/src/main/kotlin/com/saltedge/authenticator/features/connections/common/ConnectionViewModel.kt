@@ -34,6 +34,5 @@ data class ConnectionViewModel(
     val reconnectOptionIsVisible: Boolean,
     @StringRes var deleteMenuItemText: Int,
     @DrawableRes var deleteMenuItemImage: Int,
-    var isChecked: Boolean,
-    var hasConsents: Boolean = false
+    var isChecked: Boolean
 )

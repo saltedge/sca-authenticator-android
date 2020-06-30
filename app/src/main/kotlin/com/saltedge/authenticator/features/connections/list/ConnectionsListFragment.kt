@@ -218,7 +218,7 @@ class ConnectionsListFragment : BaseFragment(),
             val deleteTextView = popupView.findViewById<TextView>(R.id.deleteTextView)
             val consentView = popupView.findViewById<ViewGroup>(R.id.consentView)
 
-            consentView.setVisible(item.hasConsents)
+            consentView.setVisible(item.consentDescription.isNotEmpty())
             reconnectView.setVisible(item.reconnectOptionIsVisible)
             deleteTextView.setText(item.deleteMenuItemText)
             deleteImageView.setImageResource(item.deleteMenuItemImage)
