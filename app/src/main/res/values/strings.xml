@@ -46,6 +46,7 @@
     <string name="actions_allow">Allow</string>
     <string name="actions_confirm">Confirm</string>
     <string name="actions_clear">Clear</string>
+    <string name="actions_view_consents">View consents</string>
 
     <string name="passcode_enter_passcode_title">Enter passcode</string>
     <string name="passcode_enter_passcode_or_fingerprint_title">Enter passcode or use fingerprint</string>

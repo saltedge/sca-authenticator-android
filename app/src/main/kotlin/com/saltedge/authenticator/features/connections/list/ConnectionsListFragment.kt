@@ -35,6 +35,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.DELETE_REQUEST_CODE
 import com.saltedge.authenticator.app.RENAME_REQUEST_CODE
@@ -112,6 +113,7 @@ class ConnectionsListFragment : BaseFragment(),
 
     override fun onStop() {
         popupWindow?.dismiss()
+        swipeRefreshLayout?.stopRefresh()
         super.onStop()
     }
 
@@ -187,6 +189,11 @@ class ConnectionsListFragment : BaseFragment(),
                 connectionsListView?.addItemDecoration(this)
             }
         }
+        swipeRefreshLayout?.setOnRefreshListener {
+            viewModel.refreshConsents()
+            swipeRefreshLayout?.stopRefresh()
+        }
+        swipeRefreshLayout?.setColorSchemeResources(R.color.primary, R.color.red, R.color.green)
         binding.executePendingBindings()
     }
 
@@ -209,7 +216,9 @@ class ConnectionsListFragment : BaseFragment(),
             val deleteView = popupView.findViewById<ViewGroup>(R.id.deleteView)
             val deleteImageView = popupView.findViewById<ImageView>(R.id.deleteImageView)
             val deleteTextView = popupView.findViewById<TextView>(R.id.deleteTextView)
+            val consentView = popupView.findViewById<ViewGroup>(R.id.consentView)
 
+            consentView.setVisible(item.consentDescription.isNotEmpty())
             reconnectView.setVisible(item.reconnectOptionIsVisible)
             deleteTextView.setText(item.deleteMenuItemText)
             deleteImageView.setImageResource(item.deleteMenuItemImage)
@@ -230,6 +239,10 @@ class ConnectionsListFragment : BaseFragment(),
                 this.popupWindow?.dismiss()
                 viewModel.onDeleteOptionsSelected()
             }
+            consentView.setOnClickListener {
+                this.popupWindow?.dismiss()
+                viewModel.onViewConsentsOptionSelected()
+            }
 
             popupWindow.isOutsideTouchable = true
             popupWindow.elevation = convertDpToPx(30f).toFloat()
@@ -248,4 +261,10 @@ class ConnectionsListFragment : BaseFragment(),
             return null
         }
     }
+}
+
+private fun SwipeRefreshLayout.stopRefresh() {
+    isRefreshing = false
+    destroyDrawingCache()
+    clearAnimation()
 }

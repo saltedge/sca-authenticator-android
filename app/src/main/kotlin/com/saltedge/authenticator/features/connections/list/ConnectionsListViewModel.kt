@@ -91,12 +91,7 @@ class ConnectionsListViewModel(
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStart() {
         updateViewsContent()
-        collectConsentRequestData()?.let {
-            apiManager.getConsents(
-                connectionsAndKeys = it,
-                resultCallback = this
-            )
-        }
+        refreshConsents()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
@@ -181,6 +176,19 @@ class ConnectionsListViewModel(
         }
     }
 
+    fun onViewConsentsOptionSelected() {
+        //TODO: Display list of active Consents
+    }
+
+    fun refreshConsents() {
+        collectConsentRequestData()?.let {
+            apiManager.getConsents(
+                connectionsAndKeys = it,
+                resultCallback = this
+            )
+        }
+    }
+
     //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
     fun processDecryptedConsentsResult(result: List<ConsentData>) {
         this.consents = result.groupBy { it.connectionId ?: "" }
@@ -193,7 +201,9 @@ class ConnectionsListViewModel(
                         consentsSize,
                         consentsSize
                     ) + " ·"
-                } else ""
+                } else {
+                    ""
+                }
             }
         }
         listItems.postValue(newListItems)
