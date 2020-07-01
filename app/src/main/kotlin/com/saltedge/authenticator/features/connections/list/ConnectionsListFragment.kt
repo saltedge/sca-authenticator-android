@@ -35,7 +35,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.DELETE_REQUEST_CODE
 import com.saltedge.authenticator.app.RENAME_REQUEST_CODE
@@ -171,9 +170,9 @@ class ConnectionsListFragment : BaseFragment(),
                 activity?.addFragment(ConnectProviderFragment.newInstance(connectionGuid = it))
             }
         })
-        viewModel.onViewConsentsClickEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
-            event.getContentIfNotHandled()?.let { connectionGuid ->
-                activity?.addFragment(ConsentsListFragment.newInstance(connectionGuid = connectionGuid))
+        viewModel.onViewConsentsClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
+            event.getContentIfNotHandled()?.let { bundle ->
+                activity?.addFragment(ConsentsListFragment.newInstance(bundle))
             }
         })
         viewModel.onSupportClickEvent.observe(this, Observer<ViewModelEvent<String?>> { event ->
@@ -267,10 +266,4 @@ class ConnectionsListFragment : BaseFragment(),
             return null
         }
     }
-}
-
-private fun SwipeRefreshLayout.stopRefresh() {
-    isRefreshing = false
-    destroyDrawingCache()
-    clearAnimation()
 }

@@ -32,3 +32,6 @@ import org.joda.time.DateTime
  */
 fun DateTime.toDateFormatString(appContext: Context): String =
     this.toString("d MMMM yyyy", appContext.getCurrentAppLocale()) ?: ""
+
+fun DateTime.toDayFormatString(appContext: Context): String =
+    this.toString("d", appContext.getCurrentAppLocale()) ?: ""

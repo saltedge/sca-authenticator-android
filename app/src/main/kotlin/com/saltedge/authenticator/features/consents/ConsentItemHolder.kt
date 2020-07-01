@@ -20,19 +20,16 @@
  */
 package com.saltedge.authenticator.features.consents
 
-import android.media.Image
 import android.text.Spannable
 import android.text.SpannableStringBuilder
-import android.text.style.StyleSpan
+import android.text.style.ForegroundColorSpan
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
+import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.consents.common.ConsentViewModel
+import com.saltedge.authenticator.features.consents.common.ConsentItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tools.inflateListItemView
 
@@ -51,35 +48,25 @@ class ConsentItemHolder(parent: ViewGroup, private val listener: ListItemClickLi
         }
     }
 
-    fun bind(item: ConsentViewModel) {
-        titleView.text = item.name
-        subTitleView.text = item.consentType //spannable
-        dateView.text = "Expires in 3 days"
+    fun bind(item: ConsentItemViewModel) {
+        titleView.text = item.tppName
+        subTitleView.text = item.consentTypeDescription
 
-//        val statusDescription = SpannableStringBuilder(item.statusDescription)
-//        val spannable = SpannableStringBuilder("${item.consentDescription} $statusDescription")
-//        spannable.apply {
-//            setSpan(
-//                ResourcesCompat.getFont(listItemView.context, R.font.roboto_medium)?.style?.let {
-//                    StyleSpan(
-//                        it
-//                    )
-//                },
-//                spannable.indexOf(item.consentDescription, 0),
-//                item.consentDescription.length,
-//                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-//            )
-//            setSpan(
-//                ResourcesCompat.getFont(listItemView.context, R.font.roboto_regular)?.style?.let {
-//                    StyleSpan(
-//                        it
-//                    )
-//                },
-//                spannable.indexOf(item.statusDescription, 0),
-//                spannable.length,
-//                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-//            )
-//        }
-//        subTitleView.text = spannable
+        val description = listItemView.context.getString(R.string.consents_expires_in)
+        val expiresAt = SpannableStringBuilder(item.expiresAt)
+        val spannable = SpannableStringBuilder("$description $expiresAt")
+        spannable.apply {
+            setSpan(ForegroundColorSpan(getColor(listItemView.context, R.color.secondary_text)),
+                spannable.indexOf(description, 0),
+                description.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            setSpan(ForegroundColorSpan(getColor(listItemView.context, R.color.red)),
+                spannable.indexOf(item.expiresAt, 0),
+                spannable.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        dateView.text = spannable
     }
 }

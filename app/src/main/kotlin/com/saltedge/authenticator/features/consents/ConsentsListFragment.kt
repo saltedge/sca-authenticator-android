@@ -33,11 +33,13 @@ import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.ConsentsListBinding
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
-import com.saltedge.authenticator.features.consents.common.ConsentViewModel
+import com.saltedge.authenticator.features.consents.common.ConsentItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
-import com.saltedge.authenticator.sdk.model.GUID
+import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.sdk.model.ConsentData
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.loadRoundedImage
+import com.saltedge.authenticator.tools.stopRefresh
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
 import kotlinx.android.synthetic.main.fragment_consents_list.*
@@ -45,9 +47,10 @@ import kotlinx.android.synthetic.main.fragment_consents_list.subTitleView
 import kotlinx.android.synthetic.main.fragment_consents_list.titleView
 import javax.inject.Inject
 
+const val KEY_CONSENTS = "consents"
+
 class ConsentsListFragment : BaseFragment(),
-    ListItemClickListener
-{
+    ListItemClickListener {
 
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: ConsentsListViewModel
@@ -87,7 +90,7 @@ class ConsentsListFragment : BaseFragment(),
     }
 
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
-//        viewModel.onListItemClick(itemIndex)
+        viewModel.onListItemClick(itemIndex)
     }
 
     private fun setupViewModel() {
@@ -95,15 +98,14 @@ class ConsentsListFragment : BaseFragment(),
             .get(ConsentsListViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
-        viewModel.listItems.observe(this, Observer<List<ConsentViewModel>> {
+        viewModel.listItems.observe(this, Observer<List<ConsentItemViewModel>> {
             headerDecorator?.setHeaderForAllItems(it.count())
             headerDecorator?.footerPositions = arrayOf(it.count() - 1)
             adapter.data = it
         })
         viewModel.connectionItem.observe(this, Observer<ConnectionViewModel> {
             titleView?.text = it.name
-            subTitleView?.text = "3 consents"
-//                it.consentDescription
+            subTitleView?.text = it.consentDescription
             logoImageView?.loadRoundedImage(
                 imageUrl = it.logoUrl,
                 placeholderId = R.drawable.shape_bg_app_logo,
@@ -111,7 +113,15 @@ class ConsentsListFragment : BaseFragment(),
             )
         })
 
-        viewModel.setInitialData(connectionGuid = arguments?.getString(KEY_GUID))
+        viewModel.setInitialData(
+            connectionGuid = arguments?.getString(KEY_GUID),
+            consents = arguments?.getSerializable(KEY_CONSENTS) as List<ConsentData>
+        )
+        viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<Int>> { event ->
+            event.getContentIfNotHandled()?.let { itemIndex ->
+                //TODO: Show details of Consent
+            }
+        })
     }
 
     private fun setupViews() {
@@ -122,20 +132,18 @@ class ConsentsListFragment : BaseFragment(),
                 consentsListView?.addItemDecoration(this)
             }
         }
-//        swipeRefreshLayout?.setOnRefreshListener {
-//            viewModel.refreshConsents()
-//            swipeRefreshLayout?.stopRefresh()
-//        }
-//        swipeRefreshLayout?.setColorSchemeResources(R.color.primary, R.color.red, R.color.green)
+        swipeRefreshLayout?.setOnRefreshListener {
+            viewModel.refreshConsents()
+            swipeRefreshLayout?.stopRefresh()
+        }
+        swipeRefreshLayout?.setColorSchemeResources(R.color.primary, R.color.red, R.color.green)
         binding.executePendingBindings()
     }
 
 
     companion object {
-        fun newInstance(connectionGuid: GUID): ConsentsListFragment {
-            return ConsentsListFragment().apply {
-                arguments = Bundle().apply { putString(KEY_GUID, connectionGuid) }
-            }
+        fun newInstance(bundle: Bundle): ConsentsListFragment {
+            return ConsentsListFragment().apply { arguments = bundle }
         }
     }
 }

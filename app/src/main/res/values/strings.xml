@@ -194,4 +194,5 @@
     <string name="consents_feature_title">Active consents</string>
     <string name="ui_consents">\%s consents</string>
     <string name="ui_consent">1 consent</string>
+    <string name="consents_expires_in">Expires in</string>
 </resources>

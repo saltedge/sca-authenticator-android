@@ -20,11 +20,9 @@
  */
 package com.saltedge.authenticator.features.consents.common
 
-import org.joda.time.DateTime
-
-data class ConsentViewModel(  //ConsentItemViewModel
+data class ConsentItemViewModel(
     val id: String,
-    var name: String, //tppName
-    var consentType: String //description or consentTypeDescription
-//    var expiresAt: DateTime to String
+    var tppName: String,
+    var consentTypeDescription: String,
+    var expiresAt: String
 )

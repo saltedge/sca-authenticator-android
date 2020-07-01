@@ -22,7 +22,7 @@ package com.saltedge.authenticator.features.consents
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.saltedge.authenticator.features.consents.common.ConsentViewModel
+import com.saltedge.authenticator.features.consents.common.ConsentItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.widget.list.AbstractListAdapter
 
@@ -32,6 +32,6 @@ class ConsentsListAdapter(val clickListener: ListItemClickListener?) : AbstractL
         ConsentItemHolder(parent, clickListener)
 
     override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
-        (holder as ConsentItemHolder).bind(item as ConsentViewModel)
+        (holder as ConsentItemHolder).bind(item as ConsentItemViewModel)
     }
 }

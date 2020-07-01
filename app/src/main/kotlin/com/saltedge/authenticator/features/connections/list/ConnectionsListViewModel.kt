@@ -24,7 +24,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
@@ -33,6 +32,7 @@ import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.RENAME_REQUEST_CODE
 import com.saltedge.authenticator.features.authorizations.common.collectConnectionsAndKeys
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.consents.KEY_CONSENTS
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -47,6 +47,7 @@ import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import kotlinx.coroutines.*
+import java.io.Serializable
 import kotlin.coroutines.CoroutineContext
 
 class ConnectionsListViewModel(
@@ -66,7 +67,7 @@ class ConnectionsListViewModel(
             connectionsRepository,
             keyStoreManager
         )
-    private var consents: Map<ConnectionID, List<ConsentData>> = emptyMap()
+    private var consents: HashMap<ConnectionID, List<ConsentData>> = HashMap<ConnectionID, List<ConsentData>>()
 
     var onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
         private set
@@ -80,7 +81,7 @@ class ConnectionsListViewModel(
         private set
     var onDeleteClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
         private set
-    var onViewConsentsClickEvent = MutableLiveData<ViewModelEvent<String>>()
+    var onViewConsentsClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
         private set
 
     val listVisibility = MutableLiveData<Int>()
@@ -100,16 +101,6 @@ class ConnectionsListViewModel(
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onDestroy() {
         decryptJob.cancel()
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onResume() {
-        Log.d("some", "onResume")
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    fun onPause() {
-        Log.d("some", "onPause")
     }
 
     override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?) {}
@@ -166,7 +157,12 @@ class ConnectionsListViewModel(
         val index = onListItemClickEvent.value?.peekContent() ?: return
         val connectionGuid = listItemsValues.getOrNull(index)?.guid ?: return
 
-        onViewConsentsClickEvent.postValue(ViewModelEvent(connectionGuid))
+        val listOfConsents = arrayListOf(consents[listItemsValues.getOrNull(index)?.connectionId])
+
+        onViewConsentsClickEvent.postValue(ViewModelEvent(Bundle()
+            .apply { putString(KEY_GUID, connectionGuid) }
+            .apply { putSerializable(KEY_CONSENTS, listOfConsents) })
+        )
     }
 
     fun onContactSupportOptionSelected() {
@@ -183,8 +179,7 @@ class ConnectionsListViewModel(
     }
 
     fun onDeleteOptionsSelected() {
-        val item =
-            listItemsValues.getOrNull(onListItemClickEvent.value?.peekContent() ?: return) ?: return
+        val item = listItemsValues.getOrNull(onListItemClickEvent.value?.peekContent() ?: return) ?: return
         connectionsRepository.getByGuid(item.guid)?.let { connection ->
             if (connection.isActive()) {
                 onDeleteClickEvent.postValue(ViewModelEvent(Bundle()
@@ -208,7 +203,7 @@ class ConnectionsListViewModel(
 
     //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
     fun processDecryptedConsentsResult(result: List<ConsentData>) {
-        this.consents = result.groupBy { it.connectionId ?: "" }
+        this.consents = HashMap(result.groupBy { it.connectionId ?: "" })
         val newListItems = updateConsentData(listItemsValues, consents)
         listItems.postValue(newListItems)
     }
@@ -264,7 +259,7 @@ class ConnectionsListViewModel(
         }
     }
 
-    fun updateConsentData(
+    private fun updateConsentData(
         items: List<ConnectionViewModel>,
         consents: Map<ConnectionID, List<ConsentData>>
     ): List<ConnectionViewModel> {
