@@ -21,7 +21,6 @@
 package com.saltedge.authenticator.features.consents
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.authorizations.common.collectConnectionsAndKeys
@@ -40,7 +39,7 @@ import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.tools.toDayFormatString
+import com.saltedge.authenticator.tools.daysTillExpire
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -57,11 +56,8 @@ class ConsentsListViewModel(
         get() = decryptJob + Dispatchers.IO
 
     val listItems = MutableLiveData<List<ConsentItemViewModel>>()
-    val listItemsValues: List<ConsentItemViewModel>
-        get() = listItems.value ?: emptyList()
     val connectionItem = MutableLiveData<ConnectionViewModel>()
 
-    private var consents: List<ConsentItemViewModel> = emptyList()
     private var connection = Connection()
     private var connectionGuid = ""
     private var connectionsAndKeys: Map<ConnectionID, ConnectionAndKey> =
@@ -91,18 +87,24 @@ class ConsentsListViewModel(
     }
 
     fun setInitialData(connectionGuid: String?, consents: List<ConsentData>) {
-        this.consents = listOf(
-            ConsentItemViewModel(
-                id = "id",
-                tppName = "Fentury",
-                consentTypeDescription = "aisp",
-                expiresAt = "7 days"
-            ) //TODO: fix why data is not converted correctly with consents.buildViewModels(context)
+        listItems.postValue(
+            listOf(
+                ConsentItemViewModel(
+                    id = "id",
+                    tppName = "Example Dashboard",
+                    consentTypeDescription = "aisp",
+                    expiresAt = "7 days"
+                ) //TODO: fix why data is not converted correctly with consents.buildViewModels()
+            )
         )
         if (connectionGuid != null) {
             this.connection = connectionsRepository.getByGuid(connectionGuid) ?: Connection()
             this.connectionGuid = connectionGuid
+            val connection =
+                collectConnectionViewModel(connectionGuid, connectionsRepository, appContext)
+            connectionItem.postValue(connection)
         }
+
     }
 
     fun refreshConsents() {
@@ -115,7 +117,6 @@ class ConsentsListViewModel(
     }
 
     private fun updateViewsContent() {
-        listItems.postValue(consents)
         val connection = collectConnectionViewModel(connectionGuid, connectionsRepository, appContext)
         connectionItem.postValue(connection)
     }
@@ -142,49 +143,38 @@ class ConsentsListViewModel(
 
     //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
     fun processDecryptedConsentsResult(result: List<ConsentData>) {
-        Log.d("some", "result: ${result}")
-//        this.consents = HashMap(result.groupBy { it.connectionId ?: "" })
-//        val newListItems = updateConsentData(listItemsValues, consents)
-
-
-        Log.d("some", "processDecryptedConsentsResult ${consents}")
+        val consents = listOf(
+            ConsentItemViewModel(
+                id = "id",
+                tppName = "Example Dashboard",
+                consentTypeDescription = "aisp",
+                expiresAt = "7 days"
+            ) //TODO: fix why data is not converted correctly with consents.buildViewModels()
+        )
         listItems.postValue(consents)
-    }
-
-    private fun updateConsentData(
-        items: List<ConnectionViewModel>,
-        consents: Map<ConnectionID, List<ConsentData>>
-    ): List<ConnectionViewModel> {
-        return items.apply {
-            forEach {
-                val consentsSize = consents[it.connectionId]?.size ?: 0
-                it.consentDescription = if (consentsSize > 0) {
-                    appContext.resources.getQuantityString(
-                        R.plurals.ui_consents,
-                        consentsSize,
-                        consentsSize
-                    ) + " ·"
-                } else {
-                    ""
-                }
-            }
+        if (consents.isNotEmpty()) {
+            appContext.resources.getQuantityString(
+                R.plurals.ui_consents,
+                consents.size,
+                consents.size
+            ) + " ·"
+        } else {
+            ""
         }
     }
 
     fun onListItemClick(itemIndex: Int) {
         onListItemClickEvent.postValue(ViewModelEvent(itemIndex))
     }
-}
 
-fun List<ConsentData>.buildViewModels(context: Context): List<ConsentItemViewModel> {
-    return this.map { consent -> consent.convertConsentDataToViewModel(context) }
-}
-
-fun ConsentData.convertConsentDataToViewModel(context: Context): ConsentItemViewModel {
-    return ConsentItemViewModel(
-        id = this.id,
-        tppName = this.tppName,
-        consentTypeDescription = this.consentType,
-        expiresAt = this.expiresAt.toDateTime().toDayFormatString(context)
-    )
+    private fun buildViewModels(data: List<ConsentData>): List<ConsentItemViewModel> {
+        return data.map {
+            ConsentItemViewModel(
+                id = it.id,
+                tppName = it.tppName,
+                consentTypeDescription = it.consentType,
+                expiresAt = it.expiresAt.daysTillExpire().toString()
+            )
+        }
+    }
 }

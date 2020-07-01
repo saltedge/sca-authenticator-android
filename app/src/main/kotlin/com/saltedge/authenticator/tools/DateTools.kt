@@ -22,6 +22,8 @@ package com.saltedge.authenticator.tools
 
 import android.content.Context
 import org.joda.time.DateTime
+import org.joda.time.Days
+import org.joda.time.LocalDate
 
 /**
  * Converts the current date time to a string presentation
@@ -33,5 +35,4 @@ import org.joda.time.DateTime
 fun DateTime.toDateFormatString(appContext: Context): String =
     this.toString("d MMMM yyyy", appContext.getCurrentAppLocale()) ?: ""
 
-fun DateTime.toDayFormatString(appContext: Context): String =
-    this.toString("d", appContext.getCurrentAppLocale()) ?: ""
+fun DateTime.daysTillExpire() = Days.daysBetween(LocalDate.now(), this.toLocalDate()).days
