@@ -100,8 +100,7 @@ class ConsentsListViewModel(
         if (connectionGuid != null) {
             this.connection = connectionsRepository.getByGuid(connectionGuid) ?: Connection()
             this.connectionGuid = connectionGuid
-            val connection =
-                collectConnectionViewModel(connectionGuid, connectionsRepository, appContext)
+            val connection = collectConnectionViewModel(connectionGuid, connectionsRepository, appContext)
             connectionItem.postValue(connection)
         }
 
