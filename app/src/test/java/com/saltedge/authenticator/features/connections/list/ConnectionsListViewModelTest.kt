@@ -29,7 +29,7 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.DELETE_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.RENAME_REQUEST_CODE
-import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -143,7 +143,7 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun onStartTestCase2() {
         //given
-        val connection: List<ConnectionViewModel> =
+        val connection: List<ConnectionItemViewModel> =
             connections.convertConnectionsToViewModels(context)
         viewModel.listItems.value = connection
 
@@ -160,7 +160,7 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun onStartTestCase3() {
         //given
-        val connection: List<ConnectionViewModel> =
+        val connection: List<ConnectionItemViewModel> =
             listOf(connections[1]).convertConnectionsToViewModels(context)
         viewModel.listItems.value = connection
 
@@ -178,7 +178,7 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun refreshConsentsTest() {
         //given
-        val connection: List<ConnectionViewModel> =
+        val connection: List<ConnectionItemViewModel> =
             listOf(connections[1]).convertConnectionsToViewModels(context)
         viewModel.listItems.value = connection
 
@@ -209,8 +209,8 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun processDecryptedConsentsResultTestCase2() {
         //given
-        val connection: List<ConnectionViewModel> = listOf(
-            ConnectionViewModel(
+        val connection: List<ConnectionItemViewModel> = listOf(
+            ConnectionItemViewModel(
                 guid = "guid1",
                 connectionId = "",
                 code = "demobank1",
@@ -232,7 +232,7 @@ class ConnectionsListViewModelTest {
         assertThat(
             viewModel.listItems.value, equalTo(
             listOf(
-                ConnectionViewModel(
+                ConnectionItemViewModel(
                     guid = "guid1",
                     connectionId = "",
                     code = "demobank1",
@@ -254,8 +254,8 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun processDecryptedConsentsResultTestCase3() {
         //given
-        val connection: List<ConnectionViewModel> = listOf(
-            ConnectionViewModel(
+        val connection: List<ConnectionItemViewModel> = listOf(
+            ConnectionItemViewModel(
                 guid = "guid1",
                 connectionId = "",
                 code = "demobank1",
@@ -277,7 +277,7 @@ class ConnectionsListViewModelTest {
         assertThat(
             viewModel.listItems.value, equalTo(
             listOf(
-                ConnectionViewModel(
+                ConnectionItemViewModel(
                     guid = "guid1",
                     connectionId = "",
                     code = "demobank1",
@@ -299,7 +299,7 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun getConnectionStatusDescriptionTestCase1() {
         //given
-        val connection: List<ConnectionViewModel> =
+        val connection: List<ConnectionItemViewModel> =
             listOf(connections[0]).convertConnectionsToViewModels(context)
         viewModel.listItems.value = connection
 
@@ -307,7 +307,7 @@ class ConnectionsListViewModelTest {
         assertThat(
             viewModel.listItems.value, equalTo(
             listOf(
-                ConnectionViewModel(
+                ConnectionItemViewModel(
                     guid = "guid1",
                     connectionId = "",
                     code = "demobank1",
@@ -328,7 +328,7 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun getConnectionStatusDescriptionTestCase2() {
         //given
-        val connection: List<ConnectionViewModel> =
+        val connection: List<ConnectionItemViewModel> =
             listOf(connections[1]).convertConnectionsToViewModels(context)
         viewModel.listItems.value = connection
 
@@ -336,7 +336,7 @@ class ConnectionsListViewModelTest {
         assertThat(
             viewModel.listItems.value, equalTo(
             listOf(
-                ConnectionViewModel(
+                ConnectionItemViewModel(
                     guid = "guid2",
                     connectionId = "",
                     code = "demobank2",
@@ -369,7 +369,7 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun onListItemClickTest() {
         //given
-        val connection: List<ConnectionViewModel> =
+        val connection: List<ConnectionItemViewModel> =
             connections.convertConnectionsToViewModels(context)
         viewModel.listItems.postValue(connection)
 
@@ -386,7 +386,7 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun onRenameOptionSelectedTest() {
         //given
-        val connection: List<ConnectionViewModel> =
+        val connection: List<ConnectionItemViewModel> =
             connections.convertConnectionsToViewModels(context)
 
         viewModel.listItems.value = connection
@@ -410,7 +410,7 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun onContactSupportOptionSelectedTest() {
         //given
-        val connection: List<ConnectionViewModel> =
+        val connection: List<ConnectionItemViewModel> =
             connections.convertConnectionsToViewModels(context)
 
         viewModel.listItems.value = connection
@@ -428,7 +428,7 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun onDeleteOptionsSelectedTest() {
         //given
-        val connection: List<ConnectionViewModel> =
+        val connection: List<ConnectionItemViewModel> =
             connections.convertConnectionsToViewModels(context)
 
         viewModel.listItems.value = connection
@@ -448,7 +448,7 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun onReconnectOptionSelectedTest() {
         //given
-        val connection: List<ConnectionViewModel> =
+        val connection: List<ConnectionItemViewModel> =
             connections.convertConnectionsToViewModels(context)
 
         viewModel.listItems.value = connection
@@ -563,7 +563,7 @@ class ConnectionsListViewModelTest {
     @Test
     @Throws(Exception::class)
     fun onActivityResultTest_Rename() {
-        val connection: List<ConnectionViewModel> =
+        val connection: List<ConnectionItemViewModel> =
             connections.convertConnectionsToViewModels(context)
 
         viewModel.listItems.value = connection
@@ -590,7 +590,7 @@ class ConnectionsListViewModelTest {
     @Test
     @Throws(Exception::class)
     fun onActivityResultTest_DeleteSingleConnection_InvalidParams_Case1() {
-        val connection: List<ConnectionViewModel> =
+        val connection: List<ConnectionItemViewModel> =
             connections.convertConnectionsToViewModels(context)
 
         viewModel.listItems.value = connection
@@ -625,7 +625,7 @@ class ConnectionsListViewModelTest {
     @Test
     @Throws(Exception::class)
     fun onActivityResultTest_DeleteSingleConnection() {
-        val connection: List<ConnectionViewModel> =
+        val connection: List<ConnectionItemViewModel> =
             connections.convertConnectionsToViewModels(context)
 
         viewModel.listItems.value = connection

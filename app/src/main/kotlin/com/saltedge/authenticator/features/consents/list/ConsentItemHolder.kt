@@ -40,6 +40,7 @@ class ConsentItemHolder(parent: ViewGroup, private val listener: ListItemClickLi
     private val subTitleView = itemView.findViewById<TextView>(R.id.subTitleView)
     private val listItemView = itemView.findViewById<RelativeLayout>(R.id.listItemView)
     private val dateView = itemView.findViewById<TextView>(R.id.dateView)
+    private val description = listItemView.context.getString(R.string.consents_expires_in)
 
     init {
         itemView.setOnClickListener {
@@ -52,7 +53,6 @@ class ConsentItemHolder(parent: ViewGroup, private val listener: ListItemClickLi
         titleView.text = item.tppName
         subTitleView.text = item.consentTypeDescription
 
-        val description = listItemView.context.getString(R.string.consents_expires_in)
         val consentExpiresString = SpannableStringBuilder("$description ${item.expiresAt}")
         consentExpiresString.apply {
             setSpan(ForegroundColorSpan(getColor(listItemView.context, R.color.secondary_text)),

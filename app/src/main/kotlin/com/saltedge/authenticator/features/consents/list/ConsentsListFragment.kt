@@ -24,15 +24,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.databinding.ConsentsListBinding
-import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.consents.common.ConsentItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -54,7 +52,6 @@ class ConsentsListFragment : BaseFragment(),
 
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: ConsentsListViewModel
-    private lateinit var binding: ConsentsListBinding
     private val adapter = ConsentsListAdapter(clickListener = this)
     private var headerDecorator: SpaceItemDecoration? = null
 
@@ -73,15 +70,7 @@ class ConsentsListFragment : BaseFragment(),
             titleResId = R.string.consents_feature_title,
             backActionImageResId = R.drawable.ic_appbar_action_back
         )
-        binding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.fragment_consents_list,
-            container,
-            false
-        )
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = this
-        return binding.root
+        return inflater.inflate(R.layout.fragment_consents_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -90,7 +79,7 @@ class ConsentsListFragment : BaseFragment(),
     }
 
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
-        viewModel.onListItemClick(itemIndex)
+        viewModel.onListItemClick(arguments?.getString(KEY_GUID))
     }
 
     private fun setupViewModel() {
@@ -103,8 +92,8 @@ class ConsentsListFragment : BaseFragment(),
             headerDecorator?.footerPositions = arrayOf(it.count() - 1)
             adapter.data = it
         })
-        viewModel.connectionItem.observe(this, Observer<ConnectionViewModel> {
-            titleView?.text = it.name //TODO: Use data binding
+        viewModel.connectionViewModel.observe(this, Observer<ConnectionItemViewModel> {
+            titleView?.text = it.name
             subTitleView?.text = it.consentDescription
             logoImageView?.loadRoundedImage(
                 imageUrl = it.logoUrl,
@@ -112,8 +101,8 @@ class ConsentsListFragment : BaseFragment(),
                 cornerRadius = resources.getDimension(R.dimen.consents_list_logo_radius)
             )
         })
-        viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<Int>> { event ->
-            event.getContentIfNotHandled()?.let { itemIndex ->
+        viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
+            event.getContentIfNotHandled()?.let { bundle ->
                 //TODO: Show details of Consent
             }
         })
@@ -136,9 +125,7 @@ class ConsentsListFragment : BaseFragment(),
             swipeRefreshLayout?.stopRefresh()
         }
         swipeRefreshLayout?.setColorSchemeResources(R.color.primary, R.color.red, R.color.green)
-        binding.executePendingBindings()
     }
-
 
     companion object {
         fun newInstance(bundle: Bundle): ConsentsListFragment {

@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.connections.select
 
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment.Companion.KEY_CONNECTIONS
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -35,8 +35,8 @@ class SelectConnectionsFragmentTest {
     @Test
     @Throws(Exception::class)
     fun newInstanceTestCase() {
-        val connections: List<ConnectionViewModel> = listOf(
-            ConnectionViewModel(
+        val connections: List<ConnectionItemViewModel> = listOf(
+            ConnectionItemViewModel(
                 guid = "guid",
                 connectionId = "connectionId",
                 code = "code",
@@ -53,7 +53,7 @@ class SelectConnectionsFragmentTest {
             connections = connections
         ).arguments
 
-        assertThat(arguments?.getSerializable(KEY_CONNECTIONS) as List<ConnectionViewModel>,
+        assertThat(arguments?.getSerializable(KEY_CONNECTIONS) as List<ConnectionItemViewModel>,
             equalTo(connections))
     }
 }

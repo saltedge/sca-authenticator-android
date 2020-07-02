@@ -40,7 +40,7 @@ import com.saltedge.authenticator.app.DELETE_REQUEST_CODE
 import com.saltedge.authenticator.app.RENAME_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.ConnectionsListBinding
-import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
 import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
@@ -127,7 +127,7 @@ class ConnectionsListFragment : BaseFragment(),
             .get(ConnectionsListViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
-        viewModel.listItems.observe(this, Observer<List<ConnectionViewModel>> {
+        viewModel.listItems.observe(this, Observer<List<ConnectionItemViewModel>> {
             headerDecorator?.setHeaderForAllItems(it.count())
             headerDecorator?.footerPositions = arrayOf(it.count() - 1)
             adapter.data = it
@@ -180,7 +180,7 @@ class ConnectionsListFragment : BaseFragment(),
                 activity?.startMailApp(supportEmail)
             }
         })
-        viewModel.updateListItemEvent.observe(this, Observer<ConnectionViewModel> { itemIndex ->
+        viewModel.updateListItemEvent.observe(this, Observer<ConnectionItemViewModel> { itemIndex ->
             adapter.updateListItem(itemIndex)
         })
     }
@@ -203,7 +203,7 @@ class ConnectionsListFragment : BaseFragment(),
     }
 
     //TODO REFACTOR TO STANDALONE CLASS (example https://github.com/zawadz88/MaterialPopupMenu)
-    private fun showPopupMenu(parentView: View?, anchorView: View?, item: ConnectionViewModel): PopupWindow? {
+    private fun showPopupMenu(parentView: View?, anchorView: View?, item: ConnectionItemViewModel): PopupWindow? {
         if (parentView == null || anchorView == null) return null
         try {
             val layoutInflater = context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater

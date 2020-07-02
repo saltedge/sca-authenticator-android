@@ -32,7 +32,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_CONNECTION_GUID
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.list.ConnectionsListAdapter
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.interfaces.OnBackPressListener
@@ -99,9 +99,9 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
         viewModel = ViewModelProvider(this, viewModelFactory).get(SelectConnectionsViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
-        viewModel.setInitialData(arguments?.getSerializable(KEY_CONNECTIONS) as List<ConnectionViewModel>)
+        viewModel.setInitialData(arguments?.getSerializable(KEY_CONNECTIONS) as List<ConnectionItemViewModel>)
 
-        viewModel.listItems.observe(this, Observer<List<ConnectionViewModel>> {
+        viewModel.listItems.observe(this, Observer<List<ConnectionItemViewModel>> {
             headerDecorator?.setHeaderForAllItems(it.count())
             headerDecorator?.footerPositions = arrayOf(it.count() - 1)
             it?.let { adapter.data = it }
@@ -127,8 +127,8 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
     companion object {
         const val KEY_CONNECTIONS = "CONNECTIONS"
 
-        fun newInstance(connections: List<ConnectionViewModel>): SelectConnectionsFragment {
-            val arrayList = ArrayList<ConnectionViewModel>(connections)
+        fun newInstance(connections: List<ConnectionItemViewModel>): SelectConnectionsFragment {
+            val arrayList = ArrayList<ConnectionItemViewModel>(connections)
             return SelectConnectionsFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable(KEY_CONNECTIONS, arrayList)

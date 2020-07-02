@@ -23,7 +23,7 @@ package com.saltedge.authenticator.features.connections.common
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 
-data class ConnectionViewModel(
+data class ConnectionItemViewModel(
     val guid: String,
     val connectionId: String,
     val code: String,

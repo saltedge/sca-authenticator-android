@@ -22,7 +22,7 @@ package com.saltedge.authenticator.features.connections.list
 
 import android.content.Context
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.model.GUID
@@ -35,7 +35,7 @@ import com.saltedge.authenticator.tools.toDateFormatString
 fun collectAllConnectionsViewModels(
     repository: ConnectionsRepositoryAbs,
     context: Context
-): List<ConnectionViewModel> {
+): List<ConnectionItemViewModel> {
     return repository.getAllConnections()
         .sortedBy { it.createdAt }
         .convertConnectionsToViewModels(context)
@@ -45,12 +45,12 @@ fun collectConnectionViewModel(
     guid: GUID,
     repository: ConnectionsRepositoryAbs,
     context: Context
-): ConnectionViewModel? {
+): ConnectionItemViewModel? {
     return repository.getByGuid(guid)?.convertConnectionToViewModel(context)
 }
 
-fun Connection.convertConnectionToViewModel(context: Context): ConnectionViewModel {
-    return ConnectionViewModel(
+fun Connection.convertConnectionToViewModel(context: Context): ConnectionItemViewModel {
+    return ConnectionItemViewModel(
         guid = this.guid,
         connectionId = this.id,
         code = this.code,
@@ -67,7 +67,7 @@ fun Connection.convertConnectionToViewModel(context: Context): ConnectionViewMod
     )
 }
 
-fun List<Connection>.convertConnectionsToViewModels(context: Context): List<ConnectionViewModel> {
+fun List<Connection>.convertConnectionsToViewModels(context: Context): List<ConnectionItemViewModel> {
     return this.map { connection -> connection.convertConnectionToViewModel(context) }
 }
 

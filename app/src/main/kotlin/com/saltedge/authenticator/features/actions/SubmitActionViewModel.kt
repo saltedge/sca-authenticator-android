@@ -32,7 +32,7 @@ import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CONNECTIONS_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_CONNECTION_GUID
-import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.list.convertConnectionsToViewModels
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -65,7 +65,7 @@ class SubmitActionViewModel(
         private set
     var onOpenLinkEvent = MutableLiveData<ViewModelEvent<Uri>>()
         private set
-    var showConnectionsSelectorFragmentEvent = MutableLiveData<List<ConnectionViewModel>>()
+    var showConnectionsSelectorFragmentEvent = MutableLiveData<List<ConnectionItemViewModel>>()
         private set
     var setResultAuthorizationIdentifier = MutableLiveData<AuthorizationIdentifier>()
 

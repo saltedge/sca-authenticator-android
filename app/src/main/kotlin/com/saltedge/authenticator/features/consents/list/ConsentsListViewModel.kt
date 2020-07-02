@@ -21,18 +21,17 @@
 package com.saltedge.authenticator.features.consents.list
 
 import android.content.Context
+import android.os.Bundle
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.authorizations.common.collectConnectionsAndKeys
-import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
-import com.saltedge.authenticator.features.connections.list.collectConnectionViewModel
+import com.saltedge.authenticator.app.KEY_GUID
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
+import com.saltedge.authenticator.features.connections.list.convertConnectionToViewModel
 import com.saltedge.authenticator.features.consents.common.ConsentItemViewModel
-import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
-import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.model.ConsentData
 import com.saltedge.authenticator.sdk.model.EncryptedData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
@@ -42,6 +41,8 @@ import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.daysTillExpire
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
+
+const val KEY_CONSENT = "consent"
 
 class ConsentsListViewModel(
     private val appContext: Context,
@@ -56,15 +57,12 @@ class ConsentsListViewModel(
         get() = decryptJob + Dispatchers.IO
 
     val listItems = MutableLiveData<List<ConsentItemViewModel>>()
-    val connectionItem = MutableLiveData<ConnectionViewModel>()
+    val connectionViewModel = MutableLiveData<ConnectionItemViewModel>()
 
-    private var connection = Connection()
-    private var connectionsAndKeys: Map<ConnectionID, ConnectionAndKey> =
-        collectConnectionsAndKeys(
-            connectionsRepository,
-            keyStoreManager
-        )
-    var onListItemClickEvent = MutableLiveData<ViewModelEvent<Int>>()
+    private var connectionAndKey: ConnectionAndKey? = null
+    private var consentData: ConsentData? = null
+
+    var onListItemClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
         private set
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -88,26 +86,25 @@ class ConsentsListViewModel(
                     consentTypeDescription = "aisp",
                     expiresAt = "7 days"
                 ) //TODO: fix why data is not converted correctly with consents.buildViewModels()
+                  //TODO: Need to save in consentData data for the clicked element
             )
         )
         if (connectionGuid != null) {
-            this.connection = connectionsRepository.getByGuid(connectionGuid) ?: Connection()
-            val connectionViewModel = collectConnectionViewModel(connectionGuid, connectionsRepository, appContext)
-            connectionItem.postValue(connectionViewModel)
+            connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
+                val connectionViewModel = it.convertConnectionToViewModel(appContext)
+                this.connectionViewModel.postValue(connectionViewModel)
+                keyStoreManager.createConnectionAndKeyModel(it)
+            }
         }
     }
 
     fun refreshConsents() {
-        collectConsentRequestData()?.let {
+        connectionAndKey?.let {
             apiManager.getConsents(
-                connectionsAndKeys = it,
+                connectionsAndKeys = listOf(it),
                 resultCallback = this
             )
         }
-    }
-
-    private fun collectConsentRequestData(): List<ConnectionAndKey>? {
-        return if (connectionsAndKeys.isEmpty()) null else connectionsAndKeys.values.toList()
     }
 
     private fun processOfEncryptedConsentsResult(encryptedList: List<EncryptedData>) {
@@ -121,7 +118,7 @@ class ConsentsListViewModel(
         return encryptedList.mapNotNull {
             cryptoTools.decryptConsentData(
                 encryptedData = it,
-                rsaPrivateKey = connectionsAndKeys[it.connectionId]?.key
+                rsaPrivateKey = connectionAndKey?.key
             )
         }
     }
@@ -148,8 +145,11 @@ class ConsentsListViewModel(
         }
     }
 
-    fun onListItemClick(itemIndex: Int) {
-        onListItemClickEvent.postValue(ViewModelEvent(itemIndex))
+    fun onListItemClick(connectionGuid: String?) {
+        onListItemClickEvent.postValue(ViewModelEvent(Bundle()
+            .apply { putString(KEY_GUID, connectionGuid) }
+            .apply { putSerializable(KEY_CONSENT, consentData) })
+        )
     }
 
     private fun buildViewModels(data: List<ConsentData>): List<ConsentItemViewModel> {
