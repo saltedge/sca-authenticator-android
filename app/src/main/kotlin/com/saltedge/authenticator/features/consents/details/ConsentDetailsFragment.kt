@@ -24,6 +24,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -31,11 +32,15 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.ConsentDetailsBinding
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.model.ConsentData
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.finishFragment
+import com.saltedge.authenticator.tools.showWarningDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment
+import kotlinx.android.synthetic.main.fragment_consent_details.*
 import javax.inject.Inject
 
 class ConsentDetailsFragment : BaseFragment() {
@@ -69,6 +74,7 @@ class ConsentDetailsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         updateAppbar(title = viewModel.fragmentTitle.value)
         binding.executePendingBindings()
+        revokeView?.setOnClickListener { viewModel.onRevokeClick() }
     }
 
     private fun setupViewModel() {
@@ -76,6 +82,25 @@ class ConsentDetailsFragment : BaseFragment() {
 
         viewModel.fragmentTitle.observe(this, Observer<String> { title ->
             updateAppbar(title = title)
+        })
+        viewModel.revokeAlertEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
+            event.getContentIfNotHandled()?.let { message ->
+                activity?.let {
+                    AlertDialog.Builder(it, R.style.AlertDialogTheme)
+                        .setTitle(R.string.consent_revoke_title)
+                        .setMessage(message)
+                        .setPositiveButton(R.string.actions_confirm) { _, _ -> viewModel.onRevokeConfirmed() }
+                        .setNegativeButton(R.string.actions_cancel, null)
+                        .show()
+                }
+            }
+        })
+        viewModel.revokeErrorEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
+            event.getContentIfNotHandled()?.let { message -> activity?.showWarningDialog(message) }
+        })
+        viewModel.revokeSuccessEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
+            //TODO return consentId as result
+            activity?.finishFragment()
         })
 
         viewModel.setInitialData(

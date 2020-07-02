@@ -64,6 +64,13 @@
         <item name="android:textSize">@dimen/text_18</item>
     </style>
 
+    <style name="Text14Blue">
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/primary_dark_and_primary_light</item>
+        <item name="android:textSize">@dimen/text_18</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
+
     <style name="Text16Primary" parent="TextPrimary">
         <item name="android:textSize">@dimen/text_16</item>
     </style>

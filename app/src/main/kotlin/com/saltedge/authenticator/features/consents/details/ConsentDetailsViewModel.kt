@@ -25,12 +25,17 @@ import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
+import com.saltedge.authenticator.sdk.contract.ConsentRevokeListener
 import com.saltedge.authenticator.sdk.model.*
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.model.response.ConsentRevokeResponseData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.daysTillExpire
+import com.saltedge.authenticator.tools.postUnitEvent
 import com.saltedge.authenticator.tools.toDateFormatString
 import org.joda.time.DateTime
 
@@ -39,7 +44,7 @@ class ConsentDetailsViewModel(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyStoreManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs
-) : ViewModel() {
+) : ViewModel(), ConsentRevokeListener {
     val fragmentTitle = MutableLiveData<String>(appContext.getString(R.string.consent_details_feature_title))
     val daysLeft = MutableLiveData<String>("")
     val consentTitle = MutableLiveData<String>("")
@@ -50,13 +55,17 @@ class ConsentDetailsViewModel(
     val sharedDataVisibility = MutableLiveData<Int>(View.GONE)
     val sharedBalanceVisibility = MutableLiveData<Int>(View.GONE)
     val sharedTransactionsVisibility = MutableLiveData<Int>(View.GONE)
-
+    val revokeAlertEvent = MutableLiveData<ViewModelEvent<String>>()
+    val revokeErrorEvent = MutableLiveData<ViewModelEvent<String>>()
+    val revokeSuccessEvent = MutableLiveData<ViewModelEvent<String>>()
+    private var consentData: ConsentData? = null
     private var connectionAndKey: ConnectionAndKey? = null
 
     fun setInitialData(data: ConsentData?, connectionGuid: GUID) {
         val connection = connectionsRepository.getByGuid(connectionGuid) ?: return
         connectionAndKey = keyStoreManager.createConnectionAndKeyModel(connection)
         fragmentTitle.postValue(connection.name)
+        this.consentData = data
         data?.let { consent ->
             fragmentTitle.postValue(consent.tppName)
             daysLeft.postValue(calculateRemainedDays(consent.expiresAt))
@@ -73,6 +82,27 @@ class ConsentDetailsViewModel(
                 if (data.sharedData?.transactions == true) View.VISIBLE else View.GONE
             )
         }
+    }
+
+    fun onRevokeClick() {
+        val template = appContext.getString(R.string.consent_revoke_message)
+        revokeAlertEvent.postValue(ViewModelEvent(String.format(template, fragmentTitle.value)))
+    }
+
+    fun onRevokeConfirmed() {
+        apiManager.revokeConsent(
+            consentId = consentData?.id ?: return,
+            connectionAndKey = connectionAndKey ?: return,
+            resultCallback = this
+        )
+    }
+
+    override fun onConsentRevokeFailure(error: ApiErrorData) {
+        revokeErrorEvent.postValue(ViewModelEvent(error.errorMessage))
+    }
+
+    override fun onConsentRevokeSuccess(result: ConsentRevokeResponseData) {
+        result.consentId?.let { revokeSuccessEvent.postValue(ViewModelEvent(it)) }
     }
 
     private fun calculateRemainedDays(expiresAt: DateTime): String {

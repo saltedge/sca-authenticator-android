@@ -183,7 +183,7 @@ fun FragmentActivity.showSecurityAlertDialog(listener: DialogInterface.OnClickLi
  * @param message - the message that appears in the dialog
  * @param listener - on dialog action click listener
  */
-private fun FragmentActivity.showDialogWithTitleAndMessage(
+fun FragmentActivity.showDialogWithTitleAndMessage(
     titleResId: Int,
     message: String?,
     listener: DialogInterface.OnClickListener? = null
