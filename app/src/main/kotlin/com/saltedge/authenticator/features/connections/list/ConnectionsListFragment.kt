@@ -242,8 +242,7 @@ class ConnectionsListFragment : BaseFragment(),
             }
             consentView.setOnClickListener {
                 this.popupWindow?.dismiss()
-//                viewModel.onViewConsentsOptionSelected()//TODO
-                onViewConsentsOptionSelected(item)
+                viewModel.onViewConsentsOptionSelected()
             }
 
             popupWindow.isOutsideTouchable = true
@@ -261,15 +260,6 @@ class ConnectionsListFragment : BaseFragment(),
         } catch (e: Exception) {
             e.log()
             return null
-        }
-    }
-
-    private fun onViewConsentsOptionSelected(item: ConnectionViewModel) {//TODO
-        viewModel.consents[item.connectionId]?.first()?.let {
-            activity?.addFragment(ConsentDetailsFragment.newInstance(
-                connectionGuid = item.guid,
-                consent = it
-            ))
         }
     }
 }
