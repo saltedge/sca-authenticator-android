@@ -61,7 +61,7 @@ private fun View.buildSnackbar(
     textView.setFont(R.font.roboto_regular)
     textView.setTextColor(ContextCompat.getColor(context, R.color.grey_40))
     textView.maxLines = 7
-    snackbar.view.setBackgroundColor(ContextCompat.getColor(context, R.color.snackbar_background))
+    snackbar.view.setBackgroundColor(ContextCompat.getColor(context, R.color.blue_black_and_dark_100))
     snackbar.view.setOnTouchListener { _, _ ->
         snackbar.dismiss()
         true

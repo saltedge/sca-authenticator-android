@@ -39,7 +39,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/authorization_header_view_background">
+            android:background="@color/white_and_blue_black">
 
             <ImageView
                 android:id="@+id/logoView"
@@ -51,7 +51,7 @@
                 android:layout_marginBottom="@dimen/dp_10"
                 android:contentDescription="@string/authorization_feature_title"
                 android:scaleType="fitCenter"
-                android:background="@drawable/shape_bg_authorizations_list_logo" />
+                android:background="@drawable/shape_radius6_grey_light_extra_and_dark_100" />
 
             <TextView
                 android:id="@+id/titleView"
@@ -82,8 +82,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_2"
                 android:progressBackgroundTint="@android:color/transparent"
-                android:progressTint="@color/blue_text"
-                android:indeterminateTint="@color/blue_text"
+                android:progressTint="@color/primary_dark_and_primary_light"
+                android:indeterminateTint="@color/primary_dark_and_primary_light"
                 android:indeterminateTintMode="src_in"
                 android:progressTintMode="src_in"
                 android:layout_alignParentBottom="true"

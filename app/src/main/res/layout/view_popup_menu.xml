@@ -28,7 +28,7 @@
     <RelativeLayout
         android:layout_width="@dimen/dp_200"
         android:layout_height="wrap_content"
-        android:background="@color/dialog_background"
+        android:background="@color/white_and_dark_100"
         android:paddingTop="@dimen/popupMenuTpBottomPadding"
         android:paddingBottom="@dimen/popupMenuTpBottomPadding">
 

@@ -59,7 +59,7 @@
         android:ellipsize="end"
         android:fontFamily="@font/roboto_bold"
         android:maxLines="2"
-        android:textColor="@color/primary_text"
+        android:textColor="@color/dark_100_and_grey_40"
         android:textSize="@dimen/text_30"
         tools:background="@color/primary"
         tools:text="Full control" />

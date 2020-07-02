@@ -204,4 +204,7 @@
     <string name="consent_granted_to">Consent granted to \%s application on the following accounts from \%s</string>
     <string name="consent_granted">Granted</string>
     <string name="consent_expires">Expires</string>
+    <string name="shared_data">Shared data</string>
+    <string name="balance">Balance</string>
+    <string name="transactions">Transactions</string>
 </resources>

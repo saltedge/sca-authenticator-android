@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.consents.details
 
 import android.content.Context
+import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
@@ -46,6 +47,9 @@ class ConsentDetailsViewModel(
     val consentGranted = MutableLiveData<String>("")
     val consentExpires = MutableLiveData<String>("")
     val accounts = MutableLiveData<List<AccountData>?>()
+    val sharedDataVisibility = MutableLiveData<Int>(View.GONE)
+    val sharedBalanceVisibility = MutableLiveData<Int>(View.GONE)
+    val sharedTransactionsVisibility = MutableLiveData<Int>(View.GONE)
 
     private var connectionAndKey: ConnectionAndKey? = null
 
@@ -61,6 +65,13 @@ class ConsentDetailsViewModel(
             consentGranted.postValue(getGrantedDate(consent.createdAt))
             consentExpires.postValue(getExpiresDate(consent.expiresAt))
             accounts.postValue(data.accounts)
+            sharedDataVisibility.postValue(if (data.sharedData == null) View.GONE else View.VISIBLE)
+            sharedBalanceVisibility.postValue(
+                if (data.sharedData?.balance == true) View.VISIBLE else View.GONE
+            )
+            sharedTransactionsVisibility.postValue(
+                if (data.sharedData?.transactions == true) View.VISIBLE else View.GONE
+            )
         }
     }
 

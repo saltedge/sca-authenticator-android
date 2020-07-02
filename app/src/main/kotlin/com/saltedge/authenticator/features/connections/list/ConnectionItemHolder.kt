@@ -59,10 +59,7 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
         )
         if (item.isChecked) listItemView.setBackgroundResource(R.drawable.stroke_background)
         else listItemView.setBackgroundColor(
-            ContextCompat.getColor(
-                listItemView.context,
-                R.color.app_logo_background
-            )
+            ContextCompat.getColor(listItemView.context, R.color.white_and_blue_black)
         )
         titleView.text = item.name
         val statusDescription = SpannableStringBuilder(item.statusDescription)

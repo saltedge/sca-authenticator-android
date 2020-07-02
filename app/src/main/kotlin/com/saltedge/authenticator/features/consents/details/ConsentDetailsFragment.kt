@@ -73,7 +73,6 @@ class ConsentDetailsFragment : BaseFragment() {
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(ConsentDetailsViewModel::class.java)
-//        viewModel.bindLifecycleObserver(lifecycle = lifecycle)
 
         viewModel.fragmentTitle.observe(this, Observer<String> { title ->
             updateAppbar(title = title)

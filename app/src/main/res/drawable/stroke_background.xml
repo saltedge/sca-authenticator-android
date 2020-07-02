@@ -20,7 +20,7 @@
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/connections_list_item" />
+    <solid android:color="@color/white_and_blue_black" />
     <stroke
         android:width="@dimen/dp_2"
         android:color="@color/primary" />

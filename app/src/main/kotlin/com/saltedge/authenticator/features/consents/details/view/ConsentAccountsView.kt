@@ -34,7 +34,7 @@ import com.saltedge.authenticator.tools.setFont
 
 class ConsentAccountsView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
 
-    private val labelColor = ContextCompat.getColor(context, R.color.primary_text)
+    private val labelColor = ContextCompat.getColor(context, R.color.dark_100_and_grey_40)
     private val separatorColor = ContextCompat.getColor(context, R.color.theme_background)
     private val text16 = resources.getDimension(R.dimen.text_16)
     private val text14 = resources.getDimension(R.dimen.text_14)
@@ -45,6 +45,7 @@ class ConsentAccountsView(context: Context, attrs: AttributeSet) : LinearLayout(
 
     init {
         orientation = VERTICAL
+        background = ContextCompat.getDrawable(context, R.drawable.shape_bg_passcode_label)
     }
 
     fun setAccounts(accounts: List<AccountData>?) {

@@ -102,7 +102,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/onboardingPager"
                 app:layout_constraintStart_toStartOf="@+id/onboardingPager"
                 app:layout_constraintTop_toTopOf="@+id/onboardingPager"
-                app:selectedColor="@color/onboarding_dots_background" />
+                app:selectedColor="@color/primary_and_primary_light" />
 
             <Button
                 android:id="@+id/proceedToSetup"
