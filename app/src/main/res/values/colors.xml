@@ -87,4 +87,5 @@
     <color name="switch_track_tint_on">@color/primary_light_extra</color>
     <color name="company_logo_fill">#051539</color>
     <color name="snackbar_background">@color/blue_black</color>
+    <color name="consent_expires_text">@color/dark_80</color>
 </resources>

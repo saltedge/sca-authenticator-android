@@ -139,7 +139,7 @@ dependencies { //TODO After changing dependencies list, review third-party libra
     implementation 'com.google.android.gms:play-services-base:17.3.0'
     implementation 'com.google.android.gms:play-services-vision:20.1.0'
     implementation 'com.google.firebase:firebase-core:17.4.3'
-    implementation 'com.google.firebase:firebase-messaging:20.2.0'
+    implementation 'com.google.firebase:firebase-messaging:20.2.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.7.1'
     implementation 'net.danlew:android.joda:2.10.2'
     implementation('com.crashlytics.sdk.android:crashlytics:2.10.1') {

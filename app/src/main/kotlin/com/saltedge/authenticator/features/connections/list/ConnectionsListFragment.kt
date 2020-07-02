@@ -45,6 +45,7 @@ import com.saltedge.authenticator.features.connections.common.ConnectionViewMode
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
 import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
+import com.saltedge.authenticator.features.consents.details.ConsentDetailsFragment
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -241,7 +242,8 @@ class ConnectionsListFragment : BaseFragment(),
             }
             consentView.setOnClickListener {
                 this.popupWindow?.dismiss()
-                viewModel.onViewConsentsOptionSelected()
+//                viewModel.onViewConsentsOptionSelected()//TODO
+                onViewConsentsOptionSelected(item)
             }
 
             popupWindow.isOutsideTouchable = true
@@ -259,6 +261,15 @@ class ConnectionsListFragment : BaseFragment(),
         } catch (e: Exception) {
             e.log()
             return null
+        }
+    }
+
+    private fun onViewConsentsOptionSelected(item: ConnectionViewModel) {//TODO
+        viewModel.consents[item.connectionId]?.first()?.let {
+            activity?.addFragment(ConsentDetailsFragment.newInstance(
+                connectionGuid = item.guid,
+                consent = it
+            ))
         }
     }
 }

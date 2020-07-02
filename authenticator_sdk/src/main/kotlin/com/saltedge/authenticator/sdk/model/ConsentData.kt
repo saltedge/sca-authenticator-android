@@ -31,7 +31,7 @@ import java.io.Serializable
 data class ConsentData(
     @SerializedName(KEY_ID) var id: String,
     @SerializedName(KEY_USER_ID) var userId: String,
-    @SerializedName(KEY_CREATED_AT) var createdAt: DateTime? = null,
+    @SerializedName(KEY_CREATED_AT) var createdAt: DateTime,
     @SerializedName(KEY_EXPIRES_AT) var expiresAt: DateTime,
     @SerializedName(KEY_TPP_NAME) var tppName: String,
     @SerializedName(KEY_CONSENT_TYPE) var consentType: String,

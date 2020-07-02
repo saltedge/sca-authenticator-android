@@ -29,6 +29,7 @@ import com.saltedge.authenticator.features.authorizations.list.AuthorizationsLis
 import com.saltedge.authenticator.features.connections.create.ConnectProviderViewModel
 import com.saltedge.authenticator.features.connections.list.ConnectionsListViewModel
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsViewModel
+import com.saltedge.authenticator.features.consents.details.ConsentDetailsViewModel
 import com.saltedge.authenticator.features.launcher.LauncherViewModel
 import com.saltedge.authenticator.features.main.MainActivityViewModel
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupViewModel
@@ -162,6 +163,14 @@ class ViewModelsFactory @Inject constructor(
                 return LanguageSelectViewModel(
                     appContext = appContext,
                     preferenceRepository = preferenceRepository
+                ) as T
+            }
+            modelClass.isAssignableFrom(ConsentDetailsViewModel::class.java) -> {
+                return ConsentDetailsViewModel(
+                    appContext = appContext,
+                    connectionsRepository = connectionsRepository,
+                    keyStoreManager = keyStoreManager,
+                    apiManager = apiManager
                 ) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")

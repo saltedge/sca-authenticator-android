@@ -57,7 +57,7 @@ class ConnectionsListViewModel(
 ) : ViewModel(), LifecycleObserver, ConnectionsRevokeListener, FetchEncryptedDataListener,
     CoroutineScope {
 
-    private var consents: Map<String, List<ConsentData>> = emptyMap()
+    var consents: Map<String, List<ConsentData>> = emptyMap()
     private val decryptJob: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = decryptJob + Dispatchers.IO
@@ -197,7 +197,7 @@ class ConnectionsListViewModel(
                 val consentsSize = consents[it.connectionId]?.size ?: 0
                 it.consentDescription = if (consentsSize > 0)  {
                     appContext.resources.getQuantityString(
-                        R.plurals.ui_consents,
+                        R.plurals.count_of_consents,
                         consentsSize,
                         consentsSize
                     ) + " ·"

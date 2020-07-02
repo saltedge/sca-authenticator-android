@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +18,24 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.tools
+package com.saltedge.authenticator.sdk.model
 
-import android.content.Context
-import org.joda.time.DateTime
-import org.joda.time.Days
-import org.joda.time.LocalDate
+import java.util.*
+
+enum class ConsentType {
+    AISP, PISP_FUTURE, PISP_RECURRING;
+}
 
 /**
- * Converts the current date time to a string presentation
+ * Convert type string to enum object or null if unknown
  *
- * @receiver millis
- * @param appContext - application context
- * @return the date as a string
+ * @receiver type string
+ * @return ConsentType, optional.
  */
-fun DateTime.toDateFormatString(appContext: Context): String =
-    this.toString("d MMMM yyyy", appContext.getCurrentAppLocale()) ?: ""
-
-fun DateTime.daysTillExpire() = Days.daysBetween(LocalDate.now(), this.toLocalDate()).days
+fun String.toConsentType(): ConsentType? {
+    return try {
+        ConsentType.valueOf(this.toUpperCase(Locale.US))
+    } catch (e: Exception) {
+        null
+    }
+}

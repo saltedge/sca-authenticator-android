@@ -26,10 +26,17 @@
         <item quantity="other">@string/errors_passcode_try_again</item>
     </plurals>
 
-    <plurals name="ui_consents">
-        <item quantity="few">@string/ui_consents</item>
-        <item quantity="many">@string/ui_consents</item>
-        <item quantity="one">@string/ui_consent</item>
-        <item quantity="other">@string/ui_consents</item>
+    <plurals name="count_of_consents">
+        <item quantity="few">@string/count_of_consents</item>
+        <item quantity="many">@string/count_of_consents</item>
+        <item quantity="one">@string/one_consent</item>
+        <item quantity="other">@string/count_of_consents</item>
+    </plurals>
+
+    <plurals name="count_of_days_left">
+        <item quantity="few">@string/count_of_days_left</item>
+        <item quantity="many">@string/count_of_days_left</item>
+        <item quantity="one">@string/one_day_left</item>
+        <item quantity="other">@string/count_of_days_left</item>
     </plurals>
 </resources>
