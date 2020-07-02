@@ -35,4 +35,11 @@ import org.joda.time.LocalDate
 fun DateTime.toDateFormatString(appContext: Context): String =
     this.toString("d MMMM yyyy", appContext.getCurrentAppLocale()) ?: ""
 
+
+/**
+ * Converts the current date time to a int presentation
+ *
+ * @receiver millis
+ * @return the date as a int
+ */
 fun DateTime.daysTillExpire() = Days.daysBetween(LocalDate.now(), this.toLocalDate()).days

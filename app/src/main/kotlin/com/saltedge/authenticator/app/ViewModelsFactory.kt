@@ -29,7 +29,7 @@ import com.saltedge.authenticator.features.authorizations.list.AuthorizationsLis
 import com.saltedge.authenticator.features.connections.create.ConnectProviderViewModel
 import com.saltedge.authenticator.features.connections.list.ConnectionsListViewModel
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsViewModel
-import com.saltedge.authenticator.features.consents.ConsentsListViewModel
+import com.saltedge.authenticator.features.consents.list.ConsentsListViewModel
 import com.saltedge.authenticator.features.launcher.LauncherViewModel
 import com.saltedge.authenticator.features.main.MainActivityViewModel
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupViewModel

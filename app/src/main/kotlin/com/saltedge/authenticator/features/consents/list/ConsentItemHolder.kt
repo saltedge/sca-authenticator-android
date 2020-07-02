@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.consents
+package com.saltedge.authenticator.features.consents.list
 
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -53,20 +53,19 @@ class ConsentItemHolder(parent: ViewGroup, private val listener: ListItemClickLi
         subTitleView.text = item.consentTypeDescription
 
         val description = listItemView.context.getString(R.string.consents_expires_in)
-        val expiresAt = SpannableStringBuilder(item.expiresAt)
-        val spannable = SpannableStringBuilder("$description $expiresAt")
-        spannable.apply {
+        val consentExpiresString = SpannableStringBuilder("$description ${item.expiresAt}")
+        consentExpiresString.apply {
             setSpan(ForegroundColorSpan(getColor(listItemView.context, R.color.secondary_text)),
-                spannable.indexOf(description, 0),
+                consentExpiresString.indexOf(description, 0),
                 description.length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             setSpan(ForegroundColorSpan(getColor(listItemView.context, R.color.red)),
-                spannable.indexOf(item.expiresAt, 0),
-                spannable.length,
+                consentExpiresString.indexOf(item.expiresAt, 0),
+                consentExpiresString.length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
-        dateView.text = spannable
+        dateView.text = consentExpiresString
     }
 }

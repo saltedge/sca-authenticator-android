@@ -32,7 +32,7 @@ import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.RENAME_REQUEST_CODE
 import com.saltedge.authenticator.features.authorizations.common.collectConnectionsAndKeys
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
-import com.saltedge.authenticator.features.consents.KEY_CONSENTS
+import com.saltedge.authenticator.features.consents.list.KEY_CONSENTS
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -47,7 +47,6 @@ import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import kotlinx.coroutines.*
-import java.io.Serializable
 import kotlin.coroutines.CoroutineContext
 
 class ConnectionsListViewModel(
@@ -81,8 +80,7 @@ class ConnectionsListViewModel(
         private set
     var onDeleteClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
         private set
-    var onViewConsentsClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
-        private set
+    val onViewConsentsClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
 
     val listVisibility = MutableLiveData<Int>()
     val emptyViewVisibility = MutableLiveData<Int>()
@@ -98,7 +96,7 @@ class ConnectionsListViewModel(
         refreshConsents()
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
         decryptJob.cancel()
     }
@@ -155,9 +153,10 @@ class ConnectionsListViewModel(
 
     fun onViewConsentsOptionSelected() {
         val index = onListItemClickEvent.value?.peekContent() ?: return
-        val connectionGuid = listItemsValues.getOrNull(index)?.guid ?: return
+        val connection = listItemsValues.getOrNull(index)
+        val connectionGuid = connection?.guid ?: return
 
-        val listOfConsents = arrayListOf(consents[listItemsValues.getOrNull(index)?.connectionId])
+        val listOfConsents = arrayListOf(consents[connection.connectionId])
 
         onViewConsentsClickEvent.postValue(ViewModelEvent(Bundle()
             .apply { putString(KEY_GUID, connectionGuid) }
@@ -204,7 +203,7 @@ class ConnectionsListViewModel(
     //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
     fun processDecryptedConsentsResult(result: List<ConsentData>) {
         this.consents = HashMap(result.groupBy { it.connectionId ?: "" })
-        val newListItems = updateConsentData(listItemsValues, consents)
+        val newListItems = updateItemsWithConsentData(listItemsValues, consents)
         listItems.postValue(newListItems)
     }
 
@@ -249,7 +248,7 @@ class ConnectionsListViewModel(
 
     private fun updateViewsContent() {
         val newListItems = collectAllConnectionsViewModels(connectionsRepository, appContext)
-        listItems.postValue(updateConsentData(newListItems, consents))
+        listItems.postValue(updateItemsWithConsentData(newListItems, consents))
         if (newListItems.isEmpty()) {
             emptyViewVisibility.postValue(View.VISIBLE)
             listVisibility.postValue(View.GONE)
@@ -259,7 +258,7 @@ class ConnectionsListViewModel(
         }
     }
 
-    private fun updateConsentData(
+    private fun updateItemsWithConsentData(
         items: List<ConnectionViewModel>,
         consents: Map<ConnectionID, List<ConsentData>>
     ): List<ConnectionViewModel> {

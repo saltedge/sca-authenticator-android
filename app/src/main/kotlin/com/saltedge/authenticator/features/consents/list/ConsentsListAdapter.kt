@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.consents
+package com.saltedge.authenticator.features.consents.list
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView

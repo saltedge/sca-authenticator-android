@@ -28,7 +28,7 @@ import com.saltedge.authenticator.features.authorizations.list.AuthorizationsLis
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment
-import com.saltedge.authenticator.features.consents.ConsentsListFragment
+import com.saltedge.authenticator.features.consents.list.ConsentsListFragment
 import com.saltedge.authenticator.features.launcher.LauncherActivity
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity

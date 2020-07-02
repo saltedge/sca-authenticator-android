@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.consents
+package com.saltedge.authenticator.features.consents.list
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -104,24 +104,23 @@ class ConsentsListFragment : BaseFragment(),
             adapter.data = it
         })
         viewModel.connectionItem.observe(this, Observer<ConnectionViewModel> {
-            titleView?.text = it.name
+            titleView?.text = it.name //TODO: Use data binding
             subTitleView?.text = it.consentDescription
             logoImageView?.loadRoundedImage(
                 imageUrl = it.logoUrl,
                 placeholderId = R.drawable.shape_bg_app_logo,
-                cornerRadius = resources.getDimension(R.dimen.connections_list_logo_radius)
+                cornerRadius = resources.getDimension(R.dimen.consents_list_logo_radius)
             )
         })
-
-        viewModel.setInitialData(
-            connectionGuid = arguments?.getString(KEY_GUID),
-            consents = arguments?.getSerializable(KEY_CONSENTS) as List<ConsentData>
-        )
         viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<Int>> { event ->
             event.getContentIfNotHandled()?.let { itemIndex ->
                 //TODO: Show details of Consent
             }
         })
+        viewModel.setInitialData(
+            connectionGuid = arguments?.getString(KEY_GUID),
+            consents = arguments?.getSerializable(KEY_CONSENTS) as? List<ConsentData>
+        )
     }
 
     private fun setupViews() {

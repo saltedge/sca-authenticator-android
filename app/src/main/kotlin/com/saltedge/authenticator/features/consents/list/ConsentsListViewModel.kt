@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.consents
+package com.saltedge.authenticator.features.consents.list
 
 import android.content.Context
 import androidx.lifecycle.*
@@ -59,7 +59,6 @@ class ConsentsListViewModel(
     val connectionItem = MutableLiveData<ConnectionViewModel>()
 
     private var connection = Connection()
-    private var connectionGuid = ""
     private var connectionsAndKeys: Map<ConnectionID, ConnectionAndKey> =
         collectConnectionsAndKeys(
             connectionsRepository,
@@ -68,13 +67,7 @@ class ConsentsListViewModel(
     var onListItemClickEvent = MutableLiveData<ViewModelEvent<Int>>()
         private set
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun onStart() {
-        updateViewsContent()
-        refreshConsents()
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
         decryptJob.cancel()
     }
@@ -86,7 +79,7 @@ class ConsentsListViewModel(
         processOfEncryptedConsentsResult(encryptedList = result)
     }
 
-    fun setInitialData(connectionGuid: String?, consents: List<ConsentData>) {
+    fun setInitialData(connectionGuid: String?, consents: List<ConsentData>?) {
         listItems.postValue(
             listOf(
                 ConsentItemViewModel(
@@ -99,11 +92,9 @@ class ConsentsListViewModel(
         )
         if (connectionGuid != null) {
             this.connection = connectionsRepository.getByGuid(connectionGuid) ?: Connection()
-            this.connectionGuid = connectionGuid
-            val connection = collectConnectionViewModel(connectionGuid, connectionsRepository, appContext)
-            connectionItem.postValue(connection)
+            val connectionViewModel = collectConnectionViewModel(connectionGuid, connectionsRepository, appContext)
+            connectionItem.postValue(connectionViewModel)
         }
-
     }
 
     fun refreshConsents() {
@@ -113,11 +104,6 @@ class ConsentsListViewModel(
                 resultCallback = this
             )
         }
-    }
-
-    private fun updateViewsContent() {
-        val connection = collectConnectionViewModel(connectionGuid, connectionsRepository, appContext)
-        connectionItem.postValue(connection)
     }
 
     private fun collectConsentRequestData(): List<ConnectionAndKey>? {
