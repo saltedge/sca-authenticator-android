@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +18,11 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.common
+package com.saltedge.authenticator.features.consents.common
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
-
-data class ConnectionViewModel(
-    val guid: String,
-    val connectionId: String,
-    val code: String,
-    var name: String,
-    val logoUrl: String,
-    var consentDescription: String = "",
-    val statusDescription: String,
-    val reconnectOptionIsVisible: Boolean,
-    @StringRes var deleteMenuItemText: Int,
-    @DrawableRes var deleteMenuItemImage: Int,
-    var isChecked: Boolean
+data class ConsentItemViewModel(
+    val id: String,
+    var tppName: String,
+    var consentTypeDescription: String,
+    var expiresAt: String
 )

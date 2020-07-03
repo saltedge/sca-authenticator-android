@@ -23,6 +23,7 @@ package com.saltedge.authenticator.tools
 import android.content.res.Resources
 import android.graphics.Color
 import android.util.TypedValue
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.saltedge.authenticator.R
 
 typealias ResId = Int
@@ -61,4 +62,10 @@ fun convertDpToPx(dp: Float): Int {
         TypedValue.COMPLEX_UNIT_DIP, dp,
         Resources.getSystem().displayMetrics
     ).toInt()
+}
+
+fun SwipeRefreshLayout.stopRefresh() {
+    isRefreshing = false
+    destroyDrawingCache()
+    clearAnimation()
 }

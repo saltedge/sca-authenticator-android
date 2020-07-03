@@ -18,28 +18,21 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.tools
+package com.saltedge.authenticator.features.connections.common
 
-import android.content.Context
-import org.joda.time.DateTime
-import org.joda.time.Days
-import org.joda.time.LocalDate
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 
-/**
- * Converts the current date time to a string presentation
- *
- * @receiver millis
- * @param appContext - application context
- * @return the date as a string
- */
-fun DateTime.toDateFormatString(appContext: Context): String =
-    this.toString("d MMMM yyyy", appContext.getCurrentAppLocale()) ?: ""
-
-
-/**
- * Converts the current date time to a int presentation
- *
- * @receiver millis
- * @return the date as a int
- */
-fun DateTime.daysTillExpire() = Days.daysBetween(LocalDate.now(), this.toLocalDate()).days
+data class ConnectionItemViewModel(
+    val guid: String,
+    val connectionId: String,
+    val code: String,
+    var name: String,
+    val logoUrl: String,
+    var consentDescription: String = "",
+    val statusDescription: String,
+    val reconnectOptionIsVisible: Boolean,
+    @StringRes var deleteMenuItemText: Int,
+    @DrawableRes var deleteMenuItemImage: Int,
+    var isChecked: Boolean
+)

@@ -31,7 +31,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tools.inflateListItemView
 import com.saltedge.authenticator.tools.loadRoundedImage
@@ -51,7 +51,7 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
         }
     }
 
-    fun bind(item: ConnectionViewModel) {
+    fun bind(item: ConnectionItemViewModel) {
         logoImageView.loadRoundedImage(
             imageUrl = item.logoUrl,
             placeholderId = R.drawable.shape_bg_app_logo,

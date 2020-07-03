@@ -35,16 +35,16 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.DELETE_REQUEST_CODE
 import com.saltedge.authenticator.app.RENAME_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.ConnectionsListBinding
-import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
 import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
+import com.saltedge.authenticator.features.consents.list.ConsentsListFragment
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -127,7 +127,7 @@ class ConnectionsListFragment : BaseFragment(),
             .get(ConnectionsListViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
-        viewModel.listItems.observe(this, Observer<List<ConnectionViewModel>> {
+        viewModel.listItems.observe(this, Observer<List<ConnectionItemViewModel>> {
             headerDecorator?.setHeaderForAllItems(it.count())
             headerDecorator?.footerPositions = arrayOf(it.count() - 1)
             adapter.data = it
@@ -170,12 +170,17 @@ class ConnectionsListFragment : BaseFragment(),
                 activity?.addFragment(ConnectProviderFragment.newInstance(connectionGuid = it))
             }
         })
+        viewModel.onViewConsentsClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
+            event.getContentIfNotHandled()?.let { bundle ->
+                activity?.addFragment(ConsentsListFragment.newInstance(bundle))
+            }
+        })
         viewModel.onSupportClickEvent.observe(this, Observer<ViewModelEvent<String?>> { event ->
             event.getContentIfNotHandled()?.let { supportEmail ->
                 activity?.startMailApp(supportEmail)
             }
         })
-        viewModel.updateListItemEvent.observe(this, Observer<ConnectionViewModel> { itemIndex ->
+        viewModel.updateListItemEvent.observe(this, Observer<ConnectionItemViewModel> { itemIndex ->
             adapter.updateListItem(itemIndex)
         })
     }
@@ -198,7 +203,7 @@ class ConnectionsListFragment : BaseFragment(),
     }
 
     //TODO REFACTOR TO STANDALONE CLASS (example https://github.com/zawadz88/MaterialPopupMenu)
-    private fun showPopupMenu(parentView: View?, anchorView: View?, item: ConnectionViewModel): PopupWindow? {
+    private fun showPopupMenu(parentView: View?, anchorView: View?, item: ConnectionItemViewModel): PopupWindow? {
         if (parentView == null || anchorView == null) return null
         try {
             val layoutInflater = context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -261,10 +266,4 @@ class ConnectionsListFragment : BaseFragment(),
             return null
         }
     }
-}
-
-private fun SwipeRefreshLayout.stopRefresh() {
-    isRefreshing = false
-    destroyDrawingCache()
-    clearAnimation()
 }

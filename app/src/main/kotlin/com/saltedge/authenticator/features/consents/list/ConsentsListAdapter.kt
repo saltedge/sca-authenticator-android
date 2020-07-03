@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,28 +18,20 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.tools
+package com.saltedge.authenticator.features.consents.list
 
-import android.content.Context
-import org.joda.time.DateTime
-import org.joda.time.Days
-import org.joda.time.LocalDate
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.saltedge.authenticator.features.consents.common.ConsentItemViewModel
+import com.saltedge.authenticator.interfaces.ListItemClickListener
+import com.saltedge.authenticator.widget.list.AbstractListAdapter
 
-/**
- * Converts the current date time to a string presentation
- *
- * @receiver millis
- * @param appContext - application context
- * @return the date as a string
- */
-fun DateTime.toDateFormatString(appContext: Context): String =
-    this.toString("d MMMM yyyy", appContext.getCurrentAppLocale()) ?: ""
+class ConsentsListAdapter(val clickListener: ListItemClickListener?) : AbstractListAdapter() {
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
+        ConsentItemHolder(parent, clickListener)
 
-/**
- * Converts the current date time to a int presentation
- *
- * @receiver millis
- * @return the date as a int
- */
-fun DateTime.daysTillExpire() = Days.daysBetween(LocalDate.now(), this.toLocalDate()).days
+    override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
+        (holder as ConsentItemHolder).bind(item as ConsentItemViewModel)
+    }
+}
