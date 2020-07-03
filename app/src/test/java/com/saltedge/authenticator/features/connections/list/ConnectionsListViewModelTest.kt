@@ -89,6 +89,7 @@ class ConnectionsListViewModelTest {
     private val consentData: List<ConsentData> = listOf(
         ConsentData(
             id = "555",
+            connectionId = "1",
             userId = "1",
             tppName = "title",
             consentTypeString = "aisp",
@@ -98,7 +99,6 @@ class ConnectionsListViewModelTest {
             sharedData = ConsentSharedData(balance = true, transactions = true)
         )
     )
-
 
     @Before
     fun setUp() {
@@ -212,7 +212,7 @@ class ConnectionsListViewModelTest {
         val connection: List<ConnectionItemViewModel> = listOf(
             ConnectionItemViewModel(
                 guid = "guid1",
-                connectionId = "",
+                connectionId = "1",
                 code = "demobank1",
                 name = "Demobank1",
                 statusDescription = "Inactive. Please reconnect.",
@@ -234,12 +234,12 @@ class ConnectionsListViewModelTest {
             listOf(
                 ConnectionItemViewModel(
                     guid = "guid1",
-                    connectionId = "",
+                    connectionId = "1",
                     code = "demobank1",
                     name = "Demobank1",
                     statusDescription = "Inactive. Please reconnect.",
                     logoUrl = "",
-                    consentsCount = "1 consent ·",
+                    consentsCount = "1 consent",
                     reconnectOptionIsVisible = true,
                     deleteMenuItemText = R.string.actions_remove,
                     deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
