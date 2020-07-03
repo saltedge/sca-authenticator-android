@@ -20,29 +20,41 @@
  */
 package com.saltedge.authenticator.features.consents.list
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.CONSENT_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_GUID
-import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
-import com.saltedge.authenticator.features.connections.list.convertConnectionToViewModel
+import com.saltedge.authenticator.app.KEY_ID
+import com.saltedge.authenticator.features.consents.common.countOfDays
 import com.saltedge.authenticator.features.consents.common.toCountString
+import com.saltedge.authenticator.features.consents.details.ConsentDetailsViewModel
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
+import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
 import com.saltedge.authenticator.sdk.model.ConsentData
+import com.saltedge.authenticator.sdk.model.ConsentType
 import com.saltedge.authenticator.sdk.model.EncryptedData
+import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.daysTillExpire
+import com.saltedge.authenticator.tools.guid
 import kotlinx.coroutines.*
+import org.joda.time.DateTime
 import kotlin.coroutines.CoroutineContext
-
-const val KEY_CONSENT = "consent"
 
 class ConsentsListViewModel(
     private val appContext: Context,
@@ -52,51 +64,35 @@ class ConsentsListViewModel(
     private val cryptoTools: CryptoToolsAbs
 ) : ViewModel(), LifecycleObserver, FetchEncryptedDataListener, CoroutineScope {
 
+    val listItems = MutableLiveData<List<ConsentItemViewModel>>()
+    val onListItemClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
+    val logoUrl = MutableLiveData<String>()
+    val connectionTitle = MutableLiveData<String>()
+    val consentsCount = MutableLiveData<String>()
+    private var consents: List<ConsentData> = emptyList()
+    private var connectionAndKey: ConnectionAndKey? = null
     private val decryptJob: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = decryptJob + Dispatchers.IO
-
-    val listItems = MutableLiveData<List<ConsentItemViewModel>>()
-    val connectionViewModel = MutableLiveData<ConnectionItemViewModel>()
-
-    private var connectionAndKey: ConnectionAndKey? = null
-    private var consentData: ConsentData? = null
-
-    var onListItemClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
-        private set
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
         decryptJob.cancel()
     }
 
-    override fun onFetchEncryptedDataResult(
-        result: List<EncryptedData>,
-        errors: List<ApiErrorData>
-    ) {
+    override fun onFetchEncryptedDataResult(result: List<EncryptedData>, errors: List<ApiErrorData>) {
         processOfEncryptedConsentsResult(encryptedList = result)
     }
 
-    fun setInitialData(connectionGuid: String?, consents: List<ConsentData>?) {
-        listItems.postValue(
-            listOf(
-                ConsentItemViewModel(
-                    id = "id",
-                    tppName = "Example Dashboard",
-                    consentTypeDescription = "aisp",
-                    expiresAt = "7 days",
-                    expiresAtColorRes = R.color.red_and_red_light
-                ) //TODO: fix why data is not converted correctly with consents.buildViewModels()
-                  //TODO: Need to save in consentData data for the clicked element
-            )
-        )
-        if (connectionGuid != null) {
+    fun setInitialData(bundle: Bundle?) {
+        bundle?.guid?.let { connectionGuid ->
             connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
-                val connectionViewModel = it.convertConnectionToViewModel(appContext)
-                this.connectionViewModel.postValue(connectionViewModel)
+                logoUrl.postValue(it.logoUrl)
+                connectionTitle.postValue(it.name)
                 keyStoreManager.createConnectionAndKeyModel(it)
             }
         }
+        onReceivedNewConsents(bundle?.consents ?: emptyList())
     }
 
     fun refreshConsents() {
@@ -108,54 +104,93 @@ class ConsentsListViewModel(
         }
     }
 
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val consentId = data?.getStringExtra(KEY_ID)
+        if (requestCode == CONSENT_REQUEST_CODE && resultCode == Activity.RESULT_OK && consentId != null) {
+            val newConsents = consents.filter { it.id != consentId }
+            if (newConsents != consents) onReceivedNewConsents(newConsents)
+        }
+    }
+
+    fun onListItemClick(itemIndex: Int) {
+        val connectionGuid = connectionAndKey?.connection?.guid ?: return
+        onListItemClickEvent.postValue(ViewModelEvent(
+            ConsentDetailsViewModel.newBundle(connectionGuid, consents[itemIndex])
+        ))
+    }
+
     private fun processOfEncryptedConsentsResult(encryptedList: List<EncryptedData>) {
         launch {
             val data = decryptConsents(encryptedList = encryptedList)
-            withContext(Dispatchers.Main) { processDecryptedConsentsResult(result = data) }
+            withContext(Dispatchers.Main) { onReceivedNewConsents(result = data) }
         }
     }
 
     private fun decryptConsents(encryptedList: List<EncryptedData>): List<ConsentData> {
         return encryptedList.mapNotNull {
-            cryptoTools.decryptConsentData(
-                encryptedData = it,
-                rsaPrivateKey = connectionAndKey?.key
-            )
+            cryptoTools.decryptConsentData(encryptedData = it, rsaPrivateKey = connectionAndKey?.key)
         }
     }
 
     //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
-    fun processDecryptedConsentsResult(result: List<ConsentData>) {
-        val consents = listOf(
-            ConsentItemViewModel(
-                id = "id",
-                tppName = "Example Dashboard",
-                consentTypeDescription = "aisp",
-                expiresAt = "7 days",
-                expiresAtColorRes = R.color.red_and_red_light
-            ) //TODO: fix why data is not converted correctly with consents.buildViewModels()
-        )
-        listItems.postValue(consents)
-
-        result.toCountString(appContext)//TODO
+    fun onReceivedNewConsents(result: List<ConsentData>) {
+        consents = result
+        listItems.postValue(result.toViewModels())
+        consentsCount.postValue(consents.toCountString(appContext))
     }
 
-    fun onListItemClick(connectionGuid: String?) {
-        onListItemClickEvent.postValue(ViewModelEvent(Bundle()
-            .apply { putString(KEY_GUID, connectionGuid) }
-            .apply { putSerializable(KEY_CONSENT, consentData) })
-        )
-    }
-
-    private fun buildViewModels(data: List<ConsentData>): List<ConsentItemViewModel> {
-        return data.map {
+    private fun List<ConsentData>.toViewModels(): List<ConsentItemViewModel> {
+        return this.map {
             ConsentItemViewModel(
                 id = it.id,
                 tppName = it.tppName,
-                consentTypeDescription = it.consentType,
-                expiresAt = it.expiresAt.daysTillExpire().toString(),
-                expiresAtColorRes = R.color.red_and_red_light
+                consentTypeDescription = it.consentType?.toConsentTypeDescription() ?: "",
+                expiresAtDescription = it.expiresAt.toExpiresAtDescription()
             )
+        }
+    }
+
+    private fun ConsentType.toConsentTypeDescription(): String {
+        return appContext.getString(when (this) {
+            ConsentType.AISP -> R.string.consent_title_aisp
+            ConsentType.PISP_FUTURE -> R.string.consent_title_pisp_future
+            ConsentType.PISP_RECURRING -> R.string.consent_title_pisp_recurring
+        })
+    }
+
+    private fun DateTime.toExpiresAtDescription(): Spanned {
+        val baseColorSpan = ForegroundColorSpan(ContextCompat.getColor(appContext, R.color.dark_60_and_grey_100))
+        val alertSpan = ForegroundColorSpan(ContextCompat.getColor(appContext, R.color.red_and_red_light))
+
+        val expiresInString = appContext.getString(R.string.expires_in)
+        val daysLeftCount = this.daysTillExpire()
+        val daysTillExpireDescription = countOfDays(daysLeftCount, appContext)
+
+        val result = SpannableStringBuilder("$expiresInString $daysTillExpireDescription")
+
+        if (daysLeftCount > 7) {
+            result.setSpan(baseColorSpan, 0, result.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        } else {
+            result.setSpan(baseColorSpan, 0, expiresInString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            result.setSpan(
+                alertSpan,
+                result.indexOf(daysTillExpireDescription),
+                result.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        return result
+    }
+
+    companion object {
+        val Bundle.consents: List<ConsentData>?
+            get() = getSerializable(KEY_DATA) as? List<ConsentData>
+
+        fun newBundle(connectionGuid: GUID, consents: List<ConsentData>?): Bundle {
+            return Bundle().apply {
+                putString(KEY_GUID, connectionGuid)
+                putSerializable(KEY_DATA, ArrayList<ConsentData>(consents ?: emptyList()))
+            }
         }
     }
 }

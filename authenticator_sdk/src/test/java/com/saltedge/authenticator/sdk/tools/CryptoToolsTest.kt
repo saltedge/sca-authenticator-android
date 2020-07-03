@@ -289,7 +289,7 @@ class CryptoToolsTest {
         id = "555",
         userId = "1",
         tppName = "title",
-        consentType = "aisp",
+        consentTypeString = "aisp",
         accounts = emptyList(),
         sharedData = ConsentSharedData(balance = true, transactions = true),
         expiresAt = DateTime(0).withZone(DateTimeZone.UTC),

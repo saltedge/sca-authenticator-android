@@ -23,11 +23,14 @@ package com.saltedge.authenticator.tools
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Point
+import android.os.Bundle
 import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.crashlytics.android.Crashlytics
 import com.saltedge.authenticator.app.AuthenticatorApplication
+import com.saltedge.authenticator.app.KEY_GUID
+import com.saltedge.authenticator.sdk.model.GUID
 
 object AppTools : AppToolsAbs {
 
@@ -102,3 +105,6 @@ val FragmentActivity.authenticatorApp: AuthenticatorApplication?
  */
 val Fragment.authenticatorApp: AuthenticatorApplication?
     get() = this.activity?.authenticatorApp
+
+val Bundle.guid: GUID?
+    get() = getString(KEY_GUID)

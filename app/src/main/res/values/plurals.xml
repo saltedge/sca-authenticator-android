@@ -33,10 +33,10 @@
         <item quantity="other">@string/count_of_consents</item>
     </plurals>
 
-    <plurals name="count_of_days_left">
-        <item quantity="few">@string/count_of_days_left</item>
-        <item quantity="many">@string/count_of_days_left</item>
-        <item quantity="one">@string/one_day_left</item>
-        <item quantity="other">@string/count_of_days_left</item>
+    <plurals name="count_of_days">
+        <item quantity="few">@string/count_of_days</item>
+        <item quantity="many">@string/count_of_days</item>
+        <item quantity="one">@string/one_day</item>
+        <item quantity="other">@string/count_of_days</item>
     </plurals>
 </resources>

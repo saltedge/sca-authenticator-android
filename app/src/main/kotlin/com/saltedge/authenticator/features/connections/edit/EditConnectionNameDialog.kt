@@ -37,6 +37,7 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.sdk.constants.KEY_NAME
 import com.saltedge.authenticator.tools.getEnabledStateColorResId
+import com.saltedge.authenticator.tools.guid
 import com.saltedge.authenticator.tools.hideSystemKeyboard
 import com.saltedge.authenticator.tools.setTextColorResId
 
@@ -91,8 +92,7 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
             targetFragment?.onActivityResult(
                 targetRequestCode,
                 Activity.RESULT_OK,
-                Intent().putExtra(KEY_GUID, arguments?.getString(KEY_GUID))
-                    .putExtra(KEY_NAME, inputValue)
+                Intent().putExtra(KEY_GUID, arguments?.guid).putExtra(KEY_NAME, inputValue)
             )
         }
     }

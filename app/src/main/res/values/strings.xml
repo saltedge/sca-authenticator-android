@@ -199,8 +199,9 @@
     <string name="expires_in">Expires in</string>
 
     <string name="consent_details_feature_title">Active Consent</string>
-    <string name="count_of_days_left">\%s days left</string>
-    <string name="one_day_left">1 day left</string>
+    <string name="count_of_days">\%s days</string>
+    <string name="one_day">1 day</string>
+    <string name="days_left">\%s left</string>
     <string name="consent_title_aisp">Consent for account information access</string>
     <string name="consent_title_pisp_future">Consent for future payment</string>
     <string name="consent_title_pisp_recurring">Consent for recurring payment</string>

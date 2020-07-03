@@ -21,13 +21,18 @@
 package com.saltedge.authenticator.features.consents.details
 
 import android.content.Context
+import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.KEY_GUID
+import com.saltedge.authenticator.features.consents.common.countOfDays
+import com.saltedge.authenticator.features.consents.common.countOfDaysLeft
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
+import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.contract.ConsentRevokeListener
 import com.saltedge.authenticator.sdk.model.*
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
@@ -35,7 +40,6 @@ import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.response.ConsentRevokeResponseData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.daysTillExpire
-import com.saltedge.authenticator.tools.postUnitEvent
 import com.saltedge.authenticator.tools.toDateFormatString
 import org.joda.time.DateTime
 
@@ -45,6 +49,7 @@ class ConsentDetailsViewModel(
     private val keyStoreManager: KeyStoreManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs
 ) : ViewModel(), ConsentRevokeListener {
+
     val fragmentTitle = MutableLiveData<String>(appContext.getString(R.string.consent_details_feature_title))
     val daysLeft = MutableLiveData<String>("")
     val consentTitle = MutableLiveData<String>("")
@@ -61,6 +66,14 @@ class ConsentDetailsViewModel(
     private var consentData: ConsentData? = null
     private var connectionAndKey: ConnectionAndKey? = null
 
+    override fun onConsentRevokeFailure(error: ApiErrorData) {
+        revokeErrorEvent.postValue(ViewModelEvent(error.errorMessage))
+    }
+
+    override fun onConsentRevokeSuccess(result: ConsentRevokeResponseData) {
+        result.consentId?.let { revokeSuccessEvent.postValue(ViewModelEvent(it)) }
+    }
+
     fun setInitialData(data: ConsentData?, connectionGuid: GUID) {
         val connection = connectionsRepository.getByGuid(connectionGuid) ?: return
         connectionAndKey = keyStoreManager.createConnectionAndKeyModel(connection)
@@ -68,8 +81,8 @@ class ConsentDetailsViewModel(
         this.consentData = data
         data?.let { consent ->
             fragmentTitle.postValue(consent.tppName)
-            daysLeft.postValue(calculateRemainedDays(consent.expiresAt))
-            consentTitle.postValue(getConsentTitle(consent.consentType))
+            daysLeft.postValue(countOfDaysLeft(consent.expiresAt.daysTillExpire(), appContext))
+            consentTitle.postValue(getConsentTitle(consent.consentTypeString))
             consentDescription.postValue(getConsentDescription(consent.tppName, connection.name))
             consentGranted.postValue(getGrantedDate(consent.createdAt))
             consentExpires.postValue(getExpiresDate(consent.expiresAt))
@@ -97,23 +110,6 @@ class ConsentDetailsViewModel(
         )
     }
 
-    override fun onConsentRevokeFailure(error: ApiErrorData) {
-        revokeErrorEvent.postValue(ViewModelEvent(error.errorMessage))
-    }
-
-    override fun onConsentRevokeSuccess(result: ConsentRevokeResponseData) {
-        result.consentId?.let { revokeSuccessEvent.postValue(ViewModelEvent(it)) }
-    }
-
-    private fun calculateRemainedDays(expiresAt: DateTime): String {
-        val daysLeftCount = expiresAt.daysTillExpire()
-        return appContext.resources.getQuantityString(
-            R.plurals.count_of_days_left,
-            daysLeftCount,
-            daysLeftCount
-        )
-    }
-
     private fun getConsentTitle(consentTypeString: String): String {
         return appContext.getString(when (consentTypeString.toConsentType()) {
             ConsentType.AISP -> R.string.consent_title_aisp
@@ -133,5 +129,17 @@ class ConsentDetailsViewModel(
 
     private fun getExpiresDate(expiresAt: DateTime): String {
         return "${appContext.getString(R.string.expires)}: ${expiresAt.toDateFormatString(appContext)}"
+    }
+
+    companion object {
+        val Bundle.consents: ConsentData?
+            get() = getSerializable(KEY_DATA) as? ConsentData
+
+        fun newBundle(connectionGuid: GUID, consents: ConsentData): Bundle {
+            return Bundle().apply {
+                putString(KEY_GUID, connectionGuid)
+                putSerializable(KEY_DATA, consents)
+            }
+        }
     }
 }

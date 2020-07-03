@@ -29,6 +29,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
+import com.saltedge.authenticator.tools.guid
 
 class DeleteConnectionDialog :
     DialogFragment(),
@@ -39,7 +40,7 @@ class DeleteConnectionDialog :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter.guid = arguments?.getString(KEY_GUID)
+        presenter.guid = arguments?.guid
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

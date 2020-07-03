@@ -33,7 +33,7 @@ import com.saltedge.authenticator.app.RENAME_REQUEST_CODE
 import com.saltedge.authenticator.features.authorizations.common.collectConnectionsAndKeys
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.consents.common.toCountString
-import com.saltedge.authenticator.features.consents.list.KEY_CONSENTS
+import com.saltedge.authenticator.features.consents.list.ConsentsListViewModel
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -56,9 +56,12 @@ class ConnectionsListViewModel(
     private val keyStoreManager: KeyStoreManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
     private val cryptoTools: CryptoToolsAbs
-) : ViewModel(), LifecycleObserver, ConnectionsRevokeListener, FetchEncryptedDataListener,
-    CoroutineScope {
-
+) : ViewModel(),
+    LifecycleObserver,
+    ConnectionsRevokeListener,
+    FetchEncryptedDataListener,
+    CoroutineScope
+{
     private val decryptJob: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = decryptJob + Dispatchers.IO
@@ -68,24 +71,15 @@ class ConnectionsListViewModel(
             keyStoreManager
         )
     private var consents: Map<GUID, List<ConsentData>> = emptyMap()
-
-    var onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
-        private set
+    val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     var onListItemClickEvent = MutableLiveData<ViewModelEvent<Int>>()
-        private set
     var onSupportClickEvent = MutableLiveData<ViewModelEvent<String?>>()
-        private set
     var onReconnectClickEvent = MutableLiveData<ViewModelEvent<String>>()
-        private set
     var onRenameClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
-        private set
     var onDeleteClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
-        private set
     val onViewConsentsClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
-
     val listVisibility = MutableLiveData<Int>()
     val emptyViewVisibility = MutableLiveData<Int>()
-
     val listItems = MutableLiveData<List<ConnectionItemViewModel>>()
     val listItemsValues: List<ConnectionItemViewModel>
         get() = listItems.value ?: emptyList()
@@ -156,10 +150,9 @@ class ConnectionsListViewModel(
         val index = onListItemClickEvent.value?.peekContent() ?: return
         val connectionGuid = listItemsValues.getOrNull(index)?.guid ?: return
 
-        onViewConsentsClickEvent.postValue(ViewModelEvent(Bundle()
-            .apply { putString(KEY_GUID, connectionGuid) }
-            .apply { putSerializable(KEY_CONSENTS, arrayListOf(consents[connectionGuid])) })
-        )
+        onViewConsentsClickEvent.postValue(ViewModelEvent(
+            ConsentsListViewModel.newBundle(connectionGuid, consents[connectionGuid])
+        ))
     }
 
     fun onContactSupportOptionSelected() {

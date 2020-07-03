@@ -91,7 +91,7 @@ class ConnectionsListViewModelTest {
             id = "555",
             userId = "1",
             tppName = "title",
-            consentType = "aisp",
+            consentTypeString = "aisp",
             accounts = emptyList(),
             expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
             createdAt = DateTime(0).withZone(DateTimeZone.UTC),

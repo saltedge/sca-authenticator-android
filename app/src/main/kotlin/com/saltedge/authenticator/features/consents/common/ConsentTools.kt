@@ -33,3 +33,16 @@ fun List<ConsentData>.toCountString(appContext: Context): String {
         )
     } else ""
 }
+
+fun countOfDaysLeft(countOfDays: Int, appContext: Context): String {
+    val template = appContext.getString(R.string.days_left)
+    return String.format(template, countOfDays(countOfDays, appContext))
+}
+
+fun countOfDays(countOfDays: Int, appContext: Context): String {
+    return appContext.resources.getQuantityString(
+        R.plurals.count_of_days,
+        countOfDays,
+        countOfDays
+    )
+}

@@ -34,8 +34,11 @@ data class ConsentData(
     @SerializedName(KEY_CREATED_AT) var createdAt: DateTime,
     @SerializedName(KEY_EXPIRES_AT) var expiresAt: DateTime,
     @SerializedName(KEY_TPP_NAME) var tppName: String,
-    @SerializedName(KEY_CONSENT_TYPE) var consentType: String,
+    @SerializedName(KEY_CONSENT_TYPE) var consentTypeString: String,
     @SerializedName(KEY_ACCOUNTS) var accounts: List<AccountData>,
     @SerializedName(KEY_SHARED_DATA) var sharedData: ConsentSharedData?,
     @SerializedName(KEY_CONNECTION_ID) var connectionId: String? = null
-) : Serializable
+) : Serializable {
+    val consentType: ConsentType?
+        get() = consentTypeString.toConsentType()
+}

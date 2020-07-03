@@ -20,39 +20,40 @@
  */
 package com.saltedge.authenticator.features.consents.list
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.databinding.BindingAdapter
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_GUID
+import com.saltedge.authenticator.app.CONSENT_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
+import com.saltedge.authenticator.databinding.ConsentsListBinding
+import com.saltedge.authenticator.features.consents.details.ConsentDetailsFragment
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.sdk.model.ConsentData
+import com.saltedge.authenticator.tools.addFragment
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.loadRoundedImage
 import com.saltedge.authenticator.tools.stopRefresh
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
 import kotlinx.android.synthetic.main.fragment_consents_list.*
-import kotlinx.android.synthetic.main.fragment_consents_list.subTitleView
-import kotlinx.android.synthetic.main.fragment_consents_list.titleView
 import javax.inject.Inject
 
-const val KEY_CONSENTS = "consents"
-
-class ConsentsListFragment : BaseFragment(),
-    ListItemClickListener {
+class ConsentsListFragment : BaseFragment(), ListItemClickListener {
 
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: ConsentsListViewModel
+    private lateinit var headerDecorator: SpaceItemDecoration
+    private lateinit var binding: ConsentsListBinding
     private val adapter = ConsentsListAdapter(clickListener = this)
-    private var headerDecorator: SpaceItemDecoration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,16 +70,29 @@ class ConsentsListFragment : BaseFragment(),
             titleResId = R.string.consents_feature_title,
             backActionImageResId = R.drawable.ic_appbar_action_back
         )
-        return inflater.inflate(R.layout.fragment_consents_list, container, false)
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_consents_list,
+            container,
+            false
+        )
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
+        binding.executePendingBindings()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        viewModel.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
-        viewModel.onListItemClick(arguments?.getString(KEY_GUID))
+        viewModel.onListItemClick(itemIndex)
     }
 
     private fun setupViewModel() {
@@ -87,37 +101,27 @@ class ConsentsListFragment : BaseFragment(),
         lifecycle.addObserver(viewModel)
 
         viewModel.listItems.observe(this, Observer<List<ConsentItemViewModel>> {
-            headerDecorator?.setHeaderForAllItems(it.count())
-            headerDecorator?.footerPositions = arrayOf(it.count() - 1)
+            headerDecorator.setHeaderForAllItems(it.count())
+            headerDecorator.footerPositions = arrayOf(it.count() - 1)
             adapter.data = it
-        })
-        viewModel.connectionViewModel.observe(this, Observer<ConnectionItemViewModel> {
-            titleView?.text = it.name
-            subTitleView?.text = it.consentsCount
-            logoImageView?.loadRoundedImage(
-                imageUrl = it.logoUrl,
-                placeholderId = R.drawable.shape_bg_app_logo,
-                cornerRadius = resources.getDimension(R.dimen.consents_list_logo_radius)
-            )
         })
         viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                //TODO: Show details of Consent
+                ConsentDetailsFragment.newInstance(bundle).also {
+                    it.setTargetFragment(this, CONSENT_REQUEST_CODE)
+                    activity?.addFragment(it)
+                }
             }
         })
-        viewModel.setInitialData(
-            connectionGuid = arguments?.getString(KEY_GUID),
-            consents = arguments?.getSerializable(KEY_CONSENTS) as? List<ConsentData>
-        )
+        viewModel.setInitialData(arguments)
     }
 
     private fun setupViews() {
         activity?.let {
             consentsListView?.layoutManager = LinearLayoutManager(it)
             consentsListView?.adapter = adapter
-            headerDecorator = SpaceItemDecoration(context = it).apply {
-                consentsListView?.addItemDecoration(this)
-            }
+            if (!this::headerDecorator.isInitialized) headerDecorator = SpaceItemDecoration(context = it)
+            consentsListView?.addItemDecoration(headerDecorator)
         }
         swipeRefreshLayout?.setOnRefreshListener {
             viewModel.refreshConsents()
@@ -127,6 +131,20 @@ class ConsentsListFragment : BaseFragment(),
     }
 
     companion object {
+        @BindingAdapter("connectionLogoUrl")
+        @JvmStatic
+        fun setConnectionLogoUrl(imageView: ImageView, logoUrl: String?) {
+            if (logoUrl == null) {
+                imageView.setImageDrawable(null)
+            } else {
+                imageView.loadRoundedImage(
+                    imageUrl = logoUrl,
+                    placeholderId = R.drawable.shape_bg_app_logo,
+                    cornerRadius = imageView.resources.getDimension(R.dimen.consents_list_logo_radius)
+                )
+            }
+        }
+
         fun newInstance(bundle: Bundle): ConsentsListFragment {
             return ConsentsListFragment().apply { arguments = bundle }
         }

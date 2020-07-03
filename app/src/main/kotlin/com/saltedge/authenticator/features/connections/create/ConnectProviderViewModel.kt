@@ -71,21 +71,15 @@ class ConnectProviderViewModel(
     val completeViewVisibility = MutableLiveData<Int>(View.GONE)
     var titleRes: ResId = R.string.connections_new_connection
         private set
-
+    val onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onShowErrorEvent = MutableLiveData<ViewModelEvent<String>>()
+    val onUrlChangedEvent = MutableLiveData<ViewModelEvent<String>>()
+    val goBackEvent = MutableLiveData<ViewModelEvent<Unit>>()
     private var connection = Connection()
     private var initialConnectData: ConnectAppLinkData? = null
     private var authenticateData: CreateConnectionResponseData? = null
     private var sessionFailMessage: String? = null
     private var viewMode: ViewMode = ViewMode.START_NEW_CONNECT
-
-    var onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()
-        private set
-    var onShowErrorEvent = MutableLiveData<ViewModelEvent<String>>()
-        private set
-    var onUrlChangedEvent = MutableLiveData<ViewModelEvent<String>>()
-        private set
-    var goBackEvent = MutableLiveData<ViewModelEvent<Unit>>()
-        private set
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onResume() {

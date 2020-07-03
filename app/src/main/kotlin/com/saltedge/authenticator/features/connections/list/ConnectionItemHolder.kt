@@ -43,6 +43,7 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
     private val titleView = itemView.findViewById<TextView>(R.id.titleView)
     private val subTitleView = itemView.findViewById<TextView>(R.id.subTitleView)
     private val listItemView = itemView.findViewById<RelativeLayout>(R.id.listItemView)
+    private val bgColor = ContextCompat.getColor(listItemView.context, R.color.white_and_blue_black)
     private val robotoRegular = ResourcesCompat.getFont(listItemView.context, R.font.roboto_regular)
     private val robotoMedium = ResourcesCompat.getFont(listItemView.context, R.font.roboto_medium)
 
@@ -60,26 +61,28 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
             cornerRadius = itemView.resources.getDimension(R.dimen.connections_list_logo_radius)
         )
         if (item.isChecked) listItemView.setBackgroundResource(R.drawable.stroke_background)
-        else listItemView.setBackgroundColor(
-            ContextCompat.getColor(listItemView.context, R.color.white_and_blue_black)
-        )
+        else listItemView.setBackgroundColor(bgColor)
 
         titleView.text = item.name
 
-        val description = SpannableStringBuilder("${item.consentsCount} \u00B7 ${item.statusDescription}")
-        subTitleView.text = description.apply {
-            setSpan(
-                robotoMedium?.style?.let { StyleSpan(it) },
-                0,
-                item.consentsCount.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-            setSpan(
-                robotoRegular?.style?.let { StyleSpan(it) },
-                description.indexOf(item.statusDescription, 0),
-                item.statusDescription.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+        val description = if (item.consentsCount.isEmpty()) {
+            SpannableStringBuilder(item.statusDescription)
+        } else {
+            SpannableStringBuilder("${item.consentsCount} \u00B7 ${item.statusDescription}")
         }
+
+        description.setSpan(
+            robotoMedium?.style?.let { StyleSpan(it) } ?: return,
+            0,
+            item.consentsCount.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        description.setSpan(
+            robotoRegular?.style?.let { StyleSpan(it) } ?: return,
+            description.indexOf(item.statusDescription, 0),
+            description.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        subTitleView.setText(description, TextView.BufferType.SPANNABLE)
     }
 }
