@@ -57,7 +57,7 @@ class ConnectionsListViewModel(
 ) : ViewModel(), LifecycleObserver, ConnectionsRevokeListener, FetchEncryptedDataListener,
     CoroutineScope {
 
-    var consents: Map<String, List<ConsentData>> = emptyMap()
+    private var consents: Map<String, List<ConsentData>> = emptyMap()
     private val decryptJob: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = decryptJob + Dispatchers.IO
