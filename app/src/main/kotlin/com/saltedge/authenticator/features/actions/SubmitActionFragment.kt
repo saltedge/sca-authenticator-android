@@ -35,7 +35,7 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CONNECTIONS_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.SubmitActionBinding
-import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment
 import com.saltedge.authenticator.features.main.newAuthorizationListener
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
@@ -138,7 +138,7 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
         viewModel.mainActionTextResId.observe(this, Observer<Int> { mainActionTextResId ->
             completeView?.setMainActionText(mainActionTextResId)
         })
-        viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<List<ConnectionViewModel>> { list ->
+        viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<List<ConnectionItemViewModel>> { list ->
             SelectConnectionsFragment.newInstance(connections = list).also {
                 it.setTargetFragment(this, CONNECTIONS_REQUEST_CODE)
                 activity?.addFragment(fragment = it, animateTransition = false)

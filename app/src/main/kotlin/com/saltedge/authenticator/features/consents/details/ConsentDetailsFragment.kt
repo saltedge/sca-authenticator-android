@@ -87,7 +87,7 @@ class ConsentDetailsFragment : BaseFragment() {
             event.getContentIfNotHandled()?.let { message ->
                 activity?.let {
                     AlertDialog.Builder(it, R.style.AlertDialogTheme)
-                        .setTitle(R.string.consent_revoke_title)
+                        .setTitle(R.string.revoke_consent)
                         .setMessage(message)
                         .setPositiveButton(R.string.actions_confirm) { _, _ -> viewModel.onRevokeConfirmed() }
                         .setNegativeButton(R.string.actions_cancel, null)

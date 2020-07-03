@@ -509,10 +509,10 @@ class MainActivityViewModelTest {
     @Throws(Exception::class)
     fun onMenuItemSelectedTestCase2() {
         /**
-         * given selectedItemId = R.string.consents_feature_title
+         * given selectedItemId = R.string.consent_feature_title
          */
         val viewModel = createViewModel()
-        val selectedItemId = R.string.consents_feature_title
+        val selectedItemId = R.string.consent_feature_title
 
         //when
         viewModel.onMenuItemSelected("", selectedItemId)

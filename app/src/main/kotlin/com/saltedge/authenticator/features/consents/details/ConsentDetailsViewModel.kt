@@ -85,7 +85,7 @@ class ConsentDetailsViewModel(
     }
 
     fun onRevokeClick() {
-        val template = appContext.getString(R.string.consent_revoke_message)
+        val template = appContext.getString(R.string.revoke_consent_message)
         revokeAlertEvent.postValue(ViewModelEvent(String.format(template, fragmentTitle.value)))
     }
 
@@ -128,10 +128,10 @@ class ConsentDetailsViewModel(
     }
 
     private fun getGrantedDate(grantedAt: DateTime): String {
-        return "${appContext.getString(R.string.consent_granted)}: ${grantedAt.toDateFormatString(appContext)}"
+        return "${appContext.getString(R.string.granted)}: ${grantedAt.toDateFormatString(appContext)}"
     }
 
     private fun getExpiresDate(expiresAt: DateTime): String {
-        return "${appContext.getString(R.string.consent_expires)}: ${expiresAt.toDateFormatString(appContext)}"
+        return "${appContext.getString(R.string.expires)}: ${expiresAt.toDateFormatString(appContext)}"
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,27 +18,18 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.tools
+package com.saltedge.authenticator.features.consents.common
 
 import android.content.Context
-import org.joda.time.DateTime
-import org.joda.time.Days
-import org.joda.time.LocalDate
+import com.saltedge.authenticator.R
+import com.saltedge.authenticator.sdk.model.ConsentData
 
-/**
- * Converts the current date time to a string presentation
- *
- * @receiver millis
- * @param appContext - application context
- * @return the date as a string
- */
-fun DateTime.toDateFormatString(appContext: Context): String =
-    this.toString("d MMMM yyyy", appContext.getCurrentAppLocale()) ?: ""
-
-/**
- * Calculates days count between now and expiresAt date
- *
- * @receiver expires at dateTime
- * @return days count
- */
-fun DateTime.daysTillExpire() = Days.daysBetween(LocalDate.now(), this.toLocalDate()).days
+fun List<ConsentData>.toCountString(appContext: Context): String {
+    return if (this.isNotEmpty()) {
+        appContext.resources.getQuantityString(
+            R.plurals.count_of_consents,
+            this.count(),
+            this.count()
+        )
+    } else ""
+}

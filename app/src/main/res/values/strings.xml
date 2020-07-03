@@ -191,9 +191,12 @@
     <string name="forgot_passcode_clear_title">Clear app data</string>
     <string name="forgot_passcode_clear_message">All app data including connected providers, user data and settings will be permanently deleted</string>
 
-    <string name="consents_feature_title">Consent management</string>
+    <string name="consent_feature_title">Consent management</string>
     <string name="count_of_consents">\%s consents</string>
     <string name="one_consent">1 consent</string>
+
+    <string name="consents_feature_title">Active consents</string>
+    <string name="expires_in">Expires in</string>
 
     <string name="consent_details_feature_title">Active Consent</string>
     <string name="count_of_days_left">\%s days left</string>
@@ -203,11 +206,11 @@
     <string name="consent_title_pisp_recurring">Consent for recurring payment</string>
     <string name="consent_unknown">Unknown consent</string>
     <string name="consent_granted_to">Consent granted to \%s application on the following accounts from \%s</string>
-    <string name="consent_granted">Granted</string>
-    <string name="consent_expires">Expires</string>
+    <string name="granted">Granted</string>
+    <string name="expires">Expires</string>
     <string name="shared_data">Shared data</string>
     <string name="balance">Balance</string>
     <string name="transactions">Transactions</string>
-    <string name="consent_revoke_title">Revoke consent</string>
-    <string name="consent_revoke_message">\%s service that is provided to you may be interrupted. Are you sure you want to revoke consent?</string>
+    <string name="revoke_consent">Revoke consent</string>
+    <string name="revoke_consent_message">\%s service that is provided to you may be interrupted. Are you sure you want to revoke consent?</string>
 </resources>

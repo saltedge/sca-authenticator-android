@@ -22,7 +22,7 @@ package com.saltedge.authenticator.features.connections.list
 
 import android.text.Spannable
 import android.text.SpannableStringBuilder
-import android.text.style.*
+import android.text.style.StyleSpan
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -31,7 +31,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tools.inflateListItemView
 import com.saltedge.authenticator.tools.loadRoundedImage
@@ -43,6 +43,8 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
     private val titleView = itemView.findViewById<TextView>(R.id.titleView)
     private val subTitleView = itemView.findViewById<TextView>(R.id.subTitleView)
     private val listItemView = itemView.findViewById<RelativeLayout>(R.id.listItemView)
+    private val robotoRegular = ResourcesCompat.getFont(listItemView.context, R.font.roboto_regular)
+    private val robotoMedium = ResourcesCompat.getFont(listItemView.context, R.font.roboto_medium)
 
     init {
         itemView.setOnClickListener {
@@ -51,7 +53,7 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
         }
     }
 
-    fun bind(item: ConnectionViewModel) {
+    fun bind(item: ConnectionItemViewModel) {
         logoImageView.loadRoundedImage(
             imageUrl = item.logoUrl,
             placeholderId = R.drawable.shape_bg_app_logo,
@@ -61,31 +63,23 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
         else listItemView.setBackgroundColor(
             ContextCompat.getColor(listItemView.context, R.color.white_and_blue_black)
         )
+
         titleView.text = item.name
-        val statusDescription = SpannableStringBuilder(item.statusDescription)
-        val spannable = SpannableStringBuilder("${item.consentDescription} $statusDescription")
-        spannable.apply {
+
+        val description = SpannableStringBuilder("${item.consentsCount} \u00B7 ${item.statusDescription}")
+        subTitleView.text = description.apply {
             setSpan(
-                ResourcesCompat.getFont(listItemView.context, R.font.roboto_medium)?.style?.let {
-                    StyleSpan(
-                        it
-                    )
-                },
-                spannable.indexOf(item.consentDescription, 0),
-                item.consentDescription.length,
+                robotoMedium?.style?.let { StyleSpan(it) },
+                0,
+                item.consentsCount.length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             setSpan(
-                ResourcesCompat.getFont(listItemView.context, R.font.roboto_regular)?.style?.let {
-                    StyleSpan(
-                        it
-                    )
-                },
-                spannable.indexOf(item.statusDescription, 0),
-                spannable.length,
+                robotoRegular?.style?.let { StyleSpan(it) },
+                description.indexOf(item.statusDescription, 0),
+                item.statusDescription.length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
-        subTitleView.text = spannable
     }
 }

@@ -22,9 +22,10 @@ package com.saltedge.authenticator.features.connections.list
 
 import android.content.Context
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.connection.getStatus
@@ -34,30 +35,40 @@ import com.saltedge.authenticator.tools.toDateFormatString
 fun collectAllConnectionsViewModels(
     repository: ConnectionsRepositoryAbs,
     context: Context
-): List<ConnectionViewModel> {
+): List<ConnectionItemViewModel> {
     return repository.getAllConnections()
         .sortedBy { it.createdAt }
         .convertConnectionsToViewModels(context)
 }
 
-fun List<Connection>.convertConnectionsToViewModels(context: Context): List<ConnectionViewModel> {
-    return this.map { connection ->
-        ConnectionViewModel(
-            guid = connection.guid,
-            connectionId = connection.id,
-            code = connection.code,
-            name = connection.name,
-            statusDescription = getConnectionStatusDescription(
-                context = context,
-                connection = connection
-            ),
-            logoUrl = connection.logoUrl,
-            reconnectOptionIsVisible = isActiveConnection(connection),
-            deleteMenuItemText = getConnectionDeleteTextResId(connection),
-            deleteMenuItemImage = getConnectionDeleteImageResId(connection),
-            isChecked = false
-        )
-    }
+fun collectConnectionViewModel(
+    guid: GUID,
+    repository: ConnectionsRepositoryAbs,
+    context: Context
+): ConnectionItemViewModel? {
+    return repository.getByGuid(guid)?.convertConnectionToViewModel(context)
+}
+
+fun Connection.convertConnectionToViewModel(context: Context): ConnectionItemViewModel {
+    return ConnectionItemViewModel(
+        guid = this.guid,
+        connectionId = this.id,
+        code = this.code,
+        name = this.name,
+        statusDescription = getConnectionStatusDescription(
+            context = context,
+            connection = this
+        ),
+        logoUrl = this.logoUrl,
+        reconnectOptionIsVisible = isActiveConnection(this),
+        deleteMenuItemText = getConnectionDeleteTextResId(this),
+        deleteMenuItemImage = getConnectionDeleteImageResId(this),
+        isChecked = false
+    )
+}
+
+fun List<Connection>.convertConnectionsToViewModels(context: Context): List<ConnectionItemViewModel> {
+    return this.map { connection -> connection.convertConnectionToViewModel(context) }
 }
 
 private fun isActiveConnection(connection: ConnectionAbs): Boolean {
