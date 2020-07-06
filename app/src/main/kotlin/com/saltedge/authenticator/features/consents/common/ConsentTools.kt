@@ -24,21 +24,59 @@ import android.content.Context
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.sdk.model.ConsentData
 
+/**
+ * Get size of collection and create string like `%count consents`
+ *
+ * @receiver collection of consents
+ * @param appContext
+ * @return spanned string
+ */
 fun List<ConsentData>.toCountString(appContext: Context): String {
-    return if (this.isNotEmpty()) {
-        appContext.resources.getQuantityString(
-            R.plurals.count_of_consents,
-            this.count(),
-            this.count()
-        )
-    } else ""
+    return if (this.isEmpty()) ""
+    else appContext.resources.getQuantityString(
+        R.plurals.count_of_consents,
+        this.count(),
+        this.count()
+    )
 }
 
+/**
+ * Create prefix string for each item of connections list.
+ * Prefix has format `%count consents ·`
+ *
+ * @param count of consents
+ * @param appContext
+ * @return spanned string
+ */
+fun consentsCountPrefixForConnection(count: Int, appContext: Context): String {
+    if (count < 1) return ""
+    val quantityString = appContext.resources.getQuantityString(
+        R.plurals.count_of_consents,
+        count,
+        count
+    )
+    return "$quantityString \u00B7"
+}
+
+/**
+ * Create string with count of days like `@count day left`
+ *
+ * @param countOfDays
+ * @param appContext
+ * @return string
+ */
 fun countOfDaysLeft(countOfDays: Int, appContext: Context): String {
     val template = appContext.getString(R.string.days_left)
     return String.format(template, countOfDays(countOfDays, appContext))
 }
 
+/**
+ * Create string with count of days like `@count day`
+ *
+ * @param countOfDays
+ * @param appContext
+ * @return string
+ */
 fun countOfDays(countOfDays: Int, appContext: Context): String {
     return appContext.resources.getQuantityString(
         R.plurals.count_of_days,

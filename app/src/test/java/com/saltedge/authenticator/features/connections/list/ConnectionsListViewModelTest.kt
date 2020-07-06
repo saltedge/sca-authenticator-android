@@ -23,6 +23,8 @@ package com.saltedge.authenticator.features.connections.list
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.text.SpannableStringBuilder
+import android.text.SpannedString
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
 import com.saltedge.authenticator.R
@@ -213,11 +215,11 @@ class ConnectionsListViewModelTest {
             ConnectionItemViewModel(
                 guid = "guid1",
                 connectionId = "1",
-                code = "demobank1",
                 name = "Demobank1",
                 statusDescription = "Inactive. Please reconnect.",
+                statusDescriptionColorRes = R.color.red_and_red_light,
                 logoUrl = "",
-                reconnectOptionIsVisible = true,
+                reconnectMenuItemIsVisible = true,
                 deleteMenuItemText = R.string.actions_remove,
                 deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
                 isChecked = false
@@ -235,12 +237,13 @@ class ConnectionsListViewModelTest {
                 ConnectionItemViewModel(
                     guid = "guid1",
                     connectionId = "1",
-                    code = "demobank1",
                     name = "Demobank1",
                     statusDescription = "Inactive. Please reconnect.",
+                    statusDescriptionColorRes = R.color.red_and_red_light,
                     logoUrl = "",
-                    consentsCount = "1 consent",
-                    reconnectOptionIsVisible = true,
+                    consentsDescription = "1 consent ·",
+                    consentMenuItemIsVisible = true,
+                    reconnectMenuItemIsVisible = true,
                     deleteMenuItemText = R.string.actions_remove,
                     deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
                     isChecked = false
@@ -258,11 +261,11 @@ class ConnectionsListViewModelTest {
             ConnectionItemViewModel(
                 guid = "guid1",
                 connectionId = "",
-                code = "demobank1",
                 name = "Demobank1",
                 statusDescription = "Inactive. Please reconnect.",
+                statusDescriptionColorRes = R.color.red_and_red_light,
                 logoUrl = "",
-                reconnectOptionIsVisible = true,
+                reconnectMenuItemIsVisible = true,
                 deleteMenuItemText = R.string.actions_remove,
                 deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
                 isChecked = false
@@ -280,12 +283,11 @@ class ConnectionsListViewModelTest {
                 ConnectionItemViewModel(
                     guid = "guid1",
                     connectionId = "",
-                    code = "demobank1",
                     name = "Demobank1",
                     statusDescription = "Inactive. Please reconnect.",
+                    statusDescriptionColorRes = R.color.red_and_red_light,
                     logoUrl = "",
-                    consentsCount = "",
-                    reconnectOptionIsVisible = true,
+                    reconnectMenuItemIsVisible = true,
                     deleteMenuItemText = R.string.actions_remove,
                     deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
                     isChecked = false
@@ -310,11 +312,11 @@ class ConnectionsListViewModelTest {
                 ConnectionItemViewModel(
                     guid = "guid1",
                     connectionId = "",
-                    code = "demobank1",
                     name = "Demobank1",
                     statusDescription = "Inactive. Please reconnect.",
+                    statusDescriptionColorRes = R.color.red_and_red_light,
                     logoUrl = "",
-                    reconnectOptionIsVisible = true,
+                    reconnectMenuItemIsVisible = true,
                     deleteMenuItemText = R.string.actions_remove,
                     deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
                     isChecked = false
@@ -339,11 +341,11 @@ class ConnectionsListViewModelTest {
                 ConnectionItemViewModel(
                     guid = "guid2",
                     connectionId = "",
-                    code = "demobank2",
                     name = "Demobank2",
                     statusDescription = "Linked on 1 January 1970",
+                    statusDescriptionColorRes = R.color.dark_60_and_grey_100,
                     logoUrl = "",
-                    reconnectOptionIsVisible = false,
+                    reconnectMenuItemIsVisible = false,
                     deleteMenuItemText = R.string.actions_delete,
                     deleteMenuItemImage = R.drawable.ic_menu_delete_24dp,
                     isChecked = false

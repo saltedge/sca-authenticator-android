@@ -25,11 +25,11 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.connection.getStatus
 import com.saltedge.authenticator.sdk.tools.toDateTime
+import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.toDateFormatString
 
 fun collectAllConnectionsViewModels(
@@ -41,26 +41,15 @@ fun collectAllConnectionsViewModels(
         .convertConnectionsToViewModels(context)
 }
 
-fun collectConnectionViewModel(
-    guid: GUID,
-    repository: ConnectionsRepositoryAbs,
-    context: Context
-): ConnectionItemViewModel? {
-    return repository.getByGuid(guid)?.convertConnectionToViewModel(context)
-}
-
 fun Connection.convertConnectionToViewModel(context: Context): ConnectionItemViewModel {
     return ConnectionItemViewModel(
         guid = this.guid,
         connectionId = this.id,
-        code = this.code,
         name = this.name,
-        statusDescription = getConnectionStatusDescription(
-            context = context,
-            connection = this
-        ),
+        statusDescription = getConnectionStatusDescription(context = context, connection = this),
+        statusDescriptionColorRes = getConnectionStatusColor(connection = this),
         logoUrl = this.logoUrl,
-        reconnectOptionIsVisible = isActiveConnection(this),
+        reconnectMenuItemIsVisible = isActiveConnection(this),
         deleteMenuItemText = getConnectionDeleteTextResId(this),
         deleteMenuItemImage = getConnectionDeleteImageResId(this),
         isChecked = false
@@ -90,5 +79,12 @@ private fun getConnectionStatusDescription(context: Context, connection: Connect
             val date = connection.updatedAt.toDateTime().toDateFormatString(context)
             "${context.getString(R.string.connection_status_linked_on)} $date"
         }
+    }
+}
+
+fun getConnectionStatusColor(connection: Connection): ResId {
+    return when (connection.getStatus()) {
+        ConnectionStatus.INACTIVE -> R.color.red_and_red_light
+        ConnectionStatus.ACTIVE -> R.color.dark_60_and_grey_100
     }
 }

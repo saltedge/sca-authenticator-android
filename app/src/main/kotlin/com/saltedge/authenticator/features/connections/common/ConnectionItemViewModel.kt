@@ -20,18 +20,23 @@
  */
 package com.saltedge.authenticator.features.connections.common
 
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import com.saltedge.authenticator.tools.ResId
 
 data class ConnectionItemViewModel(
     val guid: String,
     val connectionId: String,
-    val code: String,
     var name: String,
     val logoUrl: String,
-    var consentsCount: String = "",
-    val statusDescription: String,
-    val reconnectOptionIsVisible: Boolean,
+    var consentsDescription: String = "",
+    var statusDescription: String,
+    var statusDescriptionColorRes: ResId,
+    val reconnectMenuItemIsVisible: Boolean,
+    var consentMenuItemIsVisible: Boolean = false,
     @StringRes var deleteMenuItemText: Int,
     @DrawableRes var deleteMenuItemImage: Int,
     var isChecked: Boolean

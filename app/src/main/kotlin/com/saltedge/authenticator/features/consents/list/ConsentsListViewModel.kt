@@ -24,11 +24,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.Spanned
-import android.text.style.ForegroundColorSpan
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CONSENT_REQUEST_CODE
@@ -50,6 +47,7 @@ import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.tools.appendColoredText
 import com.saltedge.authenticator.tools.daysTillExpire
 import com.saltedge.authenticator.tools.guid
 import kotlinx.coroutines.*
@@ -159,27 +157,22 @@ class ConsentsListViewModel(
     }
 
     private fun DateTime.toExpiresAtDescription(): Spanned {
-        val baseColorSpan = ForegroundColorSpan(ContextCompat.getColor(appContext, R.color.dark_60_and_grey_100))
-        val alertSpan = ForegroundColorSpan(ContextCompat.getColor(appContext, R.color.red_and_red_light))
-
         val expiresInString = appContext.getString(R.string.expires_in)
         val daysLeftCount = this.daysTillExpire()
         val daysTillExpireDescription = countOfDays(daysLeftCount, appContext)
 
-        val result = SpannableStringBuilder("$expiresInString $daysTillExpireDescription")
-
-        if (daysLeftCount > 7) {
-            result.setSpan(baseColorSpan, 0, result.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        } else {
-            result.setSpan(baseColorSpan, 0, expiresInString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            result.setSpan(
-                alertSpan,
-                result.indexOf(daysTillExpireDescription),
-                result.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        val result = SpannableStringBuilder()
+        return if (daysLeftCount > 7) {
+            result.appendColoredText(
+                "$expiresInString $daysTillExpireDescription",
+                R.color.dark_60_and_grey_100,
+                appContext
             )
+        } else {
+            result
+                .appendColoredText("$expiresInString ", R.color.dark_60_and_grey_100, appContext)
+                .appendColoredText(daysTillExpireDescription, R.color.red_and_red_light, appContext)
         }
-        return result
     }
 
     companion object {

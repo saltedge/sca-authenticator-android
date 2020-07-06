@@ -20,9 +20,16 @@
  */
 package com.saltedge.authenticator.tools
 
+import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.util.TypedValue
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.saltedge.authenticator.R
 
@@ -68,4 +75,22 @@ fun SwipeRefreshLayout.stopRefresh() {
     isRefreshing = false
     destroyDrawingCache()
     clearAnimation()
+}
+
+fun SpannableStringBuilder.appendColoredText(
+    text: String,
+    colorRes: ResId,
+    context: Context
+): SpannableStringBuilder {
+    val colorSpan = ForegroundColorSpan(ContextCompat.getColor(context, colorRes))
+    return this.append(text, colorSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+}
+
+fun SpannableStringBuilder.appendFacedText(
+    text: String,
+    fontRes: ResId,
+    context: Context
+): SpannableStringBuilder {
+    val span = StyleSpan(ResourcesCompat.getFont(context, fontRes)?.style ?: return this)
+    return this.append(text, span, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 }

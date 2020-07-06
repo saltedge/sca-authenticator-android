@@ -32,7 +32,7 @@ import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.RENAME_REQUEST_CODE
 import com.saltedge.authenticator.features.authorizations.common.collectConnectionsAndKeys
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
-import com.saltedge.authenticator.features.consents.common.toCountString
+import com.saltedge.authenticator.features.consents.common.consentsCountPrefixForConnection
 import com.saltedge.authenticator.features.consents.list.ConsentsListViewModel
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -72,11 +72,11 @@ class ConnectionsListViewModel(
         )
     private var consents: Map<GUID, List<ConsentData>> = emptyMap()
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    var onListItemClickEvent = MutableLiveData<ViewModelEvent<Int>>()
-    var onSupportClickEvent = MutableLiveData<ViewModelEvent<String?>>()
-    var onReconnectClickEvent = MutableLiveData<ViewModelEvent<String>>()
-    var onRenameClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
-    var onDeleteClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
+    val onListItemClickEvent = MutableLiveData<ViewModelEvent<Int>>()
+    val onSupportClickEvent = MutableLiveData<ViewModelEvent<String?>>()
+    val onReconnectClickEvent = MutableLiveData<ViewModelEvent<String>>()
+    val onRenameClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
+    val onDeleteClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onViewConsentsClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val listVisibility = MutableLiveData<Int>()
     val emptyViewVisibility = MutableLiveData<Int>()
@@ -258,7 +258,11 @@ class ConnectionsListViewModel(
         consents: Map<ConnectionID, List<ConsentData>>
     ): List<ConnectionItemViewModel> {
         return items.apply {
-            forEach { it.consentsCount = consents[it.guid]?.toCountString(appContext) ?: "" }
+            forEach {
+                val count = consents[it.guid]?.count() ?: 0
+                it.consentsDescription = consentsCountPrefixForConnection(count, appContext)
+                it.consentMenuItemIsVisible = count > 0
+            }
         }
     }
 

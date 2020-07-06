@@ -39,11 +39,11 @@ class SelectConnectionsFragmentTest {
             ConnectionItemViewModel(
                 guid = "guid",
                 connectionId = "connectionId",
-                code = "code",
                 name = "name",
                 logoUrl = "logoUrl",
                 statusDescription = "statusDescription",
-                reconnectOptionIsVisible = false,
+                statusDescriptionColorRes = R.color.dark_60_and_grey_100,
+                reconnectMenuItemIsVisible = false,
                 deleteMenuItemText = R.string.actions_delete,
                 deleteMenuItemImage = R.drawable.ic_menu_delete_24dp,
                 isChecked = false

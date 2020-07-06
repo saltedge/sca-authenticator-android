@@ -106,5 +106,11 @@ val FragmentActivity.authenticatorApp: AuthenticatorApplication?
 val Fragment.authenticatorApp: AuthenticatorApplication?
     get() = this.activity?.authenticatorApp
 
+/**
+ * extract guid string value from bundle
+ *
+ * @receiver bundle of data
+ * @return guid string or null if not exist
+ */
 val Bundle.guid: GUID?
     get() = getString(KEY_GUID)

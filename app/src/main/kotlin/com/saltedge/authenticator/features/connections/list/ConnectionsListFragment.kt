@@ -223,8 +223,8 @@ class ConnectionsListFragment : BaseFragment(),
             val deleteTextView = popupView.findViewById<TextView>(R.id.deleteTextView)
             val consentView = popupView.findViewById<ViewGroup>(R.id.consentView)
 
-            consentView.setVisible(item.consentsCount.isNotEmpty())
-            reconnectView.setVisible(item.reconnectOptionIsVisible)
+            consentView.setVisible(item.consentMenuItemIsVisible)
+            reconnectView.setVisible(item.reconnectMenuItemIsVisible)
             deleteTextView.setText(item.deleteMenuItemText)
             deleteImageView.setImageResource(item.deleteMenuItemImage)
 
@@ -252,7 +252,7 @@ class ConnectionsListFragment : BaseFragment(),
             popupWindow.isOutsideTouchable = true
             popupWindow.elevation = convertDpToPx(30f).toFloat()
 
-            val itemsCount = if (item.reconnectOptionIsVisible) 4 else 3
+            val itemsCount = if (item.reconnectMenuItemIsVisible) 4 else 3
             val popupMenuItemHeight = anchorView.context.resources.getDimensionPixelSize(R.dimen.popupMenuItemHeight)
             val popupMenuTpBottomPadding = anchorView.context.resources.getDimensionPixelSize(R.dimen.popupMenuTpBottomPadding)
             val popupHeight = popupMenuItemHeight * itemsCount + popupMenuTpBottomPadding * 2
