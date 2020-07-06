@@ -37,44 +37,44 @@ import org.mockito.Mockito.mock
 import org.robolectric.RobolectricTestRunner
 import java.security.PrivateKey
 
-@RunWith(RobolectricTestRunner::class)
-class ConsentsListViewModelTest {
-
-    private lateinit var viewModel: ConsentsListViewModel
-    private val context: Context = ApplicationProvider.getApplicationContext()
-    private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
-    private val mockKeyStoreManager = mock(KeyStoreManagerAbs::class.java)
-    private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
-    private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
-    private val mockCryptoTools = mock(CryptoToolsAbs::class.java)
-    private val connections = listOf(
-        Connection().apply {
-            guid = "guid2"
-            code = "demobank2"
-            name = "Demobank2"
-            status = "${ConnectionStatus.ACTIVE}"
-            accessToken = "token2"
-            createdAt = 300L
-            updatedAt = 300L
-        }
-    )
-    private val mockConnectionAndKey = ConnectionAndKey(connections[0], mockPrivateKey)
-
-    @Before
-    fun setUp() {
-        Mockito.doReturn(connections).`when`(mockConnectionsRepository).getAllConnections()
-        Mockito.doReturn(connections[0]).`when`(mockConnectionsRepository).getByGuid("guid2")
-        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(connections[1]))
-        given(mockKeyStoreManager.createConnectionAndKeyModel(connections[1])).willReturn(
-            mockConnectionAndKey
-        )
-
-        viewModel = ConsentsListViewModel(
-            appContext = context,
-            connectionsRepository = mockConnectionsRepository,
-            keyStoreManager = mockKeyStoreManager,
-            apiManager = mockApiManager,
-            cryptoTools = mockCryptoTools
-        )
-    }
-}
+//@RunWith(RobolectricTestRunner::class)
+//class ConsentsListViewModelTest {
+//
+//    private lateinit var viewModel: ConsentsListViewModel
+//    private val context: Context = ApplicationProvider.getApplicationContext()
+//    private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
+//    private val mockKeyStoreManager = mock(KeyStoreManagerAbs::class.java)
+//    private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
+//    private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
+//    private val mockCryptoTools = mock(CryptoToolsAbs::class.java)
+//    private val connections = listOf(
+//        Connection().apply {
+//            guid = "guid2"
+//            code = "demobank2"
+//            name = "Demobank2"
+//            status = "${ConnectionStatus.ACTIVE}"
+//            accessToken = "token2"
+//            createdAt = 300L
+//            updatedAt = 300L
+//        }
+//    )
+//    private val mockConnectionAndKey = ConnectionAndKey(connections[0], mockPrivateKey)
+//
+//    @Before
+//    fun setUp() {
+//        Mockito.doReturn(connections).`when`(mockConnectionsRepository).getAllConnections()
+//        Mockito.doReturn(connections[0]).`when`(mockConnectionsRepository).getByGuid("guid2")
+//        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(connections[1]))
+//        given(mockKeyStoreManager.createConnectionAndKeyModel(connections[1])).willReturn(
+//            mockConnectionAndKey
+//        )
+//
+//        viewModel = ConsentsListViewModel(
+//            appContext = context,
+//            connectionsRepository = mockConnectionsRepository,
+//            keyStoreManager = mockKeyStoreManager,
+//            apiManager = mockApiManager,
+//            cryptoTools = mockCryptoTools
+//        )
+//    }
+//}

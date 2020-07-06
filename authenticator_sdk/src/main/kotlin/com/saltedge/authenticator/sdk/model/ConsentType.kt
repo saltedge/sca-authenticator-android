@@ -18,11 +18,24 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.consents.common
+package com.saltedge.authenticator.sdk.model
 
-data class ConsentItemViewModel(
-    val id: String,
-    var tppName: String,
-    var consentTypeDescription: String,
-    var expiresAt: String
-)
+import java.util.*
+
+enum class ConsentType {
+    AISP, PISP_FUTURE, PISP_RECURRING;
+}
+
+/**
+ * Convert type string to enum object or null if unknown
+ *
+ * @receiver type string
+ * @return ConsentType, optional.
+ */
+fun String.toConsentType(): ConsentType? {
+    return try {
+        ConsentType.valueOf(this.toUpperCase(Locale.US))
+    } catch (e: Exception) {
+        null
+    }
+}

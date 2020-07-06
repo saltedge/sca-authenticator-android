@@ -23,6 +23,8 @@ package com.saltedge.authenticator.features.connections.list
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.text.SpannableStringBuilder
+import android.text.SpannedString
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
 import com.saltedge.authenticator.R
@@ -89,16 +91,16 @@ class ConnectionsListViewModelTest {
     private val consentData: List<ConsentData> = listOf(
         ConsentData(
             id = "555",
+            connectionId = "1",
             userId = "1",
             tppName = "title",
-            consentType = "aisp",
+            consentTypeString = "aisp",
             accounts = emptyList(),
             expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
             createdAt = DateTime(0).withZone(DateTimeZone.UTC),
             sharedData = ConsentSharedData(balance = true, transactions = true)
         )
     )
-
 
     @Before
     fun setUp() {
@@ -212,12 +214,12 @@ class ConnectionsListViewModelTest {
         val connection: List<ConnectionItemViewModel> = listOf(
             ConnectionItemViewModel(
                 guid = "guid1",
-                connectionId = "",
-                code = "demobank1",
+                connectionId = "1",
                 name = "Demobank1",
                 statusDescription = "Inactive. Please reconnect.",
+                statusDescriptionColorRes = R.color.red_and_red_light,
                 logoUrl = "",
-                reconnectOptionIsVisible = true,
+                reconnectMenuItemIsVisible = true,
                 deleteMenuItemText = R.string.actions_remove,
                 deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
                 isChecked = false
@@ -234,13 +236,14 @@ class ConnectionsListViewModelTest {
             listOf(
                 ConnectionItemViewModel(
                     guid = "guid1",
-                    connectionId = "",
-                    code = "demobank1",
+                    connectionId = "1",
                     name = "Demobank1",
                     statusDescription = "Inactive. Please reconnect.",
+                    statusDescriptionColorRes = R.color.red_and_red_light,
                     logoUrl = "",
-                    consentDescription = "1 consent ·",
-                    reconnectOptionIsVisible = true,
+                    consentsDescription = "1 consent ·",
+                    consentMenuItemIsVisible = true,
+                    reconnectMenuItemIsVisible = true,
                     deleteMenuItemText = R.string.actions_remove,
                     deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
                     isChecked = false
@@ -258,11 +261,11 @@ class ConnectionsListViewModelTest {
             ConnectionItemViewModel(
                 guid = "guid1",
                 connectionId = "",
-                code = "demobank1",
                 name = "Demobank1",
                 statusDescription = "Inactive. Please reconnect.",
+                statusDescriptionColorRes = R.color.red_and_red_light,
                 logoUrl = "",
-                reconnectOptionIsVisible = true,
+                reconnectMenuItemIsVisible = true,
                 deleteMenuItemText = R.string.actions_remove,
                 deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
                 isChecked = false
@@ -280,12 +283,11 @@ class ConnectionsListViewModelTest {
                 ConnectionItemViewModel(
                     guid = "guid1",
                     connectionId = "",
-                    code = "demobank1",
                     name = "Demobank1",
                     statusDescription = "Inactive. Please reconnect.",
+                    statusDescriptionColorRes = R.color.red_and_red_light,
                     logoUrl = "",
-                    consentDescription = "",
-                    reconnectOptionIsVisible = true,
+                    reconnectMenuItemIsVisible = true,
                     deleteMenuItemText = R.string.actions_remove,
                     deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
                     isChecked = false
@@ -310,11 +312,11 @@ class ConnectionsListViewModelTest {
                 ConnectionItemViewModel(
                     guid = "guid1",
                     connectionId = "",
-                    code = "demobank1",
                     name = "Demobank1",
                     statusDescription = "Inactive. Please reconnect.",
+                    statusDescriptionColorRes = R.color.red_and_red_light,
                     logoUrl = "",
-                    reconnectOptionIsVisible = true,
+                    reconnectMenuItemIsVisible = true,
                     deleteMenuItemText = R.string.actions_remove,
                     deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
                     isChecked = false
@@ -339,11 +341,11 @@ class ConnectionsListViewModelTest {
                 ConnectionItemViewModel(
                     guid = "guid2",
                     connectionId = "",
-                    code = "demobank2",
                     name = "Demobank2",
                     statusDescription = "Linked on 1 January 1970",
+                    statusDescriptionColorRes = R.color.dark_60_and_grey_100,
                     logoUrl = "",
-                    reconnectOptionIsVisible = false,
+                    reconnectMenuItemIsVisible = false,
                     deleteMenuItemText = R.string.actions_delete,
                     deleteMenuItemImage = R.drawable.ic_menu_delete_24dp,
                     isChecked = false

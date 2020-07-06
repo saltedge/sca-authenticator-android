@@ -65,7 +65,6 @@ class AuthorizationDetailsViewModel(
     private var closeAppOnBackPress: Boolean = true
     var titleRes: ResId = R.string.authorization_feature_title//TODO TEST
         private set
-
     private var connectionAndKey: ConnectionAndKey? = null
     private var pollingService: SingleAuthorizationPollingService = apiManager.createSingleAuthorizationPollingService()
     private val viewMode: ViewMode

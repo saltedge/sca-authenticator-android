@@ -32,11 +32,8 @@ class SelectConnectionsViewModel : ViewModel(), LifecycleObserver {
     val listItems = MutableLiveData<List<ConnectionItemViewModel>>()
     val listItemsValues: List<ConnectionItemViewModel>
         get() = listItems.value ?: emptyList()
-
-    var onListItemClickEvent = MutableLiveData<ViewModelEvent<Int>>()
-        private set
-    var onProceedClickEvent = MutableLiveData<GUID>()
-        private set
+    val onListItemClickEvent = MutableLiveData<ViewModelEvent<Int>>()
+    val onProceedClickEvent = MutableLiveData<GUID>()
 
     fun setInitialData(data: List<ConnectionItemViewModel>) {
         listItems.postValue(data)

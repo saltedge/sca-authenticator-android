@@ -176,6 +176,29 @@ fun FragmentActivity.showSecurityAlertDialog(listener: DialogInterface.OnClickLi
 }
 
 /**
+ * Show dialog for launcher screen about Security breach
+ *
+ * @receiver FragmentActivity
+ * @param listener - on dialog action click listener
+ * @return AlertDialog object or null
+ */
+fun FragmentActivity.showConfirmRevokeConsentDialog(
+    message: String, listener: DialogInterface.OnClickListener
+): AlertDialog? {
+    return try {
+        AlertDialog.Builder(this, R.style.AlertDialogTheme)
+            .setTitle(R.string.revoke_consent)
+            .setMessage(message)
+            .setPositiveButton(R.string.actions_confirm, listener)
+            .setNegativeButton(R.string.actions_cancel, null)
+            .show()
+    } catch (e: java.lang.Exception) {
+        e.log()
+        null
+    }
+}
+
+/**
  * Show dialog with given title and message
  *
  * @receiver FragmentActivity

@@ -20,27 +20,19 @@
  */
 package com.saltedge.authenticator.features.consents.list
 
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
 import android.view.ViewGroup
-import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.consents.common.ConsentItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tools.inflateListItemView
 
 class ConsentItemHolder(parent: ViewGroup, private val listener: ListItemClickListener?) :
-    RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_consent)) {
-
+    RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_consent))
+{
     private val titleView = itemView.findViewById<TextView>(R.id.titleView)
-    private val subTitleView = itemView.findViewById<TextView>(R.id.subTitleView)
-    private val listItemView = itemView.findViewById<RelativeLayout>(R.id.listItemView)
-    private val dateView = itemView.findViewById<TextView>(R.id.dateView)
-    private val description = listItemView.context.getString(R.string.consents_expires_in)
+    private val consentType = itemView.findViewById<TextView>(R.id.subTitleView)
+    private val expiresAt = itemView.findViewById<TextView>(R.id.dateView)
 
     init {
         itemView.setOnClickListener {
@@ -51,21 +43,7 @@ class ConsentItemHolder(parent: ViewGroup, private val listener: ListItemClickLi
 
     fun bind(item: ConsentItemViewModel) {
         titleView.text = item.tppName
-        subTitleView.text = item.consentTypeDescription
-
-        val consentExpiresString = SpannableStringBuilder("$description ${item.expiresAt}")
-        consentExpiresString.apply {
-            setSpan(ForegroundColorSpan(getColor(listItemView.context, R.color.secondary_text)),
-                consentExpiresString.indexOf(description, 0),
-                description.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-            setSpan(ForegroundColorSpan(getColor(listItemView.context, R.color.red)),
-                consentExpiresString.indexOf(item.expiresAt, 0),
-                consentExpiresString.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-        }
-        dateView.text = consentExpiresString
+        consentType.text = item.consentTypeDescription
+        expiresAt.text = item.expiresAtDescription
     }
 }

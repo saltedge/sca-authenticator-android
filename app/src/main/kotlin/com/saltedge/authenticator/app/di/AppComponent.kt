@@ -28,6 +28,7 @@ import com.saltedge.authenticator.features.authorizations.list.AuthorizationsLis
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment
+import com.saltedge.authenticator.features.consents.details.ConsentDetailsFragment
 import com.saltedge.authenticator.features.consents.list.ConsentsListFragment
 import com.saltedge.authenticator.features.launcher.LauncherActivity
 import com.saltedge.authenticator.features.main.MainActivity
@@ -79,4 +80,5 @@ interface AppComponent {
     fun inject(fragment: LicensesFragment)
     fun inject(fragment: LanguageSelectDialog)
     fun inject(fragment: PasscodeEditFragment)
+    fun inject(fragment: ConsentDetailsFragment)
 }

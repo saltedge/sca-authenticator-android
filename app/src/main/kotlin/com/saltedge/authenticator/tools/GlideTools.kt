@@ -27,7 +27,7 @@ fun ImageView.loadRoundedImage(imageUrl: String?, placeholderId: ResId, cornerRa
             .error(placeholderId)
             .fitCenter()
             .transform(RoundedBitmapTransformation(
-                backgroundColor = ContextCompat.getColor(context, R.color.connections_list_logo),
+                backgroundColor = ContextCompat.getColor(context, R.color.grey_light_extra_and_dark_100),
                 cornerRadius = cornerRadius
             ))
             .into(this)

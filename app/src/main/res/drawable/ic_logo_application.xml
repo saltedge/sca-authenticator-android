@@ -33,5 +33,5 @@
       android:pathData="M33.0008,32.9998m-20.3846,0a20.3846,20.3846 0,1 1,40.7692 0a20.3846,20.3846 0,1 1,-40.7692 0"
       android:strokeWidth="7"
       android:fillColor="#00000000"
-      android:strokeColor="@color/inner_circle_of_the_logo"/>
+      android:strokeColor="@color/primary_light_extra_and_primary_light"/>
 </vector>

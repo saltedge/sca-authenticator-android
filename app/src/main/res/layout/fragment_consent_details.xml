@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2020 Salt Edge Inc.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data class="ConsentDetailsBinding">
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.saltedge.authenticator.features.consents.details.ConsentDetailsViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/theme_background"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/dp_16"
+        android:paddingEnd="@dimen/dp_16"
+        android:paddingBottom="@dimen/dp_16">
+
+        <TextView
+            android:id="@+id/daysLeftView"
+            style="@style/Text16Secondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:text="@{viewModel.daysLeft}"
+            tools:text="16 days left" />
+
+        <TextView
+            android:id="@+id/revokeView"
+            style="@style/Text14Blue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/dp_10"
+            android:text="@string/action_revoke" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/dp_16"
+            android:layout_below="@+id/daysLeftView">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/titleView"
+                    style="@style/Text24Primary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{viewModel.consentTitle}"
+                    tools:text="Consent for account information access" />
+
+                <TextView
+                    android:id="@+id/descriptionView"
+                    style="@style/Text18Primary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:text="@{viewModel.consentDescription}"
+                    tools:text="Consent granted to Fentury application on the following accounts from Demo Bank"/>
+
+                <com.saltedge.authenticator.features.consents.details.view.ConsentAccountsView
+                    android:id="@+id/accountsView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_10"
+                    app:accounts="@{viewModel.accounts}" />
+
+                <LinearLayout
+                    android:id="@+id/sharedDataView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:background="@drawable/shape_bg_passcode_label"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/dp_10"
+                    android:visibility="@{viewModel.sharedDataVisibility}">
+
+                    <TextView
+                        style="@style/Text14Primary"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/dp_6"
+                        android:layout_weight="1"
+                        android:lines="1"
+                        android:text="@string/shared_data"/>
+
+                    <TextView
+                        style="@style/ConsentSharedLabel"
+                        android:text="@string/balance"
+                        android:visibility="@{viewModel.sharedBalanceVisibility}"/>
+
+                    <TextView
+                        style="@style/ConsentSharedLabel"
+                        android:text="@string/transactions"
+                        android:visibility="@{viewModel.sharedTransactionsVisibility}"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/grantedView"
+                    style="@style/ConsentExpiresLabel"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:text="@{viewModel.consentGranted}"
+                    tools:text="Granted: May 12, 2020"/>
+
+                <TextView
+                    android:id="@+id/expiresAtView"
+                    style="@style/ConsentExpiresLabel"
+                    android:text="@{viewModel.consentExpires}"
+                    tools:text="Expires: August 12, 2020"/>
+            </LinearLayout>
+        </ScrollView>
+    </RelativeLayout>
+</layout>

@@ -32,7 +32,8 @@ import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.RENAME_REQUEST_CODE
 import com.saltedge.authenticator.features.authorizations.common.collectConnectionsAndKeys
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
-import com.saltedge.authenticator.features.consents.list.KEY_CONSENTS
+import com.saltedge.authenticator.features.consents.common.consentsCountPrefixForConnection
+import com.saltedge.authenticator.features.consents.list.ConsentsListViewModel
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -55,9 +56,12 @@ class ConnectionsListViewModel(
     private val keyStoreManager: KeyStoreManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
     private val cryptoTools: CryptoToolsAbs
-) : ViewModel(), LifecycleObserver, ConnectionsRevokeListener, FetchEncryptedDataListener,
-    CoroutineScope {
-
+) : ViewModel(),
+    LifecycleObserver,
+    ConnectionsRevokeListener,
+    FetchEncryptedDataListener,
+    CoroutineScope
+{
     private val decryptJob: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = decryptJob + Dispatchers.IO
@@ -67,24 +71,15 @@ class ConnectionsListViewModel(
             keyStoreManager
         )
     private var consents: Map<GUID, List<ConsentData>> = emptyMap()
-
-    var onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
-        private set
-    var onListItemClickEvent = MutableLiveData<ViewModelEvent<Int>>()
-        private set
-    var onSupportClickEvent = MutableLiveData<ViewModelEvent<String?>>()
-        private set
-    var onReconnectClickEvent = MutableLiveData<ViewModelEvent<String>>()
-        private set
-    var onRenameClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
-        private set
-    var onDeleteClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
-        private set
+    val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onListItemClickEvent = MutableLiveData<ViewModelEvent<Int>>()
+    val onSupportClickEvent = MutableLiveData<ViewModelEvent<String?>>()
+    val onReconnectClickEvent = MutableLiveData<ViewModelEvent<String>>()
+    val onRenameClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
+    val onDeleteClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onViewConsentsClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
-
     val listVisibility = MutableLiveData<Int>()
     val emptyViewVisibility = MutableLiveData<Int>()
-
     val listItems = MutableLiveData<List<ConnectionItemViewModel>>()
     val listItemsValues: List<ConnectionItemViewModel>
         get() = listItems.value ?: emptyList()
@@ -154,12 +149,10 @@ class ConnectionsListViewModel(
     fun onViewConsentsOptionSelected() {
         val index = onListItemClickEvent.value?.peekContent() ?: return
         val connectionGuid = listItemsValues.getOrNull(index)?.guid ?: return
-        val listOfConsents = arrayListOf(consents[connectionGuid])
 
-        onViewConsentsClickEvent.postValue(ViewModelEvent(Bundle()
-            .apply { putString(KEY_GUID, connectionGuid) }
-            .apply { putSerializable(KEY_CONSENTS, listOfConsents) })
-        )
+        onViewConsentsClickEvent.postValue(ViewModelEvent(
+            ConsentsListViewModel.newBundle(connectionGuid, consents[connectionGuid])
+        ))
     }
 
     fun onContactSupportOptionSelected() {
@@ -266,16 +259,9 @@ class ConnectionsListViewModel(
     ): List<ConnectionItemViewModel> {
         return items.apply {
             forEach {
-                val consentsSize = consents[it.guid]?.size ?: 0
-                it.consentDescription = if (consentsSize > 0) {
-                    appContext.resources.getQuantityString(
-                        R.plurals.ui_consents,
-                        consentsSize,
-                        consentsSize
-                    ) + " ·"
-                } else {
-                    ""
-                }
+                val count = consents[it.guid]?.count() ?: 0
+                it.consentsDescription = consentsCountPrefixForConnection(count, appContext)
+                it.consentMenuItemIsVisible = count > 0
             }
         }
     }

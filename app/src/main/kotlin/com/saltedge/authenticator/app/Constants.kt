@@ -26,6 +26,7 @@ const val DELETE_REQUEST_CODE = 325
 const val DELETE_ALL_REQUEST_CODE = 327
 const val CAMERA_PERMISSION_REQUEST_CODE = 328
 const val CONNECTIONS_REQUEST_CODE = 555
+const val CONSENT_REQUEST_CODE = 556
 
 const val KEY_ACCESS_TOKEN = "accessToken" // used for database queries
 const val KEY_CREATED_AT = "createdAt" // used for database queries

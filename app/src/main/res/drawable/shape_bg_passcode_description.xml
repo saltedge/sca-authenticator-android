@@ -23,5 +23,5 @@
     android:shape="rectangle">
 
     <corners android:radius="@dimen/dp_52" />
-    <solid android:color="@color/passcode_description_background" />
+    <solid android:color="@color/grey_light_extra_and_dark_100" />
 </shape>

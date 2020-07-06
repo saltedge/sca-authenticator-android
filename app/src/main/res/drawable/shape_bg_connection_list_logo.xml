@@ -21,6 +21,6 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <corners android:radius="@dimen/connections_list_logo_radius" />
-    <solid android:color="@color/connections_list_logo" />
+    <solid android:color="@color/grey_light_extra_and_dark_100" />
 </shape>
 
