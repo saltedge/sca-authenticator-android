@@ -33,7 +33,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.features.main.buildWarningSnack
+import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
@@ -108,20 +108,19 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener {
         })
         viewModel.clearSuccessEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let {
-                activity?.buildWarningSnack(
+                activity?.showWarningSnack(
                     textResId = R.string.settings_clear_success,
                     snackBarDuration = Snackbar.LENGTH_SHORT
-                )?.show()
+                )
             }
         })
         viewModel.screenshotClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let {
                 view?.let {
-                    activity?.buildWarningSnack(
+                    activity?.showWarningSnack(
                         textResId = R.string.settings_restart_app,
                         snackBarDuration = Snackbar.LENGTH_LONG
                     )?.setAction(getString(android.R.string.ok)) { viewModel.restartConfirmed() }
-                    ?.show()
                 }
             }
         })

@@ -28,31 +28,44 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.setFont
 
-fun FragmentActivity.buildWarningSnack(
+fun FragmentActivity.showWarningSnack(
     textResId: Int,
     snackBarDuration: Int = Snackbar.LENGTH_INDEFINITE,
     actionResId: Int? = null
-) = getSnackbarAnchorView()?.buildWarningSnack(textResId, snackBarDuration, actionResId)
+) = showWarningSnack(this.getString(textResId), snackBarDuration, actionResId)
 
-fun View.buildWarningSnack(textResId: Int, snackBarDuration: Int, actionResId: Int?) = buildSnackbar(
-    textResId = textResId,
+fun FragmentActivity.showWarningSnack(
+    message: String,
+    snackBarDuration: Int = Snackbar.LENGTH_INDEFINITE,
+    actionResId: Int? = null
+) = getSnackbarAnchorView()?.showWarningSnack(message, snackBarDuration, actionResId)
+
+fun FragmentActivity.buildWarningSnack(
+    messageRes: ResId,
+    snackBarDuration: Int = Snackbar.LENGTH_INDEFINITE,
+    actionResId: Int? = null
+) = getSnackbarAnchorView()?.buildSnackbar(this.getString(messageRes), snackBarDuration, actionResId)
+
+fun View.showWarningSnack(message: String, snackBarDuration: Int, actionResId: Int?): Snackbar = buildSnackbar(
+    message = message,
     snackBarDuration = snackBarDuration,
     actionResId = actionResId
-)
+).apply { show() }
 
 private fun Activity.getSnackbarAnchorView(): View? {
     return if (this is SnackbarAnchorContainer) getSnackbarAnchorView() else null
 }
 
 private fun View.buildSnackbar(
-    textResId: Int,
+    message: String,
     snackBarDuration: Int,
     actionResId: Int? = null
 ): Snackbar {
     val snackbar = Snackbar
-        .make(this, textResId, snackBarDuration)
+        .make(this, message, snackBarDuration)
         .setActionTextColor(ContextCompat.getColor(context, R.color.primary_light))
     if (actionResId != null) snackbar.setAction(actionResId) { snackbar.dismiss() }
     val textView = snackbar.view.findViewById<TextView>(R.id.snackbar_text)
