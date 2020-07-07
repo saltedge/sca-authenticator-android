@@ -24,20 +24,16 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
-import android.text.Spanned
 import androidx.test.core.app.ApplicationProvider
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.CONNECTIONS_REQUEST_CODE
 import com.saltedge.authenticator.app.CONSENT_REQUEST_CODE
-import com.saltedge.authenticator.app.KEY_CONNECTION_GUID
 import com.saltedge.authenticator.app.KEY_ID
 import com.saltedge.authenticator.features.consents.common.countOfDays
 import com.saltedge.authenticator.models.Connection
-import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
+import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.model.ConsentData
 import com.saltedge.authenticator.sdk.model.ConsentSharedData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
@@ -47,10 +43,8 @@ import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.daysTillExpire
 import com.saltedge.authenticator.tools.guid
 import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.Matchers
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
-import org.junit.Assert
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -97,6 +91,12 @@ class ConsentsListViewModelTest {
         )
     )
 
+    private val daysLeftCount = DateTime(0).withZone(DateTimeZone.UTC).daysTillExpire()
+    private val daysTillExpireDescription = countOfDays(daysLeftCount, context)
+    private val spanned = SpannableStringBuilder(
+        "${context.getString(R.string.expires_in)} $daysTillExpireDescription"
+    )
+
     @Before
     fun setUp() {
         Mockito.doReturn(connections).`when`(mockConnectionsRepository).getAllConnections()
@@ -133,12 +133,6 @@ class ConsentsListViewModelTest {
         //when
         viewModel.onReceivedNewConsents(consentData)
 
-        val daysLeftCount = DateTime(0).withZone(DateTimeZone.UTC).daysTillExpire()
-        val daysTillExpireDescription = countOfDays(daysLeftCount, context)
-        val spanned = SpannableStringBuilder(
-            "${context.getString(R.string.expires_in)} $daysTillExpireDescription"
-        )
-
         //then
         assertThat(
             viewModel.listItems.value, equalTo(
@@ -147,7 +141,7 @@ class ConsentsListViewModelTest {
                     id = "555",
                     tppName = "title",
                     consentTypeDescription = "Consent for account information access",
-                    expiresAtDescription = spanned.toString()
+                    expiresAtDescription = spanned
                 )
             )
         )
@@ -161,12 +155,6 @@ class ConsentsListViewModelTest {
         //when
         viewModel.onReceivedNewConsents(consentData)
 
-        val daysLeftCount = DateTime(0).withZone(DateTimeZone.UTC).daysTillExpire()
-        val daysTillExpireDescription = countOfDays(daysLeftCount, context)
-        val spanned = SpannableStringBuilder(
-            "${context.getString(R.string.expires_in)} $daysTillExpireDescription"
-        )
-
         //then
         assertThat(
             viewModel.listItems.value, equalTo(
@@ -175,7 +163,7 @@ class ConsentsListViewModelTest {
                     id = "555",
                     tppName = "title",
                     consentTypeDescription = "Consent for account information access",
-                    expiresAtDescription = spanned.toString()
+                    expiresAtDescription = spanned
                 )
             )
         )
@@ -195,7 +183,7 @@ class ConsentsListViewModelTest {
                     id = "555",
                     tppName = "title",
                     consentTypeDescription = "Consent for future payment",
-                    expiresAtDescription = spanned.toString()
+                    expiresAtDescription = spanned
                 )
             )
         )
@@ -215,7 +203,7 @@ class ConsentsListViewModelTest {
                     id = "555",
                     tppName = "title",
                     consentTypeDescription = "Consent for recurring payment",
-                    expiresAtDescription = spanned.toString()
+                    expiresAtDescription = spanned
                 )
             )
         )
@@ -260,6 +248,7 @@ class ConsentsListViewModelTest {
         //given
         val bundle = Bundle().apply {
             guid = "guid2"
+            putSerializable(KEY_DATA, ArrayList<ConsentData>(consentData))
         }
 
         //when
@@ -268,6 +257,7 @@ class ConsentsListViewModelTest {
         //than
         assertThat(viewModel.logoUrl.value, equalTo("https://www.fentury.com/"))
         assertThat(viewModel.connectionTitle.value, equalTo("Demobank2"))
+        assertThat(viewModel.consentsCount.value, equalTo("1 consent"))
     }
 
     @Test
@@ -279,6 +269,7 @@ class ConsentsListViewModelTest {
         //than
         assertNull(viewModel.logoUrl.value)
         assertNull(viewModel.connectionTitle.value)
+        assertThat(viewModel.consentsCount.value, equalTo(""))
     }
 
     @Test
@@ -317,7 +308,35 @@ class ConsentsListViewModelTest {
         val resultCode = Activity.RESULT_OK
         val intent: Intent = Intent().putExtra(KEY_ID, "")
 
-        viewModel.onActivityResult(requestCode = requestCode, resultCode = resultCode, data = intent)
+        viewModel.onActivityResult(
+            requestCode = requestCode,
+            resultCode = resultCode,
+            data = intent
+        )
+
+        assertNull(viewModel.listItems.value)
+
+        viewModel.onActivityResult(
+            requestCode = requestCode,
+            resultCode = Activity.RESULT_CANCELED,
+            data = intent
+        )
+
+        assertNull(viewModel.listItems.value)
+
+        viewModel.onActivityResult(
+            requestCode = -1,
+            resultCode = resultCode,
+            data = intent
+        )
+
+        assertNull(viewModel.listItems.value)
+
+        viewModel.onActivityResult(
+            requestCode = requestCode,
+            resultCode = resultCode,
+            data = null
+        )
 
         assertNull(viewModel.listItems.value)
     }
@@ -333,7 +352,11 @@ class ConsentsListViewModelTest {
             guid = "guid2"
         }
         viewModel.setInitialData(bundle)
-        viewModel.onActivityResult(requestCode = requestCode, resultCode = resultCode, data = intent)
+        viewModel.onActivityResult(
+            requestCode = requestCode,
+            resultCode = resultCode,
+            data = intent
+        )
 
         assertThat(viewModel.listItems.value, equalTo(emptyList()))
     }
@@ -350,8 +373,23 @@ class ConsentsListViewModelTest {
         }
         viewModel.setInitialData(bundle)
         viewModel.onReceivedNewConsents(consentData)
-        viewModel.onActivityResult(requestCode = requestCode, resultCode = resultCode, data = intent)
+        viewModel.onActivityResult(
+            requestCode = requestCode,
+            resultCode = resultCode,
+            data = intent
+        )
 
-        assertNotNull(viewModel.listItems.value)
+        assertThat(
+            viewModel.listItems.value, equalTo(
+            listOf(
+                ConsentItemViewModel(
+                    id = "555",
+                    tppName = "title",
+                    consentTypeDescription = "Consent for account information access",
+                    expiresAtDescription = spanned
+                )
+            )
+        )
+        )
     }
 }

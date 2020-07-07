@@ -20,9 +20,38 @@
  */
 package com.saltedge.authenticator.features.consents.list
 
-data class ConsentItemViewModel(
+import android.text.Spanned
+
+class ConsentItemViewModel(
     val id: String,
     var tppName: String,
     var consentTypeDescription: String,
-    var expiresAtDescription: String
-)
+    var expiresAtDescription: Spanned
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ConsentItemViewModel
+
+        if (id != other.id) return false
+        if (tppName != other.tppName) return false
+        if (consentTypeDescription != other.consentTypeDescription) return false
+        if (expiresAtDescription.toString() != other.expiresAtDescription.toString()) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + tppName.hashCode()
+        result = 31 * result + consentTypeDescription.hashCode()
+        result = 31 * result + expiresAtDescription.toString().hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "ConsentItemViewModel(id='$id', tppName='$tppName'," +
+            " consentTypeDescription='$consentTypeDescription', expiresAtDescription=$expiresAtDescription)"
+    }
+}
