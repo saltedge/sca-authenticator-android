@@ -65,22 +65,30 @@ class ConsentsListViewModelTest {
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
     private val mockCryptoTools = mock(CryptoToolsAbs::class.java)
-    private val connections = listOf(
-        Connection().apply {
-            guid = "guid2"
-            code = "demobank2"
-            name = "Demobank2"
-            status = "${ConnectionStatus.ACTIVE}"
-            accessToken = "token2"
-            createdAt = 300L
-            updatedAt = 300L
-            logoUrl = "https://www.fentury.com/"
-        }
-    )
-    private val mockConnectionAndKey = ConnectionAndKey(connections[0], mockPrivateKey)
+    private val connection = Connection().apply {
+        guid = "guid2"
+        code = "demobank2"
+        name = "Demobank2"
+        status = "${ConnectionStatus.ACTIVE}"
+        accessToken = "token2"
+        createdAt = 300L
+        updatedAt = 300L
+        logoUrl = "https://www.fentury.com/"
+    }
+    private val mockConnectionAndKey = ConnectionAndKey(connection, mockPrivateKey)
     private val consentData: List<ConsentData> = listOf(
         ConsentData(
             id = "555",
+            userId = "1",
+            tppName = "title",
+            consentTypeString = "aisp",
+            accounts = emptyList(),
+            expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
+            createdAt = DateTime(0).withZone(DateTimeZone.UTC),
+            sharedData = ConsentSharedData(balance = true, transactions = true)
+        ),
+        ConsentData(
+            id = "777",
             userId = "1",
             tppName = "title",
             consentTypeString = "aisp",
@@ -99,10 +107,9 @@ class ConsentsListViewModelTest {
 
     @Before
     fun setUp() {
-        Mockito.doReturn(connections).`when`(mockConnectionsRepository).getAllConnections()
-        Mockito.doReturn(connections[0]).`when`(mockConnectionsRepository).getByGuid("guid2")
-        given(mockConnectionsRepository.getByGuid("guid2")).willReturn(connections[0])
-        given(mockKeyStoreManager.createConnectionAndKeyModel(connections[0])).willReturn(
+        Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid2")
+        given(mockConnectionsRepository.getByGuid("guid2")).willReturn(connection)
+        given(mockKeyStoreManager.createConnectionAndKeyModel(connection)).willReturn(
             mockConnectionAndKey
         )
 
@@ -134,19 +141,8 @@ class ConsentsListViewModelTest {
         viewModel.onReceivedNewConsents(consentData)
 
         //then
-        assertThat(
-            viewModel.listItems.value, equalTo(
-            listOf(
-                ConsentItemViewModel(
-                    id = "555",
-                    tppName = "title",
-                    consentTypeDescription = "Consent for account information access",
-                    expiresAtDescription = spanned
-                )
-            )
-        )
-        )
-        assertThat(viewModel.consentsCount.value, equalTo("1 consent"))
+        assertThat(viewModel.listItems.value?.map { it.id }, equalTo(listOf("555", "777")))
+        assertThat(viewModel.consentsCount.value, equalTo("2 consents"))
     }
 
     @Test
@@ -156,18 +152,7 @@ class ConsentsListViewModelTest {
         viewModel.onReceivedNewConsents(consentData)
 
         //then
-        assertThat(
-            viewModel.listItems.value, equalTo(
-            listOf(
-                ConsentItemViewModel(
-                    id = "555",
-                    tppName = "title",
-                    consentTypeDescription = "Consent for account information access",
-                    expiresAtDescription = spanned
-                )
-            )
-        )
-        )
+        assertThat(viewModel.listItems.value?.map { it.id }, equalTo(listOf("555", "777")))
 
         //when
         val consentDataWithTypePisp: ConsentData = consentData[0].also {
@@ -177,16 +162,17 @@ class ConsentsListViewModelTest {
 
         //then
         assertThat(
-            viewModel.listItems.value, equalTo(
-            listOf(
-                ConsentItemViewModel(
-                    id = "555",
-                    tppName = "title",
-                    consentTypeDescription = "Consent for future payment",
-                    expiresAtDescription = spanned
+            viewModel.listItems.value,
+            equalTo(
+                listOf(
+                    ConsentItemViewModel(
+                        id = "555",
+                        tppName = "title",
+                        consentTypeDescription = "Consent for future payment",
+                        expiresAtDescription = spanned
+                    )
                 )
             )
-        )
         )
 
         //when
@@ -197,16 +183,17 @@ class ConsentsListViewModelTest {
 
         //then
         assertThat(
-            viewModel.listItems.value, equalTo(
-            listOf(
-                ConsentItemViewModel(
-                    id = "555",
-                    tppName = "title",
-                    consentTypeDescription = "Consent for recurring payment",
-                    expiresAtDescription = spanned
+            viewModel.listItems.value,
+            equalTo(
+                listOf(
+                    ConsentItemViewModel(
+                        id = "555",
+                        tppName = "title",
+                        consentTypeDescription = "Consent for recurring payment",
+                        expiresAtDescription = spanned
+                    )
                 )
             )
-        )
         )
     }
 
@@ -214,9 +201,7 @@ class ConsentsListViewModelTest {
     @Throws(Exception::class)
     fun refreshConsentsTestCase1() {
         //given
-        val bundle = Bundle().apply {
-            guid = "guid2"
-        }
+        val bundle = Bundle().apply { guid = "guid2" }
         viewModel.setInitialData(bundle)
 
         //when
@@ -224,7 +209,7 @@ class ConsentsListViewModelTest {
 
         //than
         Mockito.verify(mockApiManager).getConsents(
-            connectionsAndKeys = listOf(ConnectionAndKey(connections[0], mockPrivateKey)),
+            connectionsAndKeys = listOf(ConnectionAndKey(connection, mockPrivateKey)),
             resultCallback = viewModel
         )
     }
@@ -257,7 +242,7 @@ class ConsentsListViewModelTest {
         //than
         assertThat(viewModel.logoUrl.value, equalTo("https://www.fentury.com/"))
         assertThat(viewModel.connectionTitle.value, equalTo("Demobank2"))
-        assertThat(viewModel.consentsCount.value, equalTo("1 consent"))
+        assertThat(viewModel.consentsCount.value, equalTo("2 consents"))
     }
 
     @Test
@@ -276,13 +261,11 @@ class ConsentsListViewModelTest {
     @Throws(Exception::class)
     fun onListItemClickTestCase1() {
         //given
-        val bundle = Bundle().apply {
-            guid = "guid2"
-        }
-
-        //when
+        val bundle = Bundle().apply { guid = "guid2" }
         viewModel.setInitialData(bundle)
         viewModel.onReceivedNewConsents(consentData)
+
+        //when
         viewModel.onListItemClick(0)
 
         //than
@@ -292,9 +275,11 @@ class ConsentsListViewModelTest {
     @Test
     @Throws(Exception::class)
     fun onListItemClickTestCase2() {
-        //when
+        //given
         viewModel.setInitialData(Bundle())
         viewModel.onReceivedNewConsents(consentData)
+
+        //when
         viewModel.onListItemClick(0)
 
         //than
@@ -344,52 +329,64 @@ class ConsentsListViewModelTest {
     @Test
     @Throws(Exception::class)
     fun onActivityResultCase2() {
+        //given
         val requestCode = CONSENT_REQUEST_CODE
         val resultCode = Activity.RESULT_OK
-        val intent: Intent = Intent().putExtra(KEY_ID, "")
+        val intent: Intent = Intent().putExtra(KEY_ID, "guid2")
 
         val bundle = Bundle().apply {
             guid = "guid2"
         }
         viewModel.setInitialData(bundle)
+
+        //when
         viewModel.onActivityResult(
             requestCode = requestCode,
             resultCode = resultCode,
             data = intent
         )
 
+        //than
         assertThat(viewModel.listItems.value, equalTo(emptyList()))
     }
 
     @Test
     @Throws(Exception::class)
     fun onActivityResultCase3() {
+        //given
         val requestCode = CONSENT_REQUEST_CODE
         val resultCode = Activity.RESULT_OK
-        val intent: Intent = Intent().putExtra(KEY_ID, "")
+        val intent: Intent = Intent().putExtra(KEY_ID, "555")
 
         val bundle = Bundle().apply {
             guid = "guid2"
         }
         viewModel.setInitialData(bundle)
         viewModel.onReceivedNewConsents(consentData)
+
+        assertThat(viewModel.listItems.value?.size, equalTo(2))
+
+        //when
         viewModel.onActivityResult(
             requestCode = requestCode,
             resultCode = resultCode,
             data = intent
         )
 
+        //than
+        assertThat(viewModel.listItems.value?.size, equalTo(1))
         assertThat(
-            viewModel.listItems.value, equalTo(
-            listOf(
-                ConsentItemViewModel(
-                    id = "555",
-                    tppName = "title",
-                    consentTypeDescription = "Consent for account information access",
-                    expiresAtDescription = spanned
+            viewModel.listItems.value,
+            equalTo(
+                listOf(
+                    ConsentItemViewModel(
+                        id = "777",
+                        tppName = "title",
+                        consentTypeDescription = "Consent for account information access",
+                        expiresAtDescription = spanned
+                    )
                 )
             )
-        )
         )
     }
 }
