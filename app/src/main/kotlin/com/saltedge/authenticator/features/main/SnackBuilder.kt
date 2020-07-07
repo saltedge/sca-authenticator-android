@@ -41,19 +41,13 @@ fun FragmentActivity.showWarningSnack(
     message: String,
     snackBarDuration: Int = Snackbar.LENGTH_INDEFINITE,
     actionResId: Int? = null
-) = getSnackbarAnchorView()?.showWarningSnack(message, snackBarDuration, actionResId)
+) = getSnackbarAnchorView()?.buildSnackbar(message, snackBarDuration, actionResId)?.apply { show() }
 
 fun FragmentActivity.buildWarningSnack(
     messageRes: ResId,
     snackBarDuration: Int = Snackbar.LENGTH_INDEFINITE,
     actionResId: Int? = null
 ) = getSnackbarAnchorView()?.buildSnackbar(this.getString(messageRes), snackBarDuration, actionResId)
-
-fun View.showWarningSnack(message: String, snackBarDuration: Int, actionResId: Int?): Snackbar = buildSnackbar(
-    message = message,
-    snackBarDuration = snackBarDuration,
-    actionResId = actionResId
-).apply { show() }
 
 private fun Activity.getSnackbarAnchorView(): View? {
     return if (this is SnackbarAnchorContainer) getSnackbarAnchorView() else null
