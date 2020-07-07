@@ -69,6 +69,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="bottom"
                     android:lines="1"
+                    android:includeFontPadding="false"
                     android:text="@{viewModel.connectionTitle}"
                     tools:text="Demobank" />
 

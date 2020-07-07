@@ -91,6 +91,6 @@ fun SpannableStringBuilder.appendFacedText(
     fontRes: ResId,
     context: Context
 ): SpannableStringBuilder {
-    val span = StyleSpan(ResourcesCompat.getFont(context, fontRes)?.style ?: return this)
+    val span = CustomTypefaceSpan(typeface = ResourcesCompat.getFont(context, fontRes) ?: return this)
     return this.append(text, span, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 }

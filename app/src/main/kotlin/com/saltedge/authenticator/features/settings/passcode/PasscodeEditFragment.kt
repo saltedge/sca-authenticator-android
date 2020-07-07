@@ -30,7 +30,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.features.main.buildWarningSnack
+import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.finishFragment
@@ -101,10 +101,10 @@ class PasscodeEditFragment : BaseFragment(), DialogHandlerListener {
         viewModel.infoEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { messageRes ->
                 view?.let {
-                    activity?.buildWarningSnack(
+                    activity?.showWarningSnack(
                         textResId = messageRes,
                         snackBarDuration = Snackbar.LENGTH_SHORT
-                    )?.show()
+                    )
                 }
             }
         })

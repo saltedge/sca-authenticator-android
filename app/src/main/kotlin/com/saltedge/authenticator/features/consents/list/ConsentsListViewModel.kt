@@ -64,6 +64,7 @@ class ConsentsListViewModel(
 
     val listItems = MutableLiveData<List<ConsentItemViewModel>>()
     val onListItemClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
+    val onConsentRemovedEvent = MutableLiveData<ViewModelEvent<String>>()
     val logoUrl = MutableLiveData<String>()
     val connectionTitle = MutableLiveData<String>()
     val consentsCount = MutableLiveData<String>()
@@ -104,9 +105,17 @@ class ConsentsListViewModel(
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val consentId = data?.getStringExtra(KEY_ID)
-        if (requestCode == CONSENT_REQUEST_CODE && resultCode == Activity.RESULT_OK && consentId != null) {
-            val newConsents = consents.filter { it.id != consentId }
-            if (newConsents != consents) onReceivedNewConsents(newConsents)
+        val revokedConsent: ConsentData? = consents.firstOrNull { it.id == consentId }
+        if (requestCode == CONSENT_REQUEST_CODE && resultCode == Activity.RESULT_OK && revokedConsent != null) {
+            val newConsents: MutableList<ConsentData> = consents.toMutableList()
+            newConsents.remove(revokedConsent)
+            if (newConsents != consents) {
+                val template = appContext.getString(R.string.consent_revoked_for)
+                val message = String.format(template, revokedConsent.tppName)
+                onConsentRemovedEvent.postValue(ViewModelEvent(message))
+
+                onReceivedNewConsents(newConsents)
+            }
         }
     }
 

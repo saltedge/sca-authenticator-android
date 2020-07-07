@@ -27,7 +27,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
-import com.saltedge.authenticator.features.consents.common.countOfDays
 import com.saltedge.authenticator.features.consents.common.countOfDaysLeft
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -40,6 +39,7 @@ import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.response.ConsentRevokeResponseData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.daysTillExpire
+import com.saltedge.authenticator.tools.guid
 import com.saltedge.authenticator.tools.toDateFormatString
 import org.joda.time.DateTime
 
@@ -74,32 +74,32 @@ class ConsentDetailsViewModel(
         result.consentId?.let { revokeSuccessEvent.postValue(ViewModelEvent(it)) }
     }
 
-    fun setInitialData(data: ConsentData?, connectionGuid: GUID) {
-        val connection = connectionsRepository.getByGuid(connectionGuid) ?: return
+    fun setInitialData(arguments: Bundle?) {
+        val connection = connectionsRepository.getByGuid(arguments?.guid ?: return) ?: return
         connectionAndKey = keyStoreManager.createConnectionAndKeyModel(connection)
         fragmentTitle.postValue(connection.name)
-        this.consentData = data
-        data?.let { consent ->
+        this.consentData = arguments.consent
+        this.consentData?.let { consent ->
             fragmentTitle.postValue(consent.tppName)
             daysLeft.postValue(countOfDaysLeft(consent.expiresAt.daysTillExpire(), appContext))
             consentTitle.postValue(getConsentTitle(consent.consentTypeString))
             consentDescription.postValue(getConsentDescription(consent.tppName, connection.name))
             consentGranted.postValue(getGrantedDate(consent.createdAt))
             consentExpires.postValue(getExpiresDate(consent.expiresAt))
-            accounts.postValue(data.accounts)
-            sharedDataVisibility.postValue(if (data.sharedData == null) View.GONE else View.VISIBLE)
+            accounts.postValue(consent.accounts)
+            sharedDataVisibility.postValue(if (consent.sharedData == null) View.GONE else View.VISIBLE)
             sharedBalanceVisibility.postValue(
-                if (data.sharedData?.balance == true) View.VISIBLE else View.GONE
+                if (consent.sharedData?.balance == true) View.VISIBLE else View.GONE
             )
             sharedTransactionsVisibility.postValue(
-                if (data.sharedData?.transactions == true) View.VISIBLE else View.GONE
+                if (consent.sharedData?.transactions == true) View.VISIBLE else View.GONE
             )
         }
     }
 
     fun onRevokeClick() {
         val template = appContext.getString(R.string.revoke_consent_message)
-        revokeAlertEvent.postValue(ViewModelEvent(String.format(template, fragmentTitle.value)))
+        revokeAlertEvent.postValue(ViewModelEvent(String.format(template, consentData?.tppName ?: "")))
     }
 
     fun onRevokeConfirmed() {
@@ -132,13 +132,13 @@ class ConsentDetailsViewModel(
     }
 
     companion object {
-        val Bundle.consents: ConsentData?
+        val Bundle.consent: ConsentData?
             get() = getSerializable(KEY_DATA) as? ConsentData
 
-        fun newBundle(connectionGuid: GUID, consents: ConsentData): Bundle {
+        fun newBundle(connectionGuid: GUID, consent: ConsentData): Bundle {
             return Bundle().apply {
                 putString(KEY_GUID, connectionGuid)
-                putSerializable(KEY_DATA, consents)
+                putSerializable(KEY_DATA, consent)
             }
         }
     }

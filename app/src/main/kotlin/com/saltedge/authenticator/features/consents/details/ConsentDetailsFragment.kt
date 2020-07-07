@@ -106,10 +106,7 @@ class ConsentDetailsFragment : BaseFragment() {
 
         })
 
-        viewModel.setInitialData(
-            connectionGuid = arguments?.getString(KEY_GUID, "") ?: "",
-            data = arguments?.getSerializable(KEY_DATA) as? ConsentData
-        )
+        viewModel.setInitialData(arguments)
     }
 
     private fun updateAppbar(title: String?) {
