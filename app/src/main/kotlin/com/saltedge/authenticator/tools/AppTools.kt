@@ -112,5 +112,8 @@ val Fragment.authenticatorApp: AuthenticatorApplication?
  * @receiver bundle of data
  * @return guid string or null if not exist
  */
-val Bundle.guid: GUID?
+var Bundle.guid: GUID?
     get() = getString(KEY_GUID)
+    set(value) {
+        putString(KEY_GUID, value)
+    }

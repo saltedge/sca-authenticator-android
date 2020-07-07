@@ -20,9 +20,6 @@
  */
 package com.saltedge.authenticator.features.connections.common
 
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.Spanned
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.saltedge.authenticator.tools.ResId

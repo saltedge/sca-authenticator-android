@@ -20,11 +20,9 @@
  */
 package com.saltedge.authenticator.features.consents.list
 
-import android.text.Spanned
-
 data class ConsentItemViewModel(
     val id: String,
     var tppName: String,
     var consentTypeDescription: String,
-    var expiresAtDescription: Spanned
+    var expiresAtDescription: String
 )

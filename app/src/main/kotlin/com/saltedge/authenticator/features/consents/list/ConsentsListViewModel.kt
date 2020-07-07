@@ -143,7 +143,7 @@ class ConsentsListViewModel(
                 id = it.id,
                 tppName = it.tppName,
                 consentTypeDescription = it.consentType?.toConsentTypeDescription() ?: "",
-                expiresAtDescription = it.expiresAt.toExpiresAtDescription()
+                expiresAtDescription = it.expiresAt.toExpiresAtDescription().toString()
             )
         }
     }
