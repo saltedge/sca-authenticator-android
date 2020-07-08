@@ -304,7 +304,7 @@ class ConnectionsListViewModel(
         connectionsRepository.deleteConnection(connectionGuid)
     }
 
-    private enum class MenuItem {
+    enum class MenuItem {
         RECONNECT, EDIT, SUPPORT, CONSENTS, DELETE
     }
 }
