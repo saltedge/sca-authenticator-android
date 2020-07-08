@@ -217,7 +217,7 @@ class ConnectionsListViewModelTest {
                 statusDescription = "Inactive. Please reconnect.",
                 statusDescriptionColorRes = R.color.red_and_red_light,
                 logoUrl = "",
-                reconnectMenuItemIsVisible = true,
+                isActive = true,
                 deleteMenuItemText = R.string.actions_remove,
                 deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
                 isChecked = false
@@ -241,7 +241,7 @@ class ConnectionsListViewModelTest {
                     logoUrl = "",
                     consentsDescription = "1 consent ·",
                     consentMenuItemIsVisible = true,
-                    reconnectMenuItemIsVisible = true,
+                    isActive = true,
                     deleteMenuItemText = R.string.actions_remove,
                     deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
                     isChecked = false
@@ -263,7 +263,7 @@ class ConnectionsListViewModelTest {
                 statusDescription = "Inactive. Please reconnect.",
                 statusDescriptionColorRes = R.color.red_and_red_light,
                 logoUrl = "",
-                reconnectMenuItemIsVisible = true,
+                isActive = true,
                 deleteMenuItemText = R.string.actions_remove,
                 deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
                 isChecked = false
@@ -285,7 +285,7 @@ class ConnectionsListViewModelTest {
                     statusDescription = "Inactive. Please reconnect.",
                     statusDescriptionColorRes = R.color.red_and_red_light,
                     logoUrl = "",
-                    reconnectMenuItemIsVisible = true,
+                    isActive = true,
                     deleteMenuItemText = R.string.actions_remove,
                     deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
                     isChecked = false
@@ -314,7 +314,7 @@ class ConnectionsListViewModelTest {
                     statusDescription = "Inactive. Please reconnect.",
                     statusDescriptionColorRes = R.color.red_and_red_light,
                     logoUrl = "",
-                    reconnectMenuItemIsVisible = true,
+                    isActive = true,
                     deleteMenuItemText = R.string.actions_remove,
                     deleteMenuItemImage = R.drawable.ic_menu_remove_24dp,
                     isChecked = false
@@ -343,7 +343,7 @@ class ConnectionsListViewModelTest {
                     statusDescription = "Linked on 1 January 1970",
                     statusDescriptionColorRes = R.color.dark_60_and_grey_100,
                     logoUrl = "",
-                    reconnectMenuItemIsVisible = false,
+                    isActive = false,
                     deleteMenuItemText = R.string.actions_delete,
                     deleteMenuItemImage = R.drawable.ic_menu_delete_24dp,
                     isChecked = false

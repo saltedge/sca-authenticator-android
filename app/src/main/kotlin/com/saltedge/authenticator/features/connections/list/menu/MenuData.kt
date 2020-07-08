@@ -18,15 +18,8 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.menu
+package com.saltedge.authenticator.features.connections.list.menu
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
-import com.saltedge.authenticator.tools.ResId
-import java.io.Serializable
+import com.saltedge.authenticator.features.menu.MenuItemData
 
-data class MenuItemData(
-    val id: Int,
-    @DrawableRes val iconRes: ResId,
-    @StringRes val textRes: ResId
-) : Serializable
+data class MenuData(val menuId: Int, val items: List<MenuItemData>)

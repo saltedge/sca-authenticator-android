@@ -152,13 +152,13 @@ class MainActivityViewModel(
                 val menuItems = listOf<MenuItemData>(
                     MenuItemData(
                         id = R.string.connections_feature_title,
-                        iconResId = R.drawable.ic_menu_action_connections,
-                        textResId = R.string.connections_feature_title
+                        iconRes = R.drawable.ic_menu_action_connections,
+                        textRes = R.string.connections_feature_title
                     ),
                     MenuItemData(
                         id = R.string.settings_feature_title,
-                        iconResId = R.drawable.ic_menu_action_settings,
-                        textResId = R.string.settings_feature_title
+                        iconRes = R.drawable.ic_menu_action_settings,
+                        textRes = R.string.settings_feature_title
                     )
                 )
                 onAppBarMenuClickEvent.postValue(ViewModelEvent(menuItems))
