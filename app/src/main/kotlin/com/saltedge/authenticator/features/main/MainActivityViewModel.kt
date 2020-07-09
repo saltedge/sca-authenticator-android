@@ -32,7 +32,7 @@ import com.saltedge.authenticator.app.switchDarkLightMode
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
-import com.saltedge.authenticator.interfaces.ActivityMenuItem
+import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -198,14 +198,14 @@ class MainActivityViewModel(
         titleResId: ResId?,
         title: String?,
         backActionImageResId: ResId?,
-        showMenu: Array<ActivityMenuItem>
+        showMenu: Array<MenuItem>
     ) {
         appBarTitle.postValue(titleResId?.let { appContext.getString(it) } ?: title ?: "")
         backActionImageResId?.let { appBarBackActionImageResource.postValue(it) }
         appBarBackActionVisibility.postValue(if (backActionImageResId == null) View.GONE else View.VISIBLE)
-        appBarActionQRVisibility.postValue(if (showMenu.contains(ActivityMenuItem.SCAN_QR)) View.VISIBLE else View.GONE)
-        appBarActionThemeVisibility.postValue(if (showMenu.contains(ActivityMenuItem.THEME)) View.VISIBLE else View.GONE)
-        appBarActionMoreVisibility.postValue(if (showMenu.contains(ActivityMenuItem.MORE)) View.VISIBLE else View.GONE)
+        appBarActionQRVisibility.postValue(if (showMenu.contains(MenuItem.SCAN_QR)) View.VISIBLE else View.GONE)
+        appBarActionThemeVisibility.postValue(if (showMenu.contains(MenuItem.THEME)) View.VISIBLE else View.GONE)
+        appBarActionMoreVisibility.postValue(if (showMenu.contains(MenuItem.MORE)) View.VISIBLE else View.GONE)
     }
 
     override fun onLanguageChanged() {

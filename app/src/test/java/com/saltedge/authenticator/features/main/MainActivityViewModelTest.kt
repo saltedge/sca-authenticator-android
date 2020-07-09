@@ -31,7 +31,7 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.menu.MenuItemData
-import com.saltedge.authenticator.interfaces.ActivityMenuItem
+import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -565,7 +565,7 @@ class MainActivityViewModelTest {
         val titleResId = R.string.app_name
         val title = null
         val backActionImageResId = null
-        val showMenu = arrayOf(ActivityMenuItem.SCAN_QR, ActivityMenuItem.MORE)
+        val showMenu = arrayOf(MenuItem.SCAN_QR, MenuItem.MORE)
 
         assertThat(viewModel.appBarBackActionImageResource.value, equalTo(R.drawable.ic_appbar_action_back))
 
@@ -591,7 +591,7 @@ class MainActivityViewModelTest {
         val titleResId = null
         val title = "Test"
         val actionImageResId = R.drawable.ic_appbar_action_close
-        val showMenu = emptyArray<ActivityMenuItem>()
+        val showMenu = emptyArray<MenuItem>()
 
         //when
         viewModel.updateAppbar(titleResId, title, actionImageResId, showMenu)

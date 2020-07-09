@@ -372,27 +372,27 @@ class ConnectionsListViewModelTest {
                 menuId = activeItemIndex,
                 items = listOf(
                     MenuItemData(
-                        id = ConnectionsListViewModel.MenuItem.RECONNECT.ordinal,
+                        id = ConnectionsListViewModel.PopupMenuItem.RECONNECT.ordinal,
                         iconRes = R.drawable.ic_menu_reconnect_24dp,
                         textRes = R.string.actions_reconnect
                     ),
                     MenuItemData(
-                        id = ConnectionsListViewModel.MenuItem.EDIT.ordinal,
+                        id = ConnectionsListViewModel.PopupMenuItem.EDIT.ordinal,
                         iconRes = R.drawable.ic_menu_edit_24dp,
                         textRes = R.string.actions_rename
                     ),
                     MenuItemData(
-                        id = ConnectionsListViewModel.MenuItem.SUPPORT.ordinal,
+                        id = ConnectionsListViewModel.PopupMenuItem.SUPPORT.ordinal,
                         iconRes = R.drawable.ic_contact_support_24dp,
                         textRes = R.string.actions_contact_support
                     ),
                     MenuItemData(
-                        id = ConnectionsListViewModel.MenuItem.CONSENTS.ordinal,
+                        id = ConnectionsListViewModel.PopupMenuItem.CONSENTS.ordinal,
                         iconRes = R.drawable.ic_view_consents_24dp,
                         textRes = R.string.actions_view_consents
                     ),
                     MenuItemData(
-                        id = ConnectionsListViewModel.MenuItem.DELETE.ordinal,
+                        id = ConnectionsListViewModel.PopupMenuItem.DELETE.ordinal,
                         iconRes = R.drawable.ic_menu_delete_24dp,
                         textRes = R.string.actions_delete
                     )
@@ -445,7 +445,7 @@ class ConnectionsListViewModelTest {
         //given itemId RECONNECT
         viewModel.listItems.value = connections.convertConnectionsToViewModels(context)
         val activeItemIndex = 1
-        val itemId = ConnectionsListViewModel.MenuItem.RECONNECT.ordinal
+        val itemId = ConnectionsListViewModel.PopupMenuItem.RECONNECT.ordinal
 
         //when
         viewModel.onMenuItemClick(menuId = activeItemIndex, itemId = itemId)
@@ -460,7 +460,7 @@ class ConnectionsListViewModelTest {
         //given itemId RENAME
         viewModel.listItems.value = connections.convertConnectionsToViewModels(context)
         val activeItemIndex = 1
-        val itemId = ConnectionsListViewModel.MenuItem.EDIT.ordinal
+        val itemId = ConnectionsListViewModel.PopupMenuItem.EDIT.ordinal
 
         //when
         viewModel.onMenuItemClick(menuId = activeItemIndex, itemId = itemId)
@@ -477,7 +477,7 @@ class ConnectionsListViewModelTest {
         //given itemId SUPPORT
         viewModel.listItems.value = connections.convertConnectionsToViewModels(context)
         val activeItemIndex = 1
-        val itemId = ConnectionsListViewModel.MenuItem.SUPPORT.ordinal
+        val itemId = ConnectionsListViewModel.PopupMenuItem.SUPPORT.ordinal
 
         //when
         viewModel.onMenuItemClick(menuId = activeItemIndex, itemId = itemId)
@@ -492,7 +492,7 @@ class ConnectionsListViewModelTest {
         //given itemId DELETE
         viewModel.listItems.value = connections.convertConnectionsToViewModels(context)
         val activeItemIndex = 1
-        val itemId = ConnectionsListViewModel.MenuItem.DELETE.ordinal
+        val itemId = ConnectionsListViewModel.PopupMenuItem.DELETE.ordinal
 
         //when
         viewModel.onMenuItemClick(menuId = activeItemIndex, itemId = itemId)
@@ -691,13 +691,13 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun menuItemTest() {
         assertThat(
-            ConnectionsListViewModel.MenuItem.values(),
+            ConnectionsListViewModel.PopupMenuItem.values(),
             equalTo(arrayOf(
-                ConnectionsListViewModel.MenuItem.RECONNECT,
-                ConnectionsListViewModel.MenuItem.EDIT,
-                ConnectionsListViewModel.MenuItem.SUPPORT,
-                ConnectionsListViewModel.MenuItem.CONSENTS,
-                ConnectionsListViewModel.MenuItem.DELETE
+                ConnectionsListViewModel.PopupMenuItem.RECONNECT,
+                ConnectionsListViewModel.PopupMenuItem.EDIT,
+                ConnectionsListViewModel.PopupMenuItem.SUPPORT,
+                ConnectionsListViewModel.PopupMenuItem.CONSENTS,
+                ConnectionsListViewModel.PopupMenuItem.DELETE
             ))
         )
     }
