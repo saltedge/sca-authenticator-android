@@ -29,8 +29,8 @@
         android:layout_width="@dimen/dp_200"
         android:layout_height="wrap_content"
         android:background="@color/white_and_dark_100"
-        android:paddingTop="@dimen/popupMenuTpBottomPadding"
-        android:paddingBottom="@dimen/popupMenuTpBottomPadding">
+        android:paddingTop="@dimen/popupMenuTopBottomPadding"
+        android:paddingBottom="@dimen/popupMenuTopBottomPadding">
 
         <LinearLayout
             android:id="@+id/reconnectView"

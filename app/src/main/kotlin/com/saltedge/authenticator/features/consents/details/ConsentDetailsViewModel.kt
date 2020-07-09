@@ -22,7 +22,11 @@ package com.saltedge.authenticator.features.consents.details
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.view.View
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
@@ -38,9 +42,7 @@ import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.response.ConsentRevokeResponseData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.tools.daysTillExpire
-import com.saltedge.authenticator.tools.guid
-import com.saltedge.authenticator.tools.toDateFormatString
+import com.saltedge.authenticator.tools.*
 import org.joda.time.DateTime
 
 class ConsentDetailsViewModel(
@@ -53,7 +55,7 @@ class ConsentDetailsViewModel(
     val fragmentTitle = MutableLiveData<String>(appContext.getString(R.string.consent_details_feature_title))
     val daysLeft = MutableLiveData<String>("")
     val consentTitle = MutableLiveData<String>("")
-    val consentDescription = MutableLiveData<String>("")
+    val consentDescription = MutableLiveData<Spanned>(SpannableStringBuilder(""))
     val consentGranted = MutableLiveData<String>("")
     val consentExpires = MutableLiveData<String>("")
     val accounts = MutableLiveData<List<AccountData>?>()
@@ -111,16 +113,34 @@ class ConsentDetailsViewModel(
     }
 
     private fun getConsentTitle(consentTypeString: String): String {
-        return appContext.getString(when (consentTypeString.toConsentType()) {
-            ConsentType.AISP -> R.string.consent_title_aisp
-            ConsentType.PISP_FUTURE -> R.string.consent_title_pisp_future
-            ConsentType.PISP_RECURRING -> R.string.consent_title_pisp_recurring
-            else -> R.string.consent_unknown
-        })
+        return appContext.getString(
+            when (consentTypeString.toConsentType()) {
+                ConsentType.AISP -> R.string.consent_title_aisp
+                ConsentType.PISP_FUTURE -> R.string.consent_title_pisp_future
+                ConsentType.PISP_RECURRING -> R.string.consent_title_pisp_recurring
+                else -> R.string.consent_unknown
+            }
+        )
     }
 
-    private fun getConsentDescription(tppName: String, providerName: String): String {
-        return String.format(appContext.getString(R.string.consent_granted_to), tppName, providerName)
+    private fun getConsentDescription(tppName: String, providerName: String): Spanned {
+        val consentDescription = SpannableStringBuilder(String.format(appContext.getString(R.string.consent_granted_to), tppName, providerName))
+        consentDescription.apply {
+            setSpan(ResourcesCompat.getFont(appContext, R.font.roboto_medium)?.let {
+                CustomTypefaceSpan(
+                    typeface = it
+                )
+            }, 19, 36, //TODO: change start/end on actual parameteres smth like this consentDescription.indexOf(tppName, 0), tppName.length
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ResourcesCompat.getFont(appContext, R.font.roboto_medium)?.let {
+                CustomTypefaceSpan(
+                    typeface = it
+                )
+            }, 80, 103,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+
+        return consentDescription
     }
 
     private fun getGrantedDate(grantedAt: DateTime): String {

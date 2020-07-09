@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2020 Salt Edge Inc.
@@ -15,8 +14,7 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -49,18 +47,18 @@
 
         <TextView
             android:id="@+id/revokeView"
-            style="@style/Text14Blue"
+            style="@style/Text18BlueMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginTop="@dimen/dp_8"
             android:text="@string/action_revoke" />
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/dp_16"
-            android:layout_below="@+id/daysLeftView">
+            android:layout_below="@+id/daysLeftView"
+            android:layout_marginTop="@dimen/dp_16">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -73,16 +71,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@{viewModel.consentTitle}"
-                    tools:text="Consent for account information access" />
+                    tools:text="Access to account information" />
 
                 <TextView
                     android:id="@+id/descriptionView"
-                    style="@style/Text18Primary"
+                    style="@style/Text14Primary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_10"
                     android:text="@{viewModel.consentDescription}"
-                    tools:text="Consent granted to Fentury application on the following accounts from Demo Bank"/>
+                    tools:text="Consent granted to Fentury application on the following accounts from Demo Bank" />
 
                 <com.saltedge.authenticator.features.consents.details.view.ConsentAccountsView
                     android:id="@+id/accountsView"
@@ -108,17 +106,17 @@
                         android:layout_marginStart="@dimen/dp_6"
                         android:layout_weight="1"
                         android:lines="1"
-                        android:text="@string/shared_data"/>
+                        android:text="@string/shared_data" />
 
                     <TextView
                         style="@style/ConsentSharedLabel"
                         android:text="@string/balance"
-                        android:visibility="@{viewModel.sharedBalanceVisibility}"/>
+                        android:visibility="@{viewModel.sharedBalanceVisibility}" />
 
                     <TextView
                         style="@style/ConsentSharedLabel"
                         android:text="@string/transactions"
-                        android:visibility="@{viewModel.sharedTransactionsVisibility}"/>
+                        android:visibility="@{viewModel.sharedTransactionsVisibility}" />
                 </LinearLayout>
 
                 <TextView
@@ -126,13 +124,13 @@
                     style="@style/ConsentExpiresLabel"
                     android:layout_marginTop="@dimen/dp_10"
                     android:text="@{viewModel.consentGranted}"
-                    tools:text="Granted: May 12, 2020"/>
+                    tools:text="Granted: May 12, 2020" />
 
                 <TextView
                     android:id="@+id/expiresAtView"
                     style="@style/ConsentExpiresLabel"
                     android:text="@{viewModel.consentExpires}"
-                    tools:text="Expires: August 12, 2020"/>
+                    tools:text="Expires: August 12, 2020" />
             </LinearLayout>
         </ScrollView>
     </RelativeLayout>

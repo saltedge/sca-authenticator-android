@@ -26,7 +26,6 @@ import android.graphics.Color
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
-import android.text.style.StyleSpan
 import android.util.TypedValue
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat

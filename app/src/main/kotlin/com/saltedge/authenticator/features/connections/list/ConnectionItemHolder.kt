@@ -63,7 +63,6 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
         titleView.text = item.name
         subTitleView.text = SpannableStringBuilder()
             .appendFacedText(item.consentsDescription, R.font.roboto_medium, subTitleView.context)
-            .append(" ")
             .appendColoredText(item.statusDescription, item.statusDescriptionColorRes, subTitleView.context)
     }
 }

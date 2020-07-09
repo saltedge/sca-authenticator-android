@@ -254,8 +254,8 @@ class ConnectionsListFragment : BaseFragment(),
 
             val itemsCount = if (item.reconnectMenuItemIsVisible) 4 else 3
             val popupMenuItemHeight = anchorView.context.resources.getDimensionPixelSize(R.dimen.popupMenuItemHeight)
-            val popupMenuTpBottomPadding = anchorView.context.resources.getDimensionPixelSize(R.dimen.popupMenuTpBottomPadding)
-            val popupHeight = popupMenuItemHeight * itemsCount + popupMenuTpBottomPadding * 2
+            val popupMenuTopBottomPadding = anchorView.context.resources.getDimensionPixelSize(R.dimen.popupMenuTopBottomPadding)
+            val popupHeight = popupMenuItemHeight * itemsCount + popupMenuTopBottomPadding * 2
             val y = if (anchorView.bottom + popupHeight > parentView.bottom ) {
                 if (anchorView.bottom > parentView.bottom) popupHeight + anchorView.height else popupHeight
             } else 0
