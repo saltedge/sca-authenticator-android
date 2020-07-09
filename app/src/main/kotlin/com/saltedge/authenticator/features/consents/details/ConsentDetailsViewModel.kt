@@ -124,23 +124,28 @@ class ConsentDetailsViewModel(
     }
 
     private fun getConsentDescription(tppName: String, providerName: String): Spanned {
-        val consentDescription = SpannableStringBuilder(String.format(appContext.getString(R.string.consent_granted_to), tppName, providerName))
-        consentDescription.apply {
-            setSpan(ResourcesCompat.getFont(appContext, R.font.roboto_medium)?.let {
-                CustomTypefaceSpan(
-                    typeface = it
-                )
-            }, 19, 36, //TODO: change start/end on actual parameteres smth like this consentDescription.indexOf(tppName, 0), tppName.length
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            setSpan(ResourcesCompat.getFont(appContext, R.font.roboto_medium)?.let {
-                CustomTypefaceSpan(
-                    typeface = it
-                )
-            }, 80, 103,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        val consentDescription = String.format(appContext.getString(R.string.consent_granted_to), tppName, providerName)
+        val tppNameIndex = consentDescription.indexOf(tppName, 0)
+        val providerNameIndex = consentDescription.indexOf(providerName, 0)
+        val spannedDescription = SpannableStringBuilder(consentDescription)
+        spannedDescription.apply {
+            setSpan(
+                ResourcesCompat.getFont(appContext, R.font.roboto_medium)?.let {
+                    CustomTypefaceSpan(typeface = it)
+                }, tppNameIndex, tppNameIndex + tppName.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            setSpan(
+                ResourcesCompat.getFont(appContext, R.font.roboto_medium)?.let {
+                    CustomTypefaceSpan(typeface = it)
+                },
+                providerNameIndex,
+                providerNameIndex + providerName.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
         }
 
-        return consentDescription
+        return spannedDescription
     }
 
     private fun getGrantedDate(grantedAt: DateTime): String {

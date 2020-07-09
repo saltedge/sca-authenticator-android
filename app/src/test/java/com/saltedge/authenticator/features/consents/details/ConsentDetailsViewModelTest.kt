@@ -150,7 +150,7 @@ class ConsentDetailsViewModelTest {
         //then
         assertThat(viewModel.fragmentTitle.value, equalTo("tppName"))
         assertThat(viewModel.daysLeft.value, equalTo("1 day left"))
-        assertThat(viewModel.consentTitle.value, equalTo("Consent for account information access"))
+        assertThat(viewModel.consentTitle.value, equalTo("Access to account information"))
         assertThat(viewModel.consentDescription.value, equalTo(
             "Consent granted to tppName application on the following accounts from Demobank"
         ))

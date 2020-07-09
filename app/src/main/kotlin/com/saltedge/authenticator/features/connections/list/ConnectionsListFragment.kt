@@ -256,10 +256,13 @@ class ConnectionsListFragment : BaseFragment(),
             val popupMenuItemHeight = anchorView.context.resources.getDimensionPixelSize(R.dimen.popupMenuItemHeight)
             val popupMenuTopBottomPadding = anchorView.context.resources.getDimensionPixelSize(R.dimen.popupMenuTopBottomPadding)
             val popupHeight = popupMenuItemHeight * itemsCount + popupMenuTopBottomPadding * 2
+            val popupWidth = anchorView.context.resources.getDimensionPixelSize(R.dimen.popupMenuItemWidth)
+            val margin = anchorView.context.resources.getDimensionPixelSize(R.dimen.dp_32)
+            val x = parentView.right - popupWidth - margin
             val y = if (anchorView.bottom + popupHeight > parentView.bottom ) {
                 if (anchorView.bottom > parentView.bottom) popupHeight + anchorView.height else popupHeight
             } else 0
-            popupWindow.showAsDropDown(anchorView, 0, -y, Gravity.TOP or Gravity.END)
+            popupWindow.showAsDropDown(anchorView, x, -y, Gravity.START)
             return popupWindow
         } catch (e: Exception) {
             e.log()
