@@ -62,7 +62,7 @@ fun consentsCountPrefixForConnection(count: Int, appContext: Context): String {
  * Create string with count of days like `@count day left`
  *
  * @param countOfDays
- * @param appContextConsent for account information access
+ * @param appContext
  * @return string
  */
 fun countOfDaysLeft(countOfDays: Int, appContext: Context): String {
