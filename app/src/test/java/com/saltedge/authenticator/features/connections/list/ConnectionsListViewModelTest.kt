@@ -239,7 +239,7 @@ class ConnectionsListViewModelTest {
                     statusDescription = "Inactive. Please reconnect.",
                     statusDescriptionColorRes = R.color.red_and_red_light,
                     logoUrl = "",
-                    consentsDescription = "1 consent ·",
+                    consentsDescription = "1 consent\u30FB",
                     consentMenuItemIsVisible = true,
                     reconnectMenuItemIsVisible = true,
                     deleteMenuItemText = R.string.actions_remove,
