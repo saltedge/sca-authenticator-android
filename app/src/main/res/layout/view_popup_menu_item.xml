@@ -19,19 +19,31 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/itemView"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:clipToPadding="false"
-    app:cardCornerRadius="@dimen/dp_6">
+    android:layout_height="@dimen/popupMenuItemHeight"
+    android:background="?android:attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:paddingStart="@dimen/dp_16"
+    android:paddingEnd="@dimen/dp_16">
 
-    <LinearLayout
-        android:id="@+id/itemsLayout"
-        android:layout_width="@dimen/dp_200"
+    <ImageView
+        android:id="@+id/iconView"
+        android:layout_width="@dimen/dp_24"
+        android:layout_height="@dimen/dp_24"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/ic_menu_action_list" />
+
+    <TextView
+        android:id="@+id/labelView"
+        style="@style/Text16Primary"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/white_and_dark_100"
-        android:paddingTop="@dimen/popupMenuTopBottomPadding"
-        android:paddingBottom="@dimen/popupMenuTopBottomPadding"/>
-</androidx.cardview.widget.CardView>
+        android:layout_marginStart="@dimen/dp_12"
+        tools:text="Menu item"/>
+</LinearLayout>

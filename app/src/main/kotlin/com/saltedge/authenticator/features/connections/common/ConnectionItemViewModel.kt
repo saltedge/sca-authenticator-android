@@ -20,8 +20,6 @@
  */
 package com.saltedge.authenticator.features.connections.common
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import com.saltedge.authenticator.tools.ResId
 
 data class ConnectionItemViewModel(
@@ -32,9 +30,6 @@ data class ConnectionItemViewModel(
     var consentsDescription: String = "",
     var statusDescription: String,
     var statusDescriptionColorRes: ResId,
-    val reconnectMenuItemIsVisible: Boolean,
-    var consentMenuItemIsVisible: Boolean = false,
-    @StringRes var deleteMenuItemText: Int,
-    @DrawableRes var deleteMenuItemImage: Int,
+    val isActive: Boolean,
     var isChecked: Boolean
 )
