@@ -77,7 +77,7 @@ class SelectConnectionsViewModelTest {
         //when
         viewModel.onListItemClick(1)
 
-        //than
+        //then
         assertThat(viewModel.onListItemClickEvent.value, equalTo(ViewModelEvent(content = 1)))
     }
 
@@ -93,7 +93,7 @@ class SelectConnectionsViewModelTest {
         //when
         viewModel.proceedConnection("guid2")
 
-        //than
+        //then
         assertThat(viewModel.onProceedClickEvent.value, equalTo("guid2"))
     }
 
@@ -111,7 +111,7 @@ class SelectConnectionsViewModelTest {
         //when
         viewModel.changeStateItem(connection[1])
 
-        //than
+        //then
         assertFalse(connection[0].isChecked)
         assertTrue(connection[1].isChecked)
     }

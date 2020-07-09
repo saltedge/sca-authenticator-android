@@ -207,7 +207,7 @@ class ConsentsListViewModelTest {
         //when
         viewModel.refreshConsents()
 
-        //than
+        //then
         Mockito.verify(mockApiManager).getConsents(
             connectionsAndKeys = listOf(ConnectionAndKey(connection, mockPrivateKey)),
             resultCallback = viewModel
@@ -223,7 +223,7 @@ class ConsentsListViewModelTest {
         //when
         viewModel.refreshConsents()
 
-        //than
+        //then
         Mockito.never()
     }
 
@@ -239,7 +239,7 @@ class ConsentsListViewModelTest {
         //when
         viewModel.setInitialData(bundle)
 
-        //than
+        //then
         assertThat(viewModel.logoUrl.value, equalTo("https://www.fentury.com/"))
         assertThat(viewModel.connectionTitle.value, equalTo("Demobank2"))
         assertThat(viewModel.consentsCount.value, equalTo("2 consents"))
@@ -251,7 +251,7 @@ class ConsentsListViewModelTest {
         //when
         viewModel.setInitialData(Bundle())
 
-        //than
+        //then
         assertNull(viewModel.logoUrl.value)
         assertNull(viewModel.connectionTitle.value)
         assertThat(viewModel.consentsCount.value, equalTo(""))
@@ -268,7 +268,7 @@ class ConsentsListViewModelTest {
         //when
         viewModel.onListItemClick(0)
 
-        //than
+        //then
         assertNotNull(viewModel.onListItemClickEvent.value)
     }
 
@@ -282,7 +282,7 @@ class ConsentsListViewModelTest {
         //when
         viewModel.onListItemClick(0)
 
-        //than
+        //then
         assertNull(viewModel.onListItemClickEvent.value)
     }
 
@@ -346,7 +346,7 @@ class ConsentsListViewModelTest {
             data = intent
         )
 
-        //than
+        //then
         assertThat(viewModel.listItems.value, equalTo(emptyList()))
     }
 
@@ -373,7 +373,7 @@ class ConsentsListViewModelTest {
             data = intent
         )
 
-        //than
+        //then
         assertThat(viewModel.listItems.value?.size, equalTo(1))
         assertThat(
             viewModel.listItems.value,

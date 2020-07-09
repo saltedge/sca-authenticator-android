@@ -2,7 +2,7 @@
 <!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
-    Copyright (c) 2019 Salt Edge Inc.
+    Copyright (c) 2020 Salt Edge Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,30 +19,31 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/dp_56"
+    android:id="@+id/itemView"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/popupMenuItemHeight"
     android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:paddingStart="@dimen/dp_16"
+    android:paddingEnd="@dimen/dp_16">
 
     <ImageView
-        android:id="@+id/menuItemImageView"
+        android:id="@+id/iconView"
         android:layout_width="@dimen/dp_24"
         android:layout_height="@dimen/dp_24"
-        android:layout_marginStart="@dimen/dp_16"
-        android:contentDescription="@null"
+        android:contentDescription="@string/app_name"
         android:scaleType="fitCenter"
-        tools:src="@drawable/ic_menu_action_connections" />
+        app:srcCompat="@drawable/ic_menu_action_list" />
 
     <TextView
-        android:id="@+id/menuItemTitleView"
-        style="@style/Text18Primary"
-        android:layout_width="match_parent"
+        android:id="@+id/labelView"
+        style="@style/Text16Primary"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_24"
-        android:layout_marginEnd="@dimen/dp_16"
-        android:maxLines="1"
-        tools:text="@string/actions_delete" />
+        android:layout_marginStart="@dimen/dp_12"
+        tools:text="Menu item"/>
 </LinearLayout>

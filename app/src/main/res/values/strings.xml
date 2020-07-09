@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2019 Salt Edge Inc.
@@ -19,10 +20,6 @@
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
 <resources>
-    <string name="app_name">Salt Edge Authenticator</string>
-    <string name="app_name_short">Authenticator</string>
-    <string name="app_name_in_two_lines">Salt Edge\nAuthenticator</string>
-
     <string name="actions_cancel">Cancel</string>
     <string name="actions_done">Done</string>
     <string name="actions_connect">Connect</string>

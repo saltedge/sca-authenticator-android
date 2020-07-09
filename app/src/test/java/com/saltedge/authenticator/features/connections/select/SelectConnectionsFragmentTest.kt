@@ -43,9 +43,7 @@ class SelectConnectionsFragmentTest {
                 logoUrl = "logoUrl",
                 statusDescription = "statusDescription",
                 statusDescriptionColorRes = R.color.dark_60_and_grey_100,
-                reconnectMenuItemIsVisible = false,
-                deleteMenuItemText = R.string.actions_delete,
-                deleteMenuItemImage = R.drawable.ic_menu_delete_24dp,
+                isActive = false,
                 isChecked = false
             )
         )

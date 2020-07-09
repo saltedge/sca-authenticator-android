@@ -20,16 +20,12 @@
  */
 package com.saltedge.authenticator.features.connections.list
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.PopupWindow
-import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
@@ -44,6 +40,8 @@ import com.saltedge.authenticator.features.connections.common.ConnectionItemView
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
 import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
+import com.saltedge.authenticator.features.connections.list.menu.MenuData
+import com.saltedge.authenticator.features.connections.list.menu.PopupMenuBuilder
 import com.saltedge.authenticator.features.consents.list.ConsentsListFragment
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.ListItemClickListener
@@ -152,18 +150,8 @@ class ConnectionsListFragment : BaseFragment(),
                 }
             }
         })
-        viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<Int>> { event ->
-            event.getContentIfNotHandled()?.let { itemIndex ->
-                viewModel.listItemsValues.getOrNull(itemIndex)?.let { item ->
-                    connectionsListView?.layoutManager?.findViewByPosition(itemIndex)?.let { anchorView ->
-                        popupWindow = showPopupMenu(
-                            parentView = connectionsListView,
-                            anchorView = anchorView,
-                            item = item
-                        )
-                    }
-                }
-            }
+        viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<MenuData>> { event ->
+            event.getContentIfNotHandled()?.let { data -> popupWindow = showPopupMenu(data) }
         })
         viewModel.onReconnectClickEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
             event.getContentIfNotHandled()?.let {
@@ -202,71 +190,9 @@ class ConnectionsListFragment : BaseFragment(),
         binding.executePendingBindings()
     }
 
-    //TODO REFACTOR TO STANDALONE CLASS (example https://github.com/zawadz88/MaterialPopupMenu)
-    private fun showPopupMenu(parentView: View?, anchorView: View?, item: ConnectionItemViewModel): PopupWindow? {
-        if (parentView == null || anchorView == null) return null
-        try {
-            val layoutInflater = context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val popupView = layoutInflater.inflate(R.layout.view_popup_menu, null)
-            val popupWindow = PopupWindow(
-                popupView,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                true
-            )
-
-            val renameView = popupView.findViewById<ViewGroup>(R.id.renameView)
-            val reconnectView = popupView.findViewById<ViewGroup>(R.id.reconnectView)
-            val contactSupportView = popupView.findViewById<ViewGroup>(R.id.contactSupportView)
-            val deleteView = popupView.findViewById<ViewGroup>(R.id.deleteView)
-            val deleteImageView = popupView.findViewById<ImageView>(R.id.deleteImageView)
-            val deleteTextView = popupView.findViewById<TextView>(R.id.deleteTextView)
-            val consentView = popupView.findViewById<ViewGroup>(R.id.consentView)
-
-            consentView.setVisible(item.consentMenuItemIsVisible)
-            reconnectView.setVisible(item.reconnectMenuItemIsVisible)
-            deleteTextView.setText(item.deleteMenuItemText)
-            deleteImageView.setImageResource(item.deleteMenuItemImage)
-
-            reconnectView.setOnClickListener {
-                this.popupWindow?.dismiss()
-                viewModel.onReconnectOptionSelected()
-            }
-            renameView.setOnClickListener {
-                this.popupWindow?.dismiss()
-                viewModel.onRenameOptionSelected()
-            }
-            contactSupportView.setOnClickListener {
-                this.popupWindow?.dismiss()
-                viewModel.onContactSupportOptionSelected()
-            }
-            deleteView.setOnClickListener {
-                this.popupWindow?.dismiss()
-                viewModel.onDeleteOptionsSelected()
-            }
-            consentView.setOnClickListener {
-                this.popupWindow?.dismiss()
-                viewModel.onViewConsentsOptionSelected()
-            }
-
-            popupWindow.isOutsideTouchable = true
-            popupWindow.elevation = convertDpToPx(30f).toFloat()
-
-            val itemsCount = if (item.reconnectMenuItemIsVisible) 4 else 3
-            val popupMenuItemHeight = anchorView.context.resources.getDimensionPixelSize(R.dimen.popupMenuItemHeight)
-            val popupMenuTopBottomPadding = anchorView.context.resources.getDimensionPixelSize(R.dimen.popupMenuTopBottomPadding)
-            val popupHeight = popupMenuItemHeight * itemsCount + popupMenuTopBottomPadding * 2
-            val popupWidth = anchorView.context.resources.getDimensionPixelSize(R.dimen.popupMenuItemWidth)
-            val margin = anchorView.context.resources.getDimensionPixelSize(R.dimen.dp_32)
-            val x = parentView.right - popupWidth - margin
-            val y = if (anchorView.bottom + popupHeight > parentView.bottom ) {
-                if (anchorView.bottom > parentView.bottom) popupHeight + anchorView.height else popupHeight
-            } else 0
-            popupWindow.showAsDropDown(anchorView, x, -y, Gravity.START)
-            return popupWindow
-        } catch (e: Exception) {
-            e.log()
-            return null
-        }
+    private fun showPopupMenu(menuData: MenuData): PopupWindow? {
+        val parentView = connectionsListView ?: return null
+        val anchorView = connectionsListView?.layoutManager?.findViewByPosition(menuData.menuId) ?: return null
+        return PopupMenuBuilder(parentView, viewModel).setContent(menuData).show(anchorView)
     }
 }

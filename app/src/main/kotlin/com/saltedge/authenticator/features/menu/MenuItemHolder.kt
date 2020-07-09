@@ -50,8 +50,8 @@ class MenuItemHolder(
     }
 
     fun bind(item: MenuItemData) {
-        optionImageView.setImageResource(item.iconResId)
-        optionTitleView.setText(item.textResId)
+        optionImageView.setImageResource(item.iconRes)
+        optionTitleView.setText(item.textRes)
         itemId = item.id
     }
 }

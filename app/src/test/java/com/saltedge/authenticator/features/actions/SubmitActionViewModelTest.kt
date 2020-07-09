@@ -85,7 +85,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onActionInitSuccess(response = connectUrlData)
 
-        //than
+        //then
         assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
         assertThat(viewModel.actionProcessingVisibility.value, equalTo(View.GONE))
 //        assertThat(viewModel.iconResId.value, equalTo(R.drawable.ic_status_success))
@@ -113,7 +113,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onActionInitSuccess(response = connectUrlData)
 
-        //than
+        //then
         assertThat(
             viewModel.setResultAuthorizationIdentifier.value,
             equalTo(
@@ -141,7 +141,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onActionInitSuccess(response = actionData)
 
-        //than
+        //then
         Mockito.never()
     }
 
@@ -156,7 +156,7 @@ class SubmitActionViewModelTest {
             )
         )
 
-        //than
+        //then
         assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
         assertThat(viewModel.actionProcessingVisibility.value, equalTo(View.GONE))
         assertThat(viewModel.iconResId.value, equalTo(R.drawable.ic_status_error))
@@ -215,7 +215,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onViewClick(R.id.actionView)
 
-        //than
+        //then
         assertNotNull(viewModel.onCloseEvent.value)
         assertThat(
             viewModel.onOpenLinkEvent.value,
@@ -243,7 +243,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onViewClick(R.id.actionView)
 
-        //than
+        //then
         assertNotNull(viewModel.onCloseEvent.value)
     }
 
@@ -262,7 +262,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onViewClick(R.id.altActionView)
 
-        //than
+        //then
         assertNull(viewModel.onCloseEvent.value)
     }
 
@@ -284,7 +284,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onViewCreated()
 
-        //than
+        //then
         assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
         assertThat(viewModel.actionProcessingVisibility.value, equalTo(View.GONE))
         assertThat(viewModel.iconResId.value, equalTo(R.drawable.ic_status_error))
@@ -327,7 +327,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onViewCreated()
 
-        //than
+        //then
         assertThat(viewModel.completeViewVisibility.value, equalTo(View.GONE))
         assertThat(viewModel.actionProcessingVisibility.value, equalTo(View.VISIBLE))
     }
@@ -359,7 +359,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onViewCreated()
 
-        //than
+        //then
 //        assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
 //        assertThat(viewModel.actionProcessingVisibility.value, equalTo(View.GONE))
 //        assertThat(viewModel.iconResId.value, equalTo(R.drawable.ic_status_success))
@@ -397,7 +397,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onViewCreated()
 
-        //than
+        //then
         Mockito.verify(mockApiManager).sendAction(
             actionUUID = "123456",
             connectionAndKey = ConnectionAndKey(
@@ -419,7 +419,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onActivityResult(requestCode, resultCode, intent)
 
-        //than
+        //then
         assertNotNull(viewModel.onCloseEvent.value)
     }
 
@@ -434,7 +434,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onActivityResult(requestCode, resultCode, intent)
 
-        //than
+        //then
         assertNotNull(viewModel.onCloseEvent.value)
     }
 
@@ -449,7 +449,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onActivityResult(requestCode, resultCode, intent)
 
-        //than
+        //then
         assertNotNull(viewModel.onCloseEvent.value)
     }
 
@@ -464,7 +464,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onActivityResult(requestCode, resultCode, intent)
 
-        //than
+        //then
         assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
     }
 
@@ -495,7 +495,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onActivityResult(requestCode, resultCode, intent)
 
-        //than
+        //then
         assertThat(viewModel.actionProcessingVisibility.value, equalTo(View.VISIBLE))
         Mockito.verify(mockApiManager).sendAction(
             actionUUID = "123456",
