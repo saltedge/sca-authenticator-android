@@ -372,7 +372,7 @@ class ConnectionsListViewModelTest {
                 menuId = activeItemIndex,
                 items = listOf(
                     MenuItemData(
-                        id = ConnectionsListViewModel.PopupMenuItem.EDIT.ordinal,
+                        id = ConnectionsListViewModel.PopupMenuItem.RENAME.ordinal,
                         iconRes = R.drawable.ic_menu_edit_24dp,
                         textRes = R.string.actions_rename
                     ),
@@ -415,22 +415,22 @@ class ConnectionsListViewModelTest {
                 menuId = inactiveItemIndex,
                 items = listOf(
                     MenuItemData(
-                        id = 0,
+                        id = ConnectionsListViewModel.PopupMenuItem.RECONNECT.ordinal,
                         iconRes = R.drawable.ic_menu_reconnect_24dp,
                         textRes = R.string.actions_reconnect
                     ),
                     MenuItemData(
-                        id = 1,
+                        id = ConnectionsListViewModel.PopupMenuItem.RENAME.ordinal,
                         iconRes = R.drawable.ic_menu_edit_24dp,
                         textRes = R.string.actions_rename
                     ),
                     MenuItemData(
-                        id = 2,
+                        id = ConnectionsListViewModel.PopupMenuItem.SUPPORT.ordinal,
                         iconRes = R.drawable.ic_contact_support_24dp,
                         textRes = R.string.actions_contact_support
                     ),
                     MenuItemData(
-                        id = 4,
+                        id = ConnectionsListViewModel.PopupMenuItem.DELETE.ordinal,
                         iconRes = R.drawable.ic_menu_remove_24dp,
                         textRes = R.string.actions_remove
                     )
@@ -460,7 +460,7 @@ class ConnectionsListViewModelTest {
         //given itemId RENAME
         viewModel.listItems.value = connections.convertConnectionsToViewModels(context)
         val activeItemIndex = 1
-        val itemId = ConnectionsListViewModel.PopupMenuItem.EDIT.ordinal
+        val itemId = ConnectionsListViewModel.PopupMenuItem.RENAME.ordinal
 
         //when
         viewModel.onMenuItemClick(menuId = activeItemIndex, itemId = itemId)
@@ -694,7 +694,7 @@ class ConnectionsListViewModelTest {
             ConnectionsListViewModel.PopupMenuItem.values(),
             equalTo(arrayOf(
                 ConnectionsListViewModel.PopupMenuItem.RECONNECT,
-                ConnectionsListViewModel.PopupMenuItem.EDIT,
+                ConnectionsListViewModel.PopupMenuItem.RENAME,
                 ConnectionsListViewModel.PopupMenuItem.SUPPORT,
                 ConnectionsListViewModel.PopupMenuItem.CONSENTS,
                 ConnectionsListViewModel.PopupMenuItem.DELETE
