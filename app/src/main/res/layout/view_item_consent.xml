@@ -48,18 +48,16 @@
         <LinearLayout
             android:id="@+id/contentView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
+            android:layout_height="match_parent"
             android:layout_marginStart="@dimen/dp_16"
-            android:layout_marginEnd="@dimen/dp_12"
+            android:layout_marginTop="@dimen/dp_9"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/titleView"
                 style="@style/Text18Primary"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:gravity="bottom"
                 android:maxLines="1"
                 tools:text="Fentury" />
@@ -69,7 +67,6 @@
                 style="@style/Text14Secondary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_3"
                 android:maxLines="1"
                 tools:text="Access to account information" />
 
@@ -78,7 +75,7 @@
                 style="@style/Text14Secondary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_1"
+                android:layout_marginTop="-3dp"
                 android:maxLines="1"
                 tools:text="Expires in 3 days" />
         </LinearLayout>

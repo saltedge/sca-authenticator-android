@@ -55,7 +55,7 @@ fun consentsCountPrefixForConnection(count: Int, appContext: Context): String {
         count,
         count
     )
-    return "$quantityString \u00B7"
+    return "$quantityString\u30FB"
 }
 
 /**

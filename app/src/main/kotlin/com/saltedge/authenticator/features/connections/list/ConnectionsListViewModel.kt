@@ -113,7 +113,7 @@ class ConnectionsListViewModel(
         val item = listItemsValues.getOrNull(menuId) ?: return
         when (PopupMenuItem.values()[itemId]) {
             PopupMenuItem.RECONNECT -> onReconnectClickEvent.postValue(ViewModelEvent(item.guid))
-            PopupMenuItem.EDIT -> {
+            PopupMenuItem.RENAME -> {
                 connectionsRepository.getByGuid(item.guid)?.let { connection ->
                     onRenameClickEvent.postValue(ViewModelEvent(Bundle().apply {
                         guid = item.guid
@@ -163,7 +163,7 @@ class ConnectionsListViewModel(
     fun onListItemClick(itemIndex: Int) {
         listItemsValues.getOrNull(itemIndex)?.let { item ->
             val menuItems = mutableListOf<MenuItemData>()
-            if (item.isActive) {
+            if (!item.isActive) {
                 menuItems.add(
                     MenuItemData(
                         id = PopupMenuItem.RECONNECT.ordinal,
@@ -175,7 +175,7 @@ class ConnectionsListViewModel(
             menuItems.addAll(
                 listOf(
                     MenuItemData(
-                        id = PopupMenuItem.EDIT.ordinal,
+                        id = PopupMenuItem.RENAME.ordinal,
                         iconRes = R.drawable.ic_menu_edit_24dp,
                         textRes = R.string.actions_rename
                     ),
@@ -305,6 +305,6 @@ class ConnectionsListViewModel(
     }
 
     enum class PopupMenuItem {
-        RECONNECT, EDIT, SUPPORT, CONSENTS, DELETE
+        RECONNECT, RENAME, SUPPORT, CONSENTS, DELETE
     }
 }

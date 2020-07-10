@@ -64,11 +64,11 @@
         <item name="android:textSize">@dimen/text_18</item>
     </style>
 
-    <style name="Text14Blue">
+    <style name="Text18BlueMedium">
         <item name="android:ellipsize">end</item>
         <item name="android:textColor">@color/primary_dark_and_primary_light</item>
         <item name="android:textSize">@dimen/text_18</item>
-        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
     </style>
 
     <style name="Text16Primary" parent="TextPrimary">

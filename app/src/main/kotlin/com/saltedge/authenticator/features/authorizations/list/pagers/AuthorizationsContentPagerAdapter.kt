@@ -29,10 +29,9 @@ import com.saltedge.authenticator.features.authorizations.common.AuthorizationVi
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tools.getOrPut
 
-class AuthorizationsContentPagerAdapter(val context: Context) :
-    AuthorizationsPagerAdapter(),
-    View.OnClickListener
-{
+class AuthorizationsContentPagerAdapter(val context: Context) : AuthorizationsPagerAdapter(),
+    View.OnClickListener {
+
     var listItemClickListener: ListItemClickListener? = null
     private val map = SparseArray<AuthorizationContentView>()
 

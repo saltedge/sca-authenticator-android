@@ -28,7 +28,7 @@
 
     <LinearLayout
         android:id="@+id/itemsLayout"
-        android:layout_width="@dimen/dp_200"
+        android:layout_width="@dimen/popupMenuItemWidth"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@color/white_and_dark_100"

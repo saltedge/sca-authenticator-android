@@ -382,7 +382,7 @@ class ConsentsListViewModelTest {
                     ConsentItemViewModel(
                         id = "777",
                         tppName = "title",
-                        consentTypeDescription = "Consent for account information access",
+                        consentTypeDescription = "Access to account information",
                         expiresAtDescription = spanned
                     )
                 )

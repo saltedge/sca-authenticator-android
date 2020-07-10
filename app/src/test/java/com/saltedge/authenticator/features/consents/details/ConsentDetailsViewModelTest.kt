@@ -150,8 +150,8 @@ class ConsentDetailsViewModelTest {
         //then
         assertThat(viewModel.fragmentTitle.value, equalTo("tppName"))
         assertThat(viewModel.daysLeft.value, equalTo("1 day left"))
-        assertThat(viewModel.consentTitle.value, equalTo("Consent for account information access"))
-        assertThat(viewModel.consentDescription.value, equalTo(
+        assertThat(viewModel.consentTitle.value, equalTo("Access to account information"))
+        assertThat(viewModel.consentDescription.value.toString(), equalTo(
             "Consent granted to tppName application on the following accounts from Demobank"
         ))
         assertThat(viewModel.consentGranted.value, equalTo(
@@ -227,7 +227,7 @@ class ConsentDetailsViewModelTest {
         assertThat(viewModel.fragmentTitle.value, equalTo("Active Consent"))
         assertThat(viewModel.daysLeft.value, equalTo(""))
         assertThat(viewModel.consentTitle.value, equalTo(""))
-        assertThat(viewModel.consentDescription.value, equalTo(""))
+        assertThat(viewModel.consentDescription.value.toString(), equalTo(""))
         assertThat(viewModel.consentGranted.value, equalTo(""))
         assertThat(viewModel.consentExpires.value, equalTo(""))
         Assert.assertNull(viewModel.accounts.value)
@@ -249,7 +249,7 @@ class ConsentDetailsViewModelTest {
         assertThat(viewModel.fragmentTitle.value, equalTo("Active Consent"))
         assertThat(viewModel.daysLeft.value, equalTo(""))
         assertThat(viewModel.consentTitle.value, equalTo(""))
-        assertThat(viewModel.consentDescription.value, equalTo(""))
+        assertThat(viewModel.consentDescription.value.toString(), equalTo(""))
         assertThat(viewModel.consentGranted.value, equalTo(""))
         assertThat(viewModel.consentExpires.value, equalTo(""))
         Assert.assertNull(viewModel.accounts.value)

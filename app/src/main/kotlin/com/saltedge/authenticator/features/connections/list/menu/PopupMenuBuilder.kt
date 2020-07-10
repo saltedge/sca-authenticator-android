@@ -66,10 +66,13 @@ class PopupMenuBuilder(
 
     fun show(anchorView: View): PopupWindow? {
         val popupHeight = itemHeight * menuData.items.size + menuTopBottomPadding * 2
+        val popupWidth = anchorView.context.resources.getDimensionPixelSize(R.dimen.popupMenuItemWidth)
+        val margin = anchorView.context.resources.getDimensionPixelSize(R.dimen.dp_32)
+        val x = parentView.right - popupWidth - margin
         val y = if (anchorView.bottom + popupHeight > parentView.bottom ) {
             if (anchorView.bottom > parentView.bottom) popupHeight + anchorView.height else popupHeight
         } else 0
-        popupWindow?.showAsDropDown(anchorView, 0, -y, Gravity.TOP or Gravity.END)
+        popupWindow?.showAsDropDown(anchorView, x, -y, Gravity.START)
         return popupWindow
     }
 
