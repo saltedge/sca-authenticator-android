@@ -87,7 +87,7 @@ object PreferenceRepository : PreferenceRepositoryAbs {
     override var systemNightMode: Boolean
         get() = preferences?.getBoolean(
             KEY_SYSTEM_NIGHT_MODE,
-            isSystemNightModeSupported() && nightMode == getDefaultSystemNightMode()
+            nightMode == getDefaultSystemNightMode()
         ) ?: true
         set(value) {
             preferences?.saveValue(KEY_SYSTEM_NIGHT_MODE, value)

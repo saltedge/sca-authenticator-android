@@ -20,7 +20,9 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -28,8 +30,12 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.test.core.app.ApplicationProvider
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
+import com.saltedge.authenticator.app.KEY_GUID
+import com.saltedge.authenticator.app.KEY_OPTION_ID
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationViewModel
+import com.saltedge.authenticator.features.menu.MenuItemData
+import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -46,7 +52,6 @@ import com.saltedge.authenticator.sdk.polling.PollingServiceAbs
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import junit.framework.TestCase.assertNull
-import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.joda.time.DateTime
@@ -647,6 +652,148 @@ class AuthorizationsListViewModelTest {
             equalTo(R.string.authorizations_empty_title))
         assertThat(viewModel.emptyViewDescriptionText.value,
             equalTo(R.string.authorizations_empty_description))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onEmptyViewActionClickTest() {
+        //given
+        //when
+        viewModel.onEmptyViewActionClick()
+
+        //then
+        assertThat(viewModel.onQrScanClickEvent.value, equalTo(ViewModelEvent(Unit)))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onAppbarMenuItemClickTestCase1() {
+        //given
+        val menuItem = MenuItem.SCAN_QR
+
+        //when
+        viewModel.onAppbarMenuItemClick(menuItem)
+
+        //then
+        assertThat(viewModel.onQrScanClickEvent.value, equalTo(ViewModelEvent(Unit)))
+        assertNull(viewModel.onMoreMenuClickEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onAppbarMenuItemClickTestCase2() {
+        //given
+        val menuItem = MenuItem.MORE_MENU
+
+        //when
+        viewModel.onAppbarMenuItemClick(menuItem)
+
+        //then
+        assertNull(viewModel.onQrScanClickEvent.value)
+        assertThat(
+            viewModel.onMoreMenuClickEvent.value,
+            equalTo(ViewModelEvent(listOf<MenuItemData>(
+                MenuItemData(
+                    id = R.string.connections_feature_title,
+                    iconRes = R.drawable.ic_menu_action_connections,
+                    textRes = R.string.connections_feature_title
+                ),
+                MenuItemData(
+                    id = R.string.settings_feature_title,
+                    iconRes = R.drawable.ic_menu_action_settings,
+                    textRes = R.string.settings_feature_title
+                )
+            )))
+        )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onAppbarMenuItemClickTestCase3() {
+        //given
+        val menuItem = MenuItem.CUSTOM_NIGHT_MODE
+
+        //when
+        viewModel.onAppbarMenuItemClick(menuItem)
+
+        //then
+        assertNull(viewModel.onQrScanClickEvent.value)
+        assertNull(viewModel.onMoreMenuClickEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onActivityResultTestCase1() {
+        //given
+        val resultCode = Activity.RESULT_CANCELED
+        val data = Intent()
+
+        //when
+        viewModel.onActivityResult(0, resultCode, data)
+
+        //then
+        assertNull(viewModel.onShowConnectionsListEvent.value)
+        assertNull(viewModel.onShowSettingsListEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onActivityResultTestCase2() {
+        //given
+        val resultCode = Activity.RESULT_OK
+        val data = null
+
+        //when
+        viewModel.onActivityResult(0, resultCode, data)
+
+        //then
+        assertNull(viewModel.onShowConnectionsListEvent.value)
+        assertNull(viewModel.onShowSettingsListEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onActivityResultTestCase3() {
+        //given
+        val resultCode = Activity.RESULT_OK
+        val data = Intent().putExtra(KEY_GUID, 0)
+
+        //when
+        viewModel.onActivityResult(0, resultCode, data)
+
+        //then
+        assertNull(viewModel.onShowConnectionsListEvent.value)
+        assertNull(viewModel.onShowSettingsListEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onActivityResultTestCase4() {
+        //given
+        val resultCode = Activity.RESULT_OK
+        val data = Intent().putExtra(KEY_OPTION_ID, R.string.connections_feature_title)
+
+        //when
+        viewModel.onActivityResult(0, resultCode, data)
+
+        //then
+        assertThat(viewModel.onShowConnectionsListEvent.value, equalTo(ViewModelEvent(Unit)))
+        assertNull(viewModel.onShowSettingsListEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onActivityResultTestCase5() {
+        //given
+        val resultCode = Activity.RESULT_OK
+        val data = Intent().putExtra(KEY_OPTION_ID, R.string.settings_feature_title)
+
+        //when
+        viewModel.onActivityResult(0, resultCode, data)
+
+        //then
+        assertNull(viewModel.onShowConnectionsListEvent.value)
+        assertThat(viewModel.onShowSettingsListEvent.value, equalTo(ViewModelEvent(Unit)))
     }
 
     private fun createAuthorization(id: Int): AuthorizationData {

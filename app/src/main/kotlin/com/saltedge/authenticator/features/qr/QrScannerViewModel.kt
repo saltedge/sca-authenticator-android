@@ -32,6 +32,7 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.isValidDeeplink
 import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.postUnitEvent
 
 class QrScannerViewModel(
     val appContext: Context,
@@ -44,7 +45,7 @@ class QrScannerViewModel(
 
     fun onViewClick(viewId: Int) {
         when (viewId) {
-            R.id.closeImageView -> onCloseEvent.postValue(ViewModelEvent(Unit))
+            R.id.closeImageView -> onCloseEvent.postUnitEvent()
         }
     }
 
@@ -55,7 +56,7 @@ class QrScannerViewModel(
         }
         deeplinks.firstOrNull()?.let { deeplink ->
             setActivityResult.postValue(deeplink)
-            onCloseEvent.postValue(ViewModelEvent(Unit))
+            onCloseEvent.postUnitEvent()
         }
     }
 

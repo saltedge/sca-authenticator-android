@@ -86,7 +86,7 @@ class MainActivityViewModel(
 
     fun onLifeCycleCreate(savedInstanceState: Bundle?, intent: Intent?) {
         if (savedInstanceState == null) {
-            onShowAuthorizationsListEvent.postValue(ViewModelEvent(Unit))
+            onShowAuthorizationsListEvent.postUnitEvent()
             if (intent != null && (intent.hasPendingAuthorizationData || intent.hasDeepLinkData)) {
                 onNewIntent(intent)
             }
@@ -139,7 +139,7 @@ class MainActivityViewModel(
             R.id.appBarActionQrCode -> onAppbarMenuItemClickEvent.postValue(ViewModelEvent(MenuItem.SCAN_QR))
             R.id.appBarActionSwitchTheme -> onAppbarMenuItemClickEvent.postValue(ViewModelEvent(MenuItem.CUSTOM_NIGHT_MODE))
             R.id.appBarActionMore -> onAppbarMenuItemClickEvent.postValue(ViewModelEvent(MenuItem.MORE_MENU))//{
-            R.id.appBarBackAction -> onBackActionClickEvent.postValue(ViewModelEvent(Unit))
+            R.id.appBarBackAction -> onBackActionClickEvent.postUnitEvent()
         }
     }
 
@@ -176,6 +176,6 @@ class MainActivityViewModel(
 
     override fun onLanguageChanged() {
         appContext.applyPreferenceLocale()
-        onRestartActivityEvent.postValue(ViewModelEvent(Unit))
+        onRestartActivityEvent.postUnitEvent()
     }
 }

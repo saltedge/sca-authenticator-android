@@ -27,7 +27,6 @@ import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
-import com.saltedge.authenticator.app.KEY_ID
 import com.saltedge.authenticator.app.KEY_OPTION_ID
 import com.saltedge.authenticator.app.NetworkStateChangeListener
 import com.saltedge.authenticator.features.authorizations.common.*
@@ -52,6 +51,7 @@ import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.postUnitEvent
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -140,12 +140,12 @@ class AuthorizationsListViewModel(
     }
 
     fun onEmptyViewActionClick() {
-        onQrScanClickEvent.postValue(ViewModelEvent(Unit))
+        onQrScanClickEvent.postUnitEvent()
     }
 
     fun onAppbarMenuItemClick(menuItem: MenuItem) {
         when (menuItem) {
-            MenuItem.SCAN_QR -> onQrScanClickEvent.postValue(ViewModelEvent(Unit))
+            MenuItem.SCAN_QR -> onQrScanClickEvent.postUnitEvent()
             MenuItem.MORE_MENU -> {
                 val menuItems = listOf<MenuItemData>(
                     MenuItemData(
@@ -171,8 +171,8 @@ class AuthorizationsListViewModel(
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data == null || resultCode != Activity.RESULT_OK) return
         when (data.getIntExtra(KEY_OPTION_ID, 0)) {
-            R.string.connections_feature_title -> onShowConnectionsListEvent.postValue(ViewModelEvent(Unit))
-            R.string.settings_feature_title -> onShowSettingsListEvent.postValue(ViewModelEvent(Unit))
+            R.string.connections_feature_title -> onShowConnectionsListEvent.postUnitEvent()
+            R.string.settings_feature_title -> onShowSettingsListEvent.postUnitEvent()
         }
     }
 

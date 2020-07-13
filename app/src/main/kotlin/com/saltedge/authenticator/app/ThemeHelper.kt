@@ -33,15 +33,14 @@ fun Context.isDarkThemeSet(): Boolean {
 }
 
 fun Context.switchDarkLightMode(currentMode: Int): Int {
-    val newMode = when (currentMode) {
+    return when (currentMode) {
         AppCompatDelegate.MODE_NIGHT_YES -> AppCompatDelegate.MODE_NIGHT_NO
         AppCompatDelegate.MODE_NIGHT_NO -> AppCompatDelegate.MODE_NIGHT_YES
         else -> {
-            if (this.isDarkThemeSet()) AppCompatDelegate.MODE_NIGHT_NO
+            if (isDarkThemeSet()) AppCompatDelegate.MODE_NIGHT_NO
             else AppCompatDelegate.MODE_NIGHT_YES
         }
     }
-    return newMode
 }
 
 fun getDefaultSystemNightMode(): Int {
@@ -49,8 +48,8 @@ fun getDefaultSystemNightMode(): Int {
     else AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
 }
 
-fun isSystemNightModeSupported(): Boolean {
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+fun isSystemNightModeSupported(sdkVersion: Int): Boolean {
+    return sdkVersion >= Build.VERSION_CODES.Q
 }
 
 fun FragmentActivity.applyNightMode(nightMode: Int) {

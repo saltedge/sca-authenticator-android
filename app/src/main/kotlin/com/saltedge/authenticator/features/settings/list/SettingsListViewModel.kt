@@ -38,10 +38,12 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.isActive
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.tools.AppToolsAbs
 import com.saltedge.authenticator.tools.postUnitEvent
 
 class SettingsListViewModel(
     private val appContext: Context,
+    private val appTools: AppToolsAbs,
     private val keyStoreManager: KeyStoreManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
     private val connectionsRepository: ConnectionsRepositoryAbs,
@@ -80,7 +82,7 @@ class SettingsListViewModel(
         when (itemId) {
             R.string.settings_screenshot_lock -> {
                 preferenceRepository.screenshotLockEnabled = checked
-                screenshotClickEvent.postValue(ViewModelEvent(Unit))
+                screenshotClickEvent.postUnitEvent()
             }
             R.string.settings_system_dark_mode -> {
                 preferenceRepository.systemNightMode = checked
@@ -104,7 +106,7 @@ class SettingsListViewModel(
     }
 
     fun restartConfirmed() {
-        restartClickEvent.postValue(ViewModelEvent(Unit))
+        restartClickEvent.postUnitEvent()
     }
 
     fun onUserConfirmedClearAppData() {
@@ -131,7 +133,7 @@ class SettingsListViewModel(
                 switchIsChecked = preferenceRepository.screenshotLockEnabled
             )
         )
-        if (isSystemNightModeSupported()) listItems.add(
+        if (isSystemNightModeSupported(appTools.getSDKVersion())) listItems.add(
             SettingsItemViewModel(
                 iconId = R.drawable.ic_settings_dark_mode,
                 titleId = R.string.settings_system_dark_mode,
