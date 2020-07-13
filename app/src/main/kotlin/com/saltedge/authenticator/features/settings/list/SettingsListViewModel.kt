@@ -97,11 +97,12 @@ class SettingsListViewModel(
 
     fun onAppbarMenuItemClick(menuItem: MenuItem) {
         if (menuItem != MenuItem.CUSTOM_NIGHT_MODE) return
-
         val newNighMode = appContext.switchDarkLightMode(preferenceRepository.nightMode)
         preferenceRepository.nightMode = newNighMode
         preferenceRepository.systemNightMode = false
-        listItems.postValue(collectListItems())
+        listItemsValues?.firstOrNull { it.titleId == R.string.settings_system_dark_mode }?.let {
+            it.switchIsChecked = false
+        }
         setNightModelEvent.postValue(ViewModelEvent(newNighMode))
     }
 

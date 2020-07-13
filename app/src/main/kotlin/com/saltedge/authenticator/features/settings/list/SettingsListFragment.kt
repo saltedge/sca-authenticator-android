@@ -40,9 +40,9 @@ import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
 import com.saltedge.authenticator.features.settings.passcode.PasscodeEditFragment
+import com.saltedge.authenticator.interfaces.AppbarMenuItemClickListener
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.MenuItem
-import com.saltedge.authenticator.interfaces.AppbarMenuItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
