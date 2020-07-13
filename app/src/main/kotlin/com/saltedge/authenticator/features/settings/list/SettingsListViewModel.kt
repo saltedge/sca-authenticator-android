@@ -81,8 +81,10 @@ class SettingsListViewModel(
         }
         when (itemId) {
             R.string.settings_screenshot_lock -> {
-                preferenceRepository.screenshotLockEnabled = checked
-                screenshotClickEvent.postUnitEvent()
+                if (preferenceRepository.screenshotLockEnabled != checked) {
+                    preferenceRepository.screenshotLockEnabled = checked
+                    screenshotClickEvent.postUnitEvent()
+                }
             }
             R.string.settings_system_dark_mode -> {
                 preferenceRepository.systemNightMode = checked
