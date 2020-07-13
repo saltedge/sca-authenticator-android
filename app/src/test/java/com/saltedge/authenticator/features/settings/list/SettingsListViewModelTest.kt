@@ -357,6 +357,7 @@ class SettingsListViewModelTest {
     fun onListItemCheckedStateChangedTestCase2() {
         //given
         val itemId = R.string.settings_screenshot_lock
+        given(mockPreferences.screenshotLockEnabled).willReturn(false)
 
         //when
         viewModel.onListItemCheckedStateChanged(itemId = itemId, checked = true)
