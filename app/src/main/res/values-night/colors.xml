@@ -54,4 +54,5 @@
     <color name="switch_track_tint_on">@color/primary_light</color>
     <color name="company_logo_fill">@android:color/white</color>
     <color name="snackbar_background">@color/dark_100</color>
+    <color name="blue_black_and_dark_100">@color/dark_100</color>
 </resources>
