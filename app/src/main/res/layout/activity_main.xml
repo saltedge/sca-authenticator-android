@@ -94,7 +94,7 @@
                 </FrameLayout>
 
                 <FrameLayout
-                    android:id="@+id/appBarActionTheme"
+                    android:id="@+id/appBarActionSwitchTheme"
                     style="@style/AppBarActionContainer"
                     android:onClick="@{(view) -> viewModel.onViewClick(view.id)}"
                     android:visibility="@{viewModel.appBarActionThemeVisibility}">

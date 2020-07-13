@@ -28,7 +28,6 @@ import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
-import com.saltedge.authenticator.app.switchDarkLightMode
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
@@ -56,19 +55,15 @@ class MainActivityViewModel(
     NewAuthorizationListener,
     ActivityComponentsContract
 {
-    val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onAppBarMenuClickEvent = MutableLiveData<ViewModelEvent<List<MenuItemData>>>()
+    val onAppbarMenuItemClickEvent = MutableLiveData<ViewModelEvent<MenuItem>>()
     val onBackActionClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onRestartActivityEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowAuthorizationsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowAuthorizationDetailsEvent = MutableLiveData<ViewModelEvent<AuthorizationIdentifier>>()
     val onShowActionAuthorizationEvent = MutableLiveData<ViewModelEvent<AuthorizationIdentifier>>()
-    val onShowConnectionsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onShowSettingsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowConnectEvent = MutableLiveData<ViewModelEvent<ConnectAppLinkData>>()
     val onShowSubmitActionEvent = MutableLiveData<ViewModelEvent<ActionAppLinkData>>()
-    val onSetNightMode = MutableLiveData<ViewModelEvent<Int>>()
-
+    val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val appBarTitle = MutableLiveData<String>()
     val appBarBackActionImageResource = MutableLiveData<ResId>(R.drawable.ic_appbar_action_back)
     val appBarBackActionVisibility = MutableLiveData<Int>(View.GONE)
@@ -137,42 +132,14 @@ class MainActivityViewModel(
     }
 
     /**
-     * Handle click on views
+     * Handle click on appbar actions
      */
     fun onViewClick(viewId: Int) {
         when (viewId) {
-            R.id.appBarActionQrCode -> onQrScanClickEvent.postValue(ViewModelEvent(Unit))
-            R.id.appBarActionTheme -> {
-                val nightMode = preferenceRepository.nightMode
-                preferenceRepository.nightMode = appContext.switchDarkLightMode(nightMode)
-                onSetNightMode.postValue(ViewModelEvent(preferenceRepository.nightMode))
-            }
-            R.id.appBarActionMore -> {
-                val menuItems = listOf<MenuItemData>(
-                    MenuItemData(
-                        id = R.string.connections_feature_title,
-                        iconResId = R.drawable.ic_menu_action_connections,
-                        textResId = R.string.connections_feature_title
-                    ),
-                    MenuItemData(
-                        id = R.string.settings_feature_title,
-                        iconResId = R.drawable.ic_menu_action_settings,
-                        textResId = R.string.settings_feature_title
-                    )
-                )
-                onAppBarMenuClickEvent.postValue(ViewModelEvent(menuItems))
-            }
+            R.id.appBarActionQrCode -> onAppbarMenuItemClickEvent.postValue(ViewModelEvent(MenuItem.SCAN_QR))
+            R.id.appBarActionSwitchTheme -> onAppbarMenuItemClickEvent.postValue(ViewModelEvent(MenuItem.CUSTOM_NIGHT_MODE))
+            R.id.appBarActionMore -> onAppbarMenuItemClickEvent.postValue(ViewModelEvent(MenuItem.MORE_MENU))//{
             R.id.appBarBackAction -> onBackActionClickEvent.postValue(ViewModelEvent(Unit))
-        }
-    }
-
-    /**
-     * Handle clicks on bottom navigation menu
-     */
-    fun onMenuItemSelected(menuId: String, selectedItemId: Int) {
-        when (selectedItemId) {
-            R.string.connections_feature_title -> onShowConnectionsListEvent.postValue(ViewModelEvent(Unit))
-            R.string.settings_feature_title -> onShowSettingsListEvent.postValue(ViewModelEvent(Unit))
         }
     }
 
@@ -203,8 +170,8 @@ class MainActivityViewModel(
         backActionImageResId?.let { appBarBackActionImageResource.postValue(it) }
         appBarBackActionVisibility.postValue(if (backActionImageResId == null) View.GONE else View.VISIBLE)
         appBarActionQRVisibility.postValue(if (showMenu.contains(MenuItem.SCAN_QR)) View.VISIBLE else View.GONE)
-        appBarActionThemeVisibility.postValue(if (showMenu.contains(MenuItem.THEME)) View.VISIBLE else View.GONE)
-        appBarActionMoreVisibility.postValue(if (showMenu.contains(MenuItem.MORE)) View.VISIBLE else View.GONE)
+        appBarActionThemeVisibility.postValue(if (showMenu.contains(MenuItem.CUSTOM_NIGHT_MODE)) View.VISIBLE else View.GONE)
+        appBarActionMoreVisibility.postValue(if (showMenu.contains(MenuItem.MORE_MENU)) View.VISIBLE else View.GONE)
     }
 
     override fun onLanguageChanged() {
