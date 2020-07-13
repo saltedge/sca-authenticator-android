@@ -24,6 +24,8 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.FragmentActivity
+import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
 
 fun Context.isDarkThemeSet(): Boolean {
     return this.resources.configuration.uiMode and
@@ -47,3 +49,11 @@ fun getDefaultSystemNightMode(): Int {
     else AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
 }
 
+fun isSystemNightModeSupported(): Boolean {
+    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+}
+
+fun FragmentActivity.applyNightMode(nightMode: Int) {
+    if (this.intent != null) this.intent.putExtra(KEY_SKIP_PIN, true)
+    AppCompatDelegate.setDefaultNightMode(nightMode)
+}

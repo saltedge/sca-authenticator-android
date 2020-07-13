@@ -28,6 +28,7 @@ interface PreferenceRepositoryAbs {
     var dbKey: String
     var encryptedPasscode: String
     var nightMode: Int
+    var systemNightMode: Boolean
     var cloudMessagingToken: String
     var notificationsEnabled: Boolean
     var currentLocale: String?

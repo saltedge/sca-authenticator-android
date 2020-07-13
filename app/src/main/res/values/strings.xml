@@ -151,6 +151,7 @@
     <string name="settings_input_new_passcode">New passcode</string>
     <string name="settings_passcode_success">New passcode successfully set</string>
     <string name="settings_screenshot_lock">Screenshot lock</string>
+    <string name="settings_system_dark_mode">System dark mode</string>
     <string name="settings_restart_app">Restart app for these changes to take effect</string>
     <string name="settings_clear_message">App data including connected providers and user data will be permanently deleted.</string>
     <string name="settings_clear_success">App data cleared successfully</string>
