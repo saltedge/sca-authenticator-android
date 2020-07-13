@@ -86,6 +86,7 @@ class SettingsListViewModel(
                 preferenceRepository.systemNightMode = checked
                 val defaultNightMode = getDefaultSystemNightMode()
                 if (preferenceRepository.nightMode != defaultNightMode && checked) {
+                    preferenceRepository.nightMode = defaultNightMode
                     setNightModelEvent.postValue(ViewModelEvent(defaultNightMode))
                 }
             }
