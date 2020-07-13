@@ -52,6 +52,7 @@ import com.saltedge.authenticator.sdk.model.response.CreateConnectionResponseDat
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.tools.parseRedirect
 import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.postUnitEvent
 
 class ConnectProviderViewModel(
     private val appContext: Context,
@@ -177,11 +178,11 @@ class ConnectProviderViewModel(
     }
 
     fun onViewClick(viewId: Int) {
-        if (viewId == R.id.actionView) onCloseEvent.postValue(ViewModelEvent(Unit))
+        if (viewId == R.id.actionView) onCloseEvent.postUnitEvent()
     }
 
     fun onDialogActionIdClick(dialogActionId: Int) {
-        if (dialogActionId == DialogInterface.BUTTON_POSITIVE) onCloseEvent.postValue(ViewModelEvent(Unit))
+        if (dialogActionId == DialogInterface.BUTTON_POSITIVE) onCloseEvent.postUnitEvent()
     }
 
     fun authFinishedWithSuccess(connectionId: ConnectionID, accessToken: Token) {
@@ -205,7 +206,7 @@ class ConnectProviderViewModel(
 
     fun onBackPress(webViewCanGoBack: Boolean?): Boolean {
         return (webViewIsVisible && webViewCanGoBack == true).apply {
-            goBackEvent.postValue(ViewModelEvent(Unit))
+            goBackEvent.postUnitEvent()
         }
     }
 

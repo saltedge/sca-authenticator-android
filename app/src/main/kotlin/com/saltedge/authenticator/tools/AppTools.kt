@@ -23,6 +23,7 @@ package com.saltedge.authenticator.tools
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Point
+import android.os.Build
 import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -85,6 +86,8 @@ object AppTools : AppToolsAbs {
         }
         return "unknown"
     }
+
+    override fun getSDKVersion(): Int = Build.VERSION.SDK_INT
 }
 
 /**

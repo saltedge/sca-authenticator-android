@@ -20,15 +20,18 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.MORE_MENU_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.cloud.clearNotifications
 import com.saltedge.authenticator.databinding.AuthorizationsListBinding
@@ -36,16 +39,19 @@ import com.saltedge.authenticator.features.authorizations.common.AuthorizationVi
 import com.saltedge.authenticator.features.authorizations.list.pagers.AuthorizationsContentPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.pagers.AuthorizationsHeaderPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.pagers.PagersScrollSynchronizer
+import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
+import com.saltedge.authenticator.features.menu.BottomMenuDialog
+import com.saltedge.authenticator.features.settings.list.SettingsListFragment
+import com.saltedge.authenticator.interfaces.AppbarMenuItemClickListener
+import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.tools.ResId
-import com.saltedge.authenticator.tools.authenticatorApp
-import com.saltedge.authenticator.tools.showQrScannerActivity
+import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_authorizations_list.*
 import javax.inject.Inject
 
-class AuthorizationsListFragment : BaseFragment() {
+class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, DialogHandlerListener {
 
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: AuthorizationsListViewModel
@@ -53,6 +59,7 @@ class AuthorizationsListFragment : BaseFragment() {
     private val pagersScrollSynchronizer = PagersScrollSynchronizer()
     private var headerAdapter: AuthorizationsHeaderPagerAdapter? = null
     private var contentAdapter: AuthorizationsContentPagerAdapter? = null
+    private var dialogFragment: DialogFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +74,7 @@ class AuthorizationsListFragment : BaseFragment() {
     ): View {
         activityComponents?.updateAppbar(
             titleResId = R.string.app_name_short,
-            showMenu = arrayOf(MenuItem.SCAN_QR, MenuItem.MORE)
+            showMenu = arrayOf(MenuItem.SCAN_QR, MenuItem.MORE_MENU)
         )
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_authorizations_list, container, false)
         binding.viewModel = viewModel
@@ -101,6 +108,18 @@ class AuthorizationsListFragment : BaseFragment() {
         super.onStop()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        viewModel.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onAppbarMenuItemClick(menuItem: MenuItem) {
+        viewModel.onAppbarMenuItemClick(menuItem)
+    }
+
+    override fun closeActiveDialogs() {
+        if (dialogFragment?.isVisible == true) dialogFragment?.dismiss()
+    }
+
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(AuthorizationsListViewModel::class.java)
         viewModel.bindLifecycleObserver(lifecycle = lifecycle)
@@ -122,8 +141,22 @@ class AuthorizationsListFragment : BaseFragment() {
                 view?.let { Snackbar.make(it, errorMessage, Snackbar.LENGTH_LONG).show() }
             }
         })
-        viewModel.onQrScanClickEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { activity?.showQrScannerActivity() }
+        viewModel.onQrScanClickEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { activity?.showQrScannerActivity() }
+        })
+        viewModel.onMoreMenuClickEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { menuItems ->
+                dialogFragment = BottomMenuDialog.newInstance(menuItems = menuItems).also {
+                    it.setTargetFragment(this, MORE_MENU_REQUEST_CODE)
+                    activity?.showDialogFragment(it)
+                }
+            }
+        })
+        viewModel.onShowConnectionsListEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { activity?.addFragment(ConnectionsListFragment()) }
+        })
+        viewModel.onShowSettingsListEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { activity?.addFragment(SettingsListFragment()) }
         })
         viewModel.emptyViewImage.observe(this, Observer<ResId> {
             emptyView.setImageResource(it)

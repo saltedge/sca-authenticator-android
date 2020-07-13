@@ -43,6 +43,7 @@ import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.isActive
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.tools.postUnitEvent
 import javax.inject.Inject
 
 class ConnectionsListViewModel @Inject constructor(
@@ -95,7 +96,7 @@ class ConnectionsListViewModel @Inject constructor(
     }
 
     fun onViewClick(viewId: Int) {
-        if (viewId == R.id.actionView) onQrScanClickEvent.postValue(ViewModelEvent(Unit))
+        if (viewId == R.id.actionView) onQrScanClickEvent.postUnitEvent()
     }
 
     fun onListItemClick(itemIndex: Int) {

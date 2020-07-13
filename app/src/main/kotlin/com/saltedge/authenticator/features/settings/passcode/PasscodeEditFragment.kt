@@ -102,7 +102,7 @@ class PasscodeEditFragment : BaseFragment(), DialogHandlerListener {
             event.getContentIfNotHandled()?.let { messageRes ->
                 view?.let {
                     activity?.buildWarningSnack(
-                        textResId = messageRes,
+                        messageRes = messageRes,
                         snackBarDuration = Snackbar.LENGTH_SHORT
                     )?.show()
                 }

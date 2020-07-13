@@ -20,14 +20,19 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
+import com.saltedge.authenticator.app.KEY_OPTION_ID
 import com.saltedge.authenticator.app.NetworkStateChangeListener
 import com.saltedge.authenticator.features.authorizations.common.*
+import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.ListItemClickListener
+import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
@@ -46,6 +51,7 @@ import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.postUnitEvent
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -85,6 +91,9 @@ class AuthorizationsListViewModel(
     val listItemUpdateEvent = MutableLiveData<ViewModelEvent<Int>>()
     val onConfirmErrorEvent = MutableLiveData<ViewModelEvent<String>>()
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onMoreMenuClickEvent = MutableLiveData<ViewModelEvent<List<MenuItemData>>>()
+    val onShowConnectionsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onShowSettingsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
     fun bindLifecycleObserver(lifecycle: Lifecycle) {
         lifecycle.let {
@@ -131,7 +140,40 @@ class AuthorizationsListViewModel(
     }
 
     fun onEmptyViewActionClick() {
-        onQrScanClickEvent.postValue(ViewModelEvent(Unit))
+        onQrScanClickEvent.postUnitEvent()
+    }
+
+    fun onAppbarMenuItemClick(menuItem: MenuItem) {
+        when (menuItem) {
+            MenuItem.SCAN_QR -> onQrScanClickEvent.postUnitEvent()
+            MenuItem.MORE_MENU -> {
+                val menuItems = listOf<MenuItemData>(
+                    MenuItemData(
+                        id = R.string.connections_feature_title,
+                        iconRes = R.drawable.ic_menu_action_connections,
+                        textRes = R.string.connections_feature_title
+                    ),
+                    MenuItemData(
+                        id = R.string.settings_feature_title,
+                        iconRes = R.drawable.ic_menu_action_settings,
+                        textRes = R.string.settings_feature_title
+                    )
+                )
+                onMoreMenuClickEvent.postValue(ViewModelEvent(menuItems))
+            }
+            else -> Unit
+        }
+    }
+
+    /**
+     * Handle clicks on bottom navigation menu
+     */
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (data == null || resultCode != Activity.RESULT_OK) return
+        when (data.getIntExtra(KEY_OPTION_ID, 0)) {
+            R.string.connections_feature_title -> onShowConnectionsListEvent.postUnitEvent()
+            R.string.settings_feature_title -> onShowSettingsListEvent.postUnitEvent()
+        }
     }
 
     override fun getCurrentConnectionsAndKeysForPolling(): List<ConnectionAndKey>? = collectAuthorizationRequestData()

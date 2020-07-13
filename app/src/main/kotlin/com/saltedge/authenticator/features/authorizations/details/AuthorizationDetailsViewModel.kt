@@ -245,7 +245,7 @@ class AuthorizationDetailsViewModel(
     private fun updateToFinalViewMode(newViewMode: ViewMode) {
         stopPolling()
         updateViewMode(newViewMode)
-        onTimeUpdateEvent.postValue(ViewModelEvent(Unit))
+        onTimeUpdateEvent.postUnitEvent()
     }
 
     private fun updateViewMode(newViewMode: ViewMode) {

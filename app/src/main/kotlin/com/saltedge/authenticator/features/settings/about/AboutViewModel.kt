@@ -30,6 +30,7 @@ import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.constants.TERMS_LINK
 import com.saltedge.authenticator.tools.AppTools
+import com.saltedge.authenticator.tools.postUnitEvent
 import com.saltedge.authenticator.widget.fragment.WebViewFragment
 
 class AboutViewModel(val appContext: Context) : ViewModel(), ListItemClickListener {
@@ -61,7 +62,7 @@ class AboutViewModel(val appContext: Context) : ViewModel(), ListItemClickListen
                     )
                 )
             }
-            R.string.about_open_source_licenses -> licenseItemClickEvent.postValue(ViewModelEvent(Unit))
+            R.string.about_open_source_licenses -> licenseItemClickEvent.postUnitEvent()
         }
     }
 }

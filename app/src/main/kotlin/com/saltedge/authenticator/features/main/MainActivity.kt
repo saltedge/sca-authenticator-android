@@ -23,7 +23,6 @@ package com.saltedge.authenticator.features.main
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
@@ -31,6 +30,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.applyNightMode
 import com.saltedge.authenticator.databinding.MainActivityBinding
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.features.actions.SubmitActionFragment
@@ -41,26 +41,18 @@ import com.saltedge.authenticator.features.connections.list.ConnectionsListFragm
 import com.saltedge.authenticator.features.menu.BottomMenuDialog
 import com.saltedge.authenticator.features.menu.MenuItemSelectListener
 import com.saltedge.authenticator.features.settings.list.SettingsListFragment
-import com.saltedge.authenticator.interfaces.ActivityComponentsContract
-import com.saltedge.authenticator.interfaces.DialogHandlerListener
-import com.saltedge.authenticator.interfaces.OnBackPressListener
-import com.saltedge.authenticator.interfaces.ViewModelContract
+import com.saltedge.authenticator.interfaces.*
 import com.saltedge.authenticator.tools.*
-import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
 import com.saltedge.authenticator.widget.security.LockableActivity
 import com.saltedge.authenticator.widget.security.UnlockAppInputView
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-class MainActivity : LockableActivity(),
-    ViewModelContract,
-    SnackbarAnchorContainer,
-    MenuItemSelectListener
+class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContainer
 {
     override lateinit var viewModel: MainActivityViewModel
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var binding: MainActivityBinding
-    private var dialogFragment: DialogFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,7 +86,6 @@ class MainActivity : LockableActivity(),
      */
     override fun onLockActivity() {
         (currentFragmentInContainer() as? DialogHandlerListener)?.closeActiveDialogs()
-        if (dialogFragment?.isVisible == true) dialogFragment?.dismiss()
     }
 
     override fun onUnlockActivity() {
@@ -105,10 +96,6 @@ class MainActivity : LockableActivity(),
 
     override fun getSnackbarAnchorView(): View? = container
 
-    override fun onMenuItemSelected(menuId: String, selectedItemId: Int) {
-        viewModel.onMenuItemSelected(menuId, selectedItemId)
-    }
-
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainActivityViewModel::class.java)
         viewModel.bindLifecycleObserver(lifecycle = lifecycle)
@@ -116,14 +103,9 @@ class MainActivity : LockableActivity(),
         binding.executePendingBindings()
         binding.lifecycleOwner = this
 
-        viewModel.onQrScanClickEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { this.showQrScannerActivity() }
-        })
-        viewModel.onAppBarMenuClickEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { menuItems ->
-                dialogFragment = BottomMenuDialog.newInstance(menuItems = menuItems).also {
-                    this.showDialogFragment(it)
-                }
+        viewModel.onAppbarMenuItemClickEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let {
+                (this.currentFragmentInContainer() as? AppbarMenuItemClickListener)?.onAppbarMenuItemClick(it)
             }
         })
         viewModel.onBackActionClickEvent.observe(this, Observer { event ->
@@ -160,12 +142,6 @@ class MainActivity : LockableActivity(),
                 )
             }
         })
-        viewModel.onShowConnectionsListEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { this.addFragment(ConnectionsListFragment()) }
-        })
-        viewModel.onShowSettingsListEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { this.addFragment(SettingsListFragment()) }
-        })
         viewModel.onShowConnectEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { connectAppLinkData ->
                 this.addFragment(
@@ -182,11 +158,8 @@ class MainActivity : LockableActivity(),
                 )
             }
         })
-        viewModel.onSetNightMode.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { nightMode ->
-                this.intent.putExtra(KEY_SKIP_PIN, true)
-                AppCompatDelegate.setDefaultNightMode(nightMode)
-            }
+        viewModel.onQrScanClickEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { this.showQrScannerActivity() }
         })
     }
 }

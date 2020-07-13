@@ -31,6 +31,7 @@ import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.postUnitEvent
 import com.saltedge.authenticator.widget.passcode.PasscodeInputListener
 import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
 
@@ -89,7 +90,7 @@ class OnboardingSetupViewModel(
     fun onViewClick(viewId: Int) {
         when (viewId) {
             R.id.skipActionView, R.id.proceedToSetup -> showPasscodeInput()
-            R.id.nextActionView -> moveNext.postValue(ViewModelEvent(Unit))
+            R.id.nextActionView -> moveNext.postUnitEvent()
         }
     }
 
@@ -112,7 +113,7 @@ class OnboardingSetupViewModel(
     override fun onNewPasscodeConfirmed(passcode: String) {
         if (passcodeTools.savePasscode(passcode)) {
             passcodeInputViewVisibility.postValue(View.GONE)
-            showMainActivity.postValue(ViewModelEvent(Unit))
+            showMainActivity.postUnitEvent()
         } else {
             showWarningDialogWithMessage.postValue(R.string.errors_cant_save_passcode)
         }

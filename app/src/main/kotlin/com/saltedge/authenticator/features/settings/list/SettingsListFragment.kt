@@ -33,11 +33,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.features.main.buildWarningSnack
+import com.saltedge.authenticator.app.applyNightMode
+import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
+import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
 import com.saltedge.authenticator.features.settings.passcode.PasscodeEditFragment
+import com.saltedge.authenticator.interfaces.AppbarMenuItemClickListener
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -47,10 +50,11 @@ import com.saltedge.authenticator.widget.list.SpaceItemDecoration
 import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
 
-class SettingsListFragment : BaseFragment(), DialogHandlerListener {
+class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuItemClickListener {
 
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: SettingsListViewModel
+    private var adapter: SettingsAdapter? = null
     private var dialogFragment: DialogFragment? = null
     private var alertDialog: AlertDialog? = null
 
@@ -71,7 +75,7 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener {
         activityComponents?.updateAppbar(
             titleResId = R.string.settings_feature_title,
             backActionImageResId = R.drawable.ic_appbar_action_back,
-            showMenu = arrayOf(MenuItem.THEME)
+            showMenu = arrayOf(MenuItem.CUSTOM_NIGHT_MODE)
         )
         setupViews()
     }
@@ -79,6 +83,10 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener {
     override fun closeActiveDialogs() {
         if (dialogFragment?.isVisible == true) dialogFragment?.dismiss()
         if (alertDialog?.isShowing == true) alertDialog?.dismiss()
+    }
+
+    override fun onAppbarMenuItemClick(menuItem: MenuItem) {
+        viewModel.onAppbarMenuItemClick(menuItem)
     }
 
     private fun setupViewModel() {
@@ -108,33 +116,44 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener {
         })
         viewModel.clearSuccessEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let {
-                activity?.buildWarningSnack(
+                activity?.showWarningSnack(
                     textResId = R.string.settings_clear_success,
                     snackBarDuration = Snackbar.LENGTH_SHORT
-                )?.show()
+                )
             }
         })
         viewModel.screenshotClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let {
                 view?.let {
-                    activity?.buildWarningSnack(
+                    activity?.showWarningSnack(
                         textResId = R.string.settings_restart_app,
                         snackBarDuration = Snackbar.LENGTH_LONG
                     )?.setAction(getString(android.R.string.ok)) { viewModel.restartConfirmed() }
-                    ?.show()
                 }
             }
         })
         viewModel.restartClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let { activity?.restartApp() }
         })
+        viewModel.setNightModelEvent.observe(this, Observer<ViewModelEvent<Int>> {
+            it.getContentIfNotHandled()?.let { nightMode -> activity?.applyNightMode(nightMode) }
+        })
+        viewModel.listItems.observe(this, Observer<List<SettingsItemViewModel>> {
+            adapter?.data = it
+        })
     }
 
     private fun setupViews() {
         activity?.let {
             recyclerView?.layoutManager = LinearLayoutManager(it)
-            recyclerView?.addItemDecoration(SpaceItemDecoration(context = it, headerPositions = arrayOf(0)))
+            recyclerView?.addItemDecoration(SpaceItemDecoration(
+                context = it,
+                headerPositions = viewModel.spacesPositions)
+            )
         }
-        recyclerView?.adapter = SettingsAdapter(listener = viewModel).apply { data = viewModel.listItems }
+        adapter = SettingsAdapter(listener = viewModel).apply {
+            viewModel.listItemsValues?.let { data = it }
+        }
+        recyclerView?.adapter = adapter
     }
 }
