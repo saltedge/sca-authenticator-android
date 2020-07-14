@@ -28,6 +28,7 @@ import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tools.currentAppLocaleName
 import com.saltedge.authenticator.tools.getAvailableLocalizations
 import com.saltedge.authenticator.tools.localeCodeToName
+import com.saltedge.authenticator.tools.postUnitEvent
 
 class LanguageSelectViewModel(
     private val appContext: Context,
@@ -41,15 +42,15 @@ class LanguageSelectViewModel(
     val onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
     fun onOkClick() {
-        onCloseEvent.postValue(ViewModelEvent(Unit))
+        onCloseEvent.postUnitEvent()
         if (appContext.currentAppLocaleName() != listItems[selectedItemIndex]) {
             preferenceRepository.currentLocale = availableLocales[selectedItemIndex]
-            onLanguageChangedEvent.postValue(ViewModelEvent(Unit))
+            onLanguageChangedEvent.postUnitEvent()
         }
-        onCloseEvent.postValue(ViewModelEvent(Unit))
+        onCloseEvent.postUnitEvent()
     }
 
     fun onCancelClick() {
-        onCloseEvent.postValue(ViewModelEvent(Unit))
+        onCloseEvent.postUnitEvent()
     }
 }

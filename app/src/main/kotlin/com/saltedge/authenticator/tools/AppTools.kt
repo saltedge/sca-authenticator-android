@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ package com.saltedge.authenticator.tools
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Point
+import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.fragment.app.Fragment
@@ -88,6 +89,8 @@ object AppTools : AppToolsAbs {
         }
         return "unknown"
     }
+
+    override fun getSDKVersion(): Int = Build.VERSION.SDK_INT
 }
 
 /**

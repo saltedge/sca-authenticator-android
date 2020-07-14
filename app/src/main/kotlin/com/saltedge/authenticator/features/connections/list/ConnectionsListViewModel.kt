@@ -45,11 +45,13 @@ import com.saltedge.authenticator.sdk.constants.KEY_NAME
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener
 import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
 import com.saltedge.authenticator.sdk.model.*
-import com.saltedge.authenticator.sdk.model.connection.*
+import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.connection.isActive
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.guid
+import com.saltedge.authenticator.tools.postUnitEvent
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -157,7 +159,7 @@ class ConnectionsListViewModel(
     }
 
     fun onViewClick(viewId: Int) {
-        if (viewId == R.id.actionView) onQrScanClickEvent.postValue(ViewModelEvent(Unit))
+        if (viewId == R.id.actionView) onQrScanClickEvent.postUnitEvent()
     }
 
     fun onListItemClick(itemIndex: Int) {

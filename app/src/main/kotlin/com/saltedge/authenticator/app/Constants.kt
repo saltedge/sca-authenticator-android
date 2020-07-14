@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.app
 
 const val QR_SCAN_REQUEST_CODE = 322
+const val MORE_MENU_REQUEST_CODE = 323
 const val RENAME_REQUEST_CODE = 324
 const val DELETE_REQUEST_CODE = 325
 const val DELETE_ALL_REQUEST_CODE = 327

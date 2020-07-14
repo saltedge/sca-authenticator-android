@@ -25,12 +25,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.test.core.app.ApplicationProvider
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
-import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
@@ -364,9 +362,8 @@ class MainActivityViewModelTest {
         //when
         viewModel.onViewClick(viewId)
 
-        //then onQrScanClickEvent is posted
-        assertThat(viewModel.onQrScanClickEvent.value, equalTo(ViewModelEvent(Unit)))
-        assertThat(viewModel.onAppBarMenuClickEvent.value, `is`(nullValue()))
+        //then
+        assertThat(viewModel.onAppbarMenuItemClickEvent.value, equalTo(ViewModelEvent(MenuItem.SCAN_QR)))
         assertThat(viewModel.onBackActionClickEvent.value, `is`(nullValue()))
     }
 
@@ -382,22 +379,8 @@ class MainActivityViewModelTest {
         //when
         viewModel.onViewClick(viewId)
 
-        //then onAppBarMenuClickEvent is posted
-        assertThat(viewModel.onQrScanClickEvent.value, `is`(nullValue()))
-        assertThat(viewModel.onAppBarMenuClickEvent.value, equalTo(ViewModelEvent(
-            listOf<MenuItemData>(
-                MenuItemData(
-                    id = R.string.connections_feature_title,
-                    iconRes = R.drawable.ic_menu_action_connections,
-                    textRes = R.string.connections_feature_title
-                ),
-                MenuItemData(
-                    id = R.string.settings_feature_title,
-                    iconRes = R.drawable.ic_menu_action_settings,
-                    textRes = R.string.settings_feature_title
-                )
-            )
-        )))
+        //then
+        assertThat(viewModel.onAppbarMenuItemClickEvent.value, equalTo(ViewModelEvent(MenuItem.MORE_MENU)))
         assertThat(viewModel.onBackActionClickEvent.value, `is`(nullValue()))
     }
 
@@ -414,8 +397,7 @@ class MainActivityViewModelTest {
         viewModel.onViewClick(viewId)
 
         //then onBackActionClickEvent is posted
-        assertThat(viewModel.onQrScanClickEvent.value, `is`(nullValue()))
-        assertThat(viewModel.onAppBarMenuClickEvent.value, `is`(nullValue()))
+        assertThat(viewModel.onAppbarMenuItemClickEvent.value, `is`(nullValue()))
         assertThat(viewModel.onBackActionClickEvent.value, equalTo(ViewModelEvent(Unit)))
     }
 
@@ -432,8 +414,7 @@ class MainActivityViewModelTest {
         viewModel.onViewClick(viewId)
 
         //then no interactions with observable values
-        assertThat(viewModel.onQrScanClickEvent.value, `is`(nullValue()))
-        assertThat(viewModel.onAppBarMenuClickEvent.value, `is`(nullValue()))
+        assertThat(viewModel.onAppbarMenuItemClickEvent.value, `is`(nullValue()))
         assertThat(viewModel.onBackActionClickEvent.value, `is`(nullValue()))
     }
 
@@ -441,102 +422,17 @@ class MainActivityViewModelTest {
     @Throws(Exception::class)
     fun onViewClickTestCase5() {
         /**
-         * given viewId = appBarActionTheme and night mode = AppCompatDelegate.MODE_NIGHT_YES
+         * given viewId = appBarActionSwitchTheme
          */
         val viewModel = createViewModel()
         val viewId = R.id.appBarActionSwitchTheme
-        given(mockPreferenceRepository.nightMode).willReturn(AppCompatDelegate.MODE_NIGHT_YES)
 
         //when
         viewModel.onViewClick(viewId)
 
         //then
-        verify(mockPreferenceRepository).nightMode = AppCompatDelegate.MODE_NIGHT_NO
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onViewClickTestCase6() {
-        /**
-         * given viewId = appBarActionTheme and night mode = AppCompatDelegate.MODE_NIGHT_NO
-         */
-        val viewModel = createViewModel()
-        val viewId = R.id.appBarActionSwitchTheme
-        given(mockPreferenceRepository.nightMode).willReturn(AppCompatDelegate.MODE_NIGHT_NO)
-
-        //when
-        viewModel.onViewClick(viewId)
-
-        //then
-        verify(mockPreferenceRepository).nightMode = AppCompatDelegate.MODE_NIGHT_YES
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onViewClickTestCase7() {
-        /**
-         * given viewId = appBarActionTheme and system night mode
-         */
-        val viewModel = createViewModel()
-        val viewId = R.id.appBarActionSwitchTheme
-        given(mockPreferenceRepository.nightMode).willReturn(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
-
-        //when
-        viewModel.onViewClick(viewId)
-
-        //then
-        verify(mockPreferenceRepository).nightMode = AppCompatDelegate.MODE_NIGHT_YES
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onMenuItemSelectedTestCase1() {
-        /**
-         * given selectedItemId = R.string.connections_feature_title
-         */
-        val viewModel = createViewModel()
-        val selectedItemId = R.string.connections_feature_title
-
-        //when
-        viewModel.onMenuItemSelected("", selectedItemId)
-
-        //then onShowConnectionsListEvent is posted
-        assertThat(viewModel.onShowConnectionsListEvent.value, equalTo(ViewModelEvent(Unit)))
-        assertThat(viewModel.onShowSettingsListEvent.value, `is`(nullValue()))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onMenuItemSelectedTestCase2() {
-        /**
-         * given selectedItemId = R.string.consent_feature_title
-         */
-        val viewModel = createViewModel()
-        val selectedItemId = R.string.consent_feature_title
-
-        //when
-        viewModel.onMenuItemSelected("", selectedItemId)
-
-        //then onShowConsentsListEvent is posted
-        assertThat(viewModel.onShowConnectionsListEvent.value, `is`(nullValue()))
-        assertThat(viewModel.onShowSettingsListEvent.value, `is`(nullValue()))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onMenuItemSelectedTestCase3() {
-        /**
-         * given selectedItemId = R.string.settings_feature_title
-         */
-        val viewModel = createViewModel()
-        val selectedItemId = R.string.settings_feature_title
-
-        //when
-        viewModel.onMenuItemSelected("", selectedItemId)
-
-        //then onShowSettingsListEvent is posted
-        assertThat(viewModel.onShowConnectionsListEvent.value, `is`(nullValue()))
-        assertThat(viewModel.onShowSettingsListEvent.value, equalTo(ViewModelEvent(Unit)))
+        assertThat(viewModel.onAppbarMenuItemClickEvent.value, equalTo(ViewModelEvent(MenuItem.CUSTOM_NIGHT_MODE)))
+        assertThat(viewModel.onBackActionClickEvent.value, `is`(nullValue()))
     }
 
     @Test
@@ -565,7 +461,7 @@ class MainActivityViewModelTest {
         val titleResId = R.string.app_name
         val title = null
         val backActionImageResId = null
-        val showMenu = arrayOf(MenuItem.SCAN_QR, MenuItem.MORE)
+        val showMenu = arrayOf(MenuItem.SCAN_QR, MenuItem.MORE_MENU)
 
         assertThat(viewModel.appBarBackActionImageResource.value, equalTo(R.drawable.ic_appbar_action_back))
 

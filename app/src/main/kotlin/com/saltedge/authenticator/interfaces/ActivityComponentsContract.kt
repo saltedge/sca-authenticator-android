@@ -33,5 +33,5 @@ interface ActivityComponentsContract {
 }
 
 enum class MenuItem {
-    SCAN_QR, THEME, MORE
+    SCAN_QR, CUSTOM_NIGHT_MODE, MORE_MENU
 }

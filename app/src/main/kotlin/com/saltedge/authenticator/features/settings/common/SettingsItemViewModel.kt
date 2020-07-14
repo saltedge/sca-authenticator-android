@@ -31,7 +31,7 @@ data class SettingsItemViewModel(
     val titleColorRes: Int = R.color.dark_100_and_grey_40,
     @DrawableRes val iconId: ResId? = null,
     val description: String = "",
-    val switchIsChecked: Boolean? = null,
+    var switchIsChecked: Boolean? = null,
     val itemIsClickable: Boolean = false
 ) {
     val iconResource: ResId = iconId ?: R.drawable.ic_menu_action_list

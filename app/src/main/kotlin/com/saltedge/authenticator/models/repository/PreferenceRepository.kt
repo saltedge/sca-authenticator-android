@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,18 +24,17 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.saltedge.authenticator.app.getDefaultSystemNightMode
-import com.saltedge.authenticator.app.isSystemNightModeSupported
 
 const val KEY_DATABASE_KEY = "KEY_DATABASE_KEY"
 const val KEY_LOCALE = "KEY_LOCALE"
 const val KEY_PASSCODE = "KEY_PASSCODE"
-const val KEY_NIGHT_MODE = "KEY_NIGHT_MODE"
+const val KEY_NIGHT_MODE = "KEY_DARK_MODE"
+const val KEY_SYSTEM_NIGHT_MODE = "KEY_SYSTEM_NIGHT_MODE"
 const val KEY_NOTIFICATIONS = "KEY_NOTIFICATIONS"
 const val KEY_SCREENSHOT_LOCK = "KEY_SCREENSHOT_LOCK"
 const val KEY_PIN_INPUT_ATTEMPTS = "KEY_PIN_INPUT_ATTEMPTS"
 const val KEY_PIN_INPUT_TIME = "KEY_PIN_INPUT_TIME"
 const val KEY_CLOUD_MESSAGING_TOKEN = "KEY_CLOUD_MESSAGING_TOKEN"
-const val KEY_SYSTEM_NIGHT_MODE = "KEY_SYSTEM_NIGHT_MODE"
 
 object PreferenceRepository : PreferenceRepositoryAbs {
 
@@ -77,6 +76,21 @@ object PreferenceRepository : PreferenceRepositoryAbs {
             ?: getDefaultSystemNightMode()
         set(value) {
             preferences?.saveValue(KEY_NIGHT_MODE, value)
+        }
+
+    /**
+     * Computed property that read dark mode state from preferences and saves to preferences.
+     *
+     * @return boolean, true if dark mode is enabled
+     * @see saveValue
+     */
+    override var systemNightMode: Boolean
+        get() = preferences?.getBoolean(
+            KEY_SYSTEM_NIGHT_MODE,
+            nightMode == getDefaultSystemNightMode()
+        ) ?: true
+        set(value) {
+            preferences?.saveValue(KEY_SYSTEM_NIGHT_MODE, value)
         }
 
     /**
@@ -151,21 +165,6 @@ object PreferenceRepository : PreferenceRepositoryAbs {
         get() = preferences?.getBoolean(KEY_SCREENSHOT_LOCK, true) ?: true
         set(value) {
             preferences?.saveValue(KEY_SCREENSHOT_LOCK, value)
-        }
-
-    /**
-     * Computed property that read dark mode state from preferences and saves to preferences.
-     *
-     * @return boolean, true if dark mode is enabled
-     * @see saveValue
-     */
-    override var systemNightMode: Boolean
-        get() = preferences?.getBoolean(
-            KEY_SYSTEM_NIGHT_MODE,
-            isSystemNightModeSupported() && nightMode == getDefaultSystemNightMode()
-        ) ?: true
-        set(value) {
-            preferences?.saveValue(KEY_SYSTEM_NIGHT_MODE, value)
         }
 
     /**

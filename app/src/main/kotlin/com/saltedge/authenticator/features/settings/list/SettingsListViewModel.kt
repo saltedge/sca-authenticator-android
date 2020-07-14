@@ -20,14 +20,16 @@
  */
 package com.saltedge.authenticator.features.settings.list
 
-import androidx.appcompat.app.AppCompatDelegate
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.getDefaultSystemNightMode
 import com.saltedge.authenticator.app.isSystemNightModeSupported
+import com.saltedge.authenticator.app.switchDarkLightMode
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
+import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -36,9 +38,12 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.isActive
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.tools.AppToolsAbs
 import com.saltedge.authenticator.tools.postUnitEvent
 
 class SettingsListViewModel(
+    private val appContext: Context,
+    private val appTools: AppToolsAbs,
     private val keyStoreManager: KeyStoreManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
     private val connectionsRepository: ConnectionsRepositoryAbs,
@@ -53,14 +58,12 @@ class SettingsListViewModel(
     val clearClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val clearSuccessEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val restartClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
-
-    val listItems = collectListItems()
+    val setNightModelEvent = MutableLiveData<ViewModelEvent<Int>>()
+    val listItems = MutableLiveData<List<SettingsItemViewModel>>(collectListItems())
+    val listItemsValues: List<SettingsItemViewModel>?
+        get() = listItems.value
     val spacesPositions: Array<Int>
-        get() = arrayOf(0, listItems.lastIndex)
-
-    fun restartConfirmed() {
-        restartClickEvent.postValue(ViewModelEvent(Unit))
-    }
+        get() = arrayOf(0, listItems.value?.lastIndex ?: 0)
 
     override fun onListItemClick(itemId: Int) {
         when (itemId) {
@@ -73,18 +76,40 @@ class SettingsListViewModel(
     }
 
     override fun onListItemCheckedStateChanged(itemId: Int, checked: Boolean) {
+        listItemsValues?.firstOrNull { it.titleId == itemId }?.let {
+            it.switchIsChecked = checked
+        }
         when (itemId) {
             R.string.settings_screenshot_lock -> {
-                preferenceRepository.screenshotLockEnabled = checked
-                screenshotClickEvent.postValue(ViewModelEvent(Unit))
+                if (preferenceRepository.screenshotLockEnabled != checked) {
+                    preferenceRepository.screenshotLockEnabled = checked
+                    screenshotClickEvent.postUnitEvent()
+                }
             }
             R.string.settings_system_dark_mode -> {
                 preferenceRepository.systemNightMode = checked
-                if (preferenceRepository.nightMode != getDefaultSystemNightMode() && checked) {
-                    AppCompatDelegate.setDefaultNightMode(getDefaultSystemNightMode())
+                val defaultNightMode = getDefaultSystemNightMode()
+                if (preferenceRepository.nightMode != defaultNightMode && checked) {
+                    preferenceRepository.nightMode = defaultNightMode
+                    setNightModelEvent.postValue(ViewModelEvent(defaultNightMode))
                 }
             }
         }
+    }
+
+    fun onAppbarMenuItemClick(menuItem: MenuItem) {
+        if (menuItem != MenuItem.CUSTOM_NIGHT_MODE) return
+        val newNighMode = appContext.switchDarkLightMode(preferenceRepository.nightMode)
+        preferenceRepository.nightMode = newNighMode
+        preferenceRepository.systemNightMode = false
+        listItemsValues?.firstOrNull { it.titleId == R.string.settings_system_dark_mode }?.let {
+            it.switchIsChecked = false
+        }
+        setNightModelEvent.postValue(ViewModelEvent(newNighMode))
+    }
+
+    fun restartConfirmed() {
+        restartClickEvent.postUnitEvent()
     }
 
     fun onUserConfirmedClearAppData() {
@@ -111,7 +136,7 @@ class SettingsListViewModel(
                 switchIsChecked = preferenceRepository.screenshotLockEnabled
             )
         )
-        if (isSystemNightModeSupported()) listItems.add(
+        if (isSystemNightModeSupported(appTools.getSDKVersion())) listItems.add(
             SettingsItemViewModel(
                 iconId = R.drawable.ic_settings_dark_mode,
                 titleId = R.string.settings_system_dark_mode,

@@ -20,9 +20,14 @@
  */
 package com.saltedge.authenticator.features.settings.list
 
+import android.content.Context
 import android.os.Build
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.test.core.app.ApplicationProvider
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.getDefaultSystemNightMode
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
+import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -31,6 +36,7 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.tools.AppToolsAbs
 import junit.framework.TestCase.assertNull
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -39,12 +45,15 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito
+import org.mockito.Mockito.never
 import org.robolectric.RobolectricTestRunner
 import java.security.PrivateKey
 
 @RunWith(RobolectricTestRunner::class)
 class SettingsListViewModelTest {
 
+    private val context: Context = ApplicationProvider.getApplicationContext()
+    private val mockAppTools = Mockito.mock(AppToolsAbs::class.java)
     private val mockPreferences = Mockito.mock(PreferenceRepositoryAbs::class.java)
     private val mockKeyStoreManager = Mockito.mock(KeyStoreManagerAbs::class.java)
     private val mockApiManager = Mockito.mock(AuthenticatorApiManagerAbs::class.java)
@@ -70,6 +79,8 @@ class SettingsListViewModelTest {
         given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(mockConnection1))
         given(mockKeyStoreManager.createConnectionAndKeyModel(mockConnection1)).willReturn(mockConnectionAndKey)
         viewModel = SettingsListViewModel(
+            appContext = context,
+            appTools = mockAppTools,
             keyStoreManager = mockKeyStoreManager,
             apiManager = mockApiManager,
             connectionsRepository = mockConnectionsRepository,
@@ -79,92 +90,126 @@ class SettingsListViewModelTest {
 
     @Test
     @Throws(Exception::class)
-    fun getListItemsTest() {
+    fun getListItemsTestCase1() {
+        //given
+        given(mockAppTools.getSDKVersion()).willReturn(Build.VERSION_CODES.Q)
+        viewModel = SettingsListViewModel(
+            appContext = context,
+            appTools = mockAppTools,
+            keyStoreManager = mockKeyStoreManager,
+            apiManager = mockApiManager,
+            connectionsRepository = mockConnectionsRepository,
+            preferenceRepository = mockPreferences
+        )
+
+        //when
+        val values = viewModel.listItems.value!!
+
+        //then
+        assertThat(values.size, equalTo(7))
         assertThat(
-            viewModel.listItems, equalTo(
-            listOf(
-                SettingsItemViewModel(
-                    iconId = R.drawable.ic_setting_passcode,
-                    titleId = R.string.settings_passcode_description,
-                    itemIsClickable = true
-                ),
-                SettingsItemViewModel(
-                    iconId = R.drawable.ic_setting_language,
-                    titleId = R.string.settings_language,
-                    itemIsClickable = true
-                ),
-                SettingsItemViewModel(
-                    iconId = R.drawable.ic_setting_screenshots,
-                    titleId = R.string.settings_screenshot_lock,
-                    switchIsChecked = true
-                ),
-                SettingsItemViewModel(
-                    iconId = R.drawable.ic_setting_about,
-                    titleId = R.string.about_feature_title,
-                    itemIsClickable = true
-                ),
-                SettingsItemViewModel(
-                    iconId = R.drawable.ic_setting_support,
-                    titleId = R.string.settings_report,
-                    itemIsClickable = true
-                ),
-                SettingsItemViewModel(
-                    iconId = R.drawable.ic_setting_clear,
-                    titleId = R.string.settings_clear_data,
-                    titleColorRes = R.color.red,
-                    itemIsClickable = true
+            values,
+            equalTo(
+                listOf(
+                    SettingsItemViewModel(
+                        iconId = R.drawable.ic_setting_passcode,
+                        titleId = R.string.settings_passcode_description,
+                        itemIsClickable = true
+                    ),
+                    SettingsItemViewModel(
+                        iconId = R.drawable.ic_setting_language,
+                        titleId = R.string.settings_language,
+                        itemIsClickable = true
+                    ),
+                    SettingsItemViewModel(
+                        iconId = R.drawable.ic_setting_screenshots,
+                        titleId = R.string.settings_screenshot_lock,
+                        switchIsChecked = true
+                    ),
+                    SettingsItemViewModel(
+                        iconId = R.drawable.ic_settings_dark_mode,
+                        titleId = R.string.settings_system_dark_mode,
+                        switchIsChecked = false
+                    ),
+                    SettingsItemViewModel(
+                        iconId = R.drawable.ic_setting_about,
+                        titleId = R.string.about_feature_title,
+                        itemIsClickable = true
+                    ),
+                    SettingsItemViewModel(
+                        iconId = R.drawable.ic_setting_support,
+                        titleId = R.string.settings_report,
+                        itemIsClickable = true
+                    ),
+                    SettingsItemViewModel(
+                        iconId = R.drawable.ic_setting_clear,
+                        titleId = R.string.settings_clear_data,
+                        titleColorRes = R.color.red,
+                        itemIsClickable = true
+                    )
                 )
-            ))
+            )
         )
     }
 
-//    TODO: test only on Android Q version http://robolectric.org/configuring/
-//    @Test
-//    @Throws(Exception::class)
-//    fun getListItemsTestCase2() {
-//        //then
-//        assertThat(
-//            viewModel.listItems, equalTo(
-//            listOf(
-//                SettingsItemViewModel(
-//                    iconId = R.drawable.ic_setting_passcode,
-//                    titleId = R.string.settings_passcode_description,
-//                    itemIsClickable = true
-//                ),
-//                SettingsItemViewModel(
-//                    iconId = R.drawable.ic_setting_language,
-//                    titleId = R.string.settings_language,
-//                    itemIsClickable = true
-//                ),
-//                SettingsItemViewModel(
-//                    iconId = R.drawable.ic_setting_screenshots,
-//                    titleId = R.string.settings_screenshot_lock,
-//                    switchIsChecked = true
-//                ),
-//                SettingsItemViewModel(
-//                    iconId = R.drawable.ic_settings_dark_mode,
-//                    titleId = R.string.settings_system_dark_mode,
-//                    switchIsChecked = true
-//                ),
-//                SettingsItemViewModel(
-//                    iconId = R.drawable.ic_setting_about,
-//                    titleId = R.string.about_feature_title,
-//                    itemIsClickable = true
-//                ),
-//                SettingsItemViewModel(
-//                    iconId = R.drawable.ic_setting_support,
-//                    titleId = R.string.settings_report,
-//                    itemIsClickable = true
-//                ),
-//                SettingsItemViewModel(
-//                    iconId = R.drawable.ic_setting_clear,
-//                    titleId = R.string.settings_clear_data,
-//                    titleColorRes = R.color.red,
-//                    itemIsClickable = true
-//                )
-//            ))
-//        )
-//    }
+    @Test
+    @Throws(Exception::class)
+    fun getListItemsTestCase2() {
+        //given
+        given(mockAppTools.getSDKVersion()).willReturn(Build.VERSION_CODES.P)
+        viewModel = SettingsListViewModel(
+            appContext = context,
+            appTools = mockAppTools,
+            keyStoreManager = mockKeyStoreManager,
+            apiManager = mockApiManager,
+            connectionsRepository = mockConnectionsRepository,
+            preferenceRepository = mockPreferences
+        )
+
+        //when
+        val values = viewModel.listItems.value!!
+
+        //then
+        assertThat(values.size, equalTo(6))
+        assertThat(
+            values,
+            equalTo(
+                listOf(
+                    SettingsItemViewModel(
+                        iconId = R.drawable.ic_setting_passcode,
+                        titleId = R.string.settings_passcode_description,
+                        itemIsClickable = true
+                    ),
+                    SettingsItemViewModel(
+                        iconId = R.drawable.ic_setting_language,
+                        titleId = R.string.settings_language,
+                        itemIsClickable = true
+                    ),
+                    SettingsItemViewModel(
+                        iconId = R.drawable.ic_setting_screenshots,
+                        titleId = R.string.settings_screenshot_lock,
+                        switchIsChecked = true
+                    ),
+                    SettingsItemViewModel(
+                        iconId = R.drawable.ic_setting_about,
+                        titleId = R.string.about_feature_title,
+                        itemIsClickable = true
+                    ),
+                    SettingsItemViewModel(
+                        iconId = R.drawable.ic_setting_support,
+                        titleId = R.string.settings_report,
+                        itemIsClickable = true
+                    ),
+                    SettingsItemViewModel(
+                        iconId = R.drawable.ic_setting_clear,
+                        titleId = R.string.settings_clear_data,
+                        titleColorRes = R.color.red,
+                        itemIsClickable = true
+                    )
+                )
+            )
+        )
+    }
 
     @Test
     @Throws(Exception::class)
@@ -296,20 +341,6 @@ class SettingsListViewModelTest {
     @Throws(Exception::class)
     fun onListItemCheckedStateChangedTestCase1() {
         //given
-        val itemId = R.string.settings_screenshot_lock
-
-        //when
-        viewModel.onListItemCheckedStateChanged(itemId = itemId, checked = true)
-
-        //then
-        Mockito.verify(mockPreferences).screenshotLockEnabled = true
-        assertThat(viewModel.screenshotClickEvent.value, equalTo(ViewModelEvent(Unit)))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onListItemCheckedStateChangedTestCase2() {
-        //given
         val itemId = R.string.settings_clear_data
         Mockito.clearInvocations(mockPreferences)
 
@@ -323,7 +354,90 @@ class SettingsListViewModelTest {
 
     @Test
     @Throws(Exception::class)
+    fun onListItemCheckedStateChangedTestCase2() {
+        //given
+        val itemId = R.string.settings_screenshot_lock
+        given(mockPreferences.screenshotLockEnabled).willReturn(false)
+
+        //when
+        viewModel.onListItemCheckedStateChanged(itemId = itemId, checked = true)
+
+        //then
+        Mockito.verify(mockPreferences).screenshotLockEnabled = true
+        assertThat(viewModel.screenshotClickEvent.value, equalTo(ViewModelEvent(Unit)))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onListItemCheckedStateChangedTestCase3() {
+        //given
+        val itemId = R.string.settings_system_dark_mode
+        val checked = true
+        val defaultMode = getDefaultSystemNightMode()
+        given(mockPreferences.nightMode).willReturn(AppCompatDelegate.MODE_NIGHT_YES)
+
+        //when
+        viewModel.onListItemCheckedStateChanged(itemId = itemId, checked = checked)
+
+        //then
+        Mockito.verify(mockPreferences).systemNightMode = checked
+        Mockito.verify(mockPreferences).nightMode = defaultMode
+        assertThat(viewModel.setNightModelEvent.value, equalTo(ViewModelEvent(defaultMode)))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onListItemCheckedStateChangedTestCase4() {
+        //given
+        val itemId = R.string.settings_system_dark_mode
+        val checked = false
+        val defaultMode = getDefaultSystemNightMode()
+        given(mockPreferences.nightMode).willReturn(AppCompatDelegate.MODE_NIGHT_YES)
+
+        //when
+        viewModel.onListItemCheckedStateChanged(itemId = itemId, checked = checked)
+
+        //then
+        Mockito.verify(mockPreferences).systemNightMode = checked
+        Mockito.verify(mockPreferences, never()).nightMode = defaultMode
+        assertNull(viewModel.setNightModelEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onAppbarMenuItemClickTestCase1() {
+        //given
+        val menuItem = MenuItem.MORE_MENU
+        given(mockPreferences.nightMode).willReturn(AppCompatDelegate.MODE_NIGHT_YES)
+
+        //when
+        viewModel.onAppbarMenuItemClick(menuItem)
+
+        //then
+        Mockito.verify(mockPreferences, never()).systemNightMode
+        Mockito.verify(mockPreferences, never()).nightMode
+        assertNull(viewModel.setNightModelEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onAppbarMenuItemClickTestCase2() {
+        //given
+        val menuItem = MenuItem.CUSTOM_NIGHT_MODE
+        given(mockPreferences.nightMode).willReturn(AppCompatDelegate.MODE_NIGHT_YES)
+
+        //when
+        viewModel.onAppbarMenuItemClick(menuItem)
+
+        //then
+        Mockito.verify(mockPreferences).systemNightMode = false
+        Mockito.verify(mockPreferences).nightMode = AppCompatDelegate.MODE_NIGHT_NO
+        assertThat(viewModel.setNightModelEvent.value, equalTo(ViewModelEvent(AppCompatDelegate.MODE_NIGHT_NO)))
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun testSpacesPositions() {
-        assertThat(viewModel.spacesPositions, equalTo(arrayOf(0, viewModel.listItems.lastIndex)))
+        assertThat(viewModel.spacesPositions, equalTo(arrayOf(0, viewModel.listItemsValues!!.lastIndex)))
     }
 }

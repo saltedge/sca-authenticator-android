@@ -24,6 +24,9 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.FragmentActivity
+import com.saltedge.authenticator.tools.AppTools
+import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
 
 fun Context.isDarkThemeSet(): Boolean {
     return this.resources.configuration.uiMode and
@@ -31,23 +34,27 @@ fun Context.isDarkThemeSet(): Boolean {
 }
 
 fun Context.switchDarkLightMode(currentMode: Int): Int {
-    val newMode = when (currentMode) {
+    return when (currentMode) {
         AppCompatDelegate.MODE_NIGHT_YES -> AppCompatDelegate.MODE_NIGHT_NO
         AppCompatDelegate.MODE_NIGHT_NO -> AppCompatDelegate.MODE_NIGHT_YES
         else -> {
-            if (this.isDarkThemeSet()) AppCompatDelegate.MODE_NIGHT_NO
+            if (isDarkThemeSet()) AppCompatDelegate.MODE_NIGHT_NO
             else AppCompatDelegate.MODE_NIGHT_YES
         }
     }
-    return newMode
 }
 
 fun getDefaultSystemNightMode(): Int {
-    return if (isSystemNightModeSupported()) AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+    return if (isSystemNightModeSupported(AppTools.getSDKVersion()))
+        AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
     else AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
 }
 
-fun isSystemNightModeSupported(): Boolean {
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+fun isSystemNightModeSupported(sdkVersion: Int): Boolean {
+    return sdkVersion >= Build.VERSION_CODES.Q
 }
 
+fun FragmentActivity.applyNightMode(nightMode: Int) {
+    if (this.intent != null) this.intent.putExtra(KEY_SKIP_PIN, true)
+    AppCompatDelegate.setDefaultNightMode(nightMode)
+}

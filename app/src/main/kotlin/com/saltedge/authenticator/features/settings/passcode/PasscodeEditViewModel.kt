@@ -28,6 +28,7 @@ import com.saltedge.authenticator.features.settings.passcode.saver.PasscodeSaver
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.postUnitEvent
 import com.saltedge.authenticator.widget.passcode.PasscodeInputListener
 import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
 
@@ -82,14 +83,14 @@ class PasscodeEditViewModel(
         loaderVisibility.postValue(View.GONE)
         if (result) {
             infoEvent.postValue(ViewModelEvent(R.string.settings_passcode_success))
-            closeViewEvent.postValue(ViewModelEvent(Unit))
+            closeViewEvent.postUnitEvent()
         } else {
             warningEvent.postValue(ViewModelEvent(R.string.errors_contact_support))
         }
     }
 
     override fun onPasscodeInputCanceledByUser() {
-        closeViewEvent.postValue(ViewModelEvent(Unit))
+        closeViewEvent.postUnitEvent()
     }
 
     private fun updateMode(newMode: PasscodeInputMode) {
