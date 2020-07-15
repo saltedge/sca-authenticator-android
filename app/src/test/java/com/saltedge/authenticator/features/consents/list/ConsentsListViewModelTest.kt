@@ -42,6 +42,9 @@ import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.daysTillExpire
 import com.saltedge.authenticator.tools.guid
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.hamcrest.CoreMatchers.equalTo
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
@@ -58,6 +61,8 @@ import java.security.PrivateKey
 @RunWith(RobolectricTestRunner::class)
 class ConsentsListViewModelTest {
 
+    @ExperimentalCoroutinesApi
+    private val testDispatcher = TestCoroutineDispatcher()
     private lateinit var viewModel: ConsentsListViewModel
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
@@ -109,16 +114,16 @@ class ConsentsListViewModelTest {
     fun setUp() {
         Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid2")
         given(mockConnectionsRepository.getByGuid("guid2")).willReturn(connection)
-        given(mockKeyStoreManager.createConnectionAndKeyModel(connection)).willReturn(
-            mockConnectionAndKey
-        )
+        given(mockKeyStoreManager.createConnectionAndKeyModel(connection))
+            .willReturn(mockConnectionAndKey)
 
         viewModel = ConsentsListViewModel(
             appContext = context,
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
             apiManager = mockApiManager,
-            cryptoTools = mockCryptoTools
+            cryptoTools = mockCryptoTools,
+            defaultDispatcher = testDispatcher
         )
     }
 
@@ -388,5 +393,17 @@ class ConsentsListViewModelTest {
                 )
             )
         )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onFetchEncryptedDataResultTest() = runBlocking {
+//        val privateKey = viewModel.getTestPrivateKey()
+//        assertNotNull(privateKey)
+
+        viewModel.onFetchEncryptedDataResult(
+            result = emptyList(), errors = emptyList()
+        )
+        assertThat(viewModel.listItems.value?.size, equalTo(0))
     }
 }

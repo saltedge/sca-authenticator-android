@@ -59,8 +59,9 @@ class ConsentsListViewModel(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyStoreManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
-    private val cryptoTools: CryptoToolsAbs
-) : ViewModel(), LifecycleObserver, FetchEncryptedDataListener, CoroutineScope {
+    private val cryptoTools: CryptoToolsAbs,
+    private val defaultDispatcher: CoroutineDispatcher
+) : ViewModel(), LifecycleObserver, FetchEncryptedDataListener {
 
     val listItems = MutableLiveData<List<ConsentItemViewModel>>()
     val onListItemClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
@@ -70,17 +71,12 @@ class ConsentsListViewModel(
     val consentsCount = MutableLiveData<String>()
     private var consents: List<ConsentData> = emptyList()
     private var connectionAndKey: ConnectionAndKey? = null
-    private val decryptJob: Job = Job()
-    override val coroutineContext: CoroutineContext
-        get() = decryptJob + Dispatchers.IO
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun onDestroy() {
-        decryptJob.cancel()
-    }
 
     override fun onFetchEncryptedDataResult(result: List<EncryptedData>, errors: List<ApiErrorData>) {
-        processOfEncryptedConsentsResult(encryptedList = result)
+        viewModelScope.launch(defaultDispatcher) {
+            val data = decryptConsents(encryptedList = result)
+            withContext(Dispatchers.Main) { onReceivedNewConsents(result = data) }
+        }
     }
 
     fun setInitialData(bundle: Bundle?) {
@@ -124,13 +120,6 @@ class ConsentsListViewModel(
         onListItemClickEvent.postValue(ViewModelEvent(
             ConsentDetailsViewModel.newBundle(connectionGuid, consents[itemIndex])
         ))
-    }
-
-    private fun processOfEncryptedConsentsResult(encryptedList: List<EncryptedData>) {
-        launch {
-            val data = decryptConsents(encryptedList = encryptedList)
-            withContext(Dispatchers.Main) { onReceivedNewConsents(result = data) }
-        }
     }
 
     private fun decryptConsents(encryptedList: List<EncryptedData>): List<ConsentData> {
