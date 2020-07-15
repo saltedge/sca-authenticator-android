@@ -26,7 +26,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
-import androidx.lifecycle.*
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CONSENT_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_GUID
@@ -50,9 +53,11 @@ import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.appendColoredText
 import com.saltedge.authenticator.tools.daysTillExpire
 import com.saltedge.authenticator.tools.guid
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
-import kotlin.coroutines.CoroutineContext
 
 class ConsentsListViewModel(
     private val appContext: Context,
@@ -74,8 +79,8 @@ class ConsentsListViewModel(
 
     override fun onFetchEncryptedDataResult(result: List<EncryptedData>, errors: List<ApiErrorData>) {
         viewModelScope.launch(defaultDispatcher) {
-            val data = decryptConsents(encryptedList = result)
-            withContext(Dispatchers.Main) { onReceivedNewConsents(result = data) }
+            val decryptedConsents = decryptConsents(encryptedList = result)
+            withContext(Dispatchers.Main) { onReceivedNewConsents(result = decryptedConsents) }
         }
     }
 
@@ -123,13 +128,13 @@ class ConsentsListViewModel(
     }
 
     private fun decryptConsents(encryptedList: List<EncryptedData>): List<ConsentData> {
-        return encryptedList.mapNotNull {
+        val result = encryptedList.mapNotNull {
             cryptoTools.decryptConsentData(encryptedData = it, rsaPrivateKey = connectionAndKey?.key)
         }
+        return result
     }
 
-    //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
-    fun onReceivedNewConsents(result: List<ConsentData>) {
+    private fun onReceivedNewConsents(result: List<ConsentData>) {
         consents = result
         listItems.postValue(result.toViewModels())
         consentsCount.postValue(consents.toCountString(appContext))

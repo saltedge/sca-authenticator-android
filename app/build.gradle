@@ -165,6 +165,7 @@ dependencies { //TODO After changing dependencies list, review third-party libra
     testImplementation 'org.robolectric:shadows-playservices:4.3'
     testImplementation 'org.mockito:mockito-core:3.2.4'
     testImplementation "io.mockk:mockk:1.9.3"
+    testImplementation project(':test_tools')
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test:runner:1.2.0'

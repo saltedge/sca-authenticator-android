@@ -20,6 +20,8 @@
  */
 package com.saltedge.authenticator.sdk.network.connector
 
+import com.saltedge.android.test_tools.CommonTestTools
+import com.saltedge.android.test_tools.getDefaultTestConnection
 import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
@@ -29,8 +31,6 @@ import com.saltedge.authenticator.sdk.model.response.SubmitActionResponseData
 import com.saltedge.authenticator.sdk.model.response.SubmitActionResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.testTools.get404Response
-import com.saltedge.authenticator.sdk.testTools.getDefaultTestConnection
-import com.saltedge.authenticator.sdk.testTools.getTestPrivateKey
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockkClass
@@ -54,8 +54,7 @@ class SubmitActionConnectorTest {
         mockkClass(Call::class) as Call<SubmitActionResponse>
     private val requestUrl = "https://localhost/api/authenticator/v1/actions/uuid-1234"
     private val requestConnection: ConnectionAbs = getDefaultTestConnection()
-    private var privateKey: PrivateKey = this.getTestPrivateKey()
-
+    private var privateKey: PrivateKey = CommonTestTools.testPrivateKey
 
     @Before
     @Throws(Exception::class)

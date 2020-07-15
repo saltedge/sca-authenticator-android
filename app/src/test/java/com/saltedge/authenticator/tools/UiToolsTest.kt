@@ -22,7 +22,7 @@ package com.saltedge.authenticator.tools
 
 import android.graphics.Color
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.testTools.TestAppTools
+import com.saltedge.authenticator.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*
 import org.junit.Test

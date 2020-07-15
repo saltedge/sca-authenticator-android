@@ -1,1 +1,2 @@
+include ':test_tools'
 include ':app', ':authenticator_sdk', ':rasp', ':ktlint_rules'

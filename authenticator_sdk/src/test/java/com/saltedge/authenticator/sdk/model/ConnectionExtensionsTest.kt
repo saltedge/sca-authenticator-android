@@ -20,20 +20,14 @@
  */
 package com.saltedge.authenticator.sdk.model
 
+import com.saltedge.android.test_tools.TestConnection
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.connection.getStatus
-import com.saltedge.authenticator.sdk.testTools.TestConnection
-import com.saltedge.authenticator.sdk.testTools.getTestPrivateKey
-import com.saltedge.authenticator.sdk.testTools.getTestPublicKey
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import io.mockk.mockkClass
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.security.PrivateKey
-import java.security.PublicKey
 
 @RunWith(RobolectricTestRunner::class)
 class ConnectionExtensionsTest {
@@ -46,8 +40,4 @@ class ConnectionExtensionsTest {
         assertThat(connection.status, equalTo("${ConnectionStatus.INACTIVE}"))
         assertThat(connection.getStatus(), equalTo(ConnectionStatus.INACTIVE))
     }
-
-    private val mockKeyStoreManager = mockkClass(KeyStoreManagerAbs::class)
-    private var privateKey: PrivateKey = this.getTestPrivateKey()
-    private var publicKey: PublicKey = this.getTestPublicKey()
 }

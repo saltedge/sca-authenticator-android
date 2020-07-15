@@ -22,7 +22,7 @@ package com.saltedge.authenticator.models.repository
 
 import android.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatDelegate
-import com.saltedge.authenticator.testTools.TestAppTools
+import com.saltedge.authenticator.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.*
