@@ -38,12 +38,12 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class AuthorizationViewModelTest {
 
-    private lateinit var model: AuthorizationViewModel
+    private lateinit var model: AuthorizationItemViewModel
 
     @Before
     fun setUp() {
         JodaTimeAndroid.init(TestAppTools.applicationContext)
-        model = AuthorizationViewModel(
+        model = AuthorizationItemViewModel(
             authorizationID = "444",
             authorizationCode = "111",
             title = "title",
@@ -65,7 +65,7 @@ class AuthorizationViewModelTest {
             createModelByIndex(2),
             createModelByIndex(3)
         )
-        val oldList = emptyList<AuthorizationViewModel>()
+        val oldList = emptyList<AuthorizationItemViewModel>()
 
         assertThat(joinViewModels(newList, oldList), equalTo(newList))
     }
@@ -73,7 +73,7 @@ class AuthorizationViewModelTest {
     @Test
     @Throws(Exception::class)
     fun joinFinalModelsTestCase2() {
-        val newList = emptyList<AuthorizationViewModel>()
+        val newList = emptyList<AuthorizationItemViewModel>()
         val oldList = listOf(
             createModelByIndex(1),
             createModelByIndex(2),
@@ -193,8 +193,8 @@ class AuthorizationViewModelTest {
             equalTo(ViewMode.UNAVAILABLE))
     }
 
-    private fun createModelByIndex(index: Int): AuthorizationViewModel {
-        return AuthorizationViewModel(
+    private fun createModelByIndex(index: Int): AuthorizationItemViewModel {
+        return AuthorizationItemViewModel(
             authorizationID = "$index",
             authorizationCode = "$index",
             title = "$index",
@@ -371,9 +371,9 @@ class AuthorizationViewModelTest {
         }
 
         assertThat(
-            data.toAuthorizationViewModel(connection = connection),
+            data.toAuthorizationItemViewModel(connection = connection),
             equalTo(
-                AuthorizationViewModel(
+                AuthorizationItemViewModel(
                     authorizationID = "444",
                     authorizationCode = "111",
                     title = "title",

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,12 +28,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.test.core.app.ApplicationProvider
+import com.saltedge.android.test_tools.CommonTestTools
+import com.saltedge.android.test_tools.encryptWithTestKey
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.KEY_OPTION_ID
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
-import com.saltedge.authenticator.features.authorizations.common.toAuthorizationViewModel
+import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.Connection
@@ -41,6 +43,7 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_CONNECTION_NOT_FOUND
+import com.saltedge.authenticator.sdk.model.EncryptedData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
@@ -52,6 +55,8 @@ import com.saltedge.authenticator.sdk.polling.PollingServiceAbs
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import junit.framework.TestCase.assertNull
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.joda.time.DateTime
@@ -63,22 +68,21 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
-import java.security.PrivateKey
 
 @RunWith(RobolectricTestRunner::class)
+@ExperimentalCoroutinesApi
 class AuthorizationsListViewModelTest {
 
+    private val testDispatcher = TestCoroutineDispatcher()
     private lateinit var viewModel: AuthorizationsListViewModel
     private val context: Context = ApplicationProvider.getApplicationContext()
-    private val mockPrivateKey = mock(PrivateKey::class.java)
     private val mockKeyStoreManager = mock(KeyStoreManagerAbs::class.java)
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
     private val mockCryptoTools = mock(CryptoToolsAbs::class.java)
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockPollingService = mock(PollingServiceAbs::class.java)
     private val mockConnectivityReceiver = Mockito.mock(ConnectivityReceiverAbs::class.java)
-
-    private val mockConnection1 = Connection().apply {
+    private val mockConnection = Connection().apply {
         guid = "guid1"
         id = "1"
         code = "demobank3"
@@ -89,17 +93,20 @@ class AuthorizationsListViewModelTest {
         createdAt = 200L
         updatedAt = 200L
     }
-    private val mockConnectionAndKey = ConnectionAndKey(mockConnection1, mockPrivateKey)
-    private val authorizationData1 = createAuthorization(id = 1)
-    private val authorizationData2 = createAuthorization(id = 2)
-    private val viewModel1 = authorizationData1.toAuthorizationViewModel(mockConnection1)
-    private val viewModel2 = authorizationData2.toAuthorizationViewModel(mockConnection1)
+    private val mockConnectionAndKey = ConnectionAndKey(mockConnection, CommonTestTools.testPrivateKey)
+    private val authorizations: List<AuthorizationData> = listOf(createAuthorization(id = 1), createAuthorization(id = 2))
+    private val encryptedAuthorizations = authorizations.map { it.encryptWithTestKey() }
+    private val items = authorizations.map { it.toAuthorizationItemViewModel(mockConnection) }
 
     @Before
     fun setUp() {
         doReturn(mockPollingService).`when`(mockApiManager).createAuthorizationsPollingService()
-        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(mockConnection1))
-        given(mockKeyStoreManager.createConnectionAndKeyModel(mockConnection1)).willReturn(mockConnectionAndKey)
+        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(mockConnection))
+        given(mockKeyStoreManager.createConnectionAndKeyModel(mockConnection)).willReturn(mockConnectionAndKey)
+        encryptedAuthorizations.forEachIndexed { index, encryptedData ->
+            given(mockCryptoTools.decryptAuthorizationData(encryptedData, mockConnectionAndKey.key))
+                .willReturn(authorizations[index])
+        }
 
         viewModel = AuthorizationsListViewModel(
             appContext = context,
@@ -107,7 +114,8 @@ class AuthorizationsListViewModelTest {
             keyStoreManager = mockKeyStoreManager,
             cryptoTools = mockCryptoTools,
             apiManager = mockApiManager,
-            connectivityReceiver = mockConnectivityReceiver
+            connectivityReceiver = mockConnectivityReceiver,
+            defaultDispatcher = testDispatcher
         )
     }
 
@@ -187,7 +195,7 @@ class AuthorizationsListViewModelTest {
     @Throws(Exception::class)
     fun onFragmentResumeCase3() {
         //given onResume event, with connection and items
-        viewModel.listItems.postValue(listOf(viewModel1, viewModel2))
+        viewModel.listItems.value = items
         val lifecycle = LifecycleRegistry(mock(LifecycleOwner::class.java))
         viewModel.bindLifecycleObserver(lifecycle)
 
@@ -203,221 +211,6 @@ class AuthorizationsListViewModelTest {
             equalTo(R.string.authorizations_empty_title))
         assertThat(viewModel.emptyViewDescriptionText.value,
             equalTo(R.string.authorizations_empty_description))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun processDecryptedAuthorizationsResultTestCase1() {
-        //given
-        viewModel.listItems.postValue(emptyList())
-
-        //when
-        viewModel.processDecryptedAuthorizationsResult(result = listOf(authorizationData2, authorizationData1))
-
-        //then
-        assertThat(viewModel.listItemsValues, equalTo(listOf(viewModel1, viewModel2)))
-        assertThat(viewModel.emptyViewVisibility.value, equalTo(View.GONE))
-        assertThat(viewModel.listVisibility.value, equalTo(View.VISIBLE))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun processDecryptedAuthorizationsResultTestCase2() {
-        //given
-        viewModel.listItems.postValue(listOf(viewModel1, viewModel2))
-
-        //when
-        viewModel.processDecryptedAuthorizationsResult(result = emptyList())
-
-        //then
-        assertThat(viewModel.listItemsValues, equalTo(emptyList()))
-        assertThat(viewModel.emptyViewVisibility.value, equalTo(View.VISIBLE))
-        assertThat(viewModel.listVisibility.value, equalTo(View.GONE))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun processDecryptedAuthorizationsResultTestCase3() {
-        //given
-        viewModel.listItems.postValue(listOf(viewModel1, viewModel2))
-
-        //when
-        viewModel.processDecryptedAuthorizationsResult(result = listOf(authorizationData1, authorizationData2))
-
-        //then
-        assertThat(viewModel.listItemsValues, equalTo(listOf(viewModel1, viewModel2)))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun processDecryptedAuthorizationsResultTestCase4() {
-        //given
-        viewModel.listItems.postValue(listOf(viewModel1, viewModel2.copy(viewMode = ViewMode.DENY_SUCCESS)))
-
-        //when
-        viewModel.processDecryptedAuthorizationsResult(result = listOf(authorizationData1, authorizationData2))
-
-        //then
-        assertThat(viewModel.listItemsValues.size, equalTo(2))
-        assertThat(
-            viewModel.listItemsValues,
-            equalTo(listOf(viewModel1, viewModel2.copy(viewMode = ViewMode.DENY_SUCCESS)))
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun getCurrentConnectionsAndKeysForPollingTestCase1() {
-        //given
-        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(emptyList<Connection>())
-        viewModel.onResume()
-
-        //when
-        val result = viewModel.getCurrentConnectionsAndKeysForPolling()
-
-        //then
-        assertThat(result, `is`(nullValue()))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun getCurrentConnectionsAndKeysForPollingTestCase2() {
-        //given view model
-
-        //when
-        val result = viewModel.getCurrentConnectionsAndKeysForPolling()
-
-        //then
-        assertThat(result, equalTo(listOf(mockConnectionAndKey)))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onTimeUpdateTestCase1() {
-        //given list with expired item
-        viewModel.listItems.postValue(listOf(viewModel1, viewModel2.copy(endTime = DateTime(0))))
-
-        //when
-        viewModel.onTimeUpdate()
-
-        //then
-        assertThat(
-            viewModel.listItemsValues[1],
-            equalTo(viewModel2.copy(endTime = DateTime(0), viewMode = ViewMode.TIME_OUT))
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onTimeUpdateTestCase2() {
-        //given list with expired item
-        viewModel.listItems.postValue(listOf(
-            viewModel1,
-            viewModel2.copy(viewMode = ViewMode.TIME_OUT).apply { destroyAt = DateTime(0) }
-        ))
-
-        //when
-        viewModel.onTimeUpdate()
-
-        //then
-        assertThat(viewModel.listItemsValues, equalTo(listOf(viewModel1)))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onListItemClickTestCase1() {
-        //given invalid itemIndex
-        viewModel.listItems.postValue(listOf(viewModel1, viewModel2))
-
-        //when
-        viewModel.onListItemClick(itemIndex = 5, itemCode = "", itemViewId = 1)
-
-        //then
-        verify(mockApiManager).createAuthorizationsPollingService()
-        verifyNoMoreInteractions(mockApiManager)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onListItemClickTestCase2() {
-        //given no connections
-        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(emptyList<Connection>())
-        viewModel.listItems.postValue(listOf(viewModel1, viewModel2))
-
-        //when
-        viewModel.onListItemClick(itemIndex = 0, itemCode = "", itemViewId = R.id.titleTextView)
-
-        //then
-        verify(mockApiManager).createAuthorizationsPollingService()
-        verifyNoMoreInteractions(mockApiManager)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onListItemClickTestCase3() {
-        //given invalid itemViewId
-        viewModel.listItems.postValue(listOf(viewModel1, viewModel2))
-
-        //when
-        viewModel.onListItemClick(itemIndex = 0, itemCode = "", itemViewId = R.id.titleTextView)
-
-        //then
-        verify(mockApiManager).createAuthorizationsPollingService()
-        verifyNoMoreInteractions(mockApiManager)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onListItemClickTestCase4() {
-        //given itemViewId = R.id.positiveActionView
-        viewModel.listItems.postValue(listOf(viewModel1, viewModel2))
-
-        //when
-        viewModel.onListItemClick(
-            itemIndex = 0,
-            itemCode = "",
-            itemViewId = R.id.positiveActionView
-        )
-
-        //then
-        assertThat(viewModel.listItemUpdateEvent.value, equalTo(ViewModelEvent(0)))
-        assertThat(
-            viewModel.listItemsValues.first(),
-            equalTo(viewModel1.copy(viewMode = ViewMode.CONFIRM_PROCESSING))
-        )
-        verify(mockApiManager).confirmAuthorization(
-            connectionAndKey = mockConnectionAndKey,
-            authorizationId = viewModel1.authorizationID,
-            authorizationCode = viewModel1.authorizationCode,
-            resultCallback = viewModel
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onListItemClickTestCase5() {
-        //given itemViewId = R.id.negativeActionView
-        viewModel.listItems.postValue(listOf(viewModel1, viewModel2))
-
-        //when
-        viewModel.onListItemClick(
-            itemIndex = 0,
-            itemCode = "",
-            itemViewId = R.id.negativeActionView
-        )
-
-        //then
-        assertThat(viewModel.listItemUpdateEvent.value, equalTo(ViewModelEvent(0)))
-        assertThat(
-            viewModel.listItemsValues.first(),
-            equalTo(viewModel1.copy(viewMode = ViewMode.DENY_PROCESSING))
-        )
-        verify(mockApiManager).denyAuthorization(
-            connectionAndKey = mockConnectionAndKey,
-            authorizationId = viewModel1.authorizationID,
-            authorizationCode = viewModel1.authorizationCode,
-            resultCallback = viewModel
-        )
     }
 
     @Test
@@ -474,20 +267,230 @@ class AuthorizationsListViewModelTest {
         verify(mockConnectionsRepository).getAllActiveConnections()
     }
 
-    //TODO INVESTIGATE TEST OF COROUTINES (https://github.com/saltedge/sca-authenticator-android/issues/39)
-//    @Test
-//    @Throws(Exception::class)
-//    fun onFetchEncryptedDataResultTest_processEncryptedAuthorizationsResult() {
-//
-//    }
+    @Test
+    @Throws(Exception::class)
+    fun onFetchEncryptedDataResultTestCase4() {
+        //given empty initial list and not empty result
+        viewModel.listItems.value = emptyList()
+        val requestResult = encryptedAuthorizations
+
+        //when
+        viewModel.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
+
+        //then
+        assertThat(viewModel.listItemsValues, equalTo(items))
+        assertThat(viewModel.emptyViewVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.listVisibility.value, equalTo(View.VISIBLE))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onFetchEncryptedDataResultTestCase5() {
+        //given not empty initial list and empty result
+        viewModel.listItems.value = items
+        val requestResult = emptyList<EncryptedData>()
+
+        //when
+        viewModel.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
+
+        //then
+        assertThat(viewModel.listItemsValues, equalTo(emptyList()))
+        assertThat(viewModel.emptyViewVisibility.value, equalTo(View.VISIBLE))
+        assertThat(viewModel.listVisibility.value, equalTo(View.GONE))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onFetchEncryptedDataResultTestCase6() {
+        //given not empty initial list and not empty result
+        viewModel.listItems.value = items
+        val requestResult = encryptedAuthorizations
+
+        //when
+        viewModel.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
+
+        //then
+        assertThat(viewModel.listItemsValues, equalTo(items))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onFetchEncryptedDataResultTestCase7() {
+        //given initial list with denied item and not empty result
+        val initialItems = listOf(items[0], items[1].copy(viewMode = ViewMode.DENY_SUCCESS))
+        viewModel.listItems.value = initialItems
+        val requestResult = encryptedAuthorizations
+
+        //when
+        viewModel.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
+
+        //then
+        assertThat(viewModel.listItemsValues.size, equalTo(2))
+        assertThat(viewModel.listItemsValues, equalTo(initialItems))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun getCurrentConnectionsAndKeysForPollingTestCase1() {
+        //given
+        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(emptyList<Connection>())
+        viewModel.onResume()
+
+        //when
+        val result = viewModel.getCurrentConnectionsAndKeysForPolling()
+
+        //then
+        assertThat(result, `is`(nullValue()))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun getCurrentConnectionsAndKeysForPollingTestCase2() {
+        //given view model
+
+        //when
+        val result = viewModel.getCurrentConnectionsAndKeysForPolling()
+
+        //then
+        assertThat(result, equalTo(listOf(mockConnectionAndKey)))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onTimeUpdateTestCase1() {
+        //given list with expired item
+        viewModel.listItems.postValue(listOf(items[0], items[1].copy(endTime = DateTime(0))))
+
+        //when
+        viewModel.onTimeUpdate()
+
+        //then
+        assertThat(
+            viewModel.listItemsValues[1],
+            equalTo(items[1].copy(endTime = DateTime(0), viewMode = ViewMode.TIME_OUT))
+        )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onTimeUpdateTestCase2() {
+        //given list with expired item
+        viewModel.listItems.postValue(listOf(
+            items[0],
+            items[1].copy(viewMode = ViewMode.TIME_OUT).apply { destroyAt = DateTime(0) }
+        ))
+
+        //when
+        viewModel.onTimeUpdate()
+
+        //then
+        assertThat(viewModel.listItemsValues, equalTo(listOf(items[0])))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onListItemClickTestCase1() {
+        //given invalid itemIndex
+        viewModel.listItems.postValue(items)
+
+        //when
+        viewModel.onListItemClick(itemIndex = 5, itemCode = "", itemViewId = 1)
+
+        //then
+        verify(mockApiManager).createAuthorizationsPollingService()
+        verifyNoMoreInteractions(mockApiManager)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onListItemClickTestCase2() {
+        //given no connections
+        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(emptyList<Connection>())
+        viewModel.listItems.postValue(items)
+
+        //when
+        viewModel.onListItemClick(itemIndex = 0, itemCode = "", itemViewId = R.id.titleTextView)
+
+        //then
+        verify(mockApiManager).createAuthorizationsPollingService()
+        verifyNoMoreInteractions(mockApiManager)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onListItemClickTestCase3() {
+        //given invalid itemViewId
+        viewModel.listItems.postValue(items)
+
+        //when
+        viewModel.onListItemClick(itemIndex = 0, itemCode = "", itemViewId = R.id.titleTextView)
+
+        //then
+        verify(mockApiManager).createAuthorizationsPollingService()
+        verifyNoMoreInteractions(mockApiManager)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onListItemClickTestCase4() {
+        //given itemViewId = R.id.positiveActionView
+        viewModel.listItems.postValue(items)
+
+        //when
+        viewModel.onListItemClick(
+            itemIndex = 0,
+            itemCode = "",
+            itemViewId = R.id.positiveActionView
+        )
+
+        //then
+        assertThat(viewModel.listItemUpdateEvent.value, equalTo(ViewModelEvent(0)))
+        assertThat(
+            viewModel.listItemsValues.first(),
+            equalTo(items[0].copy(viewMode = ViewMode.CONFIRM_PROCESSING))
+        )
+        verify(mockApiManager).confirmAuthorization(
+            connectionAndKey = mockConnectionAndKey,
+            authorizationId = items[0].authorizationID,
+            authorizationCode = items[0].authorizationCode,
+            resultCallback = viewModel
+        )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onListItemClickTestCase5() {
+        //given itemViewId = R.id.negativeActionView
+        viewModel.listItems.postValue(items)
+
+        //when
+        viewModel.onListItemClick(
+            itemIndex = 0,
+            itemCode = "",
+            itemViewId = R.id.negativeActionView
+        )
+
+        //then
+        assertThat(viewModel.listItemUpdateEvent.value, equalTo(ViewModelEvent(0)))
+        assertThat(
+            viewModel.listItemsValues.first(),
+            equalTo(items[0].copy(viewMode = ViewMode.DENY_PROCESSING))
+        )
+        verify(mockApiManager).denyAuthorization(
+            connectionAndKey = mockConnectionAndKey,
+            authorizationId = items[0].authorizationID,
+            authorizationCode = items[0].authorizationCode,
+            resultCallback = viewModel
+        )
+    }
 
     @Test
     @Throws(Exception::class)
     fun onConfirmDenySuccessTestCase1() {
         //given success result of CONFIRM
         viewModel.listItems.postValue(listOf(
-            viewModel1.copy(),
-            viewModel2.copy(viewMode = ViewMode.CONFIRM_PROCESSING)
+            items.first().copy(),
+            items[1].copy(viewMode = ViewMode.CONFIRM_PROCESSING)
         ))
         val result = ConfirmDenyResponseData(success = true, authorizationID = "2")
 
@@ -497,7 +500,7 @@ class AuthorizationsListViewModelTest {
         //then
         assertThat(
             viewModel.listItemsValues,
-            equalTo(listOf(viewModel1, viewModel2.copy(viewMode = ViewMode.CONFIRM_SUCCESS)))
+            equalTo(listOf(items.first(), items[1].copy(viewMode = ViewMode.CONFIRM_SUCCESS)))
         )
     }
 
@@ -506,8 +509,8 @@ class AuthorizationsListViewModelTest {
     fun onConfirmDenySuccessTestCase2() {
         //given success result of DENY
         viewModel.listItems.postValue(listOf(
-            viewModel1.copy(),
-            viewModel2.copy(viewMode = ViewMode.DENY_PROCESSING)
+            items.first().copy(),
+            items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
         ))
         val result = ConfirmDenyResponseData(success = true, authorizationID = "2")
 
@@ -517,7 +520,7 @@ class AuthorizationsListViewModelTest {
         //then
         assertThat(
             viewModel.listItemsValues,
-            equalTo(listOf(viewModel1, viewModel2.copy(viewMode = ViewMode.DENY_SUCCESS)))
+            equalTo(listOf(items.first(), items[1].copy(viewMode = ViewMode.DENY_SUCCESS)))
         )
     }
 
@@ -526,8 +529,8 @@ class AuthorizationsListViewModelTest {
     fun onConfirmDenySuccessTestCase3() {
         //given invalid params
         viewModel.listItems.postValue(listOf(
-            viewModel1.copy(),
-            viewModel2.copy(viewMode = ViewMode.DENY_PROCESSING)
+            items.first().copy(),
+            items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
         ))
         val result = ConfirmDenyResponseData(success = true, authorizationID = "101")
 
@@ -538,8 +541,8 @@ class AuthorizationsListViewModelTest {
         assertThat(
             viewModel.listItemsValues,
             equalTo(listOf(
-                viewModel1,
-                viewModel2.copy(viewMode = ViewMode.DENY_PROCESSING)
+                items.first(),
+                items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
             ))
         )
     }
@@ -549,8 +552,8 @@ class AuthorizationsListViewModelTest {
     fun onConfirmDenySuccessTestCase4() {
         //given invalid params
         viewModel.listItems.postValue(listOf(
-            viewModel1.copy(),
-            viewModel2.copy(viewMode = ViewMode.DENY_PROCESSING)
+            items.first().copy(),
+            items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
         ))
         val result = ConfirmDenyResponseData(success = true, authorizationID = "1")
 
@@ -561,8 +564,8 @@ class AuthorizationsListViewModelTest {
         assertThat(
             viewModel.listItemsValues,
             equalTo(listOf(
-                viewModel1.copy(),
-                viewModel2.copy(viewMode = ViewMode.DENY_PROCESSING)
+                items.first().copy(),
+                items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
             ))
         )
     }
@@ -572,8 +575,8 @@ class AuthorizationsListViewModelTest {
     fun onConfirmDenyFailureTestCase1() {
         //given
         viewModel.listItems.postValue(listOf(
-            viewModel1.copy(),
-            viewModel2.copy(viewMode = ViewMode.DENY_PROCESSING)
+            items.first().copy(),
+            items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
         ))
         val error = createRequestError(404)
 
@@ -583,7 +586,7 @@ class AuthorizationsListViewModelTest {
         //then
         assertThat(
             viewModel.listItemsValues,
-            equalTo(listOf(viewModel1, viewModel2.copy(viewMode = ViewMode.ERROR)))
+            equalTo(listOf(items.first(), items[1].copy(viewMode = ViewMode.ERROR)))
         )
         assertThat(viewModel.onConfirmErrorEvent.value, equalTo(ViewModelEvent(error.getErrorMessage(context))))
     }
@@ -593,8 +596,8 @@ class AuthorizationsListViewModelTest {
     fun onConfirmDenyFailureTestCase2() {
         //given invalid params
         viewModel.listItems.postValue(listOf(
-            viewModel1.copy(),
-            viewModel2.copy(viewMode = ViewMode.DENY_PROCESSING)
+            items.first().copy(),
+            items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
         ))
         val error = createRequestError(404)
 
@@ -604,7 +607,7 @@ class AuthorizationsListViewModelTest {
         //then
         assertThat(
             viewModel.listItemsValues,
-            equalTo(listOf(viewModel1, viewModel2.copy(viewMode = ViewMode.DENY_PROCESSING)))
+            equalTo(listOf(items.first(), items[1].copy(viewMode = ViewMode.DENY_PROCESSING)))
         )
         assertThat(viewModel.onConfirmErrorEvent.value, equalTo(ViewModelEvent("Request Error (404)")))
     }

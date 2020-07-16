@@ -24,9 +24,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
-import com.saltedge.authenticator.features.authorizations.common.toAuthorizationViewModel
+import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -97,7 +97,7 @@ class AuthorizationDetailsViewModelTest {
     private val encryptedData2 = EncryptedData(id = "2_noKey", connectionId = "1")
     private val authorizationData1 = createAuthorizationData(id = 1)
     private val authorizationData2 = createAuthorizationData(id = 2)
-    private val viewModel1 = authorizationData1.toAuthorizationViewModel(connection1)
+    private val viewModel1 = authorizationData1.toAuthorizationItemViewModel(connection1)
 
     private fun createAuthorizationData(id: Int): AuthorizationData {
         val createdAt = DateTime.now(DateTimeZone.UTC)
@@ -151,7 +151,7 @@ class AuthorizationDetailsViewModelTest {
         viewModel.setInitialData(identifier = identifier, closeAppOnBackPress = true, titleRes = null)
 
         //then
-        assertThat(viewModel.authorizationModel.value, equalTo(AuthorizationViewModel(
+        assertThat(viewModel.authorizationModel.value, equalTo(AuthorizationItemViewModel(
             authorizationID = "1",
             authorizationCode = "",
             title = "",
@@ -167,7 +167,7 @@ class AuthorizationDetailsViewModelTest {
 
         viewModel.setInitialData(identifier = AuthorizationIdentifier("1", ""), closeAppOnBackPress = true, titleRes = null)
 
-        assertThat(viewModel.authorizationModel.value, equalTo(AuthorizationViewModel(
+        assertThat(viewModel.authorizationModel.value, equalTo(AuthorizationItemViewModel(
             authorizationID = "1",
             authorizationCode = "",
             title = "",
@@ -183,7 +183,7 @@ class AuthorizationDetailsViewModelTest {
 
         viewModel.setInitialData(identifier = AuthorizationIdentifier("1", ""), closeAppOnBackPress = true, titleRes = null)
 
-        assertThat(viewModel.authorizationModel.value, equalTo(AuthorizationViewModel(
+        assertThat(viewModel.authorizationModel.value, equalTo(AuthorizationItemViewModel(
             authorizationID = "1",
             authorizationCode = "",
             title = "",
@@ -208,7 +208,7 @@ class AuthorizationDetailsViewModelTest {
         viewModel.setInitialData(identifier = identifier, closeAppOnBackPress = true, titleRes = null)
 
         //then
-        assertThat(viewModel.authorizationModel.value, equalTo(AuthorizationViewModel(
+        assertThat(viewModel.authorizationModel.value, equalTo(AuthorizationItemViewModel(
             authorizationID = "1",
             authorizationCode = "",
             title = "",
@@ -233,7 +233,7 @@ class AuthorizationDetailsViewModelTest {
         viewModel.setInitialData(identifier = identifier, closeAppOnBackPress = true, titleRes = null)
 
         //then
-        assertThat(viewModel.authorizationModel.value, equalTo(AuthorizationViewModel(
+        assertThat(viewModel.authorizationModel.value, equalTo(AuthorizationItemViewModel(
             authorizationID = "",
             authorizationCode = "",
             title = "",
@@ -258,7 +258,7 @@ class AuthorizationDetailsViewModelTest {
         viewModel.setInitialData(identifier = identifier, closeAppOnBackPress = true, titleRes = null)
 
         //then
-        assertThat(viewModel.authorizationModel.value, equalTo(AuthorizationViewModel(
+        assertThat(viewModel.authorizationModel.value, equalTo(AuthorizationItemViewModel(
             authorizationID = "",
             authorizationCode = "",
             title = "",

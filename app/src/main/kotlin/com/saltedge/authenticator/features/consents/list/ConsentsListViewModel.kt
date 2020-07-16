@@ -128,10 +128,9 @@ class ConsentsListViewModel(
     }
 
     private fun decryptConsents(encryptedList: List<EncryptedData>): List<ConsentData> {
-        val result = encryptedList.mapNotNull {
+        return encryptedList.mapNotNull {
             cryptoTools.decryptConsentData(encryptedData = it, rsaPrivateKey = connectionAndKey?.key)
         }
-        return result
     }
 
     private fun onReceivedNewConsents(result: List<ConsentData>) {

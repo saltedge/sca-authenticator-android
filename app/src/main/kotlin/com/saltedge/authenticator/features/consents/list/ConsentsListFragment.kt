@@ -98,9 +98,7 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
     }
 
     private fun setupViewModel() {
-        viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(ConsentsListViewModel::class.java)
-        lifecycle.addObserver(viewModel)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(ConsentsListViewModel::class.java)
 
         viewModel.listItems.observe(this, Observer<List<ConsentItemViewModel>> {
             headerDecorator.setHeaderForAllItems(it.count())

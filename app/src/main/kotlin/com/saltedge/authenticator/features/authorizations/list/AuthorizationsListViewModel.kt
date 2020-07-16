@@ -53,7 +53,6 @@ import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.postUnitEvent
 import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
 
 class AuthorizationsListViewModel(
     private val appContext: Context,
@@ -61,20 +60,17 @@ class AuthorizationsListViewModel(
     private val keyStoreManager: KeyStoreManagerAbs,
     private val cryptoTools: CryptoToolsAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
-    private val connectivityReceiver: ConnectivityReceiverAbs
+    private val connectivityReceiver: ConnectivityReceiverAbs,
+    private val defaultDispatcher: CoroutineDispatcher
 ) : ViewModel(),
     LifecycleObserver,
     ListItemClickListener,
     FetchAuthorizationsContract,
     ConfirmAuthorizationListener,
     TimerUpdateListener,
-    CoroutineScope,
     NetworkStateChangeListener
 {
     private var noInternetConnection: Boolean = false
-    private val decryptJob: Job = Job()
-    override val coroutineContext: CoroutineContext
-        get() = decryptJob + Dispatchers.IO
     private var pollingService = apiManager.createAuthorizationsPollingService()
     private var connectionsAndKeys: Map<ConnectionID, ConnectionAndKey> =
         collectConnectionsAndKeys(connectionsRepository, keyStoreManager)
@@ -85,8 +81,8 @@ class AuthorizationsListViewModel(
     val emptyViewActionText = MutableLiveData<ResId?>(R.string.actions_scan_qr)
     val emptyViewTitleText = MutableLiveData<ResId>(R.string.authorizations_empty_title)
     val emptyViewDescriptionText = MutableLiveData<ResId>(R.string.authorizations_empty_description)
-    val listItems = MutableLiveData<List<AuthorizationViewModel>>()
-    val listItemsValues: List<AuthorizationViewModel>
+    val listItems = MutableLiveData<List<AuthorizationItemViewModel>>()
+    val listItemsValues: List<AuthorizationItemViewModel>
         get() = listItems.value ?: emptyList()
     val listItemUpdateEvent = MutableLiveData<ViewModelEvent<Int>>()
     val onConfirmErrorEvent = MutableLiveData<ViewModelEvent<String>>()
@@ -94,87 +90,6 @@ class AuthorizationsListViewModel(
     val onMoreMenuClickEvent = MutableLiveData<ViewModelEvent<List<MenuItemData>>>()
     val onShowConnectionsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowSettingsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
-
-    fun bindLifecycleObserver(lifecycle: Lifecycle) {
-        lifecycle.let {
-            it.removeObserver(this)
-            it.addObserver(this)
-            it.removeObserver(pollingService)
-            it.addObserver(pollingService)
-        }
-        pollingService.contract = this
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun onStart() {
-        connectivityReceiver.addNetworkStateChangeListener(this)
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onResume() {
-        connectionsAndKeys = collectConnectionsAndKeys(connectionsRepository, keyStoreManager)
-        if (listItemsValues.isNotEmpty()) postListItemsUpdate(listItemsValues)
-        postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun onStop() {
-        connectivityReceiver.removeNetworkStateChangeListener(this)
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun onDestroy() {
-        decryptJob.cancel()
-    }
-
-    //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
-    fun processDecryptedAuthorizationsResult(result: List<AuthorizationData>) {
-        val newAuthorizationsData = result
-            .filter { it.isNotExpired() }
-            .sortedWith(compareBy({ it.createdAt }, { it.id }))
-        val joinedViewModels = joinViewModels(
-            newViewModels = createViewModels(newAuthorizationsData),
-            oldViewModels = this.listItemsValues
-        )
-        if (listItemsValues != joinedViewModels) postListItemsUpdate(newItems = joinedViewModels)
-    }
-
-    fun onEmptyViewActionClick() {
-        onQrScanClickEvent.postUnitEvent()
-    }
-
-    fun onAppbarMenuItemClick(menuItem: MenuItem) {
-        when (menuItem) {
-            MenuItem.SCAN_QR -> onQrScanClickEvent.postUnitEvent()
-            MenuItem.MORE_MENU -> {
-                val menuItems = listOf<MenuItemData>(
-                    MenuItemData(
-                        id = R.string.connections_feature_title,
-                        iconRes = R.drawable.ic_menu_action_connections,
-                        textRes = R.string.connections_feature_title
-                    ),
-                    MenuItemData(
-                        id = R.string.settings_feature_title,
-                        iconRes = R.drawable.ic_menu_action_settings,
-                        textRes = R.string.settings_feature_title
-                    )
-                )
-                onMoreMenuClickEvent.postValue(ViewModelEvent(menuItems))
-            }
-            else -> Unit
-        }
-    }
-
-    /**
-     * Handle clicks on bottom navigation menu
-     */
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (data == null || resultCode != Activity.RESULT_OK) return
-        when (data.getIntExtra(KEY_OPTION_ID, 0)) {
-            R.string.connections_feature_title -> onShowConnectionsListEvent.postUnitEvent()
-            R.string.settings_feature_title -> onShowSettingsListEvent.postUnitEvent()
-        }
-    }
 
     override fun getCurrentConnectionsAndKeysForPolling(): List<ConnectionAndKey>? = collectAuthorizationRequestData()
 
@@ -223,12 +138,76 @@ class AuthorizationsListViewModel(
         postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onStart() {
+        connectivityReceiver.addNetworkStateChangeListener(this)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    fun onResume() {
+        connectionsAndKeys = collectConnectionsAndKeys(connectionsRepository, keyStoreManager)
+        if (listItemsValues.isNotEmpty()) postListItemsUpdate(listItemsValues)
+        postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onStop() {
+        connectivityReceiver.removeNetworkStateChangeListener(this)
+    }
+
+    fun bindLifecycleObserver(lifecycle: Lifecycle) {
+        lifecycle.let {
+            it.removeObserver(this)
+            it.addObserver(this)
+            it.removeObserver(pollingService)
+            it.addObserver(pollingService)
+        }
+        pollingService.contract = this
+    }
+
+    fun onEmptyViewActionClick() {
+        onQrScanClickEvent.postUnitEvent()
+    }
+
+    fun onAppbarMenuItemClick(menuItem: MenuItem) {
+        when (menuItem) {
+            MenuItem.SCAN_QR -> onQrScanClickEvent.postUnitEvent()
+            MenuItem.MORE_MENU -> {
+                val menuItems = listOf<MenuItemData>(
+                    MenuItemData(
+                        id = R.string.connections_feature_title,
+                        iconRes = R.drawable.ic_menu_action_connections,
+                        textRes = R.string.connections_feature_title
+                    ),
+                    MenuItemData(
+                        id = R.string.settings_feature_title,
+                        iconRes = R.drawable.ic_menu_action_settings,
+                        textRes = R.string.settings_feature_title
+                    )
+                )
+                onMoreMenuClickEvent.postValue(ViewModelEvent(menuItems))
+            }
+            else -> Unit
+        }
+    }
+
+    /**
+     * Handle clicks on bottom navigation menu
+     */
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (data == null || resultCode != Activity.RESULT_OK) return
+        when (data.getIntExtra(KEY_OPTION_ID, 0)) {
+            R.string.connections_feature_title -> onShowConnectionsListEvent.postUnitEvent()
+            R.string.settings_feature_title -> onShowSettingsListEvent.postUnitEvent()
+        }
+    }
+
     private fun collectAuthorizationRequestData(): List<ConnectionAndKey>? {
         return if (connectionsAndKeys.isEmpty()) null else connectionsAndKeys.values.toList()
     }
 
     private fun processEncryptedAuthorizationsResult(encryptedList: List<EncryptedData>) {
-        launch {
+        viewModelScope.launch(defaultDispatcher) {
             val data = decryptAuthorizations(encryptedList = encryptedList)
             withContext(Dispatchers.Main) { processDecryptedAuthorizationsResult(result = data) }
         }
@@ -243,10 +222,21 @@ class AuthorizationsListViewModel(
         }
     }
 
-    private fun createViewModels(authorizations: List<AuthorizationData>): List<AuthorizationViewModel> {
+    private fun processDecryptedAuthorizationsResult(result: List<AuthorizationData>) {
+        val newAuthorizationsData = result
+            .filter { it.isNotExpired() }
+            .sortedWith(compareBy({ it.createdAt }, { it.id }))
+        val joinedViewModels = joinViewModels(
+            newViewModels = createViewModels(newAuthorizationsData),
+            oldViewModels = this.listItemsValues
+        )
+        if (listItemsValues != joinedViewModels) postListItemsUpdate(newItems = joinedViewModels)
+    }
+
+    private fun createViewModels(authorizations: List<AuthorizationData>): List<AuthorizationItemViewModel> {
         return authorizations.mapNotNull { item ->
             connectionsAndKeys[item.connectionId]?.let {
-                item.toAuthorizationViewModel(connection = it.connection)
+                item.toAuthorizationItemViewModel(connection = it.connection)
             }
         }
     }
@@ -263,13 +253,13 @@ class AuthorizationsListViewModel(
     private fun findListItem(
         connectionID: ConnectionID,
         authorizationID: AuthorizationID
-    ): AuthorizationViewModel? {
+    ): AuthorizationItemViewModel? {
         return listItemsValues.find {
             it.authorizationID == authorizationID && it.connectionID == connectionID
         }
     }
 
-    private fun sendConfirmRequest(listItem: AuthorizationViewModel, connectionAndKey: ConnectionAndKey) {
+    private fun sendConfirmRequest(listItem: AuthorizationItemViewModel, connectionAndKey: ConnectionAndKey) {
         updateItemViewMode(
             listItem = listItem,
             newViewMode = ViewMode.CONFIRM_PROCESSING
@@ -282,7 +272,7 @@ class AuthorizationsListViewModel(
         )
     }
 
-    private fun sendDenyRequest(listItem: AuthorizationViewModel, connectionAndKey: ConnectionAndKey) {
+    private fun sendDenyRequest(listItem: AuthorizationItemViewModel, connectionAndKey: ConnectionAndKey) {
         updateItemViewMode(
             listItem = listItem,
             newViewMode = ViewMode.DENY_PROCESSING
@@ -295,13 +285,13 @@ class AuthorizationsListViewModel(
         )
     }
 
-    private fun updateItemViewMode(listItem: AuthorizationViewModel, newViewMode: ViewMode) {
+    private fun updateItemViewMode(listItem: AuthorizationItemViewModel, newViewMode: ViewMode) {
         val itemIndex = listItemsValues.indexOf(listItem)
         listItem.setNewViewMode(newViewMode = newViewMode)
         listItemUpdateEvent.postValue(ViewModelEvent(itemIndex))
     }
 
-    private fun postListItemsUpdate(newItems: List<AuthorizationViewModel>) {
+    private fun postListItemsUpdate(newItems: List<AuthorizationItemViewModel>) {
         listItems.postValue(newItems)
         postMainComponentsState(itemsListIsEmpty = newItems.isEmpty())
     }

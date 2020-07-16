@@ -104,7 +104,8 @@ class ViewModelsFactory @Inject constructor(
                     keyStoreManager = keyStoreManager,
                     cryptoTools = cryptoTools,
                     apiManager = apiManager,
-                    connectivityReceiver = connectivityReceiver
+                    connectivityReceiver = connectivityReceiver,
+                    defaultDispatcher = Dispatchers.Default
                 ) as T
             }
             modelClass.isAssignableFrom(AuthorizationDetailsViewModel::class.java) -> {
