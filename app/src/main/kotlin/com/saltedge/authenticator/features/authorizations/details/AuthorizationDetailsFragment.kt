@@ -32,7 +32,7 @@ import com.saltedge.authenticator.app.KEY_ID
 import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.cloud.clearNotifications
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.constants.KEY_TITLE
@@ -126,7 +126,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
         viewModel.onCloseViewEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
             event.getContentIfNotHandled()?.let { activity?.finishFragment() }
         })
-        viewModel.authorizationModel.observe(this, Observer<AuthorizationViewModel> {
+        viewModel.authorizationModel.observe(this, Observer<AuthorizationItemViewModel> {
             headerView?.setTitleAndLogo(title = it.connectionName, logoUrl = it.connectionLogoUrl ?: "")
             headerView?.setProgressTime(startTime = it.startTime, endTime = it.endTime)
             headerView?.ignoreTimeUpdate = it.ignoreTimeUpdate

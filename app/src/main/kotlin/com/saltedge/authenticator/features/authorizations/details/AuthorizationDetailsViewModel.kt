@@ -23,10 +23,10 @@ package com.saltedge.authenticator.features.authorizations.details
 import android.content.Context
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.createConnectionAndKey
-import com.saltedge.authenticator.features.authorizations.common.toAuthorizationViewModel
+import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
@@ -61,7 +61,7 @@ class AuthorizationDetailsViewModel(
     val onCloseAppEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onCloseViewEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onTimeUpdateEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val authorizationModel = MutableLiveData<AuthorizationViewModel>()
+    val authorizationModel = MutableLiveData<AuthorizationItemViewModel>()
     private var closeAppOnBackPress: Boolean = true
     var titleRes: ResId = R.string.authorization_feature_title//TODO TEST
         private set
@@ -100,7 +100,7 @@ class AuthorizationDetailsViewModel(
         } else {
             ViewMode.LOADING
         }
-        authorizationModel.value = AuthorizationViewModel(
+        authorizationModel.value = AuthorizationItemViewModel(
             authorizationID = identifier?.authorizationID ?: "",
             authorizationCode = "",
             title = "",
@@ -184,7 +184,7 @@ class AuthorizationDetailsViewModel(
             encryptedData = result,
             rsaPrivateKey = connectionAndKey?.key
         )?.let {
-            val newViewModel = it.toAuthorizationViewModel(
+            val newViewModel = it.toAuthorizationItemViewModel(
                 connection = connectionAndKey?.connection ?: return
             )
             if (!modelHasFinalMode && authorizationModel.value != newViewModel) {

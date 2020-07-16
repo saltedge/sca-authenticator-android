@@ -26,6 +26,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import androidx.test.core.app.ApplicationProvider
+import com.saltedge.android.test_tools.CommonTestTools
+import com.saltedge.android.test_tools.encryptWithTestKey
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CONSENT_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_ID
@@ -42,6 +44,9 @@ import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.daysTillExpire
 import com.saltedge.authenticator.tools.guid
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.hamcrest.CoreMatchers.equalTo
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
@@ -53,19 +58,20 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.robolectric.RobolectricTestRunner
-import java.security.PrivateKey
 
 @RunWith(RobolectricTestRunner::class)
+@ExperimentalCoroutinesApi
 class ConsentsListViewModelTest {
 
+    private val testDispatcher = TestCoroutineDispatcher()
     private lateinit var viewModel: ConsentsListViewModel
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
     private val mockKeyStoreManager = mock(KeyStoreManagerAbs::class.java)
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
-    private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
     private val mockCryptoTools = mock(CryptoToolsAbs::class.java)
     private val connection = Connection().apply {
+        id = "2"
         guid = "guid2"
         code = "demobank2"
         name = "Demobank2"
@@ -75,20 +81,10 @@ class ConsentsListViewModelTest {
         updatedAt = 300L
         logoUrl = "https://www.fentury.com/"
     }
-    private val mockConnectionAndKey = ConnectionAndKey(connection, mockPrivateKey)
-    private val consentData: List<ConsentData> = listOf(
-        ConsentData(
+    private val mockConnectionAndKey = ConnectionAndKey(connection, CommonTestTools.testPrivateKey)
+    private val aispConsent = ConsentData(
             id = "555",
-            userId = "1",
-            tppName = "title",
-            consentTypeString = "aisp",
-            accounts = emptyList(),
-            expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
-            createdAt = DateTime(0).withZone(DateTimeZone.UTC),
-            sharedData = ConsentSharedData(balance = true, transactions = true)
-        ),
-        ConsentData(
-            id = "777",
+            connectionId = "2",
             userId = "1",
             tppName = "title",
             consentTypeString = "aisp",
@@ -97,8 +93,30 @@ class ConsentsListViewModelTest {
             createdAt = DateTime(0).withZone(DateTimeZone.UTC),
             sharedData = ConsentSharedData(balance = true, transactions = true)
         )
+    private val pispFutureConsent = ConsentData(
+            id = "777",
+            userId = "1",
+            connectionId = "2",
+            tppName = "title",
+            consentTypeString = "pisp_future",
+            accounts = emptyList(),
+            expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
+            createdAt = DateTime(0).withZone(DateTimeZone.UTC),
+            sharedData = ConsentSharedData(balance = true, transactions = true)
+        )
+    private val pispRecurringConsent = ConsentData(
+        id = "999",
+        userId = "1",
+        connectionId = "2",
+        tppName = "title",
+        consentTypeString = "pisp_recurring",
+        accounts = emptyList(),
+        expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
+        createdAt = DateTime(0).withZone(DateTimeZone.UTC),
+        sharedData = ConsentSharedData(balance = true, transactions = true)
     )
-
+    private val consents: List<ConsentData> = listOf(aispConsent, pispFutureConsent, pispRecurringConsent)
+    private val encryptedConsents = consents.map { it.encryptWithTestKey() }
     private val daysLeftCount = DateTime(0).withZone(DateTimeZone.UTC).daysTillExpire()
     private val daysTillExpireDescription = countOfDays(daysLeftCount, context)
     private val spanned = SpannableStringBuilder(
@@ -107,93 +125,21 @@ class ConsentsListViewModelTest {
 
     @Before
     fun setUp() {
-        Mockito.doReturn(connection).`when`(mockConnectionsRepository).getByGuid("guid2")
         given(mockConnectionsRepository.getByGuid("guid2")).willReturn(connection)
-        given(mockKeyStoreManager.createConnectionAndKeyModel(connection)).willReturn(
-            mockConnectionAndKey
-        )
+        given(mockKeyStoreManager.createConnectionAndKeyModel(connection))
+            .willReturn(mockConnectionAndKey)
+        encryptedConsents.forEachIndexed { index, encryptedData ->
+            given(mockCryptoTools.decryptConsentData(encryptedData, mockConnectionAndKey.key))
+                .willReturn(consents[index])
+        }
 
         viewModel = ConsentsListViewModel(
             appContext = context,
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
             apiManager = mockApiManager,
-            cryptoTools = mockCryptoTools
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onReceivedNewConsentsCase1() {
-        //when
-        viewModel.onReceivedNewConsents(result = emptyList())
-
-        //then
-        assertThat(viewModel.listItems.value, equalTo(emptyList()))
-        assertThat(viewModel.consentsCount.value, equalTo(""))
-
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onReceivedNewConsentsTestCase2() {
-        //when
-        viewModel.onReceivedNewConsents(consentData)
-
-        //then
-        assertThat(viewModel.listItems.value?.map { it.id }, equalTo(listOf("555", "777")))
-        assertThat(viewModel.consentsCount.value, equalTo("2 consents"))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun toConsentTypeDescriptionTest() {
-        //when
-        viewModel.onReceivedNewConsents(consentData)
-
-        //then
-        assertThat(viewModel.listItems.value?.map { it.id }, equalTo(listOf("555", "777")))
-
-        //when
-        val consentDataWithTypePisp: ConsentData = consentData[0].also {
-            it.consentTypeString = "pisp_future"
-        }
-        viewModel.onReceivedNewConsents(listOf(consentDataWithTypePisp))
-
-        //then
-        assertThat(
-            viewModel.listItems.value,
-            equalTo(
-                listOf(
-                    ConsentItemViewModel(
-                        id = "555",
-                        tppName = "title",
-                        consentTypeDescription = "Consent for future payment",
-                        expiresAtDescription = spanned
-                    )
-                )
-            )
-        )
-
-        //when
-        val consentDataWithTypePispRecurring: ConsentData = consentData[0].also {
-            it.consentTypeString = "pisp_recurring"
-        }
-        viewModel.onReceivedNewConsents(listOf(consentDataWithTypePispRecurring))
-
-        //then
-        assertThat(
-            viewModel.listItems.value,
-            equalTo(
-                listOf(
-                    ConsentItemViewModel(
-                        id = "555",
-                        tppName = "title",
-                        consentTypeDescription = "Consent for recurring payment",
-                        expiresAtDescription = spanned
-                    )
-                )
-            )
+            cryptoTools = mockCryptoTools,
+            defaultDispatcher = testDispatcher
         )
     }
 
@@ -209,7 +155,7 @@ class ConsentsListViewModelTest {
 
         //then
         Mockito.verify(mockApiManager).getConsents(
-            connectionsAndKeys = listOf(ConnectionAndKey(connection, mockPrivateKey)),
+            connectionsAndKeys = listOf(mockConnectionAndKey),
             resultCallback = viewModel
         )
     }
@@ -233,7 +179,7 @@ class ConsentsListViewModelTest {
         //given
         val bundle = Bundle().apply {
             guid = "guid2"
-            putSerializable(KEY_DATA, ArrayList<ConsentData>(consentData))
+            putSerializable(KEY_DATA, ArrayList<ConsentData>(consents))
         }
 
         //when
@@ -242,7 +188,7 @@ class ConsentsListViewModelTest {
         //then
         assertThat(viewModel.logoUrl.value, equalTo("https://www.fentury.com/"))
         assertThat(viewModel.connectionTitle.value, equalTo("Demobank2"))
-        assertThat(viewModel.consentsCount.value, equalTo("2 consents"))
+        assertThat(viewModel.consentsCount.value, equalTo("3 consents"))
     }
 
     @Test
@@ -261,9 +207,8 @@ class ConsentsListViewModelTest {
     @Throws(Exception::class)
     fun onListItemClickTestCase1() {
         //given
-        val bundle = Bundle().apply { guid = "guid2" }
-        viewModel.setInitialData(bundle)
-        viewModel.onReceivedNewConsents(consentData)
+        viewModel.setInitialData(Bundle().apply { guid = "guid2" })
+        viewModel.onFetchEncryptedDataResult(result = encryptedConsents, errors = emptyList())
 
         //when
         viewModel.onListItemClick(0)
@@ -275,9 +220,9 @@ class ConsentsListViewModelTest {
     @Test
     @Throws(Exception::class)
     fun onListItemClickTestCase2() {
-        //given
+        //given empty lists
         viewModel.setInitialData(Bundle())
-        viewModel.onReceivedNewConsents(consentData)
+        viewModel.onFetchEncryptedDataResult(result = encryptedConsents, errors = emptyList())
 
         //when
         viewModel.onListItemClick(0)
@@ -357,14 +302,10 @@ class ConsentsListViewModelTest {
         val requestCode = CONSENT_REQUEST_CODE
         val resultCode = Activity.RESULT_OK
         val intent: Intent = Intent().putExtra(KEY_ID, "555")
+        viewModel.setInitialData(Bundle().apply { guid = "guid2" })
+        viewModel.onFetchEncryptedDataResult(result = encryptedConsents, errors = emptyList())
 
-        val bundle = Bundle().apply {
-            guid = "guid2"
-        }
-        viewModel.setInitialData(bundle)
-        viewModel.onReceivedNewConsents(consentData)
-
-        assertThat(viewModel.listItems.value?.size, equalTo(2))
+        assertThat(viewModel.listItems.value?.size, equalTo(3))
 
         //when
         viewModel.onActivityResult(
@@ -374,7 +315,7 @@ class ConsentsListViewModelTest {
         )
 
         //then
-        assertThat(viewModel.listItems.value?.size, equalTo(1))
+        assertThat(viewModel.listItems.value?.size, equalTo(2))
         assertThat(
             viewModel.listItems.value,
             equalTo(
@@ -382,11 +323,71 @@ class ConsentsListViewModelTest {
                     ConsentItemViewModel(
                         id = "777",
                         tppName = "title",
-                        consentTypeDescription = "Access to account information",
+                        consentTypeDescription = "Consent for future payment",
+                        expiresAtDescription = spanned
+                    ),
+                    ConsentItemViewModel(
+                        id = "999",
+                        tppName = "title",
+                        consentTypeDescription = "Consent for recurring payment",
                         expiresAtDescription = spanned
                     )
                 )
             )
         )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onFetchEncryptedDataResultTestCase1() = runBlocking {
+        //given not empty encrypted list
+        val bundle = Bundle().apply { guid = "guid2" }
+        viewModel.setInitialData(bundle)
+
+        assertThat(encryptedConsents.size, equalTo(3))
+        assertThat(viewModel.listItems.value!!.size, equalTo(0))
+
+        //when
+        viewModel.onFetchEncryptedDataResult(result = encryptedConsents, errors = emptyList())
+
+        //then
+        assertThat(
+            viewModel.listItems.value,
+            equalTo(listOf(
+                ConsentItemViewModel(
+                    id = "555",
+                    tppName = "title",
+                    consentTypeDescription = "Access to account information",
+                    expiresAtDescription = spanned
+                ),
+                ConsentItemViewModel(
+                    id = "777",
+                    tppName = "title",
+                    consentTypeDescription = "Consent for future payment",
+                    expiresAtDescription = spanned
+                ),
+                ConsentItemViewModel(
+                    id = "999",
+                    tppName = "title",
+                    consentTypeDescription = "Consent for recurring payment",
+                    expiresAtDescription = spanned
+                )
+        )))
+        assertThat(viewModel.consentsCount.value, equalTo("3 consents"))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onFetchEncryptedDataResultTestCase2() = runBlocking {
+        //given empty encrypted list
+        val bundle = Bundle().apply { guid = "guid2" }
+        viewModel.setInitialData(bundle)
+
+        //when
+        viewModel.onFetchEncryptedDataResult(result = emptyList(), errors = emptyList())
+
+        //then
+        assertThat(viewModel.listItems.value, equalTo(emptyList()))
+        assertThat(viewModel.consentsCount.value, equalTo(""))
     }
 }

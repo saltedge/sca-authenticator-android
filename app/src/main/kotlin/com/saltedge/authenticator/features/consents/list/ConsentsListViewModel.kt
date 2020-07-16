@@ -26,7 +26,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
-import androidx.lifecycle.*
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CONSENT_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_GUID
@@ -50,17 +53,20 @@ import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.appendColoredText
 import com.saltedge.authenticator.tools.daysTillExpire
 import com.saltedge.authenticator.tools.guid
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
-import kotlin.coroutines.CoroutineContext
 
 class ConsentsListViewModel(
     private val appContext: Context,
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyStoreManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
-    private val cryptoTools: CryptoToolsAbs
-) : ViewModel(), LifecycleObserver, FetchEncryptedDataListener, CoroutineScope {
+    private val cryptoTools: CryptoToolsAbs,
+    private val defaultDispatcher: CoroutineDispatcher
+) : ViewModel(), LifecycleObserver, FetchEncryptedDataListener {
 
     val listItems = MutableLiveData<List<ConsentItemViewModel>>()
     val onListItemClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
@@ -70,17 +76,12 @@ class ConsentsListViewModel(
     val consentsCount = MutableLiveData<String>()
     private var consents: List<ConsentData> = emptyList()
     private var connectionAndKey: ConnectionAndKey? = null
-    private val decryptJob: Job = Job()
-    override val coroutineContext: CoroutineContext
-        get() = decryptJob + Dispatchers.IO
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun onDestroy() {
-        decryptJob.cancel()
-    }
 
     override fun onFetchEncryptedDataResult(result: List<EncryptedData>, errors: List<ApiErrorData>) {
-        processOfEncryptedConsentsResult(encryptedList = result)
+        viewModelScope.launch(defaultDispatcher) {
+            val decryptedConsents = decryptConsents(encryptedList = result)
+            withContext(Dispatchers.Main) { onReceivedNewConsents(result = decryptedConsents) }
+        }
     }
 
     fun setInitialData(bundle: Bundle?) {
@@ -126,21 +127,13 @@ class ConsentsListViewModel(
         ))
     }
 
-    private fun processOfEncryptedConsentsResult(encryptedList: List<EncryptedData>) {
-        launch {
-            val data = decryptConsents(encryptedList = encryptedList)
-            withContext(Dispatchers.Main) { onReceivedNewConsents(result = data) }
-        }
-    }
-
     private fun decryptConsents(encryptedList: List<EncryptedData>): List<ConsentData> {
         return encryptedList.mapNotNull {
             cryptoTools.decryptConsentData(encryptedData = it, rsaPrivateKey = connectionAndKey?.key)
         }
     }
 
-    //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
-    fun onReceivedNewConsents(result: List<ConsentData>) {
+    private fun onReceivedNewConsents(result: List<ConsentData>) {
         consents = result
         listItems.postValue(result.toViewModels())
         consentsCount.postValue(consents.toCountString(appContext))

@@ -23,12 +23,12 @@ package com.saltedge.authenticator.features.authorizations.list.pagers
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager.widget.PagerAdapter
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 
 abstract class AuthorizationsPagerAdapter : PagerAdapter() {
 
-    private var _data: MutableList<AuthorizationViewModel> = mutableListOf()
-    var data: List<AuthorizationViewModel>
+    private var _data: MutableList<AuthorizationItemViewModel> = mutableListOf()
+    var data: List<AuthorizationItemViewModel>
         get() = _data
         set(value) {
             _data = value.toMutableList()
@@ -38,7 +38,7 @@ abstract class AuthorizationsPagerAdapter : PagerAdapter() {
         get() = _data.isEmpty()
     protected var itemPosition: Int = 0
 
-    fun updateItem(item: AuthorizationViewModel, itemId: Int) {
+    fun updateItem(item: AuthorizationItemViewModel, itemId: Int) {
         val lastIndex = _data.lastIndex
         if (itemId in 0..lastIndex) {
             _data[itemId] = item

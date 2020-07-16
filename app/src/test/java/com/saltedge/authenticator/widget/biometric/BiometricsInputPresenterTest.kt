@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.widget.biometric
 
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.testTools.TestAppTools
+import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import org.junit.Test
 import org.junit.runner.RunWith

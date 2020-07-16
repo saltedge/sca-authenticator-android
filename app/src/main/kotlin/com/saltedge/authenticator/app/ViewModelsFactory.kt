@@ -21,7 +21,6 @@
 package com.saltedge.authenticator.app
 
 import android.content.Context
-import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.features.actions.SubmitActionViewModel
@@ -50,6 +49,7 @@ import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.AppTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 class ViewModelsFactory @Inject constructor(
@@ -104,7 +104,8 @@ class ViewModelsFactory @Inject constructor(
                     keyStoreManager = keyStoreManager,
                     cryptoTools = cryptoTools,
                     apiManager = apiManager,
-                    connectivityReceiver = connectivityReceiver
+                    connectivityReceiver = connectivityReceiver,
+                    defaultDispatcher = Dispatchers.Default
                 ) as T
             }
             modelClass.isAssignableFrom(AuthorizationDetailsViewModel::class.java) -> {
@@ -140,7 +141,8 @@ class ViewModelsFactory @Inject constructor(
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,
                     apiManager = apiManager,
-                    cryptoTools = cryptoTools
+                    cryptoTools = cryptoTools,
+                    defaultDispatcher = Dispatchers.Default
                 ) as T
             }
             modelClass.isAssignableFrom(SubmitActionViewModel::class.java) -> {

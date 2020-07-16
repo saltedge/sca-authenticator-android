@@ -35,7 +35,7 @@ import com.saltedge.authenticator.app.MORE_MENU_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.cloud.clearNotifications
 import com.saltedge.authenticator.databinding.AuthorizationsListBinding
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.list.pagers.AuthorizationsContentPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.pagers.AuthorizationsHeaderPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.pagers.PagersScrollSynchronizer
@@ -124,7 +124,7 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         viewModel = ViewModelProvider(this, viewModelFactory).get(AuthorizationsListViewModel::class.java)
         viewModel.bindLifecycleObserver(lifecycle = lifecycle)
 
-        viewModel.listItems.observe(this, Observer<List<AuthorizationViewModel>> {
+        viewModel.listItems.observe(this, Observer<List<AuthorizationItemViewModel>> {
             headerAdapter?.data = it
             contentAdapter?.data = it
         })

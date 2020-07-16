@@ -21,9 +21,8 @@
 package com.saltedge.authenticator.sdk.tools
 
 import android.util.Base64
+import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.authenticator.sdk.network.connector.createExpiresAtTime
-import com.saltedge.authenticator.sdk.testTools.getTestPrivateKey
-import com.saltedge.authenticator.sdk.testTools.getTestPublicKey
 import com.saltedge.authenticator.sdk.tools.sign.createSignatureHeader
 import org.junit.Assert
 import org.junit.Test
@@ -58,6 +57,6 @@ class SignatureToolsTest {
         Assert.assertTrue(signature.verify(signatureHeaderBytes))
     }
 
-    private var privateKey: PrivateKey = this.getTestPrivateKey()
-    private var publicKey: PublicKey = this.getTestPublicKey()
+    private var privateKey: PrivateKey = CommonTestTools.testPrivateKey
+    private var publicKey: PublicKey = CommonTestTools.testPublicKey
 }
