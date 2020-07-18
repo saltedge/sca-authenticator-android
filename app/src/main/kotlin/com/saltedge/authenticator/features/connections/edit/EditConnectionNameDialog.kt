@@ -25,13 +25,12 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
@@ -41,7 +40,7 @@ import com.saltedge.authenticator.tools.guid
 import com.saltedge.authenticator.tools.hideSystemKeyboard
 import com.saltedge.authenticator.tools.setTextColorResId
 
-class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListener, TextWatcher {
+class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListener {
 
     private var inputView: EditText? = null
     private var positiveButton: Button? = null
@@ -62,7 +61,11 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
         super.onStart()
         val text = arguments?.getString(KEY_NAME) ?: ""
         inputView = dialog?.findViewById(R.id.connectionNameView) as EditText?
-        inputView?.addTextChangedListener(this)
+        inputView?.addTextChangedListener {
+            val isEnabled = it?.isNotEmpty() == true
+            positiveButton?.isEnabled = isEnabled
+            positiveButton?.setTextColorResId(getEnabledStateColorResId(isEnabled))
+        }
         inputView?.requestFocus()
         inputView?.setText(text)
         inputView?.setSelection(text.length)
@@ -74,16 +77,6 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
             DialogInterface.BUTTON_NEGATIVE -> dismissDialog()
         }
     }
-
-    override fun afterTextChanged(s: Editable?) {
-        val isEnabled = s?.isNotEmpty() == true
-        positiveButton?.isEnabled = isEnabled
-        positiveButton?.setTextColorResId(getEnabledStateColorResId(isEnabled))
-    }
-
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
     private fun onOkClick() {
         val inputValue = inputView?.text?.toString() ?: return
