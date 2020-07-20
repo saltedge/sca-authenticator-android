@@ -24,54 +24,51 @@ import android.app.Activity
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
-import androidx.annotation.ColorRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.fragment.app.FragmentActivity
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tool.setFont
+import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.setFont
 
-fun AppCompatActivity.buildWarning(
-    text: String,
+fun FragmentActivity.showWarningSnack(
+    textResId: Int,
     snackBarDuration: Int = Snackbar.LENGTH_INDEFINITE,
     actionResId: Int? = null
-) = getSnackbarAnchorView()?.buildWarning(text, snackBarDuration, actionResId)
+) = showWarningSnack(this.getString(textResId), snackBarDuration, actionResId)
 
-fun View.buildWarning(text: String, snackBarDuration: Int, actionResId: Int?) = buildSnackbar(
-    messageText = text,
-    bgColorResId = android.R.color.holo_orange_dark,
-    snackBarDuration = snackBarDuration,
-    actionResId = actionResId
-)
+fun FragmentActivity.showWarningSnack(
+    message: String,
+    snackBarDuration: Int = Snackbar.LENGTH_INDEFINITE,
+    actionResId: Int? = null
+) = getSnackbarAnchorView()?.buildSnackbar(message, snackBarDuration, actionResId)?.apply { show() }
+
+fun FragmentActivity.buildWarningSnack(
+    messageRes: ResId,
+    snackBarDuration: Int = Snackbar.LENGTH_INDEFINITE,
+    actionResId: Int? = null
+) = getSnackbarAnchorView()?.buildSnackbar(this.getString(messageRes), snackBarDuration, actionResId)
 
 private fun Activity.getSnackbarAnchorView(): View? {
     return if (this is SnackbarAnchorContainer) getSnackbarAnchorView() else null
 }
 
 private fun View.buildSnackbar(
-    messageText: String,
-    @ColorRes bgColorResId: Int,
+    message: String,
     snackBarDuration: Int,
     actionResId: Int? = null
 ): Snackbar {
-    val snackbar = Snackbar.make(this, messageText, snackBarDuration)
+    val snackbar = Snackbar
+        .make(this, message, snackBarDuration)
+        .setActionTextColor(ContextCompat.getColor(context, R.color.primary_light))
     if (actionResId != null) snackbar.setAction(actionResId) { snackbar.dismiss() }
-    snackbar.setActionTextColor(ContextCompat.getColor(context, android.R.color.white))
     val textView = snackbar.view.findViewById<TextView>(R.id.snackbar_text)
     textView.minimumHeight = context.resources.getDimension(R.dimen.action_bar_size).toInt()
     textView.gravity = Gravity.CENTER_VERTICAL
     textView.setFont(R.font.roboto_regular)
+    textView.setTextColor(ContextCompat.getColor(context, R.color.grey_40))
     textView.maxLines = 7
-    snackbar.view.setBackgroundColor(ContextCompat.getColor(context, bgColorResId))
-    val fab = this.findViewById<FloatingActionButton>(R.id.actionButton)
-    snackbar.view.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
-        override fun onViewAttachedToWindow(v: View) {}
-
-        override fun onViewDetachedFromWindow(v: View) {
-            fab?.translationY = 0f
-        }
-    })
+    snackbar.view.setBackgroundColor(ContextCompat.getColor(context, R.color.blue_black_and_dark_100))
     snackbar.view.setOnTouchListener { _, _ ->
         snackbar.dismiss()
         true

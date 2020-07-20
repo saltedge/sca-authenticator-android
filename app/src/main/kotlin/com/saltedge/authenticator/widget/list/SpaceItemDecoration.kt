@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,8 @@
 package com.saltedge.authenticator.widget.list
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Paint
 import android.graphics.Rect
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
 
@@ -34,17 +31,11 @@ import com.saltedge.authenticator.R
  */
 class SpaceItemDecoration(
     context: Context,
-    var headerPositions: Array<Int> = emptyArray()
+    var headerPositions: Array<Int> = emptyArray(),
+    var footerPositions: Array<Int> = emptyArray()
 ) : RecyclerView.ItemDecoration() {
 
-    private val dividerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.divider_color)
-        style = Paint.Style.STROKE
-        strokeWidth = context.resources.getDimension(R.dimen.dp_1)
-    }
-
     private val spaceHeight = context.resources.getDimensionPixelSize(R.dimen.dp_20)
-    private val dividerHeight = context.resources.getDimensionPixelSize(R.dimen.dp_1)
 
     override fun getItemOffsets(
         outRect: Rect,
@@ -52,43 +43,28 @@ class SpaceItemDecoration(
         parent: RecyclerView,
         state: RecyclerView.State
     ) {
-        if (needToDrawSpace(parent, view)) {
-            outRect.top = spaceHeight
-        }
-        if (needToDrawDivider(parent, view)) {
-            outRect.bottom = dividerHeight
-        }
-    }
-
-    override fun onDraw(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-        val dividerStart = parent.paddingStart
-        val dividerEnd = parent.width - parent.paddingEnd
-        val endIndex = parent.adapter?.itemCount ?: 0
-        for (index in 0 until endIndex - 1) {
-            parent.getChildAt(index)?.let { currentChild ->
-                val startX = dividerStart.toFloat()
-                val endX = dividerEnd.toFloat()
-                val bottomY = currentChild.bottom.toFloat() + dividerHeight / 2
-                if (needToDrawDivider(parent, currentChild)) {
-                    canvas.drawLine(startX, bottomY, endX, bottomY, dividerPaint)
-                }
-            }
-        }
-    }
-
-    /**
-     * Determines at which positions the dividers should be drawn
-     */
-    private fun needToDrawDivider(parent: RecyclerView, view: View): Boolean {
         val viewPosition = parent.getChildAdapterPosition(view)
-        return !headerPositions.contains(viewPosition + 1)
+        if (needToDrawHeaderSpace(viewPosition)) outRect.top = spaceHeight
+        if (needToDrawFooterSpace(viewPosition)) outRect.bottom = spaceHeight
+    }
+
+    fun setHeaderForAllItems(itemCount: Int) {
+        if (itemCount > 0) {
+            headerPositions = (0..itemCount).toList().toTypedArray()
+        }
     }
 
     /**
      * Determines at which positions the header delimiters should be drawn
      */
-    private fun needToDrawSpace(parent: RecyclerView, view: View): Boolean {
-        val viewPosition = parent.getChildAdapterPosition(view)
+    private fun needToDrawHeaderSpace(viewPosition: Int): Boolean {
         return headerPositions.contains(viewPosition)
+    }
+
+    /**
+     * Determines at which positions the footer delimiters should be drawn
+     */
+    private fun needToDrawFooterSpace(viewPosition: Int): Boolean {
+        return footerPositions.contains(viewPosition)
     }
 }

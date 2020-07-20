@@ -20,9 +20,8 @@
  */
 package com.saltedge.authenticator.sdk.network
 
-import com.saltedge.authenticator.sdk.model.ProviderResponseData
-import com.saltedge.authenticator.sdk.model.request.ConfirmDenyRequestData
-import com.saltedge.authenticator.sdk.model.request.CreateConnectionRequestData
+import com.saltedge.authenticator.sdk.model.request.ConfirmDenyRequest
+import com.saltedge.authenticator.sdk.model.request.CreateConnectionRequest
 import com.saltedge.authenticator.sdk.model.response.*
 import retrofit2.Call
 import retrofit2.http.*
@@ -33,42 +32,54 @@ import retrofit2.http.*
 interface ApiInterface {
 
     @GET
-    fun getProviderData(@Url requestUrl: String): Call<ProviderResponseData>
+    fun getProviderConfiguration(@Url requestUrl: String): Call<ProviderConfigurationResponse>
 
     @POST
-    fun postNewConnectionData(
+    fun createConnection(
         @Url requestUrl: String,
-        @Body body: CreateConnectionRequestData
-    ): Call<CreateConnectionResponseData>
+        @Body body: CreateConnectionRequest
+    ): Call<CreateConnectionResponse>
 
     @DELETE
-    fun deleteAccessToken(
+    fun revokeConnection(
         @Url requestUrl: String,
         @HeaderMap headersMap: Map<String, String>
-    ): Call<RevokeAccessTokenResponseData>
+    ): Call<RevokeAccessTokenResponse>
 
     @GET
     fun getAuthorizations(
         @Url requestUrl: String,
         @HeaderMap headersMap: Map<String, String>
-    ): Call<AuthorizationsResponseData>
+    ): Call<EncryptedListResponse>
 
     @GET
     fun getAuthorization(
         @Url requestUrl: String,
         @HeaderMap headersMap: Map<String, String>
-    ): Call<AuthorizationShowResponseData>
+    ): Call<AuthorizationShowResponse>
 
     @PUT
     fun updateAuthorization(
         @Url requestUrl: String,
         @HeaderMap headersMap: Map<String, String>,
-        @Body requestBody: ConfirmDenyRequestData
-    ): Call<ConfirmDenyResponseData>
+        @Body requestBody: ConfirmDenyRequest
+    ): Call<ConfirmDenyResponse>
 
     @PUT
     fun updateAction(
         @Url requestUrl: String,
         @HeaderMap headersMap: Map<String, String>
-    ): Call<SubmitActionResponseData>
+    ): Call<SubmitActionResponse>
+
+    @GET
+    fun getConsents(
+        @Url requestUrl: String,
+        @HeaderMap headersMap: Map<String, String>
+    ): Call<EncryptedListResponse>
+
+    @DELETE
+    fun revokeConsent(
+        @Url requestUrl: String,
+        @HeaderMap headersMap: Map<String, String>
+    ): Call<ConsentRevokeResponse>
 }

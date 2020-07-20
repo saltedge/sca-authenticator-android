@@ -31,7 +31,6 @@ import android.security.keystore.KeyProperties
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import java.security.KeyPair
 import javax.crypto.Cipher
 
 const val FINGERPRINT_ALIAS_FOR_PIN = "fingerprint_alias_for_pin"
@@ -41,12 +40,6 @@ class BiometricTools(
     val appContext: Context,
     val keyStoreManager: KeyStoreManagerAbs
 ) : BiometricToolsAbs {
-
-    override fun replaceFingerprintKey(): KeyPair? {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return null
-        return keyStoreManager.createOrReplaceRsaKeyPair(appContext, FINGERPRINT_ALIAS_FOR_PIN)
-    }
-
     override fun activateFingerprint(): Boolean {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return false
         keyStoreManager.createOrReplaceAesBiometricKey(FINGERPRINT_ALIAS_FOR_PIN)
@@ -88,7 +81,7 @@ class BiometricTools(
         return when {
             context.isFingerprintHardwareNotAvailable() -> BiometricState.NOT_SUPPORTED
             context.inNotSecuredDevice() -> BiometricState.NOT_BLOCKED_DEVICE
-            context.noEnrolledFingerprints() -> BiometricState.NOT_BLOCKED_DEVICE
+            context.noEnrolledFingerprints() -> BiometricState.NO_FINGERPRINTS
             else -> BiometricState.READY
         }
     }
@@ -101,28 +94,44 @@ class BiometricTools(
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+    /**
+     * Determine if fingerprint hardware is present and functional.
+     */
     @Throws(Exception::class)
     private fun Context.isFingerprintHardwareNotAvailable(): Boolean {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true
         return !(this.getFingerprintManager()?.isHardwareDetected ?: false)
     }
 
+    /**
+     * Determine if keyguard is secured by a PIN, pattern or password or a SIM card
+     * is currently locked.
+     */
     @Throws(Exception::class)
     private fun Context.inNotSecuredDevice(): Boolean {
         return !(this.getKeyguardManager()?.isKeyguardSecure ?: false)
     }
 
+    /**
+     * Determine if there is at least one fingerprint enrolled.
+     */
     @Throws(Exception::class)
     private fun Context.noEnrolledFingerprints(): Boolean {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true
         return !(this.getFingerprintManager()?.hasEnrolledFingerprints() ?: false)
     }
 
+    /**
+     * Return KeyguardManager system service
+     */
     private fun Context.getKeyguardManager(): KeyguardManager? {
         return this.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
     }
 }
 
+/**
+ * Return FingerprintManager system service
+ */
 fun Context.getFingerprintManager(): FingerprintManager? {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return null
     return this.getSystemService(Context.FINGERPRINT_SERVICE) as? FingerprintManager

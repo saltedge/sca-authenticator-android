@@ -27,7 +27,7 @@ import com.saltedge.authenticator.sdk.contract.*
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.model.request.ConfirmDenyData
+import com.saltedge.authenticator.sdk.model.request.ConfirmDenyRequestData
 import com.saltedge.authenticator.sdk.network.RestClient
 import com.saltedge.authenticator.sdk.network.connector.*
 import com.saltedge.authenticator.sdk.polling.AuthorizationsPollingService
@@ -63,7 +63,7 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
      */
     override fun getProviderConfigurationData(
         providerConfigurationUrl: String,
-        resultCallback: FetchProviderConfigurationDataResult
+        resultCallback: FetchProviderConfigurationListener
     ) {
         ProviderDataConnector(RestClient.apiInterface, resultCallback)
             .fetchProviderData(providerConfigurationUrl)
@@ -79,7 +79,7 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
         pushToken: String,
         providerCode: String,
         connectQueryParam: String?,
-        resultCallback: ConnectionCreateResult
+        resultCallback: ConnectionCreateListener
     ) {
         ConnectionInitConnector(RestClient.apiInterface, resultCallback)
             .postConnectionData(
@@ -100,7 +100,7 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
         connection: ConnectionAbs,
         pushToken: String,
         connectQueryParam: String?,
-        resultCallback: ConnectionCreateResult
+        resultCallback: ConnectionCreateListener
     ) {
         val publicKey = KeyStoreManager.createRsaPublicKeyAsString(appContext, connection.guid)
         if (publicKey == null) {
@@ -125,7 +125,7 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
      */
     override fun revokeConnections(
         connectionsAndKeys: List<ConnectionAndKey>,
-        resultCallback: ConnectionsRevokeResult?
+        resultCallback: ConnectionsRevokeListener?
     ) {
         ConnectionsRevokeConnector(RestClient.apiInterface, resultCallback)
             .revokeTokensFor(connectionsAndKeys)
@@ -137,7 +137,7 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
      */
     override fun getAuthorizations(
         connectionsAndKeys: List<ConnectionAndKey>,
-        resultCallback: FetchAuthorizationsResult
+        resultCallback: FetchEncryptedDataListener
     ) {
         AuthorizationsConnector(RestClient.apiInterface, resultCallback)
             .fetchAuthorizations(connectionsAndKeys = connectionsAndKeys)
@@ -157,7 +157,7 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
     override fun getAuthorization(
         connectionAndKey: ConnectionAndKey,
         authorizationId: String,
-        resultCallback: FetchAuthorizationResult
+        resultCallback: FetchAuthorizationListener
     ) {
         AuthorizationConnector(RestClient.apiInterface, resultCallback)
             .getAuthorization(connectionAndKey, authorizationId)
@@ -177,13 +177,13 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
         connectionAndKey: ConnectionAndKey,
         authorizationId: String,
         authorizationCode: String?,
-        resultCallback: ConfirmAuthorizationResult
+        resultCallback: ConfirmAuthorizationListener
     ) {
         ConfirmOrDenyConnector(RestClient.apiInterface, resultCallback)
             .updateAuthorization(
                 connectionAndKey = connectionAndKey,
                 authorizationId = authorizationId,
-                payloadData = ConfirmDenyData(
+                payloadData = ConfirmDenyRequestData(
                     authorizationCode = authorizationCode,
                     confirm = true
                 )
@@ -198,13 +198,13 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
         connectionAndKey: ConnectionAndKey,
         authorizationId: String,
         authorizationCode: String?,
-        resultCallback: ConfirmAuthorizationResult
+        resultCallback: ConfirmAuthorizationListener
     ) {
         ConfirmOrDenyConnector(RestClient.apiInterface, resultCallback)
             .updateAuthorization(
                 connectionAndKey = connectionAndKey,
                 authorizationId = authorizationId,
-                payloadData = ConfirmDenyData(
+                payloadData = ConfirmDenyRequestData(
                     authorizationCode = authorizationCode,
                     confirm = false
                 )
@@ -225,5 +225,27 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
                 actionUUID = actionUUID,
                 connectionAndKey = connectionAndKey
             )
+    }
+
+    /**
+     * Request to get active User Consents list.
+     * Result is returned via callback.
+     */
+    override fun getConsents(
+        connectionsAndKeys: List<ConnectionAndKey>,
+        resultCallback: FetchEncryptedDataListener
+    ) {
+        ConsentsConnector(RestClient.apiInterface, connectionsAndKeys, resultCallback).fetchConsents()
+    }
+
+    /**
+     * Request to revoke consent
+     */
+    override fun revokeConsent(
+        consentId: String,
+        connectionAndKey: ConnectionAndKey,
+        resultCallback: ConsentRevokeListener
+    ) {
+        ConsentRevokeConnector(RestClient.apiInterface, resultCallback).revokeConsent(consentId, connectionAndKey)
     }
 }

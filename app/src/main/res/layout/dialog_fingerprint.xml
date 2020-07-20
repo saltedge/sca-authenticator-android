@@ -18,7 +18,9 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
@@ -30,14 +32,14 @@
 
     <TextView
         android:id="@+id/titleView"
-        style="@style/Text20BlackMedium"
+        style="@style/Text22PrimaryMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/settings_fingerprint" />
+        android:text="@string/fingerprint_title" />
 
     <TextView
         android:id="@+id/subtitleView"
-        style="@style/Text16GrayDarkRegular"
+        style="@style/Text16Secondary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/titleView"
@@ -59,11 +61,11 @@
             android:layout_height="@dimen/info_view_small_icon"
             android:contentDescription="@string/fingerprint_touch_sensor"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_fingerprint_input" />
+            app:srcCompat="@drawable/ic_fingerprint_input" />
 
         <TextView
             android:id="@+id/descriptionView"
-            style="@style/Text14GrayDarkRegular"
+            style="@style/Text14Primary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_12"
@@ -73,11 +75,19 @@
 
     <TextView
         android:id="@+id/cancelActionView"
-        style="@style/RightAlignedDialogAction"
+        style="@style/Text14BlueMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp_48"
         android:layout_below="@+id/statusLayout"
         android:layout_marginTop="@dimen/dp_16"
-        android:paddingStart="@dimen/dp_4"
-        android:text="@string/actions_cancel" />
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="center"
+        android:lines="1"
+        android:minWidth="@dimen/dp_64"
+        android:paddingStart="@dimen/dp_16"
+        android:paddingEnd="@dimen/dp_16"
+        android:text="@string/actions_cancel"
+        android:textAllCaps="true" />
 </RelativeLayout>
 
 

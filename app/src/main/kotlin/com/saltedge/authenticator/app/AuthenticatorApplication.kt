@@ -23,17 +23,17 @@ package com.saltedge.authenticator.app
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.gms.security.ProviderInstaller
 import com.saltedge.android.security.BuildConfig
-import com.saltedge.android.security.RaspChecker
 import com.saltedge.authenticator.app.di.AppComponent
 import com.saltedge.authenticator.app.di.AppModule
 import com.saltedge.authenticator.app.di.DaggerAppComponent
-import com.saltedge.authenticator.model.realm.RealmManager
+import com.saltedge.authenticator.models.realm.RealmManager
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
-import com.saltedge.authenticator.tool.AppTools
-import com.saltedge.authenticator.tool.createCrashlyticsKit
-import com.saltedge.authenticator.tool.log
+import com.saltedge.authenticator.tools.AppTools
+import com.saltedge.authenticator.tools.createCrashlyticsKit
+import com.saltedge.authenticator.tools.log
 import io.fabric.sdk.android.Fabric
 import net.danlew.android.joda.JodaTimeAndroid
 
@@ -62,6 +62,8 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
         registerActivityLifecycleCallbacks(this)
 
         AuthenticatorApiManager.initializeSDK(applicationContext)
+
+        setupNightMode()
     }
 
     override fun onActivityPaused(activity: Activity?) {
@@ -70,12 +72,6 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
 
     override fun onActivityResumed(activity: Activity?) {
         currentActivityName = activity?.javaClass?.name ?: ""
-
-        val raspFailReport = RaspChecker.collectFailsReport(this)
-        if (BuildConfig.BUILD_TYPE == "release" && raspFailReport.isNotEmpty()) {
-            val errorMessage = "App Is Tempered:[$raspFailReport]"
-            throw Exception(errorMessage)
-        }
     }
 
     override fun onActivityStarted(activity: Activity?) {}
@@ -94,11 +90,13 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
 
     private fun patchSecurityProvider() {
         try {
-            if (BuildConfig.BUILD_TYPE == "release") {
-                ProviderInstaller.installIfNeeded(this)
-            }
+            if ("release" == BuildConfig.BUILD_TYPE) ProviderInstaller.installIfNeeded(this)
         } catch (e: Exception) {
             e.log()
         }
+    }
+
+    private fun setupNightMode() {
+        AppCompatDelegate.setDefaultNightMode(appComponent.preferenceRepository().nightMode)
     }
 }

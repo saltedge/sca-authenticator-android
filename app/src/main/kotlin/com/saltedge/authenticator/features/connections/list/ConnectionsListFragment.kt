@@ -20,42 +20,57 @@
  */
 package com.saltedge.authenticator.features.connections.list
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.PopupWindow
+import android.widget.TextView
+import androidx.core.view.marginRight
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.connections.common.ConnectionOptions
+import com.saltedge.authenticator.app.DELETE_REQUEST_CODE
+import com.saltedge.authenticator.app.RENAME_REQUEST_CODE
+import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.databinding.ConnectionsListBinding
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
-import com.saltedge.authenticator.features.connections.edit.name.EditConnectionNameDialog
-import com.saltedge.authenticator.features.connections.list.di.ConnectionsListModule
-import com.saltedge.authenticator.features.connections.options.ConnectionOptionsDialog
-import com.saltedge.authenticator.features.main.FabState
+import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
+import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.ListItemClickListener
-import com.saltedge.authenticator.sdk.model.GUID
-import com.saltedge.authenticator.tool.*
+import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
 import kotlinx.android.synthetic.main.fragment_connections_list.*
 import javax.inject.Inject
 
-class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
-    ListItemClickListener, View.OnClickListener {
-
-    @Inject
-    lateinit var presenterContract: ConnectionsListContract.Presenter
+class ConnectionsListFragment : BaseFragment(),
+    ListItemClickListener,
+    View.OnClickListener,
+    DialogHandlerListener
+{
+    @Inject lateinit var viewModelFactory: ViewModelsFactory
+    private lateinit var viewModel: ConnectionsListViewModel
+    private lateinit var binding: ConnectionsListBinding
     private val adapter = ConnectionsListAdapter(clickListener = this)
-    private var optionsDialog: ConnectionOptionsDialog? = null
     private var headerDecorator: SpaceItemDecoration? = null
+    private var popupWindow: PopupWindow? = null
+    private var dialogFragment: DialogFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectDependencies()
-        setHasOptionsMenu(true)
+        authenticatorApp?.appComponent?.inject(this)
+        setupViewModel()
     }
 
     override fun onCreateView(
@@ -63,115 +78,175 @@ class ConnectionsListFragment : BaseFragment(), ConnectionsListContract.View,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_connections_list, container, false)
+        activityComponents?.updateAppbar(
+            titleResId = R.string.connections_feature_title,
+            backActionImageResId = R.drawable.ic_appbar_action_back
+        )
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_connections_list,
+            container,
+            false
+        )
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        try {
-            activity?.let { connectionsListView?.layoutManager = LinearLayoutManager(it) }
-            connectionsListView?.adapter = adapter
-            emptyView?.setOnClickListener(this)
-            val context = activity ?: return
-            headerDecorator = SpaceItemDecoration(
-                context = context
-            ).apply { connectionsListView?.addItemDecoration(this) }
-        } catch (e: Exception) {
-            e.log()
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        presenterContract.viewContract = this
-        updateViewsContent()
-    }
-
-    override fun onStop() {
-        presenterContract.viewContract = null
-        super.onStop()
+        setupViews()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        presenterContract.onActivityResult(requestCode, resultCode, data)
+        viewModel.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onClick(v: View?) {
-        presenterContract.onViewClick(v?.id ?: return)
+        viewModel.onViewClick(v?.id ?: return)
     }
 
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
-        presenterContract.onListItemClick((adapter.getItem(itemIndex) as ConnectionViewModel).guid)
+        viewModel.onListItemClick(itemIndex)
     }
 
-    override fun updateListItemName(connectionGuid: GUID, name: String) {
-        adapter.updateListItemName(connectionGuid, name)
+    override fun onStop() {
+        popupWindow?.dismiss()
+        super.onStop()
     }
 
-    override fun updateViewsContent() {
-        presenterContract.getListItems().let {
-            headerDecorator?.headerPositions = it.mapIndexed { index, _ -> index }.toTypedArray()
+    override fun closeActiveDialogs() {
+        if (dialogFragment?.isVisible == true) dialogFragment?.dismiss()
+        if (popupWindow?.isShowing == true) popupWindow?.dismiss()
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(this, viewModelFactory)
+            .get(ConnectionsListViewModel::class.java)
+        lifecycle.addObserver(viewModel)
+
+        viewModel.listItems.observe(this, Observer<List<ConnectionViewModel>> {
+            headerDecorator?.setHeaderForAllItems(it.count())
+            headerDecorator?.footerPositions = arrayOf(it.count() - 1)
             adapter.data = it
+        })
+        viewModel.onQrScanClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let { activity?.showQrScannerActivity() }
+        })
+        viewModel.onRenameClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
+            event.getContentIfNotHandled()?.let { bundle ->
+                dialogFragment = EditConnectionNameDialog.newInstance(bundle).also {
+                    it.setTargetFragment(this, RENAME_REQUEST_CODE)
+                    activity?.showDialogFragment(it)
+                }
+
+            }
+        })
+        viewModel.onDeleteClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
+            event.getContentIfNotHandled()?.let { bundle ->
+                dialogFragment = DeleteConnectionDialog.newInstance(bundle).also {
+                    it.setTargetFragment(this, DELETE_REQUEST_CODE)
+                    activity?.showDialogFragment(it)
+                }
+            }
+        })
+        viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<Int>> { event ->
+            event.getContentIfNotHandled()?.let { itemIndex ->
+                viewModel.listItemsValues.getOrNull(itemIndex)?.let { item ->
+                    connectionsListView?.layoutManager?.findViewByPosition(itemIndex)?.let { anchorView ->
+                        popupWindow = showPopupMenu(
+                            parentView = connectionsListView,
+                            anchorView = anchorView,
+                            item = item
+                        )
+                    }
+                }
+            }
+        })
+        viewModel.onReconnectClickEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
+            event.getContentIfNotHandled()?.let {
+                activity?.addFragment(ConnectProviderFragment.newInstance(connectionGuid = it))
+            }
+        })
+        viewModel.onSupportClickEvent.observe(this, Observer<ViewModelEvent<String?>> { event ->
+            event.getContentIfNotHandled()?.let { supportEmail ->
+                activity?.startMailApp(supportEmail)
+            }
+        })
+        viewModel.updateListItemEvent.observe(this, Observer<ConnectionViewModel> { itemIndex ->
+            adapter.updateListItem(itemIndex)
+        })
+    }
+
+    private fun setupViews() {
+        emptyView?.setActionOnClickListener(this)
+        activity?.let {
+            connectionsListView?.layoutManager = LinearLayoutManager(it)
+            connectionsListView?.adapter = adapter
+            headerDecorator = SpaceItemDecoration(context = it).apply {
+                connectionsListView?.addItemDecoration(this)
+            }
         }
-        val viewIsEmpty = adapter.isEmpty
-        emptyView?.setVisible(viewIsEmpty)
-        connectionsListView?.setVisible(!viewIsEmpty)
-        activityComponents?.updateAppbarTitleWithFabAction(
-            title = getString(R.string.connections_feature_title),
-            action = if (viewIsEmpty) FabState.NO_ACTION else FabState.SCAN_QR
-        )
+        binding.executePendingBindings()
     }
 
-    override fun showApiErrorView(message: String) {
-        activity?.showWarningDialog(message = message)
-    }
+    //TODO REFACTOR TO STANDALONE CLASS (example https://github.com/zawadz88/MaterialPopupMenu)
+    private fun showPopupMenu(parentView: View?, anchorView: View?, item: ConnectionViewModel): PopupWindow? {
+        if (parentView == null || anchorView == null) return null
+        try {
+            val layoutInflater = context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val popupView = layoutInflater.inflate(R.layout.view_popup_menu, null)
+            val popupWindow = PopupWindow(
+                popupView,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                true
+            )
 
-    override fun showSupportView(supportEmail: String?) {
-        activity?.startMailApp(supportEmail)
-    }
+            val renameView = popupView.findViewById<ViewGroup>(R.id.renameView)
+            val reconnectView = popupView.findViewById<ViewGroup>(R.id.reconnectView)
+            val contactSupportView = popupView.findViewById<ViewGroup>(R.id.contactSupportView)
+            val deleteView = popupView.findViewById<ViewGroup>(R.id.deleteView)
+            val deleteImageView = popupView.findViewById<ImageView>(R.id.deleteImageView)
+            val deleteTextView = popupView.findViewById<TextView>(R.id.deleteTextView)
 
-    override fun showConnectView(connectionGuid: GUID) {
-        activity?.addFragment(ConnectProviderFragment.newInstance(connectionGuid = connectionGuid))
-    }
+            reconnectView.setVisible(item.reconnectOptionIsVisible)
+            deleteTextView.setText(item.deleteMenuItemText)
+            deleteImageView.setImageResource(item.deleteMenuItemImage)
 
-    override fun showConnectionNameEditView(
-        connectionGuid: String,
-        connectionName: String,
-        requestCode: Int
-    ) {
-        val dialog = EditConnectionNameDialog.newInstance(connectionGuid, connectionName).also {
-            it.setTargetFragment(this, requestCode)
+            reconnectView.setOnClickListener {
+                this.popupWindow?.dismiss()
+                viewModel.onReconnectOptionSelected()
+            }
+            renameView.setOnClickListener {
+                this.popupWindow?.dismiss()
+                viewModel.onRenameOptionSelected()
+            }
+            contactSupportView.setOnClickListener {
+                this.popupWindow?.dismiss()
+                viewModel.onContactSupportOptionSelected()
+            }
+            deleteView.setOnClickListener {
+                this.popupWindow?.dismiss()
+                viewModel.onDeleteOptionsSelected()
+            }
+
+            popupWindow.isOutsideTouchable = true
+            popupWindow.elevation = convertDpToPx(30f).toFloat()
+
+            val itemsCount = if (item.reconnectOptionIsVisible) 4 else 3
+            val popupMenuItemHeight = anchorView.context.resources.getDimensionPixelSize(R.dimen.popupMenuItemHeight)
+            val popupMenuTpBottomPadding = anchorView.context.resources.getDimensionPixelSize(R.dimen.popupMenuTpBottomPadding)
+            val popupHeight = popupMenuItemHeight * itemsCount + popupMenuTpBottomPadding * 2
+            val y = if (anchorView.bottom + popupHeight > parentView.bottom ) {
+                if (anchorView.bottom > parentView.bottom) popupHeight + anchorView.height else popupHeight
+            } else 0
+            popupWindow.showAsDropDown(anchorView, 0, -y, Gravity.TOP or Gravity.END)
+            return popupWindow
+        } catch (e: Exception) {
+            e.log()
+            return null
         }
-        activity?.showDialogFragment(dialog)
-    }
-
-    override fun showDeleteConnectionView(connectionGuid: String?, requestCode: Int) {
-        val dialog = DeleteConnectionDialog.newInstance(connectionGuid).also {
-            it.setTargetFragment(this, requestCode)
-        }
-        activity?.showDialogFragment(dialog)
-    }
-
-    override fun showOptionsView(
-        connectionGuid: String,
-        options: Array<ConnectionOptions>,
-        requestCode: Int
-    ) {
-        optionsDialog?.dismiss()
-        optionsDialog = ConnectionOptionsDialog.newInstance(connectionGuid, options).also {
-            it.setTargetFragment(this, requestCode)
-        }
-        optionsDialog?.let { activity?.showDialogFragment(it) }
-    }
-
-    override fun showQrScanView() {
-        activity?.startQrScannerActivity()
-    }
-
-    private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addConnectionsListModule(ConnectionsListModule())?.inject(
-            fragment = this
-        )
     }
 }

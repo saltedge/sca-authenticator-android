@@ -32,11 +32,11 @@ import androidx.core.view.isVisible
 import com.fivehundredpx.android.blur.BlurringView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.sdk.tools.hasHTMLTags
-import com.saltedge.authenticator.tool.setVisible
+import com.saltedge.authenticator.tools.applyAlphaToColor
+import com.saltedge.authenticator.tools.setVisible
 import kotlinx.android.synthetic.main.view_authorization_content.view.*
 
 class AuthorizationContentView : LinearLayout {
-
     private var blurringView: View? = null
 
     constructor(context: Context) : super(context)
@@ -62,8 +62,8 @@ class AuthorizationContentView : LinearLayout {
                 statusLayout?.animate()?.setDuration(500)?.alpha(1.0f)?.start()
             }
 
-            progressStatusView?.setVisible(show = viewMode.showProgress)
-            statusImageView?.setVisible(show = !viewMode.showProgress)
+            progressStatusView?.setVisible(show = viewMode.processingMode)
+            statusImageView?.setVisible(show = !viewMode.processingMode)
             viewMode.statusImageResId?.let { statusImageView.setImageResource(it) }
             statusTitleTextView?.setText(viewMode.statusTitleResId)
             statusDescriptionTextView?.setText(viewMode.statusDescriptionResId)
@@ -73,8 +73,15 @@ class AuthorizationContentView : LinearLayout {
     }
 
     fun setTitleAndDescription(title: String, description: String) {
-        titleTextView?.text = title
+        setTitle(title)
+        setDescription(description)
+    }
 
+    fun setTitle(title: String) {
+        titleTextView?.text = title
+    }
+
+    fun setDescription(description: String) {
         description.hasHTMLTags().let { showWebView ->
             descriptionTextView?.setVisible(show = !showWebView)
             descriptionWebView?.setVisible(show = showWebView)
@@ -94,16 +101,22 @@ class AuthorizationContentView : LinearLayout {
     }
 
     private fun initBlurringView() {
+        val viewLayoutParams = ConstraintLayout.LayoutParams(
+            ConstraintLayout.LayoutParams.MATCH_PARENT,
+            ConstraintLayout.LayoutParams.MATCH_PARENT
+        )
+        val overlayColor = ContextCompat.getColor(context, R.color.theme_background).applyAlphaToColor(0.8f)
         blurringView = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             View(context).apply {
-                layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT)
-                setBackgroundColor(ContextCompat.getColor(context, R.color.gray_extra_light_50))
+                layoutParams = viewLayoutParams
+                setBackgroundColor(overlayColor)
             }
         } else {
             BlurringView(context).apply {
-                layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT)
-                setBlurRadius(11)
-                setDownsampleFactor(6)
+                layoutParams = viewLayoutParams
+                setOverlayColor(overlayColor)
+                setBlurRadius(24)
+                setDownsampleFactor(4)
             }
         }
     }

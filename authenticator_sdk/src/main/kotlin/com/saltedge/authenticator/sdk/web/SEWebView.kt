@@ -59,11 +59,10 @@ class SEWebView : WebView {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupView() {
+        this.setLayerType(View.LAYER_TYPE_HARDWARE, null)
         settings?.javaScriptEnabled = true
         settings?.domStorageEnabled = true
         settings?.allowFileAccess = true
         settings?.userAgentString = AuthenticatorApiManager.userAgentInfo
-
-        setLayerType(View.LAYER_TYPE_HARDWARE, null)
     }
 }

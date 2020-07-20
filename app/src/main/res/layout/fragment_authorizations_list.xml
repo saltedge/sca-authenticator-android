@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
-    Copyright (c) 2019 Salt Edge Inc.
+    Copyright (c) 2020 Salt Edge Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,39 +18,51 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/base_container_bg">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
-        android:id="@+id/listGroup"
+    <data class="AuthorizationsListBinding">
+        <import type="android.view.View" />
+        <variable
+            name="viewModel"
+            type="com.saltedge.authenticator.features.authorizations.list.AuthorizationsListViewModel" />
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@android:color/white">
+        android:background="@color/theme_background">
 
-        <com.saltedge.authenticator.features.authorizations.list.WrapContentViewPager
-            android:id="@+id/headerViewPager"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_82"
-            tools:background="@color/red"/>
-
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/contentViewPager"
+        <LinearLayout
+            android:id="@+id/listGroup"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:background="@color/blue" />
-    </LinearLayout>
+            android:orientation="vertical"
+            android:visibility="@{viewModel.listVisibility}">
 
-    <com.saltedge.authenticator.widget.InfoView
-        android:id="@+id/emptyView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:iconDimension="@dimen/info_view_big_icon"
-        app:iconSrc="@drawable/ic_no_authorizations_80dp"
-        app:subTitleText="@string/authorizations_nothing_confirm_description"
-        app:titleText="@string/authorizations_nothing_confirm" />
-</FrameLayout>
+            <com.saltedge.authenticator.features.authorizations.list.pagers.WrapContentViewPager
+                android:id="@+id/headerViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/authorizations_headers_pager_height"
+                tools:background="@color/red"/>
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/contentViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:background="@color/primary" />
+        </LinearLayout>
+
+        <com.saltedge.authenticator.widget.EmptyView
+            android:id="@+id/emptyView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:iconSrc="@drawable/ic_authorizations_empty"
+            app:title="@string/authorizations_empty_title"
+            app:description="@string/authorizations_empty_description"
+            app:mainActionText="@string/actions_scan_qr"
+            android:visibility="@{viewModel.emptyViewVisibility}"/>
+    </FrameLayout>
+</layout>

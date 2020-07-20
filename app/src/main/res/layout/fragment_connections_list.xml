@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
-    Copyright (c) 2019 Salt Edge Inc.
+    Copyright (c) 2020 Salt Edge Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,26 +18,49 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/base_container_bg">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/connectionsListView"
+    <data class="ConnectionsListBinding">
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.saltedge.authenticator.features.connections.list.ConnectionsListViewModel" />
+    </data>
+
+    <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        android:visibility="gone" />
+        android:background="@color/theme_background">
 
-    <com.saltedge.authenticator.widget.InfoView
-        android:id="@+id/emptyView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:iconDimension="@dimen/info_view_big_icon"
-        app:iconSrc="@drawable/ic_no_connections_80dp"
-        app:mainActionText="@string/actions_connect_provider"
-        app:subTitleText="@string/connections_list_no_connections_description"
-        app:titleText="@string/connections_list_no_connections" />
-</RelativeLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/connectionsListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/proceedView"
+            android:scrollbars="vertical"
+            android:visibility="@{viewModel.listVisibility}" />
+
+        <Button
+            android:id="@+id/proceedView"
+            style="@style/BlueButton"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginEnd="@dimen/dp_32"
+            android:layout_marginBottom="@dimen/dp_40"
+            android:text="@string/actions_proceed"
+            android:visibility="gone" />
+
+        <com.saltedge.authenticator.widget.EmptyView
+            android:id="@+id/emptyView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="@{viewModel.emptyViewVisibility}"
+            app:description="@string/connections_list_empty_description"
+            app:iconSrc="@drawable/ic_connections_empty"
+            app:mainActionText="@string/actions_connect"
+            app:title="@string/connections_list_empty_title" />
+    </RelativeLayout>
+</layout>

@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.authorizations.common
 
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tool.ResId
+import com.saltedge.authenticator.tools.ResId
 
 enum class ViewMode {
     LOADING,
@@ -49,11 +49,11 @@ enum class ViewMode {
     val statusImageResId: ResId?
         get() {
             return when(this) {
-                CONFIRM_SUCCESS -> R.drawable.ic_success_70
-                DENY_SUCCESS -> R.drawable.ic_auth_denied_70
-                ERROR -> R.drawable.ic_auth_error_70
-                TIME_OUT -> R.drawable.ic_auth_timeout_70
-                UNAVAILABLE -> R.drawable.ic_auth_error_70
+                CONFIRM_SUCCESS -> R.drawable.ic_status_success
+                DENY_SUCCESS -> R.drawable.ic_status_denied
+                ERROR -> R.drawable.ic_status_error
+                TIME_OUT -> R.drawable.ic_status_timeout
+                UNAVAILABLE -> R.drawable.ic_status_unavailable
                 else -> null
             }
         }
@@ -84,6 +84,6 @@ enum class ViewMode {
             }
         }
 
-    val showProgress: Boolean
+    val processingMode: Boolean
         get() = this === LOADING || this === CONFIRM_PROCESSING || this === DENY_PROCESSING
 }

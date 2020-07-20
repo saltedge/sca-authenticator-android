@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.actions
 
-import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.features.actions.SubmitActionFragment.Companion.KEY_ACTION_DEEP_LINK_DATA
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import org.hamcrest.CoreMatchers.equalTo
@@ -36,16 +35,14 @@ class SubmitActionFragmentTest {
     @Throws(Exception::class)
     fun newInstanceTestCase() {
         val actionAppLinkData = ActionAppLinkData(
-            actionUuid = "actionUuid",
+            actionUUID = "actionUuid",
             connectUrl = "connectUrl",
             returnTo = "returnTo"
         )
         val arguments = SubmitActionFragment.newInstance(
-            connectionGuid = "guid1",
             actionAppLinkData = actionAppLinkData
         ).arguments
 
-        assertThat(arguments?.getString(KEY_GUID), equalTo("guid1"))
         assertThat(arguments?.getSerializable(KEY_ACTION_DEEP_LINK_DATA) as? ActionAppLinkData,
             equalTo(actionAppLinkData))
     }

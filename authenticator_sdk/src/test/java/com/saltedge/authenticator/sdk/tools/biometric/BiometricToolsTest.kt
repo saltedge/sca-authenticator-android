@@ -1,18 +1,18 @@
-/* 
- * This file is part of the Salt Edge Authenticator distribution 
+/*
+ * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2019 Salt Edge Inc.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3 or later.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * For the additional permissions granted for Salt Edge Authenticator
@@ -29,7 +29,6 @@ import com.saltedge.authenticator.sdk.testTools.TestTools
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import io.mockk.every
 import io.mockk.mockkClass
-import io.mockk.verify
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertFalse
@@ -111,15 +110,6 @@ class BiometricToolsTest {
         every { mockFingerprintManager?.hasEnrolledFingerprints() } returns true
 
         assertTrue(biometricTools.isFingerprintAuthAvailable(mockContext))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun replaceFingerprintKeyTest() {
-        every { mockKeyStoreManager.createOrReplaceRsaKeyPair(mockContext, FINGERPRINT_ALIAS_FOR_PIN) } returns null
-        biometricTools.replaceFingerprintKey()
-
-        verify { mockKeyStoreManager.createOrReplaceRsaKeyPair(mockContext, FINGERPRINT_ALIAS_FOR_PIN) }
     }
 
     @Test

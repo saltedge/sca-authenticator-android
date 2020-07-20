@@ -20,8 +20,9 @@
  */
 package com.saltedge.authenticator.sdk.tools.crypt
 
+import com.saltedge.authenticator.sdk.model.ConsentData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
-import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
+import com.saltedge.authenticator.sdk.model.EncryptedData
 import java.security.Key
 import java.security.PrivateKey
 import java.security.PublicKey
@@ -37,7 +38,11 @@ interface CryptoToolsAbs {
     fun aesDecrypt(encryptedText: String, key: Key): String?
     fun aesDecrypt(encryptedText: String, key: ByteArray, iv: ByteArray): String?
     fun decryptAuthorizationData(
-        encryptedData: EncryptedAuthorizationData,
+        encryptedData: EncryptedData,
         rsaPrivateKey: PrivateKey?
     ): AuthorizationData?
+    fun decryptConsentData(
+        encryptedData: EncryptedData,
+        rsaPrivateKey: PrivateKey?
+    ): ConsentData?
 }

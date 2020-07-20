@@ -20,31 +20,31 @@
  */
 package com.saltedge.authenticator.sdk.network.connector
 
-import com.saltedge.authenticator.sdk.contract.FetchProviderConfigurationDataResult
+import com.saltedge.authenticator.sdk.contract.FetchProviderConfigurationListener
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.model.ProviderResponseData
+import com.saltedge.authenticator.sdk.model.response.ProviderConfigurationResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.ApiResponseInterceptor
 import retrofit2.Call
 
 internal class ProviderDataConnector(
     private val apiInterface: ApiInterface,
-    var resultCallback: FetchProviderConfigurationDataResult?
-) : ApiResponseInterceptor<ProviderResponseData>() {
+    var resultCallback: FetchProviderConfigurationListener?
+) : ApiResponseInterceptor<ProviderConfigurationResponse>() {
 
     fun fetchProviderData(requestUrl: String) {
-        apiInterface.getProviderData(requestUrl = requestUrl).enqueue(this)
+        apiInterface.getProviderConfiguration(requestUrl = requestUrl).enqueue(this)
     }
 
     override fun onSuccessResponse(
-        call: Call<ProviderResponseData>,
-        response: ProviderResponseData
+        call: Call<ProviderConfigurationResponse>,
+        response: ProviderConfigurationResponse
     ) {
         resultCallback?.fetchProviderConfigurationDataResult(result = response.data, error = null)
     }
 
     override fun onFailureResponse(
-        call: Call<ProviderResponseData>,
+        call: Call<ProviderConfigurationResponse>,
         error: ApiErrorData
     ) {
         resultCallback?.fetchProviderConfigurationDataResult(result = null, error = error)

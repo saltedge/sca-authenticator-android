@@ -22,22 +22,22 @@ package com.saltedge.authenticator.sdk.network.connector
 
 import com.saltedge.authenticator.sdk.constants.API_AUTHORIZATIONS
 import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_PUT
-import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationResult
+import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
 import com.saltedge.authenticator.sdk.model.*
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.error.createInvalidResponseError
-import com.saltedge.authenticator.sdk.model.request.ConfirmDenyData
 import com.saltedge.authenticator.sdk.model.request.ConfirmDenyRequestData
-import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData
+import com.saltedge.authenticator.sdk.model.request.ConfirmDenyRequest
+import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.ApiResponseInterceptor
 import retrofit2.Call
 
 internal class ConfirmOrDenyConnector(
     private val apiInterface: ApiInterface,
-    var resultCallback: ConfirmAuthorizationResult?
-) : ApiResponseInterceptor<ConfirmDenyResponseData>() {
+    var resultCallback: ConfirmAuthorizationListener?
+) : ApiResponseInterceptor<ConfirmDenyResponse>() {
 
     private var connectionId: ConnectionID = ""
     private var authorizationId: AuthorizationID = ""
@@ -45,12 +45,12 @@ internal class ConfirmOrDenyConnector(
     fun updateAuthorization(
         connectionAndKey: ConnectionAndKey,
         authorizationId: String,
-        payloadData: ConfirmDenyData
+        payloadData: ConfirmDenyRequestData
     ) {
         this.connectionId = connectionAndKey.connection.id
         this.authorizationId = authorizationId
-        val requestBody = ConfirmDenyRequestData(payloadData)
-        val requestData = createAuthenticatedRequestData(
+        val requestBody = ConfirmDenyRequest(payloadData)
+        val requestData = createSignedRequestData(
             requestMethod = REQUEST_METHOD_PUT,
             baseUrl = connectionAndKey.connection.connectUrl,
             apiRoutePath = "$API_AUTHORIZATIONS/$authorizationId",
@@ -66,15 +66,15 @@ internal class ConfirmOrDenyConnector(
     }
 
     override fun onSuccessResponse(
-        call: Call<ConfirmDenyResponseData>,
-        response: ConfirmDenyResponseData
+        call: Call<ConfirmDenyResponse>,
+        response: ConfirmDenyResponse
     ) {
         val data = response.data
         if (data == null) onFailureResponse(call, createInvalidResponseError())
         else resultCallback?.onConfirmDenySuccess(result = data, connectionID = this.connectionId)
     }
 
-    override fun onFailureResponse(call: Call<ConfirmDenyResponseData>, error: ApiErrorData) {
+    override fun onFailureResponse(call: Call<ConfirmDenyResponse>, error: ApiErrorData) {
         resultCallback?.onConfirmDenyFailure(
             error = error,
             connectionID = this.connectionId,

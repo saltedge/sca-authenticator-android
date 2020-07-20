@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2020 Salt Edge Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<vector android:height="24dp" android:viewportHeight="22"
+    android:viewportWidth="22" android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="@color/appbar_action_icon_fill_color" android:pathData="M7.62,0L1.69,0A1.69,1.69 0,0 0,0 1.69L0,7.62a1.69,1.69 0,0 0,1.69 1.69L7.62,9.31a1.69,1.69 0,0 0,1.69 -1.69L9.31,1.69A1.69,1.69 0,0 0,7.62 0ZM6.77,6A0.76,0.76 0,0 1,6 6.77L3.3,6.77A0.76,0.76 0,0 1,2.54 6L2.54,3.3a0.76,0.76 0,0 1,0.76 -0.76L6,2.54a0.76,0.76 0,0 1,0.76 0.76Z"/>
+    <path android:fillColor="@color/appbar_action_icon_fill_color" android:pathData="M20.31,0L14.38,0a1.69,1.69 0,0 0,-1.69 1.69L12.69,7.62a1.69,1.69 0,0 0,1.69 1.69h5.93A1.69,1.69 0,0 0,22 7.62L22,1.69A1.69,1.69 0,0 0,20.31 0ZM19.46,6a0.76,0.76 0,0 1,-0.76 0.76L16,6.76A0.76,0.76 0,0 1,15.23 6L15.23,3.3A0.76,0.76 0,0 1,16 2.54L18.7,2.54a0.76,0.76 0,0 1,0.76 0.76Z"/>
+    <path android:fillColor="@color/appbar_action_icon_fill_color" android:pathData="M7.62,12.69L1.69,12.69A1.69,1.69 0,0 0,0 14.38v5.93A1.69,1.69 0,0 0,1.69 22L7.62,22a1.69,1.69 0,0 0,1.69 -1.69L9.31,14.38A1.69,1.69 0,0 0,7.62 12.69ZM6.77,18.69a0.76,0.76 0,0 1,-0.76 0.76L3.3,19.45a0.76,0.76 0,0 1,-0.76 -0.76L2.54,16a0.76,0.76 0,0 1,0.76 -0.76L6,15.24a0.76,0.76 0,0 1,0.76 0.76Z"/>
+    <path android:fillColor="@color/appbar_action_icon_fill_color" android:pathData="M14.38,11.85L12.69,11.85a0.83,0.83 0,0 0,-0.84 0.84v1.69a0.84,0.84 0,0 0,0.84 0.85h2.54L15.23,12.69A0.84,0.84 0,0 0,14.38 11.85Z"/>
+    <path android:fillColor="@color/appbar_action_icon_fill_color" android:pathData="M19.46,22h1.69a0.85,0.85 0,0 0,0.85 -0.85L22,19.46a0.84,0.84 0,0 0,-0.85 -0.84L18.62,18.62v2.53A0.84,0.84 0,0 0,19.46 22Z"/>
+    <path android:fillColor="@color/appbar_action_icon_fill_color" android:pathData="M15.23,15.23h3.38v3.38h-3.38z"/>
+    <path android:fillColor="@color/appbar_action_icon_fill_color" android:pathData="M11.85,19.46v1.69a0.84,0.84 0,0 0,0.84 0.85h1.69a0.85,0.85 0,0 0,0.85 -0.85L15.23,18.62L12.69,18.62A0.83,0.83 0,0 0,11.85 19.46Z"/>
+    <path android:fillColor="@color/appbar_action_icon_fill_color" android:pathData="M21.15,11.85L19.46,11.85a0.83,0.83 0,0 0,-0.84 0.84v2.54h2.53a0.85,0.85 0,0 0,0.85 -0.85L22,12.69A0.84,0.84 0,0 0,21.15 11.85Z"/>
+</vector>

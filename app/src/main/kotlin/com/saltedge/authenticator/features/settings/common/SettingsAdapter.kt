@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,23 @@
  */
 package com.saltedge.authenticator.features.settings.common
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.saltedge.authenticator.interfaces.CheckableListItemClickListener
+import com.saltedge.authenticator.R
+import com.saltedge.authenticator.databinding.SettingsItemBinding
+import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.widget.list.AbstractListAdapter
 
-class SettingsAdapter(
-    private val clickListener: CheckableListItemClickListener?
-) : AbstractListAdapter() {
+class SettingsAdapter(private val listener: ListItemClickListener) : AbstractListAdapter() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return SettingsItemViewHolder(parent, clickListener)
+        val inflater = LayoutInflater.from(parent.context)
+        val binding: SettingsItemBinding = DataBindingUtil
+            .inflate(inflater, R.layout.view_item_setting, parent, false)
+        binding.listener = listener
+        return SettingsItemViewHolder(binding)
     }
 
     override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {

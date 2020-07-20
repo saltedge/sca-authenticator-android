@@ -22,10 +22,15 @@ package com.saltedge.authenticator.app.di
 
 import android.content.Context
 import android.os.Build
-import com.saltedge.authenticator.model.db.ConnectionsRepository
-import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.model.repository.PreferenceRepository
-import com.saltedge.authenticator.model.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.app.ConnectivityReceiver
+import com.saltedge.authenticator.app.ConnectivityReceiverAbs
+import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.models.realm.RealmManager
+import com.saltedge.authenticator.models.realm.RealmManagerAbs
+import com.saltedge.authenticator.models.repository.ConnectionsRepository
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.repository.PreferenceRepository
+import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricTools
@@ -35,8 +40,8 @@ import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.tool.secure.PasscodeTools
-import com.saltedge.authenticator.tool.secure.PasscodeToolsAbs
+import com.saltedge.authenticator.tools.PasscodeTools
+import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptManagerV28
 import com.saltedge.authenticator.widget.biometric.BiometricsInputDialog
@@ -49,6 +54,7 @@ class AppModule(context: Context) {
 
     private var _context: Context = context
     private val preferenceRepository = PreferenceRepository.initObject(context)
+    private val connectivityReceiver = ConnectivityReceiver(context)
 
     @Provides
     @Singleton
@@ -69,7 +75,39 @@ class AppModule(context: Context) {
 
     @Provides
     @Singleton
+    fun provideViewModelsFactory(
+        appContext: Context,
+        passcodeTools: PasscodeToolsAbs,
+        biometricTools: BiometricToolsAbs,
+        cryptoTools: CryptoToolsAbs,
+        preferences: PreferenceRepositoryAbs,
+        connectionsRepository: ConnectionsRepositoryAbs,
+        keyStoreManager: KeyStoreManagerAbs,
+        realmManager: RealmManagerAbs,
+        apiManager: AuthenticatorApiManagerAbs,
+        connectivityReceiver: ConnectivityReceiverAbs
+    ): ViewModelsFactory {
+        return ViewModelsFactory(
+            appContext = appContext,
+            passcodeTools = passcodeTools,
+            biometricTools = biometricTools,
+            cryptoTools = cryptoTools,
+            preferenceRepository = preferences,
+            connectionsRepository = connectionsRepository,
+            keyStoreManager = keyStoreManager,
+            realmManager = realmManager,
+            apiManager = apiManager,
+            connectivityReceiver = connectivityReceiver
+        )
+    }
+
+    @Provides
+    @Singleton
     fun providePasscodeTools(): PasscodeToolsAbs = PasscodeTools
+
+    @Provides
+    @Singleton
+    fun provideRealmManager(): RealmManagerAbs = RealmManager
 
     @Provides
     @Singleton
@@ -90,4 +128,8 @@ class AppModule(context: Context) {
     @Provides
     @Singleton
     fun provideKeyStoreManager(): KeyStoreManagerAbs = KeyStoreManager
+
+    @Provides
+    @Singleton
+    fun provideConnectivityReceiver(): ConnectivityReceiverAbs = connectivityReceiver
 }

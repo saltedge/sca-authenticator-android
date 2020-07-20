@@ -23,13 +23,13 @@ package com.saltedge.authenticator.features.connections.list
 import android.content.Context
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
-import com.saltedge.authenticator.model.db.Connection
-import com.saltedge.authenticator.model.db.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.Connection
+import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.connection.getStatus
 import com.saltedge.authenticator.sdk.tools.toDateTime
-import com.saltedge.authenticator.tool.toLongDateString
+import com.saltedge.authenticator.tools.toLongDateString
 
 fun collectAllConnectionsViewModels(
     repository: ConnectionsRepositoryAbs,
@@ -51,13 +51,29 @@ fun List<Connection>.convertConnectionsToViewModels(context: Context): List<Conn
                 connection = connection
             ),
             statusColorResId = getConnectionStateColorResId(connection),
-            logoUrl = connection.logoUrl
+            logoUrl = connection.logoUrl,
+            reconnectOptionIsVisible = isActiveConnection(connection),
+            deleteMenuItemText = getConnectionDeleteTextResId(connection),
+            deleteMenuItemImage = getConnectionDeleteImageResId(connection),
+            isChecked = false
         )
     }
 }
 
+private fun isActiveConnection(connection: ConnectionAbs): Boolean {
+    return connection.getStatus() !== ConnectionStatus.ACTIVE
+}
+
+private fun getConnectionDeleteTextResId(connection: ConnectionAbs): Int {
+    return if (connection.getStatus() === ConnectionStatus.ACTIVE) R.string.actions_delete else R.string.actions_remove
+}
+
+private fun getConnectionDeleteImageResId(connection: ConnectionAbs): Int {
+    return if (connection.getStatus() === ConnectionStatus.ACTIVE) R.drawable.ic_menu_delete_24dp else R.drawable.ic_menu_remove_24dp
+}
+
 private fun getConnectionStateColorResId(connection: ConnectionAbs): Int {
-    return if (connection.getStatus() === ConnectionStatus.ACTIVE) R.color.gray_dark else R.color.red
+    return if (connection.getStatus() === ConnectionStatus.ACTIVE) R.color.secondary_text else R.color.red_text
 }
 
 private fun getConnectionStatusDescription(context: Context, connection: Connection): String {

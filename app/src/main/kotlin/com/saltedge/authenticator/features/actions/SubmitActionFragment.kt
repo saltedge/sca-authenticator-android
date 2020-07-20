@@ -27,33 +27,40 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_GUID
-import com.saltedge.authenticator.features.actions.di.SubmitActionModule
-import com.saltedge.authenticator.interfaces.UpActionImageListener
+import com.saltedge.authenticator.app.CONNECTIONS_REQUEST_CODE
+import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.databinding.SubmitActionBinding
+import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment
+import com.saltedge.authenticator.features.main.newAuthorizationListener
+import com.saltedge.authenticator.interfaces.DialogHandlerListener
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.tool.*
+import com.saltedge.authenticator.tools.addFragment
+import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.finishFragment
+import com.saltedge.authenticator.tools.showWarningDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_submit_action.*
 import javax.inject.Inject
 
-class SubmitActionFragment : BaseFragment(),
-    SubmitActionContract.View,
-    UpActionImageListener,
-    View.OnClickListener {
+class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, DialogHandlerListener {
 
-    @Inject
-    lateinit var presenterContract: SubmitActionContract.Presenter
+    @Inject lateinit var viewModelFactory: ViewModelsFactory
+    private lateinit var viewModel: SubmitActionViewModel
+    private lateinit var binding: SubmitActionBinding
+    private var alertDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectDependencies()
-        presenterContract.setInitialData(
-            connectionGuid = arguments?.getString(KEY_GUID) ?: return,
-            actionAppLinkData = arguments?.getSerializable(KEY_ACTION_DEEP_LINK_DATA) as? ActionAppLinkData
-                ?: return
-        )
+        authenticatorApp?.appComponent?.inject(this)
+        setupViewModel()
     }
 
     override fun onCreateView(
@@ -61,83 +68,91 @@ class SubmitActionFragment : BaseFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        activityComponents?.updateAppbarTitleWithFabAction(getString(R.string.action_new_action))
-        return inflater.inflate(R.layout.fragment_submit_action, container, false)
+        activityComponents?.updateAppbar(
+            titleResId = R.string.action_new_action_title,
+            backActionImageResId = R.drawable.ic_appbar_action_close
+        )
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_submit_action,
+            container,
+            false
+        )
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        completeView?.setOnClickListener(this)
-        presenterContract.viewContract = this
-        presenterContract.onViewCreated()
+        completeView?.setClickListener(View.OnClickListener { v -> viewModel.onViewClick(v.id) })
+        viewModel.onViewCreated()
     }
 
-    override fun onDestroyView() {
-        presenterContract.viewContract = null
-        super.onDestroyView()
+    override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
+        viewModel.onDialogActionIdClick(dialogActionId)
     }
 
-    override fun getUpActionImageResId(): ResId? = R.drawable.ic_close_white_24dp
-
-    override fun closeView() {
-        activity?.finishFragment()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        viewModel.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun showErrorAndFinish(message: String) {
-        activity?.showWarningDialog(
-            message = message,
-            listener = DialogInterface.OnClickListener { _: DialogInterface, _: Int ->
-                closeView()
+    override fun closeActiveDialogs() {
+        if (alertDialog?.isShowing == true) alertDialog?.dismiss()
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(this, viewModelFactory)
+            .get(SubmitActionViewModel::class.java)
+        lifecycle.addObserver(viewModel)
+        viewModel.setInitialData(
+            actionAppLinkData = arguments?.getSerializable(KEY_ACTION_DEEP_LINK_DATA) as? ActionAppLinkData
+                ?: return
+        )
+
+        viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let { activity?.finishFragment() }
+        })
+        viewModel.onShowErrorEvent.observe(this, Observer<ViewModelEvent<String>> {
+            it.getContentIfNotHandled()?.let { message ->
+                alertDialog = activity?.showWarningDialog(message = message, listener = this)
             }
-        )
-    }
-
-    override fun setResultAuthorizationIdentifier(authorizationIdentifier: AuthorizationIdentifier) {
-        (activity as? AuthorizationListener)?.onNewAuthorization(authorizationIdentifier)
-    }
-
-    override fun onClick(v: View?) {
-        presenterContract.onViewClick(view?.id ?: return)
-    }
-
-    override fun updateCompleteViewContent(
-        iconResId: Int,
-        completeTitleResId: Int,
-        completeMessageResId: Int,
-        mainActionTextResId: Int
-    ) {
-        completeView?.setIconResource(iconResId)
-        completeView?.setTitleText(completeTitleResId)
-        completeView?.setSubtitleText(completeMessageResId)
-        completeView?.setMainActionText(mainActionTextResId)
-    }
-
-    override fun setProcessingVisibility(show: Boolean) {
-        completeView?.setVisible(!show)
-        fragmentActionProcessingLayout?.setVisible(show)
-    }
-
-    override fun openLink(url: String) {
-        context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-    }
-
-    private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addActionModule(SubmitActionModule())?.inject(
-            this
-        )
+        })
+        viewModel.onOpenLinkEvent.observe(this, Observer<ViewModelEvent<Uri>> {
+            it.getContentIfNotHandled()?.let { url ->
+                context?.startActivity(Intent(Intent.ACTION_VIEW, url))
+            }
+        })
+        viewModel.setResultAuthorizationIdentifier.observe(this, Observer<AuthorizationIdentifier> {
+            activity?.newAuthorizationListener?.onNewAuthorization(it)
+        })
+        viewModel.iconResId.observe(this, Observer<Int> { iconResId ->
+            completeView?.setIconResource(iconResId)
+        })
+        viewModel.completeTitleResId.observe(this, Observer<Int> { completeTitleResId ->
+            completeView?.setTitleText(completeTitleResId)
+        })
+        viewModel.completeDescriptionResId.observe(this, Observer<Int> { completeMessageResId ->
+            completeView?.setDescription(completeMessageResId)
+        })
+        viewModel.mainActionTextResId.observe(this, Observer<Int> { mainActionTextResId ->
+            completeView?.setMainActionText(mainActionTextResId)
+        })
+        viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<List<ConnectionViewModel>> { list ->
+            SelectConnectionsFragment.newInstance(connections = list).also {
+                it.setTargetFragment(this, CONNECTIONS_REQUEST_CODE)
+                activity?.addFragment(fragment = it, animateTransition = false)
+            }
+        })
     }
 
     companion object {
         const val KEY_ACTION_DEEP_LINK_DATA = "ACTION_DEEP_LINK_DATA"
 
-        fun newInstance(
-            connectionGuid: String,
-            actionAppLinkData: ActionAppLinkData
-        ): SubmitActionFragment {
+        fun newInstance(actionAppLinkData: ActionAppLinkData): SubmitActionFragment {
             return SubmitActionFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable(KEY_ACTION_DEEP_LINK_DATA, actionAppLinkData)
-                    putString(KEY_GUID, connectionGuid)
                 }
             }
         }

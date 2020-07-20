@@ -20,7 +20,8 @@
  */
 package com.saltedge.authenticator.features.authorizations.common
 
-import com.saltedge.authenticator.model.db.Connection
+import android.view.View
+import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
 import com.saltedge.authenticator.testTools.TestAppTools
 import net.danlew.android.joda.JodaTimeAndroid
@@ -47,12 +48,12 @@ class AuthorizationViewModelTest {
             authorizationCode = "111",
             title = "title",
             description = "description",
-            expiresAt = DateTime(),
+            endTime = DateTime(),
             connectionID = "333",
             connectionName = "Demobank",
             connectionLogoUrl = "url",
             validSeconds = 300,
-            createdAt = DateTime()
+            startTime = DateTime()
         )
     }
 
@@ -66,7 +67,7 @@ class AuthorizationViewModelTest {
         )
         val oldList = emptyList<AuthorizationViewModel>()
 
-        assertThat(newList.joinFinalModels(oldList), equalTo(newList))
+        assertThat(joinViewModels(newList, oldList), equalTo(newList))
     }
 
     @Test
@@ -79,7 +80,7 @@ class AuthorizationViewModelTest {
             createModelByIndex(3).copy(viewMode = ViewMode.UNAVAILABLE)
         )
 
-        assertThat(newList.joinFinalModels(oldList)[0].viewMode,
+        assertThat(joinViewModels(newList, oldList)[0].viewMode,
             equalTo(ViewMode.UNAVAILABLE))
     }
 
@@ -97,7 +98,7 @@ class AuthorizationViewModelTest {
             createModelByIndex(3)
         )
 
-        assertThat(newList.joinFinalModels(oldList), equalTo(newList))
+        assertThat(joinViewModels(newList, oldList), equalTo(newList))
     }
 
     @Test
@@ -119,7 +120,7 @@ class AuthorizationViewModelTest {
             createModelByIndex(3).copy(viewMode = ViewMode.DENY_SUCCESS)
         )
 
-        assertThat(newList.joinFinalModels(oldList), equalTo(resultList))
+        assertThat(joinViewModels(newList, oldList), equalTo(resultList))
     }
 
     @Test
@@ -141,7 +142,7 @@ class AuthorizationViewModelTest {
             createModelByIndex(3).copy(connectionID = "x", viewMode = ViewMode.DENY_SUCCESS)
         )
 
-        assertThat(newList.joinFinalModels(oldList), equalTo(resultList))
+        assertThat(joinViewModels(newList, oldList), equalTo(resultList))
     }
 
     @Test
@@ -162,8 +163,8 @@ class AuthorizationViewModelTest {
             createModelByIndex(3).copy(viewMode = ViewMode.UNAVAILABLE)
         )
 
-        assertThat(newList.joinFinalModels(oldList), equalTo(resultList))
-        assertThat(newList.joinFinalModels(oldList)[2].viewMode,
+        assertThat(joinViewModels(newList, oldList), equalTo(resultList))
+        assertThat(joinViewModels(newList, oldList)[2].viewMode,
             equalTo(ViewMode.UNAVAILABLE))
     }
 
@@ -187,8 +188,8 @@ class AuthorizationViewModelTest {
             createModelByIndex(4)
         )
 
-        assertThat(newList.joinFinalModels(oldList), equalTo(resultList))
-        assertThat(newList.joinFinalModels(oldList)[2].viewMode,
+        assertThat(joinViewModels(newList, oldList), equalTo(resultList))
+        assertThat(joinViewModels(newList, oldList)[2].viewMode,
             equalTo(ViewMode.UNAVAILABLE))
     }
 
@@ -198,12 +199,12 @@ class AuthorizationViewModelTest {
             authorizationCode = "$index",
             title = "$index",
             description = "$index",
-            expiresAt = DateTime(index.toLong()),
+            endTime = DateTime(index.toLong()),
             connectionID = "$index",
             connectionName = "$index",
             connectionLogoUrl = "$index",
             validSeconds = 100,
-            createdAt = DateTime(index.toLong())
+            startTime = DateTime(index.toLong())
         )
     }
 
@@ -272,8 +273,31 @@ class AuthorizationViewModelTest {
     fun isExpiredTest() {
         val now = DateTime.now()
 
-        Assert.assertFalse(model.copy(expiresAt = now.plusMinutes(1)).isExpired)
-        Assert.assertTrue(model.copy(expiresAt = now.minusMinutes(1)).isExpired)
+        Assert.assertFalse(model.copy(endTime = now.plusMinutes(1)).isExpired)
+        Assert.assertTrue(model.copy(endTime = now.minusMinutes(1)).isExpired)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun timeViewVisibilityTest() {
+        val results = ViewMode.values().map {
+            model.viewMode = it
+            it to model.timeViewVisibility
+        }.toMap()
+
+        assertThat(results, equalTo(
+            mapOf(
+                ViewMode.LOADING to View.INVISIBLE,
+                ViewMode.DEFAULT to View.VISIBLE,
+                ViewMode.CONFIRM_PROCESSING to View.VISIBLE,
+                ViewMode.DENY_PROCESSING to View.VISIBLE,
+                ViewMode.CONFIRM_SUCCESS to View.VISIBLE,
+                ViewMode.DENY_SUCCESS to View.VISIBLE,
+                ViewMode.ERROR to View.VISIBLE,
+                ViewMode.TIME_OUT to View.VISIBLE,
+                ViewMode.UNAVAILABLE to View.INVISIBLE
+            )
+        ))
     }
 
     @Test
@@ -304,8 +328,8 @@ class AuthorizationViewModelTest {
     fun isNotExpiredTest() {
         val now = DateTime.now()
 
-        Assert.assertTrue(model.copy(expiresAt = now.plusMinutes(1)).isNotExpired)
-        Assert.assertFalse(model.copy(expiresAt = now.minusMinutes(1)).isNotExpired)
+        Assert.assertTrue(model.copy(endTime = now.plusMinutes(1)).isNotExpired)
+        Assert.assertFalse(model.copy(endTime = now.minusMinutes(1)).isNotExpired)
     }
 
     @Test
@@ -313,7 +337,7 @@ class AuthorizationViewModelTest {
     fun remainedTimeTillExpireTest() {
         val now = DateTime.now()
 
-        assertThat(model.copy(expiresAt = now.plusMinutes(1)).remainedTimeStringTillExpire,
+        assertThat(model.copy(endTime = now.plusMinutes(1)).remainedTimeStringTillExpire,
                 anyOf(equalTo("0:59"), equalTo("1:00")))
     }
 
@@ -323,7 +347,7 @@ class AuthorizationViewModelTest {
         val now = DateTime.now()
 
         assertThat(
-            model.copy(expiresAt = now.plusMinutes(1)).remainedSecondsTillExpire,
+            model.copy(endTime = now.plusMinutes(1)).remainedSecondsTillExpire,
             anyOf(equalTo(59), equalTo(60))
         )
     }
@@ -354,12 +378,12 @@ class AuthorizationViewModelTest {
                     authorizationCode = "111",
                     title = "title",
                     description = "description",
-                    expiresAt = DateTime(300000L),
+                    endTime = DateTime(300000L),
                     connectionID = "333",
                     connectionName = "Demobank",
                     connectionLogoUrl = "url",
                     validSeconds = 300,
-                    createdAt = DateTime(0L)
+                    startTime = DateTime(0L)
                 )
             )
         )

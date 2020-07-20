@@ -1,18 +1,18 @@
-/* 
- * This file is part of the Salt Edge Authenticator distribution 
+/*
+ * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2019 Salt Edge Inc.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3 or later.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * For the additional permissions granted for Salt Edge Authenticator
@@ -29,11 +29,10 @@ import android.hardware.biometrics.BiometricPrompt.BIOMETRIC_ERROR_USER_CANCELED
 import android.hardware.fingerprint.FingerprintManager
 import android.os.Build
 import android.os.CancellationSignal
-import androidx.annotation.RequiresApi
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.biometric.getFingerprintManager
-import com.saltedge.authenticator.tool.log
+import com.saltedge.authenticator.tools.log
 
 @TargetApi(Build.VERSION_CODES.M)
 class BiometricsInputPresenter(
@@ -102,11 +101,11 @@ class BiometricsInputPresenter(
             } else {
                 R.drawable.ic_fingerprint_error
             }
-            val colorResId = if (success) R.color.color_primary else R.color.red
+            val colorResId = if (success) R.color.primary else R.color.red
             val text = if (success) {
                 R.string.fingerprint_confirmed
             } else {
-                R.string.error_fingerprint_not_recognized
+                R.string.errors_fingerprint_not_recognized
             }
             contract?.updateStatusView(
                 imageResId = image,
@@ -120,7 +119,7 @@ class BiometricsInputPresenter(
 
     private fun createCryptoObject(): FingerprintManager.CryptoObject? {
         return try {
-            biometricTools?.createFingerprintCipher()?.let { FingerprintManager.CryptoObject(it) }
+            biometricTools.createFingerprintCipher()?.let { FingerprintManager.CryptoObject(it) }
         } catch (e: Exception) {
             e.log()
             null

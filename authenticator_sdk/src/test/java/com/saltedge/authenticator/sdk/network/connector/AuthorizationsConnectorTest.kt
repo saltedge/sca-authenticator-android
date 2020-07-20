@@ -24,8 +24,8 @@ import com.saltedge.authenticator.sdk.contract.FetchAuthorizationsContract
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.authorization.EncryptedAuthorizationData
-import com.saltedge.authenticator.sdk.model.response.AuthorizationsResponseData
+import com.saltedge.authenticator.sdk.model.EncryptedData
+import com.saltedge.authenticator.sdk.model.response.EncryptedListResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.network.RestClient
@@ -73,9 +73,9 @@ class AuthorizationsConnectorTest {
 
         connector.onResponse(
             mockCall, Response.success(
-            AuthorizationsResponseData(
+            EncryptedListResponse(
                 data = listOf(
-                    EncryptedAuthorizationData(
+                    EncryptedData(
                         id = "444",
                         connectionId = "333",
                         algorithm = "AES-256-CBC",
@@ -89,9 +89,9 @@ class AuthorizationsConnectorTest {
         )
 
         verify {
-            mockCallback.onFetchAuthorizationsResult(
+            mockCallback.onFetchEncryptedDataResult(
                 result = listOf(
-                    EncryptedAuthorizationData(
+                    EncryptedData(
                         id = "444",
                         connectionId = "333",
                         algorithm = "AES-256-CBC",
@@ -124,7 +124,7 @@ class AuthorizationsConnectorTest {
         connector.onResponse(mockCall, get404Response())
 
         verify {
-            mockCallback.onFetchAuthorizationsResult(
+            mockCallback.onFetchEncryptedDataResult(
                 result = emptyList(),
                 errors = listOf(
                     ApiErrorData(
@@ -142,8 +142,8 @@ class AuthorizationsConnectorTest {
     private val requestConnection: ConnectionAbs = getDefaultTestConnection()
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
     private val mockCallback = mockkClass(FetchAuthorizationsContract::class)
-    private val mockCall: Call<AuthorizationsResponseData> =
-        mockkClass(Call::class) as Call<AuthorizationsResponseData>
+    private val mockCall: Call<EncryptedListResponse> =
+        mockkClass(Call::class) as Call<EncryptedListResponse>
     private var capturedHeaders: MutableList<Map<String, String>> = mutableListOf()
     private var privateKey: PrivateKey = this.getTestPrivateKey()
 
@@ -162,7 +162,7 @@ class AuthorizationsConnectorTest {
             HEADER_KEY_ACCESS_TOKEN,
             "accessToken"
         ).build()
-        every { mockCallback.getConnectionsData() } returns null
-        every { mockCallback.onFetchAuthorizationsResult(any(), any()) } returns Unit
+        every { mockCallback.getCurrentConnectionsAndKeysForPolling() } returns null
+        every { mockCallback.onFetchEncryptedDataResult(any(), any()) } returns Unit
     }
 }

@@ -1,18 +1,18 @@
-/* 
- * This file is part of the Salt Edge Authenticator distribution 
+/*
+ * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ * Copyright (c) 2020 Salt Edge Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3 or later.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * For the additional permissions granted for Salt Edge Authenticator
@@ -20,35 +20,48 @@
  */
 package com.saltedge.authenticator.features.settings.list
 
-import android.content.Intent
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.widget.list.SpaceItemDecoration
-import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
+import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.applyNightMode
+import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
+import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
-import com.saltedge.authenticator.features.settings.list.di.SettingsListModule
 import com.saltedge.authenticator.features.settings.passcode.PasscodeEditFragment
-import com.saltedge.authenticator.interfaces.CheckableListItemClickListener
-import com.saltedge.authenticator.tool.*
+import com.saltedge.authenticator.interfaces.AppbarMenuItemClickListener
+import com.saltedge.authenticator.interfaces.DialogHandlerListener
+import com.saltedge.authenticator.interfaces.MenuItem
+import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
+import com.saltedge.authenticator.widget.list.SpaceItemDecoration
 import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
 
-class SettingsListFragment : BaseFragment(), SettingsListContract.View,
-    CheckableListItemClickListener {
+class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuItemClickListener {
 
-    @Inject lateinit var presenterContract: SettingsListContract.Presenter
+    @Inject lateinit var viewModelFactory: ViewModelsFactory
+    private lateinit var viewModel: SettingsListViewModel
+    private var adapter: SettingsAdapter? = null
+    private var dialogFragment: DialogFragment? = null
+    private var alertDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectDependencies()
+        authenticatorApp?.appComponent?.inject(this)
+        setupViewModel()
     }
 
     override fun onCreateView(
@@ -59,88 +72,88 @@ class SettingsListFragment : BaseFragment(), SettingsListContract.View,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activityComponents?.updateAppbarTitleWithFabAction(getString(R.string.settings_feature_title))
+        activityComponents?.updateAppbar(
+            titleResId = R.string.settings_feature_title,
+            backActionImageResId = R.drawable.ic_appbar_action_back,
+            showMenu = arrayOf(MenuItem.CUSTOM_NIGHT_MODE)
+        )
         setupViews()
     }
 
-    override fun onStart() {
-        super.onStart()
-        presenterContract.viewContract = this
+    override fun closeActiveDialogs() {
+        if (dialogFragment?.isVisible == true) dialogFragment?.dismiss()
+        if (alertDialog?.isShowing == true) alertDialog?.dismiss()
     }
 
-    override fun onStop() {
-        presenterContract.viewContract = null
-        super.onStop()
+    override fun onAppbarMenuItemClick(menuItem: MenuItem) {
+        viewModel.onAppbarMenuItemClick(menuItem)
     }
 
-    override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
-        presenterContract.onListItemClick(itemViewId)
-    }
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(this, viewModelFactory).get(SettingsListViewModel::class.java)
 
-    override fun onListItemCheckedStateChanged(itemId: Int, checked: Boolean) {
-        presenterContract.onListItemCheckedStateChanged(itemId, checked)
-    }
-
-    override fun showLanguageSelector() {
-        activity?.showDialogFragment(LanguageSelectDialog())
-    }
-
-    override fun showPasscodeEditor() {
-        activity?.addFragment(PasscodeEditFragment())
-    }
-
-    override fun showSystemSettings() {
-        activity?.startSystemSettings()
-    }
-
-    override fun showAboutList() {
-        activity?.addFragment(AboutListFragment())
-    }
-
-    override fun openMailApp() {
-        activity?.startMailApp()
-    }
-
-    override fun showRestartAppQuery() {
-        view?.let {
-            Snackbar.make(it, getString(R.string.settings_restart_app), Snackbar.LENGTH_LONG)
-                .setAction(getString(android.R.string.ok)) { activity?.restartApp() }
-                .show()
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        presenterContract.onActivityResult(requestCode, resultCode, data)
-    }
-
-    override fun showDeleteConnectionView(requestCode: Int) {
-        val dialog = DeleteConnectionDialog.newInstance(null).also {
-            it.setTargetFragment(this, requestCode)
-        }
-        activity?.showDialogFragment(dialog)
+        viewModel.languageClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
+            event.getContentIfNotHandled()?.let {
+                dialogFragment = LanguageSelectDialog()
+                dialogFragment?.let { activity?.showDialogFragment(it) }
+            }
+        })
+        viewModel.passcodeClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
+            event.getContentIfNotHandled()?.let { activity?.addFragment(PasscodeEditFragment()) }
+        })
+        viewModel.aboutClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
+            event.getContentIfNotHandled()?.let { activity?.addFragment(AboutListFragment()) }
+        })
+        viewModel.supportClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
+            event.getContentIfNotHandled()?.let { activity?.startMailApp() }
+        })
+        viewModel.clearClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
+            event.getContentIfNotHandled()?.let {
+                alertDialog = activity?.showResetDataAndSettingsDialog(DialogInterface.OnClickListener { _, _ ->
+                    viewModel.onUserConfirmedClearAppData()
+                })
+            }
+        })
+        viewModel.clearSuccessEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let {
+                activity?.showWarningSnack(
+                    textResId = R.string.settings_clear_success,
+                    snackBarDuration = Snackbar.LENGTH_SHORT
+                )
+            }
+        })
+        viewModel.screenshotClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let {
+                view?.let {
+                    activity?.showWarningSnack(
+                        textResId = R.string.settings_restart_app,
+                        snackBarDuration = Snackbar.LENGTH_LONG
+                    )?.setAction(getString(android.R.string.ok)) { viewModel.restartConfirmed() }
+                }
+            }
+        })
+        viewModel.restartClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let { activity?.restartApp() }
+        })
+        viewModel.setNightModelEvent.observe(this, Observer<ViewModelEvent<Int>> {
+            it.getContentIfNotHandled()?.let { nightMode -> activity?.applyNightMode(nightMode) }
+        })
+        viewModel.listItems.observe(this, Observer<List<SettingsItemViewModel>> {
+            adapter?.data = it
+        })
     }
 
     private fun setupViews() {
-        try {
-            val context = activity ?: return
-            val layoutManager = LinearLayoutManager(context)
-            recyclerView?.layoutManager = layoutManager
-            recyclerView?.addItemDecoration(
-                SpaceItemDecoration(
-                    context = context,
-                    headerPositions = presenterContract.getPositionsOfHeaders()
-                )
+        activity?.let {
+            recyclerView?.layoutManager = LinearLayoutManager(it)
+            recyclerView?.addItemDecoration(SpaceItemDecoration(
+                context = it,
+                headerPositions = viewModel.spacesPositions)
             )
-            recyclerView?.adapter = SettingsAdapter(this).apply {
-                data = presenterContract.getListItems()
-            }
-        } catch (e: Exception) {
-            e.log()
         }
-    }
-
-    private fun injectDependencies() {
-        authenticatorApp?.appComponent?.addSettingsListModule(SettingsListModule())?.inject(this)
+        adapter = SettingsAdapter(listener = viewModel).apply {
+            viewModel.listItemsValues?.let { data = it }
+        }
+        recyclerView?.adapter = adapter
     }
 }
