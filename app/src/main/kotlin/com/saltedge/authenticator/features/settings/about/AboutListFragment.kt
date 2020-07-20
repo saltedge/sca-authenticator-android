@@ -26,16 +26,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
-import com.saltedge.authenticator.features.settings.licenses.LicensesFragment
-import com.saltedge.authenticator.tools.addFragment
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.widget.fragment.BaseFragment
-import com.saltedge.authenticator.widget.fragment.WebViewFragment
 import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
 
@@ -71,11 +69,11 @@ class AboutListFragment : BaseFragment() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(AboutViewModel::class.java)
 
         viewModel.licenseItemClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it?.let { activity?.addFragment(LicensesFragment()) }
+            it?.let { findNavController().navigate(R.id.license) }
         })
         viewModel.termsOfServiceItemClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
-            it?.getContentIfNotHandled()?.let { args ->
-                activity?.addFragment(WebViewFragment.newInstance(args = args))
+            it?.getContentIfNotHandled()?.let { bundle ->
+                findNavController().navigate(R.id.terms_of_services, bundle)
             }
         })
     }

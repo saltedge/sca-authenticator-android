@@ -35,15 +35,6 @@ import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
 
 /**
- * Check fragment navigation level
- *
- * @receiver fragment activity
- * @return boolean, true if backStackEntryCount == 0
- */
-fun FragmentActivity?.isTopNavigationLevel(): Boolean =
-    (this?.supportFragmentManager?.backStackEntryCount ?: 0) == 0
-
-/**
  * Add fragment in back stack
  *
  * @receiver fragment activity
@@ -64,29 +55,6 @@ fun FragmentActivity.addFragment(fragment: Fragment, animateTransition: Boolean 
             }
             .replace(R.id.container, fragment, fragment.createTagName())
             .addToBackStack(null)
-            .commit()
-    } catch (ignored: IllegalStateException) {
-    } catch (e: Exception) {
-        e.log()
-    }
-}
-
-/**
- * Replace fragment in container. If stack is not empty then clear it.
- *
- * @receiver fragment activity
- */
-fun FragmentActivity.replaceFragment(fragment: Fragment) {
-    try {
-        if (!isTopNavigationLevel()) {
-            supportFragmentManager.popBackStackImmediate(
-                null,
-                FragmentManager.POP_BACK_STACK_INCLUSIVE
-            )
-        }
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.container, fragment, fragment.createTagName())
             .commit()
     } catch (ignored: IllegalStateException) {
     } catch (e: Exception) {
@@ -185,15 +153,6 @@ fun FragmentActivity.restartApp() {
         intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         this.startActivity(intent)
     } catch (ignored: Exception) {
-    }
-}
-
-/**
- * Replace fragment in container if required fragment is not current fragment
- */
-fun FragmentActivity.replaceFragmentInContainer(fragment: BaseFragment) {
-    if (this.currentFragmentInContainer()?.javaClass != fragment.javaClass) {
-        this.replaceFragment(fragment)
     }
 }
 

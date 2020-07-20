@@ -24,23 +24,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.NavHostFragment
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.app.applyNightMode
 import com.saltedge.authenticator.databinding.MainActivityBinding
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.features.actions.SubmitActionFragment
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
-import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
 import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
-import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
-import com.saltedge.authenticator.features.menu.BottomMenuDialog
-import com.saltedge.authenticator.features.menu.MenuItemSelectListener
-import com.saltedge.authenticator.features.settings.list.SettingsListFragment
 import com.saltedge.authenticator.interfaces.*
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.security.LockableActivity
@@ -59,6 +53,17 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
         this.updateScreenshotLocking()
         authenticatorApp?.appComponent?.inject(this)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
+
+        val host: NavHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment? ?: return
+
+        // Set up Action Bar
+        val navController = host.navController
+
+//        appBarConfiguration = AppBarConfiguration(navController.graph)
+
+
         setupViewModel()
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
     }
@@ -94,7 +99,7 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
 
     override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView
 
-    override fun getSnackbarAnchorView(): View? = container
+    override fun getSnackbarAnchorView(): View? = null
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainActivityViewModel::class.java)
@@ -113,11 +118,6 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
         })
         viewModel.onRestartActivityEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { super.restartLockableActivity() }
-        })
-        viewModel.onShowAuthorizationsListEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let {
-                this.replaceFragmentInContainer(AuthorizationsListFragment())
-            }
         })
         viewModel.onShowAuthorizationDetailsEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { authorizationIdentifier ->

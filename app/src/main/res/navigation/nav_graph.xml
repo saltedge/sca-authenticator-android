@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/settingsListFragment">
+
+    <fragment
+        android:id="@+id/authorizationsListFragment"
+        android:name="com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment"
+        android:label="AuthorizationsListFragment" />
+
+    <fragment
+        android:id="@+id/settingsListFragment"
+        android:name="com.saltedge.authenticator.features.settings.list.SettingsListFragment"
+        android:label="SettingsListFragment">
+
+        <action
+            android:id="@+id/about_list"
+            app:destination="@+id/aboutListFragment" />
+
+        <action
+            android:id="@+id/passcode_edit"
+            app:destination="@+id/passcodeEditFragment" />
+
+        <action
+            android:id="@+id/language"
+            app:destination="@+id/languageSelectDialog" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/passcodeEditFragment"
+        android:name="com.saltedge.authenticator.features.settings.passcode.PasscodeEditFragment"
+        android:label="PasscodeEditFragment">
+
+        <action
+            android:id="@+id/settings_list"
+            app:destination="@+id/settingsListFragment" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/languageSelectDialog"
+        android:name="com.saltedge.authenticator.features.settings.language.LanguageSelectDialog"
+        android:label="LanguageSelectDialog" />
+
+    <fragment
+        android:id="@+id/aboutListFragment"
+        android:name="com.saltedge.authenticator.features.settings.about.AboutListFragment"
+        android:label="AboutListFragment">
+
+        <action
+            android:id="@+id/license"
+            app:destination="@+id/licensesFragment" />
+
+        <action
+            android:id="@+id/terms_of_services"
+            app:destination="@+id/webViewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/licensesFragment"
+        android:name="com.saltedge.authenticator.features.settings.licenses.LicensesFragment"
+        android:label="LicensesFragment">
+
+        <action
+            android:id="@+id/terms_of_services"
+            app:destination="@+id/webViewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/webViewFragment"
+        android:name="com.saltedge.authenticator.widget.fragment.WebViewFragment"
+        android:label="WebViewFragment" />
+</navigation>

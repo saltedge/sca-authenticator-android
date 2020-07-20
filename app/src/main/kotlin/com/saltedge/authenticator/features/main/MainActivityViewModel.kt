@@ -57,7 +57,6 @@ class MainActivityViewModel(
     val onAppbarMenuItemClickEvent = MutableLiveData<ViewModelEvent<MenuItem>>()
     val onBackActionClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onRestartActivityEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onShowAuthorizationsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowAuthorizationDetailsEvent = MutableLiveData<ViewModelEvent<AuthorizationIdentifier>>()
     val onShowActionAuthorizationEvent = MutableLiveData<ViewModelEvent<AuthorizationIdentifier>>()
     val onShowConnectEvent = MutableLiveData<ViewModelEvent<ConnectAppLinkData>>()
@@ -85,7 +84,6 @@ class MainActivityViewModel(
 
     fun onLifeCycleCreate(savedInstanceState: Bundle?, intent: Intent?) {
         if (savedInstanceState == null) {
-            onShowAuthorizationsListEvent.postUnitEvent()
             if (intent != null && (intent.hasPendingAuthorizationData || intent.hasDeepLinkData)) {
                 onNewIntent(intent)
             }
