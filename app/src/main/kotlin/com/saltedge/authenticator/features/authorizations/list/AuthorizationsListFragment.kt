@@ -29,6 +29,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.MORE_MENU_REQUEST_CODE
@@ -39,9 +40,7 @@ import com.saltedge.authenticator.features.authorizations.common.AuthorizationIt
 import com.saltedge.authenticator.features.authorizations.list.pagers.AuthorizationsContentPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.pagers.AuthorizationsHeaderPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.pagers.PagersScrollSynchronizer
-import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
 import com.saltedge.authenticator.features.menu.BottomMenuDialog
-import com.saltedge.authenticator.features.settings.list.SettingsListFragment
 import com.saltedge.authenticator.interfaces.AppbarMenuItemClickListener
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.MenuItem
@@ -153,10 +152,14 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
             }
         })
         viewModel.onShowConnectionsListEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { activity?.addFragment(ConnectionsListFragment()) }
+            event.getContentIfNotHandled()?.let {
+                findNavController().navigate(R.id.settings_list)
+            }
         })
         viewModel.onShowSettingsListEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { activity?.addFragment(SettingsListFragment()) }
+            event.getContentIfNotHandled()?.let {
+                findNavController().navigate(R.id.connections_list)
+            }
         })
         viewModel.emptyViewImage.observe(this, Observer<ResId> {
             emptyView.setImageResource(it)

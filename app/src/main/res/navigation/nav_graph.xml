@@ -7,7 +7,16 @@
     <fragment
         android:id="@+id/authorizationsListFragment"
         android:name="com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment"
-        android:label="AuthorizationsListFragment" />
+        android:label="AuthorizationsListFragment">
+
+        <action
+            android:id="@+id/settings_list"
+            app:destination="@+id/settingsListFragment" />
+
+        <action
+            android:id="@+id/connections_list"
+            app:destination="@+id/connectionsListFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/settingsListFragment"

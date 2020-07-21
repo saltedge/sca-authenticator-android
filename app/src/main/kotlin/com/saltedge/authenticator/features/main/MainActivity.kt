@@ -32,8 +32,9 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.MainActivityBinding
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
-import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
+import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment.Companion.KEY_CLOSE_APP
 import com.saltedge.authenticator.interfaces.*
+import com.saltedge.authenticator.sdk.constants.KEY_TITLE
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.security.LockableActivity
 import com.saltedge.authenticator.widget.security.UnlockAppInputView
@@ -112,26 +113,21 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
             }
         })
         viewModel.onShowAuthorizationDetailsEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { authorizationIdentifier ->
-                this.addFragment(
-                    fragment = AuthorizationDetailsFragment.newInstance(
-                        identifier = authorizationIdentifier,
-                        closeAppOnBackPress = true
-                    ),
-                    animateTransition = true
-                )
+            event.getContentIfNotHandled()?.let { bundle ->
+                bundle.apply {
+                    putBoolean(KEY_CLOSE_APP, true)
+                }
+                findNavController(R.id.nav_host_fragment).navigate(R.id.authorizationDetailsFragment, bundle)
             }
         })
+
         viewModel.onShowActionAuthorizationEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { authorizationIdentifier ->
-                this.addFragment(
-                    fragment = AuthorizationDetailsFragment.newInstance(
-                        identifier = authorizationIdentifier,
-                        closeAppOnBackPress = true,
-                        titleRes = R.string.action_new_action_title
-                    ),
-                    animateTransition = false
-                )
+            event.getContentIfNotHandled()?.let { bundle ->
+                bundle.apply {
+                    putBoolean(KEY_CLOSE_APP, true)
+                    putInt(KEY_TITLE, R.string.action_new_action_title)
+                }
+                findNavController(R.id.nav_host_fragment).navigate(R.id.authorizationDetailsFragment, bundle)
             }
         })
         viewModel.onShowConnectEvent.observe(this, Observer { event ->

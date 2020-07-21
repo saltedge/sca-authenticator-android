@@ -132,7 +132,7 @@ class ConnectProviderFragment : BaseFragment(),
         lifecycle.addObserver(viewModel)
 
         viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it.getContentIfNotHandled()?.let { activity?.finishFragment() } //
+            it.getContentIfNotHandled()?.let { activity?.finishFragment() }
         })
         viewModel.onShowErrorEvent.observe(this, Observer<ViewModelEvent<String>> {
             it.getContentIfNotHandled()?.let { message ->

@@ -26,41 +26,11 @@ import android.net.Uri
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentManager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.qr.QrScannerActivity
 import com.saltedge.authenticator.sdk.constants.DEFAULT_SUPPORT_EMAIL_LINK
-import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
-
-/**
- * Add fragment in back stack
- *
- * @receiver fragment activity
- */
-fun FragmentActivity.addFragment(fragment: Fragment, animateTransition: Boolean = true) {
-    try {
-        supportFragmentManager
-            .beginTransaction()
-            .apply {
-                if (animateTransition) {
-                    setCustomAnimations(
-                        R.anim.enter_from_right,
-                        R.anim.exit_to_left,
-                        R.anim.enter_from_left,
-                        R.anim.exit_to_right
-                    )
-                }
-            }
-            .replace(R.id.container, fragment, fragment.createTagName())
-            .addToBackStack(null)
-            .commit()
-    } catch (ignored: IllegalStateException) {
-    } catch (e: Exception) {
-        e.log()
-    }
-}
 
 /**
  * Get current fragment in container
@@ -155,11 +125,3 @@ fun FragmentActivity.restartApp() {
     } catch (ignored: Exception) {
     }
 }
-
-/**
- * Create tag name for fragment
- *
- * @receiver fragment
- * @return fragment name
- */
-private fun Fragment?.createTagName(): String? = this?.javaClass?.name

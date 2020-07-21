@@ -37,6 +37,7 @@ import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
+import com.saltedge.authenticator.sdk.constants.KEY_ID
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.tools.extractActionAppLinkData
 import com.saltedge.authenticator.sdk.tools.extractConnectAppLinkData
@@ -58,8 +59,8 @@ class MainActivityViewModel(
     val onBackActionClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onRestartActivityEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowAuthorizationsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onShowAuthorizationDetailsEvent = MutableLiveData<ViewModelEvent<AuthorizationIdentifier>>()
-    val onShowActionAuthorizationEvent = MutableLiveData<ViewModelEvent<AuthorizationIdentifier>>()
+    val onShowAuthorizationDetailsEvent = MutableLiveData<ViewModelEvent<Bundle>>()
+    val onShowActionAuthorizationEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onShowConnectEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onShowSubmitActionEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
@@ -113,11 +114,14 @@ class MainActivityViewModel(
     fun onNewIntent(intent: Intent?) {
         when {
             intent.hasPendingAuthorizationData -> {
+                val authorizationIdentifier = AuthorizationIdentifier(
+                    authorizationID = intent.authorizationId,
+                    connectionID = intent.connectionId
+                )
                 onShowAuthorizationDetailsEvent.postValue(
-                    ViewModelEvent(AuthorizationIdentifier(
-                        authorizationID = intent.authorizationId,
-                        connectionID = intent.connectionId
-                    ))
+                    ViewModelEvent(Bundle().apply {
+                        putSerializable(KEY_ID, authorizationIdentifier) //TODO: to verify the correctness
+                    })
                 )
             }
             intent.hasDeepLinkData -> {
@@ -157,7 +161,9 @@ class MainActivityViewModel(
      * Handle new authorization event (e.g. from ActionSubmit)
      */
     override fun onNewAuthorization(authorizationIdentifier: AuthorizationIdentifier) {
-        onShowActionAuthorizationEvent.postValue(ViewModelEvent(authorizationIdentifier))
+        onShowActionAuthorizationEvent.postValue(ViewModelEvent(Bundle().apply {
+            putSerializable(KEY_ID, authorizationIdentifier)
+        }))
     }
 
     /**

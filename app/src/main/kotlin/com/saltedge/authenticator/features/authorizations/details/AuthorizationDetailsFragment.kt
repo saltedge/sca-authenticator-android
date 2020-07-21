@@ -143,7 +143,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
     }
 
     companion object {
-        private const val KEY_CLOSE_APP = "KEY_DESTROY_ON_BACK"
+        const val KEY_CLOSE_APP = "KEY_DESTROY_ON_BACK"
         /**
          * Create new instance of AuthorizationDetailsFragment
          *
