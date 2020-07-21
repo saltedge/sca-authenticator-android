@@ -21,10 +21,8 @@
 package com.saltedge.authenticator.features.connections.delete
 
 import android.content.DialogInterface
-import android.content.Intent
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
-import com.saltedge.authenticator.app.KEY_GUID
 
 class DeleteConnectionPresenter(var viewContract: DeleteConnectionContract.View?) {
     var guid: String? = null
@@ -43,7 +41,7 @@ class DeleteConnectionPresenter(var viewContract: DeleteConnectionContract.View?
         when (dialogActionId) {
             DialogInterface.BUTTON_POSITIVE -> {
                 viewContract?.dismissView()
-                viewContract?.setResultOk(Intent().putExtra(KEY_GUID, guid))
+                guid?.let { viewContract?.returnSuccessResult(it) }
             }
             DialogInterface.BUTTON_NEGATIVE -> viewContract?.dismissView()
         }

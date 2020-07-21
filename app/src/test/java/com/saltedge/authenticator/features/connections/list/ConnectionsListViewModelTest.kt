@@ -20,15 +20,11 @@
  */
 package com.saltedge.authenticator.features.connections.list
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
+import android.os.Bundle
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.DELETE_REQUEST_CODE
-import com.saltedge.authenticator.app.KEY_GUID
-import com.saltedge.authenticator.app.RENAME_REQUEST_CODE
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.list.menu.MenuData
 import com.saltedge.authenticator.features.menu.MenuItemData
@@ -498,187 +494,142 @@ class ConnectionsListViewModelTest {
         viewModel.onMenuItemClick(menuId = activeItemIndex, itemId = itemId)
 
         //then
-        assertThat(viewModel.onDeleteClickEvent.value!!.peekContent().guid, equalTo("guid2"))
+        assertThat(viewModel.onDeleteClickEvent.value!!.peekContent(), equalTo("guid2"))
     }
 
     /**
-     * test onActivityResult,
-     * when resultCode != Activity.RESULT_OK or data == null or unknown requestCode
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onActivityResultTest() {
-        viewModel.onActivityResult(
-            requestCode = RENAME_REQUEST_CODE,
-            resultCode = Activity.RESULT_CANCELED,
-            data = Intent()
-        )
-
-        Mockito.never()
-
-        viewModel.onActivityResult(
-            requestCode = RENAME_REQUEST_CODE,
-            resultCode = Activity.RESULT_OK,
-            data = null
-        )
-
-        Mockito.never()
-
-        viewModel.onActivityResult(
-            requestCode = -1,
-            resultCode = Activity.RESULT_OK,
-            data = Intent()
-        )
-
-        Mockito.never()
-    }
-
-    /**
-     * test onActivityResult,
-     * requestCode = RENAME_REQUEST_CODE,
+     * test onEditNameResult,
      * GUID == null or No connection associated with GUID or viewContract == null.
      *
      * User entered new Connection name
      */
     @Test
     @Throws(Exception::class)
-    fun onActivityResultTest_Rename_InvalidParams() {
-        viewModel.onActivityResult(
-            resultCode = Activity.RESULT_OK,
-            requestCode = RENAME_REQUEST_CODE,
-            data = Intent().putExtra(KEY_NAME, "new name")
+    fun onEditNameResultTestCase1() {
+        viewModel.onEditNameResult(
+            data = Bundle().apply { putString(KEY_NAME, "new name") }
         )
 
         Mockito.never()
 
-        viewModel.onActivityResult(
-            resultCode = Activity.RESULT_OK,
-            requestCode = RENAME_REQUEST_CODE,
-            data = Intent()
-                .putExtra(KEY_NAME, "new name")
-                .putExtra(KEY_GUID, "guidX")
+        viewModel.onEditNameResult(
+            data = Bundle().apply {
+                putString(KEY_NAME, "new name")
+                guid = "guidX"
+            }
         )
 
         Mockito.never()
 
-        viewModel.onActivityResult(
-            resultCode = Activity.RESULT_OK,
-            requestCode = RENAME_REQUEST_CODE,
-            data = Intent()
-                .putExtra(KEY_NAME, "new name")
-                .putExtra(KEY_GUID, "guid2")
+        viewModel.onEditNameResult(
+            data = Bundle().apply {
+                putString(KEY_NAME, "new name")
+                guid = "guid2"
+            }
         )
 
         Mockito.never()
 
-        viewModel.onActivityResult(
-            resultCode = Activity.RESULT_OK,
-            requestCode = RENAME_REQUEST_CODE,
-            data = Intent()
-                .putExtra(KEY_NAME, "")
-                .putExtra(KEY_GUID, "guid2")
+        viewModel.onEditNameResult(
+            data = Bundle().apply {
+                putString(KEY_NAME, "")
+                guid = "guid2"
+            }
         )
 
         Mockito.never()
 
-        viewModel.onActivityResult(
-            resultCode = Activity.RESULT_OK,
-            requestCode = RENAME_REQUEST_CODE,
-            data = Intent()
-                .putExtra(KEY_NAME, "Demobank2")
-                .putExtra(KEY_GUID, "guid2")
+        viewModel.onEditNameResult(
+            data = Bundle().apply {
+                putString(KEY_NAME, "Demobank2")
+                guid = "guid2"
+            }
         )
 
         Mockito.never()
     }
 
     /**
-     * test onActivityResult,
-     * requestCode = RENAME_REQUEST_CODE,
+     * test onEditNameResult,
      * GUID != null.
      *
      * User entered new Connection name
      */
     @Test
     @Throws(Exception::class)
-    fun onActivityResultTest_Rename() {
+    fun onEditNameResultTestCase2() {
+        //given
         val connection: List<ConnectionItemViewModel> =
             connections.convertConnectionsToViewModels(context)
-
         viewModel.listItems.value = connection
 
-        viewModel.onActivityResult(
-            resultCode = Activity.RESULT_OK,
-            requestCode = RENAME_REQUEST_CODE,
-            data = Intent()
-                .putExtra(KEY_NAME, "new name")
-                .putExtra(KEY_GUID, "guid2")
+        //when
+        viewModel.onEditNameResult(
+            data = Bundle().apply {
+                putString(KEY_NAME, "new name")
+                guid = "guid2"
+            }
         )
 
+        //then
         assertNotNull(viewModel.updateListItemEvent.value)
         Mockito.verify(mockConnectionsRepository)
             .updateNameAndSave(connection = connections[1], newName = "new name")
     }
 
     /**
-     * test onActivityResult, requestCode = DELETE_REQUEST_CODE, GUID != null.
+     * test onDeleteItemResult,
+     * GUID != null.
      * viewContract == null
      *
      * User confirmed single Connection deletion
      */
     @Test
     @Throws(Exception::class)
-    fun onActivityResultTest_DeleteSingleConnection_InvalidParams_Case1() {
+    fun onDeleteItemResultTestCase1() {
+        //when
         val connection: List<ConnectionItemViewModel> =
             connections.convertConnectionsToViewModels(context)
-
         viewModel.listItems.value = connection
-
         Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid2")
         Mockito.doReturn(ConnectionAndKey(connections[1], mockPrivateKey)).`when`(
             mockKeyStoreManager
         ).createConnectionAndKeyModel(connections[1])
-        val presenter = viewModel
-        presenter.onActivityResult(
-            resultCode = Activity.RESULT_OK, requestCode = DELETE_REQUEST_CODE,
-            data = Intent().putExtra(KEY_GUID, "guid2")
-        )
 
+        //when
+        viewModel.onDeleteItemResult(guid = "guid2")
+
+        //then
         Mockito.verify(mockApiManager).revokeConnections(
-            listOf(
-                ConnectionAndKey(
-                    connections[1],
-                    mockPrivateKey
-                )
-            ), presenter
+            listOf(ConnectionAndKey(connections[1], mockPrivateKey)),
+            viewModel
         )
         Mockito.verify(mockConnectionsRepository).deleteConnection("guid2")
         Mockito.verify(mockKeyStoreManager).deleteKeyPair("guid2")
     }
 
     /**
-     * test onActivityResult, requestCode = DELETE_REQUEST_CODE, GUID != null.
+     * test onDeleteItemResult,
+     * GUID != null.
      *
      * User confirmed single Connection deletion
      */
     @Test
     @Throws(Exception::class)
-    fun onActivityResultTest_DeleteSingleConnection() {
+    fun onDeleteItemResultTestCase2() {
+        //given
         val connection: List<ConnectionItemViewModel> =
             connections.convertConnectionsToViewModels(context)
-
         viewModel.listItems.value = connection
-
         Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid2")
         Mockito.doReturn(ConnectionAndKey(connections[1], mockPrivateKey)).`when`(
             mockKeyStoreManager
         ).createConnectionAndKeyModel(connections[1])
-        viewModel.onActivityResult(
-            resultCode = Activity.RESULT_OK,
-            requestCode = DELETE_REQUEST_CODE,
-            data = Intent().putExtra(KEY_GUID, "guid2")
-        )
 
+        //when
+        viewModel.onDeleteItemResult(guid = "guid2")
+
+        //then
         Mockito.verify(mockApiManager).revokeConnections(
             listOf(ConnectionAndKey(connections[1], mockPrivateKey)),
             viewModel

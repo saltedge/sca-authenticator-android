@@ -20,18 +20,14 @@
  */
 package com.saltedge.authenticator.features.connections.list
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.DELETE_REQUEST_CODE
-import com.saltedge.authenticator.app.KEY_GUID
-import com.saltedge.authenticator.app.RENAME_REQUEST_CODE
 import com.saltedge.authenticator.features.authorizations.common.collectConnectionsAndKeys
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
+import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
 import com.saltedge.authenticator.features.connections.list.menu.MenuData
 import com.saltedge.authenticator.features.connections.list.menu.PopupMenuBuilder
 import com.saltedge.authenticator.features.consents.common.consentsCountPrefixForConnection
@@ -82,7 +78,7 @@ class ConnectionsListViewModel(
     val onSupportClickEvent = MutableLiveData<ViewModelEvent<String?>>()
     val onReconnectClickEvent = MutableLiveData<ViewModelEvent<String>>()
     val onRenameClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
-    val onDeleteClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
+    val onDeleteClickEvent = MutableLiveData<ViewModelEvent<GUID>>()
     val onViewConsentsClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val listVisibility = MutableLiveData<Int>()
     val emptyViewVisibility = MutableLiveData<Int>()
@@ -117,10 +113,9 @@ class ConnectionsListViewModel(
             PopupMenuItem.RECONNECT -> onReconnectClickEvent.postValue(ViewModelEvent(item.guid))
             PopupMenuItem.RENAME -> {
                 connectionsRepository.getByGuid(item.guid)?.let { connection ->
-                    onRenameClickEvent.postValue(ViewModelEvent(Bundle().apply {
-                        guid = item.guid
-                        putString(KEY_NAME, connection.name)
-                    }))
+                    onRenameClickEvent.postValue(ViewModelEvent(
+                        EditConnectionNameDialog.dataBundle(item.guid, connection.name)
+                    ))
                 }
             }
             PopupMenuItem.SUPPORT -> {
@@ -135,7 +130,7 @@ class ConnectionsListViewModel(
             }
             PopupMenuItem.DELETE -> {
                 if (item.isActive) {
-                    onDeleteClickEvent.postValue(ViewModelEvent(Bundle().apply { guid = item.guid }))
+                    onDeleteClickEvent.postValue(ViewModelEvent(item.guid))
                 } else {
                     deleteConnectionsAndKeys(item.guid)
                     updateViewsContent()
@@ -144,18 +139,26 @@ class ConnectionsListViewModel(
         }
     }
 
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (data == null || resultCode != Activity.RESULT_OK) return
-        val listItem = listItemsValues.find { it.guid == data.getStringExtra(KEY_GUID) } ?: return
-        when (requestCode) {
-            RENAME_REQUEST_CODE -> {
-                onUserRenamedConnection(
-                    listItem = listItem,
-                    newConnectionName = data.getStringExtra(KEY_NAME) ?: return
-                )
+    fun onEditNameResult(data: Bundle) {
+        val listItem = listItemsValues.find { it.guid == data.guid } ?: return
+        val newConnectionName = data.getString(KEY_NAME) ?: return
+        val itemIndex = listItemsValues.indexOf(listItem)
+        if (listItem.name != newConnectionName && newConnectionName.isNotEmpty()) {
+            connectionsRepository.getByGuid(listItem.guid)?.let { connection ->
+                connectionsRepository.updateNameAndSave(connection, newConnectionName)
+                listItems.value?.get(itemIndex)?.name = newConnectionName
+                updateListItemEvent.postValue(listItem)
             }
-            DELETE_REQUEST_CODE -> onUserConfirmedDeleteConnection(listItem = listItem)
         }
+    }
+
+    fun onDeleteItemResult(guid: GUID) {
+        val listItem = listItemsValues.find { it.guid == guid } ?: return
+        connectionsRepository.getByGuid(listItem.guid)?.let { connection ->
+            sendRevokeRequestForConnections(listOf(connection))
+        }
+        deleteConnectionsAndKeys(listItem.guid)
+        updateViewsContent()
     }
 
     fun onViewClick(viewId: Int) {
@@ -246,25 +249,6 @@ class ConnectionsListViewModel(
                 rsaPrivateKey = connectionsAndKeys[it.connectionId]?.key
             )
         }
-    }
-
-    private fun onUserRenamedConnection(listItem: ConnectionItemViewModel, newConnectionName: String) {
-        val itemIndex = listItemsValues.indexOf(listItem)
-        if (listItem.name != newConnectionName && newConnectionName.isNotEmpty()) {
-            connectionsRepository.getByGuid(listItem.guid)?.let { connection ->
-                connectionsRepository.updateNameAndSave(connection, newConnectionName)
-                listItems.value?.get(itemIndex)?.name = newConnectionName
-                updateListItemEvent.postValue(listItem)
-            }
-        }
-    }
-
-    private fun onUserConfirmedDeleteConnection(listItem: ConnectionItemViewModel) {
-        connectionsRepository.getByGuid(listItem.guid)?.let { connection ->
-            sendRevokeRequestForConnections(listOf(connection))
-        }
-        deleteConnectionsAndKeys(listItem.guid)
-        updateViewsContent()
     }
 
     private fun updateViewsContent() {
