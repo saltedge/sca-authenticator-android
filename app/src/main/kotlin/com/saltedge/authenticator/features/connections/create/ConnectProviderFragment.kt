@@ -62,9 +62,6 @@ class ConnectProviderFragment : BaseFragment(),
     private val webViewClient = ConnectWebClient(contract = this)
     private lateinit var binding: ConnectProviderBinding
     private var alertDialog: AlertDialog? = null
-    private val safeArgs: ConnectProviderFragmentArgs by navArgs()
-    private val guid: String
-        get() = safeArgs.guid
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -170,7 +167,6 @@ class ConnectProviderFragment : BaseFragment(),
         viewModel.setInitialData(
             initialConnectData = arguments?.getSerializable(KEY_DATA) as? ConnectAppLinkData,
             connectionGuid = arguments?.guid
-//            guid
         )
     }
 

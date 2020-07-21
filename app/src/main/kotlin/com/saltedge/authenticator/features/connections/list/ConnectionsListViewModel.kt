@@ -80,7 +80,7 @@ class ConnectionsListViewModel(
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onListItemClickEvent = MutableLiveData<ViewModelEvent<MenuData>>()
     val onSupportClickEvent = MutableLiveData<ViewModelEvent<String?>>()
-    val onReconnectClickEvent = MutableLiveData<ViewModelEvent<String>>()
+    val onReconnectClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onRenameClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onDeleteClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onViewConsentsClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
@@ -114,7 +114,8 @@ class ConnectionsListViewModel(
     override fun onMenuItemClick(menuId: Int, itemId: Int) {
         val item = listItemsValues.getOrNull(menuId) ?: return
         when (PopupMenuItem.values()[itemId]) {
-            PopupMenuItem.RECONNECT -> onReconnectClickEvent.postValue(ViewModelEvent(item.guid))
+            PopupMenuItem.RECONNECT -> onReconnectClickEvent.postValue(
+                ViewModelEvent(Bundle().apply { putString(KEY_GUID, item.guid) }))
             PopupMenuItem.RENAME -> {
                 connectionsRepository.getByGuid(item.guid)?.let { connection ->
                     onRenameClickEvent.postValue(ViewModelEvent(Bundle().apply {

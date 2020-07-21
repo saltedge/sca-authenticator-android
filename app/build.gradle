@@ -25,7 +25,6 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 apply plugin: 'idea'
 apply plugin: 'realm-android'
-apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply from: './jacoco.gradle'
 apply from: './common-methods.gradle'
 

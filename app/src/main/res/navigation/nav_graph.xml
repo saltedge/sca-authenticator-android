@@ -90,7 +90,7 @@
             app:destination="@+id/deleteConnectionDialog" />
 
         <action
-            android:id="@+id/next_action"
+            android:id="@+id/connect_provider"
             app:destination="@+id/connectProviderFragment" />
     </fragment>
     <fragment
