@@ -31,6 +31,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.ViewModelsFactory
@@ -61,6 +62,9 @@ class ConnectProviderFragment : BaseFragment(),
     private val webViewClient = ConnectWebClient(contract = this)
     private lateinit var binding: ConnectProviderBinding
     private var alertDialog: AlertDialog? = null
+    private val safeArgs: ConnectProviderFragmentArgs by navArgs()
+    private val guid: String
+        get() = safeArgs.guid
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,7 +135,7 @@ class ConnectProviderFragment : BaseFragment(),
         lifecycle.addObserver(viewModel)
 
         viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it.getContentIfNotHandled()?.let { activity?.finishFragment() }
+            it.getContentIfNotHandled()?.let { activity?.finishFragment() } //
         })
         viewModel.onShowErrorEvent.observe(this, Observer<ViewModelEvent<String>> {
             it.getContentIfNotHandled()?.let { message ->
@@ -166,6 +170,7 @@ class ConnectProviderFragment : BaseFragment(),
         viewModel.setInitialData(
             initialConnectData = arguments?.getSerializable(KEY_DATA) as? ConnectAppLinkData,
             connectionGuid = arguments?.guid
+//            guid
         )
     }
 

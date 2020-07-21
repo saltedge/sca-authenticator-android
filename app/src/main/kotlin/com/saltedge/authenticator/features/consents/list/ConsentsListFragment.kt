@@ -30,17 +30,15 @@ import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.CONSENT_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.ConsentsListBinding
-import com.saltedge.authenticator.features.consents.details.ConsentDetailsFragment
 import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.tools.addFragment
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.loadRoundedImage
 import com.saltedge.authenticator.tools.stopRefresh
@@ -107,10 +105,7 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
         })
         viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                ConsentDetailsFragment.newInstance(bundle).also {
-                    it.setTargetFragment(this, CONSENT_REQUEST_CODE)
-                    activity?.addFragment(it)
-                }
+                findNavController().navigate(R.id.consent_details, bundle)
             }
         })
         viewModel.onConsentRemovedEvent.observe(this, Observer<ViewModelEvent<String>> { event ->

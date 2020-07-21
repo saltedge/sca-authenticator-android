@@ -99,8 +99,6 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
         viewModel = ViewModelProvider(this, viewModelFactory).get(SelectConnectionsViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
-        viewModel.setInitialData(arguments?.getSerializable(KEY_CONNECTIONS) as List<ConnectionItemViewModel>)
-
         viewModel.listItems.observe(this, Observer<List<ConnectionItemViewModel>> {
             headerDecorator?.setHeaderForAllItems(it.count())
             headerDecorator?.footerPositions = arrayOf(it.count() - 1)
@@ -122,6 +120,8 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
             targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, resultIntent)
             activity?.finishFragment()
         })
+
+        viewModel.setInitialData(arguments?.getSerializable(KEY_CONNECTIONS) as List<ConnectionItemViewModel>)
     }
 
     companion object {

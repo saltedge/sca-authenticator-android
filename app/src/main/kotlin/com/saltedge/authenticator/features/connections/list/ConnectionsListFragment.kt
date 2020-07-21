@@ -30,19 +30,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.DELETE_REQUEST_CODE
-import com.saltedge.authenticator.app.RENAME_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.ConnectionsListBinding
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
-import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
-import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
-import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
 import com.saltedge.authenticator.features.connections.list.menu.MenuData
 import com.saltedge.authenticator.features.connections.list.menu.PopupMenuBuilder
-import com.saltedge.authenticator.features.consents.list.ConsentsListFragment
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -135,19 +130,12 @@ class ConnectionsListFragment : BaseFragment(),
         })
         viewModel.onRenameClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                dialogFragment = EditConnectionNameDialog.newInstance(bundle).also {
-                    it.setTargetFragment(this, RENAME_REQUEST_CODE)
-                    activity?.showDialogFragment(it)
-                }
-
+                findNavController().navigate(R.id.edit_connection_name_dialog, bundle) //TODO: RENAME_REQUEST_CODE https://stackoverflow.com/questions/50754523/how-to-get-a-result-from-fragment-using-navigation-architecture-component
             }
         })
         viewModel.onDeleteClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                dialogFragment = DeleteConnectionDialog.newInstance(bundle).also {
-                    it.setTargetFragment(this, DELETE_REQUEST_CODE)
-                    activity?.showDialogFragment(it)
-                }
+                findNavController().navigate(R.id.delete_connection_dialog, bundle) //TODO: DELETE_REQUEST_CODE https://stackoverflow.com/questions/50754523/how-to-get-a-result-from-fragment-using-navigation-architecture-component
             }
         })
         viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<MenuData>> { event ->
@@ -155,12 +143,12 @@ class ConnectionsListFragment : BaseFragment(),
         })
         viewModel.onReconnectClickEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
             event.getContentIfNotHandled()?.let {
-                activity?.addFragment(ConnectProviderFragment.newInstance(connectionGuid = it))
+                findNavController().navigate(ConnectionsListFragmentDirections.nextAction(it))
             }
         })
         viewModel.onViewConsentsClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                activity?.addFragment(ConsentsListFragment.newInstance(bundle))
+                findNavController().navigate(R.id.consents_list, bundle)
             }
         })
         viewModel.onSupportClickEvent.observe(this, Observer<ViewModelEvent<String?>> { event ->

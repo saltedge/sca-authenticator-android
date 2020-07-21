@@ -27,14 +27,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.findNavController
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.MainActivityBinding
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
-import com.saltedge.authenticator.features.actions.SubmitActionFragment
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
-import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
 import com.saltedge.authenticator.interfaces.*
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.security.LockableActivity
@@ -53,17 +51,6 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
         this.updateScreenshotLocking()
         authenticatorApp?.appComponent?.inject(this)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
-
-        val host: NavHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment? ?: return
-
-        // Set up Action Bar
-        val navController = host.navController
-
-//        appBarConfiguration = AppBarConfiguration(navController.graph)
-
-
         setupViewModel()
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
     }
@@ -119,6 +106,11 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
         viewModel.onRestartActivityEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { super.restartLockableActivity() }
         })
+        viewModel.onShowAuthorizationsListEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let {
+                findNavController(R.id.nav_host_fragment).navigate(R.id.authorizationsListFragment)
+            }
+        })
         viewModel.onShowAuthorizationDetailsEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { authorizationIdentifier ->
                 this.addFragment(
@@ -144,18 +136,12 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
         })
         viewModel.onShowConnectEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { connectAppLinkData ->
-                this.addFragment(
-                    fragment = ConnectProviderFragment.newInstance(connectAppLinkData = connectAppLinkData),
-                    animateTransition = false
-                )
+                findNavController(R.id.nav_host_fragment).navigate(R.id.connectProviderFragment, connectAppLinkData)
             }
         })
         viewModel.onShowSubmitActionEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { actionAppLinkData ->
-                this.addFragment(
-                    fragment = SubmitActionFragment.newInstance(actionAppLinkData = actionAppLinkData),
-                    animateTransition = false
-                )
+                findNavController(R.id.nav_host_fragment).navigate(R.id.submitActionFragment, actionAppLinkData)
             }
         })
         viewModel.onQrScanClickEvent.observe(this, Observer { event ->

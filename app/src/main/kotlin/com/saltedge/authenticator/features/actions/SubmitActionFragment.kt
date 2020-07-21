@@ -31,18 +31,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.CONNECTIONS_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.SubmitActionBinding
-import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
-import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment
 import com.saltedge.authenticator.features.main.newAuthorizationListener
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.tools.addFragment
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.finishFragment
 import com.saltedge.authenticator.tools.showWarningDialog
@@ -138,11 +135,8 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
         viewModel.mainActionTextResId.observe(this, Observer<Int> { mainActionTextResId ->
             completeView?.setMainActionText(mainActionTextResId)
         })
-        viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<List<ConnectionItemViewModel>> { list ->
-            SelectConnectionsFragment.newInstance(connections = list).also {
-                it.setTargetFragment(this, CONNECTIONS_REQUEST_CODE)
-                activity?.addFragment(fragment = it, animateTransition = false)
-            }
+        viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<Bundle> { bundle ->
+            findNavController().navigate(R.id.select_connections, bundle) //TODO: CONNECTIONS_REQUEST_CODE https://stackoverflow.com/questions/50754523/how-to-get-a-result-from-fragment-using-navigation-architecture-component
         })
     }
 

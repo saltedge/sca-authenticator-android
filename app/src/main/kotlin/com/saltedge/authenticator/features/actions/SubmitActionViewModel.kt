@@ -25,6 +25,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
@@ -32,8 +33,8 @@ import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CONNECTIONS_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_CONNECTION_GUID
-import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.list.convertConnectionsToViewModels
+import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
@@ -61,7 +62,7 @@ class SubmitActionViewModel(
     val onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowErrorEvent = MutableLiveData<ViewModelEvent<String>>()
     val onOpenLinkEvent = MutableLiveData<ViewModelEvent<Uri>>()
-    val showConnectionsSelectorFragmentEvent = MutableLiveData<List<ConnectionItemViewModel>>()
+    val showConnectionsSelectorFragmentEvent = MutableLiveData<Bundle>()
     val setResultAuthorizationIdentifier = MutableLiveData<AuthorizationIdentifier>()
     val iconResId: MutableLiveData<Int> = MutableLiveData(R.drawable.ic_status_error)
     val completeTitleResId: MutableLiveData<Int> = MutableLiveData(R.string.action_error_title)
@@ -109,7 +110,9 @@ class SubmitActionViewModel(
                     context = appContext
                 )
                 viewMode = ViewMode.SELECT
-                showConnectionsSelectorFragmentEvent.postValue(result)
+                showConnectionsSelectorFragmentEvent.postValue(Bundle().apply {
+                    putSerializable(SelectConnectionsFragment.KEY_CONNECTIONS, ArrayList(result))
+                })
             }
         }
     }
