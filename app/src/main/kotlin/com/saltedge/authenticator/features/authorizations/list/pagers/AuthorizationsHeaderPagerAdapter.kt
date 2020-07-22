@@ -49,7 +49,7 @@ class AuthorizationsHeaderPagerAdapter(
         timer = Timer()
         timer.schedule(object : TimerTask() {
             override fun run() {
-                timerUpdateListeners.iterator().forEach { it.onTimeUpdate() }
+                HashSet(timerUpdateListeners).iterator().forEach { it.onTimeUpdate() }
             }
         }, 0, TIME_VIEW_UPDATE_TIMEOUT)
     }
