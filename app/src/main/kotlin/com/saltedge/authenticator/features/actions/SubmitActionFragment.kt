@@ -87,8 +87,8 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
         super.onViewCreated(view, savedInstanceState)
         completeView?.setClickListener(View.OnClickListener { v -> viewModel.onViewClick(v.id) })
         viewModel.onViewCreated()
-        sharedViewModel.onShowConnectionSelector.observe(viewLifecycleOwner, Observer<Bundle> { result ->
-            viewModel.showConnectionSelector(result)
+        sharedViewModel.onShowConnectionSelector.observe(viewLifecycleOwner, Observer<Bundle> { bundle ->
+            viewModel.showConnectionSelector(bundle)
         })
     }
 

@@ -109,7 +109,7 @@ class SubmitActionViewModel(
                     context = appContext
                 )
                 viewMode = ViewMode.SELECT
-                showConnectionsSelectorFragmentEvent.postValue(dataBundle(result)) //ArrayList(result)
+                showConnectionsSelectorFragmentEvent.postValue(dataBundle(result))
             }
         }
     }

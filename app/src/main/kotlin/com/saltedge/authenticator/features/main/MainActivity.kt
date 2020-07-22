@@ -87,7 +87,7 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
 
     override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView
 
-    override fun getSnackbarAnchorView(): View? = null
+    override fun getSnackbarAnchorView(): View? = null //TODO: Display snackbar relative to nav_host_fragment
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainActivityViewModel::class.java)

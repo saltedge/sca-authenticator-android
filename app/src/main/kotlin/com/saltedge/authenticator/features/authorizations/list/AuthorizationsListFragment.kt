@@ -180,8 +180,8 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         pagersScrollSynchronizer.initViews(headerViewPager, contentViewPager)
         emptyView?.setActionOnClickListener(View.OnClickListener { viewModel.onEmptyViewActionClick() })
 
-        sharedViewModel.menuItemClicked.observe(viewLifecycleOwner, Observer<Bundle> { result ->
-            viewModel.onItemMenuClicked(result)
+        sharedViewModel.menuItemClicked.observe(viewLifecycleOwner, Observer<Bundle> { bundle ->
+            viewModel.onItemMenuClicked(bundle)
         })
     }
 }
