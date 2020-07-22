@@ -16,6 +16,10 @@
         <action
             android:id="@+id/connections_list"
             app:destination="@+id/connectionsListFragment" />
+
+        <action
+            android:id="@+id/bottom_menu_dialog"
+            app:destination="@+id/bottomMenuDialog" />
     </fragment>
 
     <fragment
@@ -149,4 +153,8 @@
         android:id="@+id/deleteConnectionDialog"
         android:name="com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog"
         android:label="DeleteConnectionDialog" />
+    <dialog
+        android:id="@+id/bottomMenuDialog"
+        android:name="com.saltedge.authenticator.features.menu.BottomMenuDialog"
+        android:label="BottomMenuDialog" />
 </navigation>

@@ -70,7 +70,7 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
      * Redirect back press events to fragments in container
      */
     override fun onBackPressed() {
-        val onBackPressListener = currentFragmentInContainer() as? OnBackPressListener
+        val onBackPressListener = currentFragmentOnTop() as? OnBackPressListener
         if (onBackPressListener?.onBackPress() != true) super.onBackPressed()
     }
 
@@ -78,7 +78,7 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
      * on security lock of Activity ask current Fragment to close all active dialogs
      */
     override fun onLockActivity() {
-        (currentFragmentInContainer() as? DialogHandlerListener)?.closeActiveDialogs()
+        (currentFragmentOnTop() as? DialogHandlerListener)?.closeActiveDialogs()
     }
 
     override fun onUnlockActivity() {
@@ -98,7 +98,7 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
 
         viewModel.onAppbarMenuItemClickEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
-                (this.currentFragmentInContainer() as? AppbarMenuItemClickListener)?.onAppbarMenuItemClick(it)
+                (this.currentFragmentOnTop() as? AppbarMenuItemClickListener)?.onAppbarMenuItemClick(it)
             }
         })
         viewModel.onBackActionClickEvent.observe(this, Observer { event ->

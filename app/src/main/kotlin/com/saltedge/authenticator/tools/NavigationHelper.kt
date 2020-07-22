@@ -26,6 +26,7 @@ import android.net.Uri
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.navigation.fragment.NavHostFragment
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.qr.QrScannerActivity
@@ -38,9 +39,10 @@ import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
  * @receiver app compat activity
  * @return fragment object which is in the container
  */
-fun FragmentActivity.currentFragmentInContainer(): Fragment? {
+fun FragmentActivity.currentFragmentOnTop(): Fragment? {
     try {
-        return supportFragmentManager.findFragmentById(R.id.container)
+        val host = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        return host.childFragmentManager.fragments.getOrNull(0)
     } catch (ignored: IllegalStateException) {
     } catch (e: Exception) {
         e.log()

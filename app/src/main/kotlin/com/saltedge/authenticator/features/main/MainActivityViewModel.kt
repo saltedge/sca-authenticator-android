@@ -120,7 +120,7 @@ class MainActivityViewModel(
                 )
                 onShowAuthorizationDetailsEvent.postValue(
                     ViewModelEvent(Bundle().apply {
-                        putSerializable(KEY_ID, authorizationIdentifier) //TODO: to verify the correctness
+                        putSerializable(KEY_ID, authorizationIdentifier)
                     })
                 )
             }

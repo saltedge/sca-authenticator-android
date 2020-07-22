@@ -20,19 +20,18 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.MORE_MENU_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.cloud.clearNotifications
 import com.saltedge.authenticator.databinding.AuthorizationsListBinding
@@ -40,7 +39,7 @@ import com.saltedge.authenticator.features.authorizations.common.AuthorizationIt
 import com.saltedge.authenticator.features.authorizations.list.pagers.AuthorizationsContentPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.pagers.AuthorizationsHeaderPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.pagers.PagersScrollSynchronizer
-import com.saltedge.authenticator.features.menu.BottomMenuDialog
+import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.interfaces.AppbarMenuItemClickListener
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.MenuItem
@@ -59,6 +58,7 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
     private var headerAdapter: AuthorizationsHeaderPagerAdapter? = null
     private var contentAdapter: AuthorizationsContentPagerAdapter? = null
     private var dialogFragment: DialogFragment? = null
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,10 +107,6 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         super.onStop()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        viewModel.onActivityResult(requestCode, resultCode, data)
-    }
-
     override fun onAppbarMenuItemClick(menuItem: MenuItem) {
         viewModel.onAppbarMenuItemClick(menuItem)
     }
@@ -145,20 +141,17 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         })
         viewModel.onMoreMenuClickEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { menuItems ->
-                dialogFragment = BottomMenuDialog.newInstance(menuItems = menuItems).also {
-                    it.setTargetFragment(this, MORE_MENU_REQUEST_CODE)
-                    activity?.showDialogFragment(it)
-                }
+                findNavController().navigate(R.id.bottom_menu_dialog, menuItems)
             }
         })
         viewModel.onShowConnectionsListEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
-                findNavController().navigate(R.id.settings_list)
+                findNavController().navigate(R.id.connections_list)
             }
         })
         viewModel.onShowSettingsListEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
-                findNavController().navigate(R.id.connections_list)
+                findNavController().navigate(R.id.settings_list)
             }
         })
         viewModel.emptyViewImage.observe(this, Observer<ResId> {
@@ -186,5 +179,9 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         }
         pagersScrollSynchronizer.initViews(headerViewPager, contentViewPager)
         emptyView?.setActionOnClickListener(View.OnClickListener { viewModel.onEmptyViewActionClick() })
+
+        sharedViewModel.menuItemClicked.observe(viewLifecycleOwner, Observer<Bundle> { result ->
+            viewModel.onItemMenuClicked(result)
+        })
     }
 }

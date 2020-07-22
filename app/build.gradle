@@ -95,8 +95,12 @@ android {
         }
     }
 
-    buildFeatures{
-        dataBinding = true
+//    buildFeatures{
+//        dataBinding = true
+//    }
+
+    dataBinding {
+        enabled = true
     }
 
     sourceSets {
