@@ -29,12 +29,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.SubmitActionBinding
+import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.features.main.newAuthorizationListener
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -52,6 +54,7 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
     private lateinit var viewModel: SubmitActionViewModel
     private lateinit var binding: SubmitActionBinding
     private var alertDialog: AlertDialog? = null
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,14 +86,13 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
         super.onViewCreated(view, savedInstanceState)
         completeView?.setClickListener(View.OnClickListener { v -> viewModel.onViewClick(v.id) })
         viewModel.onViewCreated()
+        sharedViewModel.onShowConnectionSelector.observe(viewLifecycleOwner, Observer<Bundle> { result ->
+            viewModel.showConnectionSelector(result)
+        })
     }
 
     override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
         viewModel.onDialogActionIdClick(dialogActionId)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        viewModel.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun closeActiveDialogs() {
@@ -135,7 +137,7 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
             completeView?.setMainActionText(mainActionTextResId)
         })
         viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<Bundle> { bundle ->
-            findNavController().navigate(R.id.select_connections, bundle) //TODO: CONNECTIONS_REQUEST_CODE https://stackoverflow.com/questions/50754523/how-to-get-a-result-from-fragment-using-navigation-architecture-component
+            findNavController().navigate(R.id.select_connections, bundle)
         })
     }
 

@@ -31,10 +31,9 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.CONNECTIONS_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_CONNECTION_GUID
 import com.saltedge.authenticator.features.connections.list.convertConnectionsToViewModels
-import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment
+import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment.Companion.dataBundle
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
@@ -110,16 +109,14 @@ class SubmitActionViewModel(
                     context = appContext
                 )
                 viewMode = ViewMode.SELECT
-                showConnectionsSelectorFragmentEvent.postValue(Bundle().apply {
-                    putSerializable(SelectConnectionsFragment.KEY_CONNECTIONS, ArrayList(result))
-                })
+                showConnectionsSelectorFragmentEvent.postValue(dataBundle(result)) //ArrayList(result)
             }
         }
     }
 
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val connectionGuid = data?.getStringExtra(KEY_CONNECTION_GUID)
-        if (requestCode == CONNECTIONS_REQUEST_CODE && resultCode == Activity.RESULT_OK && connectionGuid != null) {
+    fun showConnectionSelector(data: Bundle?) {
+        val connectionGuid = data?.getString(KEY_CONNECTION_GUID)
+        if (connectionGuid != null) {
             this.connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
                 keyStoreManager.createConnectionAndKeyModel(it)
             }
