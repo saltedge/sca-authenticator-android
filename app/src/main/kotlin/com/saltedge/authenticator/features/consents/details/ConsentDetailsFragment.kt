@@ -112,18 +112,4 @@ class ConsentDetailsFragment : BaseFragment() {
             backActionImageResId = R.drawable.ic_appbar_action_back
         )
     }
-
-    companion object {
-        /**
-         * Create new instance of ConsentDetailsFragment
-         *
-         * @param bundle of params
-         * @return ConsentDetailsFragment
-         */
-        fun newInstance(
-            bundle: Bundle
-        ): ConsentDetailsFragment {
-            return ConsentDetailsFragment().apply { arguments = bundle }
-        }
-    }
 }

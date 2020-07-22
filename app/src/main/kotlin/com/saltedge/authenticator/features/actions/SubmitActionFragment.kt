@@ -34,6 +34,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.KEY_ACTION_DEEP_LINK_DATA
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.SubmitActionBinding
 import com.saltedge.authenticator.features.main.SharedViewModel
@@ -139,17 +140,5 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
         viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<Bundle> { bundle ->
             findNavController().navigate(R.id.select_connections, bundle)
         })
-    }
-
-    companion object {
-        const val KEY_ACTION_DEEP_LINK_DATA = "ACTION_DEEP_LINK_DATA"
-
-        fun newInstance(actionAppLinkData: ActionAppLinkData): SubmitActionFragment {
-            return SubmitActionFragment().apply {
-                arguments = Bundle().apply {
-                    putSerializable(KEY_ACTION_DEEP_LINK_DATA, actionAppLinkData)
-                }
-            }
-        }
     }
 }

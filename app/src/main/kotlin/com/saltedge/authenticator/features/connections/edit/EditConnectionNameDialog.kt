@@ -99,8 +99,5 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
                     this.putString(KEY_NAME, name)
                 }
         }
-
-        fun newInstance(bundle: Bundle): EditConnectionNameDialog =
-            EditConnectionNameDialog().apply { arguments = bundle }
     }
 }

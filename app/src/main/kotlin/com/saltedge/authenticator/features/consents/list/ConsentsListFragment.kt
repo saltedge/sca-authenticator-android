@@ -147,9 +147,5 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
                 )
             }
         }
-
-        fun newInstance(bundle: Bundle): ConsentsListFragment {
-            return ConsentsListFragment().apply { arguments = bundle }
-        }
     }
 }

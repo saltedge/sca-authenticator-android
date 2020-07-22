@@ -27,9 +27,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.KEY_ACTION_DEEP_LINK_DATA
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
-import com.saltedge.authenticator.features.actions.SubmitActionFragment.Companion.KEY_ACTION_DEEP_LINK_DATA
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent

@@ -63,14 +63,4 @@ class DeleteConnectionDialog : DialogFragment(),
     override fun returnSuccessResult(guid: GUID) {
         sharedViewModel.onConnectionDeleted(guid)
     }
-
-    companion object {
-        fun newInstance(connectionGuid: String?): DeleteConnectionDialog =
-            DeleteConnectionDialog().apply {
-                arguments = Bundle().apply { guid = connectionGuid }
-            }
-
-        fun newInstance(bundle: Bundle): DeleteConnectionDialog =
-            DeleteConnectionDialog().apply { arguments = bundle }
-    }
 }

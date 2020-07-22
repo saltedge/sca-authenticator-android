@@ -33,7 +33,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.ConnectProviderBinding
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
@@ -41,7 +40,6 @@ import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.model.ConnectionID
-import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.Token
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import com.saltedge.authenticator.sdk.web.ConnectWebClient
@@ -168,19 +166,5 @@ class ConnectProviderFragment : BaseFragment(),
             initialConnectData = arguments?.getSerializable(KEY_DATA) as? ConnectAppLinkData,
             connectionGuid = arguments?.guid
         )
-    }
-
-    companion object {
-        fun newInstance(connectAppLinkData: ConnectAppLinkData): ConnectProviderFragment {
-            return ConnectProviderFragment().apply {
-                arguments = Bundle().apply { putSerializable(KEY_DATA, connectAppLinkData) }
-            }
-        }
-
-        fun newInstance(connectionGuid: GUID): ConnectProviderFragment {
-            return ConnectProviderFragment().apply {
-                arguments = Bundle().apply { putString(KEY_GUID, connectionGuid) }
-            }
-        }
     }
 }
