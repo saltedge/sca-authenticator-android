@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.connections.list
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +27,7 @@ import android.view.ViewGroup
 import android.widget.PopupWindow
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -38,9 +38,11 @@ import com.saltedge.authenticator.databinding.ConnectionsListBinding
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.list.menu.MenuData
 import com.saltedge.authenticator.features.connections.list.menu.PopupMenuBuilder
+import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
@@ -59,6 +61,7 @@ class ConnectionsListFragment : BaseFragment(),
     private var headerDecorator: SpaceItemDecoration? = null
     private var popupWindow: PopupWindow? = null
     private var dialogFragment: DialogFragment? = null
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,11 +92,6 @@ class ConnectionsListFragment : BaseFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        viewModel.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onClick(v: View?) {
@@ -130,12 +128,12 @@ class ConnectionsListFragment : BaseFragment(),
         })
         viewModel.onRenameClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                findNavController().navigate(R.id.edit_connection_name_dialog, bundle) //TODO: RENAME_REQUEST_CODE https://stackoverflow.com/questions/50754523/how-to-get-a-result-from-fragment-using-navigation-architecture-component
+                findNavController().navigate(R.id.edit_connection_name_dialog, bundle)
             }
         })
         viewModel.onDeleteClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                findNavController().navigate(R.id.delete_connection_dialog, bundle) //TODO: DELETE_REQUEST_CODE https://stackoverflow.com/questions/50754523/how-to-get-a-result-from-fragment-using-navigation-architecture-component
+                findNavController().navigate(R.id.delete_connection_dialog, bundle)
             }
         })
         viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<MenuData>> { event ->
@@ -176,6 +174,12 @@ class ConnectionsListFragment : BaseFragment(),
         }
         swipeRefreshLayout?.setColorSchemeResources(R.color.primary, R.color.red, R.color.green)
         binding.executePendingBindings()
+        sharedViewModel.newConnectionNameEntered.observe(viewLifecycleOwner, Observer<Bundle> { result ->
+            viewModel.onEditNameResult(result)
+        })
+        sharedViewModel.connectionDeleted.observe(viewLifecycleOwner, Observer<GUID> { result ->
+            viewModel.onDeleteItemResult(result)
+        })
     }
 
     private fun showPopupMenu(menuData: MenuData): PopupWindow? {

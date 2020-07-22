@@ -20,23 +20,23 @@
  */
 package com.saltedge.authenticator.features.connections.delete
 
-import android.app.Activity
 import android.app.Dialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_GUID
+import com.saltedge.authenticator.features.main.SharedViewModel
+import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.tools.guid
 
-class DeleteConnectionDialog :
-    DialogFragment(),
+class DeleteConnectionDialog : DialogFragment(),
     DeleteConnectionContract.View,
     DialogInterface.OnClickListener
 {
     private var presenter = DeleteConnectionPresenter(viewContract = this)
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,14 +60,14 @@ class DeleteConnectionDialog :
         dismiss()
     }
 
-    override fun setResultOk(resultIntent: Intent) {
-        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, resultIntent)
+    override fun returnSuccessResult(guid: GUID) {
+        sharedViewModel.onConnectionDeleted(guid)
     }
 
     companion object {
         fun newInstance(connectionGuid: String?): DeleteConnectionDialog =
             DeleteConnectionDialog().apply {
-                arguments = Bundle().apply { putString(KEY_GUID, connectionGuid) }
+                arguments = Bundle().apply { guid = connectionGuid }
             }
 
         fun newInstance(bundle: Bundle): DeleteConnectionDialog =

@@ -41,8 +41,8 @@ import com.saltedge.authenticator.widget.security.UnlockAppInputView
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContainer
-{
+class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContainer {
+
     override lateinit var viewModel: MainActivityViewModel
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var binding: MainActivityBinding
