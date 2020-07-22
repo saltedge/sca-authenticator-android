@@ -20,12 +20,12 @@
  */
 package com.saltedge.authenticator.features.connections.delete
 
-import android.content.Intent
+import com.saltedge.authenticator.sdk.model.GUID
 
 interface DeleteConnectionContract {
 
     interface View {
         fun dismissView()
-        fun setResultOk(resultIntent: Intent)
+        fun returnSuccessResult(guid: GUID)
     }
 }

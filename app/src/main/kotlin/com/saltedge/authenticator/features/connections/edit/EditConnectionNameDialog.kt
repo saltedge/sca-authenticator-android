@@ -20,10 +20,8 @@
  */
 package com.saltedge.authenticator.features.connections.edit
 
-import android.app.Activity
 import android.app.Dialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.WindowManager
@@ -32,8 +30,9 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_GUID
+import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.sdk.constants.KEY_NAME
 import com.saltedge.authenticator.tools.getEnabledStateColorResId
 import com.saltedge.authenticator.tools.guid
@@ -44,9 +43,10 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
 
     private var inputView: EditText? = null
     private var positiveButton: Button? = null
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val adb = AlertDialog.Builder(activity!!, R.style.InfoDialogTheme)
+        val adb = AlertDialog.Builder(requireActivity(), R.style.InfoDialogTheme)
             .setTitle(R.string.ui_dialog_rename_title)
             .setPositiveButton(android.R.string.ok, this)
             .setNegativeButton(R.string.actions_cancel, this)
@@ -82,11 +82,7 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
         val inputValue = inputView?.text?.toString() ?: return
         if (inputValue.isNotEmpty()) {
             dismissDialog()
-            targetFragment?.onActivityResult(
-                targetRequestCode,
-                Activity.RESULT_OK,
-                Intent().putExtra(KEY_GUID, arguments?.guid).putExtra(KEY_NAME, inputValue)
-            )
+            sharedViewModel.onNewConnectionNameEntered(dataBundle(arguments?.guid  ?: "", inputValue))
         }
     }
 
@@ -96,11 +92,13 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
     }
 
     companion object {
-        fun newInstance(guid: String, name: String): EditConnectionNameDialog =
-            newInstance(Bundle()
-                .apply { putString(KEY_GUID, guid) }
-                .apply { putString(KEY_NAME, name) }
-            )
+        fun dataBundle(guid: String, name: String): Bundle {
+            return Bundle()
+                .apply {
+                    this.guid = guid
+                    this.putString(KEY_NAME, name)
+                }
+        }
 
         fun newInstance(bundle: Bundle): EditConnectionNameDialog =
             EditConnectionNameDialog().apply { arguments = bundle }

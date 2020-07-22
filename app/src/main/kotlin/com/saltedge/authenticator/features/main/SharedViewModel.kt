@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +18,22 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.editName
+package com.saltedge.authenticator.features.main
 
-import com.saltedge.authenticator.app.KEY_GUID
-import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
-import com.saltedge.authenticator.sdk.constants.KEY_NAME
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
+import android.os.Bundle
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.saltedge.authenticator.sdk.model.GUID
 
-@RunWith(RobolectricTestRunner::class)
-class EditConnectionNameDialogTest {
+class SharedViewModel : ViewModel() {
+    val newConnectionNameEntered = MutableLiveData<Bundle>()
+    val connectionDeleted = MutableLiveData<GUID>()
 
-    @Test
-    @Throws(Exception::class)
-    fun dataBundleTest() {
-        val arguments = EditConnectionNameDialog.dataBundle(guid = "guid1", name = "Demobank")
+    fun onNewConnectionNameEntered(item: Bundle) {
+        newConnectionNameEntered.value = item
+    }
 
-        assertThat(arguments.getString(KEY_GUID), equalTo("guid1"))
-        assertThat(arguments.getString(KEY_NAME), equalTo("Demobank"))
+    fun onConnectionDeleted(guid: GUID) {
+        connectionDeleted.value = guid
     }
 }
