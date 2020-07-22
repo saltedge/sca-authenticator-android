@@ -41,7 +41,6 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.tools.authenticatorApp
-import com.saltedge.authenticator.tools.finishFragment
 import com.saltedge.authenticator.tools.showWarningDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_submit_action.*
@@ -108,7 +107,7 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
         )
 
         viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it.getContentIfNotHandled()?.let { activity?.finishFragment() }
+            it.getContentIfNotHandled()?.let { findNavController().popBackStack() }
         })
         viewModel.onShowErrorEvent.observe(this, Observer<ViewModelEvent<String>> {
             it.getContentIfNotHandled()?.let { message ->

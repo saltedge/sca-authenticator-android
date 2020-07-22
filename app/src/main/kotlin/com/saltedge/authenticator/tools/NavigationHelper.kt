@@ -64,20 +64,6 @@ fun FragmentActivity.showDialogFragment(dialog: DialogFragment) {
 }
 
 /**
- * Finish fragment
- *
- * @receiver fragment activity
- */
-fun FragmentActivity.finishFragment() {
-    try {
-        supportFragmentManager.popBackStack()
-    } catch (ignored: IllegalStateException) {
-    } catch (e: Exception) {
-        e.log()
-    }
-}
-
-/**
  * Show support mail
  *
  * @receiver fragment activity

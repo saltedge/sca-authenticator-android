@@ -114,10 +114,7 @@ class PasscodeEditFragment : BaseFragment(), DialogHandlerListener {
             }
         })
         viewModel.closeViewEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let {
-                findNavController().navigate(R.id.settings_list)
-//                findNavController().popBackStack(R.id.passcode_edit, true) TODO: https://developer.android.com/guide/navigation/navigation-navigate#pop-example
-            }
+            event.getContentIfNotHandled()?.let { findNavController().popBackStack() }
         })
     }
 }

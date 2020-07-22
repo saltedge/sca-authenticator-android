@@ -31,7 +31,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.navArgs
+import androidx.navigation.fragment.findNavController
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.ViewModelsFactory
@@ -132,7 +132,7 @@ class ConnectProviderFragment : BaseFragment(),
         lifecycle.addObserver(viewModel)
 
         viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it.getContentIfNotHandled()?.let { activity?.finishFragment() }
+            it.getContentIfNotHandled()?.let { findNavController().popBackStack() }
         })
         viewModel.onShowErrorEvent.observe(this, Observer<ViewModelEvent<String>> {
             it.getContentIfNotHandled()?.let { message ->

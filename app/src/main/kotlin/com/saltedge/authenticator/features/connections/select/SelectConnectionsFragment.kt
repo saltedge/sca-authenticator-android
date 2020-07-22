@@ -28,6 +28,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_CONNECTION_GUID
@@ -39,7 +40,6 @@ import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.tools.authenticatorApp
-import com.saltedge.authenticator.tools.finishFragment
 import com.saltedge.authenticator.tools.setVisible
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
@@ -118,7 +118,7 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
         viewModel.onProceedClickEvent.observe(this, Observer<GUID> { connectionGuid ->
             val resultIntent = Intent().putExtra(KEY_CONNECTION_GUID, connectionGuid)
             targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, resultIntent)
-            activity?.finishFragment()
+            findNavController().popBackStack()
         })
 
         viewModel.setInitialData(arguments?.getSerializable(KEY_CONNECTIONS) as List<ConnectionItemViewModel>)
