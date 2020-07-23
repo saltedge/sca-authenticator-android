@@ -36,6 +36,7 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
+import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
@@ -112,17 +113,12 @@ class SubmitActionViewModel(
         }
     }
 
-    fun showConnectionSelector(data: Bundle?) {
-        val connectionGuid = data?.getString(KEY_CONNECTION_GUID)
-        if (connectionGuid != null) {
-            this.connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
-                keyStoreManager.createConnectionAndKeyModel(it)
-            }
-            viewMode = if (connectionAndKey == null) ViewMode.ACTION_ERROR else ViewMode.START
-            onViewCreated()
-        } else {
-            onCloseEvent.postUnitEvent()
+    fun showConnectionSelector(connectionGuid: GUID) {
+        this.connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
+            keyStoreManager.createConnectionAndKeyModel(it)
         }
+        viewMode = if (connectionAndKey == null) ViewMode.ACTION_ERROR else ViewMode.START
+        onViewCreated()
     }
 
     fun onViewCreated() {

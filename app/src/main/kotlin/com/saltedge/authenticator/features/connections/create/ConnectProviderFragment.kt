@@ -32,6 +32,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.ConnectProviderBinding
@@ -60,6 +61,9 @@ class ConnectProviderFragment : BaseFragment(),
     private val webViewClient = ConnectWebClient(contract = this)
     private lateinit var binding: ConnectProviderBinding
     private var alertDialog: AlertDialog? = null
+    private val safeArgs: ConnectProviderFragmentArgs by navArgs()
+    private val guid: String
+        get() = safeArgs.guid
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -164,7 +168,7 @@ class ConnectProviderFragment : BaseFragment(),
 
         viewModel.setInitialData(
             initialConnectData = arguments?.getSerializable(KEY_DATA) as? ConnectAppLinkData,
-            connectionGuid = arguments?.guid
+            connectionGuid = guid
         )
     }
 }

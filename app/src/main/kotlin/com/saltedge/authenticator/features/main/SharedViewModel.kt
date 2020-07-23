@@ -29,7 +29,7 @@ class SharedViewModel : ViewModel() {
     val newConnectionNameEntered = MutableLiveData<Bundle>()
     val connectionDeleted = MutableLiveData<GUID>()
     val onBottomMenuItemSelected = MutableLiveData<Bundle>()
-    val onSelectConnection = MutableLiveData<Bundle>()
+    val onSelectConnection = MutableLiveData<GUID>()
 
     fun onNewConnectionNameEntered(item: Bundle) {
         newConnectionNameEntered.value = item
@@ -43,7 +43,7 @@ class SharedViewModel : ViewModel() {
         onBottomMenuItemSelected.value = menuItems
     }
 
-    fun onSelectConnection(item: Bundle) {
-        onSelectConnection.value = item
+    fun onSelectConnection(guid: GUID) {
+        onSelectConnection.value = guid
     }
 }

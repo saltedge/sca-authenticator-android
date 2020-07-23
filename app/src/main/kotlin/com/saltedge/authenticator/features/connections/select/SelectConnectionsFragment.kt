@@ -119,9 +119,7 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
             }
         })
         viewModel.onProceedClickEvent.observe(this, Observer<GUID> { connectionGuid ->
-            sharedViewModel.onSelectConnection(Bundle().apply {
-                putString(KEY_CONNECTION_GUID, connectionGuid)
-            })
+            sharedViewModel.onSelectConnection(connectionGuid)
             findNavController().popBackStack()
         })
 

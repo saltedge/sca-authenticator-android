@@ -131,17 +131,17 @@ class ConnectionsListFragment : BaseFragment(),
                 findNavController().navigate(R.id.edit_connection_name_dialog, bundle)
             }
         })
-        viewModel.onDeleteClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
-            event.getContentIfNotHandled()?.let { bundle ->
-                findNavController().navigate(R.id.delete_connection_dialog, bundle)
+        viewModel.onDeleteClickEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
+            event.getContentIfNotHandled()?.let { guid ->
+                findNavController().navigate(ConnectionsListFragmentDirections.deleteConnectionDialog(guid))
             }
         })
         viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<MenuData>> { event ->
             event.getContentIfNotHandled()?.let { data -> popupWindow = showPopupMenu(data) }
         })
-        viewModel.onReconnectClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
-            event.getContentIfNotHandled()?.let { bundle ->
-                findNavController().navigate(R.id.connect_provider, bundle)
+        viewModel.onReconnectClickEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
+            event.getContentIfNotHandled()?.let { guid ->
+                findNavController().navigate(ConnectionsListFragmentDirections.connectProvider(guid))
             }
         })
         viewModel.onViewConsentsClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
