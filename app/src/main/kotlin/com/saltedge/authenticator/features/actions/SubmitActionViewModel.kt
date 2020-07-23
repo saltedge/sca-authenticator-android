@@ -20,24 +20,23 @@
  */
 package com.saltedge.authenticator.features.actions
 
-import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.CONNECTIONS_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_CONNECTION_GUID
-import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.list.convertConnectionsToViewModels
+import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment.Companion.dataBundle
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
+import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
@@ -61,7 +60,7 @@ class SubmitActionViewModel(
     val onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowErrorEvent = MutableLiveData<ViewModelEvent<String>>()
     val onOpenLinkEvent = MutableLiveData<ViewModelEvent<Uri>>()
-    val showConnectionsSelectorFragmentEvent = MutableLiveData<List<ConnectionItemViewModel>>()
+    val showConnectionsSelectorFragmentEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val setResultAuthorizationIdentifier = MutableLiveData<AuthorizationIdentifier>()
     val iconResId: MutableLiveData<Int> = MutableLiveData(R.drawable.ic_status_error)
     val completeTitleResId: MutableLiveData<Int> = MutableLiveData(R.string.action_error_title)
@@ -109,22 +108,17 @@ class SubmitActionViewModel(
                     context = appContext
                 )
                 viewMode = ViewMode.SELECT
-                showConnectionsSelectorFragmentEvent.postValue(result)
+                showConnectionsSelectorFragmentEvent.postValue(ViewModelEvent(dataBundle(result)))
             }
         }
     }
 
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val connectionGuid = data?.getStringExtra(KEY_CONNECTION_GUID)
-        if (requestCode == CONNECTIONS_REQUEST_CODE && resultCode == Activity.RESULT_OK && connectionGuid != null) {
-            this.connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
-                keyStoreManager.createConnectionAndKeyModel(it)
-            }
-            viewMode = if (connectionAndKey == null) ViewMode.ACTION_ERROR else ViewMode.START
-            onViewCreated()
-        } else {
-            onCloseEvent.postUnitEvent()
+    fun showConnectionSelector(connectionGuid: GUID) {
+        this.connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
+            keyStoreManager.createConnectionAndKeyModel(it)
         }
+        viewMode = if (connectionAndKey == null) ViewMode.ACTION_ERROR else ViewMode.START
+        onViewCreated()
     }
 
     fun onViewCreated() {

@@ -24,24 +24,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.KEY_CLOSE_APP
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.app.applyNightMode
 import com.saltedge.authenticator.databinding.MainActivityBinding
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
-import com.saltedge.authenticator.features.actions.SubmitActionFragment
-import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
-import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
-import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
-import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
-import com.saltedge.authenticator.features.menu.BottomMenuDialog
-import com.saltedge.authenticator.features.menu.MenuItemSelectListener
-import com.saltedge.authenticator.features.settings.list.SettingsListFragment
 import com.saltedge.authenticator.interfaces.*
+import com.saltedge.authenticator.sdk.constants.KEY_TITLE
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.security.LockableActivity
 import com.saltedge.authenticator.widget.security.UnlockAppInputView
@@ -77,7 +70,7 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
      * Redirect back press events to fragments in container
      */
     override fun onBackPressed() {
-        val onBackPressListener = currentFragmentInContainer() as? OnBackPressListener
+        val onBackPressListener = currentFragmentOnTop() as? OnBackPressListener
         if (onBackPressListener?.onBackPress() != true) super.onBackPressed()
     }
 
@@ -85,7 +78,7 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
      * on security lock of Activity ask current Fragment to close all active dialogs
      */
     override fun onLockActivity() {
-        (currentFragmentInContainer() as? DialogHandlerListener)?.closeActiveDialogs()
+        (currentFragmentOnTop() as? DialogHandlerListener)?.closeActiveDialogs()
     }
 
     override fun onUnlockActivity() {
@@ -94,7 +87,7 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
 
     override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView
 
-    override fun getSnackbarAnchorView(): View? = container
+    override fun getSnackbarAnchorView(): View? = null //TODO: Display snackbar relative to navHostFragment
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainActivityViewModel::class.java)
@@ -105,7 +98,7 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
 
         viewModel.onAppbarMenuItemClickEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
-                (this.currentFragmentInContainer() as? AppbarMenuItemClickListener)?.onAppbarMenuItemClick(it)
+                (this.currentFragmentOnTop() as? AppbarMenuItemClickListener)?.onAppbarMenuItemClick(it)
             }
         })
         viewModel.onBackActionClickEvent.observe(this, Observer { event ->
@@ -116,46 +109,28 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
         })
         viewModel.onShowAuthorizationsListEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
-                this.replaceFragmentInContainer(AuthorizationsListFragment())
+                findNavController(R.id.navHostFragment).navigate(R.id.authorizationsListFragment)
             }
         })
         viewModel.onShowAuthorizationDetailsEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { authorizationIdentifier ->
-                this.addFragment(
-                    fragment = AuthorizationDetailsFragment.newInstance(
-                        identifier = authorizationIdentifier,
-                        closeAppOnBackPress = true
-                    ),
-                    animateTransition = true
-                )
+            event.getContentIfNotHandled()?.let { bundle ->
+                findNavController(R.id.navHostFragment).navigate(R.id.authorizationDetailsFragment, bundle)
             }
         })
+
         viewModel.onShowActionAuthorizationEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { authorizationIdentifier ->
-                this.addFragment(
-                    fragment = AuthorizationDetailsFragment.newInstance(
-                        identifier = authorizationIdentifier,
-                        closeAppOnBackPress = true,
-                        titleRes = R.string.action_new_action_title
-                    ),
-                    animateTransition = false
-                )
+            event.getContentIfNotHandled()?.let { bundle ->
+                findNavController(R.id.navHostFragment).navigate(R.id.authorizationDetailsFragment, bundle)
             }
         })
         viewModel.onShowConnectEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { connectAppLinkData ->
-                this.addFragment(
-                    fragment = ConnectProviderFragment.newInstance(connectAppLinkData = connectAppLinkData),
-                    animateTransition = false
-                )
+                findNavController(R.id.navHostFragment).navigate(R.id.connectProviderFragment, connectAppLinkData)
             }
         })
         viewModel.onShowSubmitActionEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { actionAppLinkData ->
-                this.addFragment(
-                    fragment = SubmitActionFragment.newInstance(actionAppLinkData = actionAppLinkData),
-                    animateTransition = false
-                )
+                findNavController(R.id.navHostFragment).navigate(R.id.submitActionFragment, actionAppLinkData)
             }
         })
         viewModel.onQrScanClickEvent.observe(this, Observer { event ->

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2020 Salt Edge Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/authorizationsListFragment">
+
+    <fragment
+        android:id="@+id/authorizationsListFragment"
+        android:name="com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment"
+        android:label="AuthorizationsListFragment">
+
+        <action
+            android:id="@+id/settings_list"
+            app:destination="@+id/settingsListFragment" />
+
+        <action
+            android:id="@+id/connections_list"
+            app:destination="@+id/connectionsListFragment" />
+
+        <action
+            android:id="@+id/bottom_menu_dialog"
+            app:destination="@+id/bottomMenuDialog" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsListFragment"
+        android:name="com.saltedge.authenticator.features.settings.list.SettingsListFragment"
+        android:label="SettingsListFragment">
+
+        <action
+            android:id="@+id/about_list"
+            app:destination="@+id/aboutListFragment" />
+
+        <action
+            android:id="@+id/passcode_edit"
+            app:destination="@+id/passcodeEditFragment" />
+
+        <action
+            android:id="@+id/language"
+            app:destination="@+id/languageSelectDialog" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/passcodeEditFragment"
+        android:name="com.saltedge.authenticator.features.settings.passcode.PasscodeEditFragment"
+        android:label="PasscodeEditFragment">
+
+        <action
+            android:id="@+id/settings_list"
+            app:destination="@+id/settingsListFragment" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/languageSelectDialog"
+        android:name="com.saltedge.authenticator.features.settings.language.LanguageSelectDialog"
+        android:label="LanguageSelectDialog" />
+
+    <fragment
+        android:id="@+id/aboutListFragment"
+        android:name="com.saltedge.authenticator.features.settings.about.AboutListFragment"
+        android:label="AboutListFragment">
+
+        <action
+            android:id="@+id/license"
+            app:destination="@+id/licensesFragment" />
+
+        <action
+            android:id="@+id/terms_of_services"
+            app:destination="@+id/webViewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/licensesFragment"
+        android:name="com.saltedge.authenticator.features.settings.licenses.LicensesFragment"
+        android:label="LicensesFragment">
+
+        <action
+            android:id="@+id/terms_of_services"
+            app:destination="@+id/webViewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/webViewFragment"
+        android:name="com.saltedge.authenticator.widget.fragment.WebViewFragment"
+        android:label="WebViewFragment" />
+
+    <fragment
+        android:id="@+id/connectionsListFragment"
+        android:name="com.saltedge.authenticator.features.connections.list.ConnectionsListFragment"
+        android:label="ConnectionsListFragment">
+
+        <action
+            android:id="@+id/consents_list"
+            app:destination="@+id/consentsListFragment" />
+
+        <action
+            android:id="@+id/edit_connection_name_dialog"
+            app:destination="@+id/editConnectionNameDialog" />
+
+        <action
+            android:id="@+id/delete_connection_dialog"
+            app:destination="@+id/deleteConnectionDialog" />
+
+        <action
+            android:id="@+id/connect_provider"
+            app:destination="@+id/connectProviderFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/consentsListFragment"
+        android:name="com.saltedge.authenticator.features.consents.list.ConsentsListFragment"
+        android:label="ConsentsListFragment">
+
+        <action
+            android:id="@+id/consent_details"
+            app:destination="@+id/consentDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/connectProviderFragment"
+        android:name="com.saltedge.authenticator.features.connections.create.ConnectProviderFragment"
+        android:label="ConnectProviderFragment">
+
+        <argument
+            android:name="guid"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/selectConnectionsFragment"
+        android:name="com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment"
+        android:label="SelectConnectionsFragment" />
+
+    <fragment
+        android:id="@+id/consentDetailsFragment"
+        android:name="com.saltedge.authenticator.features.consents.details.ConsentDetailsFragment"
+        android:label="ConsentDetailsFragment" />
+
+    <fragment
+        android:id="@+id/authorizationDetailsFragment"
+        android:name="com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment"
+        android:label="AuthorizationDetailsFragment" />
+
+    <fragment
+        android:id="@+id/submitActionFragment"
+        android:name="com.saltedge.authenticator.features.actions.SubmitActionFragment"
+        android:label="SubmitActionFragment">
+
+        <action
+            android:id="@+id/select_connections"
+            app:destination="@+id/selectConnectionsFragment" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/editConnectionNameDialog"
+        android:name="com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog"
+        android:label="EditConnectionNameDialog" />
+
+    <dialog
+        android:id="@+id/deleteConnectionDialog"
+        android:name="com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog"
+        android:label="DeleteConnectionDialog">
+
+        <argument
+            android:name="guid"
+            app:argType="string" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/bottomMenuDialog"
+        android:name="com.saltedge.authenticator.features.menu.BottomMenuDialog"
+        android:label="BottomMenuDialog" />
+</navigation>

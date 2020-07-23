@@ -38,17 +38,17 @@ class AboutViewModel(val appContext: Context) : ViewModel(), ListItemClickListen
     val termsOfServiceItemClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val licenseItemClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val listItems = listOf(
-            SettingsItemViewModel(
-                titleId = R.string.about_app_version,
-                description = AppTools.getAppVersionName(appContext)
-            ),
-            SettingsItemViewModel(
-                titleId = R.string.about_copyright,
-                description = appContext.getString(R.string.about_copyright_description)
-            ),
-            SettingsItemViewModel(titleId = R.string.about_terms_service),
-            SettingsItemViewModel(titleId = R.string.about_open_source_licenses)
-        )
+        SettingsItemViewModel(
+            titleId = R.string.about_app_version,
+            description = AppTools.getAppVersionName(appContext)
+        ),
+        SettingsItemViewModel(
+            titleId = R.string.about_copyright,
+            description = appContext.getString(R.string.about_copyright_description)
+        ),
+        SettingsItemViewModel(titleId = R.string.about_terms_service),
+        SettingsItemViewModel(titleId = R.string.about_open_source_licenses)
+    )
 
     override fun onListItemClick(itemId: Int) {
         when (itemId) {

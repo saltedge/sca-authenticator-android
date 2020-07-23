@@ -30,17 +30,14 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.ConnectionsListBinding
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
-import com.saltedge.authenticator.features.connections.create.ConnectProviderFragment
-import com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog
-import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
 import com.saltedge.authenticator.features.connections.list.menu.MenuData
 import com.saltedge.authenticator.features.connections.list.menu.PopupMenuBuilder
-import com.saltedge.authenticator.features.consents.list.ConsentsListFragment
 import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.ListItemClickListener
@@ -131,30 +128,25 @@ class ConnectionsListFragment : BaseFragment(),
         })
         viewModel.onRenameClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                dialogFragment = EditConnectionNameDialog.newInstance(bundle).also {
-                    activity?.showDialogFragment(it)
-                }
-
+                findNavController().navigate(R.id.edit_connection_name_dialog, bundle)
             }
         })
-        viewModel.onDeleteClickEvent.observe(this, Observer<ViewModelEvent<GUID>> { event ->
+        viewModel.onDeleteClickEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
             event.getContentIfNotHandled()?.let { guid ->
-                dialogFragment = DeleteConnectionDialog.newInstance(guid).also {
-                    activity?.showDialogFragment(it)
-                }
+                findNavController().navigate(ConnectionsListFragmentDirections.deleteConnectionDialog(guid))
             }
         })
         viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<MenuData>> { event ->
             event.getContentIfNotHandled()?.let { data -> popupWindow = showPopupMenu(data) }
         })
         viewModel.onReconnectClickEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
-            event.getContentIfNotHandled()?.let {
-                activity?.addFragment(ConnectProviderFragment.newInstance(connectionGuid = it))
+            event.getContentIfNotHandled()?.let { guid ->
+                findNavController().navigate(ConnectionsListFragmentDirections.connectProvider(guid))
             }
         })
         viewModel.onViewConsentsClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                activity?.addFragment(ConsentsListFragment.newInstance(bundle))
+                findNavController().navigate(R.id.consents_list, bundle)
             }
         })
         viewModel.onSupportClickEvent.observe(this, Observer<ViewModelEvent<String?>> { event ->

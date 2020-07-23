@@ -27,13 +27,13 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.tools.authenticatorApp
-import com.saltedge.authenticator.tools.finishFragment
 import com.saltedge.authenticator.tools.showWarningDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_edit_passcode.*
@@ -114,7 +114,7 @@ class PasscodeEditFragment : BaseFragment(), DialogHandlerListener {
             }
         })
         viewModel.closeViewEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { activity?.finishFragment() }
+            event.getContentIfNotHandled()?.let { findNavController().popBackStack() }
         })
     }
 }

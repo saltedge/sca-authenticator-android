@@ -120,6 +120,21 @@ class ConsentsListViewModel(
         }
     }
 
+    fun revokeConsent(consentId: String?) {
+        val revokedConsent: ConsentData? = consents.firstOrNull { it.id == consentId }
+        if (revokedConsent != null) {
+            val newConsents: MutableList<ConsentData> = consents.toMutableList()
+            newConsents.remove(revokedConsent)
+            if (newConsents != consents) {
+                val template = appContext.getString(R.string.consent_revoked_for)
+                val message = String.format(template, revokedConsent.tppName)
+                onConsentRemovedEvent.postValue(ViewModelEvent(message))
+
+                onReceivedNewConsents(newConsents)
+            }
+        }
+    }
+
     fun onListItemClick(itemIndex: Int) {
         val connectionGuid = connectionAndKey?.connection?.guid ?: return
         onListItemClickEvent.postValue(ViewModelEvent(
