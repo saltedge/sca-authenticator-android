@@ -34,13 +34,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_ACTION_DEEP_LINK_DATA
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.SubmitActionBinding
 import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.features.main.newAuthorizationListener
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
@@ -106,7 +106,7 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
             .get(SubmitActionViewModel::class.java)
         lifecycle.addObserver(viewModel)
         viewModel.setInitialData(
-            actionAppLinkData = arguments?.getSerializable(KEY_ACTION_DEEP_LINK_DATA) as? ActionAppLinkData
+            actionAppLinkData = arguments?.getSerializable(KEY_DATA) as? ActionAppLinkData
                 ?: return
         )
 

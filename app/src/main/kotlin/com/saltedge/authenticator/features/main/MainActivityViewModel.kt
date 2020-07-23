@@ -27,7 +27,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_ACTION_DEEP_LINK_DATA
 import com.saltedge.authenticator.app.KEY_CLOSE_APP
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
@@ -134,7 +133,7 @@ class MainActivityViewModel(
                     }))
                 } ?: intent.deepLink.extractActionAppLinkData()?.let { actionAppLinkData ->
                     onShowSubmitActionEvent.postValue(ViewModelEvent(Bundle().apply {
-                        putSerializable(KEY_ACTION_DEEP_LINK_DATA, actionAppLinkData)
+                        putSerializable(KEY_DATA, actionAppLinkData)
                     }))
                 }
             }

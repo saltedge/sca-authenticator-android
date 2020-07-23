@@ -149,7 +149,7 @@
     <fragment
         android:id="@+id/selectConnectionsFragment"
         android:name="com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment"
-        android:label="SelectConnectionsFragment"/>
+        android:label="SelectConnectionsFragment" />
 
     <fragment
         android:id="@+id/consentDetailsFragment"
@@ -179,7 +179,7 @@
     <dialog
         android:id="@+id/deleteConnectionDialog"
         android:name="com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog"
-        android:label="DeleteConnectionDialog" >
+        android:label="DeleteConnectionDialog">
 
         <argument
             android:name="guid"
