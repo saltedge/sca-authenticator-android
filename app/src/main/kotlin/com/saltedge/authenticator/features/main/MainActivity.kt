@@ -87,7 +87,7 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
 
     override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView
 
-    override fun getSnackbarAnchorView(): View? = null //TODO: Display snackbar relative to nav_host_fragment
+    override fun getSnackbarAnchorView(): View? = null //TODO: Display snackbar relative to navHostFragment
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainActivityViewModel::class.java)
@@ -109,35 +109,28 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
         })
         viewModel.onShowAuthorizationsListEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
-                findNavController(R.id.nav_host_fragment).navigate(R.id.authorizationsListFragment)
+                findNavController(R.id.navHostFragment).navigate(R.id.authorizationsListFragment)
             }
         })
         viewModel.onShowAuthorizationDetailsEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                bundle.apply {
-                    putBoolean(KEY_CLOSE_APP, true)
-                }
-                findNavController(R.id.nav_host_fragment).navigate(R.id.authorizationDetailsFragment, bundle)
+                findNavController(R.id.navHostFragment).navigate(R.id.authorizationDetailsFragment, bundle)
             }
         })
 
         viewModel.onShowActionAuthorizationEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                bundle.apply {
-                    putBoolean(KEY_CLOSE_APP, true)
-                    putInt(KEY_TITLE, R.string.action_new_action_title)
-                }
-                findNavController(R.id.nav_host_fragment).navigate(R.id.authorizationDetailsFragment, bundle)
+                findNavController(R.id.navHostFragment).navigate(R.id.authorizationDetailsFragment, bundle)
             }
         })
         viewModel.onShowConnectEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { connectAppLinkData ->
-                findNavController(R.id.nav_host_fragment).navigate(R.id.connectProviderFragment, connectAppLinkData)
+                findNavController(R.id.navHostFragment).navigate(R.id.connectProviderFragment, connectAppLinkData)
             }
         })
         viewModel.onShowSubmitActionEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { actionAppLinkData ->
-                findNavController(R.id.nav_host_fragment).navigate(R.id.submitActionFragment, actionAppLinkData)
+                findNavController(R.id.navHostFragment).navigate(R.id.submitActionFragment, actionAppLinkData)
             }
         })
         viewModel.onQrScanClickEvent.observe(this, Observer { event ->

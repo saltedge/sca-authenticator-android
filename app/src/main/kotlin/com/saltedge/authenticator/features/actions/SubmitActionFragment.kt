@@ -87,7 +87,7 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
         super.onViewCreated(view, savedInstanceState)
         completeView?.setClickListener(View.OnClickListener { v -> viewModel.onViewClick(v.id) })
         viewModel.onViewCreated()
-        sharedViewModel.onShowConnectionSelector.observe(viewLifecycleOwner, Observer<Bundle> { bundle ->
+        sharedViewModel.onSelectConnection.observe(viewLifecycleOwner, Observer<Bundle> { bundle ->
             viewModel.showConnectionSelector(bundle)
         })
     }
@@ -137,8 +137,10 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
         viewModel.mainActionTextResId.observe(this, Observer<Int> { mainActionTextResId ->
             completeView?.setMainActionText(mainActionTextResId)
         })
-        viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<Bundle> { bundle ->
-            findNavController().navigate(R.id.select_connections, bundle)
+        viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
+            it?.getContentIfNotHandled()?.let { bundle ->
+                findNavController().navigate(R.id.select_connections, bundle)
+            }
         })
     }
 }

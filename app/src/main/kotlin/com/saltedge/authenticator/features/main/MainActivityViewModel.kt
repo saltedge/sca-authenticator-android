@@ -28,6 +28,7 @@ import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_ACTION_DEEP_LINK_DATA
+import com.saltedge.authenticator.app.KEY_CLOSE_APP
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
@@ -38,6 +39,7 @@ import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.constants.KEY_ID
+import com.saltedge.authenticator.sdk.constants.KEY_TITLE
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.tools.extractActionAppLinkData
 import com.saltedge.authenticator.sdk.tools.extractConnectAppLinkData
@@ -121,6 +123,7 @@ class MainActivityViewModel(
                 onShowAuthorizationDetailsEvent.postValue(
                     ViewModelEvent(Bundle().apply {
                         putSerializable(KEY_ID, authorizationIdentifier)
+                        putBoolean(KEY_CLOSE_APP, true)
                     })
                 )
             }
@@ -163,6 +166,8 @@ class MainActivityViewModel(
     override fun onNewAuthorization(authorizationIdentifier: AuthorizationIdentifier) {
         onShowActionAuthorizationEvent.postValue(ViewModelEvent(Bundle().apply {
             putSerializable(KEY_ID, authorizationIdentifier)
+            putBoolean(KEY_CLOSE_APP, true)
+            putInt(KEY_TITLE, R.string.action_new_action_title)
         }))
     }
 

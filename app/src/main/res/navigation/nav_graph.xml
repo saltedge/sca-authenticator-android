@@ -104,7 +104,6 @@
         android:name="com.saltedge.authenticator.widget.fragment.WebViewFragment"
         android:label="WebViewFragment" />
 
-
     <fragment
         android:id="@+id/connectionsListFragment"
         android:name="com.saltedge.authenticator.features.connections.list.ConnectionsListFragment"
@@ -126,6 +125,7 @@
             android:id="@+id/connect_provider"
             app:destination="@+id/connectProviderFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/connectProviderFragment"
         android:name="com.saltedge.authenticator.features.connections.create.ConnectProviderFragment"
@@ -135,6 +135,7 @@
             android:name="guid"
             app:argType="string" />
     </fragment>
+
     <fragment
         android:id="@+id/consentsListFragment"
         android:name="com.saltedge.authenticator.features.consents.list.ConsentsListFragment"
@@ -144,18 +145,22 @@
             android:id="@+id/consent_details"
             app:destination="@+id/consentDetailsFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/selectConnectionsFragment"
         android:name="com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment"
         android:label="SelectConnectionsFragment"/>
+
     <fragment
         android:id="@+id/consentDetailsFragment"
         android:name="com.saltedge.authenticator.features.consents.details.ConsentDetailsFragment"
         android:label="ConsentDetailsFragment" />
+
     <fragment
         android:id="@+id/authorizationDetailsFragment"
         android:name="com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment"
         android:label="AuthorizationDetailsFragment" />
+
     <fragment
         android:id="@+id/submitActionFragment"
         android:name="com.saltedge.authenticator.features.actions.SubmitActionFragment"
@@ -165,14 +170,17 @@
             android:id="@+id/select_connections"
             app:destination="@+id/selectConnectionsFragment" />
     </fragment>
+
     <dialog
         android:id="@+id/editConnectionNameDialog"
         android:name="com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog"
         android:label="EditConnectionNameDialog" />
+
     <dialog
         android:id="@+id/deleteConnectionDialog"
         android:name="com.saltedge.authenticator.features.connections.delete.DeleteConnectionDialog"
         android:label="DeleteConnectionDialog" />
+
     <dialog
         android:id="@+id/bottomMenuDialog"
         android:name="com.saltedge.authenticator.features.menu.BottomMenuDialog"

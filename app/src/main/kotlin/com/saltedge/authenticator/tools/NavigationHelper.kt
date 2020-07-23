@@ -41,7 +41,7 @@ import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
  */
 fun FragmentActivity.currentFragmentOnTop(): Fragment? {
     try {
-        val host = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val host = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         return host.childFragmentManager.fragments.getOrNull(0)
     } catch (ignored: IllegalStateException) {
     } catch (e: Exception) {

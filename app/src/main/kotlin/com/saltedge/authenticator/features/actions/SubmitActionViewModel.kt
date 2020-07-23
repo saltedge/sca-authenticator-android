@@ -20,10 +20,8 @@
  */
 package com.saltedge.authenticator.features.actions
 
-import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -61,7 +59,7 @@ class SubmitActionViewModel(
     val onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowErrorEvent = MutableLiveData<ViewModelEvent<String>>()
     val onOpenLinkEvent = MutableLiveData<ViewModelEvent<Uri>>()
-    val showConnectionsSelectorFragmentEvent = MutableLiveData<Bundle>()
+    val showConnectionsSelectorFragmentEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val setResultAuthorizationIdentifier = MutableLiveData<AuthorizationIdentifier>()
     val iconResId: MutableLiveData<Int> = MutableLiveData(R.drawable.ic_status_error)
     val completeTitleResId: MutableLiveData<Int> = MutableLiveData(R.string.action_error_title)
@@ -109,7 +107,7 @@ class SubmitActionViewModel(
                     context = appContext
                 )
                 viewMode = ViewMode.SELECT
-                showConnectionsSelectorFragmentEvent.postValue(dataBundle(result))
+                showConnectionsSelectorFragmentEvent.postValue(ViewModelEvent(dataBundle(result)))
             }
         }
     }

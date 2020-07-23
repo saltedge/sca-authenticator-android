@@ -28,8 +28,8 @@ import com.saltedge.authenticator.sdk.model.GUID
 class SharedViewModel : ViewModel() {
     val newConnectionNameEntered = MutableLiveData<Bundle>()
     val connectionDeleted = MutableLiveData<GUID>()
-    val menuItemClicked = MutableLiveData<Bundle>()
-    val onShowConnectionSelector = MutableLiveData<Bundle>()
+    val onBottomMenuItemSelected = MutableLiveData<Bundle>()
+    val onSelectConnection = MutableLiveData<Bundle>()
 
     fun onNewConnectionNameEntered(item: Bundle) {
         newConnectionNameEntered.value = item
@@ -40,10 +40,10 @@ class SharedViewModel : ViewModel() {
     }
 
     fun onMenuItemSelected(menuItems: Bundle) {
-        menuItemClicked.value = menuItems
+        onBottomMenuItemSelected.value = menuItems
     }
 
     fun onSelectConnection(item: Bundle) {
-        onShowConnectionSelector.value = item
+        onSelectConnection.value = item
     }
 }
