@@ -165,7 +165,6 @@ class ConnectProviderFragment : BaseFragment(),
                 backActionImageResId = it
             )
         })
-
         viewModel.setInitialData(
             initialConnectData = arguments?.getSerializable(KEY_DATA) as? ConnectAppLinkData,
             connectionGuid = arguments?.guid //TODO: Replace on guid,  now we get an error when we try to qr scan

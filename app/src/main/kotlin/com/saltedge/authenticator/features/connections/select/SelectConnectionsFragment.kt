@@ -32,7 +32,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_CONNECTION_GUID
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.list.ConnectionsListAdapter
@@ -123,7 +122,9 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
             findNavController().popBackStack()
         })
 
-        viewModel.setInitialData(arguments?.getSerializable(KEY_CONNECTIONS) as List<ConnectionItemViewModel>)
+        (arguments?.getSerializable(KEY_CONNECTIONS) as? List<ConnectionItemViewModel>)?.let {
+            viewModel.setInitialData(it)
+        }
     }
 
     companion object {

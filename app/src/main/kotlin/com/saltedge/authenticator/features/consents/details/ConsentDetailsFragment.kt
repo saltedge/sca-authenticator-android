@@ -20,21 +20,20 @@
  */
 package com.saltedge.authenticator.features.consents.details
 
-import android.app.Activity
 import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_ID
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.ConsentDetailsBinding
+import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.showConfirmRevokeConsentDialog
@@ -48,6 +47,7 @@ class ConsentDetailsFragment : BaseFragment() {
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: ConsentDetailsViewModel
     private lateinit var binding: ConsentDetailsBinding
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,8 +96,7 @@ class ConsentDetailsFragment : BaseFragment() {
         })
         viewModel.revokeSuccessEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
             event.getContentIfNotHandled()?.let { consentId ->
-                val resultIntent = Intent().putExtra(KEY_ID, consentId)
-                targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, resultIntent)
+                sharedViewModel.onRevokeConsent(consentId)
                 findNavController().popBackStack()
             }
 

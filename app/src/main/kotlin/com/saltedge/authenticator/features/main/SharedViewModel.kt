@@ -30,6 +30,7 @@ class SharedViewModel : ViewModel() {
     val connectionDeleted = MutableLiveData<GUID>()
     val onBottomMenuItemSelected = MutableLiveData<Bundle>()
     val onSelectConnection = MutableLiveData<GUID>()
+    val onRevokeConsent = MutableLiveData<String>()
 
     fun onNewConnectionNameEntered(item: Bundle) {
         newConnectionNameEntered.value = item
@@ -45,5 +46,9 @@ class SharedViewModel : ViewModel() {
 
     fun onSelectConnection(guid: GUID) {
         onSelectConnection.value = guid
+    }
+
+    fun onRevokeConsent(consentId: String) {
+        onRevokeConsent.value = consentId
     }
 }

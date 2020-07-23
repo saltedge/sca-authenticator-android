@@ -147,7 +147,7 @@ class MainActivityViewModel(
         when (viewId) {
             R.id.appBarActionQrCode -> onAppbarMenuItemClickEvent.postValue(ViewModelEvent(MenuItem.SCAN_QR))
             R.id.appBarActionSwitchTheme -> onAppbarMenuItemClickEvent.postValue(ViewModelEvent(MenuItem.CUSTOM_NIGHT_MODE))
-            R.id.appBarActionMore -> onAppbarMenuItemClickEvent.postValue(ViewModelEvent(MenuItem.MORE_MENU))//{
+            R.id.appBarActionMore -> onAppbarMenuItemClickEvent.postValue(ViewModelEvent(MenuItem.MORE_MENU))
             R.id.appBarBackAction -> onBackActionClickEvent.postUnitEvent()
         }
     }

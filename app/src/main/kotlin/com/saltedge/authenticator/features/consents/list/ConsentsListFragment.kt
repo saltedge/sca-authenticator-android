@@ -28,6 +28,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -36,6 +37,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.ConsentsListBinding
+import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -54,6 +56,7 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
     private lateinit var headerDecorator: SpaceItemDecoration
     private lateinit var binding: ConsentsListBinding
     private val adapter = ConsentsListAdapter(clickListener = this)
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,10 +88,6 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
         binding.executePendingBindings()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        viewModel.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
@@ -131,6 +130,9 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
             swipeRefreshLayout?.stopRefresh()
         }
         swipeRefreshLayout?.setColorSchemeResources(R.color.primary, R.color.red, R.color.green)
+        sharedViewModel.onRevokeConsent.observe(viewLifecycleOwner, Observer<String> { result ->
+            viewModel.revokeConsent(result)
+        })
     }
 
     companion object {
