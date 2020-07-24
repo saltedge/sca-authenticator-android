@@ -33,7 +33,6 @@ import androidx.fragment.app.FragmentActivity
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.tools.ResId
-import com.saltedge.authenticator.tools.printToLogcat
 import com.saltedge.authenticator.tools.setTextColorResId
 import com.saltedge.authenticator.tools.showDialogFragment
 import com.saltedge.authenticator.widget.fragment.BaseRoundedBottomDialogFragment
@@ -45,18 +44,14 @@ class BiometricsInputDialog(
     BiometricsInputContract.View
 {
     private val presenter = BiometricsInputPresenter(contract = this, biometricTools = biometricTools)
-    private val titleView: TextView? by lazy {
-        dialog?.findViewById<TextView>(R.id.titleView)
-    }
-    private val descriptionView: TextView? by lazy {
-        dialog?.findViewById<TextView>(R.id.descriptionView)
-    }
-    private val statusImageView: ImageView? by lazy {
-        dialog?.findViewById<ImageView>(R.id.statusImageView)
-    }
-    private val cancelActionView: TextView? by lazy {
-        dialog?.findViewById<TextView>(R.id.cancelActionView)
-    }
+    private val titleView: TextView?
+        get() = dialog?.findViewById<TextView>(R.id.titleView)
+    private val descriptionView: TextView?
+        get() = dialog?.findViewById<TextView>(R.id.descriptionView)
+    private val statusImageView: ImageView?
+        get() = dialog?.findViewById<ImageView>(R.id.statusImageView)
+    private val cancelActionView: TextView?
+        get() = dialog?.findViewById<TextView>(R.id.cancelActionView)
     override var resultCallback: BiometricPromptCallback? = null
 
     override fun showBiometricPrompt(
@@ -65,7 +60,6 @@ class BiometricsInputDialog(
         @StringRes descriptionResId: ResId,
         @StringRes negativeActionTextResId: ResId
     ) {
-        printToLogcat("TEST_TEST", "BiometricsInputDialog:showBiometricPrompt")
         if (presenter.initialized) {
             arguments = BiometricsInputPresenter.dataBundle(titleResId, descriptionResId, negativeActionTextResId)
             if (!isAdded) context.showDialogFragment(this)
@@ -77,7 +71,6 @@ class BiometricsInputDialog(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
-        printToLogcat("TEST_TEST", "BiometricsInputDialog:onCreate")
         presenter.setInitialData(arguments)
     }
 
@@ -85,7 +78,6 @@ class BiometricsInputDialog(
 
     override fun onStart() {
         super.onStart()
-        printToLogcat("TEST_TEST", "BiometricsInputDialog:onStart")
         titleView?.setText(presenter.titleRes)
         descriptionView?.setText(presenter.descriptionRes)
         cancelActionView?.setText(presenter.negativeActionTextRes)
@@ -94,14 +86,12 @@ class BiometricsInputDialog(
 
     override fun onResume() {
         super.onResume()
-        printToLogcat("TEST_TEST", "BiometricsInputDialog:onResume")
         activity?.let { presenter.onDialogResume(context = it) }
     }
 
     override fun onPause() {
         super.onPause()
         presenter.onDialogPause()
-        printToLogcat("TEST_TEST", "BiometricsInputDialog:onPause")
     }
 
     override fun updateStatusView(

@@ -30,10 +30,10 @@ import javax.crypto.Cipher
  * @see BiometricTools
  */
 interface BiometricToolsAbs {
-//    /**
-//     * Create AES key for biometric Cipher
-//     */
-//    fun activateFingerprint(): Boolean
+    /**
+     * Create AES key for biometric Cipher
+     */
+    fun activateFingerprint(): Boolean
 
     /**
      * Detect if biometrics is not configured ib system settings

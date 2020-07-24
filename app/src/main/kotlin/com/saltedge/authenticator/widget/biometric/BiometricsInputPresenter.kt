@@ -39,7 +39,6 @@ import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.biometric.getFingerprintManager
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.log
-import com.saltedge.authenticator.tools.printToLogcat
 
 @TargetApi(Build.VERSION_CODES.M)
 class BiometricsInputPresenter(
@@ -99,7 +98,6 @@ class BiometricsInputPresenter(
     val initialized: Boolean = cryptoObject != null
 
     fun setInitialData(arguments: Bundle?) {
-        printToLogcat("TEST_TEST", "BiometricsInputPresenter:setInitialData cryptoObject:${cryptoObject != null}")
         titleRes = if (cryptoObject == null) R.string.errors_error
         else arguments?.getInt(KEY_TITLE, R.string.fingerprint_title) ?: R.string.fingerprint_title
 
@@ -110,7 +108,6 @@ class BiometricsInputPresenter(
     }
 
     fun onDialogResume(context: Context) {
-        printToLogcat("TEST_TEST", "BiometricsInputPresenter:onDialogResume cryptoObject:${cryptoObject != null}")
         isDialogVisible = true
         try {
             if (biometricTools.isFingerprintAuthAvailable(context) && cryptoObject != null) {
@@ -159,11 +156,9 @@ class BiometricsInputPresenter(
     }
 
     private fun createCryptoObject(): FingerprintManager.CryptoObject? {
-        printToLogcat("TEST_TEST", "BiometricsInputPresenter:createCryptoObject")
         return try {
             biometricTools.createFingerprintCipher()?.let { FingerprintManager.CryptoObject(it) }
         } catch (e: Exception) {
-            printToLogcat("TEST_TEST", "createCryptoObject error")
             e.log()
             null
         }

@@ -112,17 +112,17 @@ class BiometricToolsTest {
         assertTrue(biometricTools.isFingerprintAuthAvailable(mockContext))
     }
 
-//    @Test
-//    @Throws(Exception::class)
-//    fun activateFingerprintTest() {
-//        every { mockKeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN) } returns false
-//        every { mockKeyStoreManager.createOrReplaceAesBiometricKey(FINGERPRINT_ALIAS_FOR_PIN) } returns null
-//
-//        val biometricIsAvailable = biometricTools.isFingerprintAuthAvailable(TestTools.applicationContext)
-//
-//        assertThat(biometricTools.activateFingerprint(), equalTo(biometricIsAvailable))
-//        assertThat(mockKeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN), equalTo(biometricIsAvailable))
-//    }
+    @Test
+    @Throws(Exception::class)
+    fun activateFingerprintTest() {
+        every { mockKeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN) } returns false
+        every { mockKeyStoreManager.createOrReplaceAesBiometricKey(FINGERPRINT_ALIAS_FOR_PIN) } returns null
+
+        val biometricIsAvailable = biometricTools.isFingerprintAuthAvailable(TestTools.applicationContext)
+
+        assertThat(biometricTools.activateFingerprint(), equalTo(biometricIsAvailable))
+        assertThat(mockKeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN), equalTo(biometricIsAvailable))
+    }
 
     @Before
     @Throws(Exception::class)

@@ -40,12 +40,13 @@ class BiometricTools(
     val appContext: Context,
     val keyStoreManager: KeyStoreManagerAbs
 ) : BiometricToolsAbs {
-//    override fun activateFingerprint(): Boolean {
-//        printToLogcat("TEST_TEST", "BiometricTools:activateFingerprint")
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return false
-//        keyStoreManager.createOrReplaceAesBiometricKey(FINGERPRINT_ALIAS_FOR_PIN)
-//        return keyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN)
-//    }
+
+    @Throws(Exception::class)
+    override fun activateFingerprint(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return false
+        keyStoreManager.createOrReplaceAesBiometricKey(FINGERPRINT_ALIAS_FOR_PIN)
+        return keyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN)
+    }
 
     @Throws(Exception::class)
     override fun isBiometricNotConfigured(context: Context): Boolean = !isBiometricReady(context)
