@@ -105,17 +105,11 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
         viewModel.onRestartActivityEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { super.restartLockableActivity() }
         })
-        viewModel.onShowAuthorizationsListEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let {
-                findNavController(R.id.navHostFragment).navigate(R.id.authorizationsListFragment)
-            }
-        })
         viewModel.onShowAuthorizationDetailsEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { bundle ->
                 findNavController(R.id.navHostFragment).navigate(R.id.authorizationDetailsFragment, bundle)
             }
         })
-
         viewModel.onShowActionAuthorizationEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { bundle ->
                 findNavController(R.id.navHostFragment).navigate(R.id.authorizationDetailsFragment, bundle)

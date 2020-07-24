@@ -30,11 +30,19 @@
 
         <action
             android:id="@+id/settings_list"
-            app:destination="@+id/settingsListFragment" />
+            app:destination="@+id/settingsListFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
 
         <action
             android:id="@+id/connections_list"
-            app:destination="@+id/connectionsListFragment" />
+            app:destination="@+id/connectionsListFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
 
         <action
             android:id="@+id/bottom_menu_dialog"
