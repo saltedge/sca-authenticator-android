@@ -40,6 +40,10 @@ import javax.crypto.Cipher
 @RunWith(RobolectricTestRunner::class)
 class BiometricsInputPresenterTest {
 
+    private val mockBiometricTools = Mockito.mock(BiometricToolsAbs::class.java)
+    private val mockView = Mockito.mock(BiometricsInputContract.View::class.java)
+    private val mockCipher = Mockito.mock(Cipher::class.java)
+
     @Test
     @Throws(Exception::class)
     fun setInitialDataTestCase1() {
@@ -84,7 +88,8 @@ class BiometricsInputPresenterTest {
     fun setInitialDataTestCase3() {
         //given
         val arguments: Bundle? = null
-        given(mockBiometricTools.createFingerprintCipher()).willReturn(Cipher.getInstance("AES/CBC/${KeyProperties.ENCRYPTION_PADDING_PKCS7}"))
+
+        given(mockBiometricTools.createFingerprintCipher()).willReturn(mockCipher)
         val presenter = createPresenter(viewContract = mockView)
 
         //when
@@ -105,7 +110,7 @@ class BiometricsInputPresenterTest {
             putInt(KEY_TITLE, R.string.app_name)
             putInt(KEY_DESCRIPTION, R.string.app_name_in_two_lines)
         }
-        given(mockBiometricTools.createFingerprintCipher()).willReturn(Cipher.getInstance("AES/CBC/${KeyProperties.ENCRYPTION_PADDING_PKCS7}"))
+        given(mockBiometricTools.createFingerprintCipher()).willReturn(mockCipher)//Cipher.getInstance("AES/CBC/${KeyProperties.ENCRYPTION_PADDING_PKCS7}")
         val presenter = createPresenter(viewContract = mockView)
 
         //when
@@ -199,7 +204,4 @@ class BiometricsInputPresenterTest {
             contract = viewContract
         )
     }
-
-    private val mockBiometricTools = Mockito.mock(BiometricToolsAbs::class.java)
-    private val mockView = Mockito.mock(BiometricsInputContract.View::class.java)
 }
