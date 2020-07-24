@@ -31,19 +31,11 @@
 
         <action
             android:id="@+id/settings_list"
-            app:destination="@+id/settingsListFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:destination="@+id/settingsListFragment" />
 
         <action
             android:id="@+id/connections_list"
-            app:destination="@+id/connectionsListFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:destination="@+id/connectionsListFragment" />
 
         <action
             android:id="@+id/bottom_menu_dialog"
@@ -57,19 +49,11 @@
 
         <action
             android:id="@+id/about_list"
-            app:destination="@+id/aboutListFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:destination="@+id/aboutListFragment" />
 
         <action
             android:id="@+id/passcode_edit"
-            app:destination="@+id/passcodeEditFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:destination="@+id/passcodeEditFragment" />
 
         <action
             android:id="@+id/language"
@@ -83,11 +67,7 @@
 
         <action
             android:id="@+id/settings_list"
-            app:destination="@+id/settingsListFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:destination="@+id/settingsListFragment" />
     </fragment>
 
     <dialog
@@ -102,19 +82,11 @@
 
         <action
             android:id="@+id/license"
-            app:destination="@+id/licensesFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:destination="@+id/licensesFragment" />
 
         <action
             android:id="@+id/terms_of_services"
-            app:destination="@+id/webViewFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:destination="@+id/webViewFragment" />
     </fragment>
 
     <fragment
@@ -124,11 +96,7 @@
 
         <action
             android:id="@+id/terms_of_services"
-            app:destination="@+id/webViewFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:destination="@+id/webViewFragment" />
     </fragment>
 
     <fragment
@@ -143,11 +111,7 @@
 
         <action
             android:id="@+id/consents_list"
-            app:destination="@+id/consentsListFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:destination="@+id/consentsListFragment" />
 
         <action
             android:id="@+id/edit_connection_name_dialog"
@@ -159,11 +123,7 @@
 
         <action
             android:id="@+id/connect_provider"
-            app:destination="@+id/connectProviderFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:destination="@+id/connectProviderFragment" />
     </fragment>
 
     <fragment
@@ -173,11 +133,7 @@
 
         <action
             android:id="@+id/consent_details"
-            app:destination="@+id/consentDetailsFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:destination="@+id/consentDetailsFragment" />
     </fragment>
 
     <fragment
@@ -212,11 +168,7 @@
 
         <action
             android:id="@+id/select_connections"
-            app:destination="@+id/selectConnectionsFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:destination="@+id/selectConnectionsFragment" />
     </fragment>
 
     <dialog

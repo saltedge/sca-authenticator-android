@@ -36,6 +36,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.options
 import com.saltedge.authenticator.databinding.ConsentsListBinding
 import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.features.main.showWarningSnack
@@ -104,7 +105,7 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
         })
         viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                findNavController().navigate(R.id.consent_details, bundle)
+                findNavController().navigate(R.id.consent_details, bundle, options)
             }
         })
         viewModel.onConsentRemovedEvent.observe(this, Observer<ViewModelEvent<String>> { event ->

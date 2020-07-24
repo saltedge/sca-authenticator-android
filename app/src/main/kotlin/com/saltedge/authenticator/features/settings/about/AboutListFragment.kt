@@ -30,6 +30,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.options
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.tools.authenticatorApp
@@ -69,11 +70,11 @@ class AboutListFragment : BaseFragment() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(AboutViewModel::class.java)
 
         viewModel.licenseItemClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it?.let { findNavController().navigate(R.id.license) }
+            it?.let { findNavController().navigate(R.id.license, null, options) }
         })
         viewModel.termsOfServiceItemClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
             it?.getContentIfNotHandled()?.let { bundle ->
-                findNavController().navigate(R.id.terms_of_services, bundle)
+                findNavController().navigate(R.id.terms_of_services, bundle, options)
             }
         })
     }

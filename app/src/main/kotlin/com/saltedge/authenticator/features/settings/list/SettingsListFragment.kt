@@ -34,6 +34,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.applyNightMode
+import com.saltedge.authenticator.app.options
 import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
@@ -91,10 +92,10 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
             event.getContentIfNotHandled()?.let { findNavController().navigate(R.id.language) }
         })
         viewModel.passcodeClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
-            event.getContentIfNotHandled()?.let { findNavController().navigate(R.id.passcode_edit) }
+            event.getContentIfNotHandled()?.let { findNavController().navigate(R.id.passcode_edit, null, options) }
         })
         viewModel.aboutClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
-            event.getContentIfNotHandled()?.let { findNavController().navigate(R.id.about_list) }
+            event.getContentIfNotHandled()?.let { findNavController().navigate(R.id.about_list, null, options) }
         })
         viewModel.supportClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
             event.getContentIfNotHandled()?.let { activity?.startMailApp() }
