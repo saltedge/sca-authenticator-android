@@ -20,16 +20,107 @@
  */
 package com.saltedge.authenticator.widget.biometric
 
+import android.os.Bundle
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.testTools.TestAppTools
+import com.saltedge.authenticator.sdk.constants.KEY_DESCRIPTION
+import com.saltedge.authenticator.sdk.constants.KEY_TITLE
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.testTools.TestAppTools
+import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
+import javax.crypto.Cipher
 
 @RunWith(RobolectricTestRunner::class)
 class BiometricsInputPresenterTest {
+
+    private val mockBiometricTools = Mockito.mock(BiometricToolsAbs::class.java)
+    private val mockView = Mockito.mock(BiometricsInputContract.View::class.java)
+    private val mockCipher = Mockito.mock(Cipher::class.java)
+
+    @Test
+    @Throws(Exception::class)
+    fun setInitialDataTestCase1() {
+        //given
+        val arguments: Bundle? = null
+        given(mockBiometricTools.createFingerprintCipher()).willReturn(null)
+        val presenter = createPresenter(viewContract = mockView)
+
+        //when
+        presenter.setInitialData(arguments)
+
+        //then
+        Assert.assertFalse(presenter.initialized)
+        assertThat(presenter.titleRes, equalTo(R.string.errors_error))
+        assertThat(presenter.descriptionRes, equalTo(R.string.errors_fingerprint_init))
+        assertThat(presenter.negativeActionTextRes, equalTo(R.string.actions_cancel))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun setInitialDataTestCase2() {
+        //given
+        val arguments: Bundle? = Bundle().apply {
+            putInt(KEY_TITLE, R.string.app_name)
+            putInt(KEY_DESCRIPTION, R.string.app_name_in_two_lines)
+        }
+        given(mockBiometricTools.createFingerprintCipher()).willReturn(null)
+        val presenter = createPresenter(viewContract = mockView)
+
+        //when
+        presenter.setInitialData(arguments)
+
+        //then
+        Assert.assertFalse(presenter.initialized)
+        assertThat(presenter.titleRes, equalTo(R.string.errors_error))
+        assertThat(presenter.descriptionRes, equalTo(R.string.errors_fingerprint_init))
+        assertThat(presenter.negativeActionTextRes, equalTo(R.string.actions_cancel))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun setInitialDataTestCase3() {
+        //given
+        val arguments: Bundle? = null
+
+        given(mockBiometricTools.createFingerprintCipher()).willReturn(mockCipher)
+        val presenter = createPresenter(viewContract = mockView)
+
+        //when
+        presenter.setInitialData(arguments)
+
+        //then
+        Assert.assertTrue(presenter.initialized)
+        assertThat(presenter.titleRes, equalTo(R.string.fingerprint_title))
+        assertThat(presenter.descriptionRes, equalTo(R.string.fingerprint_touch_sensor))
+        assertThat(presenter.negativeActionTextRes, equalTo(R.string.actions_cancel))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun setInitialDataTestCase4() {
+        //given
+        val arguments: Bundle? = Bundle().apply {
+            putInt(KEY_TITLE, R.string.app_name)
+            putInt(KEY_DESCRIPTION, R.string.app_name_in_two_lines)
+        }
+        given(mockBiometricTools.createFingerprintCipher()).willReturn(mockCipher)//Cipher.getInstance("AES/CBC/${KeyProperties.ENCRYPTION_PADDING_PKCS7}")
+        val presenter = createPresenter(viewContract = mockView)
+
+        //when
+        presenter.setInitialData(arguments)
+
+        //then
+        Assert.assertTrue(presenter.initialized)
+        assertThat(presenter.titleRes, equalTo(R.string.app_name))
+        assertThat(presenter.descriptionRes, equalTo(R.string.app_name_in_two_lines))
+        assertThat(presenter.negativeActionTextRes, equalTo(R.string.actions_cancel))
+    }
 
     @Test
     @Throws(Exception::class)
@@ -112,7 +203,4 @@ class BiometricsInputPresenterTest {
             contract = viewContract
         )
     }
-
-    private val mockBiometricTools = Mockito.mock(BiometricToolsAbs::class.java)
-    private val mockView = Mockito.mock(BiometricsInputContract.View::class.java)
 }

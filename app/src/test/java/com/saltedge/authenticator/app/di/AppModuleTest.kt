@@ -20,8 +20,8 @@
  */
 package com.saltedge.authenticator.app.di
 
+import android.os.Build
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
-import com.saltedge.authenticator.sdk.tools.biometric.isBiometricPromptV28Enabled
 import com.saltedge.authenticator.testTools.TestAppTools
 import com.saltedge.authenticator.widget.biometric.BiometricPromptManagerV28
 import com.saltedge.authenticator.widget.biometric.BiometricsInputDialog
@@ -53,7 +53,7 @@ class AppModuleTest {
     @Throws(Exception::class)
     fun provideBiometricPromptTest() {
         val module = AppModule(TestAppTools.applicationContext)
-        if (isBiometricPromptV28Enabled()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             assertNotNull(module.provideBiometricPrompt(mockBiometricTools) is BiometricPromptManagerV28)
         } else {
             assertNotNull(module.provideBiometricPrompt(mockBiometricTools) is BiometricsInputDialog)
