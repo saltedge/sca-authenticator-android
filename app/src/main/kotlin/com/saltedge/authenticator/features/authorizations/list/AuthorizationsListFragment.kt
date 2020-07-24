@@ -44,7 +44,9 @@ import com.saltedge.authenticator.interfaces.AppbarMenuItemClickListener
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.tools.*
+import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.showQrScannerActivity
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_authorizations_list.*
 import javax.inject.Inject
@@ -88,6 +90,7 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
 
     override fun onStart() {
         super.onStart()
+        setupSharedObserver()
         contentAdapter?.listItemClickListener = viewModel
     }
 
@@ -145,14 +148,10 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
             }
         })
         viewModel.onShowConnectionsListEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let {
-                findNavController().navigate(R.id.connections_list)
-            }
+            event.getContentIfNotHandled()?.let { findNavController().navigate(R.id.connections_list) }
         })
         viewModel.onShowSettingsListEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let {
-                findNavController().navigate(R.id.settings_list)
-            }
+            event.getContentIfNotHandled()?.let { findNavController().navigate(R.id.settings_list) }
         })
         viewModel.emptyViewImage.observe(this, Observer<ResId> {
             emptyView.setImageResource(it)
@@ -179,9 +178,11 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         }
         pagersScrollSynchronizer.initViews(headerViewPager, contentViewPager)
         emptyView?.setActionOnClickListener(View.OnClickListener { viewModel.onEmptyViewActionClick() })
+    }
 
-        sharedViewModel.onBottomMenuItemSelected.observe(viewLifecycleOwner, Observer<Bundle> { bundle ->
-            viewModel.onItemMenuClicked(bundle)
+    private fun setupSharedObserver() {
+        sharedViewModel.onBottomMenuItemSelected.observe(viewLifecycleOwner, Observer<ViewModelEvent<Bundle>> { event ->
+            event.getContentIfNotHandled()?.let { viewModel.onItemMenuClicked(it) }
         })
     }
 }

@@ -23,12 +23,13 @@ package com.saltedge.authenticator.features.main
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.model.GUID
 
 class SharedViewModel : ViewModel() {
     val newConnectionNameEntered = MutableLiveData<Bundle>()
     val connectionDeleted = MutableLiveData<GUID>()
-    val onBottomMenuItemSelected = MutableLiveData<Bundle>()
+    val onBottomMenuItemSelected = MutableLiveData<ViewModelEvent<Bundle>>()
     val onSelectConnection = MutableLiveData<GUID>()
     val onRevokeConsent = MutableLiveData<String>()
 
@@ -40,8 +41,8 @@ class SharedViewModel : ViewModel() {
         connectionDeleted.value = guid
     }
 
-    fun onMenuItemSelected(menuItems: Bundle) {
-        onBottomMenuItemSelected.value = menuItems
+    fun onMenuItemSelected(selection: Bundle) {
+        onBottomMenuItemSelected.value = ViewModelEvent(selection)
     }
 
     fun onSelectConnection(guid: GUID) {
