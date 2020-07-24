@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.widget.passcode
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
@@ -30,6 +31,7 @@ import android.widget.LinearLayout
 import androidx.annotation.StringRes
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.buildVersion26OrGreater
 import com.saltedge.authenticator.tools.setVisible
 import kotlinx.android.synthetic.main.view_passcode_input.view.*
 
@@ -159,9 +161,10 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
         descriptionView?.animate()?.setStartDelay(3000L)?.alpha(0f)?.setDuration(500L)?.start()
     }
 
+    @SuppressLint("NewApi")
     @Suppress("DEPRECATION")
     private fun errorVibrate() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (buildVersion26OrGreater) {
             vibrator?.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 100, 100, 100), -1))
         } else vibrator?.vibrate(longArrayOf(0, 100, 100, 100), -1)
     }

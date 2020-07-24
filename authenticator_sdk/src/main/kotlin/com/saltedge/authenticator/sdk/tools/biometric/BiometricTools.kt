@@ -40,11 +40,12 @@ class BiometricTools(
     val appContext: Context,
     val keyStoreManager: KeyStoreManagerAbs
 ) : BiometricToolsAbs {
-    override fun activateFingerprint(): Boolean {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return false
-        keyStoreManager.createOrReplaceAesBiometricKey(FINGERPRINT_ALIAS_FOR_PIN)
-        return keyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN)
-    }
+//    override fun activateFingerprint(): Boolean {
+//        printToLogcat("TEST_TEST", "BiometricTools:activateFingerprint")
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return false
+//        keyStoreManager.createOrReplaceAesBiometricKey(FINGERPRINT_ALIAS_FOR_PIN)
+//        return keyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN)
+//    }
 
     @Throws(Exception::class)
     override fun isBiometricNotConfigured(context: Context): Boolean = !isBiometricReady(context)
@@ -61,7 +62,8 @@ class BiometricTools(
     @SuppressLint("NewApi")
     override fun createFingerprintCipher(): Cipher? {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return null
-        val key = keyStoreManager.getSecretKey(FINGERPRINT_ALIAS_FOR_PIN) ?: return null
+        val key = keyStoreManager.getSecretKey(FINGERPRINT_ALIAS_FOR_PIN)
+                ?: throw Exception("Secret key not found in keystore")
         val mCipher = Cipher.getInstance("AES/CBC/${KeyProperties.ENCRYPTION_PADDING_PKCS7}")
         mCipher?.init(Cipher.ENCRYPT_MODE, key)
         return mCipher
@@ -135,13 +137,4 @@ class BiometricTools(
 fun Context.getFingerprintManager(): FingerprintManager? {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return null
     return this.getSystemService(Context.FINGERPRINT_SERVICE) as? FingerprintManager
-}
-
-/**
- * Check if in the application can use new (from SDK28) biometric prompt
- *
- * @return boolean, true if version sdk is greater than or equal to VERSION_CODES.P (SDK28)
- */
-fun isBiometricPromptV28Enabled(): Boolean {
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
 }

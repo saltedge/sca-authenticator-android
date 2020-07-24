@@ -105,3 +105,38 @@ val FragmentActivity.authenticatorApp: AuthenticatorApplication?
  */
 val Fragment.authenticatorApp: AuthenticatorApplication?
     get() = this.activity?.authenticatorApp
+
+/**
+ * Check if system sdk version is 28 or greater
+ *
+ * @return boolean, true if version sdk is greater than or equal to VERSION_CODES.P (SDK28)
+ */
+val buildVersion28OrGreater: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+
+/**
+ * Check if system sdk version is 26 or greater
+ *
+ * @return boolean, true if version sdk is greater than or equal to VERSION_CODES.P (SDK26)
+ */
+val buildVersion26OrGreater: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+
+/**
+ * Check if system sdk version is 24 or greater
+ *
+ * @return boolean, true if version sdk is greater than or equal to VERSION_CODES.P (SDK24)
+ */
+val buildVersion24OrGreater: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+
+/**
+ * Check if system sdk version is 23 or greater
+ *
+ * @return boolean, true if version sdk is greater than or equal to VERSION_CODES.M (SDK23)
+ */
+val buildVersion23OrGreater: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+
+/**
+ * Check if system sdk version is less than 23
+ *
+ * @return boolean, true if version sdk is less than VERSION_CODES.M (SDK23)
+ */
+val buildVersionLessThan23: Boolean = Build.VERSION.SDK_INT < Build.VERSION_CODES.M

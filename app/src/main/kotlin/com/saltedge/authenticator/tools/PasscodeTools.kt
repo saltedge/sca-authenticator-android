@@ -34,7 +34,7 @@ object PasscodeTools : PasscodeToolsAbs {
      * Replace KeyPair, destined for Passcode encryption, with new in KeyStoreManager
      */
     override fun replacePasscodeKey(context: Context) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        if (buildVersionLessThan23) {
             KeyStoreManager.createOrReplaceRsaKeyPair(context, PASSCODE_SECURE_KEY_ALIAS)
         } else {
             KeyStoreManager.createOrReplaceAesKey(PASSCODE_SECURE_KEY_ALIAS)
@@ -49,7 +49,7 @@ object PasscodeTools : PasscodeToolsAbs {
      * @return boolean, true if PreferenceRepository.encryptedPasscode is equal encryptedPasscode
      */
     override fun savePasscode(passcode: String): Boolean {
-        val encryptedPasscode = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        val encryptedPasscode = if (buildVersionLessThan23) {
             KeyStoreManager.getKeyPair(PASSCODE_SECURE_KEY_ALIAS)?.public?.let { key ->
                 CryptoTools.rsaEncrypt(input = passcode, publicKey = key)
             }
@@ -71,7 +71,7 @@ object PasscodeTools : PasscodeToolsAbs {
     override fun getPasscode(): String {
         val encryptedPasscode = PreferenceRepository.encryptedPasscode
         if (encryptedPasscode.isBlank()) return ""
-        return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        return if (buildVersionLessThan23) {
             KeyStoreManager.getKeyPair(PASSCODE_SECURE_KEY_ALIAS)?.private?.let { key ->
                 String(CryptoTools.rsaDecrypt(encryptedPasscode, key) ?: byteArrayOf())
             }

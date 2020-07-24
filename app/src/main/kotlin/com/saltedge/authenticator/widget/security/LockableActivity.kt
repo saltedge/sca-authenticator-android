@@ -274,9 +274,10 @@ abstract class LockableActivity : AppCompatActivity(),
         }
     }
 
+    @SuppressLint("NewApi")
     @Suppress("DEPRECATION")
     private fun successVibrate() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (buildVersion26OrGreater) {
             vibrator?.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
         } else vibrator?.vibrate(50)
     }
