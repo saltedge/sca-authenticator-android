@@ -277,7 +277,7 @@ abstract class LockableActivity : AppCompatActivity(),
     @SuppressLint("NewApi")
     @Suppress("DEPRECATION")
     private fun successVibrate() {
-        if (buildVersion26OrGreater) {
+        if (buildVersion26orGreater) {
             vibrator?.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
         } else vibrator?.vibrate(50)
     }

@@ -21,7 +21,6 @@
 package com.saltedge.authenticator.widget.biometric
 
 import android.os.Bundle
-import android.security.keystore.KeyProperties
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.sdk.constants.KEY_DESCRIPTION
 import com.saltedge.authenticator.sdk.constants.KEY_TITLE

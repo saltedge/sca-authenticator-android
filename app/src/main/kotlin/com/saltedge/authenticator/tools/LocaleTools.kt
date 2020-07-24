@@ -54,7 +54,7 @@ fun Context.updateApplicationLocale(locale: Locale) {
     val resources = this.resources
     val configuration = resources?.configuration
     Locale.setDefault(locale)
-    if (buildVersion24OrGreater) configuration?.setLocales(LocaleList(locale))
+    if (buildVersion24orGreater) configuration?.setLocales(LocaleList(locale))
     else configuration?.locale = locale
 
     resources?.updateConfiguration(configuration, resources.displayMetrics)
@@ -90,7 +90,7 @@ fun Context.currentAppLocaleName(): String? = getCurrentAppLocale()?.languageNam
 @Suppress("DEPRECATION")
 @SuppressLint("NewApi")
 fun Context.getCurrentAppLocale(): Locale? {
-    return if (buildVersion24OrGreater) resources.configuration?.locales?.get(0)
+    return if (buildVersion24orGreater) resources.configuration?.locales?.get(0)
     else resources?.configuration?.locale
 }
 

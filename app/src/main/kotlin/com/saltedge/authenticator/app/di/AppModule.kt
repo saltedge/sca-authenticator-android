@@ -40,8 +40,8 @@ import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.PasscodeTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
-import com.saltedge.authenticator.tools.buildVersion23OrGreater
-import com.saltedge.authenticator.tools.buildVersion28OrGreater
+import com.saltedge.authenticator.tools.buildVersion23orGreater
+import com.saltedge.authenticator.tools.buildVersion28orGreater
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptManagerV28
 import com.saltedge.authenticator.widget.biometric.BiometricsInputDialog
@@ -67,8 +67,8 @@ class AppModule(context: Context) {
     @Provides
     fun provideBiometricPrompt(biometricTools: BiometricToolsAbs): BiometricPromptAbs? {
         return when {
-            buildVersion28OrGreater -> BiometricPromptManagerV28()
-            buildVersion23OrGreater -> BiometricsInputDialog(biometricTools)
+            buildVersion28orGreater -> BiometricPromptManagerV28()
+            buildVersion23orGreater -> BiometricsInputDialog(biometricTools)
             else -> null
         }
     }

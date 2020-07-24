@@ -25,7 +25,7 @@ import android.content.res.Configuration
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.FragmentActivity
-import com.saltedge.authenticator.tools.buildVersion28OrGreater
+import com.saltedge.authenticator.tools.buildVersion28orGreater
 import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
 
 fun Context.isDarkThemeSet(): Boolean {
@@ -45,7 +45,7 @@ fun Context.switchDarkLightMode(currentMode: Int): Int {
 }
 
 fun getDefaultSystemNightMode(): Int {
-    return if (buildVersion28OrGreater) AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+    return if (buildVersion28orGreater) AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
     else AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
 }
 
