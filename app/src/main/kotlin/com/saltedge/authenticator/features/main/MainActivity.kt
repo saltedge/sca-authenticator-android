@@ -33,7 +33,10 @@ import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.MainActivityBinding
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.interfaces.*
-import com.saltedge.authenticator.tools.*
+import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.currentFragmentOnTop
+import com.saltedge.authenticator.tools.showQrScannerActivity
+import com.saltedge.authenticator.tools.updateScreenshotLocking
 import com.saltedge.authenticator.widget.security.LockableActivity
 import com.saltedge.authenticator.widget.security.UnlockAppInputView
 import kotlinx.android.synthetic.main.activity_main.*
