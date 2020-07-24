@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2020 Salt Edge Inc.
@@ -49,11 +48,19 @@
 
         <action
             android:id="@+id/about_list"
-            app:destination="@+id/aboutListFragment" />
+            app:destination="@+id/aboutListFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
 
         <action
             android:id="@+id/passcode_edit"
-            app:destination="@+id/passcodeEditFragment" />
+            app:destination="@+id/passcodeEditFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
 
         <action
             android:id="@+id/language"
@@ -67,7 +74,11 @@
 
         <action
             android:id="@+id/settings_list"
-            app:destination="@+id/settingsListFragment" />
+            app:destination="@+id/settingsListFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
     <dialog
@@ -82,11 +93,19 @@
 
         <action
             android:id="@+id/license"
-            app:destination="@+id/licensesFragment" />
+            app:destination="@+id/licensesFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
 
         <action
             android:id="@+id/terms_of_services"
-            app:destination="@+id/webViewFragment" />
+            app:destination="@+id/webViewFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -96,7 +115,11 @@
 
         <action
             android:id="@+id/terms_of_services"
-            app:destination="@+id/webViewFragment" />
+            app:destination="@+id/webViewFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -111,7 +134,11 @@
 
         <action
             android:id="@+id/consents_list"
-            app:destination="@+id/consentsListFragment" />
+            app:destination="@+id/consentsListFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
 
         <action
             android:id="@+id/edit_connection_name_dialog"
@@ -123,7 +150,11 @@
 
         <action
             android:id="@+id/connect_provider"
-            app:destination="@+id/connectProviderFragment" />
+            app:destination="@+id/connectProviderFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -133,7 +164,11 @@
 
         <action
             android:id="@+id/consent_details"
-            app:destination="@+id/consentDetailsFragment" />
+            app:destination="@+id/consentDetailsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -168,7 +203,11 @@
 
         <action
             android:id="@+id/select_connections"
-            app:destination="@+id/selectConnectionsFragment" />
+            app:destination="@+id/selectConnectionsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
     <dialog
