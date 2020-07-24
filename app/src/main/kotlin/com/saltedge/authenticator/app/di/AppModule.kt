@@ -67,7 +67,7 @@ class AppModule(context: Context) {
     @Provides
     fun provideBiometricPrompt(biometricTools: BiometricToolsAbs): BiometricPromptAbs? {
         return when {
-//            buildVersion28OrGreater -> BiometricPromptManagerV28()
+            buildVersion28OrGreater -> BiometricPromptManagerV28()
             buildVersion23OrGreater -> BiometricsInputDialog(biometricTools)
             else -> null
         }
