@@ -33,7 +33,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.app.options
+import com.saltedge.authenticator.app.navigateTo
 import com.saltedge.authenticator.cloud.clearNotifications
 import com.saltedge.authenticator.databinding.AuthorizationsListBinding
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
@@ -149,10 +149,10 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
             }
         })
         viewModel.onShowConnectionsListEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { findNavController().navigate(R.id.connections_list, null, options) }
+            event.getContentIfNotHandled()?.let { navigateTo(actionRes = R.id.connections_list) }
         })
         viewModel.onShowSettingsListEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { findNavController().navigate(R.id.settings_list, null, options) }
+            event.getContentIfNotHandled()?.let { navigateTo(actionRes = R.id.settings_list) }
         })
         viewModel.emptyViewImage.observe(this, Observer<ResId> {
             emptyView.setImageResource(it)
