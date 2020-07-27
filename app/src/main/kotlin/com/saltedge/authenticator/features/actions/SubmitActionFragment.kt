@@ -35,6 +35,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.navigateTo
 import com.saltedge.authenticator.databinding.SubmitActionBinding
 import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.features.main.newAuthorizationListener
@@ -139,9 +140,12 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
             completeView?.setMainActionText(mainActionTextResId)
         })
         viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
-            it?.getContentIfNotHandled()?.let { bundle ->
-                findNavController().navigate(R.id.select_connections, bundle)
-            }
-        })
+                it?.getContentIfNotHandled()?.let { bundle ->
+                    navigateTo(
+                        actionRes = R.id.select_connections,
+                        bundle = bundle
+                    )
+                }
+            })
     }
 }
