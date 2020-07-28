@@ -106,10 +106,6 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(SubmitActionViewModel::class.java)
         lifecycle.addObserver(viewModel)
-        viewModel.setInitialData(
-            actionAppLinkData = arguments?.getSerializable(KEY_DATA) as? ActionAppLinkData
-                ?: return
-        )
 
         viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let { findNavController().popBackStack() }
@@ -147,5 +143,9 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
                     )
                 }
             })
+        viewModel.setInitialData(
+            actionAppLinkData = arguments?.getSerializable(KEY_DATA) as? ActionAppLinkData
+                ?: return
+        )
     }
 }
