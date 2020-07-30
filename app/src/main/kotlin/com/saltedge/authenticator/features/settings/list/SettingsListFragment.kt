@@ -50,7 +50,10 @@ import com.saltedge.authenticator.widget.list.SpaceItemDecoration
 import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
 
-class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuItemClickListener {
+class SettingsListFragment : BaseFragment(),
+    DialogHandlerListener,
+    AppbarMenuItemClickListener,
+    DialogInterface.OnClickListener {
 
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: SettingsListViewModel
@@ -89,6 +92,10 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
         viewModel.onAppbarMenuItemClick(menuItem)
     }
 
+    override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
+        viewModel.onDialogActionIdClick(dialogActionId)
+    }
+
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(SettingsListViewModel::class.java)
 
@@ -109,9 +116,7 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
         })
         viewModel.clearClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
             event.getContentIfNotHandled()?.let {
-                alertDialog = activity?.showResetDataAndSettingsDialog(DialogInterface.OnClickListener { _, _ ->
-                    viewModel.onUserConfirmedClearAppData()
-                })
+                alertDialog = activity?.showResetDataAndSettingsDialog(listener = this)
             }
         })
         viewModel.clearSuccessEvent.observe(this, Observer<ViewModelEvent<Unit>> {
