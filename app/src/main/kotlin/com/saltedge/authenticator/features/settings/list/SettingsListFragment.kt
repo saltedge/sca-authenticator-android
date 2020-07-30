@@ -52,8 +52,7 @@ import javax.inject.Inject
 
 class SettingsListFragment : BaseFragment(),
     DialogHandlerListener,
-    AppbarMenuItemClickListener,
-    DialogInterface.OnClickListener {
+    AppbarMenuItemClickListener {
 
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: SettingsListViewModel
@@ -92,10 +91,6 @@ class SettingsListFragment : BaseFragment(),
         viewModel.onAppbarMenuItemClick(menuItem)
     }
 
-    override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
-        viewModel.onDialogActionIdClick(dialogActionId)
-    }
-
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(SettingsListViewModel::class.java)
 
@@ -116,7 +111,10 @@ class SettingsListFragment : BaseFragment(),
         })
         viewModel.clearClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
             event.getContentIfNotHandled()?.let {
-                alertDialog = activity?.showResetDataAndSettingsDialog(listener = this)
+                alertDialog = activity?.showResetDataAndSettingsDialog(
+                    listener = DialogInterface.OnClickListener { _, dialogActionId ->
+                        viewModel.onDialogActionIdClick(dialogActionId)
+                    })
             }
         })
         viewModel.clearSuccessEvent.observe(this, Observer<ViewModelEvent<Unit>> {
@@ -151,9 +149,11 @@ class SettingsListFragment : BaseFragment(),
     private fun setupViews() {
         activity?.let {
             recyclerView?.layoutManager = LinearLayoutManager(it)
-            recyclerView?.addItemDecoration(SpaceItemDecoration(
-                context = it,
-                headerPositions = viewModel.spacesPositions)
+            recyclerView?.addItemDecoration(
+                SpaceItemDecoration(
+                    context = it,
+                    headerPositions = viewModel.spacesPositions
+                )
             )
         }
         adapter = SettingsAdapter(listener = viewModel).apply {
