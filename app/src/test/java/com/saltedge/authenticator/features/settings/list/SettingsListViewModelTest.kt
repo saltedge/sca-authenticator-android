@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.settings.list
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.test.core.app.ApplicationProvider
@@ -213,9 +214,9 @@ class SettingsListViewModelTest {
 
     @Test
     @Throws(Exception::class)
-    fun onUserConfirmedDeleteAllConnectionsTest() {
+    fun onDialogActionIdClickTestCase1() {
         //when
-        viewModel.onUserConfirmedClearAppData()
+        viewModel.onDialogActionIdClick(DialogInterface.BUTTON_POSITIVE)
 
         //then
         Mockito.verify(mockConnectionsRepository).deleteAllConnections()
@@ -223,6 +224,16 @@ class SettingsListViewModelTest {
             connectionsAndKeys = listOf(mockConnectionAndKey),
             resultCallback = null
         )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionIdClickTestCase2() {
+        //when
+        viewModel.onDialogActionIdClick(DialogInterface.BUTTON_NEGATIVE)
+
+        //then
+        Mockito.never()
     }
 
     @Test
