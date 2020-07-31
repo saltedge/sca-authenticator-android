@@ -35,11 +35,8 @@ class ConnectionsListAdapter(val clickListener: ListItemClickListener?) : Abstra
         (holder as ConnectionItemHolder).bind(item as ConnectionViewModel)
     }
 
-    //TODO: replace mapIndexed to indexOf
     fun updateListItem(viewModel: ConnectionViewModel) {
-        data.mapIndexed { index, any -> index to (any as ConnectionViewModel) }
-            .firstOrNull { it.second.guid == viewModel.guid }?.let { (itemIndex, _) ->
-                updateItem(viewModel, itemIndex)
-            }
+        val itemIndex = data.indexOfFirst { (it as ConnectionViewModel).guid == viewModel.guid }
+        if (itemIndex > -1) updateItem(viewModel, itemIndex)
     }
 }
