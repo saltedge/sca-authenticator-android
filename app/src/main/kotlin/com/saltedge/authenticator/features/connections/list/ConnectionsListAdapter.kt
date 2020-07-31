@@ -37,6 +37,6 @@ class ConnectionsListAdapter(val clickListener: ListItemClickListener?) : Abstra
 
     fun updateListItem(viewModel: ConnectionViewModel) {
         val itemIndex = data.indexOfFirst { (it as ConnectionViewModel).guid == viewModel.guid }
-        if (itemIndex != -1) updateItem(viewModel, itemIndex)
+        if (itemIndex > -1) updateItem(viewModel, itemIndex)
     }
 }
