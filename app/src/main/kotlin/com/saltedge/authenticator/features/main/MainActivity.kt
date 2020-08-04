@@ -29,13 +29,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_CLOSE_APP
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.MainActivityBinding
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.interfaces.*
-import com.saltedge.authenticator.sdk.constants.KEY_TITLE
-import com.saltedge.authenticator.tools.*
+import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.currentFragmentOnTop
+import com.saltedge.authenticator.tools.showQrScannerActivity
+import com.saltedge.authenticator.tools.updateScreenshotLocking
 import com.saltedge.authenticator.widget.security.LockableActivity
 import com.saltedge.authenticator.widget.security.UnlockAppInputView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -87,7 +88,7 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
 
     override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView
 
-    override fun getSnackbarAnchorView(): View? = null //TODO: Display snackbar relative to navHostFragment
+    override fun getSnackbarAnchorView(): View? = activityRootLayout
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainActivityViewModel::class.java)
@@ -107,17 +108,11 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
         viewModel.onRestartActivityEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { super.restartLockableActivity() }
         })
-        viewModel.onShowAuthorizationsListEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let {
-                findNavController(R.id.navHostFragment).navigate(R.id.authorizationsListFragment)
-            }
-        })
         viewModel.onShowAuthorizationDetailsEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { bundle ->
                 findNavController(R.id.navHostFragment).navigate(R.id.authorizationDetailsFragment, bundle)
             }
         })
-
         viewModel.onShowActionAuthorizationEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { bundle ->
                 findNavController(R.id.navHostFragment).navigate(R.id.authorizationDetailsFragment, bundle)

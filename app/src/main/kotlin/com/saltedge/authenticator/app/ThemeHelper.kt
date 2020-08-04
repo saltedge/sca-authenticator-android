@@ -23,8 +23,15 @@ package com.saltedge.authenticator.app
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
+import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
+import com.saltedge.authenticator.R
+import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.buildVersion28orGreater
 import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
 
@@ -56,4 +63,17 @@ fun isSystemNightModeSupported(sdkVersion: Int): Boolean {
 fun FragmentActivity.applyNightMode(nightMode: Int) {
     if (this.intent != null) this.intent.putExtra(KEY_SKIP_PIN, true)
     AppCompatDelegate.setDefaultNightMode(nightMode)
+}
+
+val defaultTransition = navOptions {
+    anim {
+        enter = R.anim.slide_in_right
+        exit = R.anim.slide_out_left
+        popEnter = R.anim.slide_in_left
+        popExit = R.anim.slide_out_right
+    }
+}
+
+fun Fragment.navigateTo(actionRes: ResId, bundle: Bundle? = null, transition: NavOptions = defaultTransition) {
+    findNavController().navigate(actionRes, bundle, transition)
 }

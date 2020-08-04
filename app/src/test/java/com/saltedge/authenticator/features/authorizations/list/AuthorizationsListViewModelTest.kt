@@ -20,9 +20,8 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
+import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -31,11 +30,10 @@ import androidx.test.core.app.ApplicationProvider
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.encryptWithTestKey
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.ConnectivityReceiverAbs
-import com.saltedge.authenticator.app.KEY_GUID
-import com.saltedge.authenticator.app.KEY_OPTION_ID
+import com.saltedge.authenticator.app.*
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
+import com.saltedge.authenticator.features.menu.BottomMenuDialog
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.Connection
@@ -142,7 +140,8 @@ class AuthorizationsListViewModelTest {
 
         //when
         lifecycle.currentState = Lifecycle.State.RESUMED
-        lifecycle.currentState = Lifecycle.State.CREATED//move to stop state (possible only after RESUMED state)
+        lifecycle.currentState =
+            Lifecycle.State.CREATED //move to stop state (possible only after RESUMED state)
 
         //then
         verify(mockConnectivityReceiver).removeNetworkStateChangeListener(viewModel)
@@ -162,12 +161,18 @@ class AuthorizationsListViewModelTest {
         //then
         assertThat(viewModel.emptyViewVisibility.value, equalTo(View.VISIBLE))
         assertThat(viewModel.listVisibility.value, equalTo(View.GONE))
-        assertThat(viewModel.emptyViewActionText.value,
-            equalTo(R.string.actions_connect))
-        assertThat(viewModel.emptyViewTitleText.value,
-            equalTo(R.string.connections_list_empty_title))
-        assertThat(viewModel.emptyViewDescriptionText.value,
-            equalTo(R.string.connections_list_empty_description))
+        assertThat(
+            viewModel.emptyViewActionText.value,
+            equalTo(R.string.actions_connect)
+        )
+        assertThat(
+            viewModel.emptyViewTitleText.value,
+            equalTo(R.string.connections_list_empty_title)
+        )
+        assertThat(
+            viewModel.emptyViewDescriptionText.value,
+            equalTo(R.string.connections_list_empty_description)
+        )
     }
 
     @Test
@@ -183,12 +188,18 @@ class AuthorizationsListViewModelTest {
         //then
         assertThat(viewModel.emptyViewVisibility.value, equalTo(View.VISIBLE))
         assertThat(viewModel.listVisibility.value, equalTo(View.GONE))
-        assertThat(viewModel.emptyViewActionText.value,
-            equalTo(R.string.actions_scan_qr))
-        assertThat(viewModel.emptyViewTitleText.value,
-            equalTo(R.string.authorizations_empty_title))
-        assertThat(viewModel.emptyViewDescriptionText.value,
-            equalTo(R.string.authorizations_empty_description))
+        assertThat(
+            viewModel.emptyViewActionText.value,
+            equalTo(R.string.actions_scan_qr)
+        )
+        assertThat(
+            viewModel.emptyViewTitleText.value,
+            equalTo(R.string.authorizations_empty_title)
+        )
+        assertThat(
+            viewModel.emptyViewDescriptionText.value,
+            equalTo(R.string.authorizations_empty_description)
+        )
     }
 
     @Test
@@ -205,12 +216,18 @@ class AuthorizationsListViewModelTest {
         //then
         assertThat(viewModel.emptyViewVisibility.value, equalTo(View.GONE))
         assertThat(viewModel.listVisibility.value, equalTo(View.VISIBLE))
-        assertThat(viewModel.emptyViewActionText.value,
-            equalTo(R.string.actions_scan_qr))
-        assertThat(viewModel.emptyViewTitleText.value,
-            equalTo(R.string.authorizations_empty_title))
-        assertThat(viewModel.emptyViewDescriptionText.value,
-            equalTo(R.string.authorizations_empty_description))
+        assertThat(
+            viewModel.emptyViewActionText.value,
+            equalTo(R.string.actions_scan_qr)
+        )
+        assertThat(
+            viewModel.emptyViewTitleText.value,
+            equalTo(R.string.authorizations_empty_title)
+        )
+        assertThat(
+            viewModel.emptyViewDescriptionText.value,
+            equalTo(R.string.authorizations_empty_description)
+        )
     }
 
     @Test
@@ -488,10 +505,12 @@ class AuthorizationsListViewModelTest {
     @Throws(Exception::class)
     fun onConfirmDenySuccessTestCase1() {
         //given success result of CONFIRM
-        viewModel.listItems.postValue(listOf(
-            items.first().copy(),
-            items[1].copy(viewMode = ViewMode.CONFIRM_PROCESSING)
-        ))
+        viewModel.listItems.postValue(
+            listOf(
+                items.first().copy(),
+                items[1].copy(viewMode = ViewMode.CONFIRM_PROCESSING)
+            )
+        )
         val result = ConfirmDenyResponseData(success = true, authorizationID = "2")
 
         //when
@@ -508,10 +527,12 @@ class AuthorizationsListViewModelTest {
     @Throws(Exception::class)
     fun onConfirmDenySuccessTestCase2() {
         //given success result of DENY
-        viewModel.listItems.postValue(listOf(
-            items.first().copy(),
-            items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
-        ))
+        viewModel.listItems.postValue(
+            listOf(
+                items.first().copy(),
+                items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
+            )
+        )
         val result = ConfirmDenyResponseData(success = true, authorizationID = "2")
 
         //when
@@ -528,10 +549,12 @@ class AuthorizationsListViewModelTest {
     @Throws(Exception::class)
     fun onConfirmDenySuccessTestCase3() {
         //given invalid params
-        viewModel.listItems.postValue(listOf(
-            items.first().copy(),
-            items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
-        ))
+        viewModel.listItems.postValue(
+            listOf(
+                items.first().copy(),
+                items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
+            )
+        )
         val result = ConfirmDenyResponseData(success = true, authorizationID = "101")
 
         //when
@@ -540,10 +563,12 @@ class AuthorizationsListViewModelTest {
         //then
         assertThat(
             viewModel.listItemsValues,
-            equalTo(listOf(
-                items.first(),
-                items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
-            ))
+            equalTo(
+                listOf(
+                    items.first(),
+                    items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
+                )
+            )
         )
     }
 
@@ -551,10 +576,12 @@ class AuthorizationsListViewModelTest {
     @Throws(Exception::class)
     fun onConfirmDenySuccessTestCase4() {
         //given invalid params
-        viewModel.listItems.postValue(listOf(
-            items.first().copy(),
-            items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
-        ))
+        viewModel.listItems.postValue(
+            listOf(
+                items.first().copy(),
+                items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
+            )
+        )
         val result = ConfirmDenyResponseData(success = true, authorizationID = "1")
 
         //when
@@ -563,10 +590,12 @@ class AuthorizationsListViewModelTest {
         //then
         assertThat(
             viewModel.listItemsValues,
-            equalTo(listOf(
-                items.first().copy(),
-                items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
-            ))
+            equalTo(
+                listOf(
+                    items.first().copy(),
+                    items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
+                )
+            )
         )
     }
 
@@ -574,10 +603,12 @@ class AuthorizationsListViewModelTest {
     @Throws(Exception::class)
     fun onConfirmDenyFailureTestCase1() {
         //given
-        viewModel.listItems.postValue(listOf(
-            items.first().copy(),
-            items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
-        ))
+        viewModel.listItems.postValue(
+            listOf(
+                items.first().copy(),
+                items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
+            )
+        )
         val error = createRequestError(404)
 
         //when
@@ -588,17 +619,22 @@ class AuthorizationsListViewModelTest {
             viewModel.listItemsValues,
             equalTo(listOf(items.first(), items[1].copy(viewMode = ViewMode.ERROR)))
         )
-        assertThat(viewModel.onConfirmErrorEvent.value, equalTo(ViewModelEvent(error.getErrorMessage(context))))
+        assertThat(
+            viewModel.onConfirmErrorEvent.value,
+            equalTo(ViewModelEvent(error.getErrorMessage(context)))
+        )
     }
 
     @Test
     @Throws(Exception::class)
     fun onConfirmDenyFailureTestCase2() {
         //given invalid params
-        viewModel.listItems.postValue(listOf(
-            items.first().copy(),
-            items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
-        ))
+        viewModel.listItems.postValue(
+            listOf(
+                items.first().copy(),
+                items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
+            )
+        )
         val error = createRequestError(404)
 
         //when
@@ -609,7 +645,10 @@ class AuthorizationsListViewModelTest {
             viewModel.listItemsValues,
             equalTo(listOf(items.first(), items[1].copy(viewMode = ViewMode.DENY_PROCESSING)))
         )
-        assertThat(viewModel.onConfirmErrorEvent.value, equalTo(ViewModelEvent("Request Error (404)")))
+        assertThat(
+            viewModel.onConfirmErrorEvent.value,
+            equalTo(ViewModelEvent("Request Error (404)"))
+        )
     }
 
     @Test
@@ -625,13 +664,19 @@ class AuthorizationsListViewModelTest {
         assertThat(viewModel.emptyViewVisibility.value, equalTo(View.VISIBLE))
         assertThat(viewModel.listVisibility.value, equalTo(View.GONE))
 
-        assertThat(viewModel.emptyViewImage.value,
-            equalTo(R.drawable.ic_internet_connection))
+        assertThat(
+            viewModel.emptyViewImage.value,
+            equalTo(R.drawable.ic_internet_connection)
+        )
         assertNull(viewModel.emptyViewActionText.value)
-        assertThat(viewModel.emptyViewTitleText.value,
-            equalTo(R.string.authorizations_no_internet_title))
-        assertThat(viewModel.emptyViewDescriptionText.value,
-            equalTo(R.string.authorizations_no_internet_description))
+        assertThat(
+            viewModel.emptyViewTitleText.value,
+            equalTo(R.string.authorizations_no_internet_title)
+        )
+        assertThat(
+            viewModel.emptyViewDescriptionText.value,
+            equalTo(R.string.authorizations_no_internet_description)
+        )
     }
 
     @Test
@@ -647,14 +692,22 @@ class AuthorizationsListViewModelTest {
         assertThat(viewModel.emptyViewVisibility.value, equalTo(View.VISIBLE))
         assertThat(viewModel.listVisibility.value, equalTo(View.GONE))
 
-        assertThat(viewModel.emptyViewImage.value,
-            equalTo(R.drawable.ic_authorizations_empty))
-        assertThat(viewModel.emptyViewActionText.value,
-            equalTo(R.string.actions_scan_qr))
-        assertThat(viewModel.emptyViewTitleText.value,
-            equalTo(R.string.authorizations_empty_title))
-        assertThat(viewModel.emptyViewDescriptionText.value,
-            equalTo(R.string.authorizations_empty_description))
+        assertThat(
+            viewModel.emptyViewImage.value,
+            equalTo(R.drawable.ic_authorizations_empty)
+        )
+        assertThat(
+            viewModel.emptyViewActionText.value,
+            equalTo(R.string.actions_scan_qr)
+        )
+        assertThat(
+            viewModel.emptyViewTitleText.value,
+            equalTo(R.string.authorizations_empty_title)
+        )
+        assertThat(
+            viewModel.emptyViewDescriptionText.value,
+            equalTo(R.string.authorizations_empty_description)
+        )
     }
 
     @Test
@@ -693,20 +746,26 @@ class AuthorizationsListViewModelTest {
 
         //then
         assertNull(viewModel.onQrScanClickEvent.value)
+
+        val bundle = viewModel.onMoreMenuClickEvent.value?.peekContent()
+
+        assertThat(bundle?.getString(KEY_ID), equalTo(""))
         assertThat(
-            viewModel.onMoreMenuClickEvent.value,
-            equalTo(ViewModelEvent(listOf<MenuItemData>(
-                MenuItemData(
-                    id = R.string.connections_feature_title,
-                    iconRes = R.drawable.ic_menu_action_connections,
-                    textRes = R.string.connections_feature_title
-                ),
-                MenuItemData(
-                    id = R.string.settings_feature_title,
-                    iconRes = R.drawable.ic_menu_action_settings,
-                    textRes = R.string.settings_feature_title
+            bundle?.getSerializable(BottomMenuDialog.KEY_ITEMS) as List<MenuItemData>,
+            equalTo(
+                listOf<MenuItemData>(
+                    MenuItemData(
+                        id = R.string.connections_feature_title,
+                        iconRes = R.drawable.ic_menu_action_connections,
+                        textRes = R.string.connections_feature_title
+                    ),
+                    MenuItemData(
+                        id = R.string.settings_feature_title,
+                        iconRes = R.drawable.ic_menu_action_settings,
+                        textRes = R.string.settings_feature_title
+                    )
                 )
-            )))
+            )
         )
     }
 
@@ -728,11 +787,12 @@ class AuthorizationsListViewModelTest {
     @Throws(Exception::class)
     fun onActivityResultTestCase1() {
         //given
-        val resultCode = Activity.RESULT_CANCELED
-        val data = Intent()
+        val data = Bundle().apply {
+            putInt(KEY_OPTION_ID, 0)
+        }
 
         //when
-        viewModel.onActivityResult(0, resultCode, data)
+        viewModel.onItemMenuClicked(data)
 
         //then
         assertNull(viewModel.onShowConnectionsListEvent.value)
@@ -743,11 +803,10 @@ class AuthorizationsListViewModelTest {
     @Throws(Exception::class)
     fun onActivityResultTestCase2() {
         //given
-        val resultCode = Activity.RESULT_OK
         val data = null
 
         //when
-        viewModel.onActivityResult(0, resultCode, data)
+        viewModel.onItemMenuClicked(data)
 
         //then
         assertNull(viewModel.onShowConnectionsListEvent.value)
@@ -758,26 +817,12 @@ class AuthorizationsListViewModelTest {
     @Throws(Exception::class)
     fun onActivityResultTestCase3() {
         //given
-        val resultCode = Activity.RESULT_OK
-        val data = Intent().putExtra(KEY_GUID, 0)
+        val data = Bundle().apply {
+            putInt(KEY_OPTION_ID, R.string.connections_feature_title)
+        }
 
         //when
-        viewModel.onActivityResult(0, resultCode, data)
-
-        //then
-        assertNull(viewModel.onShowConnectionsListEvent.value)
-        assertNull(viewModel.onShowSettingsListEvent.value)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onActivityResultTestCase4() {
-        //given
-        val resultCode = Activity.RESULT_OK
-        val data = Intent().putExtra(KEY_OPTION_ID, R.string.connections_feature_title)
-
-        //when
-        viewModel.onActivityResult(0, resultCode, data)
+        viewModel.onItemMenuClicked(data)
 
         //then
         assertThat(viewModel.onShowConnectionsListEvent.value, equalTo(ViewModelEvent(Unit)))
@@ -786,13 +831,14 @@ class AuthorizationsListViewModelTest {
 
     @Test
     @Throws(Exception::class)
-    fun onActivityResultTestCase5() {
+    fun onActivityResultTestCase4() {
         //given
-        val resultCode = Activity.RESULT_OK
-        val data = Intent().putExtra(KEY_OPTION_ID, R.string.settings_feature_title)
+        val data = Bundle().apply {
+            putInt(KEY_OPTION_ID, R.string.settings_feature_title)
+        }
 
         //when
-        viewModel.onActivityResult(0, resultCode, data)
+        viewModel.onItemMenuClicked(data)
 
         //then
         assertNull(viewModel.onShowConnectionsListEvent.value)
