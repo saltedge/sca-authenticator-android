@@ -57,6 +57,10 @@
 
 # Coroutines
 -dontwarn kotlinx.coroutines.flow.**inlined**
+-dontwarn java.lang.instrument.ClassFileTransformer
+-dontwarn sun.misc.SignalHandler
+-dontwarn java.lang.instrument.Instrumentation
+-dontwarn sun.misc.Signal
 
 # Blur effect
 -keep class androidx.renderscript.** { *; }

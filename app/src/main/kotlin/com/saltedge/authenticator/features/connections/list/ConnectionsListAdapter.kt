@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,11 +35,8 @@ class ConnectionsListAdapter(val clickListener: ListItemClickListener?) : Abstra
         (holder as ConnectionItemHolder).bind(item as ConnectionItemViewModel)
     }
 
-    //TODO: replace mapIndexed to indexOf
     fun updateListItem(viewModel: ConnectionItemViewModel) {
-        data.mapIndexed { index, any -> index to (any as ConnectionItemViewModel) }
-            .firstOrNull { it.second.guid == viewModel.guid }?.let { (itemIndex, _) ->
-                updateItem(viewModel, itemIndex)
-            }
+        val itemIndex = data.indexOfFirst { (it as ConnectionItemViewModel).guid == viewModel.guid }
+        if (itemIndex > -1) updateItem(viewModel, itemIndex)
     }
 }

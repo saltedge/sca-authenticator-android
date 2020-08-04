@@ -33,6 +33,7 @@ import com.fivehundredpx.android.blur.BlurringView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.sdk.tools.hasHTMLTags
 import com.saltedge.authenticator.tools.applyAlphaToColor
+import com.saltedge.authenticator.tools.buildVersionLessThan23
 import com.saltedge.authenticator.tools.setVisible
 import kotlinx.android.synthetic.main.view_authorization_content.view.*
 
@@ -106,7 +107,7 @@ class AuthorizationContentView : LinearLayout {
             ConstraintLayout.LayoutParams.MATCH_PARENT
         )
         val overlayColor = ContextCompat.getColor(context, R.color.theme_background).applyAlphaToColor(0.8f)
-        blurringView = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        blurringView = if (buildVersionLessThan23) {
             View(context).apply {
                 layoutParams = viewLayoutParams
                 setBackgroundColor(overlayColor)

@@ -101,8 +101,8 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
         })
         viewModel.clearClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
             event.getContentIfNotHandled()?.let {
-                alertDialog = activity?.showResetDataAndSettingsDialog(DialogInterface.OnClickListener { _, _ ->
-                    viewModel.onUserConfirmedClearAppData()
+                alertDialog = activity?.showResetDataAndSettingsDialog(DialogInterface.OnClickListener { _, dialogActionId ->
+                    viewModel.onDialogActionIdClick(dialogActionId)
                 })
             }
         })
@@ -138,9 +138,10 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
     private fun setupViews() {
         activity?.let {
             recyclerView?.layoutManager = LinearLayoutManager(it)
-            recyclerView?.addItemDecoration(SpaceItemDecoration(
-                context = it,
-                headerPositions = viewModel.spacesPositions)
+            recyclerView?.addItemDecoration(
+                SpaceItemDecoration(
+                    context = it,
+                    headerPositions = viewModel.spacesPositions)
             )
         }
         adapter = SettingsAdapter(listener = viewModel).apply {

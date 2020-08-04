@@ -50,10 +50,11 @@
     <string name="passcode_input_new_passcode">Input new passcode</string>
     <string name="passcode_confirm_passcode">Confirm passcode</string>
 
-    <string name="errors_touch_id_not_enrolled">No fingerprint was enrolled.</string>
-    <string name="errors_touch_id_not_supported">Fingerprint is not supported on your device</string>
+    <string name="errors_fingerprint_not_enrolled">No fingerprint was enrolled.</string>
+    <string name="errors_fingerprint_not_supported">Fingerprint is not supported on your device</string>
     <string name="errors_fingerprint_not_recognized">Fingerprint not recognized. Please try again.</string>
-    <string name="errors_activate_touch_id">Fingerprint is not activated on your device, please proceed to settings.</string>
+    <string name="errors_fingerprint_activate">Fingerprint is not activated on your device, please proceed to settings.</string>
+    <string name="errors_fingerprint_init">Fingerprint material cannot be accessed. Please reinstall the application.</string>
     <string name="errors_db_init">Database initialize error</string>
     <string name="errors_camera_init">Camera initialize error</string>
     <string name="errors_internal_error">Internal error</string>

@@ -21,7 +21,6 @@
 package com.saltedge.authenticator.app.di
 
 import android.content.Context
-import android.os.Build
 import com.saltedge.authenticator.app.ConnectivityReceiver
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.ViewModelsFactory
@@ -35,13 +34,14 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricTools
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
-import com.saltedge.authenticator.sdk.tools.biometric.isBiometricPromptV28Enabled
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.PasscodeTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
+import com.saltedge.authenticator.tools.buildVersion23orGreater
+import com.saltedge.authenticator.tools.buildVersion28orGreater
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptManagerV28
 import com.saltedge.authenticator.widget.biometric.BiometricsInputDialog
@@ -67,8 +67,8 @@ class AppModule(context: Context) {
     @Provides
     fun provideBiometricPrompt(biometricTools: BiometricToolsAbs): BiometricPromptAbs? {
         return when {
-            isBiometricPromptV28Enabled() -> BiometricPromptManagerV28()
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> BiometricsInputDialog(biometricTools)
+            buildVersion28orGreater -> BiometricPromptManagerV28()
+            buildVersion23orGreater -> BiometricsInputDialog(biometricTools)
             else -> null
         }
     }

@@ -181,6 +181,7 @@ class OnboardingSetupViewModelTest {
             viewModel.showWarningDialogWithMessage.value,
             equalTo(R.string.errors_cant_save_passcode)
         )
+        Mockito.verifyNoInteractions(mockBiometricTools)
     }
 
     /**
@@ -194,6 +195,7 @@ class OnboardingSetupViewModelTest {
 
         assertThat(viewModel.passcodeInputViewVisibility.value, equalTo(View.GONE))
         assertThat(viewModel.showMainActivity.value, equalTo(ViewModelEvent(Unit)))
+        Mockito.verify(mockBiometricTools).activateFingerprint()
     }
 
     @Test
