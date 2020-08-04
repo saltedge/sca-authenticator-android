@@ -20,6 +20,8 @@
  */
 package com.saltedge.authenticator.sdk.network.connector
 
+import com.saltedge.android.test_tools.CommonTestTools
+import com.saltedge.android.test_tools.getDefaultTestConnection
 import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
 import com.saltedge.authenticator.sdk.model.EncryptedData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
@@ -29,8 +31,6 @@ import com.saltedge.authenticator.sdk.model.response.EncryptedListResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.testTools.get404Response
-import com.saltedge.authenticator.sdk.testTools.getDefaultTestConnection
-import com.saltedge.authenticator.sdk.testTools.getTestPrivateKey
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockkClass
@@ -172,7 +172,7 @@ class ConsentsConnectorTest {
     private val mockCall: Call<EncryptedListResponse> =
         mockkClass(Call::class) as Call<EncryptedListResponse>
     private var capturedHeaders: MutableList<Map<String, String>> = mutableListOf()
-    private var privateKey: PrivateKey = this.getTestPrivateKey()
+    private var privateKey: PrivateKey = CommonTestTools.testPrivateKey
 
     @Before
     @Throws(Exception::class)

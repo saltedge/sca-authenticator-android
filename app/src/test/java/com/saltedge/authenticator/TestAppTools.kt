@@ -18,21 +18,28 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.common
+package com.saltedge.authenticator
 
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
+import com.saltedge.authenticator.tools.updateApplicationLocale
+import java.util.*
 
-data class ConnectionViewModel(
-    val guid: String,
-    val code: String,
-    var name: String,
-    val logoUrl: String,
-    val statusDescription: String,
-    @ColorRes val statusColorResId: Int,
-    val reconnectOptionIsVisible: Boolean,
-    @StringRes var deleteMenuItemText: Int,
-    @DrawableRes var deleteMenuItemImage: Int,
-    var isChecked: Boolean
-)
+object TestAppTools {
+
+    val applicationContext: Context
+        get() = ApplicationProvider.getApplicationContext<Context>().applicationContext
+
+    fun getString(resId: Int): String {
+        return try {
+            applicationContext.getString(resId) ?: ""
+        } catch (ignored: Exception) {
+            ""
+        }
+    }
+
+    @Throws(Exception::class)
+    fun setLocale(language: String, country: String = "") {
+        applicationContext.updateApplicationLocale(Locale(language, country))
+    }
+}

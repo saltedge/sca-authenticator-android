@@ -1,3 +1,4 @@
+[![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
 # Salt Edge Authenticator Android SDK  
 
 Salt Edge Authenticator Android SDK - is a set of tools for implementing connection to Salt Edge Authenticator API of Service Provider (e.g Bank) System, that implements Strong Customer Authentication/Dynamic Linking process.  
@@ -40,7 +41,7 @@ In order to use Authenticator SDK it is necessary to install the following tools
 ```
 1. Add SDK dependency to application build.gradle
 ```groovy
-    implementation ('com.saltedge.authenticator.sdk:authenticator_sdk:1.1.1@aar') {
+    implementation ('com.saltedge.authenticator.sdk:authenticator_sdk:1.2.0@aar') {
         transitive = true
     }
 ```  

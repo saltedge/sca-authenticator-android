@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,28 +18,19 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.testTools
+package com.saltedge.authenticator.features.consents.list
 
-import android.content.Context
-import androidx.test.core.app.ApplicationProvider
-import com.saltedge.authenticator.tools.updateApplicationLocale
-import java.util.*
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.saltedge.authenticator.interfaces.ListItemClickListener
+import com.saltedge.authenticator.widget.list.AbstractListAdapter
 
-object TestAppTools {
+class ConsentsListAdapter(val clickListener: ListItemClickListener?) : AbstractListAdapter() {
 
-    val applicationContext: Context
-        get() = ApplicationProvider.getApplicationContext<Context>().applicationContext
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
+        ConsentItemHolder(parent, clickListener)
 
-    fun getString(resId: Int): String {
-        return try {
-            applicationContext.getString(resId) ?: ""
-        } catch (ignored: Exception) {
-            ""
-        }
-    }
-
-    @Throws(Exception::class)
-    fun setLocale(language: String, country: String = "") {
-        applicationContext.updateApplicationLocale(Locale(language, country))
+    override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
+        (holder as ConsentItemHolder).bind(item as ConsentItemViewModel)
     }
 }

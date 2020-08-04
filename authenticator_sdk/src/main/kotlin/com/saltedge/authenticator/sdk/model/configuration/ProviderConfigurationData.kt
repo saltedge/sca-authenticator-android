@@ -33,5 +33,6 @@ data class ProviderConfigurationData(
     @SerializedName(KEY_NAME) var name: String,
     @SerializedName(KEY_LOGO_URL) var logoUrl: String?,
     @SerializedName(KEY_VERSION) var version: String,
-    @SerializedName(KEY_SUPPORT_EMAIL) var supportEmail: String?
+    @SerializedName(KEY_SUPPORT_EMAIL) var supportEmail: String?,
+    @SerializedName(KEY_CONSENT_MANAGEMENT) var consentManagementIsSupported: Boolean? = false
 ) : Serializable

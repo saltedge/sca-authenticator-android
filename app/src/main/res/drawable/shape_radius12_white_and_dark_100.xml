@@ -1,4 +1,4 @@
-<?xml version= "1.0" encoding= "utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
@@ -20,7 +20,6 @@
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <corners android:radius="@dimen/dp_6" />
-    <solid android:color="@color/passcode_pressed_key_background" />
+    <solid android:color="@color/white_and_dark_100" />
+    <corners android:radius="@dimen/dp_12" />
 </shape>

@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2020 Salt Edge Inc.
@@ -34,13 +35,19 @@
         android:layout_height="match_parent"
         android:background="@color/theme_background">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/connectionsListView"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/proceedView"
-            android:scrollbars="vertical"
-            android:visibility="@{viewModel.listVisibility}" />
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/connectionsListView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/proceedView"
+                android:scrollbars="vertical"
+                android:visibility="@{viewModel.listVisibility}" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <Button
             android:id="@+id/proceedView"

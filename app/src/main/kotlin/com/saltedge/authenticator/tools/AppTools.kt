@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,14 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Point
 import android.os.Build
+import android.os.Bundle
 import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.crashlytics.android.Crashlytics
 import com.saltedge.authenticator.app.AuthenticatorApplication
+import com.saltedge.authenticator.app.KEY_GUID
+import com.saltedge.authenticator.sdk.model.GUID
 
 object AppTools : AppToolsAbs {
 
@@ -105,6 +108,18 @@ val FragmentActivity.authenticatorApp: AuthenticatorApplication?
  */
 val Fragment.authenticatorApp: AuthenticatorApplication?
     get() = this.activity?.authenticatorApp
+
+/**
+ * extract guid string value from bundle
+ *
+ * @receiver bundle of data
+ * @return guid string or null if not exist
+ */
+var Bundle.guid: GUID?
+    get() = getString(KEY_GUID)
+    set(value) {
+        putString(KEY_GUID, value)
+    }
 
 /**
  * Check if system sdk version is 28 or greater

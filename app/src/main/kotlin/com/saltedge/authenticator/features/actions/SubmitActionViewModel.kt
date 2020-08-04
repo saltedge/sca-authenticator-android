@@ -32,7 +32,7 @@ import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CONNECTIONS_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_CONNECTION_GUID
-import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.list.convertConnectionsToViewModels
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -58,17 +58,11 @@ class SubmitActionViewModel(
     private var viewMode: ViewMode = ViewMode.START
     private var actionAppLinkData: ActionAppLinkData? = null
     private var connectionAndKey: ConnectionAndKey? = null
-
-    var onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()
-        private set
-    var onShowErrorEvent = MutableLiveData<ViewModelEvent<String>>()
-        private set
-    var onOpenLinkEvent = MutableLiveData<ViewModelEvent<Uri>>()
-        private set
-    var showConnectionsSelectorFragmentEvent = MutableLiveData<List<ConnectionViewModel>>()
-        private set
-    var setResultAuthorizationIdentifier = MutableLiveData<AuthorizationIdentifier>()
-
+    val onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onShowErrorEvent = MutableLiveData<ViewModelEvent<String>>()
+    val onOpenLinkEvent = MutableLiveData<ViewModelEvent<Uri>>()
+    val showConnectionsSelectorFragmentEvent = MutableLiveData<List<ConnectionItemViewModel>>()
+    val setResultAuthorizationIdentifier = MutableLiveData<AuthorizationIdentifier>()
     val iconResId: MutableLiveData<Int> = MutableLiveData(R.drawable.ic_status_error)
     val completeTitleResId: MutableLiveData<Int> = MutableLiveData(R.string.action_error_title)
     val completeDescriptionResId: MutableLiveData<Int> = MutableLiveData(R.string.action_error_description)

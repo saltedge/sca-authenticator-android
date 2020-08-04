@@ -72,7 +72,8 @@ class ProviderDataConnectorTest {
                         code = "code",
                         logoUrl = "url",
                         version = "1",
-                        supportEmail = "example@example.com"
+                        supportEmail = "example@example.com",
+                        consentManagementIsSupported = true
                     )
                 )
             )
@@ -86,7 +87,8 @@ class ProviderDataConnectorTest {
                     code = "code",
                     logoUrl = "url",
                     version = "1",
-                    supportEmail = "example@example.com"
+                    supportEmail = "example@example.com",
+                    consentManagementIsSupported = true
                 ),
                 error = null
             )

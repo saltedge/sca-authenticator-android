@@ -26,6 +26,6 @@
     android:viewportHeight="24">
   <path
       android:pathData="M10.7073,5.2929C11.0978,5.6834 11.0978,6.3166 10.7073,6.7071L6.4144,11H22.0002V13H6.4144L10.7073,17.2929C11.0978,17.6834 11.0978,18.3166 10.7073,18.7071C10.3167,19.0976 9.6836,19.0976 9.293,18.7071L2.5859,12L9.293,5.2929C9.6836,4.9024 10.3167,4.9024 10.7073,5.2929Z"
-      android:fillColor="@color/appbar_action_icon_fill_color"
+      android:fillColor="@color/dark_100_and_white"
       android:fillType="evenOdd"/>
 </vector>

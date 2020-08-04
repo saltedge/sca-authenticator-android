@@ -21,7 +21,6 @@
 package com.saltedge.authenticator.app
 
 import android.content.Context
-import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.features.actions.SubmitActionViewModel
@@ -30,6 +29,8 @@ import com.saltedge.authenticator.features.authorizations.list.AuthorizationsLis
 import com.saltedge.authenticator.features.connections.create.ConnectProviderViewModel
 import com.saltedge.authenticator.features.connections.list.ConnectionsListViewModel
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsViewModel
+import com.saltedge.authenticator.features.consents.details.ConsentDetailsViewModel
+import com.saltedge.authenticator.features.consents.list.ConsentsListViewModel
 import com.saltedge.authenticator.features.launcher.LauncherViewModel
 import com.saltedge.authenticator.features.main.MainActivityViewModel
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupViewModel
@@ -48,6 +49,7 @@ import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.AppTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 class ViewModelsFactory @Inject constructor(
@@ -102,7 +104,8 @@ class ViewModelsFactory @Inject constructor(
                     keyStoreManager = keyStoreManager,
                     cryptoTools = cryptoTools,
                     apiManager = apiManager,
-                    connectivityReceiver = connectivityReceiver
+                    connectivityReceiver = connectivityReceiver,
+                    defaultDispatcher = Dispatchers.Default
                 ) as T
             }
             modelClass.isAssignableFrom(AuthorizationDetailsViewModel::class.java) -> {
@@ -128,7 +131,18 @@ class ViewModelsFactory @Inject constructor(
                     appContext = appContext,
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,
-                    apiManager = apiManager
+                    apiManager = apiManager,
+                    cryptoTools = cryptoTools
+                ) as T
+            }
+            modelClass.isAssignableFrom(ConsentsListViewModel::class.java) -> {
+                return ConsentsListViewModel(
+                    appContext = appContext,
+                    connectionsRepository = connectionsRepository,
+                    keyStoreManager = keyStoreManager,
+                    apiManager = apiManager,
+                    cryptoTools = cryptoTools,
+                    defaultDispatcher = Dispatchers.Default
                 ) as T
             }
             modelClass.isAssignableFrom(SubmitActionViewModel::class.java) -> {
@@ -165,6 +179,14 @@ class ViewModelsFactory @Inject constructor(
                 return LanguageSelectViewModel(
                     appContext = appContext,
                     preferenceRepository = preferenceRepository
+                ) as T
+            }
+            modelClass.isAssignableFrom(ConsentDetailsViewModel::class.java) -> {
+                return ConsentDetailsViewModel(
+                    appContext = appContext,
+                    connectionsRepository = connectionsRepository,
+                    keyStoreManager = keyStoreManager,
+                    apiManager = apiManager
                 ) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")

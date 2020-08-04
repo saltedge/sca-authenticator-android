@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ package com.saltedge.authenticator.features.connections.list
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.widget.list.AbstractListAdapter
 
@@ -32,11 +32,11 @@ class ConnectionsListAdapter(val clickListener: ListItemClickListener?) : Abstra
         ConnectionItemHolder(parent, clickListener)
 
     override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
-        (holder as ConnectionItemHolder).bind(item as ConnectionViewModel)
+        (holder as ConnectionItemHolder).bind(item as ConnectionItemViewModel)
     }
 
-    fun updateListItem(viewModel: ConnectionViewModel) {
-        val itemIndex = data.indexOfFirst { (it as ConnectionViewModel).guid == viewModel.guid }
+    fun updateListItem(viewModel: ConnectionItemViewModel) {
+        val itemIndex = data.indexOfFirst { (it as ConnectionItemViewModel).guid == viewModel.guid }
         if (itemIndex > -1) updateItem(viewModel, itemIndex)
     }
 }

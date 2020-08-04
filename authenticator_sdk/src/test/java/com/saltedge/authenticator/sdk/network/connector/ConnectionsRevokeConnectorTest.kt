@@ -20,19 +20,19 @@
  */
 package com.saltedge.authenticator.sdk.network.connector
 
+import com.saltedge.android.test_tools.CommonTestTools
+import com.saltedge.android.test_tools.getDefaultTestConnection
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_API_RESPONSE
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_HOST_UNREACHABLE
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener
-import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.response.RevokeAccessTokenResponse
 import com.saltedge.authenticator.sdk.model.response.RevokeAccessTokenResponseData
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.testTools.get404Response
-import com.saltedge.authenticator.sdk.testTools.getDefaultTestConnection
-import com.saltedge.authenticator.sdk.testTools.getTestPrivateKey
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockkClass
@@ -181,7 +181,7 @@ class ConnectionsRevokeConnectorTest {
         mockkClass(Call::class) as Call<RevokeAccessTokenResponse>
     private val requestConnection: ConnectionAbs = getDefaultTestConnection()
     private val requestUrl = "https://localhost/api/authenticator/v1/connections"
-    private var privateKey: PrivateKey = this.getTestPrivateKey()
+    private var privateKey: PrivateKey = CommonTestTools.testPrivateKey
 
     @Before
     @Throws(Exception::class)

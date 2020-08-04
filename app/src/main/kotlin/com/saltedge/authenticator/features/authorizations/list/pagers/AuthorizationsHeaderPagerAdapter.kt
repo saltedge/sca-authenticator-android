@@ -26,7 +26,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationHeaderView
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.TimerUpdateListener
 import com.saltedge.authenticator.tools.getOrPut
 import java.util.*
@@ -75,7 +75,7 @@ class AuthorizationsHeaderPagerAdapter(
         timerUpdateListeners.remove(view as TimerUpdateListener)
     }
 
-    private fun updateViewContent(pageView: View, model: AuthorizationViewModel) {
+    private fun updateViewContent(pageView: View, model: AuthorizationItemViewModel) {
         (pageView as AuthorizationHeaderView).apply {
             setTitleAndLogo(
                 title = model.connectionName,

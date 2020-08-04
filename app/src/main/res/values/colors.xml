@@ -43,49 +43,40 @@
     <color name="green_dark">#0A9C45</color>
     <color name="green_light">#4BD683</color>
     <color name="green_light_extra">#88DCAB</color>
-    <color name="dark_theme_background">#040411</color>
     <color name="blue_black">#161E2A</color>
     <color name="white_50">#80FFFFFF</color>
 
-    <!--Aliases for Light mode-->
+    <!--Aliases-->
     <color name="color_accent">@color/primary</color>
-    <color name="system_bar_color">@color/primary</color>
-    <color name="theme_background">@android:color/white</color>
-    <color name="colorControlHighlight">@color/dark_60</color>
-    <color name="passcode_label_background">@color/grey_light_extra</color>
-    <color name="passcode_description_background">@color/grey_light_extra</color>
-    <color name="passcode_pressed_key_background">@color/grey_light_extra</color>
-    <color name="blue_text">@color/primary_dark</color>
-    <color name="onboarding_dots_background">@color/primary</color>
-    <color name="passcode_dots_background">@color/grey_40</color>
-    <color name="primary_text">@color/dark_100</color>
-    <color name="secondary_text">@color/dark_60</color>
-    <color name="red_text">@color/red</color>
-    <color name="inner_circle_of_the_logo">@color/primary_light_extra</color>
-    <color name="finger_icon_fill_color">@color/primary</color>
-    <color name="dialog_red_action">@color/red</color>
-    <color name="dialog_base_action">@color/primary</color>
-    <color name="dialog_background">@android:color/white</color>
-    <color name="connection_item_background">@android:color/white</color>
-    <color name="app_logo_background">@android:color/white</color>
-    <color name="company_logo_background">@color/blue_black</color>
-    <color name="appbar_action_icon_fill_color">@color/dark_100</color>
-    <color name="menu_action_icon_fill_color">@color/dark_60</color>
-    <color name="qr_camera_mask_background">#A6FFFFFF</color>
-    <color name="bottom_menu_background">@android:color/white</color>
-    <color name="authorization_header_view_background">@android:color/white</color>
-    <color name="connections_list_item">@android:color/white</color>
-    <color name="connections_list_logo">@color/grey_light_extra</color>
-    <color name="negative_button_background">@android:color/white</color>
     <color name="white_button_ripple">#85CDCF</color>
     <color name="button_blue_default">@color/primary</color>
     <color name="button_blue_pressed">@color/primary_dark</color>
     <color name="button_blue_disabled">@color/primary_50</color>
+    <color name="colorControlHighlight">@color/dark_60</color>
+    <color name="menu_action_icon_fill_color">@color/dark_60</color>
     <color name="switch_thumb_tint_off">@android:color/white</color>
-    <color name="switch_thumb_tint_on">@color/primary</color>
+    <color name="switch_thumb_tint_on">@color/primary_and_primary_dark</color>
     <color name="switch_track_tint_off">@color/grey_100</color>
-    <color name="switch_track_tint_on">@color/primary_light_extra</color>
+    <color name="switch_track_tint_on">@color/primary_light_extra_and_primary_light</color>
+
+    <!--Aliases for Light mode-->
+    <color name="theme_background">@android:color/white</color>
+    <color name="qr_camera_mask_background">#A6FFFFFF</color>
     <color name="company_logo_fill">#051539</color>
-    <color name="snackbar_background">@color/blue_black</color>
+    <!--Color pairs-->
+    <color name="primary_dark_and_primary_light">@color/primary_dark</color>
+    <color name="primary_and_primary_dark">@color/primary</color>
+    <color name="primary_and_primary_light">@color/primary</color>
+    <color name="primary_light_extra_and_primary_light">@color/primary_light_extra</color>
     <color name="blue_black_and_dark_100">@color/blue_black</color>
+    <color name="dark_100_and_white">@color/dark_100</color>
+    <color name="dark_100_and_grey_40">@color/dark_100</color>
+    <color name="dark_80_and_grey_100">@color/dark_80</color>
+    <color name="dark_60_and_grey_100">@color/dark_60</color>
+    <color name="grey_light_extra_and_blue_black">@color/grey_light_extra</color>
+    <color name="grey_light_extra_and_dark_100">@color/grey_light_extra</color>
+    <color name="grey_40_and_dark_80">@color/grey_40</color>
+    <color name="white_and_blue_black">@android:color/white</color>
+    <color name="white_and_dark_100">@android:color/white</color>
+    <color name="red_and_red_light">@color/red</color>
 </resources>

@@ -137,6 +137,8 @@
     <dimen name="authorizations_list_logo_radius">@dimen/dp_6</dimen>
     <dimen name="connections_list_logo_radius">@dimen/dp_12</dimen>
     <dimen name="connections_list_item_h_margin">@dimen/dp_16</dimen>
+    <dimen name="consents_list_logo_radius">@dimen/dp_6</dimen>
     <dimen name="popupMenuItemHeight">@dimen/dp_48</dimen>
-    <dimen name="popupMenuTpBottomPadding">@dimen/dp_12</dimen>
+    <dimen name="popupMenuItemWidth">@dimen/dp_200</dimen>
+    <dimen name="popupMenuTopBottomPadding">@dimen/dp_12</dimen>
 </resources>

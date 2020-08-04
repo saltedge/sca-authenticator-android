@@ -20,14 +20,14 @@
  */
 package com.saltedge.authenticator.sdk
 
+import com.saltedge.android.test_tools.CommonTestTools
+import com.saltedge.android.test_tools.TestConnection
 import com.saltedge.authenticator.sdk.contract.*
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.response.*
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.RestClient
-import com.saltedge.authenticator.sdk.testTools.TestConnection
-import com.saltedge.authenticator.sdk.testTools.getTestPrivateKey
 import io.mockk.every
 import io.mockk.mockkClass
 import io.mockk.verify
@@ -240,7 +240,7 @@ class AuthenticatorApiManagerTest {
     }
 
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
-    private var privateKey: PrivateKey = this.getTestPrivateKey()
+    private var privateKey: PrivateKey = CommonTestTools.testPrivateKey
     private val requestConnection: ConnectionAbs =
         TestConnection(id = "333", guid = "test", connectUrl = "/", accessToken = "accessToken")
 

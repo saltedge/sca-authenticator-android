@@ -25,7 +25,7 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textColor">@color/dark_100_and_grey_40</item>
         <item name="android:textSize">@dimen/text_30</item>
         <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:background">@drawable/selector_keypad_action</item>
@@ -52,7 +52,7 @@
         <item name="android:layout_height">@dimen/button_height</item>
         <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:textSize">@dimen/text_18</item>
-        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textColor">@color/dark_100_and_grey_40</item>
         <item name="android:background">@drawable/selector_white_button</item>
         <item name="android:elevation">@dimen/dp_30</item>
         <item name="android:textAllCaps">false</item>
@@ -88,19 +88,19 @@
     <style name="ConnectionLogoImage">
         <item name="android:layout_width">@dimen/dp_48</item>
         <item name="android:layout_height">@dimen/dp_48</item>
-        <item name="android:layout_marginStart">@dimen/dp_15</item>
-        <item name="android:layout_marginEnd">@dimen/dp_15</item>
+        <item name="android:layout_marginStart">@dimen/dp_16</item>
+        <item name="android:layout_marginEnd">@dimen/dp_16</item>
         <item name="android:scaleType">fitCenter</item>
         <item name="android:background">@drawable/shape_bg_connection_list_logo</item>
     </style>
 
     <!--DIALOG BUTTONS-->
     <style name="DialogBaseButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">@color/dialog_base_action</item>
+        <item name="android:textColor">@color/primary_and_primary_light</item>
     </style>
 
     <style name="DialogRedButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">@color/dialog_red_action</item>
+        <item name="android:textColor">@color/red_and_red_light</item>
     </style>
 
     <style name="AppBarActionContainer">
@@ -116,25 +116,23 @@
         <item name="android:layout_gravity">center</item>
     </style>
 
-    <!--POPUP MENU-->
-    <style name="PopupMenuRow">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/popupMenuItemHeight</item>
-        <item name="android:gravity">center_vertical</item>
-    </style>
-
-    <style name="PopupMenuImage">
-        <item name="android:layout_width">@dimen/dp_24</item>
-        <item name="android:layout_height">@dimen/dp_24</item>
-        <item name="android:layout_marginStart">@dimen/dp_16</item>
-        <item name="android:scaleType">fitCenter</item>
-    </style>
-
-    <style name="PopupMenuText" parent="Text16Primary">
+    <!--CONSENTS-->
+    <style name="ConsentSharedLabel" parent="Text14Secondary">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginStart">@dimen/dp_12</item>
-        <item name="android:layout_marginEnd">@dimen/dp_16</item>
-        <item name="android:scaleType">fitCenter</item>
+        <item name="android:layout_marginStart">@dimen/dp_10</item>
+        <item name="android:paddingStart">@dimen/dp_10</item>
+        <item name="android:paddingEnd">@dimen/dp_10</item>
+        <item name="android:paddingTop">@dimen/dp_2</item>
+        <item name="android:paddingBottom">@dimen/dp_2</item>
+        <item name="android:lines">1</item>
+        <item name="android:background">@drawable/shape_radius12_white_and_dark_100</item>
+        <item name="android:textColor">@color/dark_80_and_grey_100</item>
+    </style>
+
+    <style name="ConsentExpiresLabel" parent="Text14Secondary">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/dark_80_and_grey_100</item>
     </style>
 </resources>

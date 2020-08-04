@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.saltedge.authenticator.app.getDefaultSystemNightMode
-import com.saltedge.authenticator.app.isSystemNightModeSupported
 
 const val KEY_DATABASE_KEY = "KEY_DATABASE_KEY"
 const val KEY_LOCALE = "KEY_LOCALE"
@@ -73,7 +72,8 @@ object PreferenceRepository : PreferenceRepositoryAbs {
      * @return stored night mode or default one
      */
     override var nightMode: Int
-        get() = preferences?.getInt(KEY_NIGHT_MODE, getDefaultSystemNightMode()) ?: getDefaultSystemNightMode()
+        get() = preferences?.getInt(KEY_NIGHT_MODE, getDefaultSystemNightMode())
+            ?: getDefaultSystemNightMode()
         set(value) {
             preferences?.saveValue(KEY_NIGHT_MODE, value)
         }

@@ -22,10 +22,10 @@ package com.saltedge.authenticator.widget.biometric
 
 import android.os.Bundle
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.sdk.constants.KEY_DESCRIPTION
 import com.saltedge.authenticator.sdk.constants.KEY_TITLE
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
-import com.saltedge.authenticator.testTools.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert

@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
     This file is part of the Salt Edge Authenticator distribution
    (https://github.com/saltedge/sca-authenticator-android)
    Copyright (c) 2020 Salt Edge Inc.
@@ -21,6 +22,6 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <corners android:radius="@dimen/dp_28" />
-    <solid android:color="@color/app_logo_background" />
+    <solid android:color="@color/white_and_blue_black" />
 </shape>
 

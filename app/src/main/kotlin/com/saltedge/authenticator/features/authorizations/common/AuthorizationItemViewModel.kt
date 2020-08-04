@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ import com.saltedge.authenticator.sdk.tools.secondsBetweenDates
 import org.joda.time.DateTime
 import java.io.Serializable
 
-data class AuthorizationViewModel(
+data class AuthorizationItemViewModel(
     val authorizationID: AuthorizationID,
     val authorizationCode: String,
     val title: String,
@@ -147,8 +147,8 @@ data class AuthorizationViewModel(
  * @param connection - Connection
  * @return AuthorizationViewModel
  */
-fun AuthorizationData.toAuthorizationViewModel(connection: ConnectionAbs): AuthorizationViewModel {
-    return AuthorizationViewModel(
+fun AuthorizationData.toAuthorizationItemViewModel(connection: ConnectionAbs): AuthorizationItemViewModel {
+    return AuthorizationItemViewModel(
         title = this.title,
         description = this.description,
         connectionID = connection.id,
@@ -169,7 +169,10 @@ fun AuthorizationData.toAuthorizationViewModel(connection: ConnectionAbs): Autho
  * @param oldViewModels previously stored list of AuthorizationViewModel's
  * @return List, result of merging
  */
-fun joinViewModels(newViewModels: List<AuthorizationViewModel>, oldViewModels: List<AuthorizationViewModel>): List<AuthorizationViewModel> {
+fun joinViewModels(
+    newViewModels: List<AuthorizationItemViewModel>,
+    oldViewModels: List<AuthorizationItemViewModel>
+): List<AuthorizationItemViewModel> {
     val finalModels = oldViewModels.filter { it.hasFinalMode }
     val newModelsWithoutExitingFinalModels = newViewModels.filter {
         !finalModels.containsIdentifier(it.authorizationID, it.connectionID)
@@ -177,14 +180,17 @@ fun joinViewModels(newViewModels: List<AuthorizationViewModel>, oldViewModels: L
     return (newModelsWithoutExitingFinalModels + finalModels).sortedBy { it.startTime }
 }
 
-private fun List<AuthorizationViewModel>.containsIdentifier(
+private fun List<AuthorizationItemViewModel>.containsIdentifier(
     authorizationID: AuthorizationID,
     connectionID: ConnectionID): Boolean
 {
     return this.any { it.hasIdentifier(authorizationID, connectionID) }
 }
 
-private fun AuthorizationViewModel.hasIdentifier(authorizationID: AuthorizationID, connectionID: ConnectionID): Boolean {
+private fun AuthorizationItemViewModel.hasIdentifier(
+    authorizationID: AuthorizationID,
+    connectionID: ConnectionID
+): Boolean {
     return this.authorizationID == authorizationID && this.connectionID == connectionID
 }
 

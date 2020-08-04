@@ -445,4 +445,10 @@ class SettingsListViewModelTest {
         Mockito.verify(mockPreferences).nightMode = AppCompatDelegate.MODE_NIGHT_NO
         assertThat(viewModel.setNightModelEvent.value, equalTo(ViewModelEvent(AppCompatDelegate.MODE_NIGHT_NO)))
     }
+
+    @Test
+    @Throws(Exception::class)
+    fun testSpacesPositions() {
+        assertThat(viewModel.spacesPositions, equalTo(arrayOf(0, viewModel.listItemsValues!!.lastIndex)))
+    }
 }

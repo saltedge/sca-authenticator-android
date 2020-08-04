@@ -20,13 +20,14 @@
  */
 package com.saltedge.authenticator.sdk.tools
 
+import com.saltedge.android.test_tools.CommonTestTools
+import com.saltedge.android.test_tools.encryptAesCBCString
+import com.saltedge.android.test_tools.encryptWithTestKey
+import com.saltedge.android.test_tools.rsaEncrypt
 import com.saltedge.authenticator.sdk.model.ConsentData
-import com.saltedge.authenticator.sdk.model.EncryptedData
+import com.saltedge.authenticator.sdk.model.ConsentSharedData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.testTools.TestTools
-import com.saltedge.authenticator.sdk.testTools.getTestPrivateKey
-import com.saltedge.authenticator.sdk.testTools.getTestPublicKey
-import com.saltedge.authenticator.sdk.testTools.toJsonString
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools.aesDecrypt
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools.aesEncrypt
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools.decryptAuthorizationData
@@ -43,13 +44,8 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.io.ByteArrayOutputStream
-import java.security.PrivateKey
 import java.security.PublicKey
-import javax.crypto.Cipher
-import javax.crypto.CipherOutputStream
 import javax.crypto.SecretKey
-import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 @RunWith(RobolectricTestRunner::class)
@@ -66,14 +62,14 @@ class CryptoToolsTest {
     @Test
     @Throws(Exception::class)
     fun rsaEncryptDecryptTestCase1() {
-        assertThat(aesKey.size, equalTo(32)) // AES-256
-        assertThat(aesIV.size, equalTo(16))
+        assertThat(CommonTestTools.aesKey.size, equalTo(32)) // AES-256
+        assertThat(CommonTestTools.aesIV.size, equalTo(16))
 
-        val encryptedKey = rsaEncrypt(aesKey, publicKey)!!
-        val encryptedIV = rsaEncrypt(aesKey, publicKey)!!
+        val encryptedKey = rsaEncrypt(CommonTestTools.aesKey, CommonTestTools.testPublicKey)!!
+        val encryptedIV = rsaEncrypt(CommonTestTools.aesKey, CommonTestTools.testPublicKey)!!
 
-        assertThat(rsaDecrypt(encryptedKey, privateKey), equalTo(aesKey))
-        assertThat(rsaDecrypt(encryptedIV, privateKey), equalTo(aesKey))
+        assertThat(rsaDecrypt(encryptedKey, CommonTestTools.testPrivateKey), equalTo(CommonTestTools.aesKey))
+        assertThat(rsaDecrypt(encryptedIV, CommonTestTools.testPrivateKey), equalTo(CommonTestTools.aesKey))
     }
 
     /**
@@ -83,7 +79,7 @@ class CryptoToolsTest {
     @Test
     @Throws(Exception::class)
     fun rsaEncryptDecryptTestCase2() {
-        Assert.assertNull(rsaDecrypt("", privateKey)) // Empty encrypted text
+        Assert.assertNull(rsaDecrypt("", CommonTestTools.testPrivateKey)) // Empty encrypted text
 
         val invalidCertificate: PublicKey = object : PublicKey {
             override fun getAlgorithm(): String = ""
@@ -100,14 +96,14 @@ class CryptoToolsTest {
     @Throws(Exception::class)
     fun aesDecryptTestCase1() {
         val errorMessage = "{\"name\":\"Andrey\", \"age\":27, \"car\":\"BMW\", \"mileage\":null}"
-        val encryptedMessage = encryptAesCBCString(errorMessage, aesKey, aesIV)!!
+        val encryptedMessage = encryptAesCBCString(errorMessage, CommonTestTools.aesKey, CommonTestTools.aesIV)!!
 
         assertThat(encryptedMessage, not(equalTo(errorMessage)))
         assertThat(
             encryptedMessage,
             equalTo("MBrw7K2rCIKop50b2PmkmlAVO9Bulhl7yO8ZPw2ulVnh7MB9yI0vRJjum6xFnQMq\n9BR172WT/KAw78Zg4++EQQ==")
         )
-        assertThat(aesDecrypt(encryptedMessage, aesKey, aesIV), equalTo(errorMessage))
+        assertThat(aesDecrypt(encryptedMessage, CommonTestTools.aesKey, CommonTestTools.aesIV), equalTo(errorMessage))
     }
 
     /**
@@ -117,7 +113,7 @@ class CryptoToolsTest {
     @Throws(Exception::class)
     fun aesDecryptTestCase2() {
         val initialTextValue = "test key"
-        val testKey: SecretKey = SecretKeySpec(aesKey, 0, aesKey.size, "AES")
+        val testKey: SecretKey = SecretKeySpec(CommonTestTools.aesKey, 0, CommonTestTools.aesKey.size, "AES")
 
         val encryptedMessage = aesEncrypt(initialTextValue, testKey)!!
 
@@ -134,30 +130,20 @@ class CryptoToolsTest {
     @Throws(Exception::class)
     fun aesDecryptTestCase3() {
         val errorMessage = "{\"name\":\"Andrey\", \"age\":27, \"car\":\"BMW\", \"mileage\":null}"
-        val encryptedMessage = encryptAesCBCString(errorMessage, aesKey, aesIV)!!
+        val encryptedMessage = encryptAesCBCString(errorMessage, CommonTestTools.aesKey, CommonTestTools.aesIV)!!
 
-        Assert.assertNull(aesDecrypt(encryptedMessage, aesKey, aesKey)) // Invalid IV
+        Assert.assertNull(aesDecrypt(encryptedMessage, CommonTestTools.aesKey, CommonTestTools.aesKey)) // Invalid IV
     }
 
     @Test
     @Throws(Exception::class)
     fun decryptAuthorizationDataTest() {
-        assertThat(aesKey.size, equalTo(32)) // AES-256
-        assertThat(aesIV.size, equalTo(16))
-
-        val encryptedData = EncryptedData(
-            id = authData.id,
-            connectionId = authData.connectionId,
-            algorithm = "AES-256-CBC",
-            key = rsaEncrypt(aesKey, publicKey)!!,
-            iv = rsaEncrypt(aesIV, publicKey)!!,
-            data = encryptAesCBCString(authData.toJsonString(), aesKey, aesIV)!!
-        )
+        val encryptedData = authData.encryptWithTestKey()
 
         assertThat(
             decryptAuthorizationData(
                 encryptedData = encryptedData,
-                rsaPrivateKey = privateKey
+                rsaPrivateKey = CommonTestTools.testPrivateKey
             ),
             equalTo(authData)
         )
@@ -170,37 +156,37 @@ class CryptoToolsTest {
         Assert.assertNull(
             decryptAuthorizationData(
                 encryptedData = encryptedData.copy(key = null),
-                rsaPrivateKey = privateKey
+                rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
             decryptAuthorizationData(
                 encryptedData = encryptedData.copy(iv = null),
-                rsaPrivateKey = privateKey
+                rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
             decryptAuthorizationData(
                 encryptedData = encryptedData.copy(data = null),
-                rsaPrivateKey = privateKey
+                rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
             decryptAuthorizationData(
                 encryptedData = encryptedData.copy(key = ""),
-                rsaPrivateKey = privateKey
+                rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
             decryptAuthorizationData(
                 encryptedData = encryptedData.copy(iv = ""),
-                rsaPrivateKey = privateKey
+                rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
             decryptAuthorizationData(
                 encryptedData = encryptedData.copy(data = ""),
-                rsaPrivateKey = privateKey
+                rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
     }
@@ -208,22 +194,12 @@ class CryptoToolsTest {
     @Test
     @Throws(Exception::class)
     fun decryptConsentDataTest() {
-        assertThat(aesKey.size, equalTo(32)) // AES-256
-        assertThat(aesIV.size, equalTo(16))
-
-        val encryptedData = EncryptedData(
-            id = consentData.id,
-            connectionId = consentData.connectionId,
-            algorithm = "AES-256-CBC",
-            key = rsaEncrypt(aesKey, publicKey)!!,
-            iv = rsaEncrypt(aesIV, publicKey)!!,
-            data = encryptAesCBCString(consentData.toJsonString(), aesKey, aesIV)!!
-        )
+        val encryptedData = consentData.encryptWithTestKey()
 
         assertThat(
             decryptConsentData(
                 encryptedData = encryptedData,
-                rsaPrivateKey = privateKey
+                rsaPrivateKey = CommonTestTools.testPrivateKey
             ),
             equalTo(consentData)
         )
@@ -236,46 +212,41 @@ class CryptoToolsTest {
         Assert.assertNull(
             decryptAuthorizationData(
                 encryptedData = encryptedData.copy(key = null),
-                rsaPrivateKey = privateKey
+                rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
             decryptConsentData(
                 encryptedData = encryptedData.copy(iv = null),
-                rsaPrivateKey = privateKey
+                rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
             decryptAuthorizationData(
                 encryptedData = encryptedData.copy(data = null),
-                rsaPrivateKey = privateKey
+                rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
             decryptConsentData(
                 encryptedData = encryptedData.copy(key = ""),
-                rsaPrivateKey = privateKey
+                rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
             decryptAuthorizationData(
                 encryptedData = encryptedData.copy(iv = ""),
-                rsaPrivateKey = privateKey
+                rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
             decryptConsentData(
                 encryptedData = encryptedData.copy(data = ""),
-                rsaPrivateKey = privateKey
+                rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
     }
 
-    private val aesKey = byteArrayOf(
-        65, 1, 2, 23, 4, 5, 6, 7, 32, 21, 10, 11, 12, 13, 84, 45,
-        65, 1, 2, 23, 4, 5, 6, 7, 32, 21, 10, 11, 12, 13, 84, 45
-    )
-    private val aesIV = byteArrayOf(65, 1, 2, 23, 4, 5, 6, 7, 32, 21, 10, 11, 12, 13, 84, 45)
     private val authData = AuthorizationData(
         id = "444",
         title = "title",
@@ -286,35 +257,12 @@ class CryptoToolsTest {
     )
     private val consentData = ConsentData(
         id = "555",
-        title = "title",
-        description = "description",
-        connectionId = "333",
+        userId = "1",
+        tppName = "title",
+        consentTypeString = "aisp",
+        accounts = emptyList(),
+        sharedData = ConsentSharedData(balance = true, transactions = true),
         expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
         createdAt = DateTime(0).withZone(DateTimeZone.UTC)
     )
-    private var privateKey: PrivateKey = this.getTestPrivateKey()
-    private var publicKey: PublicKey = this.getTestPublicKey()
-
-    private fun rsaEncrypt(input: ByteArray, publicKey: PublicKey): String? {
-        try {
-            val encryptCipher =
-                Cipher.getInstance("RSA/ECB/PKCS1Padding")
-            encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey)
-
-            val outputStream = ByteArrayOutputStream()
-            val cipherOutputStream = CipherOutputStream(outputStream, encryptCipher)
-            cipherOutputStream.write(input)
-            cipherOutputStream.close()
-            return encodeToPemBase64String(outputStream.toByteArray())
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return null
-    }
-
-    private fun encryptAesCBCString(text: String, key: ByteArray, iv: ByteArray): String? {
-        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-        cipher.init(Cipher.ENCRYPT_MODE, SecretKeySpec(key, "AES"), IvParameterSpec(iv))
-        return encodeToPemBase64String(cipher.doFinal(text.toByteArray()))
-    }
 }

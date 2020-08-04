@@ -25,6 +25,7 @@ import android.content.Intent
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_GUID
+import com.saltedge.authenticator.sdk.model.GUID
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*
 import org.junit.Before
@@ -36,20 +37,20 @@ import org.robolectric.RobolectricTestRunner
 class DeleteConnectionPresenterTest : DeleteConnectionContract.View {
 
     private var dismissViewCallback: Boolean = false
-    private var resultIntentCallback: Intent? = null
+    private var resultGuidCallback: String? = null
 
     override fun dismissView() {
         this.dismissViewCallback = true
     }
 
-    override fun setResultOk(resultIntent: Intent) {
-        this.resultIntentCallback = resultIntent
+    override fun returnSuccessResult(guid: GUID) {
+        this.resultGuidCallback = guid
     }
 
     @Before
     fun setUp() {
         dismissViewCallback = false
-        resultIntentCallback = null
+        resultGuidCallback = null
     }
 
     @Test
@@ -69,7 +70,7 @@ class DeleteConnectionPresenterTest : DeleteConnectionContract.View {
         presenter.onActionViewClick(DialogInterface.BUTTON_NEGATIVE)
 
         assertTrue(dismissViewCallback)
-        assertNull(resultIntentCallback)
+        assertNull(resultGuidCallback)
     }
 
     @Test
@@ -81,7 +82,7 @@ class DeleteConnectionPresenterTest : DeleteConnectionContract.View {
         presenter.onActionViewClick(DialogInterface.BUTTON_POSITIVE)
 
         assertTrue(dismissViewCallback)
-        assertThat(resultIntentCallback!!.getStringExtra(KEY_GUID), equalTo("test"))
+        assertThat(resultGuidCallback!!, equalTo("test"))
     }
 
     @Test

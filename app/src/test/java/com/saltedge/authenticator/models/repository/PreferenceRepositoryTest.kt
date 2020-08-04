@@ -22,7 +22,8 @@ package com.saltedge.authenticator.models.repository
 
 import android.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatDelegate
-import com.saltedge.authenticator.testTools.TestAppTools
+import com.saltedge.authenticator.TestAppTools
+import com.saltedge.authenticator.app.getDefaultSystemNightMode
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.*
@@ -197,6 +198,8 @@ class PreferenceRepositoryTest {
     @Test
     @Throws(Exception::class)
     fun clearUserPreferencesTest() {
+        val expectedMode = getDefaultSystemNightMode()
+
         PreferenceRepository.encryptedPasscode = "test"
         PreferenceRepository.nightMode = 1
         PreferenceRepository.notificationsEnabled = true
@@ -216,7 +219,7 @@ class PreferenceRepositoryTest {
         PreferenceRepository.clearUserPreferences()
 
         assertTrue(PreferenceRepository.encryptedPasscode.isEmpty())
-        assertThat(PreferenceRepository.nightMode, equalTo(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM))
+        assertThat(PreferenceRepository.nightMode, equalTo(expectedMode))
         assertFalse(PreferenceRepository.notificationsEnabled)
         assertNull(PreferenceRepository.currentLocale)
         assertThat(PreferenceRepository.pinInputAttempts, equalTo(0))
@@ -239,6 +242,40 @@ class PreferenceRepositoryTest {
                 .getString("KEY_CLOUD_MESSAGING_TOKEN", "")!!, equalTo("token")
         )
     }
+
+//    TODO: test on Android Q version http://robolectric.org/configuring/
+//    @Test
+//    @Throws(Exception::class)
+//    fun systemNightModeTest() {
+//        clearPreferences()
+//
+//        assertTrue(PreferenceRepository.systemNightMode)
+//
+//        PreferenceRepository.systemNightMode = false
+//
+//        assertFalse(PreferenceRepository.systemNightMode)
+//        assertFalse(
+//            PreferenceManager.getDefaultSharedPreferences(TestAppTools.applicationContext).getBoolean(
+//                KEY_SYSTEM_DARK_MODE,
+//                true
+//            )
+//        )
+//    }
+
+        @Test
+        @Throws(Exception::class)
+        fun systemNightModeTest() {
+            clearPreferences()
+            PreferenceRepository.systemNightMode = false
+
+            assertFalse(PreferenceRepository.systemNightMode)
+            assertFalse(
+                PreferenceManager.getDefaultSharedPreferences(TestAppTools.applicationContext).getBoolean(
+                    KEY_SYSTEM_NIGHT_MODE,
+                    true
+                )
+            )
+        }
 
     private fun clearPreferences() {
         PreferenceManager.getDefaultSharedPreferences(TestAppTools.applicationContext).edit().clear().apply()
