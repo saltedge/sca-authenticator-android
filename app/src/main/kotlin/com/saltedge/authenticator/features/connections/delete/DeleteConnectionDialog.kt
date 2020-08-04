@@ -26,10 +26,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.navArgs
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.sdk.model.GUID
-import com.saltedge.authenticator.tools.guid
 
 class DeleteConnectionDialog : DialogFragment(),
     DeleteConnectionContract.View,
@@ -37,10 +37,13 @@ class DeleteConnectionDialog : DialogFragment(),
 {
     private var presenter = DeleteConnectionPresenter(viewContract = this)
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val safeArgs: DeleteConnectionDialogArgs by navArgs()
+    private val guid: String
+        get() = safeArgs.guid
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter.guid = arguments?.guid
+        presenter.guid = guid
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -62,15 +65,5 @@ class DeleteConnectionDialog : DialogFragment(),
 
     override fun returnSuccessResult(guid: GUID) {
         sharedViewModel.onConnectionDeleted(guid)
-    }
-
-    companion object {
-        fun newInstance(connectionGuid: String?): DeleteConnectionDialog =
-            DeleteConnectionDialog().apply {
-                arguments = Bundle().apply { guid = connectionGuid }
-            }
-
-        fun newInstance(bundle: Bundle): DeleteConnectionDialog =
-            DeleteConnectionDialog().apply { arguments = bundle }
     }
 }

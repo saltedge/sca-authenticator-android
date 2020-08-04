@@ -17,7 +17,6 @@
 #    For the additional permissions granted for Salt Edge Authenticator
 #    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 
-sudo: false
 language: android
 dist: trusty
 jdk: oraclejdk8

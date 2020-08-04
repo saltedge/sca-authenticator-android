@@ -20,9 +20,8 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
+import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
@@ -30,6 +29,7 @@ import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.KEY_OPTION_ID
 import com.saltedge.authenticator.app.NetworkStateChangeListener
 import com.saltedge.authenticator.features.authorizations.common.*
+import com.saltedge.authenticator.features.menu.BottomMenuDialog
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.interfaces.MenuItem
@@ -52,7 +52,10 @@ import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.postUnitEvent
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AuthorizationsListViewModel(
     private val appContext: Context,
@@ -68,8 +71,8 @@ class AuthorizationsListViewModel(
     FetchAuthorizationsContract,
     ConfirmAuthorizationListener,
     TimerUpdateListener,
-    NetworkStateChangeListener
-{
+    NetworkStateChangeListener {
+
     private var noInternetConnection: Boolean = false
     private var pollingService = apiManager.createAuthorizationsPollingService()
     private var connectionsAndKeys: Map<ConnectionID, ConnectionAndKey> =
@@ -87,7 +90,7 @@ class AuthorizationsListViewModel(
     val listItemUpdateEvent = MutableLiveData<ViewModelEvent<Int>>()
     val onConfirmErrorEvent = MutableLiveData<ViewModelEvent<String>>()
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onMoreMenuClickEvent = MutableLiveData<ViewModelEvent<List<MenuItemData>>>()
+    val onMoreMenuClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onShowConnectionsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowSettingsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
@@ -104,18 +107,30 @@ class AuthorizationsListViewModel(
         val listItem = listItemsValues.getOrNull(itemIndex) ?: return
         val connectionAndKey = connectionsAndKeys[listItem.connectionID] ?: return
         when (itemViewId) {
-            R.id.positiveActionView -> sendConfirmRequest(listItem = listItem, connectionAndKey = connectionAndKey)
-            R.id.negativeActionView -> sendDenyRequest(listItem = listItem, connectionAndKey = connectionAndKey)
+            R.id.positiveActionView -> sendConfirmRequest(
+                listItem = listItem,
+                connectionAndKey = connectionAndKey
+            )
+            R.id.negativeActionView -> sendDenyRequest(
+                listItem = listItem,
+                connectionAndKey = connectionAndKey
+            )
         }
     }
 
-    override fun onFetchEncryptedDataResult(result: List<EncryptedData>, errors: List<ApiErrorData>) {
+    override fun onFetchEncryptedDataResult(
+        result: List<EncryptedData>,
+        errors: List<ApiErrorData>
+    ) {
         processAuthorizationsErrors(errors = errors)
         processEncryptedAuthorizationsResult(encryptedList = result)
     }
 
     override fun onConfirmDenySuccess(result: ConfirmDenyResponseData, connectionID: ConnectionID) {
-        findListItem(connectionID = connectionID, authorizationID = result.authorizationID ?: "")?.let { item ->
+        findListItem(
+            connectionID = connectionID,
+            authorizationID = result.authorizationID ?: ""
+        )?.let { item ->
             val viewMode = if (item.viewMode == ViewMode.DENY_PROCESSING)
                 ViewMode.DENY_SUCCESS else ViewMode.CONFIRM_SUCCESS
             updateItemViewMode(listItem = item, newViewMode = viewMode)
@@ -185,7 +200,7 @@ class AuthorizationsListViewModel(
                         textRes = R.string.settings_feature_title
                     )
                 )
-                onMoreMenuClickEvent.postValue(ViewModelEvent(menuItems))
+                onMoreMenuClickEvent.postValue(ViewModelEvent(BottomMenuDialog.dataBundle(menuItems = menuItems)))
             }
             else -> Unit
         }
@@ -194,9 +209,8 @@ class AuthorizationsListViewModel(
     /**
      * Handle clicks on bottom navigation menu
      */
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (data == null || resultCode != Activity.RESULT_OK) return
-        when (data.getIntExtra(KEY_OPTION_ID, 0)) {
+    fun onItemMenuClicked(data: Bundle?) {
+        when (data?.getInt(KEY_OPTION_ID, 0)) {
             R.string.connections_feature_title -> onShowConnectionsListEvent.postUnitEvent()
             R.string.settings_feature_title -> onShowSettingsListEvent.postUnitEvent()
         }
@@ -259,7 +273,10 @@ class AuthorizationsListViewModel(
         }
     }
 
-    private fun sendConfirmRequest(listItem: AuthorizationItemViewModel, connectionAndKey: ConnectionAndKey) {
+    private fun sendConfirmRequest(
+        listItem: AuthorizationItemViewModel,
+        connectionAndKey: ConnectionAndKey
+    ) {
         updateItemViewMode(
             listItem = listItem,
             newViewMode = ViewMode.CONFIRM_PROCESSING
@@ -272,7 +289,10 @@ class AuthorizationsListViewModel(
         )
     }
 
-    private fun sendDenyRequest(listItem: AuthorizationItemViewModel, connectionAndKey: ConnectionAndKey) {
+    private fun sendDenyRequest(
+        listItem: AuthorizationItemViewModel,
+        connectionAndKey: ConnectionAndKey
+    ) {
         updateItemViewMode(
             listItem = listItem,
             newViewMode = ViewMode.DENY_PROCESSING

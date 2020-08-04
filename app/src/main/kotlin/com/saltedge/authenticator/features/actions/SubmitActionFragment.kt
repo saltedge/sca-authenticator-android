@@ -29,22 +29,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.CONNECTIONS_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.navigateTo
 import com.saltedge.authenticator.databinding.SubmitActionBinding
-import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
-import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment
+import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.features.main.newAuthorizationListener
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.sdk.constants.KEY_DATA
+import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.tools.addFragment
 import com.saltedge.authenticator.tools.authenticatorApp
-import com.saltedge.authenticator.tools.finishFragment
 import com.saltedge.authenticator.tools.showWarningDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_submit_action.*
@@ -56,6 +57,7 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
     private lateinit var viewModel: SubmitActionViewModel
     private lateinit var binding: SubmitActionBinding
     private var alertDialog: AlertDialog? = null
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,14 +89,13 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
         super.onViewCreated(view, savedInstanceState)
         completeView?.setClickListener(View.OnClickListener { v -> viewModel.onViewClick(v.id) })
         viewModel.onViewCreated()
+        sharedViewModel.onSelectConnection.observe(viewLifecycleOwner, Observer<GUID> { result ->
+            viewModel.showConnectionSelector(result)
+        })
     }
 
     override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
         viewModel.onDialogActionIdClick(dialogActionId)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        viewModel.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun closeActiveDialogs() {
@@ -105,13 +106,9 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(SubmitActionViewModel::class.java)
         lifecycle.addObserver(viewModel)
-        viewModel.setInitialData(
-            actionAppLinkData = arguments?.getSerializable(KEY_ACTION_DEEP_LINK_DATA) as? ActionAppLinkData
-                ?: return
-        )
 
         viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it.getContentIfNotHandled()?.let { activity?.finishFragment() }
+            it.getContentIfNotHandled()?.let { findNavController().popBackStack() }
         })
         viewModel.onShowErrorEvent.observe(this, Observer<ViewModelEvent<String>> {
             it.getContentIfNotHandled()?.let { message ->
@@ -138,23 +135,17 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
         viewModel.mainActionTextResId.observe(this, Observer<Int> { mainActionTextResId ->
             completeView?.setMainActionText(mainActionTextResId)
         })
-        viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<List<ConnectionItemViewModel>> { list ->
-            SelectConnectionsFragment.newInstance(connections = list).also {
-                it.setTargetFragment(this, CONNECTIONS_REQUEST_CODE)
-                activity?.addFragment(fragment = it, animateTransition = false)
-            }
-        })
-    }
-
-    companion object {
-        const val KEY_ACTION_DEEP_LINK_DATA = "ACTION_DEEP_LINK_DATA"
-
-        fun newInstance(actionAppLinkData: ActionAppLinkData): SubmitActionFragment {
-            return SubmitActionFragment().apply {
-                arguments = Bundle().apply {
-                    putSerializable(KEY_ACTION_DEEP_LINK_DATA, actionAppLinkData)
+        viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
+                it?.getContentIfNotHandled()?.let { bundle ->
+                    navigateTo(
+                        actionRes = R.id.select_connections,
+                        bundle = bundle
+                    )
                 }
-            }
-        }
+            })
+        viewModel.setInitialData(
+            actionAppLinkData = arguments?.getSerializable(KEY_DATA) as? ActionAppLinkData
+                ?: return
+        )
     }
 }

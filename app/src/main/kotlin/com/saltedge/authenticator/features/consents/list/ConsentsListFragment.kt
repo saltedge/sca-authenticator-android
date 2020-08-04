@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.consents.list
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,19 +27,19 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.CONSENT_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.navigateTo
 import com.saltedge.authenticator.databinding.ConsentsListBinding
-import com.saltedge.authenticator.features.consents.details.ConsentDetailsFragment
+import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.tools.addFragment
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.loadRoundedImage
 import com.saltedge.authenticator.tools.stopRefresh
@@ -56,6 +55,7 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
     private lateinit var headerDecorator: SpaceItemDecoration
     private lateinit var binding: ConsentsListBinding
     private val adapter = ConsentsListAdapter(clickListener = this)
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,10 +89,6 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
         binding.executePendingBindings()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        viewModel.onActivityResult(requestCode, resultCode, data)
-    }
-
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
         viewModel.onListItemClick(itemIndex)
     }
@@ -107,10 +103,10 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
         })
         viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                ConsentDetailsFragment.newInstance(bundle).also {
-                    it.setTargetFragment(this, CONSENT_REQUEST_CODE)
-                    activity?.addFragment(it)
-                }
+                navigateTo(
+                    actionRes = R.id.consent_details,
+                    bundle = bundle
+                )
             }
         })
         viewModel.onConsentRemovedEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
@@ -136,6 +132,9 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
             swipeRefreshLayout?.stopRefresh()
         }
         swipeRefreshLayout?.setColorSchemeResources(R.color.primary, R.color.red, R.color.green)
+        sharedViewModel.onRevokeConsent.observe(viewLifecycleOwner, Observer<String> { result ->
+            viewModel.revokeConsent(result)
+        })
     }
 
     companion object {
@@ -151,10 +150,6 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
                     cornerRadius = imageView.resources.getDimension(R.dimen.consents_list_logo_radius)
                 )
             }
-        }
-
-        fun newInstance(bundle: Bundle): ConsentsListFragment {
-            return ConsentsListFragment().apply { arguments = bundle }
         }
     }
 }

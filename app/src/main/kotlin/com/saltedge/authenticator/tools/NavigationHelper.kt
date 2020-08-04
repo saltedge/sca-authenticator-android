@@ -26,73 +26,12 @@ import android.net.Uri
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentManager
+import androidx.navigation.fragment.NavHostFragment
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.qr.QrScannerActivity
 import com.saltedge.authenticator.sdk.constants.DEFAULT_SUPPORT_EMAIL_LINK
-import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
-
-/**
- * Check fragment navigation level
- *
- * @receiver fragment activity
- * @return boolean, true if backStackEntryCount == 0
- */
-fun FragmentActivity?.isTopNavigationLevel(): Boolean =
-    (this?.supportFragmentManager?.backStackEntryCount ?: 0) == 0
-
-/**
- * Add fragment in back stack
- *
- * @receiver fragment activity
- */
-fun FragmentActivity.addFragment(fragment: Fragment, animateTransition: Boolean = true) {
-    try {
-        supportFragmentManager
-            .beginTransaction()
-            .apply {
-                if (animateTransition) {
-                    setCustomAnimations(
-                        R.anim.enter_from_right,
-                        R.anim.exit_to_left,
-                        R.anim.enter_from_left,
-                        R.anim.exit_to_right
-                    )
-                }
-            }
-            .replace(R.id.container, fragment, fragment.createTagName())
-            .addToBackStack(null)
-            .commit()
-    } catch (ignored: IllegalStateException) {
-    } catch (e: Exception) {
-        e.log()
-    }
-}
-
-/**
- * Replace fragment in container. If stack is not empty then clear it.
- *
- * @receiver fragment activity
- */
-fun FragmentActivity.replaceFragment(fragment: Fragment) {
-    try {
-        if (!isTopNavigationLevel()) {
-            supportFragmentManager.popBackStackImmediate(
-                null,
-                FragmentManager.POP_BACK_STACK_INCLUSIVE
-            )
-        }
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.container, fragment, fragment.createTagName())
-            .commit()
-    } catch (ignored: IllegalStateException) {
-    } catch (e: Exception) {
-        e.log()
-    }
-}
 
 /**
  * Get current fragment in container
@@ -100,9 +39,10 @@ fun FragmentActivity.replaceFragment(fragment: Fragment) {
  * @receiver app compat activity
  * @return fragment object which is in the container
  */
-fun FragmentActivity.currentFragmentInContainer(): Fragment? {
+fun FragmentActivity.currentFragmentOnTop(): Fragment? {
     try {
-        return supportFragmentManager.findFragmentById(R.id.container)
+        val host = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
+        return host.childFragmentManager.fragments.getOrNull(0)
     } catch (ignored: IllegalStateException) {
     } catch (e: Exception) {
         e.log()
@@ -119,20 +59,6 @@ fun FragmentActivity.currentFragmentInContainer(): Fragment? {
 fun FragmentActivity.showDialogFragment(dialog: DialogFragment) {
     try {
         dialog.show(supportFragmentManager, dialog.javaClass.simpleName)
-    } catch (ignored: IllegalStateException) {
-    } catch (e: Exception) {
-        e.log()
-    }
-}
-
-/**
- * Finish fragment
- *
- * @receiver fragment activity
- */
-fun FragmentActivity.finishFragment() {
-    try {
-        supportFragmentManager.popBackStack()
     } catch (ignored: IllegalStateException) {
     } catch (e: Exception) {
         e.log()
@@ -187,20 +113,3 @@ fun FragmentActivity.restartApp() {
     } catch (ignored: Exception) {
     }
 }
-
-/**
- * Replace fragment in container if required fragment is not current fragment
- */
-fun FragmentActivity.replaceFragmentInContainer(fragment: BaseFragment) {
-    if (this.currentFragmentInContainer()?.javaClass != fragment.javaClass) {
-        this.replaceFragment(fragment)
-    }
-}
-
-/**
- * Create tag name for fragment
- *
- * @receiver fragment
- * @return fragment name
- */
-private fun Fragment?.createTagName(): String? = this?.javaClass?.name

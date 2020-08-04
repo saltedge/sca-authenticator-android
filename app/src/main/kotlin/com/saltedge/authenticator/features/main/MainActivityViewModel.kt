@@ -27,6 +27,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.KEY_CLOSE_APP
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
@@ -35,8 +36,9 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
-import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
+import com.saltedge.authenticator.sdk.constants.KEY_DATA
+import com.saltedge.authenticator.sdk.constants.KEY_ID
+import com.saltedge.authenticator.sdk.constants.KEY_TITLE
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.tools.extractActionAppLinkData
 import com.saltedge.authenticator.sdk.tools.extractConnectAppLinkData
@@ -57,11 +59,10 @@ class MainActivityViewModel(
     val onAppbarMenuItemClickEvent = MutableLiveData<ViewModelEvent<MenuItem>>()
     val onBackActionClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onRestartActivityEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onShowAuthorizationsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onShowAuthorizationDetailsEvent = MutableLiveData<ViewModelEvent<AuthorizationIdentifier>>()
-    val onShowActionAuthorizationEvent = MutableLiveData<ViewModelEvent<AuthorizationIdentifier>>()
-    val onShowConnectEvent = MutableLiveData<ViewModelEvent<ConnectAppLinkData>>()
-    val onShowSubmitActionEvent = MutableLiveData<ViewModelEvent<ActionAppLinkData>>()
+    val onShowAuthorizationDetailsEvent = MutableLiveData<ViewModelEvent<Bundle>>()
+    val onShowActionAuthorizationEvent = MutableLiveData<ViewModelEvent<Bundle>>()
+    val onShowConnectEvent = MutableLiveData<ViewModelEvent<Bundle>>()
+    val onShowSubmitActionEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val appBarTitle = MutableLiveData<String>()
     val appBarBackActionImageResource = MutableLiveData<ResId>(R.drawable.ic_appbar_action_back)
@@ -85,7 +86,6 @@ class MainActivityViewModel(
 
     fun onLifeCycleCreate(savedInstanceState: Bundle?, intent: Intent?) {
         if (savedInstanceState == null) {
-            onShowAuthorizationsListEvent.postUnitEvent()
             if (intent != null && (intent.hasPendingAuthorizationData || intent.hasDeepLinkData)) {
                 onNewIntent(intent)
             }
@@ -113,18 +113,26 @@ class MainActivityViewModel(
     fun onNewIntent(intent: Intent?) {
         when {
             intent.hasPendingAuthorizationData -> {
+                val authorizationIdentifier = AuthorizationIdentifier(
+                    authorizationID = intent.authorizationId,
+                    connectionID = intent.connectionId
+                )
                 onShowAuthorizationDetailsEvent.postValue(
-                    ViewModelEvent(AuthorizationIdentifier(
-                        authorizationID = intent.authorizationId,
-                        connectionID = intent.connectionId
-                    ))
+                    ViewModelEvent(Bundle().apply {
+                        putSerializable(KEY_ID, authorizationIdentifier)
+                        putBoolean(KEY_CLOSE_APP, true)
+                    })
                 )
             }
             intent.hasDeepLinkData -> {
                 intent.deepLink.extractConnectAppLinkData()?.let { connectionAppLinkData ->
-                    onShowConnectEvent.postValue(ViewModelEvent(connectionAppLinkData))
+                    onShowConnectEvent.postValue(ViewModelEvent(Bundle().apply {
+                        putSerializable(KEY_DATA, connectionAppLinkData)
+                    }))
                 } ?: intent.deepLink.extractActionAppLinkData()?.let { actionAppLinkData ->
-                    onShowSubmitActionEvent.postValue(ViewModelEvent(actionAppLinkData))
+                    onShowSubmitActionEvent.postValue(ViewModelEvent(Bundle().apply {
+                        putSerializable(KEY_DATA, actionAppLinkData)
+                    }))
                 }
             }
         }
@@ -137,7 +145,7 @@ class MainActivityViewModel(
         when (viewId) {
             R.id.appBarActionQrCode -> onAppbarMenuItemClickEvent.postValue(ViewModelEvent(MenuItem.SCAN_QR))
             R.id.appBarActionSwitchTheme -> onAppbarMenuItemClickEvent.postValue(ViewModelEvent(MenuItem.CUSTOM_NIGHT_MODE))
-            R.id.appBarActionMore -> onAppbarMenuItemClickEvent.postValue(ViewModelEvent(MenuItem.MORE_MENU))//{
+            R.id.appBarActionMore -> onAppbarMenuItemClickEvent.postValue(ViewModelEvent(MenuItem.MORE_MENU))
             R.id.appBarBackAction -> onBackActionClickEvent.postUnitEvent()
         }
     }
@@ -153,7 +161,11 @@ class MainActivityViewModel(
      * Handle new authorization event (e.g. from ActionSubmit)
      */
     override fun onNewAuthorization(authorizationIdentifier: AuthorizationIdentifier) {
-        onShowActionAuthorizationEvent.postValue(ViewModelEvent(authorizationIdentifier))
+        onShowActionAuthorizationEvent.postValue(ViewModelEvent(Bundle().apply {
+            putSerializable(KEY_ID, authorizationIdentifier)
+            putBoolean(KEY_CLOSE_APP, true)
+            putInt(KEY_TITLE, R.string.action_new_action_title)
+        }))
     }
 
     /**

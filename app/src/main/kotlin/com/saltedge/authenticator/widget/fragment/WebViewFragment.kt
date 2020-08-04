@@ -84,13 +84,5 @@ class WebViewFragment : BaseFragment() {
                 putString(KEY_TITLE, title)
             }
         }
-
-        fun newInstance(url: String = "", title: String): WebViewFragment {
-            return newInstance(newBundle(url, title))
-        }
-
-        fun newInstance(args: Bundle): WebViewFragment {
-            return WebViewFragment().apply { arguments = args }
-        }
     }
 }

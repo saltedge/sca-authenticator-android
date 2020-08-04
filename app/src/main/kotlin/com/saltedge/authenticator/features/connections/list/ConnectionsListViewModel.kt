@@ -25,6 +25,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.features.authorizations.common.collectConnectionsAndKeys
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
@@ -78,7 +79,7 @@ class ConnectionsListViewModel(
     val onSupportClickEvent = MutableLiveData<ViewModelEvent<String?>>()
     val onReconnectClickEvent = MutableLiveData<ViewModelEvent<String>>()
     val onRenameClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
-    val onDeleteClickEvent = MutableLiveData<ViewModelEvent<GUID>>()
+    val onDeleteClickEvent = MutableLiveData<ViewModelEvent<String>>()
     val onViewConsentsClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val listVisibility = MutableLiveData<Int>()
     val emptyViewVisibility = MutableLiveData<Int>()
@@ -129,9 +130,8 @@ class ConnectionsListViewModel(
                 ))
             }
             PopupMenuItem.DELETE -> {
-                if (item.isActive) {
-                    onDeleteClickEvent.postValue(ViewModelEvent(item.guid))
-                } else {
+                if (item.isActive) onDeleteClickEvent.postValue(ViewModelEvent(item.guid))
+                else {
                     deleteConnectionsAndKeys(item.guid)
                     updateViewsContent()
                 }
