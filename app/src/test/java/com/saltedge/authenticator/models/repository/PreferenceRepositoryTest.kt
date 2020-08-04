@@ -23,6 +23,7 @@ package com.saltedge.authenticator.models.repository
 import android.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatDelegate
 import com.saltedge.authenticator.TestAppTools
+import com.saltedge.authenticator.app.getDefaultSystemNightMode
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.*
@@ -197,6 +198,8 @@ class PreferenceRepositoryTest {
     @Test
     @Throws(Exception::class)
     fun clearUserPreferencesTest() {
+        val expectedMode = getDefaultSystemNightMode()
+
         PreferenceRepository.encryptedPasscode = "test"
         PreferenceRepository.nightMode = 1
         PreferenceRepository.notificationsEnabled = true
@@ -216,7 +219,7 @@ class PreferenceRepositoryTest {
         PreferenceRepository.clearUserPreferences()
 
         assertTrue(PreferenceRepository.encryptedPasscode.isEmpty())
-        assertThat(PreferenceRepository.nightMode, equalTo(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY))
+        assertThat(PreferenceRepository.nightMode, equalTo(expectedMode))
         assertFalse(PreferenceRepository.notificationsEnabled)
         assertNull(PreferenceRepository.currentLocale)
         assertThat(PreferenceRepository.pinInputAttempts, equalTo(0))

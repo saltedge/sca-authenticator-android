@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.cloud
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -27,9 +28,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.tools.buildVersion26orGreater
 
 const val CHANNEL_ID = "com.saltedge.authenticator.notifications"
 const val CHANNEL_NAME = "SaltEdge Authenticator Channel"
@@ -40,8 +41,9 @@ const val NOTIFICATION_ID = 201
  *
  * @receiver context - application context
  */
+@SuppressLint("NewApi")
 fun Context.registerNotificationChannels() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    if (buildVersion26orGreater) {
         val notificationChannel: NotificationChannel = NotificationChannel(
             CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH
         ).apply {
@@ -71,10 +73,8 @@ fun Context.showAuthNotification(
     notificationBody: String?,
     activityIntent: PendingIntent?
 ) {
-    val contentTitle = notificationTitle
-        ?: this.getString(R.string.authorizations_notification_title)
-    val contentText = notificationBody
-        ?: this.getString(R.string.authorizations_notification_description)
+    val contentTitle = notificationTitle ?: this.getString(R.string.authorizations_notification_title)
+    val contentText = notificationBody ?: this.getString(R.string.authorizations_notification_description)
     val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
         .setSmallIcon(R.drawable.ic_logo_app_notifications)
         .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.mipmap.ic_launcher))
