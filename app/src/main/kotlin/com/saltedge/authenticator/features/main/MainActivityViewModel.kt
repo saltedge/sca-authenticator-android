@@ -125,6 +125,7 @@ class MainActivityViewModel(
                 )
             }
             intent.hasDeepLinkData -> {
+                initialQrScanWasStarted = true
                 intent.deepLink.extractConnectAppLinkData()?.let { connectionAppLinkData ->
                     onShowConnectEvent.postValue(ViewModelEvent(Bundle().apply {
                         putSerializable(KEY_DATA, connectionAppLinkData)
