@@ -22,7 +22,7 @@
 <resources>
     <!--ACTIVITY THEMES-->
     <style name="LauncherScreenThemeBase" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimaryDark">@color/primary_and_primary_dark</item>
+        <item name="colorPrimaryDark">@color/system_bar_color</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
@@ -36,7 +36,7 @@
         <item name="windowActionBar">false</item>
         <item name="android:windowContentOverlay">@null</item>
 
-        <item name="colorPrimaryDark">@color/primary_and_primary_dark</item>
+        <item name="colorPrimaryDark">@color/system_bar_color</item>
         <item name="colorAccent">@color/primary</item>
         <item name="colorControlNormal">@color/primary</item>
         <item name="colorControlActivated">@color/primary</item>
@@ -52,7 +52,7 @@
     </style>
 
     <style name="MainScreenThemeBase" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <item name="colorPrimaryDark">@color/primary_and_primary_dark</item>
+        <item name="colorPrimaryDark">@color/system_bar_color</item>
         <item name="colorAccent">@color/primary</item>
         <item name="colorControlNormal">@color/primary</item>
         <item name="colorControlActivated">@color/primary</item>

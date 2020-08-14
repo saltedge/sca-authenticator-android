@@ -112,7 +112,7 @@ class MainActivityViewModel(
      */
     fun onNewIntent(intent: Intent?) {
         when {
-            intent.hasPendingAuthorizationData -> {
+            intent.hasPendingAuthorizationData -> {//Data from push notification
                 val authorizationIdentifier = AuthorizationIdentifier(
                     authorizationID = intent.authorizationId,
                     connectionID = intent.connectionId
@@ -126,11 +126,13 @@ class MainActivityViewModel(
             }
             intent.hasDeepLinkData -> {
                 initialQrScanWasStarted = true
-                intent.deepLink.extractConnectAppLinkData()?.let { connectionAppLinkData ->
+                val connectionAppLinkData = intent.deepLink.extractConnectAppLinkData()
+                val actionAppLinkData = intent.deepLink.extractActionAppLinkData()
+                if (connectionAppLinkData != null) {
                     onShowConnectEvent.postValue(ViewModelEvent(Bundle().apply {
                         putSerializable(KEY_DATA, connectionAppLinkData)
                     }))
-                } ?: intent.deepLink.extractActionAppLinkData()?.let { actionAppLinkData ->
+                } else if (actionAppLinkData != null && !connectionsRepository.isEmpty()) {
                     onShowSubmitActionEvent.postValue(ViewModelEvent(Bundle().apply {
                         putSerializable(KEY_DATA, actionAppLinkData)
                     }))

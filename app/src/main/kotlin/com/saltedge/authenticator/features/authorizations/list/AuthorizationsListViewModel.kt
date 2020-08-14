@@ -79,7 +79,7 @@ class AuthorizationsListViewModel(
         collectConnectionsAndKeys(connectionsRepository, keyStoreManager)
 
     val listVisibility = MutableLiveData<Int>(View.GONE)
-    val emptyViewVisibility = MutableLiveData<Int>(View.VISIBLE)
+    val emptyViewVisibility = MutableLiveData<Int>(View.GONE)
     val emptyViewImage = MutableLiveData<ResId>(R.drawable.ic_authorizations_empty)
     val emptyViewActionText = MutableLiveData<ResId?>(R.string.actions_scan_qr)
     val emptyViewTitleText = MutableLiveData<ResId>(R.string.authorizations_empty_title)
