@@ -47,6 +47,7 @@
     <color name="white_50">#80FFFFFF</color>
 
     <!--Aliases-->
+    <color name="system_bar_color">@color/primary_and_primary_dark</color>
     <color name="color_accent">@color/primary</color>
     <color name="white_button_ripple">#85CDCF</color>
     <color name="button_blue_default">@color/primary</color>

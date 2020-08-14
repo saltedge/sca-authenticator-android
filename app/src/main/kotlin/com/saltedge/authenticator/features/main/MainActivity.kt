@@ -51,9 +51,9 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.updateScreenshotLocking()
-        authenticatorApp?.appComponent?.inject(this)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        setupViewModel()
+        authenticatorApp?.appComponent?.inject(this)//inject ViewModelsFactory
+        setupViewModel()//setup ViewModel
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
     }
 

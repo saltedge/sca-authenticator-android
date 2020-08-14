@@ -20,5 +20,5 @@
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
 <resources>
-    <color name="primary_and_primary_dark">@color/theme_background</color>
+    <color name="system_bar_color">@color/theme_background</color>
 </resources>
