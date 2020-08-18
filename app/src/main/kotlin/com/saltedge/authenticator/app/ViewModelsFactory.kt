@@ -65,6 +65,7 @@ class ViewModelsFactory @Inject constructor(
     val connectivityReceiver: ConnectivityReceiverAbs
 ) : ViewModelProvider.Factory {
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         when {
             modelClass.isAssignableFrom(LauncherViewModel::class.java) -> {
