@@ -176,7 +176,7 @@
     <string name="delete_connections_title">Clear app data</string>
     <string name="delete_connections_message">App data including connected providers and user data will be permanently deleted.</string>
     <string name="delete_connection_title">Delete connection</string>
-    <string name="delete_connection_message">Are you sure want to delete connection to your provider? This action cannot be undone.</string>
+    <string name="delete_connection_message">Are you sure you want to delete connection to your provider? This action cannot be undone.</string>
     <string name="ui_dialog_rename_title">Rename connection</string>
 
     <string name="warning_no_internet_connection">No internet connection</string>
