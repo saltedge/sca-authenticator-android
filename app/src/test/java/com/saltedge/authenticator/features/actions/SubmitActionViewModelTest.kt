@@ -84,13 +84,13 @@ class SubmitActionViewModelTest {
         //then
         assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
         assertThat(viewModel.actionProcessingVisibility.value, equalTo(View.GONE))
-//        assertThat(viewModel.iconResId.value, equalTo(R.drawable.ic_status_success))
-//        assertThat(viewModel.completeTitleResId.value, equalTo(R.string.action_feature_title))
-//        assertThat(
-//            viewModel.completeDescriptionResId.value,
-//            equalTo(R.string.action_feature_description)
-//        )
-//        assertThat(viewModel.mainActionTextResId.value, equalTo(android.R.string.ok))
+        assertThat(viewModel.iconResId.value, equalTo(R.drawable.ic_status_error))
+        assertThat(viewModel.completeTitleResId.value, equalTo(R.string.action_error_title))
+        assertThat(
+            viewModel.completeDescription.value,
+            equalTo(TestAppTools.applicationContext.getString(R.string.errors_actions_not_success))
+        )
+        assertThat(viewModel.mainActionTextResId.value, equalTo(R.string.actions_done))
     }
 
     /**
@@ -158,14 +158,10 @@ class SubmitActionViewModelTest {
         assertThat(viewModel.iconResId.value, equalTo(R.drawable.ic_status_error))
         assertThat(viewModel.completeTitleResId.value, equalTo(R.string.action_error_title))
         assertThat(
-            viewModel.completeDescriptionResId.value,
-            equalTo(R.string.action_error_description)
+            viewModel.completeDescription.value,
+            equalTo("test error")
         )
         assertThat(viewModel.mainActionTextResId.value, equalTo(R.string.actions_done))
-        assertThat(
-            viewModel.onShowErrorEvent.value,
-            equalTo(ViewModelEvent("test error"))
-        )
     }
 
     @Test
@@ -263,7 +259,7 @@ class SubmitActionViewModelTest {
     }
 
     /**
-     * Test onViewCreated when ViewMode is ACTION_ERROR
+     * Test onViewCreated when ViewMode is ACTION_ERROR and no connections in db
      */
     @Test
     @Throws(Exception::class)
@@ -286,8 +282,8 @@ class SubmitActionViewModelTest {
         assertThat(viewModel.iconResId.value, equalTo(R.drawable.ic_status_error))
         assertThat(viewModel.completeTitleResId.value, equalTo(R.string.action_error_title))
         assertThat(
-            viewModel.completeDescriptionResId.value,
-            equalTo(R.string.action_error_description)
+            viewModel.completeDescription.value,
+            equalTo(TestAppTools.applicationContext.getString(R.string.errors_actions_no_connections_link_app))
         )
         assertThat(viewModel.mainActionTextResId.value, equalTo(R.string.actions_done))
     }
@@ -356,15 +352,8 @@ class SubmitActionViewModelTest {
         viewModel.onViewCreated()
 
         //then
-//        assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
-//        assertThat(viewModel.actionProcessingVisibility.value, equalTo(View.GONE))
-//        assertThat(viewModel.iconResId.value, equalTo(R.drawable.ic_status_success))
-//        assertThat(viewModel.completeTitleResId.value, equalTo(R.string.action_feature_title))
-//        assertThat(
-//            viewModel.completeDescriptionResId.value,
-//            equalTo(R.string.action_feature_description)
-//        )
-//        assertThat(viewModel.mainActionTextResId.value, equalTo(android.R.string.ok))
+        assertThat(viewModel.completeViewVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.actionProcessingVisibility.value, equalTo(View.VISIBLE))
     }
 
     /**

@@ -73,6 +73,14 @@ class BiometricPromptManagerV28 : BiometricPromptAbs, DialogInterface.OnClickLis
         }
     }
 
+    override fun dismissBiometricPrompt() {
+        try {
+            cancelPrompt()
+        } catch (e: Exception) {
+            e.log()
+        }
+    }
+
     private fun cancelPrompt() {
         try {
             cancellationSignal?.cancel()

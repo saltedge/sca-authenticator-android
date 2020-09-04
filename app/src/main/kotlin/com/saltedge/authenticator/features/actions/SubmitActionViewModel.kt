@@ -21,7 +21,6 @@
 package com.saltedge.authenticator.features.actions
 
 import android.content.Context
-import android.content.DialogInterface
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -57,17 +56,16 @@ class SubmitActionViewModel(
     private var actionAppLinkData: ActionAppLinkData? = null
     private var connectionAndKey: ConnectionAndKey? = null
     val onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onShowErrorEvent = MutableLiveData<ViewModelEvent<String>>()
     val onOpenLinkEvent = MutableLiveData<ViewModelEvent<Uri>>()
     val showConnectionsSelectorFragmentEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val setResultAuthorizationIdentifier = MutableLiveData<AuthorizationIdentifier>()
     val iconResId: MutableLiveData<Int> = MutableLiveData(R.drawable.ic_status_error)
     val completeTitleResId: MutableLiveData<Int> = MutableLiveData(R.string.action_error_title)
-    val completeDescriptionResId: MutableLiveData<Int> = MutableLiveData(R.string.action_error_description)
+    val completeDescription: MutableLiveData<String> = MutableLiveData("")
     val mainActionTextResId: MutableLiveData<Int> = MutableLiveData(R.string.actions_try_again)
 
-    var completeViewVisibility = MutableLiveData<Int>()
-    var actionProcessingVisibility = MutableLiveData<Int>()
+    var completeViewVisibility = MutableLiveData<Int>(View.GONE)
+    var actionProcessingVisibility = MutableLiveData<Int>(View.VISIBLE)
 
     override fun onActionInitFailure(error: ApiErrorData) {
         showActionError(error.getErrorMessage(appContext))
@@ -84,8 +82,7 @@ class SubmitActionViewModel(
                 )
             )
         } else {
-            viewMode = ViewMode.ACTION_ERROR
-            updateViewsContent()
+            showActionError(appContext.getString(R.string.errors_actions_not_success))
         }
     }
 
@@ -94,7 +91,7 @@ class SubmitActionViewModel(
         this.actionAppLinkData = actionAppLinkData
         when {
             connections.isEmpty() -> {
-                showActionError(appContext.getString(R.string.connections_list_empty_title))
+                showActionError(appContext.getString(R.string.errors_actions_no_connections_link_app))
             }
             connections.size == 1 -> {
                 this.connectionAndKey = connections.firstOrNull()?.let {
@@ -145,19 +142,12 @@ class SubmitActionViewModel(
         }
     }
 
-    fun onDialogActionIdClick(dialogActionId: Int) {
-        if (dialogActionId == DialogInterface.BUTTON_POSITIVE) {
-            onCloseEvent.postUnitEvent()
-        }
-    }
-
     private fun updateViewsContent() {
-        iconResId.postValue(R.drawable.ic_status_error)
-        completeTitleResId.postValue(R.string.action_error_title)
-        completeDescriptionResId.postValue(R.string.action_error_description)
         mainActionTextResId.postValue(R.string.actions_done)
 
         if (viewMode == ViewMode.ACTION_ERROR) {
+            iconResId.postValue(R.drawable.ic_status_error)
+            completeTitleResId.postValue(R.string.action_error_title)
             completeViewVisibility.postValue(View.VISIBLE)
             actionProcessingVisibility.postValue(View.GONE)
         } else {
@@ -169,7 +159,9 @@ class SubmitActionViewModel(
     private fun showActionError(errorMessage: String) {
         viewMode = ViewMode.ACTION_ERROR
         updateViewsContent()
-        onShowErrorEvent.postValue(ViewModelEvent(errorMessage))
+        completeDescription.postValue(
+            if (errorMessage.isEmpty()) appContext.getString(R.string.action_error_description) else errorMessage
+        )
     }
 }
 

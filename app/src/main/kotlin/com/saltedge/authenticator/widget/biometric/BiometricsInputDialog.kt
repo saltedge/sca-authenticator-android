@@ -33,6 +33,7 @@ import androidx.fragment.app.FragmentActivity
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.log
 import com.saltedge.authenticator.tools.setTextColorResId
 import com.saltedge.authenticator.tools.showDialogFragment
 import com.saltedge.authenticator.widget.fragment.BaseRoundedBottomDialogFragment
@@ -65,6 +66,14 @@ class BiometricsInputDialog(
             if (!isAdded) context.showDialogFragment(this)
         } else {
             Toast.makeText(context, R.string.errors_internal_error, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun dismissBiometricPrompt() {
+        try {
+            dismiss()
+        } catch (e: Exception) {
+            e.log()
         }
     }
 
