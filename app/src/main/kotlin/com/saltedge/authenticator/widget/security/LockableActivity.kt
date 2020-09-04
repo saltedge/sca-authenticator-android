@@ -115,6 +115,7 @@ abstract class LockableActivity : AppCompatActivity(),
     override fun onStop() {
         viewModel.destroyTimer()
         biometricPrompt?.resultCallback = null
+        biometricPrompt?.dismissBiometricPrompt()
         getUnlockAppInputView()?.passcodeInputViewListener = null
         super.onStop()
     }

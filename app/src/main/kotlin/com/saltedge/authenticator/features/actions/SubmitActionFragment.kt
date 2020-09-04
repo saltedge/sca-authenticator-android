@@ -51,12 +51,11 @@ import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_submit_action.*
 import javax.inject.Inject
 
-class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, DialogHandlerListener {
+class SubmitActionFragment : BaseFragment() {
 
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: SubmitActionViewModel
     private lateinit var binding: SubmitActionBinding
-    private var alertDialog: AlertDialog? = null
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,14 +93,6 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
         })
     }
 
-    override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
-        viewModel.onDialogActionIdClick(dialogActionId)
-    }
-
-    override fun closeActiveDialogs() {
-        if (alertDialog?.isShowing == true) alertDialog?.dismiss()
-    }
-
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(SubmitActionViewModel::class.java)
@@ -109,11 +100,6 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
 
         viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let { findNavController().popBackStack() }
-        })
-        viewModel.onShowErrorEvent.observe(this, Observer<ViewModelEvent<String>> {
-            it.getContentIfNotHandled()?.let { message ->
-                alertDialog = activity?.showWarningDialog(message = message, listener = this)
-            }
         })
         viewModel.onOpenLinkEvent.observe(this, Observer<ViewModelEvent<Uri>> {
             it.getContentIfNotHandled()?.let { url ->
@@ -129,8 +115,8 @@ class SubmitActionFragment : BaseFragment(), DialogInterface.OnClickListener, Di
         viewModel.completeTitleResId.observe(this, Observer<Int> { completeTitleResId ->
             completeView?.setTitleText(completeTitleResId)
         })
-        viewModel.completeDescriptionResId.observe(this, Observer<Int> { completeMessageResId ->
-            completeView?.setDescription(completeMessageResId)
+        viewModel.completeDescription.observe(this, Observer<String> { completeMessage ->
+            completeView?.setDescription(completeMessage)
         })
         viewModel.mainActionTextResId.observe(this, Observer<Int> { mainActionTextResId ->
             completeView?.setMainActionText(mainActionTextResId)

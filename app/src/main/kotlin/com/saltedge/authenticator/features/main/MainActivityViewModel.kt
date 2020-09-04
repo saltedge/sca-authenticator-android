@@ -132,7 +132,7 @@ class MainActivityViewModel(
                     onShowConnectEvent.postValue(ViewModelEvent(Bundle().apply {
                         putSerializable(KEY_DATA, connectionAppLinkData)
                     }))
-                } else if (actionAppLinkData != null && !connectionsRepository.isEmpty()) {
+                } else if (actionAppLinkData != null) {
                     onShowSubmitActionEvent.postValue(ViewModelEvent(Bundle().apply {
                         putSerializable(KEY_DATA, actionAppLinkData)
                     }))

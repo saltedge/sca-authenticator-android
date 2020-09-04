@@ -116,6 +116,8 @@
     <string name="action_error_description">Error occurred. Please try again later or contact support.</string>
     <string name="action_status_in_progress">Authenticating for action</string>
     <string name="action_revoke">Revoke</string>
+    <string name="errors_actions_no_connections_link_app">No connections. Please link your provider first.</string>
+    <string name="errors_actions_not_success">Action failed. Please try again later or contact support.</string>
 
     <string name="authorizations_feature_title">Authorizations</string>
     <string name="authorization_feature_title">Authorization</string>
