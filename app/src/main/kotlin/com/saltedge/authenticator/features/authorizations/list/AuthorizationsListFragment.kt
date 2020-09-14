@@ -20,33 +20,34 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.MORE_MENU_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.navigateTo
 import com.saltedge.authenticator.cloud.clearNotifications
 import com.saltedge.authenticator.databinding.AuthorizationsListBinding
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.list.pagers.AuthorizationsContentPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.pagers.AuthorizationsHeaderPagerAdapter
 import com.saltedge.authenticator.features.authorizations.list.pagers.PagersScrollSynchronizer
-import com.saltedge.authenticator.features.connections.list.ConnectionsListFragment
-import com.saltedge.authenticator.features.menu.BottomMenuDialog
-import com.saltedge.authenticator.features.settings.list.SettingsListFragment
+import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.interfaces.AppbarMenuItemClickListener
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.tools.*
+import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.showQrScannerActivity
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_authorizations_list.*
 import javax.inject.Inject
@@ -60,6 +61,7 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
     private var headerAdapter: AuthorizationsHeaderPagerAdapter? = null
     private var contentAdapter: AuthorizationsContentPagerAdapter? = null
     private var dialogFragment: DialogFragment? = null
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,6 +91,7 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
 
     override fun onStart() {
         super.onStart()
+        setupSharedObserver()
         contentAdapter?.listItemClickListener = viewModel
     }
 
@@ -108,10 +111,6 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         super.onStop()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        viewModel.onActivityResult(requestCode, resultCode, data)
-    }
-
     override fun onAppbarMenuItemClick(menuItem: MenuItem) {
         viewModel.onAppbarMenuItemClick(menuItem)
     }
@@ -124,7 +123,7 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         viewModel = ViewModelProvider(this, viewModelFactory).get(AuthorizationsListViewModel::class.java)
         viewModel.bindLifecycleObserver(lifecycle = lifecycle)
 
-        viewModel.listItems.observe(this, Observer<List<AuthorizationViewModel>> {
+        viewModel.listItems.observe(this, Observer<List<AuthorizationItemViewModel>> {
             headerAdapter?.data = it
             contentAdapter?.data = it
         })
@@ -146,17 +145,14 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         })
         viewModel.onMoreMenuClickEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { menuItems ->
-                dialogFragment = BottomMenuDialog.newInstance(menuItems = menuItems).also {
-                    it.setTargetFragment(this, MORE_MENU_REQUEST_CODE)
-                    activity?.showDialogFragment(it)
-                }
+                findNavController().navigate(R.id.bottom_menu_dialog, menuItems)
             }
         })
         viewModel.onShowConnectionsListEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { activity?.addFragment(ConnectionsListFragment()) }
+            event.getContentIfNotHandled()?.let { navigateTo(actionRes = R.id.connections_list) }
         })
         viewModel.onShowSettingsListEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { activity?.addFragment(SettingsListFragment()) }
+            event.getContentIfNotHandled()?.let { navigateTo(actionRes = R.id.settings_list) }
         })
         viewModel.emptyViewImage.observe(this, Observer<ResId> {
             emptyView.setImageResource(it)
@@ -183,5 +179,11 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         }
         pagersScrollSynchronizer.initViews(headerViewPager, contentViewPager)
         emptyView?.setActionOnClickListener(View.OnClickListener { viewModel.onEmptyViewActionClick() })
+    }
+
+    private fun setupSharedObserver() {
+        sharedViewModel.onBottomMenuItemSelected.observe(viewLifecycleOwner, Observer<ViewModelEvent<Bundle>> { event ->
+            event.getContentIfNotHandled()?.let { viewModel.onItemMenuClicked(it) }
+        })
     }
 }

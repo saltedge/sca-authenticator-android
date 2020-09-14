@@ -22,7 +22,7 @@ package com.saltedge.authenticator.features.settings.about
 
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
-import com.saltedge.authenticator.testTools.TestAppTools
+import com.saltedge.authenticator.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*
 import org.junit.Before
@@ -90,7 +90,7 @@ class AboutViewModelTest {
             equalTo(listOf(
                 SettingsItemViewModel(
                     titleId = R.string.about_app_version,
-                    description = "3.0.0"
+                    description = "3.1.1"
                 ),
                 SettingsItemViewModel(
                     titleId = R.string.about_copyright,

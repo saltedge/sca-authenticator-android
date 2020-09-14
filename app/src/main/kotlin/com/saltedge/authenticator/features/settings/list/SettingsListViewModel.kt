@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.settings.list
 
 import android.content.Context
+import android.content.DialogInterface
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
@@ -108,14 +109,16 @@ class SettingsListViewModel(
         setNightModelEvent.postValue(ViewModelEvent(newNighMode))
     }
 
-    fun restartConfirmed() {
-        restartClickEvent.postUnitEvent()
+    fun onDialogActionIdClick(dialogActionId: Int) {
+        if (dialogActionId == DialogInterface.BUTTON_POSITIVE) {
+            sendRevokeRequestForConnections(connectionsRepository.getAllActiveConnections())
+            deleteAllConnectionsAndKeys()
+            clearSuccessEvent.postUnitEvent()
+        }
     }
 
-    fun onUserConfirmedClearAppData() {
-        sendRevokeRequestForConnections(connectionsRepository.getAllActiveConnections())
-        deleteAllConnectionsAndKeys()
-        clearSuccessEvent.postUnitEvent()
+    fun restartConfirmed() {
+        restartClickEvent.postUnitEvent()
     }
 
     private fun collectListItems(): List<SettingsItemViewModel> {

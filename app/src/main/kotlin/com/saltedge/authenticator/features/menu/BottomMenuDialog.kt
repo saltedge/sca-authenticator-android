@@ -20,14 +20,14 @@
  */
 package com.saltedge.authenticator.features.menu
 
-import android.app.Activity.RESULT_OK
-import android.content.Intent
 import android.os.Bundle
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_ID
 import com.saltedge.authenticator.app.KEY_OPTION_ID
+import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.widget.fragment.BaseRoundedBottomDialogFragment
 
@@ -36,6 +36,7 @@ class BottomMenuDialog : BaseRoundedBottomDialogFragment(), ListItemClickListene
     private val presenter = BottomMenuPresenter()
     private val adapter = MenuItemsAdapter(this)
     private var contentRecyclerView: RecyclerView? = null
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun getDialogViewLayout(): Int = R.layout.dialog_menu
 
@@ -57,13 +58,10 @@ class BottomMenuDialog : BaseRoundedBottomDialogFragment(), ListItemClickListene
         dismiss()
         val menuItemSelectListener = activity as? MenuItemSelectListener
         if (menuItemSelectListener == null) {
-            targetFragment?.onActivityResult(
-                targetRequestCode,
-                RESULT_OK,
-                Intent()
-                    .putExtra(KEY_ID, presenter.menuId)
-                    .putExtra(KEY_OPTION_ID, item.id)
-            )
+            sharedViewModel.onMenuItemSelected(Bundle().apply {
+                putString(KEY_ID, presenter.menuId)
+                putInt(KEY_OPTION_ID, item.id)
+            })
         } else {
             menuItemSelectListener.onMenuItemSelected(presenter.menuId ?: "", item.id)
         }
@@ -79,15 +77,13 @@ class BottomMenuDialog : BaseRoundedBottomDialogFragment(), ListItemClickListene
     companion object {
         const val KEY_ITEMS = "items"
 
-        fun newInstance(
+        fun dataBundle(
             menuId: String = "",
             menuItems: List<MenuItemData>
-        ): BottomMenuDialog {
-            return BottomMenuDialog().apply {
-                arguments = Bundle().apply {
-                    putString(KEY_ID, menuId)
-                    putSerializable(KEY_ITEMS, ArrayList(menuItems))
-                }
+        ): Bundle {
+            return Bundle().apply {
+                this.putString(KEY_ID, menuId)
+                this.putSerializable(KEY_ITEMS, ArrayList(menuItems))
             }
         }
     }

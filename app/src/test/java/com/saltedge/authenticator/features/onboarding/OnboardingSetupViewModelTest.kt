@@ -25,7 +25,7 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
-import com.saltedge.authenticator.testTools.TestAppTools
+import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
 import org.hamcrest.CoreMatchers.equalTo
@@ -181,6 +181,7 @@ class OnboardingSetupViewModelTest {
             viewModel.showWarningDialogWithMessage.value,
             equalTo(R.string.errors_cant_save_passcode)
         )
+        Mockito.verifyNoInteractions(mockBiometricTools)
     }
 
     /**
@@ -194,6 +195,7 @@ class OnboardingSetupViewModelTest {
 
         assertThat(viewModel.passcodeInputViewVisibility.value, equalTo(View.GONE))
         assertThat(viewModel.showMainActivity.value, equalTo(ViewModelEvent(Unit)))
+        Mockito.verify(mockBiometricTools).activateFingerprint()
     }
 
     @Test

@@ -20,14 +20,14 @@
  */
 package com.saltedge.authenticator.sdk.polling
 
+import com.saltedge.android.test_tools.CommonTestTools
+import com.saltedge.android.test_tools.TestConnection
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.response.AuthorizationShowResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.RestClient
-import com.saltedge.authenticator.sdk.testTools.TestConnection
-import com.saltedge.authenticator.sdk.testTools.getTestPrivateKey
 import io.mockk.every
 import io.mockk.mockkClass
 import io.mockk.verify
@@ -103,7 +103,7 @@ class SingleAuthorizationPollingServiceTest {
         verify(atLeast = 0) { mockContract.getConnectionDataForAuthorizationPolling() }
     }
 
-    private var privateKey: PrivateKey = this.getTestPrivateKey()
+    private var privateKey: PrivateKey = CommonTestTools.testPrivateKey
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
     private val mockContract: FetchAuthorizationContract =
         mockkClass(FetchAuthorizationContract::class)

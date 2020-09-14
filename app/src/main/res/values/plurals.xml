@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
- <!--
+<!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2019 Salt Edge Inc.
@@ -20,10 +20,24 @@
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
 <resources>
-  <plurals name="errors_passcode_try_again">
-    <item quantity="few">@string/errors_passcode_try_again</item>
-    <item quantity="many">@string/errors_passcode_try_again</item>
-    <item quantity="one">@string/errors_passcode_try_again_short</item>
-    <item quantity="other">@string/errors_passcode_try_again</item>
-  </plurals>
+    <plurals name="errors_passcode_try_again">
+        <item quantity="few">@string/errors_passcode_try_again</item>
+        <item quantity="many">@string/errors_passcode_try_again</item>
+        <item quantity="one">@string/errors_passcode_try_again_short</item>
+        <item quantity="other">@string/errors_passcode_try_again</item>
+    </plurals>
+
+    <plurals name="count_of_consents">
+        <item quantity="few">@string/count_of_consents</item>
+        <item quantity="many">@string/count_of_consents</item>
+        <item quantity="one">@string/one_consent</item>
+        <item quantity="other">@string/count_of_consents</item>
+    </plurals>
+
+    <plurals name="count_of_days">
+        <item quantity="few">@string/count_of_days</item>
+        <item quantity="many">@string/count_of_days</item>
+        <item quantity="one">@string/one_day</item>
+        <item quantity="other">@string/count_of_days</item>
+    </plurals>
 </resources>

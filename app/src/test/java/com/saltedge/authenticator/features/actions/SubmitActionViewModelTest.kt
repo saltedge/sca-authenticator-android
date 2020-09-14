@@ -20,13 +20,9 @@
  */
 package com.saltedge.authenticator.features.actions
 
-import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import android.view.View
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.CONNECTIONS_REQUEST_CODE
-import com.saltedge.authenticator.app.KEY_CONNECTION_GUID
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -38,7 +34,7 @@ import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.response.SubmitActionResponseData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.testTools.TestAppTools
+import com.saltedge.authenticator.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*
 import org.junit.Before
@@ -85,16 +81,16 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onActionInitSuccess(response = connectUrlData)
 
-        //than
+        //then
         assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
         assertThat(viewModel.actionProcessingVisibility.value, equalTo(View.GONE))
-//        assertThat(viewModel.iconResId.value, equalTo(R.drawable.ic_status_success))
-//        assertThat(viewModel.completeTitleResId.value, equalTo(R.string.action_feature_title))
-//        assertThat(
-//            viewModel.completeDescriptionResId.value,
-//            equalTo(R.string.action_feature_description)
-//        )
-//        assertThat(viewModel.mainActionTextResId.value, equalTo(android.R.string.ok))
+        assertThat(viewModel.iconResId.value, equalTo(R.drawable.ic_status_error))
+        assertThat(viewModel.completeTitleResId.value, equalTo(R.string.action_error_title))
+        assertThat(
+            viewModel.completeDescription.value,
+            equalTo(TestAppTools.applicationContext.getString(R.string.errors_actions_not_success))
+        )
+        assertThat(viewModel.mainActionTextResId.value, equalTo(R.string.actions_done))
     }
 
     /**
@@ -113,7 +109,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onActionInitSuccess(response = connectUrlData)
 
-        //than
+        //then
         assertThat(
             viewModel.setResultAuthorizationIdentifier.value,
             equalTo(
@@ -141,7 +137,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onActionInitSuccess(response = actionData)
 
-        //than
+        //then
         Mockito.never()
     }
 
@@ -156,20 +152,16 @@ class SubmitActionViewModelTest {
             )
         )
 
-        //than
+        //then
         assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
         assertThat(viewModel.actionProcessingVisibility.value, equalTo(View.GONE))
         assertThat(viewModel.iconResId.value, equalTo(R.drawable.ic_status_error))
         assertThat(viewModel.completeTitleResId.value, equalTo(R.string.action_error_title))
         assertThat(
-            viewModel.completeDescriptionResId.value,
-            equalTo(R.string.action_error_description)
+            viewModel.completeDescription.value,
+            equalTo("test error")
         )
         assertThat(viewModel.mainActionTextResId.value, equalTo(R.string.actions_done))
-        assertThat(
-            viewModel.onShowErrorEvent.value,
-            equalTo(ViewModelEvent("test error"))
-        )
     }
 
     @Test
@@ -215,7 +207,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onViewClick(R.id.actionView)
 
-        //than
+        //then
         assertNotNull(viewModel.onCloseEvent.value)
         assertThat(
             viewModel.onOpenLinkEvent.value,
@@ -243,7 +235,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onViewClick(R.id.actionView)
 
-        //than
+        //then
         assertNotNull(viewModel.onCloseEvent.value)
     }
 
@@ -262,12 +254,12 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onViewClick(R.id.altActionView)
 
-        //than
+        //then
         assertNull(viewModel.onCloseEvent.value)
     }
 
     /**
-     * Test onViewCreated when ViewMode is ACTION_ERROR
+     * Test onViewCreated when ViewMode is ACTION_ERROR and no connections in db
      */
     @Test
     @Throws(Exception::class)
@@ -284,14 +276,14 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onViewCreated()
 
-        //than
+        //then
         assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
         assertThat(viewModel.actionProcessingVisibility.value, equalTo(View.GONE))
         assertThat(viewModel.iconResId.value, equalTo(R.drawable.ic_status_error))
         assertThat(viewModel.completeTitleResId.value, equalTo(R.string.action_error_title))
         assertThat(
-            viewModel.completeDescriptionResId.value,
-            equalTo(R.string.action_error_description)
+            viewModel.completeDescription.value,
+            equalTo(TestAppTools.applicationContext.getString(R.string.errors_actions_no_connections_link_app))
         )
         assertThat(viewModel.mainActionTextResId.value, equalTo(R.string.actions_done))
     }
@@ -327,7 +319,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onViewCreated()
 
-        //than
+        //then
         assertThat(viewModel.completeViewVisibility.value, equalTo(View.GONE))
         assertThat(viewModel.actionProcessingVisibility.value, equalTo(View.VISIBLE))
     }
@@ -359,16 +351,9 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onViewCreated()
 
-        //than
-//        assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
-//        assertThat(viewModel.actionProcessingVisibility.value, equalTo(View.GONE))
-//        assertThat(viewModel.iconResId.value, equalTo(R.drawable.ic_status_success))
-//        assertThat(viewModel.completeTitleResId.value, equalTo(R.string.action_feature_title))
-//        assertThat(
-//            viewModel.completeDescriptionResId.value,
-//            equalTo(R.string.action_feature_description)
-//        )
-//        assertThat(viewModel.mainActionTextResId.value, equalTo(android.R.string.ok))
+        //then
+        assertThat(viewModel.completeViewVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.actionProcessingVisibility.value, equalTo(View.VISIBLE))
     }
 
     /**
@@ -397,7 +382,7 @@ class SubmitActionViewModelTest {
         //when
         viewModel.onViewCreated()
 
-        //than
+        //then
         Mockito.verify(mockApiManager).sendAction(
             actionUUID = "123456",
             connectionAndKey = ConnectionAndKey(
@@ -411,66 +396,6 @@ class SubmitActionViewModelTest {
     @Test
     @Throws(Exception::class)
     fun onActivityResultTestCase1() {
-        //given wrong requestCode
-        val requestCode = 0
-        val resultCode = Activity.RESULT_OK
-        val intent: Intent = Intent().putExtra(KEY_CONNECTION_GUID, "1")
-
-        //when
-        viewModel.onActivityResult(requestCode, resultCode, intent)
-
-        //than
-        assertNotNull(viewModel.onCloseEvent.value)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onActivityResultTestCase2() {
-        //given wrong resultCode
-        val requestCode = CONNECTIONS_REQUEST_CODE
-        val resultCode = Activity.RESULT_CANCELED
-        val intent: Intent = Intent().putExtra(KEY_CONNECTION_GUID, "1")
-
-        //when
-        viewModel.onActivityResult(requestCode, resultCode, intent)
-
-        //than
-        assertNotNull(viewModel.onCloseEvent.value)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onActivityResultTestCase3() {
-        //given wrong Intent
-        val requestCode = CONNECTIONS_REQUEST_CODE
-        val resultCode = Activity.RESULT_OK
-        val intent: Intent? = null
-
-        //when
-        viewModel.onActivityResult(requestCode, resultCode, intent)
-
-        //than
-        assertNotNull(viewModel.onCloseEvent.value)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onActivityResultTestCase4() {
-        //given wrong connection guid
-        val requestCode = CONNECTIONS_REQUEST_CODE
-        val resultCode = Activity.RESULT_OK
-        val intent: Intent = Intent().putExtra(KEY_CONNECTION_GUID, "")
-
-        //when
-        viewModel.onActivityResult(requestCode, resultCode, intent)
-
-        //than
-        assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onActivityResultTestCase5() {
         //given
         val connection = Connection().apply {
             guid = "guid1"
@@ -488,14 +413,39 @@ class SubmitActionViewModelTest {
                 returnTo = "https://www.saltedge.com/"
             )
         )
-        val requestCode = CONNECTIONS_REQUEST_CODE
-        val resultCode = Activity.RESULT_OK
-        val intent: Intent = Intent().putExtra(KEY_CONNECTION_GUID, "guid1")
 
         //when
-        viewModel.onActivityResult(requestCode, resultCode, intent)
+        viewModel.showConnectionSelector("guid2")
 
-        //than
+        //then
+        assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onActivityResultTestCase2() {
+        //given
+        val connection = Connection().apply {
+            guid = "guid1"
+            accessToken = ""
+            code = "demobank1"
+            name = "Demobank1"
+        }
+        Mockito.`when`(mockConnectionsRepository.getByConnectUrl("https://www.fentury.com/")).thenReturn(listOf(connection))
+        Mockito.`when`(mockConnectionsRepository.getByGuid("guid1")).thenReturn(connection)
+        Mockito.`when`(mockKeyStoreManager.createConnectionAndKeyModel(connection)).thenReturn(ConnectionAndKey(connection, mockPrivateKey))
+        viewModel.setInitialData(
+            actionAppLinkData = ActionAppLinkData(
+                actionUUID = "123456",
+                connectUrl = "https://www.fentury.com/",
+                returnTo = "https://www.saltedge.com/"
+            )
+        )
+
+        //when
+        viewModel.showConnectionSelector("guid1")
+
+        //then
         assertThat(viewModel.actionProcessingVisibility.value, equalTo(View.VISIBLE))
         Mockito.verify(mockApiManager).sendAction(
             actionUUID = "123456",

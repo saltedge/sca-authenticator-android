@@ -31,8 +31,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.ConnectProviderBinding
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
@@ -40,15 +41,11 @@ import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.model.ConnectionID
-import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.Token
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import com.saltedge.authenticator.sdk.web.ConnectWebClient
 import com.saltedge.authenticator.sdk.web.ConnectWebClientContract
-import com.saltedge.authenticator.tools.ResId
-import com.saltedge.authenticator.tools.authenticatorApp
-import com.saltedge.authenticator.tools.finishFragment
-import com.saltedge.authenticator.tools.showErrorDialog
+import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_connect.*
 import javax.inject.Inject
@@ -64,6 +61,9 @@ class ConnectProviderFragment : BaseFragment(),
     private val webViewClient = ConnectWebClient(contract = this)
     private lateinit var binding: ConnectProviderBinding
     private var alertDialog: AlertDialog? = null
+    private val safeArgs: ConnectProviderFragmentArgs by navArgs()
+    private val guid: String
+        get() = safeArgs.guid
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -134,7 +134,7 @@ class ConnectProviderFragment : BaseFragment(),
         lifecycle.addObserver(viewModel)
 
         viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it.getContentIfNotHandled()?.let { activity?.finishFragment() }
+            it.getContentIfNotHandled()?.let { findNavController().popBackStack() }
         })
         viewModel.onShowErrorEvent.observe(this, Observer<ViewModelEvent<String>> {
             it.getContentIfNotHandled()?.let { message ->
@@ -165,24 +165,9 @@ class ConnectProviderFragment : BaseFragment(),
                 backActionImageResId = it
             )
         })
-
         viewModel.setInitialData(
             initialConnectData = arguments?.getSerializable(KEY_DATA) as? ConnectAppLinkData,
-            connectionGuid = arguments?.getString(KEY_GUID)
+            connectionGuid = arguments?.guid //TODO: Replace on guid,  now we get an error when we try to qr scan
         )
-    }
-
-    companion object {
-        fun newInstance(connectAppLinkData: ConnectAppLinkData): ConnectProviderFragment {
-            return ConnectProviderFragment().apply {
-                arguments = Bundle().apply { putSerializable(KEY_DATA, connectAppLinkData) }
-            }
-        }
-
-        fun newInstance(connectionGuid: GUID): ConnectProviderFragment {
-            return ConnectProviderFragment().apply {
-                arguments = Bundle().apply { putString(KEY_GUID, connectionGuid) }
-            }
-        }
     }
 }

@@ -26,20 +26,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.KEY_CLOSE_APP
 import com.saltedge.authenticator.app.KEY_ID
 import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.cloud.clearNotifications
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationViewModel
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.constants.KEY_TITLE
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.authenticatorApp
-import com.saltedge.authenticator.tools.finishFragment
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_authorization_details.*
 import java.util.*
@@ -124,9 +124,9 @@ class AuthorizationDetailsFragment : BaseFragment(),
             event.getContentIfNotHandled()?.let { activity?.finish() }
         })
         viewModel.onCloseViewEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
-            event.getContentIfNotHandled()?.let { activity?.finishFragment() }
+            event.getContentIfNotHandled()?.let { findNavController().popBackStack() }
         })
-        viewModel.authorizationModel.observe(this, Observer<AuthorizationViewModel> {
+        viewModel.authorizationModel.observe(this, Observer<AuthorizationItemViewModel> {
             headerView?.setTitleAndLogo(title = it.connectionName, logoUrl = it.connectionLogoUrl ?: "")
             headerView?.setProgressTime(startTime = it.startTime, endTime = it.endTime)
             headerView?.ignoreTimeUpdate = it.ignoreTimeUpdate
@@ -140,28 +140,5 @@ class AuthorizationDetailsFragment : BaseFragment(),
             closeAppOnBackPress = arguments?.getBoolean(KEY_CLOSE_APP, true),
             titleRes = arguments?.getInt(KEY_TITLE, R.string.authorization_feature_title)
         )
-    }
-
-    companion object {
-        private const val KEY_CLOSE_APP = "KEY_DESTROY_ON_BACK"
-        /**
-         * Create new instance of AuthorizationDetailsFragment
-         *
-         * @param identifier - wrapper for ID of Connection and ID of Authorization
-         * @return AuthorizationDetailsFragment
-         */
-        fun newInstance(
-            identifier: AuthorizationIdentifier,
-            closeAppOnBackPress: Boolean = true,
-            titleRes: ResId? = null
-        ): AuthorizationDetailsFragment {
-            return AuthorizationDetailsFragment().apply {
-                arguments = Bundle().apply {
-                    putSerializable(KEY_ID, identifier)
-                    putBoolean(KEY_CLOSE_APP, closeAppOnBackPress)
-                    titleRes?.let { putInt(KEY_TITLE, it) }
-                }
-            }
-        }
     }
 }

@@ -27,6 +27,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.KEY_CLOSE_APP
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.interfaces.MenuItem
@@ -34,13 +35,13 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
-import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
+import com.saltedge.authenticator.sdk.constants.*
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
@@ -69,7 +70,7 @@ class MainActivityViewModelTest {
     @Test
     @Throws(Exception::class)
     fun initTestCase1() {
-         //given
+        //given
         given(mockRealmManager.initialized).willReturn(true)
 
         //when
@@ -104,14 +105,12 @@ class MainActivityViewModelTest {
         val intent: Intent? = null
         given(mockConnectionsRepository.isEmpty()).willReturn(true)
 
-        assertThat(viewModel.onShowAuthorizationsListEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
 
         //when
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
 
         //then onShowAuthorizationsListEvent is posted
-        assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
@@ -132,7 +131,6 @@ class MainActivityViewModelTest {
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
 
         //then onShowAuthorizationsListEvent only is posted
-        assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
@@ -146,17 +144,20 @@ class MainActivityViewModelTest {
          */
         val viewModel = createViewModel()
         val savedInstanceState: Bundle? = null
-        val intent: Intent? = Intent().putExtra(KEY_CONNECTION_ID, "1").putExtra(KEY_AUTHORIZATION_ID, "2")
+        val intent: Intent? =
+            Intent().putExtra(KEY_CONNECTION_ID, "1").putExtra(KEY_AUTHORIZATION_ID, "2")
         given(mockConnectionsRepository.isEmpty()).willReturn(false)
 
         //when
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
 
         //then onShowAuthorizationDetailsEvent is posted
-        assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
+        val bundle = viewModel.onShowAuthorizationDetailsEvent.value?.peekContent()
+
+        assertThat(bundle?.getBoolean(KEY_CLOSE_APP), equalTo(true))
         assertThat(
-            viewModel.onShowAuthorizationDetailsEvent.value,
-            equalTo(ViewModelEvent(AuthorizationIdentifier(authorizationID = "2", connectionID = "1")))
+            bundle?.getSerializable(KEY_ID) as AuthorizationIdentifier,
+            equalTo(AuthorizationIdentifier(authorizationID = "2", connectionID = "1"))
         )
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
@@ -170,20 +171,29 @@ class MainActivityViewModelTest {
          */
         val viewModel = createViewModel()
         val savedInstanceState: Bundle? = null
-        val intent: Intent? = Intent().putExtra(KEY_DEEP_LINK, "authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration&connect_query=1234567890")
+        val intent: Intent? = Intent().putExtra(
+            KEY_DEEP_LINK,
+            "authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration&connect_query=1234567890"
+        )
         given(mockConnectionsRepository.isEmpty()).willReturn(false)
 
         //when
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
 
         //then onShowConnectEvent is posted
-        assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
-        assertThat(viewModel.onShowConnectEvent.value,
-            equalTo(ViewModelEvent(ConnectAppLinkData(
-                configurationUrl = "https://saltedge.com/configuration",
-                connectQuery = "1234567890"
-            ))))
+
+        val bundle = viewModel.onShowConnectEvent.value?.peekContent()
+
+        assertThat(
+            bundle?.getSerializable(KEY_DATA) as ConnectAppLinkData,
+            equalTo(
+                ConnectAppLinkData(
+                    configurationUrl = "https://saltedge.com/configuration",
+                    connectQuery = "1234567890"
+                )
+            )
+        )
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
     }
 
@@ -195,22 +205,31 @@ class MainActivityViewModelTest {
          */
         val viewModel = createViewModel()
         val savedInstanceState: Bundle? = null
-        val intent: Intent? = Intent().putExtra(KEY_DEEP_LINK, "authenticator://saltedge.com/action?action_uuid=123456&return_to=https://return.com&connect_url=https://someurl.com")
+        val intent: Intent? = Intent().putExtra(
+            KEY_DEEP_LINK,
+            "authenticator://saltedge.com/action?action_uuid=123456&return_to=https://return.com&connect_url=https://someurl.com"
+        )
         given(mockConnectionsRepository.isEmpty()).willReturn(false)
 
         //when
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
 
         //then onShowSubmitActionEvent is posted
-        assertThat(viewModel.onShowAuthorizationsListEvent.value, equalTo(ViewModelEvent(Unit)))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
-        assertThat(viewModel.onShowSubmitActionEvent.value,
-            equalTo(ViewModelEvent(ActionAppLinkData(
-                actionUUID = "123456",
-                connectUrl = "https://someurl.com",
-                returnTo = "https://return.com"
-            ))))
+
+        val bundle = viewModel.onShowSubmitActionEvent.value?.peekContent()
+
+        assertThat(
+            bundle?.getSerializable(KEY_DATA) as ActionAppLinkData,
+            equalTo(
+                ActionAppLinkData(
+                    actionUUID = "123456",
+                    connectUrl = "https://someurl.com",
+                    returnTo = "https://return.com"
+                )
+            )
+        )
     }
 
     @Test
@@ -228,7 +247,6 @@ class MainActivityViewModelTest {
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
 
         //then no interactions with observable values
-        assertThat(viewModel.onShowAuthorizationsListEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
@@ -249,7 +267,6 @@ class MainActivityViewModelTest {
         viewModel.onActivityResult(requestCode, resultCode, intent)
 
         //then no interactions with observable values
-        assertThat(viewModel.onShowAuthorizationsListEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
@@ -270,7 +287,6 @@ class MainActivityViewModelTest {
         viewModel.onActivityResult(requestCode, resultCode, intent)
 
         //then no interactions with observable values
-        assertThat(viewModel.onShowAuthorizationsListEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
@@ -291,7 +307,6 @@ class MainActivityViewModelTest {
         viewModel.onActivityResult(requestCode, resultCode, intent)
 
         //then no interactions with observable values
-        assertThat(viewModel.onShowAuthorizationsListEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
@@ -307,19 +322,29 @@ class MainActivityViewModelTest {
         val viewModel = createViewModel()
         val requestCode = QR_SCAN_REQUEST_CODE
         val resultCode: Int = Activity.RESULT_OK
-        val intent: Intent? = Intent().putExtra(KEY_DEEP_LINK, "authenticator://saltedge.com/connect?configuration=https://example.com/configuration&connect_query=1234567890")
+        val intent: Intent? = Intent().putExtra(
+            KEY_DEEP_LINK,
+            "authenticator://saltedge.com/connect?configuration=https://example.com/configuration&connect_query=1234567890"
+        )
 
         //when
         viewModel.onActivityResult(requestCode, resultCode, intent)
 
         //then onShowConnectEvent is posted
-        assertThat(viewModel.onShowAuthorizationsListEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
-        assertThat(viewModel.onShowConnectEvent.value,
-            equalTo(ViewModelEvent(ConnectAppLinkData(
-                configurationUrl = "https://example.com/configuration",
-                connectQuery = "1234567890"
-            ))))
+        assertNotNull(viewModel.onShowConnectEvent.value)
+
+        val bundle = viewModel.onShowConnectEvent.value?.peekContent()
+
+        assertThat(
+            bundle?.getSerializable(KEY_DATA) as ConnectAppLinkData,
+            equalTo(
+                ConnectAppLinkData(
+                    configurationUrl = "https://example.com/configuration",
+                    connectQuery = "1234567890"
+                )
+            )
+        )
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
     }
 
@@ -333,21 +358,31 @@ class MainActivityViewModelTest {
         val viewModel = createViewModel()
         val requestCode = QR_SCAN_REQUEST_CODE
         val resultCode: Int = Activity.RESULT_OK
-        val intent: Intent? = Intent().putExtra(KEY_DEEP_LINK, "authenticator://saltedge.com/action?action_uuid=123456&return_to=https://return.com&connect_url=https://someurl.com")
+        val intent: Intent? = Intent().putExtra(
+            KEY_DEEP_LINK,
+            "authenticator://saltedge.com/action?action_uuid=123456&return_to=https://return.com&connect_url=https://someurl.com"
+        )
 
         //when
         viewModel.onActivityResult(requestCode, resultCode, intent)
 
         //then onShowSubmitActionEvent is posted
-        assertThat(viewModel.onShowAuthorizationsListEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
-        assertThat(viewModel.onShowSubmitActionEvent.value,
-            equalTo(ViewModelEvent(ActionAppLinkData(
-                actionUUID = "123456",
-                connectUrl = "https://someurl.com",
-                returnTo = "https://return.com"
-            ))))
+        assertNotNull(viewModel.onShowSubmitActionEvent.value)
+
+        val bundle = viewModel.onShowSubmitActionEvent.value?.peekContent()
+
+        assertThat(
+            bundle?.getSerializable(KEY_DATA) as ActionAppLinkData,
+            equalTo(
+                ActionAppLinkData(
+                    actionUUID = "123456",
+                    connectUrl = "https://someurl.com",
+                    returnTo = "https://return.com"
+                )
+            )
+        )
     }
 
     @Test
@@ -363,7 +398,10 @@ class MainActivityViewModelTest {
         viewModel.onViewClick(viewId)
 
         //then
-        assertThat(viewModel.onAppbarMenuItemClickEvent.value, equalTo(ViewModelEvent(MenuItem.SCAN_QR)))
+        assertThat(
+            viewModel.onAppbarMenuItemClickEvent.value,
+            equalTo(ViewModelEvent(MenuItem.SCAN_QR))
+        )
         assertThat(viewModel.onBackActionClickEvent.value, `is`(nullValue()))
     }
 
@@ -380,7 +418,10 @@ class MainActivityViewModelTest {
         viewModel.onViewClick(viewId)
 
         //then
-        assertThat(viewModel.onAppbarMenuItemClickEvent.value, equalTo(ViewModelEvent(MenuItem.MORE_MENU)))
+        assertThat(
+            viewModel.onAppbarMenuItemClickEvent.value,
+            equalTo(ViewModelEvent(MenuItem.MORE_MENU))
+        )
         assertThat(viewModel.onBackActionClickEvent.value, `is`(nullValue()))
     }
 
@@ -431,7 +472,10 @@ class MainActivityViewModelTest {
         viewModel.onViewClick(viewId)
 
         //then
-        assertThat(viewModel.onAppbarMenuItemClickEvent.value, equalTo(ViewModelEvent(MenuItem.CUSTOM_NIGHT_MODE)))
+        assertThat(
+            viewModel.onAppbarMenuItemClickEvent.value,
+            equalTo(ViewModelEvent(MenuItem.CUSTOM_NIGHT_MODE))
+        )
         assertThat(viewModel.onBackActionClickEvent.value, `is`(nullValue()))
     }
 
@@ -442,13 +486,17 @@ class MainActivityViewModelTest {
          * given authorizationIdentifier
          */
         val viewModel = createViewModel()
-        val authorizationIdentifier = AuthorizationIdentifier(connectionID = "1", authorizationID = "2")
+        val authorizationIdentifier =
+            AuthorizationIdentifier(connectionID = "1", authorizationID = "2")
 
         //when
         viewModel.onNewAuthorization(authorizationIdentifier)
 
         //then onShowAuthorizationDetailsEvent is posted
-        assertThat(viewModel.onShowActionAuthorizationEvent.value, equalTo(ViewModelEvent(authorizationIdentifier)))
+        val bundle = viewModel.onShowActionAuthorizationEvent.value?.peekContent()
+        assertThat(bundle?.getBoolean(KEY_CLOSE_APP), equalTo(true))
+        assertThat(bundle?.getSerializable(KEY_ID), equalTo(authorizationIdentifier ?: ""))
+        assertThat(bundle?.getInt(KEY_TITLE), equalTo(R.string.action_new_action_title))
     }
 
     @Test
@@ -463,14 +511,20 @@ class MainActivityViewModelTest {
         val backActionImageResId = null
         val showMenu = arrayOf(MenuItem.SCAN_QR, MenuItem.MORE_MENU)
 
-        assertThat(viewModel.appBarBackActionImageResource.value, equalTo(R.drawable.ic_appbar_action_back))
+        assertThat(
+            viewModel.appBarBackActionImageResource.value,
+            equalTo(R.drawable.ic_appbar_action_back)
+        )
 
         //when
         viewModel.updateAppbar(titleResId, title, backActionImageResId, showMenu = showMenu)
 
         //then updated view
         assertThat(viewModel.appBarTitle.value, equalTo(context.getString(R.string.app_name)))
-        assertThat(viewModel.appBarBackActionImageResource.value, equalTo(R.drawable.ic_appbar_action_back))
+        assertThat(
+            viewModel.appBarBackActionImageResource.value,
+            equalTo(R.drawable.ic_appbar_action_back)
+        )
         assertThat(viewModel.appBarBackActionVisibility.value, equalTo(View.GONE))
         assertThat(viewModel.appBarActionQRVisibility.value, equalTo(View.VISIBLE))
         assertThat(viewModel.appBarActionMoreVisibility.value, equalTo(View.VISIBLE))
@@ -494,7 +548,10 @@ class MainActivityViewModelTest {
 
         //then updated view
         assertThat(viewModel.appBarTitle.value, equalTo("Test"))
-        assertThat(viewModel.appBarBackActionImageResource.value, equalTo(R.drawable.ic_appbar_action_close))
+        assertThat(
+            viewModel.appBarBackActionImageResource.value,
+            equalTo(R.drawable.ic_appbar_action_close)
+        )
         assertThat(viewModel.appBarBackActionVisibility.value, equalTo(View.VISIBLE))
         assertThat(viewModel.appBarActionQRVisibility.value, equalTo(View.GONE))
         assertThat(viewModel.appBarActionMoreVisibility.value, equalTo(View.GONE))

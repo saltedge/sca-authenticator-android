@@ -28,10 +28,16 @@ import android.hardware.biometrics.BiometricPrompt.BIOMETRIC_ERROR_CANCELED
 import android.hardware.biometrics.BiometricPrompt.BIOMETRIC_ERROR_USER_CANCELED
 import android.hardware.fingerprint.FingerprintManager
 import android.os.Build
+import android.os.Bundle
 import android.os.CancellationSignal
+import androidx.annotation.StringRes
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.KEY_ACTION
+import com.saltedge.authenticator.sdk.constants.KEY_DESCRIPTION
+import com.saltedge.authenticator.sdk.constants.KEY_TITLE
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.biometric.getFingerprintManager
+import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.log
 
 @TargetApi(Build.VERSION_CODES.M)
@@ -40,6 +46,26 @@ class BiometricsInputPresenter(
     val contract: BiometricsInputContract.View?
 ) : FingerprintManager.AuthenticationCallback() {
 
+    companion object {
+        fun dataBundle(
+            @StringRes titleResId: ResId,
+            @StringRes descriptionResId: ResId,
+            @StringRes negativeActionTextResId: ResId
+        ): Bundle {
+            return Bundle().apply {
+                putInt(KEY_TITLE, titleResId)
+                putInt(KEY_DESCRIPTION, descriptionResId)
+                putInt(KEY_ACTION, negativeActionTextResId)
+            }
+        }
+    }
+
+    var titleRes: ResId = R.string.fingerprint_title
+        private set
+    var descriptionRes: ResId = R.string.fingerprint_touch_sensor
+        private set
+    var negativeActionTextRes: ResId = R.string.actions_cancel
+        private set
     private var fingerprintManager: FingerprintManager? = null
     private val cryptoObject: FingerprintManager.CryptoObject? = createCryptoObject()
     private var mCancellationSignal: CancellationSignal? = null
@@ -67,6 +93,18 @@ class BiometricsInputPresenter(
     override fun onAuthenticationFailed() {
         super.onAuthenticationFailed()
         onAuthResult(success = false)
+    }
+
+    val initialized: Boolean = cryptoObject != null
+
+    fun setInitialData(arguments: Bundle?) {
+        titleRes = if (cryptoObject == null) R.string.errors_error
+        else arguments?.getInt(KEY_TITLE, R.string.fingerprint_title) ?: R.string.fingerprint_title
+
+        descriptionRes = if (cryptoObject == null) R.string.errors_fingerprint_init
+        else arguments?.getInt(KEY_DESCRIPTION, R.string.fingerprint_touch_sensor) ?: R.string.fingerprint_touch_sensor
+
+        negativeActionTextRes = arguments?.getInt(KEY_ACTION, R.string.actions_cancel) ?: R.string.actions_cancel
     }
 
     fun onDialogResume(context: Context) {

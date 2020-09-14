@@ -26,20 +26,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.applyNightMode
+import com.saltedge.authenticator.app.navigateTo
 import com.saltedge.authenticator.features.main.showWarningSnack
-import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
-import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
-import com.saltedge.authenticator.features.settings.passcode.PasscodeEditFragment
 import com.saltedge.authenticator.interfaces.AppbarMenuItemClickListener
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.MenuItem
@@ -55,7 +53,6 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: SettingsListViewModel
     private var adapter: SettingsAdapter? = null
-    private var dialogFragment: DialogFragment? = null
     private var alertDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,7 +78,6 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
     }
 
     override fun closeActiveDialogs() {
-        if (dialogFragment?.isVisible == true) dialogFragment?.dismiss()
         if (alertDialog?.isShowing == true) alertDialog?.dismiss()
     }
 
@@ -93,24 +89,21 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
         viewModel = ViewModelProvider(this, viewModelFactory).get(SettingsListViewModel::class.java)
 
         viewModel.languageClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
-            event.getContentIfNotHandled()?.let {
-                dialogFragment = LanguageSelectDialog()
-                dialogFragment?.let { activity?.showDialogFragment(it) }
-            }
+            event.getContentIfNotHandled()?.let { findNavController().navigate(R.id.language) }
         })
         viewModel.passcodeClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
-            event.getContentIfNotHandled()?.let { activity?.addFragment(PasscodeEditFragment()) }
+            event.getContentIfNotHandled()?.let { navigateTo(actionRes = R.id.passcode_edit) }
         })
         viewModel.aboutClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
-            event.getContentIfNotHandled()?.let { activity?.addFragment(AboutListFragment()) }
+            event.getContentIfNotHandled()?.let { navigateTo(actionRes = R.id.about_list) }
         })
         viewModel.supportClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
             event.getContentIfNotHandled()?.let { activity?.startMailApp() }
         })
         viewModel.clearClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
             event.getContentIfNotHandled()?.let {
-                alertDialog = activity?.showResetDataAndSettingsDialog(DialogInterface.OnClickListener { _, _ ->
-                    viewModel.onUserConfirmedClearAppData()
+                alertDialog = activity?.showResetDataAndSettingsDialog(DialogInterface.OnClickListener { _, dialogActionId ->
+                    viewModel.onDialogActionIdClick(dialogActionId)
                 })
             }
         })
@@ -146,9 +139,10 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
     private fun setupViews() {
         activity?.let {
             recyclerView?.layoutManager = LinearLayoutManager(it)
-            recyclerView?.addItemDecoration(SpaceItemDecoration(
-                context = it,
-                headerPositions = viewModel.spacesPositions)
+            recyclerView?.addItemDecoration(
+                SpaceItemDecoration(
+                    context = it,
+                    headerPositions = viewModel.spacesPositions)
             )
         }
         adapter = SettingsAdapter(listener = viewModel).apply {

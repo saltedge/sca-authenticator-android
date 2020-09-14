@@ -22,66 +22,59 @@ package com.saltedge.authenticator.features.connections.list
 
 import android.content.Context
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.connection.getStatus
 import com.saltedge.authenticator.sdk.tools.toDateTime
-import com.saltedge.authenticator.tools.toLongDateString
+import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.toDateFormatString
 
 fun collectAllConnectionsViewModels(
     repository: ConnectionsRepositoryAbs,
     context: Context
-): List<ConnectionViewModel> {
+): List<ConnectionItemViewModel> {
     return repository.getAllConnections()
         .sortedBy { it.createdAt }
         .convertConnectionsToViewModels(context)
 }
 
-fun List<Connection>.convertConnectionsToViewModels(context: Context): List<ConnectionViewModel> {
-    return this.map { connection ->
-        ConnectionViewModel(
-            guid = connection.guid,
-            code = connection.code,
-            name = connection.name,
-            statusDescription = getConnectionStatusDescription(
-                context = context,
-                connection = connection
-            ),
-            statusColorResId = getConnectionStateColorResId(connection),
-            logoUrl = connection.logoUrl,
-            reconnectOptionIsVisible = isActiveConnection(connection),
-            deleteMenuItemText = getConnectionDeleteTextResId(connection),
-            deleteMenuItemImage = getConnectionDeleteImageResId(connection),
-            isChecked = false
-        )
-    }
+fun Connection.convertConnectionToViewModel(context: Context): ConnectionItemViewModel {
+    return ConnectionItemViewModel(
+        guid = this.guid,
+        connectionId = this.id,
+        name = this.name,
+        statusDescription = getConnectionStatusDescription(context = context, connection = this),
+        statusDescriptionColorRes = getConnectionStatusColor(connection = this),
+        logoUrl = this.logoUrl,
+        isActive = isActiveConnection(this),
+        isChecked = false
+    )
+}
+
+fun List<Connection>.convertConnectionsToViewModels(context: Context): List<ConnectionItemViewModel> {
+    return this.map { connection -> connection.convertConnectionToViewModel(context) }
 }
 
 private fun isActiveConnection(connection: ConnectionAbs): Boolean {
-    return connection.getStatus() !== ConnectionStatus.ACTIVE
-}
-
-private fun getConnectionDeleteTextResId(connection: ConnectionAbs): Int {
-    return if (connection.getStatus() === ConnectionStatus.ACTIVE) R.string.actions_delete else R.string.actions_remove
-}
-
-private fun getConnectionDeleteImageResId(connection: ConnectionAbs): Int {
-    return if (connection.getStatus() === ConnectionStatus.ACTIVE) R.drawable.ic_menu_delete_24dp else R.drawable.ic_menu_remove_24dp
-}
-
-private fun getConnectionStateColorResId(connection: ConnectionAbs): Int {
-    return if (connection.getStatus() === ConnectionStatus.ACTIVE) R.color.secondary_text else R.color.red_text
+    return connection.getStatus() === ConnectionStatus.ACTIVE
 }
 
 private fun getConnectionStatusDescription(context: Context, connection: Connection): String {
     return when (connection.getStatus()) {
         ConnectionStatus.INACTIVE -> context.getString(R.string.connection_status_inactive)
         ConnectionStatus.ACTIVE -> {
-            val date = connection.updatedAt.toDateTime().toLongDateString(context)
-            "${context.getString(R.string.connection_status_connected_on)} $date"
+            val date = connection.updatedAt.toDateTime().toDateFormatString(context)
+            "${context.getString(R.string.connection_status_linked_on)} $date"
         }
+    }
+}
+
+fun getConnectionStatusColor(connection: Connection): ResId {
+    return when (connection.getStatus()) {
+        ConnectionStatus.INACTIVE -> R.color.red_and_red_light
+        ConnectionStatus.ACTIVE -> R.color.dark_60_and_grey_100
     }
 }

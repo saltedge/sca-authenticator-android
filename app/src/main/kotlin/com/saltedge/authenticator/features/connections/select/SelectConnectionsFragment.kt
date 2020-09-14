@@ -26,20 +26,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_CONNECTION_GUID
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.features.connections.common.ConnectionViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.list.ConnectionsListAdapter
+import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.tools.authenticatorApp
-import com.saltedge.authenticator.tools.finishFragment
 import com.saltedge.authenticator.tools.setVisible
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
@@ -52,6 +53,7 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
     private lateinit var viewModel: SelectConnectionsViewModel
     private val adapter = ConnectionsListAdapter(clickListener = this)
     private var headerDecorator: SpaceItemDecoration? = null
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,9 +101,7 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
         viewModel = ViewModelProvider(this, viewModelFactory).get(SelectConnectionsViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
-        viewModel.setInitialData(arguments?.getSerializable(KEY_CONNECTIONS) as List<ConnectionViewModel>)
-
-        viewModel.listItems.observe(this, Observer<List<ConnectionViewModel>> {
+        viewModel.listItems.observe(this, Observer<List<ConnectionItemViewModel>> {
             headerDecorator?.setHeaderForAllItems(it.count())
             headerDecorator?.footerPositions = arrayOf(it.count() - 1)
             it?.let { adapter.data = it }
@@ -118,22 +118,21 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
             }
         })
         viewModel.onProceedClickEvent.observe(this, Observer<GUID> { connectionGuid ->
-            val resultIntent = Intent().putExtra(KEY_CONNECTION_GUID, connectionGuid)
-            targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, resultIntent)
-            activity?.finishFragment()
+            sharedViewModel.onSelectConnection(connectionGuid)
+            findNavController().popBackStack()
         })
+
+        (arguments?.getSerializable(KEY_CONNECTIONS) as? List<ConnectionItemViewModel>)?.let {
+            viewModel.setInitialData(it)
+        }
     }
 
     companion object {
         const val KEY_CONNECTIONS = "CONNECTIONS"
 
-        fun newInstance(connections: List<ConnectionViewModel>): SelectConnectionsFragment {
-            val arrayList = ArrayList<ConnectionViewModel>(connections)
-            return SelectConnectionsFragment().apply {
-                arguments = Bundle().apply {
-                    putSerializable(KEY_CONNECTIONS, arrayList)
-                }
-            }
+        fun dataBundle(connections: List<ConnectionItemViewModel>): Bundle {
+            val arrayList = ArrayList<ConnectionItemViewModel>(connections)
+            return Bundle().apply { this.putSerializable(KEY_CONNECTIONS, arrayList) }
         }
     }
 }

@@ -20,7 +20,9 @@
  */
 package com.saltedge.authenticator.sdk.tools
 
+import android.content.Context
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
 import com.saltedge.authenticator.sdk.tools.keystore.publicKeyToPemEncodedString
 import org.hamcrest.CoreMatchers.equalTo
@@ -33,14 +35,17 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class KeyStoreManagerTest {
 
+    private val context: Context
+        get() = InstrumentationRegistry.getInstrumentation().context
+
     @Test
     @Throws(Exception::class)
     fun createOrReplaceKeyPairTest() {
         cleanKeystore()
         val secretKey = KeyStoreManager.createOrReplaceAesBiometricKey("biometric")
 
-        assertNotNull(KeyStoreManager.createOrReplaceRsaKeyPair("test1"))
-        assertNotNull(KeyStoreManager.createOrReplaceRsaKeyPair("test1"))
+        assertNotNull(KeyStoreManager.createOrReplaceRsaKeyPair(context, "test1"))
+        assertNotNull(KeyStoreManager.createOrReplaceRsaKeyPair(context, "test1"))
 
         if (secretKey == null) {
             assertThat(KeyStoreManager.getKeyStoreAliases(), equalTo(listOf("test1")))
@@ -54,7 +59,7 @@ class KeyStoreManagerTest {
     @Throws(Exception::class)
     fun keyPairExistTest() {
         cleanKeystore()
-        KeyStoreManager.createOrReplaceRsaKeyPair("test1")
+        KeyStoreManager.createOrReplaceRsaKeyPair(context, "test1")
 
         Assert.assertTrue(KeyStoreManager.keyEntryExist("test1"))
         Assert.assertFalse(KeyStoreManager.keyEntryExist("test2"))
@@ -64,7 +69,7 @@ class KeyStoreManagerTest {
     @Throws(Exception::class)
     fun getKeyStoreAliasesTest() {
         cleanKeystore()
-        KeyStoreManager.createNewRsaKeyPair("test1")
+        KeyStoreManager.createNewRsaKeyPair(context, "test1")
 
         assertThat(KeyStoreManager.getKeyStoreAliases(), equalTo(listOf("test1")))
     }
@@ -73,7 +78,7 @@ class KeyStoreManagerTest {
     @Throws(Exception::class)
     fun getKeyPairTest() {
         cleanKeystore()
-        KeyStoreManager.createNewRsaKeyPair("test1")
+        KeyStoreManager.createNewRsaKeyPair(context, "test1")
         val pair = KeyStoreManager.getKeyPair("test1")
 
         assertThat(KeyStoreManager.getKeyStoreAliases(), equalTo(listOf("test1")))
@@ -88,8 +93,8 @@ class KeyStoreManagerTest {
     @Throws(Exception::class)
     fun deleteKeyPairsTest() {
         cleanKeystore()
-        KeyStoreManager.createNewRsaKeyPair("test1")
-        KeyStoreManager.createNewRsaKeyPair("test2")
+        KeyStoreManager.createNewRsaKeyPair(context, "test1")
+        KeyStoreManager.createNewRsaKeyPair(context, "test2")
 
         assertThat(KeyStoreManager.getKeyStoreAliases(), equalTo(listOf("test1", "test2")))
 
@@ -102,8 +107,8 @@ class KeyStoreManagerTest {
     @Throws(Exception::class)
     fun deleteKeyPairTest() {
         cleanKeystore()
-        KeyStoreManager.createNewRsaKeyPair("test1")
-        KeyStoreManager.createNewRsaKeyPair("test2")
+        KeyStoreManager.createNewRsaKeyPair(context, "test1")
+        KeyStoreManager.createNewRsaKeyPair(context, "test2")
 
         assertThat(KeyStoreManager.getKeyStoreAliases(), equalTo(listOf("test1", "test2")))
 
@@ -120,11 +125,11 @@ class KeyStoreManagerTest {
     @Throws(Exception::class)
     fun createNewKeyPairTest() {
         cleanKeystore()
-        KeyStoreManager.createNewRsaKeyPair("test1")
+        KeyStoreManager.createNewRsaKeyPair(context, "test1")
 
         assertThat(KeyStoreManager.getKeyStoreAliases(), equalTo(listOf("test1")))
 
-        KeyStoreManager.createNewRsaKeyPair("test2")
+        KeyStoreManager.createNewRsaKeyPair(context, "test2")
 
         assertThat(KeyStoreManager.getKeyStoreAliases(), equalTo(listOf("test1", "test2")))
     }
@@ -133,7 +138,7 @@ class KeyStoreManagerTest {
     @Throws(Exception::class)
     fun publicKeyToPemEncodedStringTest() {
         cleanKeystore()
-        val kp = KeyStoreManager.createNewRsaKeyPair("test1")
+        val kp = KeyStoreManager.createNewRsaKeyPair(context, "test1")
         val pemString = kp!!.publicKeyToPemEncodedString()
 
         Assert.assertTrue(pemString.isNotEmpty())

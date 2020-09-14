@@ -65,7 +65,7 @@
 
     <!--ALERT DIALOG-->
     <style name="BaseAlertDialogTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert">
-        <item name="android:background">@color/dialog_background</item>
+        <item name="android:background">@color/white_and_dark_100</item>
         <item name="android:colorPrimary">@color/primary</item>
         <item name="android:colorAccent">@color/primary</item>
         <item name="android:colorControlNormal">@color/primary</item>
@@ -74,9 +74,9 @@
     </style>
 
     <style name="LockAlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
-        <item name="android:windowBackground">@drawable/lock_dialog_background</item>
+        <item name="android:windowBackground">@drawable/shape_radius12_white_and_dark_100</item>
         <item name="textAllCaps">false</item>
-        <item name="android:textColorPrimary">@color/primary_text</item>
+        <item name="android:textColorPrimary">@color/dark_100_and_grey_40</item>
         <item name="android:textAlignment">center</item>
     </style>
 

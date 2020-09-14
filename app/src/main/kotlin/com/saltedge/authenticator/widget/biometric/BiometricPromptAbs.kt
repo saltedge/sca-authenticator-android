@@ -33,4 +33,5 @@ interface BiometricPromptAbs {
         @StringRes descriptionResId: ResId,
         @StringRes negativeActionTextResId: ResId
     )
+    fun dismissBiometricPrompt()
 }

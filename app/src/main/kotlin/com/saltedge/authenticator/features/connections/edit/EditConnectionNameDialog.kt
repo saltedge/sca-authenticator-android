@@ -20,33 +20,33 @@
  */
 package com.saltedge.authenticator.features.connections.edit
 
-import android.app.Activity
 import android.app.Dialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_GUID
+import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.sdk.constants.KEY_NAME
 import com.saltedge.authenticator.tools.getEnabledStateColorResId
+import com.saltedge.authenticator.tools.guid
 import com.saltedge.authenticator.tools.hideSystemKeyboard
 import com.saltedge.authenticator.tools.setTextColorResId
 
-class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListener, TextWatcher {
+class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListener {
 
     private var inputView: EditText? = null
     private var positiveButton: Button? = null
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val adb = AlertDialog.Builder(activity!!, R.style.InfoDialogTheme)
+        val adb = AlertDialog.Builder(requireActivity(), R.style.InfoDialogTheme)
             .setTitle(R.string.ui_dialog_rename_title)
             .setPositiveButton(android.R.string.ok, this)
             .setNegativeButton(R.string.actions_cancel, this)
@@ -61,7 +61,11 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
         super.onStart()
         val text = arguments?.getString(KEY_NAME) ?: ""
         inputView = dialog?.findViewById(R.id.connectionNameView) as EditText?
-        inputView?.addTextChangedListener(this)
+        inputView?.addTextChangedListener {
+            val isEnabled = it?.isNotEmpty() == true
+            positiveButton?.isEnabled = isEnabled
+            positiveButton?.setTextColorResId(getEnabledStateColorResId(isEnabled))
+        }
         inputView?.requestFocus()
         inputView?.setText(text)
         inputView?.setSelection(text.length)
@@ -74,26 +78,11 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
         }
     }
 
-    override fun afterTextChanged(s: Editable?) {
-        val isEnabled = s?.isNotEmpty() == true
-        positiveButton?.isEnabled = isEnabled
-        positiveButton?.setTextColorResId(getEnabledStateColorResId(isEnabled))
-    }
-
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
     private fun onOkClick() {
         val inputValue = inputView?.text?.toString() ?: return
         if (inputValue.isNotEmpty()) {
             dismissDialog()
-            targetFragment?.onActivityResult(
-                targetRequestCode,
-                Activity.RESULT_OK,
-                Intent().putExtra(KEY_GUID, arguments?.getString(KEY_GUID))
-                    .putExtra(KEY_NAME, inputValue)
-            )
+            sharedViewModel.onNewConnectionNameEntered(dataBundle(arguments?.guid  ?: "", inputValue))
         }
     }
 
@@ -103,13 +92,12 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
     }
 
     companion object {
-        fun newInstance(guid: String, name: String): EditConnectionNameDialog =
-            newInstance(Bundle()
-                .apply { putString(KEY_GUID, guid) }
-                .apply { putString(KEY_NAME, name) }
-            )
-
-        fun newInstance(bundle: Bundle): EditConnectionNameDialog =
-            EditConnectionNameDialog().apply { arguments = bundle }
+        fun dataBundle(guid: String, name: String): Bundle {
+            return Bundle()
+                .apply {
+                    this.guid = guid
+                    this.putString(KEY_NAME, name)
+                }
+        }
     }
 }

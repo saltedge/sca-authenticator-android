@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2019 Salt Edge Inc.
@@ -19,10 +20,6 @@
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
 <resources>
-    <string name="app_name">Salt Edge Authenticator</string>
-    <string name="app_name_short">Authenticator</string>
-    <string name="app_name_in_two_lines">Salt Edge\nAuthenticator</string>
-
     <string name="actions_cancel">Cancel</string>
     <string name="actions_done">Done</string>
     <string name="actions_connect">Connect</string>
@@ -46,16 +43,18 @@
     <string name="actions_allow">Allow</string>
     <string name="actions_confirm">Confirm</string>
     <string name="actions_clear">Clear</string>
+    <string name="actions_view_consents">View consents</string>
 
     <string name="passcode_enter_passcode_title">Enter passcode</string>
     <string name="passcode_enter_passcode_or_fingerprint_title">Enter passcode or use fingerprint</string>
     <string name="passcode_input_new_passcode">Input new passcode</string>
     <string name="passcode_confirm_passcode">Confirm passcode</string>
 
-    <string name="errors_touch_id_not_enrolled">No fingerprint was enrolled.</string>
-    <string name="errors_touch_id_not_supported">Fingerprint is not supported on your device</string>
+    <string name="errors_fingerprint_not_enrolled">No fingerprint was enrolled.</string>
+    <string name="errors_fingerprint_not_supported">Fingerprint is not supported on your device</string>
     <string name="errors_fingerprint_not_recognized">Fingerprint not recognized. Please try again.</string>
-    <string name="errors_activate_touch_id">Fingerprint is not activated on your device, please proceed to settings.</string>
+    <string name="errors_fingerprint_activate">Fingerprint is not activated on your device, please proceed to settings.</string>
+    <string name="errors_fingerprint_init">Fingerprint material cannot be accessed. Please reinstall the application.</string>
     <string name="errors_db_init">Database initialize error</string>
     <string name="errors_camera_init">Camera initialize error</string>
     <string name="errors_internal_error">Internal error</string>
@@ -102,7 +101,7 @@
     <string name="connections_list_empty_title">No connections</string>
     <string name="connections_list_empty_description">Seems like you didn’t connect to your provider yet. Add new connection to securely authorize your actions.</string>
     <string name="connections_list_delete_all_connections">Delete all connections and stop receiving confirmations until another Provider is connected.</string>
-    <string name="connection_status_connected_on">Connected on</string>
+    <string name="connection_status_linked_on">Linked on</string>
     <string name="connection_status_inactive">Inactive. Please reconnect.</string>
     <string name="connect_status_encrypted_connection">Your connection is encrypted and\nsecurely transmitted using SSL</string>
     <string name="connect_status_in_progress">Processing…</string>
@@ -116,6 +115,9 @@
     <string name="action_error_title">Something went wrong</string>
     <string name="action_error_description">Error occurred. Please try again later or contact support.</string>
     <string name="action_status_in_progress">Authenticating for action</string>
+    <string name="action_revoke">Revoke</string>
+    <string name="errors_actions_no_connections_link_app">No connections. Please link your provider first.</string>
+    <string name="errors_actions_not_success">Action failed. Please try again later or contact support.</string>
 
     <string name="authorizations_feature_title">Authorizations</string>
     <string name="authorization_feature_title">Authorization</string>
@@ -189,5 +191,28 @@
     <string name="forgot_passcode_clear_title">Clear app data</string>
     <string name="forgot_passcode_clear_message">All app data including connected providers, user data and settings will be permanently deleted</string>
 
-    <string name="consents_feature_title">Consent management</string>
+    <string name="consent_feature_title">Consent management</string>
+    <string name="count_of_consents">\%s consents</string>
+    <string name="one_consent">1 consent</string>
+
+    <string name="consents_feature_title">Active consents</string>
+    <string name="expires_in">Expires in</string>
+
+    <string name="consent_details_feature_title">Active Consent</string>
+    <string name="count_of_days">\%s days</string>
+    <string name="one_day">1 day</string>
+    <string name="days_left">\%s left</string>
+    <string name="consent_title_aisp">Access to account information</string>
+    <string name="consent_title_pisp_future">Consent for future payment</string>
+    <string name="consent_title_pisp_recurring">Consent for recurring payment</string>
+    <string name="consent_unknown">Unknown consent</string>
+    <string name="consent_granted_to">Consent granted to \%s application on the following accounts from \%s</string>
+    <string name="granted">Granted</string>
+    <string name="expires">Expires</string>
+    <string name="shared_data">Shared data</string>
+    <string name="balance">Balance</string>
+    <string name="transactions">Transactions</string>
+    <string name="revoke_consent">Revoke consent</string>
+    <string name="revoke_consent_message">\%s service that is provided to you may be interrupted. Are you sure you want to revoke consent?</string>
+    <string name="consent_revoked_for">Consent revoked for \%s</string>
 </resources>

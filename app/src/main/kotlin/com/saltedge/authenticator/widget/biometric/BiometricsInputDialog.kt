@@ -25,16 +25,15 @@ import android.view.View
 import android.view.animation.CycleInterpolator
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.FragmentActivity
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_ACTION
-import com.saltedge.authenticator.sdk.constants.KEY_DESCRIPTION
-import com.saltedge.authenticator.sdk.constants.KEY_TITLE
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.log
 import com.saltedge.authenticator.tools.setTextColorResId
 import com.saltedge.authenticator.tools.showDialogFragment
 import com.saltedge.authenticator.widget.fragment.BaseRoundedBottomDialogFragment
@@ -43,21 +42,17 @@ class BiometricsInputDialog(
     val biometricTools: BiometricToolsAbs
 ) : BaseRoundedBottomDialogFragment(),
     BiometricPromptAbs,
-    BiometricsInputContract.View {
-
+    BiometricsInputContract.View
+{
     private val presenter = BiometricsInputPresenter(contract = this, biometricTools = biometricTools)
-    private val titleView: TextView? by lazy {
-        dialog?.findViewById<TextView>(R.id.titleView)
-    }
-    private val descriptionView: TextView? by lazy {
-        dialog?.findViewById<TextView>(R.id.descriptionView)
-    }
-    private val statusImageView: ImageView? by lazy {
-        dialog?.findViewById<ImageView>(R.id.statusImageView)
-    }
-    private val cancelActionView: TextView? by lazy {
-        dialog?.findViewById<TextView>(R.id.cancelActionView)
-    }
+    private val titleView: TextView?
+        get() = dialog?.findViewById<TextView>(R.id.titleView)
+    private val descriptionView: TextView?
+        get() = dialog?.findViewById<TextView>(R.id.descriptionView)
+    private val statusImageView: ImageView?
+        get() = dialog?.findViewById<ImageView>(R.id.statusImageView)
+    private val cancelActionView: TextView?
+        get() = dialog?.findViewById<TextView>(R.id.cancelActionView)
     override var resultCallback: BiometricPromptCallback? = null
 
     override fun showBiometricPrompt(
@@ -66,32 +61,35 @@ class BiometricsInputDialog(
         @StringRes descriptionResId: ResId,
         @StringRes negativeActionTextResId: ResId
     ) {
-        arguments = Bundle().apply {
-            putInt(KEY_TITLE, titleResId)
-            putInt(KEY_DESCRIPTION, descriptionResId)
-            putInt(KEY_ACTION, negativeActionTextResId)
+        if (presenter.initialized) {
+            arguments = BiometricsInputPresenter.dataBundle(titleResId, descriptionResId, negativeActionTextResId)
+            if (!isAdded) context.showDialogFragment(this)
+        } else {
+            Toast.makeText(context, R.string.errors_internal_error, Toast.LENGTH_SHORT).show()
         }
-        if (!isAdded) context.showDialogFragment(this)
+    }
+
+    override fun dismissBiometricPrompt() {
+        try {
+            dismiss()
+        } catch (e: Exception) {
+            e.log()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
+        presenter.setInitialData(arguments)
     }
 
     override fun getDialogViewLayout(): Int = R.layout.dialog_fingerprint
 
     override fun onStart() {
         super.onStart()
-        arguments?.getInt(KEY_TITLE, R.string.fingerprint_title)?.let {
-            titleView?.text = getString(it)
-        }
-        arguments?.getInt(KEY_DESCRIPTION, R.string.fingerprint_touch_sensor)?.let {
-            descriptionView?.text = getString(it)
-        }
-        arguments?.getInt(KEY_ACTION, R.string.actions_cancel)?.let {
-            cancelActionView?.text = getString(it)
-        }
+        titleView?.setText(presenter.titleRes)
+        descriptionView?.setText(presenter.descriptionRes)
+        cancelActionView?.setText(presenter.negativeActionTextRes)
         cancelActionView?.setOnClickListener { onNegativeActionClick() }
     }
 
