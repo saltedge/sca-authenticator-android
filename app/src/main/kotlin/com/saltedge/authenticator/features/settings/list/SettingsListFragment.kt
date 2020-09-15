@@ -28,13 +28,11 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.applyNightMode
-import com.saltedge.authenticator.app.navigateTo
 import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
@@ -89,7 +87,7 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
         viewModel = ViewModelProvider(this, viewModelFactory).get(SettingsListViewModel::class.java)
 
         viewModel.languageClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
-            event.getContentIfNotHandled()?.let { findNavController().navigate(R.id.language) }
+            event.getContentIfNotHandled()?.let { navigateTo(R.id.language) }
         })
         viewModel.passcodeClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
             event.getContentIfNotHandled()?.let { navigateTo(actionRes = R.id.passcode_edit) }

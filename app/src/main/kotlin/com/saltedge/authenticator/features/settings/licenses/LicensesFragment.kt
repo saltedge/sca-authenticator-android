@@ -26,13 +26,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.navigateTo
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
@@ -72,9 +72,7 @@ class LicensesFragment : BaseFragment() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(LicensesViewModel::class.java)
 
         viewModel.licenseItemClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
-            it.getContentIfNotHandled()?.let { bundle ->
-                findNavController().navigate(R.id.terms_of_services, bundle)
-            }
+            it.getContentIfNotHandled()?.let { bundle -> navigateTo(R.id.terms_of_services, bundle) }
         })
     }
 

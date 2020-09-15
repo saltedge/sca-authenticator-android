@@ -29,10 +29,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.app.navigateTo
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.navigateTo
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
