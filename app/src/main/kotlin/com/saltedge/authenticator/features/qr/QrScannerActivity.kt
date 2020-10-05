@@ -138,12 +138,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
 
     private fun setupSurface() {
         surfaceView?.holder?.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(
-                holder: SurfaceHolder,
-                format: Int,
-                width: Int,
-                height: Int
-            ) {
+            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
             }
 
             override fun surfaceDestroyed(holder: SurfaceHolder) {

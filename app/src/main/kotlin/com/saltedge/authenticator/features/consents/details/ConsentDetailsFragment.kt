@@ -29,13 +29,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.ConsentDetailsBinding
 import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.popBackStack
 import com.saltedge.authenticator.tools.showConfirmRevokeConsentDialog
 import com.saltedge.authenticator.tools.showWarningDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -97,7 +97,7 @@ class ConsentDetailsFragment : BaseFragment() {
         viewModel.revokeSuccessEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
             event.getContentIfNotHandled()?.let { consentId ->
                 sharedViewModel.onRevokeConsent(consentId)
-                findNavController().popBackStack()
+                popBackStack()
             }
 
         })
