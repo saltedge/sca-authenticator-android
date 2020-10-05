@@ -20,12 +20,15 @@
  */
 package com.saltedge.authenticator.features.qr
 
+import android.content.pm.PackageManager
 import android.util.SparseArray
 import com.google.android.gms.vision.barcode.Barcode
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.TestAppTools
+import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
+import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*
 import org.junit.Before
@@ -54,8 +57,13 @@ class QrScannerViewModelTest {
     @Test
     @Throws(Exception::class)
     fun onViewClickTestCase1() {
-        viewModel.onViewClick(R.id.closeImageView)
+        //given
+        val viewId = R.id.closeImageView
 
+        //when
+        viewModel.onViewClick(viewId = viewId)
+
+        //then
         assertNotNull(viewModel.onCloseEvent.value)
     }
 
@@ -65,30 +73,26 @@ class QrScannerViewModelTest {
     @Test
     @Throws(Exception::class)
     fun onViewClickTestCase2() {
-        viewModel.onViewClick(-1)
+        //given
+        val viewId = -1
 
+        //when
+        viewModel.onViewClick(viewId = viewId)
+
+        //then
         assertNull(viewModel.onCloseEvent.value)
     }
 
     @Test
     @Throws
-    fun showErrorMessageTest() {
-        viewModel.showErrorMessage(null)
-
-        assertNull(viewModel.errorMessageResId.value)
-
-        viewModel.showErrorMessage(R.string.errors_camera_init)
-
-        assertThat(viewModel.errorMessageResId.value, equalTo(R.string.errors_camera_init))
-    }
-
-    @Test
-    @Throws
     fun onReceivedCodesTestCase1() {
+        //given
         val codes = SparseArray<Barcode>()
 
+        //when
         viewModel.onReceivedCodes(codes)
 
+        //then
         assertNull(viewModel.setActivityResult.value)
         assertNull(viewModel.onCloseEvent.value)
     }
@@ -96,15 +100,80 @@ class QrScannerViewModelTest {
     @Test
     @Throws
     fun onReceivedCodesTestCase2() {
-        val validDeeplink = "authenticator://saltedge.com/connect?configuration=https://example.com/configuration&connect_query=1234567890"
+        //given
+        val validDeepLink = "authenticator://saltedge.com/connect?configuration=https://example.com/configuration&connect_query=1234567890"
         val barcode = Barcode()
-        barcode.displayValue = validDeeplink
+        barcode.displayValue = validDeepLink
         val codes = SparseArray<Barcode>()
         codes.put((0), barcode)
 
+        //when
         viewModel.onReceivedCodes(codes)
 
-        assertThat(viewModel.setActivityResult.value, equalTo(validDeeplink))
+        //then
+        assertThat(viewModel.setActivityResult.value, equalTo(validDeepLink))
+        assertThat(viewModel.onCloseEvent.value, equalTo(ViewModelEvent(Unit)))
+    }
+
+    @Test
+    @Throws
+    fun onCameraInitExceptionTest() {
+        //when
+        viewModel.onCameraInitException()
+
+        //then
+        assertThat(viewModel.errorMessageResId.value, equalTo(R.string.errors_camera_init))
+    }
+
+    @Test
+    @Throws
+    fun onRequestPermissionsResultTestCase1() {
+        //given
+        val requestCode: Int = CAMERA_PERMISSION_REQUEST_CODE
+        val grantResults = IntArray(0)
+
+        //when
+        viewModel.onRequestPermissionsResult(requestCode, grantResults)
+
+        //then
+        assertThat(viewModel.errorMessageResId.value, equalTo(R.string.errors_permission_denied))
+    }
+
+    @Test
+    @Throws
+    fun onRequestPermissionsResultTestCase2() {
+        //given
+        val requestCode: Int = QR_SCAN_REQUEST_CODE
+        val grantResults = IntArray(1) { PackageManager.PERMISSION_GRANTED }
+
+        //when
+        viewModel.onRequestPermissionsResult(requestCode, grantResults)
+
+        //then
+        assertThat(viewModel.errorMessageResId.value, equalTo(R.string.errors_permission_denied))
+    }
+
+    @Test
+    @Throws
+    fun onRequestPermissionsResultTestCase3() {
+        //given
+        val requestCode: Int = CAMERA_PERMISSION_REQUEST_CODE
+        val grantResults = IntArray(1) { PackageManager.PERMISSION_GRANTED }
+
+        //when
+        viewModel.onRequestPermissionsResult(requestCode, grantResults)
+
+        //then
+        assertThat(viewModel.permissionGrantEvent.value, equalTo(ViewModelEvent(Unit)))
+    }
+
+    @Test
+    @Throws
+    fun onErrorConfirmedTest() {
+        //when
+        viewModel.onErrorConfirmed()
+
+        //then
         assertThat(viewModel.onCloseEvent.value, equalTo(ViewModelEvent(Unit)))
     }
 }

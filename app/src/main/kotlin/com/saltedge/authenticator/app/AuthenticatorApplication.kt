@@ -25,6 +25,7 @@ import android.app.Application
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.gms.security.ProviderInstaller
+import com.google.firebase.FirebaseApp
 import com.saltedge.android.security.BuildConfig
 import com.saltedge.authenticator.app.di.AppComponent
 import com.saltedge.authenticator.app.di.AppModule
@@ -84,6 +85,7 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
 
     private fun initFirebaseModules() {
+        FirebaseApp.initializeApp(this);
         createCrashlyticsKit()
     }
 
