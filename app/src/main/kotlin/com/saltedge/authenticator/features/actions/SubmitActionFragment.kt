@@ -20,33 +20,29 @@
  */
 package com.saltedge.authenticator.features.actions
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.app.navigateTo
 import com.saltedge.authenticator.databinding.SubmitActionBinding
 import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.features.main.newAuthorizationListener
-import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.tools.authenticatorApp
-import com.saltedge.authenticator.tools.showWarningDialog
+import com.saltedge.authenticator.tools.navigateTo
+import com.saltedge.authenticator.tools.popBackStack
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_submit_action.*
 import javax.inject.Inject
@@ -99,7 +95,7 @@ class SubmitActionFragment : BaseFragment() {
         lifecycle.addObserver(viewModel)
 
         viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it.getContentIfNotHandled()?.let { findNavController().popBackStack() }
+            it.getContentIfNotHandled()?.let { popBackStack() }
         })
         viewModel.onOpenLinkEvent.observe(this, Observer<ViewModelEvent<Uri>> {
             it.getContentIfNotHandled()?.let { url ->

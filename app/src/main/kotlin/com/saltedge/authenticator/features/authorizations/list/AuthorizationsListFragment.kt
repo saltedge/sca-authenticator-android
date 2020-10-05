@@ -29,11 +29,9 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.app.navigateTo
 import com.saltedge.authenticator.cloud.clearNotifications
 import com.saltedge.authenticator.databinding.AuthorizationsListBinding
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
@@ -45,9 +43,7 @@ import com.saltedge.authenticator.interfaces.AppbarMenuItemClickListener
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.tools.ResId
-import com.saltedge.authenticator.tools.authenticatorApp
-import com.saltedge.authenticator.tools.showQrScannerActivity
+import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_authorizations_list.*
 import javax.inject.Inject
@@ -145,7 +141,7 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         })
         viewModel.onMoreMenuClickEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { menuItems ->
-                findNavController().navigate(R.id.bottom_menu_dialog, menuItems)
+                navigateToDialog(R.id.bottom_menu_dialog, menuItems)
             }
         })
         viewModel.onShowConnectionsListEvent.observe(this, Observer { event ->
