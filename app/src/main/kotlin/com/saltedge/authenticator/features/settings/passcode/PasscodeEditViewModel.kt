@@ -76,7 +76,7 @@ class PasscodeEditViewModel(
 
     override fun onNewPasscodeConfirmed(passcode: String) {
         loaderVisibility.postValue(View.VISIBLE)
-        PasscodeSaver(passcodeTools, callback = this).runNewTask(passcode)
+        PasscodeSaver(passcodeTools, callback = this).runNewTask(passcode)//TODO use coroutine
     }
 
     override fun passcodeSavedWithResult(result: Boolean) {
