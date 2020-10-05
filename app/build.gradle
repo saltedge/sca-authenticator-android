@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,10 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'io.fabric'
 apply plugin: 'idea'
 apply plugin: 'realm-android'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
+apply plugin: 'com.google.firebase.crashlytics'
 apply from: './jacoco.gradle'
 apply from: './common-methods.gradle'
 
@@ -142,12 +142,11 @@ dependencies { //TODO After changing dependencies list, review third-party libra
     implementation 'com.google.android.gms:play-services-base:17.4.0'
     implementation 'com.google.android.gms:play-services-vision:20.1.2'
     implementation 'com.google.firebase:firebase-core:17.5.0'
-    implementation 'com.google.firebase:firebase-messaging:20.2.4'
+    implementation 'com.google.firebase:firebase-messaging:20.3.0'
+    implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
+    implementation 'com.google.firebase:firebase-analytics:17.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.7.1'
     implementation 'net.danlew:android.joda:2.10.2'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.10.1') {
-        transitive = true
-    }
     implementation('com.github.bumptech.glide:glide:4.11.0') {
         exclude group: "com.android.support"
     }
@@ -164,7 +163,7 @@ dependencies { //TODO After changing dependencies list, review third-party libra
     testImplementation 'org.robolectric:robolectric:4.3.1'
     testImplementation 'org.robolectric:shadows-playservices:4.3'
     testImplementation 'org.mockito:mockito-core:3.2.4'
-    testImplementation "io.mockk:mockk:1.9.3"
+    testImplementation "io.mockk:mockk:1.10.2"
     testImplementation project(':test_tools')
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

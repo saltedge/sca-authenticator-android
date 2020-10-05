@@ -25,6 +25,7 @@ import android.app.Application
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.gms.security.ProviderInstaller
+import com.google.firebase.FirebaseApp
 import com.saltedge.android.security.BuildConfig
 import com.saltedge.authenticator.app.di.AppComponent
 import com.saltedge.authenticator.app.di.AppModule
@@ -34,7 +35,6 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.tools.AppTools
 import com.saltedge.authenticator.tools.createCrashlyticsKit
 import com.saltedge.authenticator.tools.log
-import io.fabric.sdk.android.Fabric
 import net.danlew.android.joda.JodaTimeAndroid
 
 open class AuthenticatorApplication : Application(), Application.ActivityLifecycleCallbacks {
@@ -85,7 +85,8 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
 
     private fun initFirebaseModules() {
-        Fabric.with(this, createCrashlyticsKit())
+        FirebaseApp.initializeApp(this);
+        createCrashlyticsKit()
     }
 
     private fun patchSecurityProvider() {

@@ -51,9 +51,9 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.updateScreenshotLocking()
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         authenticatorApp?.appComponent?.inject(this)//inject ViewModelsFactory
-        setupViewModel()//setup ViewModel
+        setupViewModel()
+        setupBinding()
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
     }
 
@@ -93,9 +93,6 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainActivityViewModel::class.java)
         viewModel.bindLifecycleObserver(lifecycle = lifecycle)
-        binding.viewModel = viewModel
-        binding.executePendingBindings()
-        binding.lifecycleOwner = this
 
         viewModel.onAppbarMenuItemClickEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
@@ -131,6 +128,13 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
         viewModel.onQrScanClickEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { this.showQrScannerActivity() }
         })
+    }
+
+    private fun setupBinding() {
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.viewModel = viewModel
+        binding.executePendingBindings()
+        binding.lifecycleOwner = this
     }
 }
 

@@ -28,7 +28,6 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import com.crashlytics.android.Crashlytics
 import com.saltedge.authenticator.app.AuthenticatorApplication
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.sdk.model.GUID
@@ -84,7 +83,7 @@ object AppTools : AppToolsAbs {
             return appContext.packageManager?.getPackageInfo(appContext.packageName, 0)?.versionName
                 ?: "unknown"
         } catch (e: PackageManager.NameNotFoundException) {
-            Crashlytics.logException(e)
+            e.log()
         } catch (ignored: Exception) {
         }
         return "unknown"

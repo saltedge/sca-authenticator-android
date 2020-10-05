@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,16 +29,15 @@ buildscript {
         jcenter()
         google()
         mavenLocal()
-        maven { url 'https://maven.fabric.io/public' }
         gradlePluginPortal()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.0.1'
         classpath "org.jacoco:org.jacoco.core:0.8.4"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.3.3'
+        classpath 'com.google.gms:google-services:4.3.4'
         classpath "io.realm:realm-gradle-plugin:$realm_version"
-        classpath 'io.fabric.tools:gradle:1.28.1'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.3.0'
         classpath "org.jlleitschuh.gradle:ktlint-gradle:8.2.0"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.0"
     }
