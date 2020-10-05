@@ -275,7 +275,7 @@ class ConnectProviderViewModel(
         } else {
             sessionFailMessage ?: appContext.getString(
                 R.string.errors_connection_failed_description
-            ) ?: ""
+            )
         }
     }
 }

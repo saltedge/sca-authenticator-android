@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2020 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,12 +23,16 @@ package com.saltedge.authenticator.tools
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
+import com.saltedge.authenticator.app.defaultTransition
 import com.saltedge.authenticator.features.qr.QrScannerActivity
 import com.saltedge.authenticator.sdk.constants.DEFAULT_SUPPORT_EMAIL_LINK
 import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
@@ -111,5 +115,29 @@ fun FragmentActivity.restartApp() {
         intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         this.startActivity(intent)
     } catch (ignored: Exception) {
+    }
+}
+
+fun Fragment.navigateTo(actionRes: ResId, bundle: Bundle? = null, transition: NavOptions = defaultTransition) {
+    try {
+        findNavController().navigate(actionRes, bundle, transition)
+    } catch (e: Exception) {
+        e.log()
+    }
+}
+
+fun Fragment.navigateToDialog(actionRes: ResId, bundle: Bundle) {
+    try {
+        findNavController().navigate(actionRes, bundle)
+    } catch (e: Exception) {
+        e.log()
+    }
+}
+
+fun Fragment.popBackStack() {
+    try {
+        findNavController().popBackStack()
+    } catch (e: Exception) {
+        e.log()
     }
 }
