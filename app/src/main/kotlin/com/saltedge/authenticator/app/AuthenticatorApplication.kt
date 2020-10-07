@@ -86,7 +86,7 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
 
     private fun initFirebaseModules() {
         FirebaseApp.initializeApp(this);
-//        createCrashlyticsKit()
+        createCrashlyticsKit()
     }
 
     private fun patchSecurityProvider() {

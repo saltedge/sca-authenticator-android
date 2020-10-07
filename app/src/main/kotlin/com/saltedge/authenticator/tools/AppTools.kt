@@ -22,15 +22,14 @@ package com.saltedge.authenticator.tools
 
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Point
 import android.os.Build
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.saltedge.authenticator.app.AuthenticatorApplication
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.sdk.model.GUID
+
 
 object AppTools : AppToolsAbs {
 
@@ -42,34 +41,6 @@ object AppTools : AppToolsAbs {
      */
     override fun isTestsSuite(appContext: Context): Boolean {
         return appContext.classLoader?.toString()?.contains("test") ?: false
-    }
-
-    /**
-     * Get display height
-     *
-     * @param appContext - application context
-     * @return height size
-     */
-    override fun getDisplayHeight(appContext: Context): Int {
-        val display =
-            (appContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
-        val size = Point()
-        display?.getSize(size)
-        return size.y
-    }
-
-    /**
-     * Get display width
-     *
-     * @param appContext - application context
-     * @return width size
-     */
-    override fun getDisplayWidth(appContext: Context): Int {
-        val display =
-            (appContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
-        val size = Point()
-        display?.getSize(size)
-        return size.x
     }
 
     /**
