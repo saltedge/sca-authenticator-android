@@ -53,6 +53,7 @@ class LauncherActivity : AppCompatActivity() {
         this.applyPreferenceLocale()
         this.registerNotificationChannels()
         setContentView(R.layout.activity_launcher)
+        throw RuntimeException("Test Crash")
     }
 
     override fun onStop() {

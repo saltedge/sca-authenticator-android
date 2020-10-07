@@ -61,6 +61,9 @@
 -dontwarn sun.misc.SignalHandler
 -dontwarn java.lang.instrument.Instrumentation
 -dontwarn sun.misc.Signal
+-dontwarn kotlin.time.Duration$Companion
 
 # Blur effect
 -keep class androidx.renderscript.** { *; }
+
+-dontwarn module-info
