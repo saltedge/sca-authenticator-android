@@ -43,18 +43,6 @@ class UiToolsTest {
 
     @Test
     @Throws(Exception::class)
-    fun getDisplayHeightTest() {
-        assertTrue(AppTools.getDisplayHeight(TestAppTools.applicationContext) > 0)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun getDisplayWidthTest() {
-        assertTrue(AppTools.getDisplayWidth(TestAppTools.applicationContext) > 0)
-    }
-
-    @Test
-    @Throws(Exception::class)
     fun getEnabledStateColorResIdTest() {
         assertThat(
             getEnabledStateColorResId(isEnabled = true),
