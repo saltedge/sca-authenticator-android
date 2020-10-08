@@ -26,7 +26,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.gms.security.ProviderInstaller
 import com.google.firebase.FirebaseApp
-import com.saltedge.android.security.BuildConfig
+import com.saltedge.authenticator.BuildConfig
 import com.saltedge.authenticator.app.di.AppComponent
 import com.saltedge.authenticator.app.di.AppModule
 import com.saltedge.authenticator.app.di.DaggerAppComponent

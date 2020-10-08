@@ -24,8 +24,6 @@ import android.content.Context
 
 interface AppToolsAbs {
     fun isTestsSuite(appContext: Context): Boolean
-    fun getDisplayHeight(appContext: Context): Int
-    fun getDisplayWidth(appContext: Context): Int
     fun getAppVersionName(appContext: Context): String
     fun getSDKVersion(): Int
 }

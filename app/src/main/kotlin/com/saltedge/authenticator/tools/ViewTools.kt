@@ -20,10 +20,11 @@
  */
 package com.saltedge.authenticator.tools
 
+import android.app.Activity
 import android.content.Context
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.graphics.Point
+import android.util.DisplayMetrics
+import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
@@ -104,4 +105,30 @@ fun ViewGroup.inflateListItemView(resId: Int): View =
  */
 fun TextView.setTextColorResId(colorResId: Int) {
     ContextCompat.getColor(this.context, colorResId).also { this.setTextColor(it) }
+}
+
+/**
+ * Get display height
+ *
+ * @receiver Activity - Activity object
+ * @return height size
+ */
+fun Activity.getDisplayHeight(): Int {
+    val display = (this.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
+    val size = Point()
+    display?.getSize(size)
+    return size.y
+}
+
+/**
+ * Get display width
+ *
+ * @receiver Activity - Activity object
+ * @return width size
+ */
+fun Activity.getDisplayWidth(): Int {
+    val display = (this.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
+    val size = Point()
+    display?.getSize(size)
+    return size.x
 }
