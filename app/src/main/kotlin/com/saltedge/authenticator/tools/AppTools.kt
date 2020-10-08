@@ -30,7 +30,6 @@ import com.saltedge.authenticator.app.AuthenticatorApplication
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.sdk.model.GUID
 
-
 object AppTools : AppToolsAbs {
 
     /**
