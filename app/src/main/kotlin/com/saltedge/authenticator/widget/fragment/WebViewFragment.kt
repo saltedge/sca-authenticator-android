@@ -44,6 +44,11 @@ class WebViewFragment : BaseFragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        customWebView?.onResume()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -60,6 +65,16 @@ class WebViewFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         customWebView?.webViewClient = webViewClient
         customWebView?.loadUrl(url)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        customWebView?.onPause()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        customWebView?.stopLoading()
     }
 
     private val webViewClient = object : WebViewClient() {
