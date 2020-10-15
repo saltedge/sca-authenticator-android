@@ -26,7 +26,6 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
@@ -62,7 +61,6 @@ class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
     }
 
     fun setupFingerAction(active: Boolean) {
-        Log.d("some", "active: $active")
         fingerActionView?.setVisible(active)
         forgotActionView?.setVisible(active)
         deleteActionView?.setVisible(!active)
