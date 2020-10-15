@@ -25,6 +25,7 @@ import android.content.Context
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.annotation.StringRes
@@ -70,6 +71,7 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
     var biometricsActionIsAvailable: Boolean = false
         set(value) {
             field = value
+            Log.d("some", "value: $value")
             keypadView?.setupFingerAction(active = value)
         }
 
@@ -101,6 +103,8 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
         descriptionView?.alpha = 0f
 
         updatePasscodeOutput("")
+        Log.d("some", "biometricsActionIsAvailable: $biometricsActionIsAvailable")
+
         keypadView?.setupFingerAction(active = biometricsActionIsAvailable)
         keypadView?.clickListener = this
         submitView?.setOnClickListener {
