@@ -1,5 +1,6 @@
 [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html) 
-![Version](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsaltedge%2Fsca-authenticator-android%2Fmaster%2Fauthenticator_sdk%2Fversion.json) 
+![SDK Version](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsaltedge%2Fsca-authenticator-android%2Fmaster%2Fauthenticator_sdk%2Fbadge_version.json) 
+![Android API](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsaltedge%2Fsca-authenticator-android%2Fmaster%2Fauthenticator_sdk%2Fbadge_android.json) 
   
 # Salt Edge Authenticator Android SDK  
 
@@ -20,7 +21,7 @@ In order to use Authenticator SDK it is necessary to install the following tools
 * [Android SDK](https://developer.android.com/studio/index.html)
 * IDE (e.g. Android Studio)
 * [Kotlin plugin installed](https://developer.android.com/kotlin/) v.1.3.+ [**optional**]
-* Minimal supported Android SDK is SDK21 (Android 5 Lollipop)  
+* Minimal supported Android API: 21 (Android 5 Lollipop)    
    
    
 ## How to add SDK to project
@@ -43,7 +44,7 @@ In order to use Authenticator SDK it is necessary to install the following tools
 ```
 1. Add SDK dependency to application build.gradle
 ```groovy
-    implementation ('com.saltedge.authenticator.sdk:authenticator_sdk:1.2.0@aar') {
+    implementation ('com.saltedge.authenticator.sdk:authenticator_sdk:x.x.x@aar') {
         transitive = true
     }
 ```  
