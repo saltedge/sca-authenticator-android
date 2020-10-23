@@ -64,3 +64,9 @@
 
 # Blur effect
 -keep class androidx.renderscript.** { *; }
+
+# Solve module-info conflicts
+-dontwarn module-info
+
+# Solve https://github.com/Kotlin/kotlinx.coroutines/issues/2046
+-dontwarn kotlin.time.Duration$Companion

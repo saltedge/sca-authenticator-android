@@ -25,7 +25,8 @@ import android.app.Application
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.gms.security.ProviderInstaller
-import com.saltedge.android.security.BuildConfig
+import com.google.firebase.FirebaseApp
+import com.saltedge.authenticator.BuildConfig
 import com.saltedge.authenticator.app.di.AppComponent
 import com.saltedge.authenticator.app.di.AppModule
 import com.saltedge.authenticator.app.di.DaggerAppComponent
@@ -34,7 +35,6 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.tools.AppTools
 import com.saltedge.authenticator.tools.createCrashlyticsKit
 import com.saltedge.authenticator.tools.log
-import io.fabric.sdk.android.Fabric
 import net.danlew.android.joda.JodaTimeAndroid
 
 open class AuthenticatorApplication : Application(), Application.ActivityLifecycleCallbacks {
@@ -66,26 +66,27 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
         setupNightMode()
     }
 
-    override fun onActivityPaused(activity: Activity?) {
+    override fun onActivityPaused(activity: Activity) {
         currentActivityName = ""
     }
 
-    override fun onActivityResumed(activity: Activity?) {
-        currentActivityName = activity?.javaClass?.name ?: ""
+    override fun onActivityResumed(activity: Activity) {
+        currentActivityName = activity.javaClass.name ?: ""
     }
 
-    override fun onActivityStarted(activity: Activity?) {}
+    override fun onActivityStarted(activity: Activity) {}
 
-    override fun onActivityDestroyed(activity: Activity?) {}
+    override fun onActivityDestroyed(activity: Activity) {}
 
-    override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {}
+    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
 
-    override fun onActivityStopped(activity: Activity?) {}
+    override fun onActivityStopped(activity: Activity) {}
 
-    override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {}
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
 
     private fun initFirebaseModules() {
-        Fabric.with(this, createCrashlyticsKit())
+        FirebaseApp.initializeApp(this);
+        createCrashlyticsKit()
     }
 
     private fun patchSecurityProvider() {

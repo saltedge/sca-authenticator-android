@@ -27,7 +27,6 @@ import android.os.Bundle
 import android.util.SparseArray
 import android.view.SurfaceHolder
 import android.view.View
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
@@ -42,10 +41,9 @@ import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.features.main.SnackbarAnchorContainer
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.tools.AppTools.getDisplayHeight
-import com.saltedge.authenticator.tools.AppTools.getDisplayWidth
-import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.getDisplayHeight
+import com.saltedge.authenticator.tools.getDisplayWidth
 import com.saltedge.authenticator.tools.log
 import com.saltedge.authenticator.widget.security.LockableActivity
 import com.saltedge.authenticator.widget.security.UnlockAppInputView
@@ -79,13 +77,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE
-            && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
-        ) {
-            startCameraSource()
-        } else {
-            showError(R.string.errors_permission_denied)
-        }
+        viewModel.onRequestPermissionsResult(requestCode, grantResults)
     }
 
     override fun onDestroy() {
@@ -104,16 +96,17 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
         viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let { finish() }
         })
-        viewModel.setActivityResult.observe(this, Observer<String> { deeplink ->
-            this.setResult(
-                Activity.RESULT_OK,
-                intent.putExtra(KEY_DEEP_LINK, deeplink)
-            )
+        viewModel.permissionGrantEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let { startCameraSource() }
+        })
+        viewModel.setActivityResult.observe(this, Observer<String> { deepLink ->
+            this.setResult(Activity.RESULT_OK, intent.putExtra(KEY_DEEP_LINK, deepLink))
         })
         viewModel.errorMessageResId.observe(this, Observer { errorMessageResId ->
             errorDialog = AlertDialog.Builder(this)
                 .setTitle(android.R.string.dialog_alert_title)
                 .setMessage(getString(errorMessageResId ?: R.string.errors_invalid_qr))
+                .setPositiveButton(android.R.string.ok) { _, _ -> viewModel.onErrorConfirmed() }
                 .show()
         })
     }
@@ -127,8 +120,8 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
     }
 
     private fun setupCameraSource() {
-        val height = getDisplayHeight(this)
-        val width = getDisplayWidth(this)
+        val height = this.getDisplayHeight()
+        val width = this.getDisplayWidth()
         cameraSource = CameraSource.Builder(applicationContext, barcodeDetector)
             .setRequestedPreviewSize(height, width)
             .setFacing(CameraSource.CAMERA_FACING_BACK)
@@ -138,19 +131,14 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
 
     private fun setupSurface() {
         surfaceView?.holder?.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(
-                holder: SurfaceHolder?,
-                format: Int,
-                width: Int,
-                height: Int
-            ) {
+            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
             }
 
-            override fun surfaceDestroyed(holder: SurfaceHolder?) {
+            override fun surfaceDestroyed(holder: SurfaceHolder) {
                 cameraSource?.stop()
             }
 
-            override fun surfaceCreated(holder: SurfaceHolder?) {
+            override fun surfaceCreated(holder: SurfaceHolder) {
                 startCameraSource()
             }
         })
@@ -192,12 +180,8 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
                 )
             }
         } catch (e: IOException) {
-            showError(R.string.errors_camera_init)
+            viewModel.onCameraInitException()
             e.log()
         }
-    }
-
-    private fun showError(@StringRes errorName: ResId?) {
-        viewModel.showErrorMessage(errorName)
     }
 }

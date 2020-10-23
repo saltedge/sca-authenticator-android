@@ -43,7 +43,7 @@ abstract class BaseFragment : Fragment() {
     }
 
     private fun createProgressDialog(): ProgressDialog? {
-        val dialog = ProgressDialog(activity, R.style.ProgressDialogTheme)
+        val dialog = ProgressDialog(activity ?: return null, R.style.ProgressDialogTheme)
         dialog.setCancelable(false)
         dialog.setProgressStyle(android.R.style.Widget_ProgressBar_Large)
         return dialog

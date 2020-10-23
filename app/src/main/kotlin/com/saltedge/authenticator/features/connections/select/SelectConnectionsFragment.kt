@@ -29,7 +29,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
@@ -41,6 +40,7 @@ import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.tools.popBackStack
 import com.saltedge.authenticator.tools.setVisible
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
@@ -119,7 +119,7 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
         })
         viewModel.onProceedClickEvent.observe(this, Observer<GUID> { connectionGuid ->
             sharedViewModel.onSelectConnection(connectionGuid)
-            findNavController().popBackStack()
+            popBackStack()
         })
 
         (arguments?.getSerializable(KEY_CONNECTIONS) as? List<ConnectionItemViewModel>)?.let {

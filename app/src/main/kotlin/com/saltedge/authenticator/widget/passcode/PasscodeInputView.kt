@@ -101,6 +101,7 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
         descriptionView?.alpha = 0f
 
         updatePasscodeOutput("")
+
         keypadView?.setupFingerAction(active = biometricsActionIsAvailable)
         keypadView?.clickListener = this
         submitView?.setOnClickListener {

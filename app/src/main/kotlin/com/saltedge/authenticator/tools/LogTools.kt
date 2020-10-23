@@ -21,8 +21,7 @@
 package com.saltedge.authenticator.tools
 
 import android.util.Log
-import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.core.CrashlyticsCore
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.saltedge.authenticator.BuildConfig
 
 private const val MAX_LOG_SIZE = 1000
@@ -38,9 +37,9 @@ fun Throwable.log(message: String = "") {
         if (BuildConfig.DEBUG) {
             printToLogcat("${this.cause}", message)
             printStackTrace()
-        } else Crashlytics.logException(this)
+        } else FirebaseCrashlytics.getInstance().recordException(this)
     } catch (e: Exception) {
-        Crashlytics.logException(e)
+        FirebaseCrashlytics.getInstance().recordException(e)
     }
 }
 
@@ -49,8 +48,9 @@ fun Throwable.log(message: String = "") {
  *
  * @return crashlytics
  */
-fun createCrashlyticsKit(): Crashlytics =
-    Crashlytics.Builder().core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()).build()
+fun createCrashlyticsKit() {
+    FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG)
+}
 
 /**
  * Show log/logs with given message and tag
