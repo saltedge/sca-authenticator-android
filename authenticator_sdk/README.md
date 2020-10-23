@@ -1,4 +1,6 @@
-[![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
+[![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html) 
+![Version](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsaltedge%2Fsca-authenticator-android%2Fmaster%2Fauthenticator_sdk%2Fversion.json) 
+  
 # Salt Edge Authenticator Android SDK  
 
 Salt Edge Authenticator Android SDK - is a set of tools for implementing connection to Salt Edge Authenticator API of Service Provider (e.g Bank) System, that implements Strong Customer Authentication/Dynamic Linking process.  
