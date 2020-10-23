@@ -43,7 +43,7 @@ In order to use Authenticator SDK it is necessary to install the following tools
 ```
 1. Add SDK dependency to application build.gradle
 ```groovy
-    implementation ('com.saltedge.authenticator.sdk:authenticator_sdk:1.2.0@aar') {
+    implementation ('com.saltedge.authenticator.sdk:authenticator_sdk:x.x.x@aar') {
         transitive = true
     }
 ```  
