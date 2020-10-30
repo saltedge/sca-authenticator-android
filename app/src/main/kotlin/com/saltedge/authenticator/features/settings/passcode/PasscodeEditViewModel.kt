@@ -23,21 +23,21 @@ package com.saltedge.authenticator.features.settings.passcode
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.settings.passcode.saver.PasscodeSaveResultListener
-import com.saltedge.authenticator.features.settings.passcode.saver.PasscodeSaver
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.postUnitEvent
 import com.saltedge.authenticator.widget.passcode.PasscodeInputListener
 import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
 class PasscodeEditViewModel(
     private val passcodeTools: PasscodeToolsAbs
 ) : ViewModel(),
     LifecycleObserver,
     PasscodeInputListener,
-    PasscodeSaveResultListener
+    CoroutineScope
 {
     private val savedPasscode: String
         get() = passcodeTools.getPasscode()
@@ -48,6 +48,7 @@ class PasscodeEditViewModel(
     val warningEvent = MutableLiveData<ViewModelEvent<ResId>>()
     val infoEvent = MutableLiveData<ViewModelEvent<ResId>>()
     val closeViewEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    override var coroutineContext = initCoroutine()
 
     fun bindLifecycleObserver(lifecycle: Lifecycle) {
         lifecycle.let {
@@ -58,8 +59,14 @@ class PasscodeEditViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onLifecycleStart() {
+        coroutineContext = initCoroutine()
         updateMode(newMode = PasscodeInputMode.CHECK_PASSCODE)
         initialPasscode.postValue(savedPasscode)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    fun onLifecycleDestroy() {
+        coroutineContext.cancel()
     }
 
     override fun onInputValidPasscode() {
@@ -76,22 +83,25 @@ class PasscodeEditViewModel(
 
     override fun onNewPasscodeConfirmed(passcode: String) {
         loaderVisibility.postValue(View.VISIBLE)
-        PasscodeSaver(passcodeTools, callback = this).runNewTask(passcode)//TODO use coroutine
-    }
-
-    override fun passcodeSavedWithResult(result: Boolean) {
-        loaderVisibility.postValue(View.GONE)
-        if (result) {
-            infoEvent.postValue(ViewModelEvent(R.string.settings_passcode_success))
-            closeViewEvent.postUnitEvent()
-        } else {
-            warningEvent.postValue(ViewModelEvent(R.string.errors_contact_support))
+        launch {
+            loaderVisibility.postValue(View.GONE)
+            if (savePasscode(passcodeTools, passcode)) {
+                infoEvent.postValue(ViewModelEvent(R.string.settings_passcode_success))
+                closeViewEvent.postUnitEvent()
+            } else {
+                warningEvent.postValue(ViewModelEvent(R.string.errors_contact_support))
+            }
         }
     }
 
     override fun onPasscodeInputCanceledByUser() {
         closeViewEvent.postUnitEvent()
     }
+
+    private fun initCoroutine(): CoroutineContext = Job() + Dispatchers.Main
+
+    private suspend fun savePasscode(passcodeTools: PasscodeToolsAbs, param: String) =
+        withContext(Dispatchers.IO) { passcodeTools.savePasscode(passcode = param) }
 
     private fun updateMode(newMode: PasscodeInputMode) {
         passcodeInputMode.postValue(newMode)

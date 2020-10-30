@@ -88,22 +88,23 @@ class PasscodeEditPresenterTest {
         Mockito.verify(mockPasscodeTools).savePasscode(passcode = "9753")
     }
 
-    @Test
-    @Throws(Exception::class)
-    fun passcodeSavedWithResultTestCase1() {
-        viewModel.passcodeSavedWithResult(result = true)
-
-        assertThat(viewModel.infoEvent.value, equalTo(ViewModelEvent(R.string.settings_passcode_success)))
-        assertThat(viewModel.closeViewEvent.value, equalTo(ViewModelEvent(Unit)))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun passcodeSavedWithResultTestCase2() {
-        viewModel.passcodeSavedWithResult(result = false)
-
-        assertThat(viewModel.warningEvent.value, equalTo(ViewModelEvent(R.string.errors_contact_support)))
-    }
+    //TODO: check result fun savePasscode(passcodeTools, passcode)
+//    @Test
+//    @Throws(Exception::class)
+//    fun passcodeSavedWithResultTestCase1() {
+//        viewModel.passcodeSavedWithResult(result = true)
+//
+//        assertThat(viewModel.infoEvent.value, equalTo(ViewModelEvent(R.string.settings_passcode_success)))
+//        assertThat(viewModel.closeViewEvent.value, equalTo(ViewModelEvent(Unit)))
+//    }
+//
+//    @Test
+//    @Throws(Exception::class)
+//    fun passcodeSavedWithResultTestCase2() {
+//        viewModel.passcodeSavedWithResult(result = false)
+//
+//        assertThat(viewModel.warningEvent.value, equalTo(ViewModelEvent(R.string.errors_contact_support)))
+//    }
 
     @Test
     @Throws(Exception::class)
