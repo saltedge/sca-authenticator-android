@@ -84,11 +84,12 @@ class PasscodeEditViewModel(
     override fun onNewPasscodeConfirmed(passcode: String) {
         loaderVisibility.postValue(View.VISIBLE)
         launch {
-            loaderVisibility.postValue(View.GONE)
             if (savePasscode(passcodeTools, passcode)) {
+                loaderVisibility.postValue(View.GONE)
                 infoEvent.postValue(ViewModelEvent(R.string.settings_passcode_success))
                 closeViewEvent.postUnitEvent()
             } else {
+                loaderVisibility.postValue(View.GONE)
                 warningEvent.postValue(ViewModelEvent(R.string.errors_contact_support))
             }
         }
