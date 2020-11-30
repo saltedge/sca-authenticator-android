@@ -168,7 +168,10 @@ class ViewModelsFactory @Inject constructor(
                 ) as T
             }
             modelClass.isAssignableFrom(PasscodeEditViewModel::class.java) -> {
-                return PasscodeEditViewModel(passcodeTools) as T
+                return PasscodeEditViewModel(
+                    passcodeTools = passcodeTools,
+                    defaultDispatcher = Dispatchers.Default
+                ) as T
             }
             modelClass.isAssignableFrom(AboutViewModel::class.java) -> {
                 return AboutViewModel(appContext) as T

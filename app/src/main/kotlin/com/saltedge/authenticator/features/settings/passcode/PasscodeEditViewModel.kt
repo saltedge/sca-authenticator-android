@@ -33,7 +33,8 @@ import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 class PasscodeEditViewModel(
-    private val passcodeTools: PasscodeToolsAbs
+    private val passcodeTools: PasscodeToolsAbs,
+    private val defaultDispatcher: CoroutineDispatcher
 ) : ViewModel(),
     LifecycleObserver,
     PasscodeInputListener,
@@ -83,7 +84,7 @@ class PasscodeEditViewModel(
 
     override fun onNewPasscodeConfirmed(passcode: String) {
         loaderVisibility.postValue(View.VISIBLE)
-        launch {
+        viewModelScope.launch(defaultDispatcher) {
             if (savePasscode(passcodeTools, passcode)) {
                 infoEvent.postValue(ViewModelEvent(R.string.settings_passcode_success))
                 closeViewEvent.postUnitEvent()
@@ -101,7 +102,7 @@ class PasscodeEditViewModel(
     private fun initCoroutine(): CoroutineContext = Job() + Dispatchers.Main
 
     private suspend fun savePasscode(passcodeTools: PasscodeToolsAbs, param: String) =
-        withContext(Dispatchers.IO) { passcodeTools.savePasscode(passcode = param) }
+        withContext(Dispatchers.Main) { passcodeTools.savePasscode(passcode = param) }
 
     private fun updateMode(newMode: PasscodeInputMode) {
         passcodeInputMode.postValue(newMode)
