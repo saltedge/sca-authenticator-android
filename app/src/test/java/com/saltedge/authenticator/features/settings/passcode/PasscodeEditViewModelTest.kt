@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.settings.passcode
 
-import android.view.View
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
@@ -38,8 +37,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 
 @RunWith(RobolectricTestRunner::class)
 @ExperimentalCoroutinesApi
@@ -47,7 +44,6 @@ class PasscodeEditViewModelTest {
 
     private val testDispatcher = TestCoroutineDispatcher()
     private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)
-    private var doneSignal: CountDownLatch? = null
     private lateinit var viewModel: PasscodeEditViewModel
 
     @Test
@@ -81,13 +77,8 @@ class PasscodeEditViewModelTest {
     @Throws(Exception::class)
     fun onNewPasscodeConfirmedTest() {
         Mockito.doReturn(true).`when`(mockPasscodeTools).savePasscode(passcode = "9753")
-        viewModel.loaderVisibility.observeForever {
-            if (viewModel.loaderVisibility.value == View.GONE) doneSignal!!.countDown()
-        }
 
-        doneSignal = CountDownLatch(1)
         viewModel.onNewPasscodeConfirmed(passcode = "9753")
-        doneSignal!!.await(3, TimeUnit.SECONDS)
 
         Mockito.verify(mockPasscodeTools).savePasscode(passcode = "9753")
     }
