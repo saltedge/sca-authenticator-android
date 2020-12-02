@@ -32,10 +32,7 @@ import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.network.RestClient
 import com.saltedge.authenticator.sdk.testTools.get404Response
-import io.mockk.confirmVerified
-import io.mockk.every
-import io.mockk.mockkClass
-import io.mockk.verify
+import io.mockk.*
 import okhttp3.Request
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -141,7 +138,7 @@ class AuthorizationsConnectorTest {
     private val requestUrl = "https://localhost/api/authenticator/v1/authorizations"
     private val requestConnection: ConnectionAbs = getDefaultTestConnection()
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
-    private val mockCallback = mockkClass(FetchAuthorizationsContract::class)
+    private val mockCallback = mockk<FetchAuthorizationsContract>(relaxed = true)
     private val mockCall: Call<EncryptedListResponse> =
         mockkClass(Call::class) as Call<EncryptedListResponse>
     private var capturedHeaders: MutableList<Map<String, String>> = mutableListOf()
@@ -163,6 +160,5 @@ class AuthorizationsConnectorTest {
             "accessToken"
         ).build()
         every { mockCallback.getCurrentConnectionsAndKeysForPolling() } returns null
-        every { mockCallback.onFetchEncryptedDataResult(any(), any()) } returns Unit
     }
 }
