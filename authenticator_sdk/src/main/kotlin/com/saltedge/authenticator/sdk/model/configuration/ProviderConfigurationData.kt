@@ -25,7 +25,7 @@ import com.saltedge.authenticator.sdk.constants.*
 import java.io.Serializable
 
 /**
- * Model of provider data
+ * Model of provider configuration
  */
 data class ProviderConfigurationData(
     @SerializedName(KEY_CONNECT_URL) var connectUrl: String,
@@ -34,5 +34,6 @@ data class ProviderConfigurationData(
     @SerializedName(KEY_LOGO_URL) var logoUrl: String?,
     @SerializedName(KEY_VERSION) var version: String,
     @SerializedName(KEY_SUPPORT_EMAIL) var supportEmail: String?,
-    @SerializedName(KEY_CONSENT_MANAGEMENT) var consentManagementIsSupported: Boolean? = false
+    @SerializedName(KEY_CONSENT_MANAGEMENT) var consentManagementSupported: Boolean? = false,
+    @SerializedName(KEY_GEOLOCATION_REQUIRED) var geolocationRequired: Boolean?
 ) : Serializable

@@ -28,6 +28,8 @@ import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.createConnectionAndKey
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
+import com.saltedge.authenticator.models.location.headerValue
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
@@ -51,7 +53,8 @@ class AuthorizationDetailsViewModel(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val cryptoTools: CryptoToolsAbs,
     private val keyStoreManager: KeyStoreManagerAbs,
-    private val apiManager: AuthenticatorApiManagerAbs
+    private val apiManager: AuthenticatorApiManagerAbs,
+    private val locationManager: DeviceLocationManagerAbs
 ) : ViewModel(),
     LifecycleObserver,
     FetchAuthorizationContract,
@@ -222,6 +225,8 @@ class AuthorizationDetailsViewModel(
             connectionAndKey = connectionAndKey ?: return,
             authorizationId = authorizationModel.value?.authorizationID ?: return,
             authorizationCode = authorizationModel.value?.authorizationCode,
+            geolocation = locationManager.location?.headerValue,
+            authorizationType = null,//TODO ADD
             resultCallback = this
         )
     }
@@ -232,6 +237,8 @@ class AuthorizationDetailsViewModel(
             connectionAndKey = connectionAndKey ?: return,
             authorizationId = authorizationModel.value?.authorizationID ?: return,
             authorizationCode = authorizationModel.value?.authorizationCode,
+            geolocation = locationManager.location?.headerValue,
+            authorizationType = null,//TODO ADD
             resultCallback = this
         )
     }

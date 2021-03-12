@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.main
 
 import android.content.Intent
+import android.location.LocationManager
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
@@ -33,6 +34,7 @@ import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.MainActivityBinding
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.interfaces.*
+import com.saltedge.authenticator.models.location.DeviceLocationManager
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.currentFragmentOnTop
 import com.saltedge.authenticator.tools.showQrScannerActivity
@@ -55,6 +57,7 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
         setupViewModel()
         setupBinding()
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
+        DeviceLocationManager.initManager(context = this)
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -65,6 +68,16 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         viewModel.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        DeviceLocationManager.startLocationUpdates(context = this)
+    }
+
+    override fun onPause() {
+        DeviceLocationManager.stopLocationUpdates()
+        super.onPause()
     }
 
     /**

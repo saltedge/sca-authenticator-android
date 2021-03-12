@@ -28,16 +28,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.CookieManager
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.ConnectProviderBinding
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.location.DeviceLocationManager
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.model.ConnectionID
 import com.saltedge.authenticator.sdk.model.Token
@@ -128,6 +131,11 @@ class ConnectProviderFragment : BaseFragment(),
         if (alertDialog?.isShowing == true) alertDialog?.dismiss()
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        viewModel.onRequestPermissionsResult(requestCode, grantResults)
+    }
+
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(ConnectProviderViewModel::class.java)
         lifecycle.addObserver(viewModel)
@@ -163,6 +171,11 @@ class ConnectProviderFragment : BaseFragment(),
                 titleResId = viewModel.titleRes,
                 backActionImageResId = it
             )
+        })
+        viewModel.onAskPermissionsEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let {
+                requestPermissions(DeviceLocationManager.permissions, LOCATION_PERMISSION_REQUEST_CODE)
+            }
         })
         viewModel.setInitialData(
             initialConnectData = arguments?.getSerializable(KEY_DATA) as? ConnectAppLinkData,

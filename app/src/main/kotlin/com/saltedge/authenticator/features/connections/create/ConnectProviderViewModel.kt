@@ -22,6 +22,7 @@ package com.saltedge.authenticator.features.connections.create
 
 import android.content.Context
 import android.content.DialogInterface
+import android.content.pm.PackageManager
 import android.graphics.Typeface.BOLD
 import android.text.SpannableString
 import android.text.style.StyleSpan
@@ -30,8 +31,10 @@ import android.webkit.URLUtil
 import androidx.core.text.set
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.models.toConnection
@@ -59,7 +62,8 @@ class ConnectProviderViewModel(
     private val preferenceRepository: PreferenceRepositoryAbs,
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyStoreManagerAbs,
-    private val apiManager: AuthenticatorApiManagerAbs
+    private val apiManager: AuthenticatorApiManagerAbs,
+    private val locationManager: DeviceLocationManagerAbs
 ) : ViewModel(), LifecycleObserver, ConnectionCreateListener, FetchProviderConfigurationListener {
 
     val backActionIconRes: MutableLiveData<ResId?> = MutableLiveData(R.drawable.ic_appbar_action_close)
@@ -76,6 +80,7 @@ class ConnectProviderViewModel(
     val onShowErrorEvent = MutableLiveData<ViewModelEvent<String>>()
     val onUrlChangedEvent = MutableLiveData<ViewModelEvent<String>>()
     val goBackEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onAskPermissionsEvent = MutableLiveData<ViewModelEvent<Unit>>()
     private var connection = Connection()
     private var initialConnectData: ConnectAppLinkData? = null
     private var authenticateData: CreateConnectionResponseData? = null
@@ -105,21 +110,22 @@ class ConnectProviderViewModel(
         error: ApiErrorData?
     ) {
         when {
-            error != null -> onShowErrorEvent.postValue(
-                ViewModelEvent(
-                    error.getErrorMessage(
-                        appContext
-                    )
-                )
-            )
+            error != null -> {
+                onShowErrorEvent.postValue(ViewModelEvent(error.getErrorMessage(appContext)))
+            }
             result != null && result.isValid() -> {
                 result.toConnection()?.let {
                     this.connection = it
                     performCreateConnectionRequest()
-                }
-                    ?: onShowErrorEvent.postValue(ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider)))
+                } ?: onShowErrorEvent.postValue(
+                    ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider))
+                )
             }
-            else -> onShowErrorEvent.postValue(ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider)))
+            else -> {
+                onShowErrorEvent.postValue(
+                    ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider))
+                )
+            }
         }
     }
 
@@ -190,6 +196,7 @@ class ConnectProviderViewModel(
             connectionsRepository.fixNameAndSave(connection)
         }
         updateViewsContent()
+        checkGeolocationRequirements()
     }
 
     fun webAuthFinishError(errorClass: String, errorMessage: String?) {
@@ -199,8 +206,14 @@ class ConnectProviderViewModel(
     }
 
     fun onBackPress(webViewCanGoBack: Boolean?): Boolean {
-        return (webViewIsVisible && webViewCanGoBack == true).apply {
-            goBackEvent.postUnitEvent()
+        return (webViewIsVisible && webViewCanGoBack == true).also { goBackEvent.postUnitEvent() }
+    }
+
+    fun onRequestPermissionsResult(requestCode: Int, grantResults: IntArray) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE
+            && grantResults.any { it == PackageManager.PERMISSION_GRANTED }
+        ) {
+            locationManager.startLocationUpdates(appContext)
         }
     }
 
@@ -216,6 +229,17 @@ class ConnectProviderViewModel(
         get() = if (viewMode.isCompleteWithSuccess) R.drawable.ic_status_success else R.drawable.ic_status_error
     private val completeActionTextRes: ResId
         get() = if (viewMode.isCompleteWithSuccess) R.string.actions_done else R.string.actions_try_again
+
+    private fun checkGeolocationRequirements() {
+        connection.geolocationRequired?.let {
+            val permissionGranted: Boolean = locationManager.locationPermissionsGranted(appContext)
+            if (permissionGranted) {
+                locationManager.startLocationUpdates(appContext)
+            } else {
+                onAskPermissionsEvent.postUnitEvent()
+            }
+        }
+    }
 
     private fun performFetchConfigurationRequest() {
         initialConnectData?.configurationUrl?.let {

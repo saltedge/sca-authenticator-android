@@ -38,7 +38,7 @@ class ProviderDataExtensionsTest {
             logoUrl = "",
             version = "",
             supportEmail = "",
-            consentManagementIsSupported = true
+            consentManagementSupported = true
         )
 
         Assert.assertFalse(model.isValid())

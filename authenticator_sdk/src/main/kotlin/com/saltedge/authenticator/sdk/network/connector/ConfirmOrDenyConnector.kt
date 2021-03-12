@@ -32,6 +32,8 @@ import com.saltedge.authenticator.sdk.model.request.ConfirmDenyRequest
 import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.ApiResponseInterceptor
+import com.saltedge.authenticator.sdk.network.addAuthorizationTypeHeader
+import com.saltedge.authenticator.sdk.network.addLocationHeader
 import retrofit2.Call
 
 internal class ConfirmOrDenyConnector(
@@ -45,6 +47,8 @@ internal class ConfirmOrDenyConnector(
     fun updateAuthorization(
         connectionAndKey: ConnectionAndKey,
         authorizationId: String,
+        geolocationHeader: String?,
+        authorizationTypeHeader: String?,
         payloadData: ConfirmDenyRequestData
     ) {
         this.connectionId = connectionAndKey.connection.id
@@ -60,7 +64,9 @@ internal class ConfirmOrDenyConnector(
         )
         apiInterface.updateAuthorization(
             requestUrl = requestData.requestUrl,
-            headersMap = requestData.headersMap,
+            headersMap = requestData.headersMap
+                .addLocationHeader(geolocationHeader)
+                .addAuthorizationTypeHeader(authorizationTypeHeader),
             requestBody = requestBody
         ).enqueue(this)
     }
