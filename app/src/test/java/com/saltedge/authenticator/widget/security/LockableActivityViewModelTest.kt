@@ -30,6 +30,7 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.TestAppTools
+import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
@@ -192,16 +193,21 @@ class LockableActivityViewModelTest {
     @Test
     @Throws(Exception::class)
     fun onSuccessAuthenticationTest() {
+        //given
         val viewModel = createViewModel()
+        AppTools.lastUnlockType = ActivityUnlockType.PASSCODE
         mockPreferenceRepository.pinInputAttempts = 7
         mockPreferenceRepository.blockPinInputTillTime = 999L + SystemClock.elapsedRealtime()
 
-        viewModel.onSuccessAuthentication()
+        //when
+        viewModel.onSuccessAuthentication(unlockType = ActivityUnlockType.BIOMETRICS)
 
+        //then
         assertThat(mockPreferenceRepository.pinInputAttempts, equalTo(0))
         assertThat(mockPreferenceRepository.blockPinInputTillTime, equalTo(0L))
         assertThat(viewModel.successVibrateEvent.value, equalTo(ViewModelEvent(Unit)))
         assertThat(viewModel.lockViewVisibility.value, equalTo(View.GONE))
+        assertThat(AppTools.lastUnlockType, equalTo(ActivityUnlockType.BIOMETRICS))
     }
 
     /**

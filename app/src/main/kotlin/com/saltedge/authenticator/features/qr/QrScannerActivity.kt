@@ -41,7 +41,7 @@ import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.features.main.SnackbarAnchorContainer
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.tools.getDisplayHeight
 import com.saltedge.authenticator.tools.getDisplayWidth
 import com.saltedge.authenticator.tools.log

@@ -33,7 +33,7 @@ import com.fivehundredpx.android.blur.BlurringView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.sdk.tools.hasHTMLTags
 import com.saltedge.authenticator.tools.applyAlphaToColor
-import com.saltedge.authenticator.tools.buildVersionLessThan23
+import com.saltedge.authenticator.app.buildVersionLessThan23
 import com.saltedge.authenticator.tools.setVisible
 import kotlinx.android.synthetic.main.view_authorization_content.view.*
 

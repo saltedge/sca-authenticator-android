@@ -48,7 +48,6 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.tools.AppTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject

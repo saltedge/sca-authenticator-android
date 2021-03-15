@@ -34,6 +34,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.databinding.ConnectionsListBinding
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.list.menu.MenuData
@@ -65,7 +66,7 @@ class ConnectionsListFragment : BaseFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        authenticatorApp?.appComponent?.inject(this)
+        this.authenticatorApp?.appComponent?.inject(this)
         setupViewModel()
     }
 

@@ -32,6 +32,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.cloud.clearNotifications
 import com.saltedge.authenticator.databinding.AuthorizationsListBinding
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
@@ -61,7 +62,7 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        authenticatorApp?.appComponent?.inject(this)
+        this.authenticatorApp?.appComponent?.inject(this)
         setupViewModel()
     }
 

@@ -39,7 +39,7 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.isActive
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.tools.AppToolsAbs
+import com.saltedge.authenticator.app.AppToolsAbs
 import com.saltedge.authenticator.tools.postUnitEvent
 
 class SettingsListViewModel(

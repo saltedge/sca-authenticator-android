@@ -52,7 +52,7 @@ import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.appendColoredText
 import com.saltedge.authenticator.tools.daysTillExpire
-import com.saltedge.authenticator.tools.guid
+import com.saltedge.authenticator.app.guid
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

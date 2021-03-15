@@ -47,7 +47,7 @@ import com.saltedge.authenticator.sdk.model.connection.isActive
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.tools.guid
+import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.tools.postUnitEvent
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext

@@ -32,7 +32,7 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
-import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.tools.popBackStack
 import com.saltedge.authenticator.tools.showWarningDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment

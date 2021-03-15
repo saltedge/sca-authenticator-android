@@ -69,7 +69,9 @@ class ConfirmOrDenyConnectorTest {
         connector.updateAuthorization(
             connectionAndKey = ConnectionAndKey(requestConnection, privateKey),
             authorizationId = requestAuthorizationId,
-            payloadData = ConfirmDenyRequestData(confirm = true, authorizationCode = "authorizationCode")
+            payloadData = ConfirmDenyRequestData(confirm = true, authorizationCode = "authorizationCode"),
+            geolocationHeader = "GEO:52.506931;13.144558",
+            authorizationTypeHeader = "biometrics"
         )
 
         verify { mockCall.enqueue(connector) }
@@ -105,7 +107,9 @@ class ConfirmOrDenyConnectorTest {
         connector.updateAuthorization(
             connectionAndKey = ConnectionAndKey(requestConnection, privateKey),
             authorizationId = requestAuthorizationId,
-            payloadData = ConfirmDenyRequestData(confirm = true, authorizationCode = "authorizationCode")
+            payloadData = ConfirmDenyRequestData(confirm = true, authorizationCode = "authorizationCode"),
+            geolocationHeader = "GEO:52.506931;13.144558",
+            authorizationTypeHeader = "biometrics"
         )
 
         verify { mockCall.enqueue(connector) }
@@ -123,7 +127,9 @@ class ConfirmOrDenyConnectorTest {
         connector.updateAuthorization(
             connectionAndKey = ConnectionAndKey(requestConnection, privateKey),
             authorizationId = requestAuthorizationId,
-            payloadData = ConfirmDenyRequestData(confirm = true, authorizationCode = "authorizationCode")
+            payloadData = ConfirmDenyRequestData(confirm = true, authorizationCode = "authorizationCode"),
+            geolocationHeader = "GEO:52.506931;13.144558",
+            authorizationTypeHeader = "biometrics"
         )
 
         verify { mockCall.enqueue(connector) }

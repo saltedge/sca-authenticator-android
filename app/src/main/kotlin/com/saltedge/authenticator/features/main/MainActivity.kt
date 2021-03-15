@@ -35,7 +35,7 @@ import com.saltedge.authenticator.databinding.MainActivityBinding
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.interfaces.*
 import com.saltedge.authenticator.models.location.DeviceLocationManager
-import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.tools.currentFragmentOnTop
 import com.saltedge.authenticator.tools.showQrScannerActivity
 import com.saltedge.authenticator.tools.updateScreenshotLocking

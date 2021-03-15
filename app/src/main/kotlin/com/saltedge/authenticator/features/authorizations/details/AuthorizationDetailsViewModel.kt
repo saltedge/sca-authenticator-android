@@ -23,6 +23,7 @@ package com.saltedge.authenticator.features.authorizations.details
 import android.content.Context
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.createConnectionAndKey
@@ -225,8 +226,8 @@ class AuthorizationDetailsViewModel(
             connectionAndKey = connectionAndKey ?: return,
             authorizationId = authorizationModel.value?.authorizationID ?: return,
             authorizationCode = authorizationModel.value?.authorizationCode,
-            geolocation = locationManager.location?.headerValue,
-            authorizationType = null,//TODO ADD
+            geolocation = locationManager.locationDescription,
+            authorizationType = AppTools.lastUnlockType.description,
             resultCallback = this
         )
     }
@@ -237,8 +238,8 @@ class AuthorizationDetailsViewModel(
             connectionAndKey = connectionAndKey ?: return,
             authorizationId = authorizationModel.value?.authorizationID ?: return,
             authorizationCode = authorizationModel.value?.authorizationCode,
-            geolocation = locationManager.location?.headerValue,
-            authorizationType = null,//TODO ADD
+            geolocation = locationManager.locationDescription,
+            authorizationType = AppTools.lastUnlockType.description,
             resultCallback = this
         )
     }

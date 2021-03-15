@@ -31,7 +31,7 @@ import androidx.core.content.ContextCompat
 import com.google.android.gms.location.*
 
 interface DeviceLocationManagerAbs {
-    val location: Location?
+    val locationDescription: String?
     fun initManager(context: Context)
     fun startLocationUpdates(context: Context)
     fun locationPermissionsGranted(context: Context): Boolean
@@ -41,14 +41,14 @@ interface DeviceLocationManagerAbs {
 object DeviceLocationManager : DeviceLocationManagerAbs {
 
     val permissions = arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)
-    override var location: Location? = null
+    override var locationDescription: String? = null
         private set
     @SuppressLint("StaticFieldLeak")
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val locationCallback: LocationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
             super.onLocationResult(result)
-            location = result.lastLocation
+            locationDescription = result.lastLocation.headerValue
         }
     }
 
@@ -71,7 +71,7 @@ object DeviceLocationManager : DeviceLocationManagerAbs {
                 fusedLocationClient.requestLocationUpdates(request, locationCallback, Looper.getMainLooper())
             } else {
                 fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                    DeviceLocationManager.location = location
+                    locationDescription = location?.headerValue
                 }
             }
         }

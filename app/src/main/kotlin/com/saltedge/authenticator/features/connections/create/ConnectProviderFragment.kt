@@ -28,7 +28,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.CookieManager
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -36,6 +35,8 @@ import androidx.navigation.fragment.navArgs
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.authenticatorApp
+import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.databinding.ConnectProviderBinding
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.OnBackPressListener
@@ -47,7 +48,9 @@ import com.saltedge.authenticator.sdk.model.Token
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import com.saltedge.authenticator.sdk.web.ConnectWebClient
 import com.saltedge.authenticator.sdk.web.ConnectWebClientContract
-import com.saltedge.authenticator.tools.*
+import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.popBackStack
+import com.saltedge.authenticator.tools.showErrorDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_connect.*
 import javax.inject.Inject
@@ -69,7 +72,7 @@ class ConnectProviderFragment : BaseFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        authenticatorApp?.appComponent?.inject(this)
+        this.authenticatorApp?.appComponent?.inject(this)
         setupViewModel()
     }
 

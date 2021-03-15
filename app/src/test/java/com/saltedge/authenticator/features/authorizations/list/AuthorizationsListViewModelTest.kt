@@ -38,6 +38,7 @@ import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_CONNECTION_NOT_FOUND
@@ -52,6 +53,7 @@ import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.polling.PollingServiceAbs
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.widget.security.ActivityUnlockType
 import junit.framework.TestCase.assertNull
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -80,6 +82,7 @@ class AuthorizationsListViewModelTest {
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockPollingService = mock(PollingServiceAbs::class.java)
     private val mockConnectivityReceiver = Mockito.mock(ConnectivityReceiverAbs::class.java)
+    private val mockLocationManager = mock(DeviceLocationManagerAbs::class.java)
     private val mockConnection = Connection().apply {
         guid = "guid1"
         id = "1"
@@ -98,6 +101,8 @@ class AuthorizationsListViewModelTest {
 
     @Before
     fun setUp() {
+        AppTools.lastUnlockType = ActivityUnlockType.BIOMETRICS
+        doReturn("GEO:52.506931;13.144558").`when`(mockLocationManager).locationDescription
         doReturn(mockPollingService).`when`(mockApiManager).createAuthorizationsPollingService()
         given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(mockConnection))
         given(mockKeyStoreManager.createConnectionAndKeyModel(mockConnection)).willReturn(mockConnectionAndKey)
@@ -113,6 +118,7 @@ class AuthorizationsListViewModelTest {
             cryptoTools = mockCryptoTools,
             apiManager = mockApiManager,
             connectivityReceiver = mockConnectivityReceiver,
+            locationManager = mockLocationManager,
             defaultDispatcher = testDispatcher
         )
     }
@@ -470,6 +476,8 @@ class AuthorizationsListViewModelTest {
             connectionAndKey = mockConnectionAndKey,
             authorizationId = items[0].authorizationID,
             authorizationCode = items[0].authorizationCode,
+            geolocation = "GEO:52.506931;13.144558",
+            authorizationType = "biometrics",
             resultCallback = viewModel
         )
     }
@@ -497,6 +505,8 @@ class AuthorizationsListViewModelTest {
             connectionAndKey = mockConnectionAndKey,
             authorizationId = items[0].authorizationID,
             authorizationCode = items[0].authorizationCode,
+            geolocation = "GEO:52.506931;13.144558",
+            authorizationType = "biometrics",
             resultCallback = viewModel
         )
     }
