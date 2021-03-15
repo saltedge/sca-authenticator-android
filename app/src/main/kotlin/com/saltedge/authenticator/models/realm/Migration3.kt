@@ -28,7 +28,7 @@ import io.realm.RealmSchema
  */
 fun RealmSchema.runMigration3() {
     get("Connection")?.let {
-        it.addField("consentManagementSupported", Boolean::class.java)
-        it.addField("geolocationRequired", Boolean::class.java)
+        it.addField("consentManagementSupported", Boolean::class.java).setNullable("consentManagementSupported", true)
+        it.addField("geolocationRequired", Boolean::class.java).setNullable("geolocationRequired", true)
     }
 }
