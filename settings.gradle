@@ -1,1 +1,2 @@
+include ':applock'
 include ':app', ':authenticator_sdk', ':rasp', ':ktlint_rules', ':test_tools'

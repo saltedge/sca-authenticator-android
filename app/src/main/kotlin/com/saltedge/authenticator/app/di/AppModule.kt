@@ -32,19 +32,12 @@ import com.saltedge.authenticator.models.repository.PreferenceRepository
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricTools
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.PasscodeTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
-import com.saltedge.authenticator.tools.buildVersion23orGreater
-import com.saltedge.authenticator.tools.buildVersion28orGreater
-import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
-import com.saltedge.authenticator.widget.biometric.BiometricPromptManagerV28
-import com.saltedge.authenticator.widget.biometric.BiometricsInputDialog
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -62,23 +55,9 @@ class AppModule(context: Context) {
 
     @Provides
     @Singleton
-    fun provideBiometricTools(): BiometricToolsAbs = BiometricTools(_context, provideKeyStoreManager())
-
-    @Provides
-    fun provideBiometricPrompt(biometricTools: BiometricToolsAbs): BiometricPromptAbs? {
-        return when {
-            buildVersion28orGreater -> BiometricPromptManagerV28()
-            buildVersion23orGreater -> BiometricsInputDialog(biometricTools)
-            else -> null
-        }
-    }
-
-    @Provides
-    @Singleton
     fun provideViewModelsFactory(
         appContext: Context,
         passcodeTools: PasscodeToolsAbs,
-        biometricTools: BiometricToolsAbs,
         cryptoTools: CryptoToolsAbs,
         preferences: PreferenceRepositoryAbs,
         connectionsRepository: ConnectionsRepositoryAbs,
@@ -90,7 +69,6 @@ class AppModule(context: Context) {
         return ViewModelsFactory(
             appContext = appContext,
             passcodeTools = passcodeTools,
-            biometricTools = biometricTools,
             cryptoTools = cryptoTools,
             preferenceRepository = preferences,
             connectionsRepository = connectionsRepository,

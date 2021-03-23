@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="errors_passcode_try_again">
+        <item quantity="few">@string/errors_passcode_try_again</item>
+        <item quantity="many">@string/errors_passcode_try_again</item>
+        <item quantity="one">@string/errors_passcode_try_again_short</item>
+        <item quantity="other">@string/errors_passcode_try_again</item>
+    </plurals>
+</resources>

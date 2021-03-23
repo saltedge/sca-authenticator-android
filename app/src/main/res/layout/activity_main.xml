@@ -130,7 +130,7 @@
             app:defaultNavHost="true"
             app:navGraph="@navigation/nav_graph" />
 
-        <com.saltedge.authenticator.widget.security.UnlockAppInputView
+        <com.fentury.applock.widget.security.UnlockAppInputView
             android:id="@+id/unlockAppInputView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

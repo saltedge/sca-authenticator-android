@@ -44,7 +44,6 @@ import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.AppTools
@@ -55,7 +54,6 @@ import javax.inject.Inject
 class ViewModelsFactory @Inject constructor(
     val appContext: Context,
     val passcodeTools: PasscodeToolsAbs,
-    val biometricTools: BiometricToolsAbs,
     val cryptoTools: CryptoToolsAbs,
     val preferenceRepository: PreferenceRepositoryAbs,
     val connectionsRepository: ConnectionsRepositoryAbs,
@@ -89,7 +87,6 @@ class ViewModelsFactory @Inject constructor(
                     appContext = appContext,
                     passcodeTools = passcodeTools,
                     preferenceRepository = preferenceRepository,
-                    biometricTools = biometricTools
                 ) as T
             }
             modelClass.isAssignableFrom(QrScannerViewModel::class.java) -> {

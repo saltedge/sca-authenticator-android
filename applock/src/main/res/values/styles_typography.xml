@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TextPrimary">
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/dark_100</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
+
+    <style name="TextSecondary">
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/dark_60</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
+
+    <style name="Text14Primary" parent="TextPrimary">
+        <item name="android:textSize">@dimen/text_14</item>
+    </style>
+
+    <style name="Text16Primary" parent="TextPrimary">
+        <item name="android:textSize">@dimen/text_16</item>
+    </style>
+
+    <style name="Text16Secondary" parent="TextSecondary">
+        <item name="android:textSize">@dimen/text_16</item>
+    </style>
+
+    <style name="Text18Primary" parent="TextPrimary">
+        <item name="android:textSize">@dimen/text_18</item>
+        <item name="android:lineSpacingExtra">@dimen/text_4</item>
+    </style>
+
+    <style name="Text22Primary" parent="TextPrimary">
+        <item name="android:textSize">@dimen/text_22</item>
+    </style>
+
+    <style name="Text22PrimaryMedium" parent="TextPrimary">
+        <item name="android:textSize">@dimen/text_22</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
+
+    <style name="Text14VioletMedium">
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/violet</item>
+        <item name="android:textSize">@dimen/text_14</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
+</resources>

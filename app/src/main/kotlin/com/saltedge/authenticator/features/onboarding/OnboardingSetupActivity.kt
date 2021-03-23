@@ -28,6 +28,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
+import com.fentury.applock.lock.KEY_SKIP_PIN
+import com.fentury.applock.widget.passcode.PasscodeInputMode
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.OnboardingSetupBinding
@@ -37,8 +39,6 @@ import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.log
 import com.saltedge.authenticator.tools.showWarningDialog
-import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
-import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
 import kotlinx.android.synthetic.main.activity_onboarding.*
 import javax.inject.Inject
 
@@ -81,10 +81,10 @@ class OnboardingSetupActivity : AppCompatActivity(),
             pageIndicatorView?.selection = position
         })
         viewModel.passcodeInputMode.observe(this, Observer<PasscodeInputMode> {
-            passcodeEditView?.inputMode = it
+//            passcodeEditView?.inputMode = it
         })
         viewModel.headerTitle.observe(this, Observer<ResId> {
-            passcodeEditView.title = getString(it)
+//            passcodeEditView.title = getString(it)
         })
         viewModel.showMainActivity.observe(this, Observer<ViewModelEvent<Unit>> {
             showMainActivity()
@@ -100,8 +100,8 @@ class OnboardingSetupActivity : AppCompatActivity(),
     private fun initViews() {
         try {
             initOnboardingViews()
-            passcodeEditView?.biometricsActionIsAvailable = false
-            passcodeEditView?.listener = viewModel
+//            passcodeEditView?.biometricsActionIsAvailable = false
+//            passcodeEditView?.listener = viewModel
         } catch (e: Exception) {
             e.log()
         }

@@ -1,0 +1,41 @@
+<resources>
+    <string name="errors_passcode_not_match">Passcodes don\'t match</string>
+    <string name="errors_wrong_passcode">Wrong passcode</string>
+    <string name="errors_max_passcode">You reached passcode\nmaximum length</string>
+    <string name="errors_passcode_try_again">Please try again in \%s minutes.</string>
+    <string name="errors_passcode_try_again_short">Please try again in \%s minute.</string>
+    <string name="errors_internal_error">Internal error</string>
+    <string name="errors_error">Error</string>
+    <string name="errors_contact_support">Something went wrong. Please contact our Support team.</string>
+    <string name="errors_fingerprint_init">Fingerprint material cannot be accessed. Please reinstall the application.</string>
+    <string name="errors_fingerprint_not_recognized">Fingerprint not recognized. Please try again.</string>
+    <string name="errors_account_reset">Your account was reset due to multiple failed attempts.</string>
+    <string name="errors_warning">Warning</string>
+    <string name="forgot_passcode">Forgot?</string>
+    <string name="secure_app_passcode_create">Create Passcode</string>
+    <string name="passcode_confirm_passcode">Confirm passcode</string>
+    <string name="errors_cant_save_passcode">Internal error. Can not save passcode</string>
+    <string name="passcode_enter_passcode_title">Enter passcode</string>
+    <string name="warning_application_was_locked">Application will be locked due to inactivity</string>
+    <string name="actions_cancel">Cancel</string>
+    <string name="actions_clear">Clear</string>
+    <string name="actions_confirm">Confirm</string>
+
+    <string name="forgot_passcode_clear_title">Clear app data</string>
+    <string name="forgot_passcode_title">Forgot passcode?</string>
+    <string name="forgot_passcode_log_out">Log out</string>
+    <string name="forgot_passcode_description">Please log out from your current Fentury account and authenticate once again to setup new passcode.</string>
+    <string name="forgot_passcode_clear_message">All app data including connected providers, user data and settings will be permanently deleted</string>
+
+    <string name="settings_passcode_input_current">Your current passcode</string>
+    <string name="settings_passcode_success">New passcode successfully set</string>
+    <string name="settings_input_new_passcode">New passcode</string>
+
+    <string name="fingerprint_title">Fingerprint</string>
+    <string name="fingerprint_confirmed">Fingerprint confirmed</string>
+    <string name="fingerprint_scan_continue">Scan your Fingerprint to continue</string>
+    <string name="fingerprint_scan_unlock">Unlock the app with biometrics</string>
+    <string name="fingerprint_touch_sensor">Touch Sensor</string>
+    <string name="app_name">Payments</string>
+    <string name="log_out_question">Are you sure you want to log out?</string>
+</resources>

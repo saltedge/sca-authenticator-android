@@ -25,22 +25,20 @@ import android.view.View
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.fentury.applock.widget.passcode.PasscodeInputListener
+import com.fentury.applock.widget.passcode.PasscodeInputMode
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.log
 import com.saltedge.authenticator.tools.postUnitEvent
-import com.saltedge.authenticator.widget.passcode.PasscodeInputListener
-import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
 
 class OnboardingSetupViewModel(
     val appContext: Context,
     val passcodeTools: PasscodeToolsAbs,
-    val preferenceRepository: PreferenceRepositoryAbs,
-    val biometricTools: BiometricToolsAbs
+    val preferenceRepository: PreferenceRepositoryAbs
 ) : ViewModel(),
     LifecycleObserver,
     PasscodeInputListener
@@ -140,9 +138,17 @@ class OnboardingSetupViewModel(
 
     private fun activateFingerprint() {
         try {
-            biometricTools.activateFingerprint()
+//            biometricTools.activateFingerprint()
         } catch (e: Exception) {
             e.log()
         }
+    }
+
+    override fun onForgotActionSelected() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onClearApplicationDataSelected() {
+        TODO("Not yet implemented")
     }
 }

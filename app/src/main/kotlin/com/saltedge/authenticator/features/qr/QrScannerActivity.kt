@@ -31,6 +31,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.fentury.applock.lock.LockableActivity
+import com.fentury.applock.widget.security.UnlockAppInputView
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
@@ -45,8 +47,6 @@ import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.getDisplayHeight
 import com.saltedge.authenticator.tools.getDisplayWidth
 import com.saltedge.authenticator.tools.log
-import com.saltedge.authenticator.widget.security.LockableActivity
-import com.saltedge.authenticator.widget.security.UnlockAppInputView
 import kotlinx.android.synthetic.main.activity_qr_scanner.*
 import java.io.IOException
 import javax.inject.Inject
@@ -78,6 +78,10 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         viewModel.onRequestPermissionsResult(requestCode, grantResults)
+    }
+
+    override fun onClearApplicationDataSelected() {
+        TODO("Not yet implemented")
     }
 
     override fun onDestroy() {

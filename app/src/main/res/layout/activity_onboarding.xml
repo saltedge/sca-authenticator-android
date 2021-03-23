@@ -62,7 +62,7 @@
                     app:srcCompat="@drawable/ic_logo_application" />
             </FrameLayout>
 
-            <com.saltedge.authenticator.widget.passcode.PasscodeInputView
+            <com.fentury.applock.widget.passcode.PasscodeInputView
                 android:id="@+id/passcodeEditView"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

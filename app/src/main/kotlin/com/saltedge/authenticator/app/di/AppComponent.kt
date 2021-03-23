@@ -42,11 +42,8 @@ import com.saltedge.authenticator.features.settings.passcode.PasscodeEditFragmen
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
-import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
-import com.saltedge.authenticator.widget.security.LockableActivity
 import dagger.Component
 import javax.inject.Singleton
 
@@ -58,12 +55,9 @@ interface AppComponent {
     fun connectionsRepository(): ConnectionsRepositoryAbs
     fun keyStoreManager(): KeyStoreManagerAbs
     fun passcodeTools(): PasscodeToolsAbs
-    fun biometricTools(): BiometricToolsAbs
-    fun biometricPrompt(): BiometricPromptAbs?
     fun realmManager() : RealmManagerAbs
     fun viewModelsFactory() : ViewModelsFactory
 
-    fun inject(activity: LockableActivity)
     fun inject(activity: OnboardingSetupActivity)
     fun inject(activity: LauncherActivity)
     fun inject(activity: MainActivity)

@@ -28,6 +28,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import com.fentury.applock.lock.LockableActivity
+import com.fentury.applock.widget.security.UnlockAppInputView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.MainActivityBinding
@@ -37,8 +39,6 @@ import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.currentFragmentOnTop
 import com.saltedge.authenticator.tools.showQrScannerActivity
 import com.saltedge.authenticator.tools.updateScreenshotLocking
-import com.saltedge.authenticator.widget.security.LockableActivity
-import com.saltedge.authenticator.widget.security.UnlockAppInputView
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
@@ -73,6 +73,10 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
     override fun onBackPressed() {
         val onBackPressListener = currentFragmentOnTop() as? OnBackPressListener
         if (onBackPressListener?.onBackPress() != true) super.onBackPressed()
+    }
+
+    override fun onClearApplicationDataSelected() {
+        TODO("Not yet implemented")
     }
 
     /**

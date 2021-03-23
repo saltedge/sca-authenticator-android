@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="text_4">4sp</dimen>
+    <dimen name="text_14">14sp</dimen>
+    <dimen name="text_16">16sp</dimen>
+    <dimen name="text_18">18sp</dimen>
+    <dimen name="text_22">22sp</dimen>
+    <dimen name="text_30">30sp</dimen>
+
+    <dimen name="dp_4">4dp</dimen>
+    <dimen name="dp_6">6dp</dimen>
+    <dimen name="dp_8">8dp</dimen>
+    <dimen name="dp_10">10dp</dimen>
+    <dimen name="dp_12">12dp</dimen>
+    <dimen name="dp_14">14dp</dimen>
+    <dimen name="dp_16">16dp</dimen>
+    <dimen name="dp_20">20dp</dimen>
+    <dimen name="dp_24">24dp</dimen>
+    <dimen name="dp_28">28dp</dimen>
+    <dimen name="dp_32">32dp</dimen>
+    <dimen name="dp_34">34dp</dimen>
+    <dimen name="dp_40">40dp</dimen>
+    <dimen name="dp_46">46dp</dimen>
+    <dimen name="dp_48">48dp</dimen>
+    <dimen name="dp_50">50dp</dimen>
+    <dimen name="dp_52">52dp</dimen>
+    <dimen name="dp_54">54dp</dimen>
+    <dimen name="dp_58">58dp</dimen>
+    <dimen name="dp_64">64dp</dimen>
+    <dimen name="dp_70">70dp</dimen>
+    <dimen name="dp_72">72dp</dimen>
+    <dimen name="dp_80">80dp</dimen>
+    <dimen name="dp_108">108dp</dimen>
+    <dimen name="dp_200">200dp</dimen>
+    <dimen name="dp_328">328dp</dimen>
+
+    <dimen name="app_logo_image_size">@dimen/dp_72</dimen>
+    <dimen name="passcode_logo_size">@dimen/dp_108</dimen>
+    <dimen name="button_height">@dimen/dp_54</dimen>
+    <dimen name="info_view_small_icon">@dimen/dp_70</dimen>
+</resources>

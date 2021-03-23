@@ -24,9 +24,11 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
+import com.fentury.applock.root.SEAppLock
 import com.google.android.gms.security.ProviderInstaller
 import com.google.firebase.FirebaseApp
 import com.saltedge.authenticator.BuildConfig
+import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.di.AppComponent
 import com.saltedge.authenticator.app.di.AppModule
 import com.saltedge.authenticator.app.di.DaggerAppComponent
@@ -55,9 +57,8 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
 
         if (AppTools.isTestsSuite(this)) RealmManager.initRealm(this)
 
-        appComponent = DaggerAppComponent.builder()
-            .appModule(AppModule(applicationContext))
-            .build()
+        initDagger()
+        initAppLock()
 
         registerActivityLifecycleCallbacks(this)
 
@@ -99,5 +100,20 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
 
     private fun setupNightMode() {
         AppCompatDelegate.setDefaultNightMode(appComponent.preferenceRepository().nightMode)
+    }
+
+    private fun initDagger() {
+        appComponent = DaggerAppComponent.builder()
+            .appModule(AppModule(applicationContext))
+            .build()
+    }
+
+    private fun initAppLock() {
+        if (!AppTools.isTestsSuite(this)) SEAppLock.initAppLock(
+            context = applicationContext,
+            appName = getString(R.string.app_name),
+            forgotActionButtonText = getString(R.string.forgot_passcode_log_out),
+            otpDescriptionText = getString(R.string.forgot_passcode_log_out) //TODO: check usage string res
+        )
     }
 }
