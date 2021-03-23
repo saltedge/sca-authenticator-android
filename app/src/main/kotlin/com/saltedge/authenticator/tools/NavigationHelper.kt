@@ -30,12 +30,12 @@ import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import com.fentury.applock.lock.KEY_SKIP_PIN
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.app.defaultTransition
 import com.saltedge.authenticator.features.qr.QrScannerActivity
 import com.saltedge.authenticator.sdk.constants.DEFAULT_SUPPORT_EMAIL_LINK
-import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
 
 /**
  * Get current fragment in container

@@ -28,6 +28,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import com.fentury.applock.contracts.PasscodeListener
 import com.fentury.applock.lock.LockableActivity
 import com.fentury.applock.widget.security.UnlockAppInputView
 import com.saltedge.authenticator.R
@@ -42,7 +43,10 @@ import com.saltedge.authenticator.tools.updateScreenshotLocking
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContainer {
+class MainActivity : LockableActivity(),
+    ViewModelContract,
+    SnackbarAnchorContainer,
+    PasscodeListener {
 
     override lateinit var viewModel: MainActivityViewModel
     @Inject lateinit var viewModelFactory: ViewModelsFactory

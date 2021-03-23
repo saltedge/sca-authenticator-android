@@ -39,7 +39,6 @@ import com.saltedge.authenticator.features.settings.about.AboutViewModel
 import com.saltedge.authenticator.features.settings.language.LanguageSelectViewModel
 import com.saltedge.authenticator.features.settings.licenses.LicensesViewModel
 import com.saltedge.authenticator.features.settings.list.SettingsListViewModel
-import com.saltedge.authenticator.features.settings.passcode.PasscodeEditViewModel
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
@@ -163,9 +162,6 @@ class ViewModelsFactory @Inject constructor(
                     keyStoreManager = keyStoreManager,
                     apiManager = apiManager
                 ) as T
-            }
-            modelClass.isAssignableFrom(PasscodeEditViewModel::class.java) -> {
-                return PasscodeEditViewModel(passcodeTools) as T
             }
             modelClass.isAssignableFrom(AboutViewModel::class.java) -> {
                 return AboutViewModel(appContext) as T

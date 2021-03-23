@@ -62,7 +62,7 @@
 
     <fragment
         android:id="@+id/passcodeEditFragment"
-        android:name="com.saltedge.authenticator.features.settings.passcode.PasscodeEditFragment"
+        android:name="com.fentury.applock.passcode.edit.PasscodeEditFragment"
         android:label="PasscodeEditFragment">
 
         <action
