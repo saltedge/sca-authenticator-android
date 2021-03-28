@@ -29,6 +29,16 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+<!--    <style name="MainScreenThemeBase" parent="Theme.AppCompat.DayNight.NoActionBar">-->
+<!--        <item name="colorPrimaryDark">@color/system_bar_color</item>-->
+<!--        <item name="colorAccent">@color/primary</item>-->
+<!--        <item name="colorControlNormal">@color/primary</item>-->
+<!--        <item name="colorControlActivated">@color/primary</item>-->
+<!--        <item name="colorControlHighlight">@color/primary</item>-->
+<!--        <item name="android:colorButtonNormal">@color/button_blue_default</item>-->
+<!--        <item name="android:colorControlHighlight">@color/colorControlHighlight</item>&lt;!&ndash;ripple effect color&ndash;&gt;-->
+<!--    </style>-->
+
     <style name="LauncherScreenTheme" parent="LauncherScreenThemeBase"/>
 
     <style name="SetupScreenThemeBase" parent="Theme.AppCompat.DayNight.NoActionBar">

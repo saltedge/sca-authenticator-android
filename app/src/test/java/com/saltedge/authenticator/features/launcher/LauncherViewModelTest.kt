@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.launcher
 
 import com.saltedge.authenticator.features.main.MainActivity
-import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
+import com.saltedge.authenticator.features.onboarding.OnboardingFragment
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.TestAppTools
@@ -37,14 +37,14 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class LauncherViewModelTest {
 
-    private lateinit var viewModel: LauncherViewModel
+    private lateinit var viewModel: SplashViewModel
     private val mockPreferenceRepository = Mockito.mock(PreferenceRepositoryAbs::class.java)
     private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)
     private val mockRealmManager = Mockito.mock(RealmManagerAbs::class.java)
 
     @Before
     fun setUp() {
-        viewModel = LauncherViewModel(
+        viewModel = SplashViewModel(
             appContext = TestAppTools.applicationContext,
             preferenceRepository = mockPreferenceRepository,
             passcodeTools = mockPasscodeTools,
@@ -56,14 +56,14 @@ class LauncherViewModelTest {
      * When passcode is not exist, and the getNextActivityClass() was called,
      * then it will start OnboardingSetupActivity
      *
-     * @see OnboardingSetupActivity
+     * @see OnboardingFragment
      */
     @Test
     @Throws(Exception::class)
     fun getNextActivityClassTestCase1() {
         Mockito.doReturn(false).`when`(mockPreferenceRepository).passcodeExist()
 
-        assertEquals(viewModel.getNextActivityClass(), OnboardingSetupActivity::class.java)
+        assertEquals(viewModel.getNextActivityClass(), OnboardingFragment::class.java)
     }
 
     /**

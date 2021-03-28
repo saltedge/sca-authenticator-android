@@ -20,9 +20,11 @@
  */
 package com.saltedge.authenticator.features.main
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
@@ -33,32 +35,39 @@ import com.fentury.applock.lock.LockableActivity
 import com.fentury.applock.widget.security.UnlockAppInputView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.cloud.registerNotificationChannels
 import com.saltedge.authenticator.databinding.MainActivityBinding
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.interfaces.*
-import com.saltedge.authenticator.tools.authenticatorApp
-import com.saltedge.authenticator.tools.currentFragmentOnTop
-import com.saltedge.authenticator.tools.showQrScannerActivity
-import com.saltedge.authenticator.tools.updateScreenshotLocking
+import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.tools.*
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 class MainActivity : LockableActivity(),
     ViewModelContract,
     SnackbarAnchorContainer,
+    DialogInterface.OnClickListener,
     PasscodeListener {
 
     override lateinit var viewModel: MainActivityViewModel
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var binding: MainActivityBinding
+    private var dialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.updateScreenshotLocking()
-        authenticatorApp?.appComponent?.inject(this)//inject ViewModelsFactory
+        authenticatorApp?.appComponent?.inject(this) //inject ViewModelsFactory
         setupViewModel()
         setupBinding()
+        setupLauncherSettings()
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
+    }
+
+    override fun onStop() {
+        if (dialog?.isShowing == true) dialog?.dismiss()
+        super.onStop()
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -80,7 +89,7 @@ class MainActivity : LockableActivity(),
     }
 
     override fun onClearApplicationDataSelected() {
-        TODO("Not yet implemented")
+        showResetDataDialog(listener = this)
     }
 
     /**
@@ -104,7 +113,9 @@ class MainActivity : LockableActivity(),
 
         viewModel.onAppbarMenuItemClickEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
-                (this.currentFragmentOnTop() as? AppbarMenuItemClickListener)?.onAppbarMenuItemClick(it)
+                (this.currentFragmentOnTop() as? AppbarMenuItemClickListener)?.onAppbarMenuItemClick(
+                    it
+                )
             }
         })
         viewModel.onBackActionClickEvent.observe(this, Observer { event ->
@@ -115,26 +126,54 @@ class MainActivity : LockableActivity(),
         })
         viewModel.onShowAuthorizationDetailsEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                findNavController(R.id.navHostFragment).navigate(R.id.authorizationDetailsFragment, bundle)
+                findNavController(R.id.navHostFragment).navigate(
+                    R.id.authorizationDetailsFragment,
+                    bundle
+                )
             }
         })
         viewModel.onShowActionAuthorizationEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                findNavController(R.id.navHostFragment).navigate(R.id.authorizationDetailsFragment, bundle)
+                findNavController(R.id.navHostFragment).navigate(
+                    R.id.authorizationDetailsFragment,
+                    bundle
+                )
             }
         })
         viewModel.onShowConnectEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { connectAppLinkData ->
-                findNavController(R.id.navHostFragment).navigate(R.id.connectProviderFragment, connectAppLinkData)
+                findNavController(R.id.navHostFragment).navigate(
+                    R.id.connectProviderFragment,
+                    connectAppLinkData
+                )
             }
         })
         viewModel.onShowSubmitActionEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { actionAppLinkData ->
-                findNavController(R.id.navHostFragment).navigate(R.id.submitActionFragment, actionAppLinkData)
+                findNavController(R.id.navHostFragment).navigate(
+                    R.id.submitActionFragment,
+                    actionAppLinkData
+                )
             }
         })
+
+        //qr
         viewModel.onQrScanClickEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { this.showQrScannerActivity() }
+//            event.getContentIfNotHandled()?.let { this.showQrScannerActivity() } //TODO: Open QrScannerActivity and replace it on fragment
+        })
+
+        //onboarding
+        viewModel.onDbInitializationFail.observe(this, Observer {
+            it?.let { showDbErrorAlert() }
+        })
+        viewModel.onSecurityCheckFail.observe(this, Observer {
+            it?.let { showSecurityErrorAlert() }
+        })
+        viewModel.closeEvent.observe(this, Observer {
+            it?.let { finishAffinity() }
+        })
+        viewModel.supportClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
+            event.getContentIfNotHandled()?.let { startMailApp() }
         })
     }
 
@@ -143,6 +182,38 @@ class MainActivity : LockableActivity(),
         binding.viewModel = viewModel
         binding.executePendingBindings()
         binding.lifecycleOwner = this
+    }
+
+    private fun setupLauncherSettings() {
+        this.applyPreferenceLocale()
+        this.registerNotificationChannels()
+    }
+
+    override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
+        when (dialogActionId) {
+            DialogInterface.BUTTON_POSITIVE -> {
+                viewModel.onUserConfirmedClearAppData()
+//                showOnboardingActivity()
+            }
+            DialogInterface.BUTTON_NEGATIVE -> listener?.dismiss()
+        }
+    }
+
+    override fun onNewPasscodeSet() {
+        findNavController(R.id.navHostFragment).navigate(
+            R.id.authorizationsListFragment)
+    }
+
+    private fun showDbErrorAlert() {
+        dialog = this.showDbErrorDialog(listener = DialogInterface.OnClickListener { _, _ ->
+            viewModel.dbErrorCheckedByUser()
+        })
+    }
+
+    private fun showSecurityErrorAlert() {
+        dialog = this.showSecurityAlertDialog(listener = DialogInterface.OnClickListener { _, _ ->
+            viewModel.securityErrorCheckedByUser()
+        })
     }
 }
 

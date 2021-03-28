@@ -26,12 +26,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
+import com.saltedge.android.security.RaspChecker
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_CLOSE_APP
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
 import com.saltedge.authenticator.interfaces.MenuItem
+import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -42,9 +44,8 @@ import com.saltedge.authenticator.sdk.constants.KEY_TITLE
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.tools.extractActionAppLinkData
 import com.saltedge.authenticator.sdk.tools.extractConnectAppLinkData
-import com.saltedge.authenticator.tools.ResId
-import com.saltedge.authenticator.tools.applyPreferenceLocale
-import com.saltedge.authenticator.tools.postUnitEvent
+import com.saltedge.authenticator.BuildConfig
+import com.saltedge.authenticator.tools.*
 
 class MainActivityViewModel(
     val appContext: Context,
@@ -73,8 +74,76 @@ class MainActivityViewModel(
 
     private var initialQrScanWasStarted = false
 
+    //onboarding
+    val onDbInitializationFail = MutableLiveData<ViewModelEvent<Unit>>()
+    val closeEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onSecurityCheckFail = MutableLiveData<ViewModelEvent<Unit>>()
+    val supportClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+
     init {
         if (!realmManager.initialized) realmManager.initRealm(context = appContext)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onLifeCycleStart() {
+        val securityCheckNotPassed = !checkAppSecurity()
+        if (!AppTools.isTestsSuite(appContext)) realmManager.initRealm(context = appContext)
+
+        when {
+            securityCheckNotPassed -> {
+                onSecurityCheckFail.postUnitEvent()
+            }
+            realmManager.errorOccurred -> {
+                onDbInitializationFail.postUnitEvent()
+            }
+            else -> {
+//                if (shouldSetupApplication) passcodeTools.replacePasscodeKey(appContext)
+                onDbInitializationFail.value = null
+            }
+        }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    fun onLifeCycleResume() {
+        appContext.applyPreferenceLocale()
+    }
+
+    /**
+     * Handle new authorization event (e.g. from ActionSubmit)
+     */
+    override fun onNewAuthorization(authorizationIdentifier: AuthorizationIdentifier) {
+        onShowActionAuthorizationEvent.postValue(ViewModelEvent(Bundle().apply {
+            putSerializable(KEY_ID, authorizationIdentifier)
+            putBoolean(KEY_CLOSE_APP, true)
+            putInt(KEY_TITLE, R.string.action_new_action_title)
+        }))
+    }
+
+    /**
+     * Handle app bar events
+     */
+    override fun updateAppbar(
+        titleResId: ResId?,
+        title: String?,
+        backActionImageResId: ResId?,
+        showMenu: Array<MenuItem>
+    ) {
+        appBarTitle.postValue(titleResId?.let { appContext.getString(it) } ?: title ?: "")
+        backActionImageResId?.let { appBarBackActionImageResource.postValue(it) }
+        appBarBackActionVisibility.postValue(if (backActionImageResId == null) View.GONE else View.VISIBLE)
+        appBarActionQRVisibility.postValue(if (showMenu.contains(MenuItem.SCAN_QR)) View.VISIBLE else View.GONE)
+        appBarActionThemeVisibility.postValue(if (showMenu.contains(MenuItem.CUSTOM_NIGHT_MODE)) View.VISIBLE else View.GONE)
+        appBarActionMoreVisibility.postValue(if (showMenu.contains(MenuItem.MORE_MENU)) View.VISIBLE else View.GONE)
+    }
+
+    override fun onLanguageChanged() {
+        appContext.applyPreferenceLocale()
+        onRestartActivityEvent.postUnitEvent()
+    }
+
+    fun dbErrorCheckedByUser() {
+        realmManager.resetError()
+        closeEvent.postUnitEvent()
     }
 
     fun bindLifecycleObserver(lifecycle: Lifecycle) {
@@ -92,9 +161,8 @@ class MainActivityViewModel(
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onLifeCycleResume() {
-        appContext.applyPreferenceLocale()
+    fun securityErrorCheckedByUser() {
+        supportClickEvent.postUnitEvent()
     }
 
     /**
@@ -160,36 +228,37 @@ class MainActivityViewModel(
         }
     }
 
-    /**
-     * Handle new authorization event (e.g. from ActionSubmit)
-     */
-    override fun onNewAuthorization(authorizationIdentifier: AuthorizationIdentifier) {
-        onShowActionAuthorizationEvent.postValue(ViewModelEvent(Bundle().apply {
-            putSerializable(KEY_ID, authorizationIdentifier)
-            putBoolean(KEY_CLOSE_APP, true)
-            putInt(KEY_TITLE, R.string.action_new_action_title)
-        }))
+    fun onUserConfirmedClearAppData() {
+        sendRevokeRequestForConnections(connectionsRepository.getAllActiveConnections())
+        wipeApplication()
+    }
+
+    private fun sendRevokeRequestForConnections(connections: List<Connection>) {//TODO move connections interactor
+        //        val connectionsAndKeys: List<ConnectionAndKey> = connections.filter { it.isActive() }
+        //            .mapNotNull { keyStoreManager.createConnectionAndKeyModel(it) }
+        //        apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = null)
+    }
+
+    private fun wipeApplication() {
+        //        preferenceRepository.clearUserPreferences()
+        //        keyStoreManager.deleteKeyPairs(connectionsRepository.getAllConnections().map { it.guid })
+        //        connectionsRepository.deleteAllConnections()
     }
 
     /**
-     * Handle app bar events
+     * Check security breaches. Generated report is logged.
+     *
+     * @return true if security report is empty or false
      */
-    override fun updateAppbar(
-        titleResId: ResId?,
-        title: String?,
-        backActionImageResId: ResId?,
-        showMenu: Array<MenuItem>
-    ) {
-        appBarTitle.postValue(titleResId?.let { appContext.getString(it) } ?: title ?: "")
-        backActionImageResId?.let { appBarBackActionImageResource.postValue(it) }
-        appBarBackActionVisibility.postValue(if (backActionImageResId == null) View.GONE else View.VISIBLE)
-        appBarActionQRVisibility.postValue(if (showMenu.contains(MenuItem.SCAN_QR)) View.VISIBLE else View.GONE)
-        appBarActionThemeVisibility.postValue(if (showMenu.contains(MenuItem.CUSTOM_NIGHT_MODE)) View.VISIBLE else View.GONE)
-        appBarActionMoreVisibility.postValue(if (showMenu.contains(MenuItem.MORE_MENU)) View.VISIBLE else View.GONE)
-    }
+    private fun checkAppSecurity(): Boolean {
+        return if ("release" == BuildConfig.BUILD_TYPE) {
+            val raspFailReport = RaspChecker.collectFailsReport(appContext)
 
-    override fun onLanguageChanged() {
-        appContext.applyPreferenceLocale()
-        onRestartActivityEvent.postUnitEvent()
+            if (raspFailReport.isNotEmpty()) {
+                val errorMessage = "App Is Tempered:[$raspFailReport]"
+                Exception(errorMessage).log()
+            }
+            raspFailReport.isEmpty()
+        } else true
     }
 }

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2020 Salt Edge Inc.
@@ -22,7 +21,36 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/authorizationsListFragment">
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.saltedge.authenticator.features.launcher.SplashFragment"
+        android:label="SplashFragment">
+
+        <action
+            android:id="@+id/authorizations_list"
+            app:destination="@+id/authorizationsListFragment" />
+
+        <action
+            android:id="@+id/onboarding"
+            app:destination="@+id/onboardingFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/onboardingFragment"
+        android:name="com.saltedge.authenticator.features.onboarding.OnboardingFragment"
+        android:label="OnboardingFragment">
+
+        <action
+            android:id="@+id/passcode_setup"
+            app:destination="@+id/passcodeSetupFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/passcodeSetupFragment"
+        android:name="com.fentury.applock.passcode.setup.PasscodeSetupFragment"
+        android:label="PasscodeSetupFragment" />
 
     <fragment
         android:id="@+id/authorizationsListFragment"

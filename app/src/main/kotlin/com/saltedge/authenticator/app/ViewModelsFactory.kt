@@ -31,7 +31,7 @@ import com.saltedge.authenticator.features.connections.list.ConnectionsListViewM
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsViewModel
 import com.saltedge.authenticator.features.consents.details.ConsentDetailsViewModel
 import com.saltedge.authenticator.features.consents.list.ConsentsListViewModel
-import com.saltedge.authenticator.features.launcher.LauncherViewModel
+import com.saltedge.authenticator.features.launcher.SplashViewModel
 import com.saltedge.authenticator.features.main.MainActivityViewModel
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupViewModel
 import com.saltedge.authenticator.features.qr.QrScannerViewModel
@@ -65,8 +65,8 @@ class ViewModelsFactory @Inject constructor(
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         when {
-            modelClass.isAssignableFrom(LauncherViewModel::class.java) -> {
-                return LauncherViewModel(
+            modelClass.isAssignableFrom(SplashViewModel::class.java) -> {
+                return SplashViewModel(
                     appContext = appContext,
                     preferenceRepository = preferenceRepository,
                     passcodeTools = passcodeTools,

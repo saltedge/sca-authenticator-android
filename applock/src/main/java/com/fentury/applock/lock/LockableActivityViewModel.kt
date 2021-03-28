@@ -65,6 +65,7 @@ internal class LockableActivityViewModel(
                 intent.removeExtra(KEY_SKIP_PIN)
                 unlockScreen()
             }
+            savedPasscode.isEmpty() -> unlockScreen()
             else -> lockScreen()
         }
     }

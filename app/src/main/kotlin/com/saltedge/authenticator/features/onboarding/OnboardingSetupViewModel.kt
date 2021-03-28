@@ -25,14 +25,10 @@ import android.view.View
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.fentury.applock.widget.passcode.PasscodeInputListener
-import com.fentury.applock.widget.passcode.PasscodeInputMode
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
-import com.saltedge.authenticator.tools.ResId
-import com.saltedge.authenticator.tools.log
 import com.saltedge.authenticator.tools.postUnitEvent
 
 class OnboardingSetupViewModel(
@@ -40,23 +36,13 @@ class OnboardingSetupViewModel(
     val passcodeTools: PasscodeToolsAbs,
     val preferenceRepository: PreferenceRepositoryAbs
 ) : ViewModel(),
-    LifecycleObserver,
-    PasscodeInputListener
+    LifecycleObserver
 {
-    //onboarding frame
-    val onboardingLayoutVisibility: MutableLiveData<Int> = MutableLiveData(View.VISIBLE)
     val proceedViewVisibility: MutableLiveData<Int> = MutableLiveData(View.GONE)
     val skipViewVisibility: MutableLiveData<Int> = MutableLiveData(View.VISIBLE)
     val pageIndicator = MutableLiveData<Int>()
     val moveNext = MutableLiveData<ViewModelEvent<Unit>>()
-
-    //passcode frame
-    val setupLayoutVisibility: MutableLiveData<Int> = MutableLiveData(View.GONE)
-    val headerTitle: MutableLiveData<ResId> = MutableLiveData(R.string.onboarding_secure_app_passcode_create)
-    val passcodeInputViewVisibility: MutableLiveData<Int> = MutableLiveData(View.VISIBLE)
-    val passcodeInputMode = MutableLiveData<PasscodeInputMode>()
-    val showWarningDialogWithMessage = MutableLiveData<ResId>()
-    val showMainActivity = MutableLiveData<ViewModelEvent<Unit>>()
+    val showPasscodeSetup = MutableLiveData<ViewModelEvent<Unit>>()
 
     val onboardingViewModels: List<OnboardingPageViewModel> = listOf(
         OnboardingPageViewModel(
@@ -79,7 +65,7 @@ class OnboardingSetupViewModel(
     fun onOnboardingPageSelected(position: Int) {
         if (onboardingViewModels.getOrNull(position) != null) {
             pageIndicator.postValue(position)
-            if (shouldShowProceedToSetupAction(position)) {
+            if (position == onboardingViewModels.lastIndex) {
                 proceedViewVisibility.postValue(View.VISIBLE)
                 skipViewVisibility.postValue(View.GONE)
             }
@@ -88,67 +74,8 @@ class OnboardingSetupViewModel(
 
     fun onViewClick(viewId: Int) {
         when (viewId) {
-            R.id.skipActionView, R.id.proceedToSetup -> showPasscodeInput()
+            R.id.skipActionView, R.id.proceedToSetup -> showPasscodeSetup.postUnitEvent()
             R.id.nextActionView -> moveNext.postUnitEvent()
         }
-    }
-
-    override fun onPasscodeInputCanceledByUser() {
-        val inputMode = PasscodeInputMode.NEW_PASSCODE
-        passcodeInputMode.postValue(inputMode)
-        headerTitle.postValue(getSetupTitleResId(inputMode))
-    }
-
-    override fun onInputValidPasscode() {}
-
-    override fun onInputInvalidPasscode(mode: PasscodeInputMode) {
-        headerTitle.postValue(getSetupTitleResId(PasscodeInputMode.NEW_PASSCODE))
-    }
-
-    override fun onNewPasscodeEntered(mode: PasscodeInputMode, passcode: String) {
-        headerTitle.postValue(getSetupTitleResId(mode))
-    }
-
-    override fun onNewPasscodeConfirmed(passcode: String) {
-        if (passcodeTools.savePasscode(passcode)) {
-            passcodeInputViewVisibility.postValue(View.GONE)
-            activateFingerprint()
-            showMainActivity.postUnitEvent()
-        } else {
-            showWarningDialogWithMessage.postValue(R.string.errors_cant_save_passcode)
-        }
-    }
-
-    private fun shouldShowProceedToSetupAction(position: Int): Boolean =
-        position == onboardingViewModels.lastIndex
-
-    private fun showPasscodeInput() {
-        val inputMode = PasscodeInputMode.NEW_PASSCODE
-        setupLayoutVisibility.postValue(View.VISIBLE)
-        onboardingLayoutVisibility.postValue(View.GONE)
-        passcodeInputMode.postValue(inputMode)
-        headerTitle.postValue(getSetupTitleResId(inputMode))
-    }
-
-    private fun getSetupTitleResId(passcodeInputMode: PasscodeInputMode?): Int {
-        return if (passcodeInputMode == PasscodeInputMode.CONFIRM_PASSCODE) {
-            R.string.passcode_confirm_passcode
-        } else R.string.onboarding_secure_app_passcode_create
-    }
-
-    private fun activateFingerprint() {
-        try {
-//            biometricTools.activateFingerprint()
-        } catch (e: Exception) {
-            e.log()
-        }
-    }
-
-    override fun onForgotActionSelected() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onClearApplicationDataSelected() {
-        TODO("Not yet implemented")
     }
 }

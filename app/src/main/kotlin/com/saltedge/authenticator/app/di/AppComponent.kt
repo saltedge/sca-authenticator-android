@@ -30,9 +30,9 @@ import com.saltedge.authenticator.features.connections.list.ConnectionsListFragm
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment
 import com.saltedge.authenticator.features.consents.details.ConsentDetailsFragment
 import com.saltedge.authenticator.features.consents.list.ConsentsListFragment
-import com.saltedge.authenticator.features.launcher.LauncherActivity
+import com.saltedge.authenticator.features.launcher.SplashFragment
 import com.saltedge.authenticator.features.main.MainActivity
-import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
+import com.saltedge.authenticator.features.onboarding.OnboardingFragment
 import com.saltedge.authenticator.features.qr.QrScannerActivity
 import com.saltedge.authenticator.features.settings.about.AboutListFragment
 import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
@@ -57,8 +57,6 @@ interface AppComponent {
     fun realmManager() : RealmManagerAbs
     fun viewModelsFactory() : ViewModelsFactory
 
-    fun inject(activity: OnboardingSetupActivity)
-    fun inject(activity: LauncherActivity)
     fun inject(activity: MainActivity)
     fun inject(activity: QrScannerActivity)
     fun inject(fragment: AuthorizationsListFragment)
@@ -73,4 +71,6 @@ interface AppComponent {
     fun inject(fragment: LicensesFragment)
     fun inject(fragment: LanguageSelectDialog)
     fun inject(fragment: ConsentDetailsFragment)
+    fun inject(fragment: SplashFragment)
+    fun inject(fragment: OnboardingFragment)
 }

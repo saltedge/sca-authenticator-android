@@ -38,47 +38,9 @@
         android:background="@color/theme_background">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/setupLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="@{viewModel.setupLayoutVisibility}">
-
-            <FrameLayout
-                android:id="@+id/topSpace"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/passcodeEditView"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_weight="2">
-
-                <ImageView
-                    android:id="@+id/appLogoView"
-                    android:layout_width="@dimen/app_logo_image_size"
-                    android:layout_height="@dimen/app_logo_image_size"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/app_name_short"
-                    app:srcCompat="@drawable/ic_logo_application" />
-            </FrameLayout>
-
-            <com.fentury.applock.widget.passcode.PasscodeInputView
-                android:id="@+id/passcodeEditView"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:visibility="@{viewModel.passcodeInputViewVisibility}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/topSpace"
-                app:layout_constraintVertical_weight="5" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/onboardingLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="@{viewModel.onboardingLayoutVisibility}">
+            android:layout_height="match_parent">
 
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/onboardingPager"
