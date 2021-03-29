@@ -36,6 +36,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.authenticatorApp
+import com.saltedge.authenticator.app.buildVersion26orGreater
 import com.saltedge.authenticator.features.main.buildWarningSnack
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.models.repository.ConnectionsRepository
@@ -47,8 +49,16 @@ import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
 import com.saltedge.authenticator.widget.passcode.PasscodeInputListener
 import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
+import java.util.*
 
 const val KEY_SKIP_PIN = "KEY_SKIP_PIN"
+
+enum class ActivityUnlockType {
+    PASSCODE, BIOMETRICS;
+
+    val description: String
+        get() = this.toString().toLowerCase(Locale.ROOT)
+}
 
 @SuppressLint("Registered")
 abstract class LockableActivity : AppCompatActivity(),
@@ -87,9 +97,9 @@ abstract class LockableActivity : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        authenticatorApp?.appComponent?.let {
-            viewModel.biometricTools = authenticatorApp?.appComponent?.biometricTools()
-            biometricPrompt = authenticatorApp?.appComponent?.biometricPrompt()
+        this.authenticatorApp?.appComponent?.let {
+            viewModel.biometricTools = it.biometricTools()
+            this.biometricPrompt = it.biometricPrompt()
         }
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         setupViewModel()
@@ -127,7 +137,7 @@ abstract class LockableActivity : AppCompatActivity(),
     override fun onPasscodeInputCanceledByUser() {}
 
     override fun onInputValidPasscode() {
-        viewModel.onSuccessAuthentication()
+        viewModel.onSuccessAuthentication(ActivityUnlockType.PASSCODE)
     }
 
     override fun onInputInvalidPasscode(mode: PasscodeInputMode) {
@@ -157,7 +167,7 @@ abstract class LockableActivity : AppCompatActivity(),
     }
 
     override fun biometricAuthFinished() {
-        viewModel.onSuccessAuthentication()
+        viewModel.onSuccessAuthentication(ActivityUnlockType.BIOMETRICS)
     }
 
     override fun biometricsCanceledByUser() {}

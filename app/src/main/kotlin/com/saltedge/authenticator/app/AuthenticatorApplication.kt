@@ -32,7 +32,6 @@ import com.saltedge.authenticator.app.di.AppModule
 import com.saltedge.authenticator.app.di.DaggerAppComponent
 import com.saltedge.authenticator.models.realm.RealmManager
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
-import com.saltedge.authenticator.tools.AppTools
 import com.saltedge.authenticator.tools.createCrashlyticsKit
 import com.saltedge.authenticator.tools.log
 import net.danlew.android.joda.JodaTimeAndroid

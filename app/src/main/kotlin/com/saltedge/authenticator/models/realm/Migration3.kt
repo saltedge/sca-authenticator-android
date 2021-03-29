@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2020 Salt Edge Inc.
+ * Copyright (c) 2021 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,18 +20,15 @@
  */
 package com.saltedge.authenticator.models.realm
 
-import android.content.Context
-import io.realm.Realm
+import io.realm.RealmSchema
 
 /**
- * Abstraction of RealmManager
- *
- * @see RealmManager
+ * Add the consentManagementSupported field to the Connection model
+ * Add the geolocationRequired field to the Connection model
  */
-interface RealmManagerAbs {
-    val initialized: Boolean
-    val errorOccurred: Boolean
-    fun initRealm(context: Context)
-    fun getDefaultInstance(): Realm
-    fun resetError()
+fun RealmSchema.runMigration3() {
+    get("Connection")?.let {
+        it.addField("consentManagementSupported", Boolean::class.java).setNullable("consentManagementSupported", true)
+        it.addField("geolocationRequired", Boolean::class.java).setNullable("geolocationRequired", true)
+    }
 }

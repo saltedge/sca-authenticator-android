@@ -27,6 +27,7 @@ import android.os.SystemClock
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -96,10 +97,11 @@ class LockableActivityViewModel(
         }
     }
 
-    fun onSuccessAuthentication() {
+    fun onSuccessAuthentication(unlockType: ActivityUnlockType) {
         preferenceRepository.pinInputAttempts = 0
         preferenceRepository.blockPinInputTillTime = 0L
         successVibrateEvent.postUnitEvent()
+        AppTools.lastUnlockType = unlockType
         unlockScreen()
     }
 

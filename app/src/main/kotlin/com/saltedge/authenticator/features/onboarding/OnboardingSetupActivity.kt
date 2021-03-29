@@ -34,7 +34,7 @@ import com.saltedge.authenticator.databinding.OnboardingSetupBinding
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.ResId
-import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.tools.log
 import com.saltedge.authenticator.tools.showWarningDialog
 import com.saltedge.authenticator.widget.passcode.PasscodeInputMode

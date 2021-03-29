@@ -34,7 +34,7 @@ import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.databinding.ConsentDetailsBinding
 import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.tools.popBackStack
 import com.saltedge.authenticator.tools.showConfirmRevokeConsentDialog
 import com.saltedge.authenticator.tools.showWarningDialog

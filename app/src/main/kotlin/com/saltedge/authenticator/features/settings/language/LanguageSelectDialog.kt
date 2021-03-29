@@ -30,7 +30,7 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.features.main.activityComponentsContract
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.app.authenticatorApp
 import javax.inject.Inject
 
 class LanguageSelectDialog : DialogFragment() {
