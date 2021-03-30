@@ -1,18 +1,18 @@
-/* 
- * This file is part of the Salt Edge Authenticator distribution 
+/*
+ * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2019 Salt Edge Inc.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3 or later.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * For the additional permissions granted for Salt Edge Authenticator
@@ -34,14 +34,19 @@ fun createSignatureHeader(
     privateKey: PrivateKey
 ): String {
     val payload = "${requestMethod.toLowerCase(Locale.US)}|$requestUrl|$expiresAt|$requestBody"
-    return payload.toByteArray(StandardCharsets.UTF_8).signWith(privateKey)?.let {
-        Base64.encodeToString(it, Base64.NO_WRAP)
-    } ?: return ""
+    return runCatching {
+        return payload.toByteArray(StandardCharsets.UTF_8).signWith(privateKey)?.let {
+            Base64.encodeToString(it, Base64.NO_WRAP)
+        } ?: return ""
+    }.onFailure {
+        it.printStackTrace()
+    }.getOrDefault(defaultValue = "")
 }
 
 private fun ByteArray.signWith(privateKey: PrivateKey): ByteArray? {
-    val signature: Signature = Signature.getInstance("SHA256withRSA")
-    signature.initSign(privateKey)
-    signature.update(this)
+    val signature: Signature = Signature.getInstance("SHA256withRSA").also {
+        it.initSign(privateKey)
+        it.update(this)
+    }
     return signature.sign()
 }

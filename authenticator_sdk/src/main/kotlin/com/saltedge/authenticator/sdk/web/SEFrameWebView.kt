@@ -46,6 +46,14 @@ open class SEFrameWebView : WebView {
         setupView()
     }
 
+    override fun setOverScrollMode(mode: Int) {
+        runCatching {
+            super.setOverScrollMode(mode)
+        }.onFailure {
+            it.printStackTrace()
+        }
+    }
+
     private fun setupView() {
         this.setLayerType(View.LAYER_TYPE_HARDWARE, null)
         if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {

@@ -77,7 +77,12 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        viewModel.onRequestPermissionsResult(requestCode, grantResults)
+        runCatching {
+            viewModel.onRequestPermissionsResult(requestCode, grantResults)
+        }.onFailure {
+            viewModel.onCameraInitException()
+            it.log()
+        }
     }
 
     override fun onDestroy() {
