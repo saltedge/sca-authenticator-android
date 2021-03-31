@@ -38,7 +38,7 @@ import com.saltedge.authenticator.sdk.constants.KEY_TITLE
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.biometric.getFingerprintManager
 import com.saltedge.authenticator.tools.ResId
-import com.saltedge.authenticator.tools.log
+import timber.log.Timber
 
 @TargetApi(Build.VERSION_CODES.M)
 class BiometricsInputPresenter(
@@ -122,7 +122,7 @@ class BiometricsInputPresenter(
                 )
             }
         } catch (e: Exception) {
-            e.log()
+            Timber.e(e)
         }
     }
 
@@ -159,7 +159,7 @@ class BiometricsInputPresenter(
         return try {
             biometricTools.createFingerprintCipher()?.let { FingerprintManager.CryptoObject(it) }
         } catch (e: Exception) {
-            e.log()
+            Timber.e(e)
             null
         }
     }

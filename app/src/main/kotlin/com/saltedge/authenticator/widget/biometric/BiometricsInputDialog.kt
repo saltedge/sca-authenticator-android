@@ -33,10 +33,10 @@ import androidx.fragment.app.FragmentActivity
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.tools.ResId
-import com.saltedge.authenticator.tools.log
 import com.saltedge.authenticator.tools.setTextColorResId
 import com.saltedge.authenticator.tools.showDialogFragment
 import com.saltedge.authenticator.widget.fragment.BaseRoundedBottomDialogFragment
+import timber.log.Timber
 
 class BiometricsInputDialog(
     val biometricTools: BiometricToolsAbs
@@ -73,7 +73,7 @@ class BiometricsInputDialog(
         try {
             dismiss()
         } catch (e: Exception) {
-            e.log()
+            Timber.e(e)
         }
     }
 

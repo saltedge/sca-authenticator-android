@@ -39,8 +39,8 @@ import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.tools.millisToRemainedMinutes
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
-import com.saltedge.authenticator.tools.log
 import com.saltedge.authenticator.tools.postUnitEvent
+import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -184,7 +184,7 @@ class LockableActivityViewModel(
                 override fun onTick(millisUntilFinished: Long) {}
             }.start()
         } catch (e: Exception) {
-            e.log()
+            Timber.e(e)
         }
     }
 

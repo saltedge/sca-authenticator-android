@@ -34,8 +34,8 @@ import com.saltedge.authenticator.models.realm.RealmManager
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.tools.AppTools
 import com.saltedge.authenticator.tools.createCrashlyticsKit
-import com.saltedge.authenticator.tools.log
 import net.danlew.android.joda.JodaTimeAndroid
+import timber.log.Timber
 
 open class AuthenticatorApplication : Application(), Application.ActivityLifecycleCallbacks {
 
@@ -93,7 +93,7 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
         try {
             if ("release" == BuildConfig.BUILD_TYPE) ProviderInstaller.installIfNeeded(this)
         } catch (e: Exception) {
-            e.log()
+            Timber.e(e)
         }
     }
 

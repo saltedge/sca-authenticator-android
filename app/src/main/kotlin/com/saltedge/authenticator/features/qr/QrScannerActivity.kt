@@ -44,10 +44,10 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.getDisplayHeight
 import com.saltedge.authenticator.tools.getDisplayWidth
-import com.saltedge.authenticator.tools.log
 import com.saltedge.authenticator.widget.security.LockableActivity
 import com.saltedge.authenticator.widget.security.UnlockAppInputView
 import kotlinx.android.synthetic.main.activity_qr_scanner.*
+import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
 
@@ -81,7 +81,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
             viewModel.onRequestPermissionsResult(requestCode, grantResults)
         }.onFailure {
             viewModel.onCameraInitException()
-            it.log()
+            Timber.e(it)
         }
     }
 
@@ -186,7 +186,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
             }
         } catch (e: IOException) {
             viewModel.onCameraInitException()
-            e.log()
+            Timber.e(e)
         }
     }
 }

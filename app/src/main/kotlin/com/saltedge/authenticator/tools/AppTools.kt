@@ -29,6 +29,7 @@ import androidx.fragment.app.FragmentActivity
 import com.saltedge.authenticator.app.AuthenticatorApplication
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.sdk.model.GUID
+import timber.log.Timber
 
 object AppTools : AppToolsAbs {
 
@@ -53,7 +54,7 @@ object AppTools : AppToolsAbs {
             return appContext.packageManager?.getPackageInfo(appContext.packageName, 0)?.versionName
                 ?: "unknown"
         } catch (e: PackageManager.NameNotFoundException) {
-            e.log()
+            Timber.e(e)
         } catch (ignored: Exception) {
         }
         return "unknown"

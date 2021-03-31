@@ -36,6 +36,7 @@ import com.saltedge.authenticator.app.defaultTransition
 import com.saltedge.authenticator.features.qr.QrScannerActivity
 import com.saltedge.authenticator.sdk.constants.DEFAULT_SUPPORT_EMAIL_LINK
 import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
+import timber.log.Timber
 
 /**
  * Get current fragment in container
@@ -49,7 +50,7 @@ fun FragmentActivity.currentFragmentOnTop(): Fragment? {
         return host.childFragmentManager.fragments.getOrNull(0)
     } catch (ignored: IllegalStateException) {
     } catch (e: Exception) {
-        e.log()
+        Timber.e(e)
     }
     return null
 }
@@ -65,7 +66,7 @@ fun FragmentActivity.showDialogFragment(dialog: DialogFragment) {
         dialog.show(supportFragmentManager, dialog.javaClass.simpleName)
     } catch (ignored: IllegalStateException) {
     } catch (e: Exception) {
-        e.log()
+        Timber.e(e)
     }
 }
 
@@ -82,7 +83,7 @@ fun FragmentActivity.startMailApp(supportEmail: String? = null) {
     } catch (ignored: IllegalStateException) {
     } catch (ignored: ActivityNotFoundException) {
     } catch (e: Exception) {
-        e.log()
+        Timber.e(e)
     }
 }
 
@@ -100,7 +101,7 @@ fun FragmentActivity.showQrScannerActivity() {
     } catch (ignored: IllegalStateException) {
     } catch (ignored: ActivityNotFoundException) {
     } catch (e: Exception) {
-        e.log()
+        Timber.e(e)
     }
 }
 
@@ -122,7 +123,7 @@ fun Fragment.navigateTo(actionRes: ResId, bundle: Bundle? = null, transition: Na
     try {
         findNavController().navigate(actionRes, bundle, transition)
     } catch (e: Exception) {
-        e.log()
+        Timber.e(e)
     }
 }
 
@@ -130,7 +131,7 @@ fun Fragment.navigateToDialog(actionRes: ResId, bundle: Bundle) {
     try {
         findNavController().navigate(actionRes, bundle)
     } catch (e: Exception) {
-        e.log()
+        Timber.e(e)
     }
 }
 
@@ -138,6 +139,6 @@ fun Fragment.popBackStack() {
     try {
         findNavController().popBackStack()
     } catch (e: Exception) {
-        e.log()
+        Timber.e(e)
     }
 }

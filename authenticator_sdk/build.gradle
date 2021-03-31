@@ -80,6 +80,7 @@ dependencies {
     api 'com.squareup.retrofit2:converter-gson:2.7.1'
     api 'com.squareup.okhttp3:logging-interceptor:4.3.1'
     api 'net.danlew:android.joda:2.10.2'
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 
     androidTestUtil 'com.android.support.test:orchestrator:1.0.2'
     testImplementation 'junit:junit:4.13'

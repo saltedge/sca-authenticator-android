@@ -35,11 +35,11 @@ import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.authenticatorApp
-import com.saltedge.authenticator.tools.log
 import com.saltedge.authenticator.tools.showWarningDialog
 import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
 import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
 import kotlinx.android.synthetic.main.activity_onboarding.*
+import timber.log.Timber
 import javax.inject.Inject
 
 class OnboardingSetupActivity : AppCompatActivity(),
@@ -103,7 +103,7 @@ class OnboardingSetupActivity : AppCompatActivity(),
             passcodeEditView?.biometricsActionIsAvailable = false
             passcodeEditView?.listener = viewModel
         } catch (e: Exception) {
-            e.log()
+            Timber.e(e)
         }
     }
 

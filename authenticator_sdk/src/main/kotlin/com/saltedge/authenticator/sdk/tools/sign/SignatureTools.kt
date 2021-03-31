@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.sdk.tools.sign
 
 import android.util.Base64
+import timber.log.Timber
 import java.nio.charset.StandardCharsets
 import java.security.PrivateKey
 import java.security.Signature
@@ -39,7 +40,7 @@ fun createSignatureHeader(
             Base64.encodeToString(it, Base64.NO_WRAP)
         } ?: return ""
     }.onFailure {
-        it.printStackTrace()
+        Timber.e(it)
     }.getOrDefault(defaultValue = "")
 }
 
