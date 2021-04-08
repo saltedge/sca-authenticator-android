@@ -121,7 +121,7 @@ fun FragmentActivity.restartApp() {
 
 fun Fragment.navigateTo(actionRes: ResId, bundle: Bundle? = null, transition: NavOptions = defaultTransition) {
     try {
-        findNavController().navigate(actionRes, bundle, transition)
+        if (mayNavigate()) findNavController().navigate(actionRes, bundle, transition)
     } catch (e: Exception) {
         Timber.e(e)
     }
@@ -129,7 +129,7 @@ fun Fragment.navigateTo(actionRes: ResId, bundle: Bundle? = null, transition: Na
 
 fun Fragment.navigateToDialog(actionRes: ResId, bundle: Bundle) {
     try {
-        findNavController().navigate(actionRes, bundle)
+        if (mayNavigate()) findNavController().navigate(actionRes, bundle)
     } catch (e: Exception) {
         Timber.e(e)
     }
@@ -137,8 +137,25 @@ fun Fragment.navigateToDialog(actionRes: ResId, bundle: Bundle) {
 
 fun Fragment.popBackStack() {
     try {
-        findNavController().popBackStack()
+        if (mayNavigate()) findNavController().popBackStack()
     } catch (e: Exception) {
         Timber.e(e)
     }
+}
+
+/**
+ * Returns true if the navigation controller is still pointing at 'this' fragment, or false if it already navigated away.
+ */
+fun Fragment.mayNavigate(): Boolean {
+    val navController = findNavController()
+    val destinationIdInNavController = navController.currentDestination?.id
+
+    // add tag_navigation_destination_id to your ids.xml so that it's unique:
+    val destinationIdOfThisFragment = view?.getTag(R.id.tag_navigation_destination_id) ?: destinationIdInNavController
+
+    // check that the navigation graph is still in 'this' fragment, if not then the app already navigated:
+    return if (destinationIdInNavController == destinationIdOfThisFragment) {
+        view?.setTag(R.id.tag_navigation_destination_id, destinationIdOfThisFragment)
+        true
+    } else false
 }
