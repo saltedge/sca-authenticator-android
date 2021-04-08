@@ -23,13 +23,21 @@ package com.saltedge.authenticator.models.realm
 import android.content.Context
 import com.saltedge.authenticator.models.repository.PreferenceRepository
 import com.saltedge.authenticator.sdk.tools.createRandomGuid
-import com.saltedge.authenticator.tools.AppTools
+import com.saltedge.authenticator.app.AppTools
 import io.realm.Realm
 import io.realm.RealmConfiguration
 
-const val DB_SCHEMA_VERSION = 2L
+const val DB_SCHEMA_VERSION = 3L
 
-object RealmManager: RealmManagerAbs {
+interface RealmManagerAbs {
+    val initialized: Boolean
+    val errorOccurred: Boolean
+    fun initRealm(context: Context)
+    fun getDefaultInstance(): Realm
+    fun resetError()
+}
+
+object RealmManager : RealmManagerAbs {
 
     private const val DB_NAME = "authenticator_app.realm"
     private var initErrorOccurred: Boolean? = null

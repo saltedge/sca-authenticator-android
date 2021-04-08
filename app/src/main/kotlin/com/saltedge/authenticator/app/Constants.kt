@@ -23,6 +23,7 @@ package com.saltedge.authenticator.app
 const val QR_SCAN_REQUEST_CODE = 322
 const val DELETE_ALL_REQUEST_CODE = 327
 const val CAMERA_PERMISSION_REQUEST_CODE = 328
+const val LOCATION_PERMISSION_REQUEST_CODE = 329
 const val CONNECTIONS_REQUEST_CODE = 555
 const val CONSENT_REQUEST_CODE = 556
 

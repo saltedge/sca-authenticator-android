@@ -24,6 +24,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.LocaleList
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.buildVersion24orGreater
 import com.saltedge.authenticator.models.repository.PreferenceRepository
 import java.util.*
 

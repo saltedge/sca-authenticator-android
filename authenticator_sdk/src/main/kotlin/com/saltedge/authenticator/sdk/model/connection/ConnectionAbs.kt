@@ -33,7 +33,7 @@ package com.saltedge.authenticator.sdk.model.connection
  * @property status - Connection Status. ACTIVE or INACTIVE
  * @property supportEmail - Provider's support email
  *
- * @see ProviderData
+ * @see com.saltedge.authenticator.sdk.model.configuration.ProviderConfigurationData
  */
 interface ConnectionAbs {
     var guid: String
@@ -47,4 +47,6 @@ interface ConnectionAbs {
     var accessToken: String
     var status: String
     var supportEmail: String?
+    var consentManagementSupported: Boolean?
+    var geolocationRequired: Boolean?
 }

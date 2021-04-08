@@ -31,10 +31,7 @@ import com.saltedge.authenticator.sdk.model.response.EncryptedListResponse
 import com.saltedge.authenticator.sdk.network.ApiInterface
 import com.saltedge.authenticator.sdk.network.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.testTools.get404Response
-import io.mockk.confirmVerified
-import io.mockk.every
-import io.mockk.mockkClass
-import io.mockk.verify
+import io.mockk.*
 import okhttp3.Request
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -168,7 +165,7 @@ class ConsentsConnectorTest {
     private val requestUrl = "https://localhost/api/authenticator/v1/consents"
     private val requestConnection: ConnectionAbs = getDefaultTestConnection()
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
-    private val mockCallback = mockkClass(FetchEncryptedDataListener::class)
+    private val mockCallback = mockk<FetchEncryptedDataListener>(relaxed = true)
     private val mockCall: Call<EncryptedListResponse> =
         mockkClass(Call::class) as Call<EncryptedListResponse>
     private var capturedHeaders: MutableList<Map<String, String>> = mutableListOf()
@@ -188,6 +185,5 @@ class ConsentsConnectorTest {
         every { mockCall.request() } returns Request.Builder().url(requestUrl)
             .addHeader(HEADER_KEY_ACCESS_TOKEN, "accessToken")
             .build()
-        every { mockCallback.onFetchEncryptedDataResult(any(), any()) } returns Unit
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2021 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +18,17 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.settings.passcode.saver
+package com.saltedge.authenticator.models.realm
 
-import android.os.AsyncTask
-import com.saltedge.authenticator.tools.PasscodeToolsAbs
+import io.realm.RealmSchema
 
-class PasscodeSaver(
-    private val passcodeTools: PasscodeToolsAbs,
-    override var callback: PasscodeSaveResultListener?
-) : AsyncTask<String, Void, Boolean>(), PasscodeSaverAbs {//TODO use coroutine
-
-    override fun runNewTask(passcode: String) {
-        this.execute(passcode)
-    }
-
-    override fun doInBackground(vararg params: String?): Boolean {
-        return passcodeTools.savePasscode(passcode = params.firstOrNull() ?: return false)
-    }
-
-    override fun onPostExecute(result: Boolean) {
-        super.onPostExecute(result)
-        callback?.passcodeSavedWithResult(result)
+/**
+ * Add the consentManagementSupported field to the Connection model
+ * Add the geolocationRequired field to the Connection model
+ */
+fun RealmSchema.runMigration3() {
+    get("Connection")?.let {
+        it.addField("consentManagementSupported", Boolean::class.java).setNullable("consentManagementSupported", true)
+        it.addField("geolocationRequired", Boolean::class.java).setNullable("geolocationRequired", true)
     }
 }
