@@ -40,7 +40,7 @@ import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.tools.navigateTo
 import com.saltedge.authenticator.tools.popBackStack
 import com.saltedge.authenticator.widget.fragment.BaseFragment

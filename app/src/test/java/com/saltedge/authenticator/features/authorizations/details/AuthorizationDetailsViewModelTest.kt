@@ -24,11 +24,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.TestAppTools
+import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_CONNECTION_NOT_FOUND
@@ -45,7 +48,7 @@ import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.TestAppTools
+import com.saltedge.authenticator.widget.security.ActivityUnlockType
 import junit.framework.Assert.assertTrue
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
@@ -69,6 +72,7 @@ class AuthorizationDetailsViewModelTest {
     private val mockCryptoTools = mock(CryptoToolsAbs::class.java)
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockPollingService = mock(SingleAuthorizationPollingService::class.java)
+    private val mockLocationManager = mock(DeviceLocationManagerAbs::class.java)
     private val mockPrivateKey = mock(PrivateKey::class.java)
 
     private val connection1 = Connection().apply {
@@ -114,6 +118,8 @@ class AuthorizationDetailsViewModelTest {
 
     @Before
     fun setUp() {
+        AppTools.lastUnlockType = ActivityUnlockType.BIOMETRICS
+        doReturn("GEO:52.506931;13.144558").`when`(mockLocationManager).locationDescription
         doReturn(connection1).`when`(mockConnectionsRepository).getById("1")
         doReturn(connection2).`when`(mockConnectionsRepository).getById("2_noKey")
         doReturn(mockPollingService).`when`(mockApiManager)
@@ -137,7 +143,8 @@ class AuthorizationDetailsViewModelTest {
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
             cryptoTools = mockCryptoTools,
-            apiManager = mockApiManager
+            apiManager = mockApiManager,
+            locationManager = mockLocationManager
         )
     }
 
@@ -325,6 +332,8 @@ class AuthorizationDetailsViewModelTest {
             connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
             authorizationId = "1",
             authorizationCode = "111",
+            geolocation = "GEO:52.506931;13.144558",
+            authorizationType = "biometrics",
             resultCallback = viewModel
         )
     }
@@ -347,6 +356,8 @@ class AuthorizationDetailsViewModelTest {
             connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
             authorizationId = "1",
             authorizationCode = "111",
+            geolocation = "GEO:52.506931;13.144558",
+            authorizationType = "biometrics",
             resultCallback = viewModel
         )
     }

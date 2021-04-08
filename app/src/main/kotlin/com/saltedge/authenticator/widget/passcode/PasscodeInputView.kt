@@ -30,7 +30,7 @@ import android.widget.LinearLayout
 import androidx.annotation.StringRes
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.ResId
-import com.saltedge.authenticator.tools.buildVersion26orGreater
+import com.saltedge.authenticator.app.buildVersion26orGreater
 import com.saltedge.authenticator.tools.setVisible
 import kotlinx.android.synthetic.main.view_passcode_input.view.*
 

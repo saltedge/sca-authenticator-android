@@ -145,7 +145,12 @@ class AuthenticatorApiManagerTest {
             connectionAndKey = ConnectionAndKey(
                 requestConnection,
                 privateKey
-            ), authorizationId = "444", authorizationCode = "code", resultCallback = mockCallback
+            ),
+            authorizationId = "444",
+            authorizationCode = "code",
+            geolocation = "GEO:52.506931;13.144558",
+            authorizationType = "biometrics",
+            resultCallback = mockCallback
         )
 
         verify { mockCall.enqueue(any()) }
@@ -168,7 +173,12 @@ class AuthenticatorApiManagerTest {
             connectionAndKey = ConnectionAndKey(
                 requestConnection,
                 privateKey
-            ), authorizationId = "444", authorizationCode = "code", resultCallback = mockCallback
+            ),
+            authorizationId = "444",
+            authorizationCode = "code",
+            geolocation = "GEO:52.506931;13.144558",
+            authorizationType = "biometrics",
+            resultCallback = mockCallback
         )
 
         verify { mockCall.enqueue(any()) }

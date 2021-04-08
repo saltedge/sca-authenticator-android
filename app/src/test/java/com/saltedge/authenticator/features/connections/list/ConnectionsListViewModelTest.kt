@@ -39,7 +39,7 @@ import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.tools.guid
+import com.saltedge.authenticator.app.guid
 import org.hamcrest.Matchers.equalTo
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone

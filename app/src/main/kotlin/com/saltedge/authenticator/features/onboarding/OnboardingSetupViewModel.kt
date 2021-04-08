@@ -26,6 +26,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
@@ -34,6 +35,7 @@ import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.postUnitEvent
 import com.saltedge.authenticator.widget.passcode.PasscodeInputListener
 import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
+import com.saltedge.authenticator.widget.security.ActivityUnlockType
 import timber.log.Timber
 
 class OnboardingSetupViewModel(
@@ -41,10 +43,7 @@ class OnboardingSetupViewModel(
     val passcodeTools: PasscodeToolsAbs,
     val preferenceRepository: PreferenceRepositoryAbs,
     val biometricTools: BiometricToolsAbs
-) : ViewModel(),
-    LifecycleObserver,
-    PasscodeInputListener
-{
+) : ViewModel(), LifecycleObserver, PasscodeInputListener {
     //onboarding frame
     val onboardingLayoutVisibility: MutableLiveData<Int> = MutableLiveData(View.VISIBLE)
     val proceedViewVisibility: MutableLiveData<Int> = MutableLiveData(View.GONE)
@@ -115,6 +114,7 @@ class OnboardingSetupViewModel(
         if (passcodeTools.savePasscode(passcode)) {
             passcodeInputViewVisibility.postValue(View.GONE)
             activateFingerprint()
+            AppTools.lastUnlockType = ActivityUnlockType.PASSCODE
             showMainActivity.postUnitEvent()
         } else {
             showWarningDialogWithMessage.postValue(R.string.errors_cant_save_passcode)

@@ -50,4 +50,8 @@ open class Connection : RealmObject(), ConnectionAbs {
     override var status: String = ""
     @Keep
     override var supportEmail: String? = null
+    @Keep
+    override var consentManagementSupported: Boolean? = null
+    @Keep
+    override var geolocationRequired: Boolean? = null
 }

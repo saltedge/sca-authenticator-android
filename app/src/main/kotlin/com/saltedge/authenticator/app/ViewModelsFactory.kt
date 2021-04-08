@@ -40,6 +40,7 @@ import com.saltedge.authenticator.features.settings.language.LanguageSelectViewM
 import com.saltedge.authenticator.features.settings.licenses.LicensesViewModel
 import com.saltedge.authenticator.features.settings.list.SettingsListViewModel
 import com.saltedge.authenticator.features.settings.passcode.PasscodeEditViewModel
+import com.saltedge.authenticator.models.location.DeviceLocationManager
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
@@ -47,7 +48,6 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.tools.AppTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
@@ -105,6 +105,7 @@ class ViewModelsFactory @Inject constructor(
                     keyStoreManager = keyStoreManager,
                     cryptoTools = cryptoTools,
                     apiManager = apiManager,
+                    locationManager = DeviceLocationManager,
                     connectivityReceiver = connectivityReceiver,
                     defaultDispatcher = Dispatchers.Default
                 ) as T
@@ -115,7 +116,8 @@ class ViewModelsFactory @Inject constructor(
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,
                     cryptoTools = cryptoTools,
-                    apiManager = apiManager
+                    apiManager = apiManager,
+                    locationManager = DeviceLocationManager
                 ) as T
             }
             modelClass.isAssignableFrom(ConnectProviderViewModel::class.java) -> {
@@ -124,7 +126,8 @@ class ViewModelsFactory @Inject constructor(
                     preferenceRepository = preferenceRepository,
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,
-                    apiManager = apiManager
+                    apiManager = apiManager,
+                    locationManager = DeviceLocationManager
                 ) as T
             }
             modelClass.isAssignableFrom(ConnectionsListViewModel::class.java) -> {
@@ -168,7 +171,10 @@ class ViewModelsFactory @Inject constructor(
                 ) as T
             }
             modelClass.isAssignableFrom(PasscodeEditViewModel::class.java) -> {
-                return PasscodeEditViewModel(passcodeTools) as T
+                return PasscodeEditViewModel(
+                    passcodeTools = passcodeTools,
+                    defaultDispatcher = Dispatchers.Default
+                ) as T
             }
             modelClass.isAssignableFrom(AboutViewModel::class.java) -> {
                 return AboutViewModel(appContext) as T

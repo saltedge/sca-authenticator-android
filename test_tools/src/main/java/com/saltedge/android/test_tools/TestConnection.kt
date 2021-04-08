@@ -33,5 +33,7 @@ data class TestConnection(
     override var logoUrl: String = "",
     override var accessToken: String = "",
     override var status: String = "",
-    override var supportEmail: String? = ""
+    override var supportEmail: String? = "",
+    override var consentManagementSupported: Boolean? = true,
+    override var geolocationRequired: Boolean? = true
 ) : ConnectionAbs
