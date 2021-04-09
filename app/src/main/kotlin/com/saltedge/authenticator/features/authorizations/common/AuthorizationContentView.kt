@@ -78,11 +78,16 @@ class AuthorizationContentView : LinearLayout {
         setDescription(description)
     }
 
-    fun setTitle(title: String) {
+    fun setActionClickListener(actionViewClickListener: OnClickListener) {
+        negativeActionView?.setOnClickListener(actionViewClickListener)
+        positiveActionView?.setOnClickListener(actionViewClickListener)
+    }
+
+    private fun setTitle(title: String) {
         titleTextView?.text = title
     }
 
-    fun setDescription(description: String) {
+    private fun setDescription(description: String) {
         description.hasHTMLTags().let { showWebView ->
             descriptionTextView?.setVisible(show = !showWebView)
             descriptionWebView?.setVisible(show = showWebView)
@@ -94,11 +99,6 @@ class AuthorizationContentView : LinearLayout {
                 descriptionTextView?.text = description
             }
         }
-    }
-
-    fun setActionClickListener(actionViewClickListener: OnClickListener) {
-        negativeActionView?.setOnClickListener(actionViewClickListener)
-        positiveActionView?.setOnClickListener(actionViewClickListener)
     }
 
     private fun initBlurringView() {

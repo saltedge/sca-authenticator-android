@@ -152,6 +152,7 @@ dependencies { //TODO After changing dependencies list, review third-party libra
     implementation('com.github.bumptech.glide:glide:4.11.0') {
         exclude group: "com.android.support"
     }
+    implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'com.fivehundredpx:blurringview:1.0.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'

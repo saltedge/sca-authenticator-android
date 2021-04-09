@@ -25,6 +25,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import com.saltedge.authenticator.R
+import timber.log.Timber
 
 /**
  * Show warning dialog with given message
@@ -37,7 +38,7 @@ fun FragmentActivity.showWarningDialog(@StringRes messageId: Int): AlertDialog? 
     return try {
         showWarningDialog(message = getString(messageId))
     } catch (e: Exception) {
-        e.log()
+        Timber.e(e)
         null
     }
 }
@@ -109,7 +110,7 @@ fun FragmentActivity.showResetDataDialog(listener: DialogInterface.OnClickListen
             .setNegativeButton(R.string.actions_cancel, listener)
             .show()
     } catch (e: java.lang.Exception) {
-        e.log()
+        Timber.e(e)
         null
     }
 }
@@ -130,7 +131,7 @@ fun FragmentActivity.showResetDataAndSettingsDialog(listener: DialogInterface.On
             .setNegativeButton(R.string.actions_cancel, listener)
             .show()
     } catch (e: java.lang.Exception) {
-        e.log()
+        Timber.e(e)
         null
     }
 }
@@ -149,7 +150,7 @@ fun FragmentActivity.showLockWarningDialog(message: String?): AlertDialog? {
             .setCancelable(false)
             .show()
     } catch (e: java.lang.Exception) {
-        e.log()
+        Timber.e(e)
         null
     }
 }
@@ -170,7 +171,7 @@ fun FragmentActivity.showSecurityAlertDialog(listener: DialogInterface.OnClickLi
             .setPositiveButton(R.string.actions_contact_support, listener)
             .show()
     } catch (e: java.lang.Exception) {
-        e.log()
+        Timber.e(e)
         null
     }
 }
@@ -193,7 +194,7 @@ fun FragmentActivity.showConfirmRevokeConsentDialog(
             .setNegativeButton(R.string.actions_cancel, null)
             .show()
     } catch (e: java.lang.Exception) {
-        e.log()
+        Timber.e(e)
         null
     }
 }
@@ -219,7 +220,7 @@ private fun FragmentActivity.showDialogWithTitleAndMessage(
             .setPositiveButton(android.R.string.ok, listener)
             .show()
     } catch (e: Exception) {
-        e.log()
+        Timber.e(e)
         null
     }
 }

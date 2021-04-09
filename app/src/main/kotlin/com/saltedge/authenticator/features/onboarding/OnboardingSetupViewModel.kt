@@ -32,11 +32,11 @@ import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.tools.ResId
-import com.saltedge.authenticator.tools.log
 import com.saltedge.authenticator.tools.postUnitEvent
 import com.saltedge.authenticator.widget.passcode.PasscodeInputListener
 import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
 import com.saltedge.authenticator.widget.security.ActivityUnlockType
+import timber.log.Timber
 
 class OnboardingSetupViewModel(
     val appContext: Context,
@@ -142,7 +142,7 @@ class OnboardingSetupViewModel(
         try {
             biometricTools.activateFingerprint()
         } catch (e: Exception) {
-            e.log()
+            Timber.e(e)
         }
     }
 }
