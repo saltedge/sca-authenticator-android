@@ -32,10 +32,10 @@ import timber.log.Timber.DebugTree
  * @return crashlytics
  */
 fun createCrashlyticsKit() {
+    FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG)
     if (BuildConfig.DEBUG) {
         Timber.plant(DebugTree())
     } else {
-        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG)
         Timber.plant(CrashlyticsReportingTree())
     }
 }
@@ -47,7 +47,7 @@ fun createCrashlyticsKit() {
  */
 class CrashlyticsReportingTree : Timber.Tree() {
 
-    override fun log(priority: Int, tag: String?, message: String, throwable : Throwable?) {
+    override fun log(priority: Int, tag: String?, message: String, throwable: Throwable?) {
         val crashlytics = FirebaseCrashlytics.getInstance()
         crashlytics.log(message)
         if (throwable != null) {
