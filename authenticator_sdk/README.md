@@ -49,14 +49,14 @@ In order to use Authenticator SDK it is necessary to install the following tools
     }
 ```  
 
-1. Logger for recording errors
+### Logger for recording errors
 
-  We use [Timber](https://github.com/JakeWharton/timber) as a logger so that we can catch errors in the module. All information that Timber collects for logging, we record in Crashlytics.
+We use [Timber](https://github.com/JakeWharton/timber) as a logger so that we can catch errors in the module. All information that Timber collects for logging, we record in Crashlytics in application.
 
-  In order to use it, you need to:
-    1. Install any Tree instances you want in the `onCreate` of your application class. 
-  Check out the example in [LogTools.kt](https://github.com/saltedge/sca-authenticator-android/blob/master/app/src/main/kotlin/com/saltedge/authenticator/tools/LogTools.kt) to see it in action.
-    2. Call Timber's static methods everywhere throughout your app.
+In order to use it, you need to:
+1. Install any Tree instances you want in the `onCreate` of your application class. 
+Check out the example in [LogTools.kt](https://github.com/saltedge/sca-authenticator-android/blob/master/app/src/main/kotlin/com/saltedge/authenticator/tools/LogTools.kt) to see it in action.
+2. Call Timber's static methods everywhere throughout your app.
 
 ---
 ## Data models  
