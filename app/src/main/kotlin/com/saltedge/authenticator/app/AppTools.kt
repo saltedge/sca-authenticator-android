@@ -27,8 +27,8 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.saltedge.authenticator.sdk.model.GUID
-import timber.log.Timber
 import com.saltedge.authenticator.widget.security.ActivityUnlockType
+import timber.log.Timber
 
 interface AppToolsAbs {
     var lastUnlockType: ActivityUnlockType

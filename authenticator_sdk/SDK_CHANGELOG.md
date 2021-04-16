@@ -4,6 +4,7 @@
 ## 1.3.0
 ### Add
 * Geolocation and authorization type info header
+* Logger for recording errors
 
 ## 1.2.0
 ### Add
