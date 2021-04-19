@@ -20,8 +20,8 @@
  */
 package com.saltedge.authenticator.models
 
-import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
-import com.saltedge.authenticator.sdk.model.connection.toConnectionStatus
+import com.saltedge.authenticator.sdk.api.model.connection.ConnectionStatus
+import com.saltedge.authenticator.sdk.api.model.connection.toConnectionStatus
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert

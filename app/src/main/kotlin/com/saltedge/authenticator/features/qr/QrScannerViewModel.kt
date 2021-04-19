@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.qr
 
-import android.content.Context
 import android.content.pm.PackageManager
 import android.util.SparseArray
 import androidx.core.util.forEach
@@ -37,7 +36,6 @@ import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.postUnitEvent
 
 class QrScannerViewModel(
-    val appContext: Context,
     val connectionsRepository: ConnectionsRepositoryAbs
 ) : ViewModel(), LifecycleObserver {
     val onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()

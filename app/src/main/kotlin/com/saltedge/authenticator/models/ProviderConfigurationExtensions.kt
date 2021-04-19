@@ -20,9 +20,9 @@
  */
 package com.saltedge.authenticator.models
 
-import com.saltedge.authenticator.sdk.model.configuration.ProviderConfigurationData
-import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
-import com.saltedge.authenticator.sdk.model.configuration.isValid
+import com.saltedge.authenticator.sdk.api.model.configuration.ProviderConfigurationData
+import com.saltedge.authenticator.sdk.api.model.connection.ConnectionStatus
+import com.saltedge.authenticator.sdk.api.model.configuration.isValid
 import com.saltedge.authenticator.sdk.tools.createRandomGuid
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone

@@ -22,7 +22,7 @@ package com.saltedge.authenticator.features.authorizations.common
 
 import android.view.View
 import com.saltedge.authenticator.models.Connection
-import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
+import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.TestAppTools
 import net.danlew.android.joda.JodaTimeAndroid
 import org.hamcrest.CoreMatchers.anyOf

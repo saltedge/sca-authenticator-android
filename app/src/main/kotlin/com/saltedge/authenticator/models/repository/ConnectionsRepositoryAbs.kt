@@ -21,8 +21,8 @@
 package com.saltedge.authenticator.models.repository
 
 import com.saltedge.authenticator.models.Connection
-import com.saltedge.authenticator.sdk.model.GUID
-import com.saltedge.authenticator.sdk.model.Token
+import com.saltedge.authenticator.sdk.api.model.GUID
+import com.saltedge.authenticator.sdk.api.model.Token
 
 /**
  * Abstraction of ConnectionsRepository

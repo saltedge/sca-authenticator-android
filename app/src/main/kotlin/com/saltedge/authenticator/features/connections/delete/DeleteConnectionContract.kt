@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.features.connections.delete
 
-import com.saltedge.authenticator.sdk.model.GUID
+import com.saltedge.authenticator.sdk.api.model.GUID
 
 interface DeleteConnectionContract {
 

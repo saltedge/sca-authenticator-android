@@ -79,6 +79,7 @@
     <string name="errors_max_passcode">You reached passcode\nmaximum length</string>
     <string name="errors_app_launch_title">App launch interrupted</string>
     <string name="errors_app_launch_message">Application cannot be launched due to security breach. You may contact our technical support for clarification.</string>
+    <string name="errors_invalid_response">Invalid response</string>
 
     <string name="onboarding_allow_notifications_description">Enable notifications, to receive useful alerts and always be up to speed with your transactions.</string>
     <string name="onboarding_allow_notifications_title">Allow Notifications</string>
@@ -215,4 +216,6 @@
     <string name="revoke_consent">Revoke consent</string>
     <string name="revoke_consent_message">\%s service that is provided to you may be interrupted. Are you sure you want to revoke consent?</string>
     <string name="consent_revoked_for">Consent revoked for \%s</string>
+
+    <string name="scan_qr_code">Scan QR Code</string>
 </resources>
