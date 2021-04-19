@@ -24,12 +24,12 @@ package com.saltedge.authenticator.sdk.model.connection
  * Connection model abstraction
  *
  * @property guid - Alias to RSA keypair in Keystore
- * @property id - Unique id received from Authenticator API
+ * @property id - Unique Connection ID in SCA Service
  * @property name - Provider's name from ProviderData
  * @property code - Provider's code
  * @property logoUrl - Provider's logo url. May be empty
- * @property connectUrl - Base url of Authenticator API
- * @property accessToken - Access token for accessing Authenticator API resources
+ * @property connectUrl - Base url of SCA Service
+ * @property accessToken - Access token for accessing SCA Service resources
  * @property status - Connection Status. ACTIVE or INACTIVE
  * @property supportEmail - Provider's support email
  *

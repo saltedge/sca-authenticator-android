@@ -134,8 +134,8 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
         providerConfigurationUrl: String,
         resultCallback: FetchProviderConfigurationListener
     ) {
-        ProviderDataConnector(RestClient.apiInterface, resultCallback)
-            .fetchProviderData(providerConfigurationUrl)
+        ProviderConfigurationConnector(RestClient.apiInterface, resultCallback)
+            .fetchProviderConfiguration(providerConfigurationUrl)
     }
 
     /**

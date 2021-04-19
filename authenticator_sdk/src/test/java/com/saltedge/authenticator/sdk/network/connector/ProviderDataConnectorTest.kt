@@ -45,7 +45,7 @@ class ProviderDataConnectorTest {
     @Test
     @Throws(Exception::class)
     fun valuesTest() {
-        val connector = ProviderDataConnector(mockApi, null)
+        val connector = ProviderConfigurationConnector(mockApi, null)
 
         Assert.assertNull(connector.resultCallback)
 
@@ -57,8 +57,8 @@ class ProviderDataConnectorTest {
     @Test
     @Throws(Exception::class)
     fun fetchProviderDataTest_allSuccess() {
-        val connector = ProviderDataConnector(mockApi, mockCallback)
-        connector.fetchProviderData(requestUrl)
+        val connector = ProviderConfigurationConnector(mockApi, mockCallback)
+        connector.fetchProviderConfiguration(requestUrl)
 
         verify { mockCall.enqueue(connector) }
 
@@ -101,8 +101,8 @@ class ProviderDataConnectorTest {
     @Test
     @Throws(Exception::class)
     fun fetchProviderDataTest_withError() {
-        val connector = ProviderDataConnector(mockApi, mockCallback)
-        connector.fetchProviderData(requestUrl)
+        val connector = ProviderConfigurationConnector(mockApi, mockCallback)
+        connector.fetchProviderConfiguration(requestUrl)
 
         verify(exactly = 1) {
             mockApi.getProviderConfiguration(requestUrl = requestUrl)

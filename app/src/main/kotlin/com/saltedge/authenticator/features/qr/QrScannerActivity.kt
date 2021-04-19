@@ -48,7 +48,6 @@ import com.saltedge.authenticator.widget.security.LockableActivity
 import com.saltedge.authenticator.widget.security.UnlockAppInputView
 import kotlinx.android.synthetic.main.activity_qr_scanner.*
 import timber.log.Timber
-import java.io.IOException
 import javax.inject.Inject
 
 class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {

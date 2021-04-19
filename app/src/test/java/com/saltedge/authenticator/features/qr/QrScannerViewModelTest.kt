@@ -24,7 +24,6 @@ import android.content.pm.PackageManager
 import android.util.SparseArray
 import com.google.android.gms.vision.barcode.Barcode
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -45,10 +44,7 @@ class QrScannerViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = QrScannerViewModel(
-            appContext = TestAppTools.applicationContext,
-            connectionsRepository = mockConnectionsRepository
-        )
+        viewModel = QrScannerViewModel(connectionsRepository = mockConnectionsRepository)
     }
 
     /**

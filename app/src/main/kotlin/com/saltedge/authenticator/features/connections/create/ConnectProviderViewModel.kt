@@ -47,7 +47,6 @@ import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.sdk.model.Token
 import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
 import com.saltedge.authenticator.sdk.model.configuration.ProviderConfigurationData
-import com.saltedge.authenticator.sdk.model.configuration.isValid
 import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.error.getErrorMessage
@@ -105,28 +104,17 @@ class ConnectProviderViewModel(
         }
     }
 
-    override fun fetchProviderConfigurationDataResult(
-        result: ProviderConfigurationData?,
-        error: ApiErrorData?
-    ) {
-        when {
-            error != null -> {
-                onShowErrorEvent.postValue(ViewModelEvent(error.getErrorMessage(appContext)))
-            }
-            result != null && result.isValid() -> {
-                result.toConnection()?.let {
-                    this.connection = it
-                    performCreateConnectionRequest()
-                } ?: onShowErrorEvent.postValue(
-                    ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider))
-                )
-            }
-            else -> {
-                onShowErrorEvent.postValue(
-                    ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider))
-                )
-            }
-        }
+    override fun onFetchProviderConfigurationSuccess(result: ProviderConfigurationData) {
+        result.toConnection()?.let {
+            this.connection = it
+            performCreateConnectionRequest()
+        } ?: onShowErrorEvent.postValue(
+            ViewModelEvent(appContext.getString(R.string.errors_invalid_response))
+        )
+    }
+
+    override fun onFetchProviderConfigurationFailure(error: ApiErrorData) {
+        onShowErrorEvent.postValue(ViewModelEvent(error.getErrorMessage(appContext)))
     }
 
     override fun onConnectionCreateSuccess(response: CreateConnectionResponseData) {
@@ -245,21 +233,17 @@ class ConnectProviderViewModel(
         initialConnectData?.configurationUrl?.let {
             apiManager.getProviderConfigurationData(it, resultCallback = this)
         } ?: onShowErrorEvent.postValue(
-            ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider))
+            ViewModelEvent(appContext.getString(R.string.errors_invalid_qr))
         )
     }
 
     private fun performCreateConnectionRequest() {
-        if (connection.connectUrl.isNotEmpty()) {
-            apiManager.createConnectionRequest(
-                appContext = appContext,
-                connection = connection,
-                pushToken = preferenceRepository.cloudMessagingToken,
-                connectQueryParam = initialConnectData?.connectQuery,
-                resultCallback = this
-            )
-        } else onShowErrorEvent.postValue(
-            ViewModelEvent(appContext.getString(R.string.errors_unable_connect_provider))
+        apiManager.createConnectionRequest(
+            appContext = appContext,
+            connection = connection,
+            pushToken = preferenceRepository.cloudMessagingToken,
+            connectQueryParam = initialConnectData?.connectQuery,
+            resultCallback = this
         )
     }
 
