@@ -20,9 +20,9 @@
  */
 package com.saltedge.authenticator.sdk.tools.crypt
 
-import com.saltedge.authenticator.sdk.model.ConsentData
-import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
-import com.saltedge.authenticator.sdk.model.EncryptedData
+import com.saltedge.authenticator.sdk.api.model.ConsentData
+import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
+import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import java.security.Key
 import java.security.PrivateKey
 import java.security.PublicKey

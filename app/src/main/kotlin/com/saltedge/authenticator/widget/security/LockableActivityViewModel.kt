@@ -33,8 +33,8 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.connection.isActive
+import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.api.model.connection.isActive
 import com.saltedge.authenticator.sdk.tools.MILLIS_IN_MINUTE
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs

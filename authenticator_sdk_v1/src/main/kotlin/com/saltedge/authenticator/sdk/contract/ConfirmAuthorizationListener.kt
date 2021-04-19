@@ -20,10 +20,10 @@
  */
 package com.saltedge.authenticator.sdk.contract
 
-import com.saltedge.authenticator.sdk.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.model.AuthorizationID
-import com.saltedge.authenticator.sdk.model.ConnectionID
-import com.saltedge.authenticator.sdk.model.response.ConfirmDenyResponseData
+import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.api.model.AuthorizationID
+import com.saltedge.authenticator.sdk.api.model.ConnectionID
+import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
 
 /**
  * Confirm SCA Authorization request result

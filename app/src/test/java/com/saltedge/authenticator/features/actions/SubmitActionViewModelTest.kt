@@ -28,11 +28,11 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_API_RESPONSE
-import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
-import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.model.response.SubmitActionResponseData
+import com.saltedge.authenticator.sdk.api.model.appLink.ActionAppLinkData
+import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
+import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.api.model.response.SubmitActionResponseData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.TestAppTools
 import org.hamcrest.CoreMatchers.equalTo

@@ -24,7 +24,7 @@ import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.sdk.model.GUID
+import com.saltedge.authenticator.sdk.api.model.GUID
 
 class SharedViewModel : ViewModel() {
     val newConnectionNameEntered = MutableLiveData<Bundle>()

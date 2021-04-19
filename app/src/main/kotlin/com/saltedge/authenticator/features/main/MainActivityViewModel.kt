@@ -39,7 +39,7 @@ import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.constants.KEY_ID
 import com.saltedge.authenticator.sdk.constants.KEY_TITLE
-import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
+import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.tools.extractActionAppLinkData
 import com.saltedge.authenticator.sdk.tools.extractConnectAppLinkData
 import com.saltedge.authenticator.tools.ResId

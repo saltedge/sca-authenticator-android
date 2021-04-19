@@ -21,9 +21,9 @@
 package com.saltedge.authenticator.features.authorizations.common
 
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.sdk.model.ConnectionID
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.api.model.ConnectionID
+import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
+import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 
 /**

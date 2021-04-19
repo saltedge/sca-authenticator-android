@@ -22,8 +22,8 @@ package com.saltedge.authenticator.sdk.tools
 
 import android.net.Uri
 import com.saltedge.authenticator.sdk.constants.*
-import com.saltedge.authenticator.sdk.model.ConnectionID
-import com.saltedge.authenticator.sdk.model.Token
+import com.saltedge.authenticator.sdk.api.model.ConnectionID
+import com.saltedge.authenticator.sdk.api.model.Token
 
 fun parseRedirect(
     url: String,

@@ -23,11 +23,11 @@ package com.saltedge.authenticator.sdk.polling
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.TestConnection
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.response.AuthorizationShowResponse
-import com.saltedge.authenticator.sdk.network.ApiInterface
-import com.saltedge.authenticator.sdk.network.RestClient
+import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
+import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.api.model.response.AuthorizationShowResponse
+import com.saltedge.authenticator.sdk.api.ApiInterface
+import com.saltedge.authenticator.sdk.api.RestClient
 import io.mockk.every
 import io.mockk.mockkClass
 import io.mockk.verify

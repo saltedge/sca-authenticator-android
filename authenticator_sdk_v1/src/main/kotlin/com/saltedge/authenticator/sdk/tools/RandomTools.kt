@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.tools
 
-import com.saltedge.authenticator.sdk.model.GUID
+import com.saltedge.authenticator.sdk.api.model.GUID
 import java.util.*
 
 const val MAX_GUID_LENGTH = 64

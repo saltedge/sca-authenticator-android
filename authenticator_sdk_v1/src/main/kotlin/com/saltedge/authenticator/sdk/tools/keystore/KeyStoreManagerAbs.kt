@@ -22,8 +22,8 @@ package com.saltedge.authenticator.sdk.tools.keystore
 
 import android.annotation.SuppressLint
 import android.content.Context
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
+import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
 import java.security.Key
 import java.security.KeyPair
 import javax.crypto.SecretKey

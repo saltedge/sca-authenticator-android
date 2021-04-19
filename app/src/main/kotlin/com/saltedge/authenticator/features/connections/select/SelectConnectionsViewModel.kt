@@ -25,7 +25,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.sdk.model.GUID
+import com.saltedge.authenticator.sdk.api.model.GUID
 
 class SelectConnectionsViewModel : ViewModel(), LifecycleObserver {
 

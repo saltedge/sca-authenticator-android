@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.tools
 
-import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
+import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.junit.Assert.assertTrue

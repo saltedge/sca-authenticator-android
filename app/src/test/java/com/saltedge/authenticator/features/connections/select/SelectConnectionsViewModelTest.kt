@@ -25,7 +25,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.saltedge.authenticator.features.connections.list.convertConnectionsToViewModels
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
+import com.saltedge.authenticator.sdk.api.model.connection.ConnectionStatus
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*
 import org.junit.Before

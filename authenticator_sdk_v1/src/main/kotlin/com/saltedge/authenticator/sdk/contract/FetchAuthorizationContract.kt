@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.contract
 
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
 
 /**
  * Polling service contract

@@ -21,9 +21,9 @@
 package com.saltedge.authenticator.sdk.tools.crypt
 
 import android.util.Base64
-import com.saltedge.authenticator.sdk.model.ConsentData
-import com.saltedge.authenticator.sdk.model.EncryptedData
-import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
+import com.saltedge.authenticator.sdk.api.model.ConsentData
+import com.saltedge.authenticator.sdk.api.model.EncryptedData
+import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.tools.createDefaultGson
 import com.saltedge.authenticator.sdk.tools.decodeFromPemBase64String
 import java.security.Key

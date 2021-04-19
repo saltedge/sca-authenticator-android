@@ -21,8 +21,8 @@
 package com.saltedge.authenticator.sdk.polling
 
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
-import com.saltedge.authenticator.sdk.network.RestClient
-import com.saltedge.authenticator.sdk.network.connector.AuthorizationConnector
+import com.saltedge.authenticator.sdk.api.RestClient
+import com.saltedge.authenticator.sdk.api.connector.AuthorizationConnector
 
 /**
  * Periodically query authorization

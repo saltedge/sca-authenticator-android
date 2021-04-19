@@ -20,7 +20,7 @@
  */
 package com.saltedge.android.test_tools
 
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
+import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
 
 data class TestConnection(
     override var guid: String = "",

@@ -22,7 +22,7 @@ package com.saltedge.authenticator.instrumentationTestTools
 
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepository
-import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
+import com.saltedge.authenticator.sdk.api.model.connection.ConnectionStatus
 
 fun Connection.setGuid(value: String): Connection = apply { guid = value }
 

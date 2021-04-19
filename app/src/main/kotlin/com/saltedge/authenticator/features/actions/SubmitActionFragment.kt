@@ -37,9 +37,9 @@ import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.features.main.newAuthorizationListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
-import com.saltedge.authenticator.sdk.model.GUID
-import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
-import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
+import com.saltedge.authenticator.sdk.api.model.GUID
+import com.saltedge.authenticator.sdk.api.model.appLink.ActionAppLinkData
+import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.tools.navigateTo
 import com.saltedge.authenticator.tools.popBackStack

@@ -22,7 +22,7 @@ package com.saltedge.authenticator.features.consents.common
 
 import android.content.Context
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.sdk.model.ConsentData
+import com.saltedge.authenticator.sdk.api.model.ConsentData
 
 /**
  * Get size of collection and create string like `%count consents`

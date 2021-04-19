@@ -21,8 +21,8 @@
 package com.saltedge.authenticator.sdk.tools
 
 import android.net.Uri
-import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
-import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
+import com.saltedge.authenticator.sdk.api.model.appLink.ActionAppLinkData
+import com.saltedge.authenticator.sdk.api.model.appLink.ConnectAppLinkData
 
 const val KEY_CONFIGURATION_PARAM = "configuration"
 const val KEY_CONNECT_QUERY_PARAM = "connect_query"

@@ -21,10 +21,10 @@
 package com.saltedge.authenticator.features.authorizations.common
 
 import android.view.View
-import com.saltedge.authenticator.sdk.model.AuthorizationID
-import com.saltedge.authenticator.sdk.model.ConnectionID
-import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
+import com.saltedge.authenticator.sdk.api.model.AuthorizationID
+import com.saltedge.authenticator.sdk.api.model.ConnectionID
+import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
+import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.tools.remainedSeconds
 import com.saltedge.authenticator.sdk.tools.remainedTimeDescription
 import com.saltedge.authenticator.sdk.tools.secondsBetweenDates

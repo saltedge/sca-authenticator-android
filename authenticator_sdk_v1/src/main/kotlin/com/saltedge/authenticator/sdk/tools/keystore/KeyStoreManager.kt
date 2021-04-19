@@ -29,8 +29,8 @@ import android.security.KeyPairGeneratorSpec
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import androidx.annotation.RequiresApi
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
+import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.tools.encodeToPemBase64String
 import java.math.BigInteger
 import java.security.*

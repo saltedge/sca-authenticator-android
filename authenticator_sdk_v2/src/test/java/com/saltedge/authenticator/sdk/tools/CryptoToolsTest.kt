@@ -22,11 +22,10 @@ package com.saltedge.authenticator.sdk.tools
 
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.encryptAesCBCString
-import com.saltedge.android.test_tools.encryptWithTestKey
 import com.saltedge.android.test_tools.rsaEncrypt
-import com.saltedge.authenticator.sdk.model.ConsentData
-import com.saltedge.authenticator.sdk.model.ConsentSharedData
-import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
+import com.saltedge.authenticator.sdk.api.model.ConsentData
+import com.saltedge.authenticator.sdk.api.model.ConsentSharedData
+import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.testTools.TestTools
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools.aesDecrypt
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools.aesEncrypt

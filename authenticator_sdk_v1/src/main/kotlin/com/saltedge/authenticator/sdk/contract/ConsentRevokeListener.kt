@@ -20,8 +20,8 @@
  */
 package com.saltedge.authenticator.sdk.contract
 
-import com.saltedge.authenticator.sdk.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.model.response.ConsentRevokeResponseData
+import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.api.model.response.ConsentRevokeResponseData
 
 /**
  * Consent revoke request result
