@@ -47,11 +47,12 @@ internal class ConfirmOrDenyConnector(
         authorizationId: String,
         geolocationHeader: String?,
         authorizationTypeHeader: String?,
-        payloadData: ConfirmDenyRequestData
+        payloadData: ConfirmDenyRequestData,
+        validSeconds: Int
     ) {
         this.connectionId = connectionAndKey.connection.id
         this.authorizationId = authorizationId
-        val requestBody = ConfirmDenyRequest(payloadData)
+        val requestBody = ConfirmDenyRequest(data = payloadData, exp = validSeconds)
         val requestData = createSignedRequestData(
             requestMethod = REQUEST_METHOD_PUT,
             baseUrl = connectionAndKey.connection.connectUrl,

@@ -23,6 +23,7 @@ package com.saltedge.authenticator.sdk.v2.api
 import com.saltedge.authenticator.sdk.v2.api.model.configuration.ProviderConfigurationResponse
 import com.saltedge.authenticator.sdk.v2.api.model.request.ConfirmDenyRequest
 import com.saltedge.authenticator.sdk.v2.api.model.request.CreateConnectionRequest
+import com.saltedge.authenticator.sdk.v2.api.model.request.RevokeConnectionRequest
 import com.saltedge.authenticator.sdk.v2.api.model.response.*
 import retrofit2.Call
 import retrofit2.http.*
@@ -41,10 +42,11 @@ interface ApiInterface {
         @Body body: CreateConnectionRequest
     ): Call<CreateConnectionResponse>
 
-    @DELETE
+    @PUT
     fun revokeConnection(
         @Url requestUrl: String,
-        @HeaderMap headersMap: Map<String, String>
+        @HeaderMap headersMap: Map<String, String>,
+        @Body requestBody: RevokeConnectionRequest
     ): Call<RevokeAccessTokenResponse>
 
     @GET
@@ -65,10 +67,4 @@ interface ApiInterface {
         @HeaderMap headersMap: Map<String, String>,
         @Body requestBody: ConfirmDenyRequest
     ): Call<ConfirmDenyResponse>
-
-    @PUT
-    fun updateAction(
-        @Url requestUrl: String,
-        @HeaderMap headersMap: Map<String, String>
-    ): Call<SubmitActionResponse>
 }

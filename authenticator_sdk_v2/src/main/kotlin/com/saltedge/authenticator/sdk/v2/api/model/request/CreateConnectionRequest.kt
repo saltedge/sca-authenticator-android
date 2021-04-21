@@ -26,10 +26,11 @@ import com.saltedge.authenticator.sdk.v2.config.*
 data class CreateConnectionRequest(@SerializedName(KEY_DATA) val data: CreateConnectionRequestData)
 
 data class CreateConnectionRequestData(
-    @SerializedName(KEY_PUBLIC_KEY) val publicKey: String,
+    @SerializedName(KEY_PROVIDER_ID) val providerId: String,
+    @SerializedName(DH_PUBLIC_KEY) var dhPublicKey: String,
+    @SerializedName(ENC_RSA_PUBLIC_KEY) var encRsaPublicKey: String,
     @SerializedName(KEY_RETURN_URL) val returnUrl: String = ClientConfig.authenticationReturnUrl,
     @SerializedName(KEY_PLATFORM) val platform: String = DEFAULT_PLATFORM_NAME,
-    @SerializedName(KEY_PUSH_TOKEN) val pushToken: String,
-    @SerializedName(KEY_PROVIDER_CODE) val providerCode: String,
+    @SerializedName(KEY_PUSH_TOKEN) val pushToken: String?,
     @SerializedName(KEY_CONNECT_QUERY) val connectQueryParam: String?
 )

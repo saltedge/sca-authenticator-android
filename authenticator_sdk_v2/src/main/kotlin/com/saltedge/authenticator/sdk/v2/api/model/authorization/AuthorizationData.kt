@@ -30,12 +30,37 @@ import java.io.Serializable
  * with annotation for GSON parsing
  */
 data class AuthorizationData(
-    @SerializedName(KEY_ID) var id: String,
-    @SerializedName(KEY_CREATED_AT) var createdAt: DateTime? = null,
-    @SerializedName(KEY_UPDATED_AT) var updatedAt: DateTime? = null,
     @SerializedName(KEY_TITLE) var title: String,
-    @SerializedName(KEY_DESCRIPTION) var description: String,
+    @SerializedName(KEY_DESCRIPTION) var description: DescriptionData,
     @SerializedName(KEY_AUTHORIZATION_CODE) var authorizationCode: String? = null,
-    @SerializedName(KEY_CONNECTION_ID) var connectionId: String,
+    @SerializedName(KEY_CREATED_AT) var createdAt: DateTime? = null,
     @SerializedName(KEY_EXPIRES_AT) var expiresAt: DateTime
 ) : Serializable
+
+data class DescriptionData(
+    val payment: DescriptionPaymentData? = null,
+    val text: DescriptionTextData? = null,
+    val html: DescriptionHTMLData? = null,
+    val extra: ExtraData? = null
+)
+
+data class DescriptionPaymentData(
+    @SerializedName("payee") var payee: String? = null,
+    @SerializedName("amount") var amount: String? = null,
+    @SerializedName("account") var account: String? = null,
+    @SerializedName("payment_date") var paymentDate: DateTime? = null,
+    @SerializedName("reference") var reference: String? = null,
+    @SerializedName("fee") var fee: String? = null,
+    @SerializedName("exchange_rate") var exchangeRate: String? = null
+)
+
+data class DescriptionTextData(@SerializedName("text") var text: String? = null)
+
+data class DescriptionHTMLData(@SerializedName("html") var html: String? = null)
+
+data class ExtraData(
+    @SerializedName("action_date") var actionDate: String? = null,
+    @SerializedName("device") var device: String? = null,
+    @SerializedName("location") var location: String? = null,
+    @SerializedName("ip") var ip: String? = null
+)

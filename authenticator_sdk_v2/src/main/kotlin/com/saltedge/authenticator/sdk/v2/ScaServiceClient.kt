@@ -59,7 +59,6 @@ class ScaServiceClient : ScaServiceClientAbs {
         baseUrl: String,
         publicKey: String,
         pushToken: String,
-        providerCode: String,
         connectQueryParam: String?,
         resultCallback: ConnectionCreateListener
     ) {
@@ -68,7 +67,6 @@ class ScaServiceClient : ScaServiceClientAbs {
                 baseUrl = baseUrl,
                 publicKey = publicKey,
                 pushToken = pushToken,
-                providerCode = providerCode,
                 connectQueryParam = connectQueryParam
             )
     }
@@ -94,7 +92,6 @@ class ScaServiceClient : ScaServiceClientAbs {
                 baseUrl = connection.connectUrl,
                 publicKey = publicKey,
                 pushToken = pushToken,
-                providerCode = connection.code,
                 connectQueryParam = connectQueryParam,
                 resultCallback = resultCallback
             )
@@ -161,6 +158,7 @@ class ScaServiceClient : ScaServiceClientAbs {
         authorizationCode: String?,
         geolocation: String?,
         authorizationType: String?,
+        validSeconds: Int,
         resultCallback: ConfirmAuthorizationListener
     ) {
         ConfirmOrDenyConnector(RestClient.apiInterface, resultCallback)
@@ -170,9 +168,10 @@ class ScaServiceClient : ScaServiceClientAbs {
                 geolocationHeader = geolocation,
                 authorizationTypeHeader = authorizationType,
                 payloadData = ConfirmDenyRequestData(
-                    authorizationCode = authorizationCode,
-                    confirm = true
-                )
+                    confirm = true,
+                    payload = ""
+                ),
+                validSeconds = validSeconds
             )
     }
 
@@ -186,6 +185,7 @@ class ScaServiceClient : ScaServiceClientAbs {
         authorizationCode: String?,
         geolocation: String?,
         authorizationType: String?,
+        validSeconds: Int,
         resultCallback: ConfirmAuthorizationListener
     ) {
         ConfirmOrDenyConnector(RestClient.apiInterface, resultCallback)
@@ -195,9 +195,10 @@ class ScaServiceClient : ScaServiceClientAbs {
                 geolocationHeader = geolocation,
                 authorizationTypeHeader = authorizationType,
                 payloadData = ConfirmDenyRequestData(
-                    authorizationCode = authorizationCode,
-                    confirm = false
-                )
+                    confirm = false,
+                    payload = ""
+                ),
+                validSeconds = validSeconds
             )
     }
 }
@@ -211,7 +212,6 @@ interface ScaServiceClientAbs {
         baseUrl: String,
         publicKey: String,
         pushToken: String,
-        providerCode: String,
         connectQueryParam: String?,
         resultCallback: ConnectionCreateListener
     )
@@ -243,6 +243,7 @@ interface ScaServiceClientAbs {
         authorizationCode: String?,
         geolocation: String?,
         authorizationType: String?,
+        validSeconds: Int,
         resultCallback: ConfirmAuthorizationListener
     )
     fun denyAuthorization(
@@ -251,6 +252,7 @@ interface ScaServiceClientAbs {
         authorizationCode: String?,
         geolocation: String?,
         authorizationType: String?,
+        validSeconds: Int,
         resultCallback: ConfirmAuthorizationListener
     )
 }
