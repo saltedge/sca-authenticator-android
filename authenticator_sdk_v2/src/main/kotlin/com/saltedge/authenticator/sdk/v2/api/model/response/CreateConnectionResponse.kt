@@ -21,17 +21,13 @@
 package com.saltedge.authenticator.sdk.v2.api.model.response
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.config.KEY_ACCESS_TOKEN
-import com.saltedge.authenticator.sdk.v2.config.KEY_CONNECT_URL
-import com.saltedge.authenticator.sdk.v2.config.KEY_DATA
-import com.saltedge.authenticator.sdk.v2.config.KEY_ID
+import com.saltedge.authenticator.sdk.v2.config.*
 
 data class CreateConnectionResponse(
     @SerializedName(KEY_DATA) var data: CreateConnectionResponseData? = null
 )
 
 data class CreateConnectionResponseData(
-    @SerializedName(KEY_CONNECT_URL) var redirectUrl: String? = null,
-    @SerializedName(KEY_ID) var connectionId: String? = null,
-    @SerializedName(KEY_ACCESS_TOKEN) var accessToken: String? = null
+    @SerializedName(KEY_AUTHENTICATION_URL) var authenticationUrl: String,
+    @SerializedName(KEY_CONNECTION_ID) var connectionId: String
 )

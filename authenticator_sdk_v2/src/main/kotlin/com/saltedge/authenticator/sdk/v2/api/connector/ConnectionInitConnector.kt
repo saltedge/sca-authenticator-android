@@ -57,7 +57,6 @@ internal class ConnectionInitConnector(
         baseUrl: String,
         publicKey: String,
         pushToken: String,
-        providerCode: String,
         connectQueryParam: String?
     ) {
         val url = createRequestUrl(baseUrl = baseUrl, routePath = API_CONNECTIONS)
@@ -65,7 +64,6 @@ internal class ConnectionInitConnector(
             data = CreateConnectionRequestData(
                 publicKey = publicKey,
                 pushToken = pushToken,
-                providerCode = providerCode,
                 connectQueryParam = connectQueryParam
             )
         )

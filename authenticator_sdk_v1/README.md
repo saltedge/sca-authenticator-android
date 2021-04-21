@@ -178,7 +178,7 @@ _This step can be skipped if application already knows service configuration._
 ```kotlin
     AuthenticatorApiManager.createConnectionRequest(
             appContext,
-            conenction,
+            connenction,
             firebaseCloudMessagingToken,
             connectQueryParam,
             object : ConnectionCreateListener() {

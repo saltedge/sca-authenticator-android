@@ -21,13 +21,14 @@
 package com.saltedge.authenticator.sdk.v2.api.model.request
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.config.KEY_AUTHORIZATION_CODE
-import com.saltedge.authenticator.sdk.v2.config.KEY_CONFIRM
-import com.saltedge.authenticator.sdk.v2.config.KEY_DATA
+import com.saltedge.authenticator.sdk.v2.config.*
 
-data class ConfirmDenyRequest(@SerializedName(KEY_DATA) val data: ConfirmDenyRequestData)
+data class ConfirmDenyRequest(
+    @SerializedName(KEY_DATA) val data: ConfirmDenyRequestData,
+    @SerializedName(KEY_EXP) val exp: Int
+)
 
 data class ConfirmDenyRequestData(
     @SerializedName(KEY_CONFIRM) val confirm: Boolean,
-    @SerializedName(KEY_AUTHORIZATION_CODE) val authorizationCode: String?
+    @SerializedName(KEY_PAYLOAD) val payload: String
 )
