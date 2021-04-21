@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2">
+    <plurals name="joda_time_android_abbrev_in_num_days">
+        <item msgid="2178576254385739855" quantity="one">"tomorrow"</item>
+        <item msgid="2973062968038355991" quantity="other">"in <ns1:g id="COUNT">%d</ns1:g> days"</item>
+    </plurals>
+    <plurals name="joda_time_android_abbrev_in_num_hours">
+        <item msgid="3274708118124045246" quantity="one">"in 1 hour"</item>
+        <item msgid="3705373766798013406" quantity="other">"in <ns1:g id="COUNT">%d</ns1:g> hours"</item>
+    </plurals>
+    <plurals name="joda_time_android_abbrev_in_num_minutes">
+        <item msgid="562786149928284878" quantity="one">"in 1 min"</item>
+        <item msgid="4216113292706568726" quantity="other">"in <ns1:g id="COUNT">%d</ns1:g> mins"</item>
+    </plurals>
+    <plurals name="joda_time_android_abbrev_in_num_seconds">
+        <item msgid="5842225370795066299" quantity="one">"in 1 sec"</item>
+        <item msgid="5495880108825805108" quantity="other">"in <ns1:g id="COUNT">%d</ns1:g> secs"</item>
+    </plurals>
+    <plurals name="joda_time_android_abbrev_num_days_ago">
+        <item msgid="8463161711492680309" quantity="one">"yesterday"</item>
+        <item msgid="3453342639616481191" quantity="other">"<ns1:g id="COUNT">%d</ns1:g> days ago"</item>
+    </plurals>
+    <plurals name="joda_time_android_abbrev_num_hours_ago">
+        <item msgid="4796212039724722116" quantity="one">"1 hour ago"</item>
+        <item msgid="6889970745748538901" quantity="other">"<ns1:g id="COUNT">%d</ns1:g> hours ago"</item>
+    </plurals>
+    <plurals name="joda_time_android_abbrev_num_minutes_ago">
+        <item msgid="6361490147113871545" quantity="one">"1 min ago"</item>
+        <item msgid="851164968597150710" quantity="other">"<ns1:g id="COUNT">%d</ns1:g> mins ago"</item>
+    </plurals>
+    <plurals name="joda_time_android_abbrev_num_seconds_ago">
+        <item msgid="1849036840200069118" quantity="one">"1 sec ago"</item>
+        <item msgid="3699169366650930415" quantity="other">"<ns1:g id="COUNT">%d</ns1:g> secs ago"</item>
+    </plurals>
+    <plurals name="joda_time_android_duration_hours">
+        <item msgid="8917467491248809972" quantity="one">"1 hour"</item>
+        <item msgid="3863962854246773930" quantity="other">"<ns1:g id="COUNT">%d</ns1:g> hours"</item>
+    </plurals>
+    <plurals name="joda_time_android_duration_minutes">
+        <item msgid="4915414002546085617" quantity="one">"1 minute"</item>
+        <item msgid="3165187169224908775" quantity="other">"<ns1:g id="COUNT">%d</ns1:g> minutes"</item>
+    </plurals>
+    <plurals name="joda_time_android_duration_seconds">
+        <item msgid="6962015528372969481" quantity="one">"1 second"</item>
+        <item msgid="1886107766577166786" quantity="other">"<ns1:g id="COUNT">%d</ns1:g> seconds"</item>
+    </plurals>
+    <plurals name="joda_time_android_in_num_days">
+        <item msgid="5413088743009839518" quantity="one">"tomorrow"</item>
+        <item msgid="5109449375100953247" quantity="other">"in <ns1:g id="COUNT">%d</ns1:g> days"</item>
+    </plurals>
+    <plurals name="joda_time_android_in_num_hours">
+        <item msgid="7164353342477769999" quantity="one">"in 1 hour"</item>
+        <item msgid="547290677353727389" quantity="other">"in <ns1:g id="COUNT">%d</ns1:g> hours"</item>
+    </plurals>
+    <plurals name="joda_time_android_in_num_minutes">
+        <item msgid="8793095251325200395" quantity="one">"in 1 minute"</item>
+        <item msgid="3330713936399448749" quantity="other">"in <ns1:g id="COUNT">%d</ns1:g> minutes"</item>
+    </plurals>
+    <plurals name="joda_time_android_in_num_seconds">
+        <item msgid="2729745560954905102" quantity="one">"in 1 second"</item>
+        <item msgid="1241926116443974687" quantity="other">"in <ns1:g id="COUNT">%d</ns1:g> seconds"</item>
+    </plurals>
+    <plurals name="joda_time_android_num_days_ago">
+        <item msgid="861358534398115820" quantity="one">"yesterday"</item>
+        <item msgid="2479586466153314633" quantity="other">"<ns1:g id="COUNT">%d</ns1:g> days ago"</item>
+    </plurals>
+    <plurals name="joda_time_android_num_hours_ago">
+        <item msgid="9150797944610821849" quantity="one">"1 hour ago"</item>
+        <item msgid="2467273239587587569" quantity="other">"<ns1:g id="COUNT">%d</ns1:g> hours ago"</item>
+    </plurals>
+    <plurals name="joda_time_android_num_minutes_ago">
+        <item msgid="3306787433088810191" quantity="one">"1 minute ago"</item>
+        <item msgid="2176942008915455116" quantity="other">"<ns1:g id="COUNT">%d</ns1:g> minutes ago"</item>
+    </plurals>
+    <plurals name="joda_time_android_num_seconds_ago">
+        <item msgid="4869870056547896011" quantity="one">"1 second ago"</item>
+        <item msgid="3903706804349556379" quantity="other">"<ns1:g id="COUNT">%d</ns1:g> seconds ago"</item>
+    </plurals>
+    <string msgid="5976598919945601918" name="abc_action_bar_home_description">"Navigate home"</string>
+    <string msgid="8388173803310557296" name="abc_action_bar_up_description">"Navigate up"</string>
+    <string msgid="3937310113216875497" name="abc_action_menu_overflow_description">"More options"</string>
+    <string msgid="4692188335987374352" name="abc_action_mode_done">"Done"</string>
+    <string msgid="1189761859438369441" name="abc_activity_chooser_view_see_all">"See all"</string>
+    <string msgid="2165779757652331008" name="abc_activitychooserview_choose_application">"Choose an app"</string>
+    <string msgid="4215997306490295099" name="abc_capital_off">"OFF"</string>
+    <string msgid="884982626291842264" name="abc_capital_on">"ON"</string>
+    <string msgid="8833365367933412986" name="abc_menu_alt_shortcut_label">"Alt+"</string>
+    <string msgid="2223301931652355242" name="abc_menu_ctrl_shortcut_label">"Ctrl+"</string>
+    <string msgid="838001238306846836" name="abc_menu_delete_shortcut_label">"delete"</string>
+    <string msgid="7986526966204849475" name="abc_menu_enter_shortcut_label">"enter"</string>
+    <string msgid="375214403600139847" name="abc_menu_function_shortcut_label">"Function+"</string>
+    <string msgid="4192209724446364286" name="abc_menu_meta_shortcut_label">"Meta+"</string>
+    <string msgid="4741552369836443843" name="abc_menu_shift_shortcut_label">"Shift+"</string>
+    <string msgid="5473865519181928982" name="abc_menu_space_shortcut_label">"space"</string>
+    <string msgid="6180552449598693998" name="abc_menu_sym_shortcut_label">"Sym+"</string>
+    <string msgid="5520303668377388990" name="abc_prepend_shortcut_label">"Menu+"</string>
+    <string msgid="7208076849092622260" name="abc_search_hint">"Search…"</string>
+    <string msgid="3741173234950517107" name="abc_searchview_description_clear">"Clear query"</string>
+    <string msgid="693312494995508443" name="abc_searchview_description_query">"Search query"</string>
+    <string msgid="3417662926640357176" name="abc_searchview_description_search">"Search"</string>
+    <string msgid="1486535517437947103" name="abc_searchview_description_submit">"Submit query"</string>
+    <string msgid="2293578557972875415" name="abc_searchview_description_voice">"Voice search"</string>
+    <string msgid="8875138169939072951" name="abc_shareactionprovider_share_with">"Share with"</string>
+    <string msgid="9055268688411532828" name="abc_shareactionprovider_share_with_application">"Share with <ns1:g id="APPLICATION_NAME">%s</ns1:g>"</string>
+    <string msgid="1656852541809559762" name="abc_toolbar_collapse_description">"Collapse"</string>
+    <string name="joda_time_android_date_time">%1$s, %2$s</string>
+    <string msgid="9093949757757445117" name="joda_time_android_preposition_for_date">"on <ns1:g id="DATE">%s</ns1:g>"</string>
+    <string msgid="5506831244263083793" name="joda_time_android_preposition_for_time">"at <ns1:g id="TIME">%s</ns1:g>"</string>
+    <string msgid="1818557177829411417" name="joda_time_android_relative_time">"<ns1:g id="DATE">%1$s</ns1:g>, <ns1:g id="TIME">%2$s</ns1:g>"</string>
+    <string msgid="6264217191555673260" name="search_menu_title">"Search"</string>
+    <string msgid="6277540029070332960" name="status_bar_notification_info_overflow">"999+"</string>
+</resources>
