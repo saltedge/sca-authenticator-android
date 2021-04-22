@@ -57,7 +57,9 @@ class ScaServiceClient : ScaServiceClientAbs {
      */
     override fun createConnectionRequest(
         baseUrl: String,
-        publicKey: String,
+        dhPublicKey: String,
+        encRsaPublicKey: String,
+        providerId: String,
         pushToken: String,
         connectQueryParam: String?,
         resultCallback: ConnectionCreateListener
@@ -65,7 +67,9 @@ class ScaServiceClient : ScaServiceClientAbs {
         ConnectionInitConnector(RestClient.apiInterface, resultCallback)
             .postConnectionData(
                 baseUrl = baseUrl,
-                publicKey = publicKey,
+                dhPublicKey = dhPublicKey,
+                encRsaPublicKey = encRsaPublicKey,
+                providerId = providerId,
                 pushToken = pushToken,
                 connectQueryParam = connectQueryParam
             )
@@ -78,11 +82,14 @@ class ScaServiceClient : ScaServiceClientAbs {
     override fun createConnectionRequest(
         appContext: Context,
         connection: ConnectionAbs,
+        providerId: String,
         pushToken: String,
         connectQueryParam: String?,
         resultCallback: ConnectionCreateListener
     ) {
         val publicKey = KeyStoreManager.createRsaPublicKeyAsString(appContext, connection.guid)
+        //TODO: Generate DH keypair
+
         if (publicKey == null) {
             resultCallback.onConnectionCreateFailure(
                 ApiErrorData(errorClassName = ERROR_CLASS_API_REQUEST, errorMessage = "Secure material is unavailable")
@@ -90,7 +97,9 @@ class ScaServiceClient : ScaServiceClientAbs {
         } else {
             createConnectionRequest(
                 baseUrl = connection.connectUrl,
-                publicKey = publicKey,
+                dhPublicKey = dhPublicKey,
+                encRsaPublicKey = encRsaPublicKey,
+                providerId = providerId,
                 pushToken = pushToken,
                 connectQueryParam = connectQueryParam,
                 resultCallback = resultCallback
@@ -104,10 +113,11 @@ class ScaServiceClient : ScaServiceClientAbs {
      */
     override fun revokeConnections(
         connectionsAndKeys: List<ConnectionAndKey>,
+        validSeconds: Int,
         resultCallback: ConnectionsRevokeListener?
     ) {
         ConnectionsRevokeConnector(RestClient.apiInterface, resultCallback)
-            .revokeTokensFor(connectionsAndKeys)
+            .revokeTokensFor(connectionsAndKeys, validSeconds)
     }
 
     /**
@@ -159,6 +169,7 @@ class ScaServiceClient : ScaServiceClientAbs {
         geolocation: String?,
         authorizationType: String?,
         validSeconds: Int,
+        payload: String,
         resultCallback: ConfirmAuthorizationListener
     ) {
         ConfirmOrDenyConnector(RestClient.apiInterface, resultCallback)
@@ -169,7 +180,7 @@ class ScaServiceClient : ScaServiceClientAbs {
                 authorizationTypeHeader = authorizationType,
                 payloadData = ConfirmDenyRequestData(
                     confirm = true,
-                    payload = ""
+                    payload = payload
                 ),
                 validSeconds = validSeconds
             )
@@ -186,6 +197,7 @@ class ScaServiceClient : ScaServiceClientAbs {
         geolocation: String?,
         authorizationType: String?,
         validSeconds: Int,
+        payload: String,
         resultCallback: ConfirmAuthorizationListener
     ) {
         ConfirmOrDenyConnector(RestClient.apiInterface, resultCallback)
@@ -196,7 +208,7 @@ class ScaServiceClient : ScaServiceClientAbs {
                 authorizationTypeHeader = authorizationType,
                 payloadData = ConfirmDenyRequestData(
                     confirm = false,
-                    payload = ""
+                    payload = payload
                 ),
                 validSeconds = validSeconds
             )
@@ -210,7 +222,9 @@ interface ScaServiceClientAbs {
     )
     fun createConnectionRequest(
         baseUrl: String,
-        publicKey: String,
+        dhPublicKey: String,
+        encRsaPublicKey: String,
+        providerId: String,
         pushToken: String,
         connectQueryParam: String?,
         resultCallback: ConnectionCreateListener
@@ -218,12 +232,16 @@ interface ScaServiceClientAbs {
     fun createConnectionRequest(
         appContext: Context,
         connection: ConnectionAbs,
+//        dhPublicKey: String,
+//        encRsaPublicKey: String,
+        providerId: String,
         pushToken: String,
         connectQueryParam: String?,
         resultCallback: ConnectionCreateListener
     )
     fun revokeConnections(
         connectionsAndKeys: List<ConnectionAndKey>,
+        validSeconds: Int,
         resultCallback: ConnectionsRevokeListener?
     )
     fun getAuthorizations(
@@ -244,6 +262,7 @@ interface ScaServiceClientAbs {
         geolocation: String?,
         authorizationType: String?,
         validSeconds: Int,
+        payload: String,
         resultCallback: ConfirmAuthorizationListener
     )
     fun denyAuthorization(
@@ -253,6 +272,7 @@ interface ScaServiceClientAbs {
         geolocation: String?,
         authorizationType: String?,
         validSeconds: Int,
+        payload: String,
         resultCallback: ConfirmAuthorizationListener
     )
 }

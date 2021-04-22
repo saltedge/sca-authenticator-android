@@ -25,11 +25,11 @@ import com.saltedge.authenticator.sdk.v2.config.REQUEST_METHOD_DELETE
 import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionsRevokeListener
 import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.v2.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.v2.api.model.Token
 import com.saltedge.authenticator.sdk.v2.api.model.request.SignedRequest
 import com.saltedge.authenticator.sdk.v2.api.model.response.RevokeAccessTokenResponse
 import com.saltedge.authenticator.sdk.v2.api.ApiInterface
 import com.saltedge.authenticator.sdk.v2.api.createSignedRequestData
+import com.saltedge.authenticator.sdk.v2.api.model.request.RevokeConnectionRequest
 import retrofit2.Call
 
 /**
@@ -43,7 +43,6 @@ internal class ConnectionsRevokeConnector(
     var resultCallback: ConnectionsRevokeListener? = null
 ) : RequestQueueAbs<RevokeAccessTokenResponse>() {
 
-    private var result = mutableListOf<Token>()
     private var errorResult: ApiErrorData? = null
 
     /**
@@ -52,7 +51,7 @@ internal class ConnectionsRevokeConnector(
      *
      * @param connections - list of ConnectionAndKey (alias to Pairs of Connection and related PrivateKey)
      */
-    fun revokeTokensFor(connections: List<ConnectionAndKey>) {
+    fun revokeTokensFor(connections: List<ConnectionAndKey>, validSeconds: Int) {
         if (super.queueIsEmpty()) {
             val requestData: List<SignedRequest> = connections.map { (connection, key) ->
                 createSignedRequestData<Nothing>(
@@ -63,11 +62,10 @@ internal class ConnectionsRevokeConnector(
                     signPrivateKey = key
                 )
             }
-            this.result = ArrayList()
             super.setQueueSize(requestData.size)
 
             if (super.queueIsEmpty()) onQueueFinished()
-            else requestData.forEach { sendRequest(it) }
+            else requestData.forEach { sendRequest(requestData = it, validSeconds = validSeconds) }
         }
     }
 
@@ -75,7 +73,7 @@ internal class ConnectionsRevokeConnector(
      * Pass result to resultCallback.onConnectionsRevokeResult(...)
      */
     public override fun onQueueFinished() {
-        resultCallback?.onConnectionsRevokeResult(result, errorResult)
+        resultCallback?.onConnectionsRevokeResult(errorResult)
     }
 
     /**
@@ -88,9 +86,6 @@ internal class ConnectionsRevokeConnector(
         call: Call<RevokeAccessTokenResponse>,
         response: RevokeAccessTokenResponse
     ) {
-        response.data?.accessToken?.let {
-            if ((response.data?.success == true)) result.add(it)
-        }
         super.onResponseReceived()
     }
 
@@ -105,10 +100,14 @@ internal class ConnectionsRevokeConnector(
         super.onResponseReceived()
     }
 
-    private fun sendRequest(requestData: SignedRequest) {
+    private fun sendRequest(requestData: SignedRequest, validSeconds: Int) {
+        val revokeConnectionRequest = RevokeConnectionRequest(
+            exp = validSeconds
+        )
         apiInterface.revokeConnection(
             requestUrl = requestData.requestUrl,
-            headersMap = requestData.headersMap
+            headersMap = requestData.headersMap,
+            requestBody = revokeConnectionRequest
         ).enqueue(this)
     }
 }
