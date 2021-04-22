@@ -24,15 +24,11 @@ package com.saltedge.authenticator.sdk.v2.api.model.response
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.sdk.v2.config.KEY_DATA
 import com.saltedge.authenticator.sdk.v2.config.KEY_ID
-import com.saltedge.authenticator.sdk.v2.config.KEY_SUCCESS
+import com.saltedge.authenticator.sdk.v2.config.KEY_STATUS
 
 data class ConfirmDenyResponse(@SerializedName(KEY_DATA) var data: ConfirmDenyResponseData? = null)
 
 data class ConfirmDenyResponseData(
-    @SerializedName(KEY_SUCCESS) var success: Boolean? = null,
-    @SerializedName(KEY_ID) var authorizationID: String? = null
+    @SerializedName(KEY_ID) var authorizationID: String,
+    @SerializedName(KEY_STATUS) var status: String
 )
-
-fun ConfirmDenyResponseData.isValid(): Boolean {
-    return this.success != null && this.authorizationID?.isNotEmpty() == true
-}

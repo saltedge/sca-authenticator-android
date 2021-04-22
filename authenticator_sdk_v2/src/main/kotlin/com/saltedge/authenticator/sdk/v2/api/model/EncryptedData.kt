@@ -34,10 +34,10 @@ import java.io.Serializable
  * - initialization vector (IV), encrypted with asymmetric RSA key attached to specific connection (connectionId)
  */
 data class EncryptedData(
-    @SerializedName(KEY_ID) var id: String? = null,
-    @SerializedName(KEY_CONNECTION_ID) var connectionId: String? = null,
-    @SerializedName(KEY_DATA) var data: String? = null,
-    @SerializedName(KEY_ALGORITHM) var algorithm: String? = null,
-    @SerializedName(KEY_IV) var iv: String? = null,
-    @SerializedName(KEY_KEY) var key: String? = null
+    @SerializedName(KEY_ID) var id: String,
+    @SerializedName(KEY_CONNECTION_ID) var connectionId: String,
+    @SerializedName(KEY_STATUS) var status: String,
+    @SerializedName(KEY_IV) var iv: String,
+    @SerializedName(KEY_KEY) var key: String,
+    @SerializedName(KEY_DATA) var data: String
 ) : Serializable

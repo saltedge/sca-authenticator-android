@@ -24,18 +24,18 @@ import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.sdk.v2.config.*
 import java.io.Serializable
 
+data class ProviderConfigurationResponse(@SerializedName(KEY_DATA) var data: ProviderConfigurationData)
+
 /**
  * SCA Service configuration
  */
 data class ProviderConfigurationData(
-    @SerializedName(KEY_CONNECT_URL) var connectUrl: String,
-    @SerializedName(KEY_CODE) var code: String,
+    @SerializedName(KEY_SCA_SERVICE_URL) var scaServiceUrl: String,
+    @SerializedName(KEY_API_VERSION) var apiVersion: String,
+    @SerializedName(KEY_PROVIDER_ID) var providerId: String,
     @SerializedName(KEY_NAME) var name: String,
-    @SerializedName(KEY_LOGO_URL) var logoUrl: String?,
-    @SerializedName(KEY_VERSION) var version: String,
-    @SerializedName(KEY_SUPPORT_EMAIL) var supportEmail: String?,
-    @SerializedName(KEY_CONSENT_MANAGEMENT) var consentManagementSupported: Boolean? = false,
-    @SerializedName(KEY_GEOLOCATION_REQUIRED) var geolocationRequired: Boolean?
+    @SerializedName(KEY_LOGO_URL) var logoUrl: String,
+    @SerializedName(KEY_SUPPORT_EMAIL) var supportEmail: String,
+    @SerializedName(DH_PUBLIC_KEY) var dhPublicKey: String,
+    @SerializedName(KEY_GEOLOCATION_REQUIRED) var geolocationRequired: Boolean
 ) : Serializable
-
-data class ProviderConfigurationResponse(@SerializedName(KEY_DATA) var data: ProviderConfigurationData)

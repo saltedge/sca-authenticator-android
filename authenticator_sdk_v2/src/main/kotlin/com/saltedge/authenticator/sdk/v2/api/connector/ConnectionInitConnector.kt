@@ -55,17 +55,19 @@ internal class ConnectionInitConnector(
      */
     fun postConnectionData(
         baseUrl: String,
-        publicKey: String,
+        dhPublicKey: String,
+        encRsaPublicKey: String,
+        providerId: String,
         pushToken: String,
-        providerCode: String,
         connectQueryParam: String?
     ) {
         val url = createRequestUrl(baseUrl = baseUrl, routePath = API_CONNECTIONS)
         val requestData = CreateConnectionRequest(
             data = CreateConnectionRequestData(
-                publicKey = publicKey,
+                dhPublicKey = dhPublicKey,
+                encRsaPublicKey = encRsaPublicKey,
+                providerId = providerId,
                 pushToken = pushToken,
-                providerCode = providerCode,
                 connectQueryParam = connectQueryParam
             )
         )

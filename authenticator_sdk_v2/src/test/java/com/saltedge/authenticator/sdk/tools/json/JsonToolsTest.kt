@@ -34,11 +34,9 @@ class JsonToolsTest {
     fun createDefaultGsonTest() {
         val gson = createDefaultGson()
         val data = AuthorizationData(
-            id = "",
             title = "",
             description = "",
             authorizationCode = "Qwerty1+==",
-            connectionId = "",
             expiresAt = DateTime(0).withZone(DateTimeZone.UTC)
         )
         assertTrue(gson.toJson(data).contains("Qwerty1+=="))

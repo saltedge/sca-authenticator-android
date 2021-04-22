@@ -18,26 +18,13 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api.model.configuration
+package com.saltedge.authenticator.sdk.v2.api.model.request
 
-import com.saltedge.authenticator.sdk.v2.config.API_VERSION
+import com.google.gson.annotations.SerializedName
+import com.saltedge.authenticator.sdk.v2.config.KEY_DATA
+import com.saltedge.authenticator.sdk.v2.config.KEY_EXP
 
-/**
- * Checks validity of Provider model
- *
- * @receiver Encrypted authorization
- * @return boolean. true if `name`, `code` and `connectUrl` fields are present
- * and version code equal to API_VERSION constant
- */
-fun ProviderConfigurationData.isValid(): Boolean {
-    return try {
-        name.isNotEmpty() &&
-            code.isNotEmpty() &&
-            connectUrl.isNotEmpty() &&
-            !connectUrl.contains("/localhost") &&
-            version == API_VERSION
-    } catch (e: Exception) {
-        e.printStackTrace()
-        false
-    }
-}
+data class RevokeConnectionRequest(
+    @SerializedName(KEY_DATA) val data: Any = Any(),
+    @SerializedName(KEY_EXP) val exp: Int
+)
