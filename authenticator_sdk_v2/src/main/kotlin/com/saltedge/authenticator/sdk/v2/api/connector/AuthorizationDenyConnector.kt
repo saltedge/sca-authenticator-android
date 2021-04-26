@@ -20,59 +20,33 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.connector
 
-import com.saltedge.authenticator.sdk.v2.api.ApiResponseInterceptor
 import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationDenyListener
-import com.saltedge.authenticator.sdk.v2.api.model.AuthorizationID
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponse
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationRequest
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationRequestData
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
-import com.saltedge.authenticator.sdk.v2.api.retrofit.addSignatureHeader
-import com.saltedge.authenticator.sdk.v2.api.retrofit.authorizationsConfirmPath
-import com.saltedge.authenticator.sdk.v2.api.retrofit.createAccessTokenHeader
 import retrofit2.Call
 
 internal class AuthorizationDenyConnector(
     private val apiInterface: ApiInterface,
-    var resultCallback: AuthorizationDenyListener?
-) : ApiResponseInterceptor<ConfirmDenyResponse>() {
+    authorizationId: String,
+    var callback: AuthorizationDenyListener?
+) : AuthorizationUpdateBaseConnector(authorizationId = authorizationId, isConfirmRequest = false) {
 
-    private var authorizationId: AuthorizationID = ""
-
-    fun denyAuthorization(
-        connectionAndKey: RichConnection,
-        authorizationId: String,
-        encryptedPayload: String,
-    ) {
-        this.authorizationId = authorizationId
-        val request = UpdateAuthorizationRequest(data = UpdateAuthorizationRequestData(encryptedPayload))
-        val headers = createAccessTokenHeader(connectionAndKey.connection.accessToken)
-            .addSignatureHeader(
-                connectionAndKey.rsaPrivate,
-                request.data,
-                request.requestExpirationTime
-            )
+    fun denyAuthorization(richConnection: RichConnection, encryptedPayload: String) {
+        val request = super.body(encryptedPayload)
         apiInterface.denyAuthorization(
-            requestUrl = connectionAndKey.connection.connectUrl.authorizationsConfirmPath(authorizationId),
-            headersMap = headers,
+            requestUrl = super.url(richConnection),
+            headersMap = super.headers(richConnection, request),
             requestBody = request
         ).enqueue(this)
     }
 
-    override fun onSuccessResponse(
-        call: Call<ConfirmDenyResponse>,
-        response: ConfirmDenyResponse
-    ) {
-        val data = response.data
-        resultCallback?.onAuthorizationDenySuccess(result = data)
+    override fun onSuccessResponse(call: Call<ConfirmDenyResponse>, response: ConfirmDenyResponse) {
+        callback?.onAuthorizationDenySuccess(result = response.data)
     }
 
     override fun onFailureResponse(call: Call<ConfirmDenyResponse>, error: ApiErrorData) {
-        resultCallback?.onAuthorizationDenyFailure(
-            error = error,
-            authorizationID = this.authorizationId
-        )
+        callback?.onAuthorizationDenyFailure(error = error, authorizationID = authorizationId)
     }
 }
