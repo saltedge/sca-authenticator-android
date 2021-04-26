@@ -18,9 +18,15 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api.model.response
+package com.saltedge.authenticator.sdk.v2.api.contract
 
-import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.config.KEY_DATA
+import com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationData
+import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
 
-data class RevokeAccessTokenResponse(@SerializedName(KEY_DATA) var data: Any = Any())
+/**
+ * Provider configuration request result
+ */
+interface FetchConfigurationListener {
+    fun onFetchProviderConfigurationSuccess(result: ConfigurationData)
+    fun onFetchProviderConfigurationFailure(error: ApiErrorData)
+}

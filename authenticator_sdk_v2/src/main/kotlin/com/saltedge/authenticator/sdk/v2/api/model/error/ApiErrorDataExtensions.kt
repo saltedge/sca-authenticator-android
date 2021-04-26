@@ -22,7 +22,7 @@ package com.saltedge.authenticator.sdk.v2.api.model.error
 
 import android.content.Context
 import com.saltedge.authenticator.sdk.v2.R
-import com.saltedge.authenticator.sdk.v2.config.*
+import com.saltedge.authenticator.sdk.v2.api.*
 import com.saltedge.authenticator.sdk.v2.tools.isNetworkException
 import com.saltedge.authenticator.sdk.v2.tools.isSSLException
 

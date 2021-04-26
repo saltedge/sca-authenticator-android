@@ -30,21 +30,20 @@ import android.security.KeyPairGeneratorSpec
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import androidx.annotation.RequiresApi
-import com.saltedge.authenticator.sdk.v2.api.model.connection.ConnectionAbs
-import com.saltedge.authenticator.sdk.v2.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.v2.tools.encodeToPemBase64String
+import com.saltedge.authenticator.sdk.v2.api.model.connection.ConnectionV2Abs
+import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
 import java.math.BigInteger
 import java.security.*
 import java.util.*
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
+import javax.crypto.interfaces.DHPublicKey
+import javax.crypto.spec.DHParameterSpec
 import javax.security.auth.x500.X500Principal
 
-private const val STORE_TYPE = "AndroidKeyStore"
-private const val KEY_ALGORITHM_RSA = "RSA"
-private const val KEY_SIZE = 2048
+private const val ANDROID_KEYSTORE = "AndroidKeyStore"
 
-object KeyStoreManager : KeyStoreManagerAbs {
+object KeyManager : KeyManagerAbs {
 
     private var androidKeyStore: KeyStore? = null
 
@@ -58,21 +57,24 @@ object KeyStoreManager : KeyStoreManagerAbs {
      * @param alias - the alias name
      * @return KeyPair object
      */
-    override fun createOrReplaceRsaKeyPair(context: Context?, alias: String): KeyPair? {
-        val store = androidKeyStore ?: return null
-        if (store.containsAlias(alias)) deleteKeyPair(alias = alias)
-        return createNewRsaKeyPair(context = context, alias = alias)
+    override fun createOrReplaceRsaKeyPair(context: Context, alias: String): KeyPair? {
+        return androidKeyStore?.let {
+            deleteKeyPairIfExist(alias = alias)
+            return generateRsaKeyPair(context = context, alias = alias)
+        }
     }
 
     /**
-     * Creates new or replace existing RSA key pairs with new one by the given alias,
-     * convert public key from asymmetric key pair to pem string
+     * Creates new or replace existing DH key pairs with new one by the given alias
      *
      * @param alias - the alias name
-     * @return public key as String
+     * @return KeyPair object
      */
-    override fun createRsaPublicKeyAsString(context: Context?, alias: String): String? {
-        return createOrReplaceRsaKeyPair(context = context, alias = alias)?.publicKeyToPemEncodedString()
+    override fun createOrReplaceDhKeyPair(context: Context, alias: String, outDhPublicKey: PublicKey): KeyPair? {
+        return androidKeyStore?.let {
+            deleteKeyPairIfExist(alias = alias)
+            return generateDhKeyPair(context = context, alias = alias, outDhPublicKey = outDhPublicKey)
+        }
     }
 
     /**
@@ -102,8 +104,8 @@ object KeyStoreManager : KeyStoreManagerAbs {
      *
      * @return SecretKey object
      */
-    override fun getSecretKey(alias: String?): Key? {
-        return androidKeyStore?.getKey(alias ?: return null, null)
+    override fun getSecretKey(alias: String): Key? {
+        return androidKeyStore?.getKey(alias, null)
     }
 
     /**
@@ -112,12 +114,10 @@ object KeyStoreManager : KeyStoreManagerAbs {
      * @param alias - the alias name
      * @return KeyPair object
      */
-    override fun getKeyPair(alias: String?): KeyPair? {
-        val keyAlias = alias ?: return null
+    override fun getKeyPair(alias: String): KeyPair? {
         val store = androidKeyStore ?: return null
-        return (store.getKey(keyAlias, null) as? PrivateKey)?.let { privateKey ->
-            val publicKey: PublicKey? = store.getCertificate(keyAlias).publicKey
-            KeyPair(publicKey, privateKey)
+        return (store.getKey(alias, null) as? PrivateKey)?.let { privateKey ->
+            KeyPair(store.getCertificate(alias).publicKey, privateKey)
         }
     }
 
@@ -127,14 +127,14 @@ object KeyStoreManager : KeyStoreManagerAbs {
      * @param guids - list of guids
      * @return list of guids
      */
-    override fun deleteKeyPairs(guids: List<String>) = guids.forEach { deleteKeyPair(it) }
+    override fun deleteKeyPairsIfExist(guids: List<String>) = guids.forEach { deleteKeyPairIfExist(it) }
 
     /**
      * Delete key pair identified by the given alias from Android Keystore
      *
      * @param alias - the alias name
      */
-    override fun deleteKeyPair(alias: String) {
+    override fun deleteKeyPairIfExist(alias: String) {
         androidKeyStore?.let { if (it.containsAlias(alias)) it.deleteEntry(alias) }
     }
 
@@ -149,7 +149,7 @@ object KeyStoreManager : KeyStoreManagerAbs {
         return try {
             val mKeyGenerator = KeyGenerator.getInstance(
                 KeyProperties.KEY_ALGORITHM_AES,
-                STORE_TYPE
+                ANDROID_KEYSTORE
             )
             val purposes = KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
             val spec = KeyGenParameterSpec.Builder(alias, purposes)
@@ -184,7 +184,7 @@ object KeyStoreManager : KeyStoreManagerAbs {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 builder.setInvalidatedByBiometricEnrollment(true)
             }
-            val mKeyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, STORE_TYPE)
+            val mKeyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
             mKeyGenerator.init(builder.build())
             mKeyGenerator.generateKey()
         } catch (e: Exception) {
@@ -194,86 +194,127 @@ object KeyStoreManager : KeyStoreManagerAbs {
     }
 
     /**
-     * Create new RSA key pair by the given alias
-     *
-     * @param alias - the alias name
-     * @return KeyPair object
-     */
-    fun createNewRsaKeyPair(context: Context?, alias: String): KeyPair? {
-        val generator = KeyPairGenerator.getInstance(KEY_ALGORITHM_RSA, STORE_TYPE)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            initGeneratorWithKeyPairGeneratorSpec(
-                context = context ?: return null,
-                generator = generator,
-                alias = alias
-            )
-        } else {
-            initGeneratorWithKeyGenParameterSpec(generator = generator, alias = alias)
-        }
-        return generator.generateKeyPair()
-    }
-
-    /**
      *  Get related private key for connection
      *
      *  @param connection Connection
      *  @return ConnectionAndKey
      */
-    override fun createConnectionAndKeyModel(connection: ConnectionAbs): ConnectionAndKey? {
-        return getKeyPair(connection.guid)?.private?.let { key ->
-            ConnectionAndKey(connection, key)
-        }
+    override fun enrichConnection(connection: ConnectionV2Abs): RichConnection? {
+        val rsaPrivate = getKeyPair(alias = connection.guid)?.private ?: return null
+        val appDhKeyPair = getKeyPair(alias = connection.appDhKeyAlias) ?: return null
+        val providerDhPublicKey = convertPemToPublicKey(
+            pem = connection.providerDhPublicKey,
+            algorithm = KeyAlgorithm.DIFFIE_HELLMAN
+        ) ?: return null
+        val aesSharedSecret = KeyTools.computeSecretKey(
+            privateDhKey = appDhKeyPair.private,
+            publicDhKey = providerDhPublicKey
+        )
+        return RichConnection(connection, rsaPrivate, aesSharedSecret)
     }
 
     /**
-     * Initialize KeyPairGenerator
+     * Create new RSA key pair by the given alias
+     *
+     * @param alias - the alias name
+     * @return KeyPair object
+     */
+    private fun generateRsaKeyPair(context: Context, alias: String): KeyPair? {
+        return (if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            initAsymmetricKeyGenerator(context = context, alias = alias, keyAlgorithm = KeyAlgorithm.RSA)
+        } else {
+            initRsaKeyGenerator(alias = alias)
+        }).generateKeyPair()
+    }
+
+    /**
+     * Create new Diffie-Hellman key pair by the given alias
+     *
+     * @param alias - the alias name
+     * @return KeyPair object
+     */
+    private fun generateDhKeyPair(context: Context, alias: String, outDhPublicKey: PublicKey): KeyPair? {
+        return (if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            initAsymmetricKeyGenerator(
+                context = context,
+                alias = alias,
+                keyAlgorithm = KeyAlgorithm.DIFFIE_HELLMAN,
+                outDhPublicKey = outDhPublicKey
+            )
+        } else {
+            initDhKeyGenerator(alias = alias, outDhPublicKey = outDhPublicKey)
+        })?.generateKeyPair()
+    }
+
+    /**
+     * Initialize old type KeyPairGenerator
      * Designated for Android version less than SDK23
      *
      * @param context Application Context
-     * @param generator KeyPairGenerator
      * @param alias the alias name
-     * @return algorithm parameter spec
+     * @return generator KeyPairGenerator
      */
     @Suppress("DEPRECATION")
-    private fun initGeneratorWithKeyPairGeneratorSpec(
-        context: Context,
-        generator: KeyPairGenerator,
-        alias: String
-    ) {
-        val startDate = Calendar.getInstance()
-        val endDate = Calendar.getInstance()
-        endDate.add(Calendar.YEAR, 20)
-
+    private fun initAsymmetricKeyGenerator(context: Context, alias: String, keyAlgorithm: String, outDhPublicKey: PublicKey? = null): KeyPairGenerator {
         val builder = KeyPairGeneratorSpec.Builder(context)
             .setAlias(alias)
             .setSerialNumber(BigInteger.ONE)
             .setSubject(X500Principal("CN=${alias} CA Certificate"))
-            .setStartDate(startDate.time)
-            .setEndDate(endDate.time)
-        generator.initialize(builder.build())
+            .setStartDate(Calendar.getInstance().time)
+            .setEndDate((Calendar.getInstance().apply { add(Calendar.YEAR, 20) }).time)
+        (outDhPublicKey as? DHPublicKey)?.params?.let { builder.setAlgorithmParameterSpec(it) }
+        return  KeyPairGenerator.getInstance(keyAlgorithm, ANDROID_KEYSTORE).apply {
+            initialize(builder.build())
+        }
     }
 
     /**
-     * Initialize KeyPairGenerator
+     * Initialize KeyPairGenerator for RSA
      * Designated for Android version greater than or equal to SDK23
      *
-     * @param generator KeyPairGenerator
      * @param alias the alias name
-     * @return algorithm parameter spec
+     * @return generator KeyPairGenerator
      */
     @TargetApi(Build.VERSION_CODES.M)
-    private fun initGeneratorWithKeyGenParameterSpec(generator: KeyPairGenerator, alias: String) {
+    private fun initRsaKeyGenerator(alias: String): KeyPairGenerator {
         val builder = KeyGenParameterSpec.Builder(
             alias,
             KeyProperties.PURPOSE_ENCRYPT
                 or KeyProperties.PURPOSE_DECRYPT
                 or KeyProperties.PURPOSE_SIGN
         )
-            .setDigests(KeyProperties.DIGEST_SHA256)
-            .setKeySize(KEY_SIZE)
-            .setSignaturePaddings(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
-            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
-        generator.initialize(builder.build())
+        builder.setDigests(KeyProperties.DIGEST_SHA256)
+        builder.setKeySize(DEFAULT_KEY_SIZE)
+        builder.setSignaturePaddings(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
+        builder.setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+        return  KeyPairGenerator.getInstance(KeyAlgorithm.RSA, ANDROID_KEYSTORE).apply {
+            initialize(builder.build())
+        }
+    }
+
+    /**
+     * Create new Diffie-Hellman key pair by the given alias
+     *
+     * @param alias - the alias name
+     * @return KeyPair object
+     */
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun initDhKeyGenerator(alias: String, outDhPublicKey: PublicKey): KeyPairGenerator? {
+        val dhParams: DHParameterSpec = (outDhPublicKey as DHPublicKey).params
+
+        val builder = KeyGenParameterSpec.Builder(
+            alias,
+            KeyProperties.PURPOSE_ENCRYPT
+                or KeyProperties.PURPOSE_DECRYPT
+                or KeyProperties.PURPOSE_SIGN
+        )
+        .setAlgorithmParameterSpec(dhParams)
+        .setDigests(KeyProperties.DIGEST_SHA256)
+        .setRandomizedEncryptionRequired(true)
+
+        return  KeyPairGenerator.getInstance(KeyAlgorithm.DIFFIE_HELLMAN, ANDROID_KEYSTORE).apply {
+            initialize(builder.build())
+        }
     }
 
     /**
@@ -281,7 +322,7 @@ object KeyStoreManager : KeyStoreManagerAbs {
      */
     private fun loadKeyStore() {
         try {
-            androidKeyStore = KeyStore.getInstance(STORE_TYPE)
+            androidKeyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
             androidKeyStore?.load(null)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -289,26 +330,15 @@ object KeyStoreManager : KeyStoreManagerAbs {
     }
 }
 
-interface KeyStoreManagerAbs {
-    fun createOrReplaceRsaKeyPair(context: Context?, alias: String): KeyPair?
-    fun createRsaPublicKeyAsString(context: Context?, alias: String): String?
+interface KeyManagerAbs {
+    fun createOrReplaceRsaKeyPair(context: Context, alias: String): KeyPair?
+    fun createOrReplaceDhKeyPair(context: Context, alias: String, outDhPublicKey: PublicKey): KeyPair?
     fun keyEntryExist(alias: String): Boolean
     fun getKeyStoreAliases(): List<String>
-    fun getKeyPair(alias: String?): KeyPair?
-    fun deleteKeyPairs(guids: List<String>)
-    fun deleteKeyPair(alias: String)
-    fun getSecretKey(alias: String?): Key?
+    fun getSecretKey(alias: String): Key?
+    fun getKeyPair(alias: String): KeyPair?
+    fun deleteKeyPairsIfExist(guids: List<String>)
+    fun deleteKeyPairIfExist(alias: String)
     @SuppressLint("NewApi") fun createOrReplaceAesBiometricKey(alias: String): SecretKey?
-    fun createConnectionAndKeyModel(connection: ConnectionAbs): ConnectionAndKey?
-}
-
-/**
- * Convert public key from asymmetric key pair to pem string
- *
- * @receiver KeyPair object
- * @return public key as String
- */
-fun KeyPair.publicKeyToPemEncodedString(): String {
-    val encodedKey = encodeToPemBase64String(this.public.encoded)
-    return "-----BEGIN PUBLIC KEY-----\n$encodedKey\n-----END PUBLIC KEY-----\n"
+    fun enrichConnection(connection: ConnectionV2Abs): RichConnection?
 }

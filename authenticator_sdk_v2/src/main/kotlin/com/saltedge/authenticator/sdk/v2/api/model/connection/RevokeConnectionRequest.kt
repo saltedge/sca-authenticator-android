@@ -18,12 +18,14 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api.model.authorization
+package com.saltedge.authenticator.sdk.v2.api.model.connection
 
-/**
- * Check that Authorization is not expired
- *
- * @receiver authorization
- * @return boolean, true if expiresAt time is after current time
- */
-fun AuthorizationData.isNotExpired(): Boolean = expiresAt.isAfterNow
+import com.google.gson.annotations.SerializedName
+import com.saltedge.authenticator.sdk.v2.api.KEY_DATA
+import com.saltedge.authenticator.sdk.v2.api.KEY_EXP
+import com.saltedge.authenticator.sdk.v2.api.retrofit.createExpiresAtTime
+
+data class RevokeConnectionRequest(
+    @SerializedName(KEY_DATA) val data: Any = Any(),
+    @SerializedName(KEY_EXP) val requestExpirationTime: Int = createExpiresAtTime()
+)

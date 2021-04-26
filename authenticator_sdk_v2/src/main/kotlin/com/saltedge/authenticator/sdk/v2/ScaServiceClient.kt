@@ -21,18 +21,19 @@
 package com.saltedge.authenticator.sdk.v2
 
 import android.content.Context
-import com.saltedge.authenticator.sdk.v2.api.RestClient
 import com.saltedge.authenticator.sdk.v2.api.connector.*
 import com.saltedge.authenticator.sdk.v2.api.contract.*
-import com.saltedge.authenticator.sdk.v2.config.ERROR_CLASS_API_REQUEST
-import com.saltedge.authenticator.sdk.v2.api.model.connection.ConnectionAbs
-import com.saltedge.authenticator.sdk.v2.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.v2.api.model.request.ConfirmDenyRequestData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationData
+import com.saltedge.authenticator.sdk.v2.api.model.connection.ConnectionV2Abs
+import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
+import com.saltedge.authenticator.sdk.v2.api.model.guard
+import com.saltedge.authenticator.sdk.v2.api.retrofit.RestClient
 import com.saltedge.authenticator.sdk.v2.polling.AuthorizationsPollingService
 import com.saltedge.authenticator.sdk.v2.polling.PollingServiceAbs
 import com.saltedge.authenticator.sdk.v2.polling.SingleAuthorizationPollingService
-import com.saltedge.authenticator.sdk.v2.tools.secure.KeyStoreManager
+import com.saltedge.authenticator.sdk.v2.tools.createRandomGuid
+import com.saltedge.authenticator.sdk.v2.tools.json.toJsonString
+import com.saltedge.authenticator.sdk.v2.tools.secure.*
 
 /**
  * Wrap network communication with Salt Edge SCA Service (Authenticator API v2)
@@ -45,9 +46,9 @@ class ScaServiceClient : ScaServiceClientAbs {
      */
     override fun getProviderConfigurationData(
         configurationUrl: String,
-        resultCallback: FetchProviderConfigurationListener
+        callback: FetchConfigurationListener
     ) {
-        ProviderConfigurationConnector(RestClient.apiInterface, resultCallback)
+        ConfigurationConnector(RestClient.apiInterface, callback)
             .fetchProviderConfiguration(configurationUrl)
     }
 
@@ -60,76 +61,89 @@ class ScaServiceClient : ScaServiceClientAbs {
         dhPublicKey: String,
         encRsaPublicKey: String,
         providerId: String,
-        pushToken: String,
+        pushToken: String?,
         connectQueryParam: String?,
-        resultCallback: ConnectionCreateListener
+        callback: ConnectionCreateListener
     ) {
-        ConnectionInitConnector(RestClient.apiInterface, resultCallback)
-            .postConnectionData(
-                baseUrl = baseUrl,
-                dhPublicKey = dhPublicKey,
-                encRsaPublicKey = encRsaPublicKey,
-                providerId = providerId,
-                pushToken = pushToken,
-                connectQueryParam = connectQueryParam
-            )
+        ConnectionCreateConnector(RestClient.apiInterface, callback).postConnectionData(
+            baseUrl = baseUrl,
+            appDhPublicKey = dhPublicKey,
+            encryptedAppRsaPublicKey = encRsaPublicKey,
+            providerId = providerId,
+            pushToken = pushToken,
+            connectQueryParam = connectQueryParam
+        )
     }
 
     /**
      * Request to create new SCA Service connection.
      * Result is returned through callback.
      */
-    override fun createConnectionRequest(
+    override fun initConnectionRequest(
         appContext: Context,
-        connection: ConnectionAbs,
-        providerId: String,
-        pushToken: String,
+        connection: ConnectionV2Abs,
         connectQueryParam: String?,
-        resultCallback: ConnectionCreateListener
+        pushToken: String?,
+        callback: ConnectionCreateListener
     ) {
-        val publicKey = KeyStoreManager.createRsaPublicKeyAsString(appContext, connection.guid)
-        //TODO: Generate DH keypair
-
-        if (publicKey == null) {
-            resultCallback.onConnectionCreateFailure(
-                ApiErrorData(errorClassName = ERROR_CLASS_API_REQUEST, errorMessage = "Secure material is unavailable")
-            )
-        } else {
-            createConnectionRequest(
-                baseUrl = connection.connectUrl,
-                dhPublicKey = dhPublicKey,
-                encRsaPublicKey = encRsaPublicKey,
-                providerId = providerId,
-                pushToken = pushToken,
-                connectQueryParam = connectQueryParam,
-                resultCallback = resultCallback
-            )
+        val providerDhPublicKey = convertPemToPublicKey(
+            pem = connection.providerDhPublicKey,
+            algorithm = KeyAlgorithm.DIFFIE_HELLMAN
+        ).guard {
+            callback.error("Diffie-Hellman secure material of provider is invalid")
+            return
         }
+        val dhAlias = createRandomGuid()
+        val dhKeyPair = KeyManager.createOrReplaceDhKeyPair(
+            context = appContext,
+            alias = dhAlias,
+            outDhPublicKey = providerDhPublicKey
+        ).guard {
+            callback.error("Diffie-Hellman secure material is unavailable")
+            return
+        }
+        val rsaAlias = createRandomGuid()
+        val publicKeyPem = KeyManager.createOrReplaceRsaKeyPair(
+            context = appContext,
+            alias = rsaAlias
+        )?.publicKeyToPemString().guard {
+            callback.error("RSA secure material is unavailable")
+            return
+        }
+
+        val sharedSecret = KeyTools.computeSecretKey(
+            privateDhKey = dhKeyPair.private,
+            publicDhKey = providerDhPublicKey
+        )
+        connection.appDhKeyAlias = dhAlias
+        connection.guid = rsaAlias
+        createConnectionRequest(
+            baseUrl = connection.connectUrl,
+            dhPublicKey = dhKeyPair.publicKeyToPemString(),
+            encRsaPublicKey = CryptoTools.aesEncrypt(data = publicKeyPem, key = sharedSecret),
+            providerId = connection.code,
+            pushToken = pushToken,
+            connectQueryParam = connectQueryParam,
+            callback = callback
+        )
     }
 
     /**
      * Request to revoke SCA Service connection.
      * Result is returned through callback.
      */
-    override fun revokeConnections(
-        connectionsAndKeys: List<ConnectionAndKey>,
-        validSeconds: Int,
-        resultCallback: ConnectionsRevokeListener?
-    ) {
-        ConnectionsRevokeConnector(RestClient.apiInterface, resultCallback)
-            .revokeTokensFor(connectionsAndKeys, validSeconds)
+    override fun revokeConnections(connections: List<RichConnection>, callback: ConnectionsRevokeListener?) {
+        ConnectionsRevokeConnector(RestClient.apiInterface, callback)
+            .revokeTokensFor(connections = connections)
     }
 
     /**
      * Request to get all active SCA Service Authorizations list.
      * Result is returned through callback.
      */
-    override fun getAuthorizations(
-        connectionsAndKeys: List<ConnectionAndKey>,
-        resultCallback: FetchEncryptedDataListener
-    ) {
-        AuthorizationsConnector(RestClient.apiInterface, resultCallback)
-            .fetchAuthorizations(connectionsAndKeys = connectionsAndKeys)
+    override fun getAuthorizations(connections: List<RichConnection>, callback: FetchAuthorizationsListener) {
+        AuthorizationsIndexConnector(RestClient.apiInterface, callback)
+            .fetchActiveAuthorizations(connections = connections)
     }
 
     /**
@@ -144,12 +158,12 @@ class ScaServiceClient : ScaServiceClientAbs {
      * Result is returned through callback.
      */
     override fun getAuthorization(
-        connectionAndKey: ConnectionAndKey,
+        connection: RichConnection,
         authorizationId: String,
-        resultCallback: FetchAuthorizationListener
+        callback: FetchAuthorizationListener
     ) {
-        AuthorizationConnector(RestClient.apiInterface, resultCallback)
-            .getAuthorization(connectionAndKey, authorizationId)
+        AuthorizationShowConnector(RestClient.apiInterface, callback)
+            .showAuthorization(connection.connection, authorizationId)
     }
 
     /**
@@ -163,27 +177,20 @@ class ScaServiceClient : ScaServiceClientAbs {
      * Result is returned through callback.
      */
     override fun confirmAuthorization(
-        connectionAndKey: ConnectionAndKey,
+        connection: RichConnection,
         authorizationId: String,
-        authorizationCode: String?,
-        geolocation: String?,
-        authorizationType: String?,
-        validSeconds: Int,
-        payload: String,
-        resultCallback: ConfirmAuthorizationListener
+        authorizationData: UpdateAuthorizationData,
+        callback: AuthorizationConfirmListener
     ) {
-        ConfirmOrDenyConnector(RestClient.apiInterface, resultCallback)
-            .updateAuthorization(
-                connectionAndKey = connectionAndKey,
-                authorizationId = authorizationId,
-                geolocationHeader = geolocation,
-                authorizationTypeHeader = authorizationType,
-                payloadData = ConfirmDenyRequestData(
-                    confirm = true,
-                    payload = payload
-                ),
-                validSeconds = validSeconds
-            )
+        val encryptedPayload = CryptoTools.aesEncrypt(
+            authorizationData.toJsonString(),
+            connection.aesSharedSecret
+        )
+        AuthorizationConfirmConnector(RestClient.apiInterface, callback).confirmAuthorization(
+            richConnection = connection,
+            authorizationId = authorizationId,
+            encryptedPayload = encryptedPayload
+        )
     }
 
     /**
@@ -191,88 +198,60 @@ class ScaServiceClient : ScaServiceClientAbs {
      * Result is returned through callback.
      */
     override fun denyAuthorization(
-        connectionAndKey: ConnectionAndKey,
+        connection: RichConnection,
         authorizationId: String,
-        authorizationCode: String?,
-        geolocation: String?,
-        authorizationType: String?,
-        validSeconds: Int,
-        payload: String,
-        resultCallback: ConfirmAuthorizationListener
+        authorizationData: UpdateAuthorizationData,
+        callback: AuthorizationDenyListener
     ) {
-        ConfirmOrDenyConnector(RestClient.apiInterface, resultCallback)
-            .updateAuthorization(
-                connectionAndKey = connectionAndKey,
-                authorizationId = authorizationId,
-                geolocationHeader = geolocation,
-                authorizationTypeHeader = authorizationType,
-                payloadData = ConfirmDenyRequestData(
-                    confirm = false,
-                    payload = payload
-                ),
-                validSeconds = validSeconds
-            )
+        val encryptedPayload = CryptoTools.aesEncrypt(
+            authorizationData.toJsonString(),
+            connection.aesSharedSecret
+        )
+        AuthorizationDenyConnector(RestClient.apiInterface, callback).denyAuthorization(
+            connectionAndKey = connection,
+            authorizationId = authorizationId,
+            encryptedPayload = encryptedPayload
+        )
     }
 }
 
 interface ScaServiceClientAbs {
-    fun getProviderConfigurationData(
-        configurationUrl: String,
-        resultCallback: FetchProviderConfigurationListener
-    )
+    fun getProviderConfigurationData(configurationUrl: String, callback: FetchConfigurationListener)
     fun createConnectionRequest(
         baseUrl: String,
         dhPublicKey: String,
         encRsaPublicKey: String,
         providerId: String,
-        pushToken: String,
+        pushToken: String?,
         connectQueryParam: String?,
-        resultCallback: ConnectionCreateListener
+        callback: ConnectionCreateListener
     )
-    fun createConnectionRequest(
+    fun initConnectionRequest(
         appContext: Context,
-        connection: ConnectionAbs,
-//        dhPublicKey: String,
-//        encRsaPublicKey: String,
-        providerId: String,
-        pushToken: String,
+        connection: ConnectionV2Abs,
         connectQueryParam: String?,
-        resultCallback: ConnectionCreateListener
+        pushToken: String?,
+        callback: ConnectionCreateListener
     )
-    fun revokeConnections(
-        connectionsAndKeys: List<ConnectionAndKey>,
-        validSeconds: Int,
-        resultCallback: ConnectionsRevokeListener?
-    )
-    fun getAuthorizations(
-        connectionsAndKeys: List<ConnectionAndKey>,
-        resultCallback: FetchEncryptedDataListener
-    )
+    fun revokeConnections(connections: List<RichConnection>, callback: ConnectionsRevokeListener?)
+    fun getAuthorizations(connections: List<RichConnection>, callback: FetchAuthorizationsListener)
     fun createAuthorizationsPollingService(): PollingServiceAbs<FetchAuthorizationsContract>
     fun getAuthorization(
-        connectionAndKey: ConnectionAndKey,
+        connection: RichConnection,
         authorizationId: String,
-        resultCallback: FetchAuthorizationListener
+        callback: FetchAuthorizationListener
     )
     fun createSingleAuthorizationPollingService(): SingleAuthorizationPollingService
     fun confirmAuthorization(
-        connectionAndKey: ConnectionAndKey,
+        connection: RichConnection,
         authorizationId: String,
-        authorizationCode: String?,
-        geolocation: String?,
-        authorizationType: String?,
-        validSeconds: Int,
-        payload: String,
-        resultCallback: ConfirmAuthorizationListener
+        authorizationData: UpdateAuthorizationData,
+        callback: AuthorizationConfirmListener
     )
     fun denyAuthorization(
-        connectionAndKey: ConnectionAndKey,
+        connection: RichConnection,
         authorizationId: String,
-        authorizationCode: String?,
-        geolocation: String?,
-        authorizationType: String?,
-        validSeconds: Int,
-        payload: String,
-        resultCallback: ConfirmAuthorizationListener
+        authorizationData: UpdateAuthorizationData,
+        callback: AuthorizationDenyListener
     )
 }

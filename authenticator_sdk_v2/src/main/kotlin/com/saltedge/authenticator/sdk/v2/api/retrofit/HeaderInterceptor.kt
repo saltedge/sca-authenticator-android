@@ -18,20 +18,22 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api
+package com.saltedge.authenticator.sdk.v2.api.retrofit
 
 import com.saltedge.authenticator.sdk.v2.config.ClientConfig
+import com.saltedge.authenticator.sdk.v2.config.DEFAULT_EXPIRATION_MINUTES
+import com.saltedge.authenticator.sdk.v2.tools.secure.JwsTools
 import okhttp3.Interceptor
 import okhttp3.Response
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
+import java.security.PrivateKey
 
 const val HEADER_CONTENT_TYPE = "Content-Type"
 const val HEADER_KEY_ACCEPT_LANGUAGE = "Accept-Language"
 const val HEADER_KEY_ACCESS_TOKEN = "Access-Token"
-const val HEADER_KEY_EXPIRES_AT = "Expires-at"
-const val HEADER_KEY_SIGNATURE = "Signature"
+const val HEADER_KEY_X_JWS_SIGNATURE = "x-jws-signature"
 const val HEADER_KEY_USER_AGENT = "User-Agent"
-const val HEADER_KEY_GEOLOCATION = "GEO-Location"
-const val HEADER_KEY_AUTHORIZATION_TYPE = "Authorization-Type"
 
 const val HEADER_VALUE_JSON = "application/json"
 const val HEADER_VALUE_ACCEPT_LANGUAGE = "en"
@@ -56,14 +58,22 @@ internal class HeaderInterceptor : Interceptor {
     }
 }
 
-fun Map<String, String>.addLocationHeader(geolocation: String?): Map<String, String> {
-    return geolocation?.let {
-        this.toMutableMap().apply { put(HEADER_KEY_GEOLOCATION, it) }
-    } ?: this
+fun createAccessTokenHeader(accessToken: String): Map<String, String> {
+    return mapOf(HEADER_KEY_ACCESS_TOKEN to accessToken)
 }
 
-fun Map<String, String>.addAuthorizationTypeHeader(authorizationType: String?): Map<String, String> {
-    return authorizationType?.let {
-        this.toMutableMap().apply { put(HEADER_KEY_AUTHORIZATION_TYPE, it) }
-    } ?: this
+fun Map<String, String>.addSignatureHeader(
+    signPrivateKey: PrivateKey,
+    requestDataObject: Any,
+    expiresAt: Int
+): Map<String, String> {
+    val map = this.toMutableMap()
+    map[HEADER_KEY_X_JWS_SIGNATURE] = JwsTools.createSignature(requestDataObject, expiresAt, signPrivateKey)
+    return map
 }
+
+/**
+ * Return unix time (seconds) of current time plus timeout (by default 5 minutes)
+ */
+internal fun createExpiresAtTime(withMinutesTimeOut: Int = DEFAULT_EXPIRATION_MINUTES): Int =
+    (DateTime.now(DateTimeZone.UTC).plusMinutes(withMinutesTimeOut).millis / 1000).toInt()

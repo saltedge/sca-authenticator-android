@@ -18,13 +18,34 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api.model.request
+package com.saltedge.authenticator.sdk.v2.api.retrofit
 
-import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.config.KEY_DATA
-import com.saltedge.authenticator.sdk.v2.config.KEY_EXP
+import com.saltedge.authenticator.sdk.v2.BuildConfig
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import okhttp3.logging.HttpLoggingInterceptor.Level
 
-data class RevokeConnectionRequest(
-    @SerializedName(KEY_DATA) val data: Any = Any(),
-    @SerializedName(KEY_EXP) val exp: Int
-)
+/**
+ * Creates OkHttpClient
+ * add header interceptor, add logging interceptor, add timeouts
+ *
+ * @return OkHttpClient
+ */
+internal fun createOkHttpClient(): OkHttpClient {
+    return OkHttpClient.Builder()
+        .addInterceptor(HeaderInterceptor())
+        .addInterceptor(createHttpLoggingInterceptor())
+        .build()
+}
+
+/**
+ * Creates header interceptor
+ * with log level BODY for DEBUG build type or NONE for RELEASE build type
+ *
+ * @return retrofit interceptor
+ */
+private fun createHttpLoggingInterceptor(): HttpLoggingInterceptor {
+    return HttpLoggingInterceptor().apply {
+        level = if (BuildConfig.DEBUG) Level.BODY else Level.NONE
+    }
+}

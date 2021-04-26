@@ -127,7 +127,7 @@ class ConnectProviderViewModelTest {
         viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
         clearInvocations(mockConnectionsRepository)
 
-        viewModel.authFinishedWithSuccess(connectionId = "1", accessToken = "access_token")
+        viewModel.onConnectionSuccessAuthentication(connectionId = "1", accessToken = "access_token")
 
         verify(mockConnectionsRepository).fixNameAndSave(connection)
 
@@ -485,7 +485,7 @@ class ConnectProviderViewModelTest {
 
         viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
 
-        viewModel.authFinishedWithSuccess(connectionId = "1", accessToken = "access_token")
+        viewModel.onConnectionSuccessAuthentication(connectionId = "1", accessToken = "access_token")
 
         assertThat(viewModel.statusIconRes.value, equalTo(R.drawable.ic_status_success))
     }
@@ -516,7 +516,7 @@ class ConnectProviderViewModelTest {
         given(mockConnectionsRepository.getConnectionsCount("demobank1")).willReturn(1L)
 
         viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
-        viewModel.authFinishedWithSuccess(connectionId = "1", accessToken = "access_token")
+        viewModel.onConnectionSuccessAuthentication(connectionId = "1", accessToken = "access_token")
 
         assertThat(viewModel.mainActionTextRes.value, equalTo(R.string.actions_done))
     }
@@ -550,7 +550,7 @@ class ConnectProviderViewModelTest {
         given(mockConnectionsRepository.getConnectionsCount("demobank1")).willReturn(1L)
 
         viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
-        viewModel.authFinishedWithSuccess(connectionId = "1", accessToken = "access_token")
+        viewModel.onConnectionSuccessAuthentication(connectionId = "1", accessToken = "access_token")
 
         assertThat(
             viewModel.completeTitle.value.toString(),
@@ -609,7 +609,7 @@ class ConnectProviderViewModelTest {
         given(mockConnectionsRepository.getConnectionsCount("demobank1")).willReturn(1L)
 
         viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
-        viewModel.authFinishedWithSuccess(connectionId = "1", accessToken = "access_token")
+        viewModel.onConnectionSuccessAuthentication(connectionId = "1", accessToken = "access_token")
 
         assertThat(
             viewModel.completeDescription.value,
@@ -674,7 +674,7 @@ class ConnectProviderViewModelTest {
         given(mockConnectionsRepository.getConnectionsCount("demobank1")).willReturn(1L)
 
         viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
-        viewModel.authFinishedWithSuccess(connectionId = "1", accessToken = "access_token")
+        viewModel.onConnectionSuccessAuthentication(connectionId = "1", accessToken = "access_token")
         clearInvocations(mockConnectionsRepository)
 
         viewModel.onResume()
@@ -749,7 +749,7 @@ class ConnectProviderViewModelTest {
         given(mockConnectionsRepository.getConnectionsCount("demobank1")).willReturn(1L)
 
         viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
-        viewModel.authFinishedWithSuccess(connectionId = "1", accessToken = "access_token")
+        viewModel.onConnectionSuccessAuthentication(connectionId = "1", accessToken = "access_token")
         viewModel.onResume()
 
         assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))

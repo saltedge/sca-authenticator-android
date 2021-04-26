@@ -21,9 +21,13 @@
 package com.saltedge.authenticator.sdk.v2.api.model.connection
 
 import java.security.PrivateKey
+import javax.crypto.SecretKey
 
-//TODO: Rename ConnectionAndKey
 /**
  * Container for Connection model and related PrivateKey
  */
-data class ConnectionAndKey(val connection: ConnectionAbs, val key: PrivateKey)
+data class RichConnection(
+    val connection: ConnectionV2Abs,
+    val rsaPrivate: PrivateKey,
+    val aesSharedSecret: SecretKey
+)

@@ -119,7 +119,7 @@ class ConnectProviderFragment : BaseFragment(),
     override fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token) {
         connectWebView?.clearCache(true)
         CookieManager.getInstance().removeSessionCookies(null)
-        viewModel.authFinishedWithSuccess(id, accessToken)
+        viewModel.onConnectionSuccessAuthentication(id, accessToken)
     }
 
     override fun onPageLoadStarted() {

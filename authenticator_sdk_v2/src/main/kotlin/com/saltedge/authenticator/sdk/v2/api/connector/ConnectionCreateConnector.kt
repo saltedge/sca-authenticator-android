@@ -20,16 +20,14 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.connector
 
-import com.saltedge.authenticator.sdk.v2.config.API_CONNECTIONS
-import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionCreateListener
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.v2.api.model.error.createInvalidResponseError
-import com.saltedge.authenticator.sdk.v2.api.model.request.CreateConnectionRequestData
-import com.saltedge.authenticator.sdk.v2.api.model.request.CreateConnectionRequest
-import com.saltedge.authenticator.sdk.v2.api.model.response.CreateConnectionResponse
-import com.saltedge.authenticator.sdk.v2.api.ApiInterface
 import com.saltedge.authenticator.sdk.v2.api.ApiResponseInterceptor
-import com.saltedge.authenticator.sdk.v2.api.createRequestUrl
+import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionCreateListener
+import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionRequest
+import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionRequestData
+import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponse
+import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
+import com.saltedge.authenticator.sdk.v2.api.retrofit.createConnectionsPath
 import retrofit2.Call
 
 /**
@@ -39,7 +37,7 @@ import retrofit2.Call
  * @param apiInterface - instance of ApiInterface
  * @param resultCallback - instance of ConnectionInitResult for returning query result
  */
-internal class ConnectionInitConnector(
+internal class ConnectionCreateConnector(
     private val apiInterface: ApiInterface,
     var resultCallback: ConnectionCreateListener?
 ) : ApiResponseInterceptor<CreateConnectionResponse>() {
@@ -48,30 +46,31 @@ internal class ConnectionInitConnector(
      * Prepare request url, request model (CreateConnectionRequestData)
      * and sends request to server (ApiInterface)
      *
-     * @param baseUrl - provider base url
-     * @param publicKey - new connection public key in pem format
+     * @param appDhPublicKey - newly generated DH public key
+     * @param encryptedAppRsaPublicKey - encrypted public RSA key by DH shared secret
+     * @param providerId - unique identifier of Provider in SCA Service
      * @param pushToken - Firebase Cloud Messaging token of current app
      * @param connectQueryParam: String? - connect_query string extracted from deep-link
      */
     fun postConnectionData(
         baseUrl: String,
-        dhPublicKey: String,
-        encRsaPublicKey: String,
+        appDhPublicKey: String,
+        encryptedAppRsaPublicKey: String,
         providerId: String,
-        pushToken: String,
+        pushToken: String?,
         connectQueryParam: String?
     ) {
-        val url = createRequestUrl(baseUrl = baseUrl, routePath = API_CONNECTIONS)
+        val requestUrl = baseUrl.createConnectionsPath()
         val requestData = CreateConnectionRequest(
             data = CreateConnectionRequestData(
-                dhPublicKey = dhPublicKey,
-                encRsaPublicKey = encRsaPublicKey,
+                appDhPublicKey = appDhPublicKey,
+                encryptedAppRsaPublicKey = encryptedAppRsaPublicKey,
                 providerId = providerId,
                 pushToken = pushToken,
                 connectQueryParam = connectQueryParam
             )
         )
-        apiInterface.createConnection(url, requestData).enqueue(this)
+        apiInterface.createConnection(requestUrl = requestUrl, body = requestData).enqueue(this)
     }
 
     /**
@@ -82,16 +81,8 @@ internal class ConnectionInitConnector(
      * @param call - retrofit call
      * @param response - CreateConnectionResponse model
      */
-    override fun onSuccessResponse(
-        call: Call<CreateConnectionResponse>,
-        response: CreateConnectionResponse
-    ) {
-        val data = response.data
-        if (data == null) {
-            onFailureResponse(call, createInvalidResponseError())
-        } else {
-            resultCallback?.onConnectionCreateSuccess(data)
-        }
+    override fun onSuccessResponse(call: Call<CreateConnectionResponse>, response: CreateConnectionResponse) {
+        resultCallback?.onConnectionCreateSuccess(response.data)
     }
 
     /**

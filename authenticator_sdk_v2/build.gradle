@@ -81,6 +81,11 @@ dependencies {
     api 'net.danlew:android.joda:2.10.2'
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
+    def jjwtVersion = '0.11.2'
+    api "io.jsonwebtoken:jjwt-api:$jjwtVersion"
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:$jjwtVersion"
+    api("io.jsonwebtoken:jjwt-gson:$jjwtVersion")
+
     androidTestUtil 'com.android.support.test:orchestrator:1.0.2'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'androidx.test:core:1.3.0'

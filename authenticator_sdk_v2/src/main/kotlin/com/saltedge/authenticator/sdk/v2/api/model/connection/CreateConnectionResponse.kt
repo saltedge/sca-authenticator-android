@@ -18,20 +18,16 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api.model.response
+package com.saltedge.authenticator.sdk.v2.api.model.connection
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.config.KEY_AUTHORIZATION_ID
-import com.saltedge.authenticator.sdk.v2.config.KEY_CONNECTION_ID
-import com.saltedge.authenticator.sdk.v2.config.KEY_DATA
-import com.saltedge.authenticator.sdk.v2.config.KEY_SUCCESS
+import com.saltedge.authenticator.sdk.v2.api.KEY_AUTHENTICATION_URL
+import com.saltedge.authenticator.sdk.v2.api.KEY_CONNECTION_ID
+import com.saltedge.authenticator.sdk.v2.api.KEY_DATA
 
-data class SubmitActionResponse(
-    @SerializedName(KEY_DATA) var data: SubmitActionResponseData? = null
-)
+data class CreateConnectionResponse(@SerializedName(KEY_DATA) var data: CreateConnectionResponseData)
 
-data class SubmitActionResponseData(
-    @SerializedName(KEY_SUCCESS) var success: Boolean? = null,
-    @SerializedName(KEY_CONNECTION_ID) var connectionId: String? = null,
-    @SerializedName(KEY_AUTHORIZATION_ID) var authorizationId: String? = null
+data class CreateConnectionResponseData(
+    @SerializedName(KEY_AUTHENTICATION_URL) var authenticationUrl: String,
+    @SerializedName(KEY_CONNECTION_ID) var connectionId: String
 )

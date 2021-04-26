@@ -3,3 +3,4 @@
 signing*.properties
 google-services.json
 !/src/test/java/com/saltedge/authenticator/models/
+/build

@@ -18,13 +18,20 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api
+package com.saltedge.authenticator.sdk.v2.api.retrofit
 
-import com.saltedge.authenticator.sdk.v2.api.model.configuration.ProviderConfigurationResponse
-import com.saltedge.authenticator.sdk.v2.api.model.request.ConfirmDenyRequest
-import com.saltedge.authenticator.sdk.v2.api.model.request.CreateConnectionRequest
-import com.saltedge.authenticator.sdk.v2.api.model.request.RevokeConnectionRequest
-import com.saltedge.authenticator.sdk.v2.api.model.response.*
+import com.saltedge.authenticator.sdk.v2.api.API_AUTHORIZATIONS
+import com.saltedge.authenticator.sdk.v2.api.API_CONNECTIONS
+import com.saltedge.authenticator.sdk.v2.api.KEY_ID
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponse
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationsListResponse
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationRequest
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponse
+import com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationResponse
+import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionRequest
+import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponse
+import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionRequest
+import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionResponse
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -34,7 +41,7 @@ import retrofit2.http.*
 interface ApiInterface {
 
     @GET
-    fun getProviderConfiguration(@Url requestUrl: String): Call<ProviderConfigurationResponse>
+    fun getProviderConfiguration(@Url requestUrl: String): Call<ConfigurationResponse>
 
     @POST
     fun createConnection(
@@ -47,24 +54,31 @@ interface ApiInterface {
         @Url requestUrl: String,
         @HeaderMap headersMap: Map<String, String>,
         @Body requestBody: RevokeConnectionRequest
-    ): Call<RevokeAccessTokenResponse>
+    ): Call<RevokeConnectionResponse>
 
-    @GET
-    fun getAuthorizations(
+    @GET(API_AUTHORIZATIONS)
+    fun activeAuthorizations(
         @Url requestUrl: String,
         @HeaderMap headersMap: Map<String, String>
-    ): Call<EncryptedListResponse>
+    ): Call<AuthorizationsListResponse>
 
     @GET
-    fun getAuthorization(
+    fun showAuthorization(
         @Url requestUrl: String,
         @HeaderMap headersMap: Map<String, String>
-    ): Call<AuthorizationShowResponse>
+    ): Call<AuthorizationResponse>
 
     @PUT
-    fun updateAuthorization(
+    fun confirmAuthorization(
         @Url requestUrl: String,
         @HeaderMap headersMap: Map<String, String>,
-        @Body requestBody: ConfirmDenyRequest
+        @Body requestBody: UpdateAuthorizationRequest
+    ): Call<ConfirmDenyResponse>
+
+    @PUT
+    fun denyAuthorization(
+        @Url requestUrl: String,
+        @HeaderMap headersMap: Map<String, String>,
+        @Body requestBody: UpdateAuthorizationRequest
     ): Call<ConfirmDenyResponse>
 }

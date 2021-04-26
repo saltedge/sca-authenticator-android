@@ -18,16 +18,21 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api.model.response
+package com.saltedge.authenticator.sdk.v2.api.model.authorization
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.config.*
+import com.saltedge.authenticator.sdk.v2.api.*
+import com.saltedge.authenticator.sdk.v2.api.retrofit.createExpiresAtTime
 
-data class CreateConnectionResponse(
-    @SerializedName(KEY_DATA) var data: CreateConnectionResponseData? = null
+data class UpdateAuthorizationRequest(
+    @SerializedName(KEY_DATA) val data: UpdateAuthorizationRequestData,
+    @SerializedName(KEY_EXP) val requestExpirationTime: Int = createExpiresAtTime()
 )
 
-data class CreateConnectionResponseData(
-    @SerializedName(KEY_AUTHENTICATION_URL) var authenticationUrl: String,
-    @SerializedName(KEY_CONNECTION_ID) var connectionId: String
+data class UpdateAuthorizationRequestData(@SerializedName(KEY_PAYLOAD) val encryptedPayload: String)
+
+data class UpdateAuthorizationData(
+    @SerializedName(KEY_AUTHORIZATION_CODE) val authorizationCode: String,
+    @SerializedName(KEY_USER_AUTHORIZATION_TYPE) val userAuthorizationType: String,
+    @SerializedName(KEY_GEOLOCATION) val geolocation: String
 )

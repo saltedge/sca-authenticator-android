@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.sdk.v2.api.model.authorization
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.config.*
+import com.saltedge.authenticator.sdk.v2.api.*
 import org.joda.time.DateTime
 import java.io.Serializable
 

@@ -18,19 +18,17 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api.model.request
+
+package com.saltedge.authenticator.sdk.v2.api.model.authorization
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.config.*
+import com.saltedge.authenticator.sdk.v2.api.KEY_DATA
+import com.saltedge.authenticator.sdk.v2.api.KEY_ID
+import com.saltedge.authenticator.sdk.v2.api.KEY_STATUS
 
-data class CreateConnectionRequest(@SerializedName(KEY_DATA) val data: CreateConnectionRequestData)
+data class ConfirmDenyResponse(@SerializedName(KEY_DATA) var data: ConfirmDenyResponseData)
 
-data class CreateConnectionRequestData(
-    @SerializedName(KEY_PROVIDER_ID) val providerId: String,
-    @SerializedName(DH_PUBLIC_KEY) var dhPublicKey: String,
-    @SerializedName(ENC_RSA_PUBLIC_KEY) var encRsaPublicKey: String,
-    @SerializedName(KEY_RETURN_URL) val returnUrl: String = ClientConfig.authenticationReturnUrl,
-    @SerializedName(KEY_PLATFORM) val platform: String = DEFAULT_PLATFORM_NAME,
-    @SerializedName(KEY_PUSH_TOKEN) val pushToken: String?,
-    @SerializedName(KEY_CONNECT_QUERY) val connectQueryParam: String?
+data class ConfirmDenyResponseData(
+    @SerializedName(KEY_ID) var authorizationID: String,
+    @SerializedName(KEY_STATUS) var status: String
 )

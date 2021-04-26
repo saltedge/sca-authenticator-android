@@ -18,22 +18,18 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.config
+package com.saltedge.authenticator.sdk.v2.api
 
 // Static links
-const val DEFAULT_HOST = "https://www.saltedge.com"
 const val TERMS_LINK = "https://www.saltedge.com/pages/authenticator_terms"
 const val DEFAULT_SUPPORT_EMAIL_LINK = "authenticator@saltedge.com"
 
 // API endpoints
-const val API_VERSION = "1"
-private const val API_VERSION_NAMESPACE = "api/authenticator/v$API_VERSION"
+const val DEFAULT_HOST = "https://sca.saltedge.com"
+const val API_VERSION = "2"
+const val API_VERSION_NAMESPACE = "api/authenticator/v$API_VERSION"
 const val API_CONNECTIONS = "$API_VERSION_NAMESPACE/connections"
 const val API_AUTHORIZATIONS = "$API_VERSION_NAMESPACE/authorizations"
-
-const val DEFAULT_RETURN_URL = "authenticator://oauth/redirect"
-const val DEFAULT_PLATFORM_NAME = "android"
-const val DEFAULT_EXPIRATION_MINUTES = 5
 
 // Model fields
 const val KEY_DATA = "data"
@@ -47,7 +43,6 @@ const val KEY_ERROR_CLASS = "error_class"
 const val KEY_ERROR_MESSAGE = "error_message"
 const val KEY_IV = "iv"
 const val KEY_KEY = "key"
-const val KEY_ALGORITHM = "algorithm"
 
 const val KEY_ID = "id"
 const val KEY_AUTHORIZATION_ID = "authorization_id"
@@ -55,11 +50,9 @@ const val KEY_CONNECTION_ID = "connection_id"
 const val KEY_STATUS = "status"
 const val KEY_AUTHENTICATION_URL = "authentication_url"
 const val KEY_USER_ID = "user_id"
-const val KEY_CONNECT_URL = "connect_url"
-const val KEY_SCA_SERVICE_URL = "sca_service_utl"
+const val KEY_SCA_SERVICE_URL = "sca_service_url"
 const val KEY_LOGO_URL = "logo_url"
 const val KEY_ACCESS_TOKEN = "access_token"
-const val KEY_CONFIRM = "confirm"
 const val KEY_PAYLOAD = "payload"
 const val KEY_AUTHORIZATION_CODE = "authorization_code"
 const val KEY_CODE = "code"
@@ -69,26 +62,17 @@ const val KEY_UPDATED_AT = "updated_at"
 const val KEY_TITLE = "title"
 const val KEY_DESCRIPTION = "description"
 const val KEY_EXPIRES_AT = "expires_at"
-const val KEY_PROVIDER_CODE = "provider_code"
 const val KEY_NAME = "name"
 const val KEY_SUCCESS = "success"
 const val KEY_VERSION = "version"
 const val KEY_API_VERSION = "api_version"
 const val KEY_SUPPORT_EMAIL = "support_email"
-const val KEY_CONSENT_MANAGEMENT = "consent_management"
 const val KEY_GEOLOCATION_REQUIRED = "geolocation_required"
-const val KEY_CONSENT_TYPE = "consent_type"
-const val KEY_TPP_NAME = "tpp_name"
-const val KEY_ACCOUNTS = "accounts"
-const val KEY_SHARED_DATA = "shared_data"
-const val KEY_ACCOUNT_NUMBER = "account_number"
-const val KEY_SORT_CODE = "sort_code"
-const val KEY_IBAN = "iban"
-const val KEY_BALANCE = "balance"
-const val KEY_TRANSACTIONS = "transactions"
+const val KEY_GEOLOCATION = "geolocation"
+const val KEY_USER_AUTHORIZATION_TYPE = "user_authorization_type"
 const val KEY_PROVIDER_ID = "provider_id"
-const val DH_PUBLIC_KEY = "dh_public_key"
-const val ENC_RSA_PUBLIC_KEY = "enc_rsa_public_key"
+const val KEY_DH_PUBLIC = "dh_public_key"
+const val KEY_ENC_RSA_PUBLIC = "enc_rsa_public_key"
 
 // Error classes
 const val ERROR_CLASS_AUTHENTICATION_RESPONSE = "AuthenticationError"

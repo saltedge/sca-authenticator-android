@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.sdk.v2.tools
 
 import android.net.Uri
-import com.saltedge.authenticator.sdk.v2.config.*
+import com.saltedge.authenticator.sdk.v2.api.*
 import com.saltedge.authenticator.sdk.v2.api.model.ConnectionID
 import com.saltedge.authenticator.sdk.v2.api.model.Token
 

@@ -23,19 +23,23 @@ package com.saltedge.authenticator.sdk.v2.api.model.connection
 /**
  * Connection model abstraction
  *
- * @property guid - Alias to RSA keypair in Keystore
- * @property id - Unique Connection ID in SCA Service
- * @property name - Provider's name from ProviderData
- * @property code - Provider's code
- * @property logoUrl - Provider's logo url. May be empty
- * @property connectUrl - Base url of SCA Service
- * @property accessToken - Access token for accessing SCA Service resources
- * @property status - Connection Status. ACTIVE or INACTIVE
- * @property supportEmail - Provider's support email
+ * @property guid - unique alias of RSA key in Keystore
+ * @property id - unique Connection ID in SCA Service
+ * @property name - name of Provider from Configuration
+ * @property code - unique code of Provider (Provider ID) from Configuration
+ * @property logoUrl - logo URL of Provider. May be empty
+ * @property connectUrl - base URL of SCA Service
+ * @property accessToken - access token for accessing SCA Service resources
+ * @property status - connection Status (ACTIVE or INACTIVE)
+ * @property supportEmail - support email if Provider from Configuration
+ * @property consentManagementSupported - consent management is supported by Provider or not. Flag from Configuration
+ * @property geolocationRequired - collection of geolocation data is mandatory or not. Flag from Configuration
+ * @property appDhKeyAlias - unique alias of DH key in Keystore
+ * @property providerDhPublicKey - asymmetric Diffie–Hellman Public Key (in PEM format) linked to the Provider
  *
- * @see com.saltedge.authenticator.sdk.v2.model.configuration.ProviderConfigurationData
+ * @see com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationData
  */
-interface ConnectionAbs {
+interface ConnectionV2Abs {
     var guid: String
     var id: String
     var createdAt: Long
@@ -49,4 +53,6 @@ interface ConnectionAbs {
     var supportEmail: String?
     var consentManagementSupported: Boolean?
     var geolocationRequired: Boolean?
+    var appDhKeyAlias: String
+    var providerDhPublicKey: String
 }

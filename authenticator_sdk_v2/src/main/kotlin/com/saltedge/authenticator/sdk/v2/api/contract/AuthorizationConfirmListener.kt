@@ -18,12 +18,24 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api.model.response
+package com.saltedge.authenticator.sdk.v2.api.contract
 
-import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.config.KEY_DATA
-import com.saltedge.authenticator.sdk.v2.api.model.EncryptedData
+import com.saltedge.authenticator.sdk.v2.api.ERROR_CLASS_API_REQUEST
+import com.saltedge.authenticator.sdk.v2.api.model.AuthorizationID
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponseData
+import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
 
-data class EncryptedListResponse(
-    @SerializedName(KEY_DATA) var data: List<EncryptedData>? = null
-)
+/**
+ * Confirm SCA Authorization request result
+ */
+interface AuthorizationConfirmListener {
+    fun onAuthorizationConfirmSuccess(result: ConfirmDenyResponseData)
+    fun onAuthorizationConfirmFailure(error: ApiErrorData, authorizationID: AuthorizationID)
+}
+
+fun AuthorizationConfirmListener.error(message: String, authorizationID: AuthorizationID) {
+    this.onAuthorizationConfirmFailure(
+        error = ApiErrorData(errorClassName = ERROR_CLASS_API_REQUEST, errorMessage = message),
+        authorizationID = authorizationID
+    )
+}

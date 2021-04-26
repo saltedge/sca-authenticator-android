@@ -24,3 +24,7 @@ typealias GUID = String
 typealias Token = String
 typealias ConnectionID = String
 typealias AuthorizationID = String
+
+inline fun<T> T?.guard(nullClause: () -> Nothing): T {
+    return this ?: nullClause()
+}

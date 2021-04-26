@@ -20,19 +20,12 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.contract
 
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
 import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.v2.api.model.AuthorizationID
-import com.saltedge.authenticator.sdk.v2.api.model.ConnectionID
-import com.saltedge.authenticator.sdk.v2.api.model.response.ConfirmDenyResponseData
 
 /**
- * Confirm SCA Authorization request result
+ * Encrypted Data (Authorizations, Consents) request result
  */
-interface ConfirmAuthorizationListener {
-    fun onConfirmDenyFailure(
-        error: ApiErrorData,
-        connectionID: ConnectionID,
-        authorizationID: AuthorizationID
-    )
-    fun onConfirmDenySuccess(result: ConfirmDenyResponseData, connectionID: ConnectionID)
+interface FetchAuthorizationsListener {
+    fun onFetchAuthorizationsResult(result: List<AuthorizationResponseData>, errors: List<ApiErrorData>)
 }

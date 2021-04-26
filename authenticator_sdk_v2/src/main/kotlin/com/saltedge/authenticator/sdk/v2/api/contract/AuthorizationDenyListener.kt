@@ -18,17 +18,24 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
+package com.saltedge.authenticator.sdk.v2.api.contract
 
-package com.saltedge.authenticator.sdk.v2.api.model.response
+import com.saltedge.authenticator.sdk.v2.api.ERROR_CLASS_API_REQUEST
+import com.saltedge.authenticator.sdk.v2.api.model.AuthorizationID
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponseData
+import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
 
-import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.config.KEY_DATA
-import com.saltedge.authenticator.sdk.v2.config.KEY_ID
-import com.saltedge.authenticator.sdk.v2.config.KEY_STATUS
+/**
+ * Deny SCA Authorization request result
+ */
+interface AuthorizationDenyListener {
+    fun onAuthorizationDenySuccess(result: ConfirmDenyResponseData)
+    fun onAuthorizationDenyFailure(error: ApiErrorData, authorizationID: AuthorizationID)
+}
 
-data class ConfirmDenyResponse(@SerializedName(KEY_DATA) var data: ConfirmDenyResponseData? = null)
-
-data class ConfirmDenyResponseData(
-    @SerializedName(KEY_ID) var authorizationID: String,
-    @SerializedName(KEY_STATUS) var status: String
-)
+fun AuthorizationDenyListener.error(message: String, authorizationID: AuthorizationID) {
+    this.onAuthorizationDenyFailure(
+        error = ApiErrorData(errorClassName = ERROR_CLASS_API_REQUEST, errorMessage = message),
+        authorizationID = authorizationID
+    )
+}

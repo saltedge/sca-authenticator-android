@@ -20,9 +20,13 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.model.appLink
 
+import com.saltedge.authenticator.sdk.v2.api.API_VERSION_NAMESPACE
 import java.io.Serializable
 
 data class ConnectAppLinkData(
     var configurationUrl: String,
     var connectQuery: String? = null
-) : Serializable
+) : Serializable {
+    val isV2Api: Boolean
+        get() = configurationUrl.contains(API_VERSION_NAMESPACE)
+}

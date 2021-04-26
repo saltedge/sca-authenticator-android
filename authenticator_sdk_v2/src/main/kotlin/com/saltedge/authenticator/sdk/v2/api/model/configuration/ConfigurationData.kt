@@ -18,26 +18,24 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api.model
+package com.saltedge.authenticator.sdk.v2.api.model.configuration
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.config.*
+import com.saltedge.authenticator.sdk.v2.api.*
 import java.io.Serializable
 
+data class ConfigurationResponse(@SerializedName(KEY_DATA) var data: ConfigurationData)
+
 /**
- * Encrypted model
- * with annotation for GSON parsing
- * contains:
- * - encrypted data (any data) with symmetric algorithm,
- * - algorithm code (now is supported only AES-CBC-256),
- * - encryption key (KEY), encrypted with asymmetric RSA key attached to specific connection (connectionId)
- * - initialization vector (IV), encrypted with asymmetric RSA key attached to specific connection (connectionId)
+ * SCA Service configuration
  */
-data class EncryptedData(
-    @SerializedName(KEY_ID) var id: String,
-    @SerializedName(KEY_CONNECTION_ID) var connectionId: String,
-    @SerializedName(KEY_STATUS) var status: String,
-    @SerializedName(KEY_IV) var iv: String,
-    @SerializedName(KEY_KEY) var key: String,
-    @SerializedName(KEY_DATA) var data: String
+data class ConfigurationData(
+    @SerializedName(KEY_SCA_SERVICE_URL) var scaServiceUrl: String,
+    @SerializedName(KEY_API_VERSION) var apiVersion: String,
+    @SerializedName(KEY_PROVIDER_ID) var providerId: String,
+    @SerializedName(KEY_NAME) var name: String,
+    @SerializedName(KEY_LOGO_URL) var logoUrl: String,
+    @SerializedName(KEY_SUPPORT_EMAIL) var supportEmail: String,
+    @SerializedName(KEY_DH_PUBLIC) var dhPublicKey: String,
+    @SerializedName(KEY_GEOLOCATION_REQUIRED) var geolocationRequired: Boolean
 ) : Serializable

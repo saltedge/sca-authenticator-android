@@ -18,28 +18,14 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api
+package com.saltedge.authenticator.sdk.v2.api.model.connection
 
-import com.google.gson.Gson
-import com.saltedge.authenticator.sdk.v2.config.DEFAULT_HOST
-import com.saltedge.authenticator.sdk.v2.tools.createDefaultGson
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.google.gson.annotations.SerializedName
+import com.saltedge.authenticator.sdk.v2.api.KEY_CONNECTION_ID
+import com.saltedge.authenticator.sdk.v2.api.KEY_DATA
 
-/**
- * Initiates ApiInterface and default GSON
- */
-internal object RestClient {
+data class RevokeConnectionResponse(@SerializedName(KEY_DATA) var data: RevokeConnectionResponseData)
 
-    var apiInterface: ApiInterface
-    val defaultGson: Gson = createDefaultGson()
-
-    init {
-        apiInterface = Retrofit.Builder()
-            .baseUrl(DEFAULT_HOST)
-            .client(createOkHttpClient())
-            .addConverterFactory(GsonConverterFactory.create(defaultGson))
-            .build()
-            .create(ApiInterface::class.java)
-    }
-}
+data class RevokeConnectionResponseData(
+    @SerializedName(KEY_CONNECTION_ID) var revokedConnectionId: String
+)

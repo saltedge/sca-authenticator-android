@@ -20,9 +20,9 @@
  */
 package com.saltedge.authenticator.sdk.v2.polling
 
+import com.saltedge.authenticator.sdk.v2.api.connector.AuthorizationShowConnector
 import com.saltedge.authenticator.sdk.v2.api.contract.FetchAuthorizationContract
-import com.saltedge.authenticator.sdk.v2.api.RestClient
-import com.saltedge.authenticator.sdk.v2.api.connector.AuthorizationConnector
+import com.saltedge.authenticator.sdk.v2.api.retrofit.RestClient
 
 /**
  * Periodically query authorization
@@ -31,13 +31,13 @@ import com.saltedge.authenticator.sdk.v2.api.connector.AuthorizationConnector
  */
 open class SingleAuthorizationPollingService : PollingServiceAbs<FetchAuthorizationContract>() {
 
-    internal var connector: AuthorizationConnector? = null
+    internal var connector: AuthorizationShowConnector? = null
     override var contract: FetchAuthorizationContract? = null
     private var authorizationId: String = ""
 
     fun start(authorizationId: String) {
         this.authorizationId = authorizationId
-        connector = AuthorizationConnector(
+        connector = AuthorizationShowConnector(
             apiInterface = RestClient.apiInterface,
             resultCallback = contract
         )
@@ -52,8 +52,8 @@ open class SingleAuthorizationPollingService : PollingServiceAbs<FetchAuthorizat
     override fun forcedFetch() {
         try {
             contract?.getConnectionDataForAuthorizationPolling()?.let {
-                connector?.getAuthorization(
-                    connectionAndKey = it,
+                connector?.showAuthorization(
+                    connection = it.connection,
                     authorizationId = authorizationId
                 )
             }

@@ -21,8 +21,8 @@
 package com.saltedge.authenticator.sdk.v2.api.model.error
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.config.KEY_ERROR_CLASS
-import com.saltedge.authenticator.sdk.v2.config.KEY_ERROR_MESSAGE
+import com.saltedge.authenticator.sdk.v2.api.KEY_ERROR_CLASS
+import com.saltedge.authenticator.sdk.v2.api.KEY_ERROR_MESSAGE
 import com.saltedge.authenticator.sdk.v2.api.model.Token
 import java.io.Serializable
 

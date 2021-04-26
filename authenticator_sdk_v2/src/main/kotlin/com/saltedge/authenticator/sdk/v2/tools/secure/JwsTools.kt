@@ -20,34 +20,24 @@
  */
 package com.saltedge.authenticator.sdk.v2.tools.secure
 
-import android.util.Base64
-import timber.log.Timber
-import java.nio.charset.StandardCharsets
-import java.security.PrivateKey
-import java.security.Signature
+import com.saltedge.authenticator.sdk.v2.api.KEY_DATA
+import com.saltedge.authenticator.sdk.v2.tools.json.createDefaultGson
+import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.gson.io.GsonSerializer
+import java.security.Key
 import java.util.*
 
-fun createSignatureHeader(
-    requestMethod: String,
-    requestUrl: String,
-    expiresAt: String,
-    requestBody: String,
-    privateKey: PrivateKey
-): String {
-    val payload = "${requestMethod.toLowerCase(Locale.US)}|$requestUrl|$expiresAt|$requestBody"
-    return runCatching {
-        return payload.toByteArray(StandardCharsets.UTF_8).signWith(privateKey)?.let {
-            Base64.encodeToString(it, Base64.NO_WRAP)
-        } ?: return ""
-    }.onFailure {
-        Timber.e(it)
-    }.getOrDefault(defaultValue = "")
-}
+object JwsTools {
 
-private fun ByteArray.signWith(privateKey: PrivateKey): ByteArray? {
-    val signature: Signature = Signature.getInstance("SHA256withRSA").also {
-        it.initSign(privateKey)
-        it.update(this)
+    fun createSignature(requestDataObject: Any, expiresAt: Int, key: Key): String {
+        val jws: String = Jwts.builder()
+            .serializeToJsonWith(GsonSerializer(createDefaultGson()))
+            .claim(KEY_DATA, requestDataObject)
+            .signWith(key)
+            .setExpiration(Date(expiresAt * 1000L))
+            .compact()
+        val sections: MutableList<String> = jws.split(".").toMutableList()
+        sections[1] = ""
+        return sections.joinToString(".")
     }
-    return signature.sign()
 }
