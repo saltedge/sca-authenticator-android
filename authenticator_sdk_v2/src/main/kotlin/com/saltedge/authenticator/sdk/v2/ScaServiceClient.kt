@@ -186,11 +186,11 @@ class ScaServiceClient : ScaServiceClientAbs {
             authorizationData.toJsonString(),
             connection.aesSharedSecret
         )
-        AuthorizationConfirmConnector(RestClient.apiInterface, callback).confirmAuthorization(
-            richConnection = connection,
+        AuthorizationConfirmConnector(
+            apiInterface = RestClient.apiInterface,
             authorizationId = authorizationId,
-            encryptedPayload = encryptedPayload
-        )
+            callback = callback
+        ).confirmAuthorization(richConnection = connection, encryptedPayload = encryptedPayload)
     }
 
     /**
@@ -207,11 +207,11 @@ class ScaServiceClient : ScaServiceClientAbs {
             authorizationData.toJsonString(),
             connection.aesSharedSecret
         )
-        AuthorizationDenyConnector(RestClient.apiInterface, callback).denyAuthorization(
-            connectionAndKey = connection,
+        AuthorizationDenyConnector(
+            apiInterface = RestClient.apiInterface,
             authorizationId = authorizationId,
-            encryptedPayload = encryptedPayload
-        )
+            callback = callback
+        ).denyAuthorization(richConnection = connection, encryptedPayload = encryptedPayload)
     }
 }
 

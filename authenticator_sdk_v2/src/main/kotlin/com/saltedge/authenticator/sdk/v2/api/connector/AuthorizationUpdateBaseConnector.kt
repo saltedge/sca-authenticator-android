@@ -51,7 +51,6 @@ internal abstract class AuthorizationUpdateBaseConnector(
         )
     }
 
-    protected fun body(encryptedPayload: String): UpdateAuthorizationRequest {
-        return UpdateAuthorizationRequest(data = UpdateAuthorizationRequestData(encryptedPayload))
-    }
+    protected fun body(encryptedPayload: String): UpdateAuthorizationRequest =
+        UpdateAuthorizationRequest(data = UpdateAuthorizationRequestData(encryptedPayload))
 }
