@@ -69,12 +69,10 @@ object CryptoTools : CryptoToolsAbs {
 
     fun aesEncrypt(data: String, key: SecretKey): String {
         try {
-            val aesKey: ByteArray = key.encoded
-            val digest: MessageDigest = MessageDigest.getInstance("SHA-256")
-            val aesKeyHash: ByteArray = digest.digest(aesKey)
             val keyBytes: ByteArray = key.encoded
+            val aesKeyHash: ByteArray = MessageDigest.getInstance("SHA-256").digest(keyBytes)
             val ivBytes: ByteArray = aesKeyHash.copyOfRange(0, 16)
-            val encryptedBytes: ByteArray = aesEncrypt(data, keyBytes, ivBytes) ?: return ""
+            val encryptedBytes: ByteArray = aesEncrypt(data, key = keyBytes, iv = ivBytes) ?: return ""
             return Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
@@ -87,6 +85,19 @@ object CryptoTools : CryptoToolsAbs {
         val cipher = Cipher.getInstance(AES_EXTERNAL_TRANSFORMATION)
         cipher.init(Cipher.ENCRYPT_MODE, SecretKeySpec(key, KeyAlgorithm.AES), IvParameterSpec(iv))
         return cipher.doFinal(data.toByteArray(StandardCharsets.UTF_8))
+    }
+
+    @Throws(java.lang.Exception::class)
+    fun aesDecrypt(encryptedText: String, key: SecretKey): String? {
+        return try {
+            val keyBytes: ByteArray = key.encoded
+            val aesKeyHash: ByteArray = MessageDigest.getInstance("SHA-256").digest(keyBytes)
+            val ivBytes: ByteArray = aesKeyHash.copyOfRange(0, 16)
+            aesDecrypt(encryptedText, key = keyBytes, iv = ivBytes)
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+            ""
+        }
     }
 
     @Throws(java.lang.Exception::class)

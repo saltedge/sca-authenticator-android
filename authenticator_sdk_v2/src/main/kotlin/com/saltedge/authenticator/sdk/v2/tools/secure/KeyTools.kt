@@ -24,19 +24,26 @@ package com.saltedge.authenticator.sdk.v2.tools.secure
 
 import android.util.Base64
 import com.saltedge.authenticator.sdk.v2.tools.encodeToPemBase64String
-import java.security.KeyFactory
-import java.security.KeyPair
-import java.security.PrivateKey
-import java.security.PublicKey
+import java.security.*
 import java.security.spec.KeySpec
+import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
 import javax.crypto.KeyAgreement
 import javax.crypto.SecretKey
+import javax.crypto.interfaces.DHPublicKey
+import javax.crypto.spec.DHParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 const val DEFAULT_KEY_SIZE = 2048
 
 object KeyTools {
+
+    fun createDhKeyPair(providerDhPublicKey: PublicKey): KeyPair? {
+        val dhParams: DHParameterSpec = (providerDhPublicKey as DHPublicKey).params
+        val authGen: KeyPairGenerator = KeyPairGenerator.getInstance(KeyAlgorithm.DIFFIE_HELLMAN)
+        authGen.initialize(dhParams)
+        return authGen.generateKeyPair()
+    }
 
     /**
      * Computes SecretKey based on DIFFIE-HELLMAN private key and DIFFIE-HELLMAN public key
@@ -61,25 +68,56 @@ object KeyAlgorithm {
 }
 
 /**
+ * Convert private key from asymmetric key pair to pem string
+ *
+ * @receiver KeyPair object
+ * @return private key as String
+ */
+fun KeyPair.privateKeyToPem(): String {
+    val encodedKey = encodeToPemBase64String(this.private.encoded)
+    return "-----BEGIN PRIVATE KEY-----\n$encodedKey\n-----END PRIVATE KEY-----\n"
+}
+
+/**
  * Convert public key from asymmetric key pair to pem string
  *
  * @receiver KeyPair object
  * @return public key as String
  */
-fun KeyPair.publicKeyToPemString(): String {
+fun KeyPair.publicKeyToPem(): String {
     val encodedKey = encodeToPemBase64String(this.public.encoded)
     return "-----BEGIN PUBLIC KEY-----\n$encodedKey\n-----END PUBLIC KEY-----\n"
 }
 
 /**
+ * Converts string which contains private key in PEM format to PrivateKey object
+ *
+ * @receiver private key in PEM format
+ * @return PrivateKey or null
+ */
+fun String.pemToPrivateKey(algorithm: String): PrivateKey? {
+    return try {
+        val keyContent = this
+            .replace("\\n", "")
+            .replace("-----BEGIN PRIVATE KEY-----", "")
+            .replace("-----END PRIVATE KEY-----", "")
+        val keySpec: KeySpec = PKCS8EncodedKeySpec(Base64.decode(keyContent, Base64.NO_WRAP))
+        KeyFactory.getInstance(algorithm).generatePrivate(keySpec)
+    } catch (e: Exception) {
+        //TODO log
+        null
+    }
+}
+
+/**
  * Converts string which contains public key in PEM format to PublicKey object
  *
- * @param pem public key in PEM format
+ * @receiver public key in PEM format
  * @return PublicKey or null
  */
-fun convertPemToPublicKey(pem: String, algorithm: String): PublicKey? {
+fun String.pemToPublicKey(algorithm: String): PublicKey? {
     return try {
-        val keyContent = pem
+        val keyContent = this
             .replace("\\n", "")
             .replace("-----BEGIN PUBLIC KEY-----", "")
             .replace("-----END PUBLIC KEY-----", "")

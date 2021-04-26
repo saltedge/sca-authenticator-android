@@ -34,8 +34,8 @@ package com.saltedge.authenticator.sdk.v2.api.model.connection
  * @property supportEmail - support email if Provider from Configuration
  * @property consentManagementSupported - consent management is supported by Provider or not. Flag from Configuration
  * @property geolocationRequired - collection of geolocation data is mandatory or not. Flag from Configuration
- * @property appDhKeyAlias - unique alias of DH key in Keystore
- * @property providerDhPublicKey - asymmetric Diffie–Hellman Public Key (in PEM format) linked to the Provider
+ * @property providerDhPublicKeyPem - asymmetric Diffie–Hellman Public Key (in PEM format) linked to the Provider
+ * @property appDhPrivateKeyPem - asymmetric Diffie–Hellman Private Key (in PEM format) linked to the connection
  *
  * @see com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationData
  */
@@ -53,6 +53,6 @@ interface ConnectionV2Abs {
     var supportEmail: String?
     var consentManagementSupported: Boolean?
     var geolocationRequired: Boolean?
-    var appDhKeyAlias: String
-    var providerDhPublicKey: String
+    var providerDhPublicKeyPem: String
+    var appDhPrivateKeyPem: String
 }

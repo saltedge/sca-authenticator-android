@@ -86,19 +86,13 @@ class ScaServiceClient : ScaServiceClientAbs {
         pushToken: String?,
         callback: ConnectionCreateListener
     ) {
-        val providerDhPublicKey = convertPemToPublicKey(
-            pem = connection.providerDhPublicKey,
+        val providerDhPublicKey = connection.providerDhPublicKeyPem.pemToPublicKey(
             algorithm = KeyAlgorithm.DIFFIE_HELLMAN
         ).guard {
             callback.error("Diffie-Hellman secure material of provider is invalid")
             return
         }
-        val dhAlias = createRandomGuid()
-        val dhKeyPair = KeyManager.createOrReplaceDhKeyPair(
-            context = appContext,
-            alias = dhAlias,
-            outDhPublicKey = providerDhPublicKey
-        ).guard {
+        val dhKeyPair = KeyTools.createDhKeyPair(providerDhPublicKey).guard {
             callback.error("Diffie-Hellman secure material is unavailable")
             return
         }
@@ -106,7 +100,7 @@ class ScaServiceClient : ScaServiceClientAbs {
         val publicKeyPem = KeyManager.createOrReplaceRsaKeyPair(
             context = appContext,
             alias = rsaAlias
-        )?.publicKeyToPemString().guard {
+        )?.publicKeyToPem().guard {
             callback.error("RSA secure material is unavailable")
             return
         }
@@ -115,11 +109,11 @@ class ScaServiceClient : ScaServiceClientAbs {
             privateDhKey = dhKeyPair.private,
             publicDhKey = providerDhPublicKey
         )
-        connection.appDhKeyAlias = dhAlias
+        connection.appDhPrivateKeyPem = dhKeyPair.privateKeyToPem()
         connection.guid = rsaAlias
         createConnectionRequest(
             baseUrl = connection.connectUrl,
-            dhPublicKey = dhKeyPair.publicKeyToPemString(),
+            dhPublicKey = dhKeyPair.publicKeyToPem(),
             encRsaPublicKey = CryptoTools.aesEncrypt(data = publicKeyPem, key = sharedSecret),
             providerId = connection.code,
             pushToken = pushToken,
@@ -236,11 +230,7 @@ interface ScaServiceClientAbs {
     fun revokeConnections(connections: List<RichConnection>, callback: ConnectionsRevokeListener?)
     fun getAuthorizations(connections: List<RichConnection>, callback: FetchAuthorizationsListener)
     fun createAuthorizationsPollingService(): PollingServiceAbs<FetchAuthorizationsContract>
-    fun getAuthorization(
-        connection: RichConnection,
-        authorizationId: String,
-        callback: FetchAuthorizationListener
-    )
+    fun getAuthorization(connection: RichConnection, authorizationId: String, callback: FetchAuthorizationListener)
     fun createSingleAuthorizationPollingService(): SingleAuthorizationPollingService
     fun confirmAuthorization(
         connection: RichConnection,

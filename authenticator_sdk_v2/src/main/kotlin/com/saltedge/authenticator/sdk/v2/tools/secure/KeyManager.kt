@@ -65,19 +65,6 @@ object KeyManager : KeyManagerAbs {
     }
 
     /**
-     * Creates new or replace existing DH key pairs with new one by the given alias
-     *
-     * @param alias - the alias name
-     * @return KeyPair object
-     */
-    override fun createOrReplaceDhKeyPair(context: Context, alias: String, outDhPublicKey: PublicKey): KeyPair? {
-        return androidKeyStore?.let {
-            deleteKeyPairIfExist(alias = alias)
-            return generateDhKeyPair(context = context, alias = alias, outDhPublicKey = outDhPublicKey)
-        }
-    }
-
-    /**
      * Checks if key pair is exist by the given alias
      *
      * @param alias - the alias name
@@ -197,17 +184,18 @@ object KeyManager : KeyManagerAbs {
      *  Get related private key for connection
      *
      *  @param connection Connection
-     *  @return ConnectionAndKey
+     *  @return RichConnection
      */
     override fun enrichConnection(connection: ConnectionV2Abs): RichConnection? {
         val rsaPrivate = getKeyPair(alias = connection.guid)?.private ?: return null
-        val appDhKeyPair = getKeyPair(alias = connection.appDhKeyAlias) ?: return null
-        val providerDhPublicKey = convertPemToPublicKey(
-            pem = connection.providerDhPublicKey,
+        val providerDhPublicKey = connection.providerDhPublicKeyPem.pemToPublicKey(
+            algorithm = KeyAlgorithm.DIFFIE_HELLMAN
+        ) ?: return null
+        val appDhPrivateKey = connection.appDhPrivateKeyPem.pemToPrivateKey(
             algorithm = KeyAlgorithm.DIFFIE_HELLMAN
         ) ?: return null
         val aesSharedSecret = KeyTools.computeSecretKey(
-            privateDhKey = appDhKeyPair.private,
+            privateDhKey = appDhPrivateKey,
             publicDhKey = providerDhPublicKey
         )
         return RichConnection(connection, rsaPrivate, aesSharedSecret)
@@ -219,7 +207,7 @@ object KeyManager : KeyManagerAbs {
      * @param alias - the alias name
      * @return KeyPair object
      */
-    private fun generateRsaKeyPair(context: Context, alias: String): KeyPair? {
+    fun generateRsaKeyPair(context: Context, alias: String): KeyPair? {
         return (if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             initAsymmetricKeyGenerator(context = context, alias = alias, keyAlgorithm = KeyAlgorithm.RSA)
         } else {
@@ -332,7 +320,6 @@ object KeyManager : KeyManagerAbs {
 
 interface KeyManagerAbs {
     fun createOrReplaceRsaKeyPair(context: Context, alias: String): KeyPair?
-    fun createOrReplaceDhKeyPair(context: Context, alias: String, outDhPublicKey: PublicKey): KeyPair?
     fun keyEntryExist(alias: String): Boolean
     fun getKeyStoreAliases(): List<String>
     fun getSecretKey(alias: String): Key?
