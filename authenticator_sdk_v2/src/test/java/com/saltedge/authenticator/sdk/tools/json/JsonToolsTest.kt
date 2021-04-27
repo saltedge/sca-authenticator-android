@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.sdk.tools.json
 
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationData
-import com.saltedge.authenticator.sdk.v2.tools.createDefaultGson
+import com.saltedge.authenticator.sdk.v2.tools.json.createDefaultGson
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.junit.Assert.assertTrue

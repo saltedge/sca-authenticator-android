@@ -18,13 +18,14 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api.contract
+package com.saltedge.authenticator.sdk.v2.api.model.connection
 
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
+import com.google.gson.annotations.SerializedName
+import com.saltedge.authenticator.sdk.v2.api.KEY_DATA
+import com.saltedge.authenticator.sdk.v2.api.KEY_EXP
+import com.saltedge.authenticator.sdk.v2.api.retrofit.createExpiresAtTime
 
-/**
- * Polling service contract
- */
-interface FetchAuthorizationsContract : FetchAuthorizationsListener {
-    fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection>?
-}
+data class RevokeConnectionRequest(
+    @SerializedName(KEY_DATA) val data: Any = Any(),
+    @SerializedName(KEY_EXP) val requestExpirationTime: Int = createExpiresAtTime()
+)

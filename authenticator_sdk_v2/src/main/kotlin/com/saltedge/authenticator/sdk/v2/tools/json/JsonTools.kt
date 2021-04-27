@@ -18,12 +18,10 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.tools
+package com.saltedge.authenticator.sdk.v2.tools.json
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.saltedge.authenticator.sdk.v2.tools.json.DateTimeAdapter
-import com.saltedge.authenticator.sdk.v2.tools.json.LocalDateAdapter
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
 
@@ -39,3 +37,5 @@ fun createDefaultGson(): Gson {
         .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
         .create()
 }
+
+internal fun Any.toJsonString(): String = createDefaultGson().toJson(this)

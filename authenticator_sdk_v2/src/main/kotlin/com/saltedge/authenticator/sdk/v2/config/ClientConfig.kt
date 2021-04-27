@@ -23,6 +23,10 @@ package com.saltedge.authenticator.sdk.v2.config
 import android.content.Context
 import com.saltedge.authenticator.sdk.v2.tools.buildUserAgent
 
+const val DEFAULT_RETURN_URL = "authenticator://oauth/redirect"
+const val DEFAULT_PLATFORM_NAME = "android"
+const val DEFAULT_EXPIRATION_MINUTES = 5
+
 object ClientConfig {
     /**
      * Url where WebView will be redirected on enrollment finish

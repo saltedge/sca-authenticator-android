@@ -121,7 +121,7 @@ class ConnectProviderViewModel(
         val accessToken = response.accessToken
         val redirectUrl = response.redirectUrl
         if (accessToken?.isNotEmpty() == true) {
-            authFinishedWithSuccess(
+            onConnectionSuccessAuthentication(
                 connectionId = response.connectionId ?: "",
                 accessToken = accessToken
             )
@@ -130,7 +130,7 @@ class ConnectProviderViewModel(
                 parseRedirect(
                     url = redirectUrl,
                     success = { connectionID, resultAccessToken ->
-                        authFinishedWithSuccess(connectionID, resultAccessToken)
+                        onConnectionSuccessAuthentication(connectionID, resultAccessToken)
                     },
                     error = { errorClass, errorMessage ->
                         webAuthFinishError(errorClass, errorMessage)
@@ -173,7 +173,7 @@ class ConnectProviderViewModel(
         if (dialogActionId == DialogInterface.BUTTON_POSITIVE) onCloseEvent.postUnitEvent()
     }
 
-    fun authFinishedWithSuccess(connectionId: ConnectionID, accessToken: Token) {
+    fun onConnectionSuccessAuthentication(connectionId: ConnectionID, accessToken: Token) {
         viewMode = ViewMode.COMPLETE_SUCCESS
         connection.id = connectionId
         connection.accessToken = accessToken

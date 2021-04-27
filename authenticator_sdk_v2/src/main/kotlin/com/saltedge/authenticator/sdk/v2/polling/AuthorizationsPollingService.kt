@@ -21,8 +21,8 @@
 package com.saltedge.authenticator.sdk.v2.polling
 
 import com.saltedge.authenticator.sdk.v2.api.contract.FetchAuthorizationsContract
-import com.saltedge.authenticator.sdk.v2.api.RestClient
-import com.saltedge.authenticator.sdk.v2.api.connector.AuthorizationsConnector
+import com.saltedge.authenticator.sdk.v2.api.retrofit.RestClient
+import com.saltedge.authenticator.sdk.v2.api.connector.AuthorizationsIndexConnector
 
 /**
  * Periodically query authorizations list.
@@ -35,11 +35,11 @@ class AuthorizationsPollingService : PollingServiceAbs<FetchAuthorizationsContra
 
     override fun forcedFetch() {
         try {
-            val connector = AuthorizationsConnector(
+            val connector = AuthorizationsIndexConnector(
                 apiInterface = RestClient.apiInterface,
                 resultCallback = contract
             )
-            contract?.getCurrentConnectionsAndKeysForPolling()?.let { connector.fetchAuthorizations(connectionsAndKeys = it) }
+            contract?.getCurrentConnectionsAndKeysForPolling()?.let { connector.fetchActiveAuthorizations(connections = it) }
         } catch (e: Exception) {
             e.printStackTrace()
         }

@@ -18,13 +18,20 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api.contract
+package com.saltedge.authenticator.sdk.v2.api.model.connection
 
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
+import com.google.gson.annotations.SerializedName
+import com.saltedge.authenticator.sdk.v2.api.*
+import com.saltedge.authenticator.sdk.v2.config.*
 
-/**
- * Polling service contract
- */
-interface FetchAuthorizationsContract : FetchAuthorizationsListener {
-    fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection>?
-}
+data class CreateConnectionRequest(@SerializedName(KEY_DATA) val data: CreateConnectionRequestData)
+
+data class CreateConnectionRequestData(
+    @SerializedName(KEY_PROVIDER_ID) val providerId: String,
+    @SerializedName(KEY_DH_PUBLIC) var appDhPublicKey: String,
+    @SerializedName(KEY_ENC_RSA_PUBLIC) var encryptedAppRsaPublicKey: String,
+    @SerializedName(KEY_RETURN_URL) val returnUrl: String = ClientConfig.authenticationReturnUrl,
+    @SerializedName(KEY_PLATFORM) val platform: String = DEFAULT_PLATFORM_NAME,
+    @SerializedName(KEY_PUSH_TOKEN) val pushToken: String?,
+    @SerializedName(KEY_CONNECT_QUERY) val connectQueryParam: String?
+)

@@ -20,11 +20,12 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.contract
 
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
+import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
 
 /**
- * Polling service contract
+ * Encrypted Data (Authorizations, Consents) request result
  */
-interface FetchAuthorizationsContract : FetchAuthorizationsListener {
-    fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection>?
+interface FetchAuthorizationsListener {
+    fun onFetchAuthorizationsResult(result: List<AuthorizationResponseData>, errors: List<ApiErrorData>)
 }

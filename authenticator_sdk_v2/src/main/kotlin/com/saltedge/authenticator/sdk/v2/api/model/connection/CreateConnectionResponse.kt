@@ -18,13 +18,16 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api.contract
+package com.saltedge.authenticator.sdk.v2.api.model.connection
 
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
+import com.google.gson.annotations.SerializedName
+import com.saltedge.authenticator.sdk.v2.api.KEY_AUTHENTICATION_URL
+import com.saltedge.authenticator.sdk.v2.api.KEY_CONNECTION_ID
+import com.saltedge.authenticator.sdk.v2.api.KEY_DATA
 
-/**
- * Polling service contract
- */
-interface FetchAuthorizationsContract : FetchAuthorizationsListener {
-    fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection>?
-}
+data class CreateConnectionResponse(@SerializedName(KEY_DATA) var data: CreateConnectionResponseData)
+
+data class CreateConnectionResponseData(
+    @SerializedName(KEY_AUTHENTICATION_URL) var authenticationUrl: String,
+    @SerializedName(KEY_CONNECTION_ID) var connectionId: String
+)

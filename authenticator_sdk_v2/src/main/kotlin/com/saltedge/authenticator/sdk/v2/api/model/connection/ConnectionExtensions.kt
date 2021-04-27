@@ -26,7 +26,7 @@ package com.saltedge.authenticator.sdk.v2.api.model.connection
  * @receiver connection
  * @return boolean, true if status == ACTIVE && has access_token
  */
-fun ConnectionAbs.isActive(): Boolean {
+fun ConnectionV2Abs.isActive(): Boolean {
     return this.getStatus() == ConnectionStatus.ACTIVE && this.accessToken.isNotEmpty()
 }
 
@@ -36,6 +36,6 @@ fun ConnectionAbs.isActive(): Boolean {
  * @receiver connection
  * @return connection status
  */
-fun ConnectionAbs.getStatus(): ConnectionStatus {
+fun ConnectionV2Abs.getStatus(): ConnectionStatus {
     return this.status.toConnectionStatus() ?: ConnectionStatus.INACTIVE
 }

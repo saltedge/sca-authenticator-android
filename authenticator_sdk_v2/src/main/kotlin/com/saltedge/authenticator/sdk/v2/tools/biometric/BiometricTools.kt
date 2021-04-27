@@ -30,7 +30,7 @@ import android.os.Build
 import android.security.keystore.KeyProperties
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import com.saltedge.authenticator.sdk.v2.tools.secure.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.v2.tools.secure.KeyManagerAbs
 import javax.crypto.Cipher
 
 const val FINGERPRINT_ALIAS_FOR_PIN = "fingerprint_alias_for_pin"
@@ -38,7 +38,7 @@ const val FINGERPRINT_ALIAS_FOR_PIN = "fingerprint_alias_for_pin"
 @Suppress("DEPRECATION")
 class BiometricTools(
     val appContext: Context,
-    val keyStoreManager: KeyStoreManagerAbs
+    val keyStoreManager: KeyManagerAbs
 ) : BiometricToolsAbs {
 
     @Throws(Exception::class)

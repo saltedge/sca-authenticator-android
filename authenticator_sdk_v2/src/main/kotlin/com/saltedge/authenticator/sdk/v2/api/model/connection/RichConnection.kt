@@ -18,13 +18,16 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api.contract
+package com.saltedge.authenticator.sdk.v2.api.model.connection
 
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
+import java.security.PrivateKey
+import javax.crypto.SecretKey
 
 /**
- * Polling service contract
+ * Container for Connection model and related PrivateKey
  */
-interface FetchAuthorizationsContract : FetchAuthorizationsListener {
-    fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection>?
-}
+data class RichConnection(
+    val connection: ConnectionV2Abs,
+    val rsaPrivate: PrivateKey,
+    val aesSharedSecret: SecretKey
+)

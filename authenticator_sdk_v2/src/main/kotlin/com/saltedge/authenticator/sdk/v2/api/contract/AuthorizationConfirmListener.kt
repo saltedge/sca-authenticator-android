@@ -20,11 +20,22 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.contract
 
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
+import com.saltedge.authenticator.sdk.v2.api.ERROR_CLASS_API_REQUEST
+import com.saltedge.authenticator.sdk.v2.api.model.AuthorizationID
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponseData
+import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
 
 /**
- * Polling service contract
+ * Confirm SCA Authorization request result
  */
-interface FetchAuthorizationsContract : FetchAuthorizationsListener {
-    fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection>?
+interface AuthorizationConfirmListener {
+    fun onAuthorizationConfirmSuccess(result: ConfirmDenyResponseData)
+    fun onAuthorizationConfirmFailure(error: ApiErrorData, authorizationID: AuthorizationID)
+}
+
+fun AuthorizationConfirmListener.error(message: String, authorizationID: AuthorizationID) {
+    this.onAuthorizationConfirmFailure(
+        error = ApiErrorData(errorClassName = ERROR_CLASS_API_REQUEST, errorMessage = message),
+        authorizationID = authorizationID
+    )
 }
