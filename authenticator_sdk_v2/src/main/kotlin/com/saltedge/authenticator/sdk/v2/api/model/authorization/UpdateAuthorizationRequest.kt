@@ -22,14 +22,13 @@ package com.saltedge.authenticator.sdk.v2.api.model.authorization
 
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.sdk.v2.api.*
+import com.saltedge.authenticator.sdk.v2.api.model.EncryptedBundle
 import com.saltedge.authenticator.sdk.v2.api.retrofit.createExpiresAtTime
 
 data class UpdateAuthorizationRequest(
-    @SerializedName(KEY_DATA) val data: UpdateAuthorizationRequestData,
+    @SerializedName(KEY_DATA) val data: EncryptedBundle,
     @SerializedName(KEY_EXP) val requestExpirationTime: Int = createExpiresAtTime()
 )
-
-data class UpdateAuthorizationRequestData(@SerializedName(KEY_PAYLOAD) val encryptedPayload: String)
 
 data class UpdateAuthorizationData(
     @SerializedName(KEY_AUTHORIZATION_CODE) val authorizationCode: String,

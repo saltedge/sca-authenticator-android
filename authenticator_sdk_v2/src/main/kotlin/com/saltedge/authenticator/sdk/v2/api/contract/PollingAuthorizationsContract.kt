@@ -25,6 +25,6 @@ import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
 /**
  * Polling service contract
  */
-interface FetchAuthorizationContract : FetchAuthorizationListener {
-    fun getConnectionDataForAuthorizationPolling(): RichConnection?
+interface PollingAuthorizationsContract : FetchAuthorizationsListener {
+    fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection>?
 }

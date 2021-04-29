@@ -23,7 +23,7 @@ package com.saltedge.authenticator.sdk.v2.api.model.appLink
 import com.saltedge.authenticator.sdk.v2.api.API_VERSION_NAMESPACE
 import java.io.Serializable
 
-data class ConnectAppLinkData(
+data class ConnectAppLinkDataV2(
     var configurationUrl: String,
     var connectQuery: String? = null
 ) : Serializable {

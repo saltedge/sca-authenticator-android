@@ -24,45 +24,17 @@ package com.saltedge.authenticator.sdk.v2.tools.secure
 
 import android.util.Base64
 import com.saltedge.authenticator.sdk.v2.tools.encodeToPemBase64String
-import java.security.*
+import java.security.KeyFactory
+import java.security.KeyPair
+import java.security.PrivateKey
+import java.security.PublicKey
 import java.security.spec.KeySpec
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
-import javax.crypto.KeyAgreement
-import javax.crypto.SecretKey
-import javax.crypto.interfaces.DHPublicKey
-import javax.crypto.spec.DHParameterSpec
-import javax.crypto.spec.SecretKeySpec
 
 const val DEFAULT_KEY_SIZE = 2048
 
-object KeyTools {
-
-    fun createDhKeyPair(providerDhPublicKey: PublicKey): KeyPair? {
-        val dhParams: DHParameterSpec = (providerDhPublicKey as DHPublicKey).params
-        val authGen: KeyPairGenerator = KeyPairGenerator.getInstance(KeyAlgorithm.DIFFIE_HELLMAN)
-        authGen.initialize(dhParams)
-        return authGen.generateKeyPair()
-    }
-
-    /**
-     * Computes SecretKey based on DIFFIE-HELLMAN private key and DIFFIE-HELLMAN public key
-     */
-    @Throws(Exception::class)
-    fun computeSecretKey(
-        privateDhKey: PrivateKey,
-        publicDhKey: PublicKey
-    ): SecretKey {
-        val authAgreement: KeyAgreement = KeyAgreement.getInstance(KeyAlgorithm.DIFFIE_HELLMAN)
-        authAgreement.init(privateDhKey)
-        authAgreement.doPhase(publicDhKey, true)
-        val sharedSecret: ByteArray = authAgreement.generateSecret()
-        return SecretKeySpec(sharedSecret, 0, 32, KeyAlgorithm.AES)
-    }
-}
-
 object KeyAlgorithm {
-    const val DIFFIE_HELLMAN = "DH"
     const val RSA = "RSA"
     const val AES = "AES"
 }
@@ -84,8 +56,16 @@ fun KeyPair.privateKeyToPem(): String {
  * @receiver KeyPair object
  * @return public key as String
  */
-fun KeyPair.publicKeyToPem(): String {
-    val encodedKey = encodeToPemBase64String(this.public.encoded)
+fun KeyPair.publicKeyToPem(): String = this.public.publicKeyToPem()
+
+/**
+ * Convert public key to pem string
+ *
+ * @receiver RSA PublicKey
+ * @return public key as String
+ */
+fun PublicKey.publicKeyToPem(): String {
+    val encodedKey = encodeToPemBase64String(this.encoded)
     return "-----BEGIN PUBLIC KEY-----\n$encodedKey\n-----END PUBLIC KEY-----\n"
 }
 

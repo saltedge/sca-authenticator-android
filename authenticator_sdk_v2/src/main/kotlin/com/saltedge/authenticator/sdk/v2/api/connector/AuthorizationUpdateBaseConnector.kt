@@ -22,9 +22,9 @@ package com.saltedge.authenticator.sdk.v2.api.connector
 
 import com.saltedge.authenticator.sdk.v2.api.ApiResponseInterceptor
 import com.saltedge.authenticator.sdk.v2.api.model.AuthorizationID
+import com.saltedge.authenticator.sdk.v2.api.model.EncryptedBundle
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponse
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationRequest
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationRequestData
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.retrofit.addSignatureHeader
 import com.saltedge.authenticator.sdk.v2.api.retrofit.authorizationsConfirmPath
@@ -51,6 +51,5 @@ internal abstract class AuthorizationUpdateBaseConnector(
         )
     }
 
-    protected fun body(encryptedPayload: String): UpdateAuthorizationRequest =
-        UpdateAuthorizationRequest(data = UpdateAuthorizationRequestData(encryptedPayload))
+    protected fun body(encryptedPayload: EncryptedBundle) = UpdateAuthorizationRequest(data = encryptedPayload)
 }

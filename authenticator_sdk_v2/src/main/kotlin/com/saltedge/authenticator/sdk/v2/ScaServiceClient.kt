@@ -23,6 +23,7 @@ package com.saltedge.authenticator.sdk.v2
 import android.content.Context
 import com.saltedge.authenticator.sdk.v2.api.connector.*
 import com.saltedge.authenticator.sdk.v2.api.contract.*
+import com.saltedge.authenticator.sdk.v2.api.model.EncryptedBundle
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationData
 import com.saltedge.authenticator.sdk.v2.api.model.connection.ConnectionV2Abs
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
@@ -58,8 +59,7 @@ class ScaServiceClient : ScaServiceClientAbs {
      */
     override fun createConnectionRequest(
         baseUrl: String,
-        dhPublicKey: String,
-        encRsaPublicKey: String,
+        rsaPublicKeyEncryptedBundle: EncryptedBundle,
         providerId: String,
         pushToken: String?,
         connectQueryParam: String?,
@@ -67,11 +67,10 @@ class ScaServiceClient : ScaServiceClientAbs {
     ) {
         ConnectionCreateConnector(RestClient.apiInterface, callback).postConnectionData(
             baseUrl = baseUrl,
-            appDhPublicKey = dhPublicKey,
-            encryptedAppRsaPublicKey = encRsaPublicKey,
             providerId = providerId,
             pushToken = pushToken,
-            connectQueryParam = connectQueryParam
+            connectQueryParam = connectQueryParam,
+            encryptedRsaPublicKey = rsaPublicKeyEncryptedBundle
         )
     }
 
@@ -79,42 +78,38 @@ class ScaServiceClient : ScaServiceClientAbs {
      * Request to create new SCA Service connection.
      * Result is returned through callback.
      */
-    override fun initConnectionRequest(
+    override fun createConnectionRequest(
         appContext: Context,
         connection: ConnectionV2Abs,
         connectQueryParam: String?,
         pushToken: String?,
         callback: ConnectionCreateListener
     ) {
-        val providerDhPublicKey = connection.providerDhPublicKeyPem.pemToPublicKey(
-            algorithm = KeyAlgorithm.DIFFIE_HELLMAN
+        val providerRsaPublicKey = connection.providerRsaPublicKeyPem.pemToPublicKey(
+            algorithm = KeyAlgorithm.RSA
         ).guard {
             callback.error("Diffie-Hellman secure material of provider is invalid")
             return
         }
-        val dhKeyPair = KeyTools.createDhKeyPair(providerDhPublicKey).guard {
-            callback.error("Diffie-Hellman secure material is unavailable")
-            return
-        }
         val rsaAlias = createRandomGuid()
-        val publicKeyPem = KeyManager.createOrReplaceRsaKeyPair(
+        val appRsaPublicKey = KeyManager.createOrReplaceRsaKeyPair(
             context = appContext,
             alias = rsaAlias
-        )?.publicKeyToPem().guard {
+        )?.public.guard {
             callback.error("RSA secure material is unavailable")
             return
         }
-
-        val sharedSecret = KeyTools.computeSecretKey(
-            privateDhKey = dhKeyPair.private,
-            publicDhKey = providerDhPublicKey
-        )
-        connection.appDhPrivateKeyPem = dhKeyPair.privateKeyToPem()
+        val rsaPublicKeyEncryptedBundle = CryptoTools.createEncryptedBundle(
+            payload = appRsaPublicKey.publicKeyToPem(),
+            rsaPublicKey = providerRsaPublicKey
+        ).guard {
+            callback.error("User data encryption failed")
+            return
+        }
         connection.guid = rsaAlias
         createConnectionRequest(
             baseUrl = connection.connectUrl,
-            dhPublicKey = dhKeyPair.publicKeyToPem(),
-            encRsaPublicKey = CryptoTools.aesEncrypt(data = publicKeyPem, key = sharedSecret),
+            rsaPublicKeyEncryptedBundle = rsaPublicKeyEncryptedBundle,
             providerId = connection.code,
             pushToken = pushToken,
             connectQueryParam = connectQueryParam,
@@ -143,7 +138,7 @@ class ScaServiceClient : ScaServiceClientAbs {
     /**
      * Create Polling Service for an SCA Service Authorizations list status
      */
-    override fun createAuthorizationsPollingService(): PollingServiceAbs<FetchAuthorizationsContract> {
+    override fun createAuthorizationsPollingService(): PollingServiceAbs<PollingAuthorizationsContract> {
         return AuthorizationsPollingService()
     }
 
@@ -176,10 +171,13 @@ class ScaServiceClient : ScaServiceClientAbs {
         authorizationData: UpdateAuthorizationData,
         callback: AuthorizationConfirmListener
     ) {
-        val encryptedPayload = CryptoTools.aesEncrypt(
-            authorizationData.toJsonString(),
-            connection.aesSharedSecret
-        )
+        val encryptedPayload = CryptoTools.createEncryptedBundle(
+            payload = authorizationData.toJsonString(),
+            rsaPublicKey = connection.providerPublicKey
+        ).guard {
+            callback.error(message = "User data encryption failed", authorizationID = authorizationId)
+            return
+        }
         AuthorizationConfirmConnector(
             apiInterface = RestClient.apiInterface,
             authorizationId = authorizationId,
@@ -197,10 +195,13 @@ class ScaServiceClient : ScaServiceClientAbs {
         authorizationData: UpdateAuthorizationData,
         callback: AuthorizationDenyListener
     ) {
-        val encryptedPayload = CryptoTools.aesEncrypt(
-            authorizationData.toJsonString(),
-            connection.aesSharedSecret
-        )
+        val encryptedPayload = CryptoTools.createEncryptedBundle(
+            payload = authorizationData.toJsonString(),
+            rsaPublicKey = connection.providerPublicKey
+        ).guard {
+            callback.error(message = "User data encryption failed", authorizationID = authorizationId)
+            return
+        }
         AuthorizationDenyConnector(
             apiInterface = RestClient.apiInterface,
             authorizationId = authorizationId,
@@ -213,14 +214,13 @@ interface ScaServiceClientAbs {
     fun getProviderConfigurationData(configurationUrl: String, callback: FetchConfigurationListener)
     fun createConnectionRequest(
         baseUrl: String,
-        dhPublicKey: String,
-        encRsaPublicKey: String,
+        rsaPublicKeyEncryptedBundle: EncryptedBundle,
         providerId: String,
         pushToken: String?,
         connectQueryParam: String?,
         callback: ConnectionCreateListener
     )
-    fun initConnectionRequest(
+    fun createConnectionRequest(
         appContext: Context,
         connection: ConnectionV2Abs,
         connectQueryParam: String?,
@@ -229,7 +229,7 @@ interface ScaServiceClientAbs {
     )
     fun revokeConnections(connections: List<RichConnection>, callback: ConnectionsRevokeListener?)
     fun getAuthorizations(connections: List<RichConnection>, callback: FetchAuthorizationsListener)
-    fun createAuthorizationsPollingService(): PollingServiceAbs<FetchAuthorizationsContract>
+    fun createAuthorizationsPollingService(): PollingServiceAbs<PollingAuthorizationsContract>
     fun getAuthorization(connection: RichConnection, authorizationId: String, callback: FetchAuthorizationListener)
     fun createSingleAuthorizationPollingService(): SingleAuthorizationPollingService
     fun confirmAuthorization(

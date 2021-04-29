@@ -21,13 +21,16 @@
 package com.saltedge.authenticator.sdk.tools
 
 import android.content.Context
+import android.util.Log
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.saltedge.authenticator.sdk.v2.tools.secure.*
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.*
 
 
 @RunWith(AndroidJUnit4::class)
@@ -38,9 +41,9 @@ class KeyExchangeTest {
 
     @Test
     @Throws(Exception::class)
-    fun createOrReplaceDhKeyPairTest() {
+    fun keyExchangeTest() {
         //Init connection on application side
-        val providerDhPublicKey = providerDhPublicKeyPem.pemToPublicKey(KeyAlgorithm.DIFFIE_HELLMAN)!!
+        val providerDhPublicKey = providerDhPublicKeyPem.pemToPublicKey(KeyAlgorithm.EC)!!
         val appDhKeyPair = KeyTools.createDhKeyPair(providerDhPublicKey)!!
         val sharedSecretOfApp = KeyTools.computeSecretKey(appDhKeyPair.private, providerDhPublicKey)
         val rsaKeyPair = KeyManager.createOrReplaceRsaKeyPair(context, "testRSA")!!
@@ -49,11 +52,30 @@ class KeyExchangeTest {
         val appDhPublicKeyPem = appDhKeyPair.publicKeyToPem()
 
         //Init connection on provider side
-        val providerDhPrivateKey = providerDhPrivateKeyPem.pemToPrivateKey(KeyAlgorithm.DIFFIE_HELLMAN)!!
-        val appDhPublicKey = appDhPublicKeyPem.pemToPublicKey(KeyAlgorithm.DIFFIE_HELLMAN)!!
+        val providerDhPrivateKey = providerDhPrivateKeyPem.pemToPrivateKey(KeyAlgorithm.EC)!!
+        val appDhPublicKey = appDhPublicKeyPem.pemToPublicKey(KeyAlgorithm.EC)!!
         val sharedSecretOfProvider = KeyTools.computeSecretKey(providerDhPrivateKey, appDhPublicKey)
         val decRsaPublicPem = CryptoTools.aesDecrypt(encRsaPublicPem, sharedSecretOfProvider)
 
         assertThat(rsaPublicPem, equalTo(decRsaPublicPem))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun dhEncryptTest() {
+        //Init connection on application side
+        val providerDhPublicKey = providerDhPublicKeyPem.pemToPublicKey(KeyAlgorithm.EC)!!
+        val appDhKeyPair = KeyTools.createDhKeyPair(providerDhPublicKey)!!
+        val sharedSecretOfApp = KeyTools.computeSecretKey(appDhKeyPair.private, providerDhPublicKey)
+        val appDhPublicKeyPem = appDhKeyPair.publicKeyToPem()
+
+        val accessToken: String = UUID.randomUUID().toString()
+        val accessTokenResponseJson = "{\"access_token\": \"$accessToken\"}"
+        Log.d("TEST_TEST", "Access Token object: $accessTokenResponseJson")
+        val encryptedJson: String = CryptoTools.aesEncrypt(accessTokenResponseJson, sharedSecretOfApp)
+        Log.d("TEST_TEST", "encryptedJson: $encryptedJson")
+        Log.d("TEST_TEST", "appDhPublicKeyPem:\n$appDhPublicKeyPem")
+
+        Assert.assertTrue(encryptedJson.isNotEmpty())
     }
 }

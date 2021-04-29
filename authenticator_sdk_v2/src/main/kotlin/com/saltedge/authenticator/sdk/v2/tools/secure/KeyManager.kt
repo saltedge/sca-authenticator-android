@@ -37,8 +37,6 @@ import java.security.*
 import java.util.*
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
-import javax.crypto.interfaces.DHPublicKey
-import javax.crypto.spec.DHParameterSpec
 import javax.security.auth.x500.X500Principal
 
 private const val ANDROID_KEYSTORE = "AndroidKeyStore"
@@ -187,18 +185,11 @@ object KeyManager : KeyManagerAbs {
      *  @return RichConnection
      */
     override fun enrichConnection(connection: ConnectionV2Abs): RichConnection? {
-        val rsaPrivate = getKeyPair(alias = connection.guid)?.private ?: return null
-        val providerDhPublicKey = connection.providerDhPublicKeyPem.pemToPublicKey(
-            algorithm = KeyAlgorithm.DIFFIE_HELLMAN
+        val appRsaPrivate = getKeyPair(alias = connection.guid)?.private ?: return null
+        val providerRsaPublic = connection.providerRsaPublicKeyPem.pemToPublicKey(
+            algorithm = KeyAlgorithm.RSA
         ) ?: return null
-        val appDhPrivateKey = connection.appDhPrivateKeyPem.pemToPrivateKey(
-            algorithm = KeyAlgorithm.DIFFIE_HELLMAN
-        ) ?: return null
-        val aesSharedSecret = KeyTools.computeSecretKey(
-            privateDhKey = appDhPrivateKey,
-            publicDhKey = providerDhPublicKey
-        )
-        return RichConnection(connection, rsaPrivate, aesSharedSecret)
+        return RichConnection(connection, appRsaPrivate, providerRsaPublic)
     }
 
     /**
@@ -209,29 +200,10 @@ object KeyManager : KeyManagerAbs {
      */
     fun generateRsaKeyPair(context: Context, alias: String): KeyPair? {
         return (if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            initAsymmetricKeyGenerator(context = context, alias = alias, keyAlgorithm = KeyAlgorithm.RSA)
+            initAsymmetricKeyGenerator(context = context, alias = alias)
         } else {
             initRsaKeyGenerator(alias = alias)
         }).generateKeyPair()
-    }
-
-    /**
-     * Create new Diffie-Hellman key pair by the given alias
-     *
-     * @param alias - the alias name
-     * @return KeyPair object
-     */
-    private fun generateDhKeyPair(context: Context, alias: String, outDhPublicKey: PublicKey): KeyPair? {
-        return (if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            initAsymmetricKeyGenerator(
-                context = context,
-                alias = alias,
-                keyAlgorithm = KeyAlgorithm.DIFFIE_HELLMAN,
-                outDhPublicKey = outDhPublicKey
-            )
-        } else {
-            initDhKeyGenerator(alias = alias, outDhPublicKey = outDhPublicKey)
-        })?.generateKeyPair()
     }
 
     /**
@@ -243,15 +215,14 @@ object KeyManager : KeyManagerAbs {
      * @return generator KeyPairGenerator
      */
     @Suppress("DEPRECATION")
-    private fun initAsymmetricKeyGenerator(context: Context, alias: String, keyAlgorithm: String, outDhPublicKey: PublicKey? = null): KeyPairGenerator {
+    private fun initAsymmetricKeyGenerator(context: Context, alias: String): KeyPairGenerator {
         val builder = KeyPairGeneratorSpec.Builder(context)
             .setAlias(alias)
             .setSerialNumber(BigInteger.ONE)
             .setSubject(X500Principal("CN=${alias} CA Certificate"))
             .setStartDate(Calendar.getInstance().time)
             .setEndDate((Calendar.getInstance().apply { add(Calendar.YEAR, 20) }).time)
-        (outDhPublicKey as? DHPublicKey)?.params?.let { builder.setAlgorithmParameterSpec(it) }
-        return  KeyPairGenerator.getInstance(keyAlgorithm, ANDROID_KEYSTORE).apply {
+        return  KeyPairGenerator.getInstance(KeyAlgorithm.RSA, ANDROID_KEYSTORE).apply {
             initialize(builder.build())
         }
     }
@@ -276,31 +247,6 @@ object KeyManager : KeyManagerAbs {
         builder.setSignaturePaddings(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
         builder.setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
         return  KeyPairGenerator.getInstance(KeyAlgorithm.RSA, ANDROID_KEYSTORE).apply {
-            initialize(builder.build())
-        }
-    }
-
-    /**
-     * Create new Diffie-Hellman key pair by the given alias
-     *
-     * @param alias - the alias name
-     * @return KeyPair object
-     */
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun initDhKeyGenerator(alias: String, outDhPublicKey: PublicKey): KeyPairGenerator? {
-        val dhParams: DHParameterSpec = (outDhPublicKey as DHPublicKey).params
-
-        val builder = KeyGenParameterSpec.Builder(
-            alias,
-            KeyProperties.PURPOSE_ENCRYPT
-                or KeyProperties.PURPOSE_DECRYPT
-                or KeyProperties.PURPOSE_SIGN
-        )
-        .setAlgorithmParameterSpec(dhParams)
-        .setDigests(KeyProperties.DIGEST_SHA256)
-        .setRandomizedEncryptionRequired(true)
-
-        return  KeyPairGenerator.getInstance(KeyAlgorithm.DIFFIE_HELLMAN, ANDROID_KEYSTORE).apply {
             initialize(builder.build())
         }
     }

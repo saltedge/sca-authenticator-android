@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.sdk.v2.api.model.connection
 
 import java.security.PrivateKey
-import javax.crypto.SecretKey
+import java.security.PublicKey
 
 /**
  * Container for Connection model and related PrivateKey
@@ -29,5 +29,5 @@ import javax.crypto.SecretKey
 data class RichConnection(
     val connection: ConnectionV2Abs,
     val rsaPrivate: PrivateKey,
-    val aesSharedSecret: SecretKey
+    val providerPublicKey: PublicKey
 )

@@ -20,13 +20,13 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.contract
 
-import com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationData
+import com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationDataV2
 import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
 
 /**
  * Provider configuration request result
  */
 interface FetchConfigurationListener {
-    fun onFetchProviderConfigurationSuccess(result: ConfigurationData)
+    fun onFetchProviderConfigurationSuccess(result: ConfigurationDataV2)
     fun onFetchProviderConfigurationFailure(error: ApiErrorData)
 }

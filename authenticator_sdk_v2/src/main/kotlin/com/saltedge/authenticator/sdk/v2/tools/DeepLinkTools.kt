@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.sdk.v2.tools
 
 import android.net.Uri
-import com.saltedge.authenticator.sdk.v2.api.model.appLink.ConnectAppLinkData
+import com.saltedge.authenticator.sdk.v2.api.model.appLink.ConnectAppLinkDataV2
 
 const val KEY_CONFIGURATION_PARAM = "configuration"
 const val KEY_CONNECT_QUERY_PARAM = "connect_query"
@@ -45,12 +45,12 @@ fun String.isValidDeeplink(): Boolean {
  * @receiver deep link String (e.g. authenticator://saltedge.com/connect?configuration=https://example.com/configuration&connect_query=1234567890)
  * @return ConnectAppLinkData object
  */
-fun String.extractConnectAppLinkData(): ConnectAppLinkData? {
+fun String.extractConnectAppLinkData(): ConnectAppLinkDataV2? {
     val uri = Uri.parse(this)
     val configurationUrl = uri.getQueryParameter(KEY_CONFIGURATION_PARAM) ?: return null
     val configurationUri = Uri.parse(configurationUrl)
     return if (configurationUri.host?.contains(".") == true) {
-        ConnectAppLinkData(
+        ConnectAppLinkDataV2(
             configurationUrl = configurationUrl,
             connectQuery = uri.getQueryParameter(KEY_CONNECT_QUERY_PARAM)
         )

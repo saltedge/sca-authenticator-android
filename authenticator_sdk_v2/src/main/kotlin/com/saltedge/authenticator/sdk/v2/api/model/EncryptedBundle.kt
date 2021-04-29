@@ -18,24 +18,27 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api.model.configuration
+package com.saltedge.authenticator.sdk.v2.api.model
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.api.*
+import com.saltedge.authenticator.sdk.v2.api.KEY_DATA
+import com.saltedge.authenticator.sdk.v2.api.KEY_IV
+import com.saltedge.authenticator.sdk.v2.api.KEY_KEY
 import java.io.Serializable
 
-data class ConfigurationResponse(@SerializedName(KEY_DATA) var data: ConfigurationData)
-
 /**
- * SCA Service configuration
+ * Encrypted data bundle. Based on hybrid crypto algorithm.
+ *
+ * Payload is encrypted with symmetric AES-CBC-256 algorithm.
+ * AES secret key and initialization vector are encrypted with asymmetric RSA-256 algorithm.
+ * All strings are encoded with Base64 algorithm.
+ *
+ * @param encryptedAesKey AES secret key encrypted with RSA algorithm and encoded with Base64 algorithm
+ * @param encryptedIvKey AES initialization vector encrypted with RSA algorithm and encoded with Base64 algorithm
+ * @param encryptedData AES secret key encrypted with RSA algorithm and encoded with Base64 algorithm
  */
-data class ConfigurationData(
-    @SerializedName(KEY_SCA_SERVICE_URL) var scaServiceUrl: String,
-    @SerializedName(KEY_API_VERSION) var apiVersion: String,
-    @SerializedName(KEY_PROVIDER_ID) var providerId: String,
-    @SerializedName(KEY_NAME) var name: String,
-    @SerializedName(KEY_LOGO_URL) var logoUrl: String,
-    @SerializedName(KEY_SUPPORT_EMAIL) var supportEmail: String,
-    @SerializedName(KEY_DH_PUBLIC) var dhPublicKey: String,
-    @SerializedName(KEY_GEOLOCATION_REQUIRED) var geolocationRequired: Boolean
+data class EncryptedBundle(
+    @SerializedName(KEY_KEY) var encryptedAesKey: String,
+    @SerializedName(KEY_IV) var encryptedIvKey: String,
+    @SerializedName(KEY_DATA) var encryptedData: String
 ) : Serializable
