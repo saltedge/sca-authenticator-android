@@ -37,6 +37,8 @@ data class AuthorizationData(
     @SerializedName(KEY_EXPIRES_AT) var expiresAt: DateTime
 ) : Serializable
 
+fun AuthorizationData.isNotExpired(): Boolean = expiresAt.isAfterNow
+
 data class DescriptionData(
     val payment: DescriptionPaymentData? = null,
     val text: DescriptionTextData? = null,

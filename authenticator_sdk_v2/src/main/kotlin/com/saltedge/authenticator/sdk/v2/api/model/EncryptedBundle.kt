@@ -34,11 +34,11 @@ import java.io.Serializable
  * All strings are encoded with Base64 algorithm.
  *
  * @param encryptedAesKey AES secret key encrypted with RSA algorithm and encoded with Base64 algorithm
- * @param encryptedIvKey AES initialization vector encrypted with RSA algorithm and encoded with Base64 algorithm
+ * @param encryptedAesIv AES initialization vector encrypted with RSA algorithm and encoded with Base64 algorithm
  * @param encryptedData AES secret key encrypted with RSA algorithm and encoded with Base64 algorithm
  */
 data class EncryptedBundle(
-    @SerializedName(KEY_KEY) var encryptedAesKey: String,
-    @SerializedName(KEY_IV) var encryptedIvKey: String,
-    @SerializedName(KEY_DATA) var encryptedData: String
+    @SerializedName(KEY_KEY) val encryptedAesKey: String,
+    @SerializedName(KEY_IV) val encryptedAesIv: String,
+    @SerializedName(KEY_DATA) val encryptedData: String
 ) : Serializable

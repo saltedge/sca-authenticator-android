@@ -34,11 +34,11 @@ internal class AuthorizationConfirmConnector(
     var callback: AuthorizationConfirmListener?
 ) : AuthorizationUpdateBaseConnector(authorizationId = authorizationId, isConfirmRequest = true) {
 
-    fun confirmAuthorization(richConnection: RichConnection, encryptedPayload: EncryptedBundle) {
+    fun confirmAuthorization(connection: RichConnection, encryptedPayload: EncryptedBundle) {
         val request = super.body(encryptedPayload)
         apiInterface.confirmAuthorization(
-            requestUrl = super.url(richConnection),
-            headersMap = super.headers(richConnection, request),
+            requestUrl = super.url(connection),
+            headersMap = super.headers(connection, request),
             requestBody = request
         ).enqueue(this)
     }

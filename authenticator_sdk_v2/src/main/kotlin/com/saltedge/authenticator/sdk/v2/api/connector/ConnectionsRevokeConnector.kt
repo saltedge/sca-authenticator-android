@@ -48,13 +48,13 @@ internal class ConnectionsRevokeConnector(
      * Prepare request url, request models (AuthenticatedRequestData)
      * and sends requests queue to server (ApiInterface)
      *
-     * @param connections - list of ConnectionAndKey (alias to Pairs of Connection and related PrivateKey)
+     * @param forConnections - list of ConnectionAndKey (alias to Pairs of Connection and related PrivateKey)
      */
-    fun revokeTokensFor(connections: List<RichConnection>) {//RevokeConnectionRequest
+    fun revokeAccess(forConnections: List<RichConnection>) {//RevokeConnectionRequest
         if (super.queueIsEmpty()) {
-            super.setQueueSize(connections.size)
+            super.setQueueSize(forConnections.size)
             if (super.queueIsEmpty()) onQueueFinished()
-            else connections.forEach {
+            else forConnections.forEach {
                 val request = RevokeConnectionRequest()
                 val headers = createAccessTokenHeader(it.connection.accessToken)
                     .addSignatureHeader(

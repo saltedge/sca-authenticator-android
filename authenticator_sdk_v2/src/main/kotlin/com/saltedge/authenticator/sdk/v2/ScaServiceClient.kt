@@ -123,7 +123,7 @@ class ScaServiceClient : ScaServiceClientAbs {
      */
     override fun revokeConnections(connections: List<RichConnection>, callback: ConnectionsRevokeListener?) {
         ConnectionsRevokeConnector(RestClient.apiInterface, callback)
-            .revokeTokensFor(connections = connections)
+            .revokeAccess(forConnections = connections)
     }
 
     /**
@@ -182,7 +182,7 @@ class ScaServiceClient : ScaServiceClientAbs {
             apiInterface = RestClient.apiInterface,
             authorizationId = authorizationId,
             callback = callback
-        ).confirmAuthorization(richConnection = connection, encryptedPayload = encryptedPayload)
+        ).confirmAuthorization(connection = connection, encryptedPayload = encryptedPayload)
     }
 
     /**

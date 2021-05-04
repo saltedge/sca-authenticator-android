@@ -124,7 +124,7 @@ object CryptoTools : CryptoToolsAbs {
             val iv = ByteArray(16).also { SecureRandom().nextBytes(it) }
             return EncryptedBundle(
                 encryptedAesKey = rsaEncrypt(input = key, publicKey = rsaPublicKey) ?: return null,
-                encryptedIvKey = rsaEncrypt(input = iv, publicKey = rsaPublicKey) ?: return null,
+                encryptedAesIv = rsaEncrypt(input = iv, publicKey = rsaPublicKey) ?: return null,
                 encryptedData = Base64.encodeToString(aesEncrypt(data = payload, key = key, iv = iv), Base64.DEFAULT)
             )
         } catch (e: Exception) {
