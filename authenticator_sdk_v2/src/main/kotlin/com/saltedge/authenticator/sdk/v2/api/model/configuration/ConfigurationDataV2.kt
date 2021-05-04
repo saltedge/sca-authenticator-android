@@ -18,25 +18,24 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api.contract
+package com.saltedge.authenticator.sdk.v2.api.model.configuration
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.api.ERROR_CLASS_API_REQUEST
-import com.saltedge.authenticator.sdk.v2.api.KEY_AUTHENTICATION_URL
-import com.saltedge.authenticator.sdk.v2.api.KEY_CONNECTION_ID
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponseData
+import com.saltedge.authenticator.sdk.v2.api.*
+import java.io.Serializable
+
+data class ConfigurationResponse(@SerializedName(KEY_DATA) var data: ConfigurationDataV2)
 
 /**
- * Create SCA Connection request result
+ * SCA Service configuration
  */
-interface ConnectionCreateListener {
-    fun onConnectionCreateSuccess(authenticationUrl: String, connectionId: String)
-    fun onConnectionCreateFailure(error: ApiErrorData)
-}
-
-fun ConnectionCreateListener.error(message: String) {
-    this.onConnectionCreateFailure(
-        error = ApiErrorData(errorClassName = ERROR_CLASS_API_REQUEST, errorMessage = message)
-    )
-}
+data class ConfigurationDataV2(
+    @SerializedName(KEY_SCA_SERVICE_URL) var scaServiceUrl: String,
+    @SerializedName(KEY_API_VERSION) var apiVersion: String,
+    @SerializedName(KEY_PROVIDER_ID) var providerId: String,
+    @SerializedName(KEY_PROVIDER_NAME) var providerName: String,
+    @SerializedName(KEY_PROVIDER_LOGO_URL) var providerLogoUrl: String,
+    @SerializedName(KEY_PROVIDER_SUPPORT_EMAIL) var providerSupportEmail: String,
+    @SerializedName(KEY_PROVIDER_PUBLIC_KEY) var providerPublicKey: String,
+    @SerializedName(KEY_GEOLOCATION_REQUIRED) var geolocationRequired: Boolean
+) : Serializable

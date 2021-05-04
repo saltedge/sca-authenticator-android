@@ -20,23 +20,11 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.contract
 
-import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.api.ERROR_CLASS_API_REQUEST
-import com.saltedge.authenticator.sdk.v2.api.KEY_AUTHENTICATION_URL
-import com.saltedge.authenticator.sdk.v2.api.KEY_CONNECTION_ID
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponseData
+import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
 
 /**
- * Create SCA Connection request result
+ * Polling service contract
  */
-interface ConnectionCreateListener {
-    fun onConnectionCreateSuccess(authenticationUrl: String, connectionId: String)
-    fun onConnectionCreateFailure(error: ApiErrorData)
-}
-
-fun ConnectionCreateListener.error(message: String) {
-    this.onConnectionCreateFailure(
-        error = ApiErrorData(errorClassName = ERROR_CLASS_API_REQUEST, errorMessage = message)
-    )
+interface PollingAuthorizationsContract : FetchAuthorizationsListener {
+    fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection>?
 }

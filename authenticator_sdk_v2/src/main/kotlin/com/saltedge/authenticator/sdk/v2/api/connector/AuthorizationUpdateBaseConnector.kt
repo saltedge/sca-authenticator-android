@@ -22,9 +22,9 @@ package com.saltedge.authenticator.sdk.v2.api.connector
 
 import com.saltedge.authenticator.sdk.v2.api.ApiResponseInterceptor
 import com.saltedge.authenticator.sdk.v2.api.model.AuthorizationID
+import com.saltedge.authenticator.sdk.v2.api.model.EncryptedBundle
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponse
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationRequest
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationRequestData
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.retrofit.addSignatureHeader
 import com.saltedge.authenticator.sdk.v2.api.retrofit.authorizationsConfirmPath
@@ -37,10 +37,9 @@ internal abstract class AuthorizationUpdateBaseConnector(
 ) : ApiResponseInterceptor<ConfirmDenyResponse>() {
 
     protected fun url(richConnection: RichConnection): String {
-        return richConnection.connection.connectUrl.also {
-            if (isConfirmRequest) it.authorizationsConfirmPath(authorizationId)
-            else it.authorizationsDenyPath(authorizationId)
-        }
+        val baseUrl = richConnection.connection.connectUrl
+        return if (isConfirmRequest) baseUrl.authorizationsConfirmPath(authorizationId)
+        else baseUrl.authorizationsDenyPath(authorizationId)
     }
 
     protected fun headers(richConnection: RichConnection, request: UpdateAuthorizationRequest): Map<String, String> {
@@ -51,6 +50,5 @@ internal abstract class AuthorizationUpdateBaseConnector(
         )
     }
 
-    protected fun body(encryptedPayload: String): UpdateAuthorizationRequest =
-        UpdateAuthorizationRequest(data = UpdateAuthorizationRequestData(encryptedPayload))
+    protected fun body(encryptedPayload: EncryptedBundle) = UpdateAuthorizationRequest(data = encryptedPayload)
 }

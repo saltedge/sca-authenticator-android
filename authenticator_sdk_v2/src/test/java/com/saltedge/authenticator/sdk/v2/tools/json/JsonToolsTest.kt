@@ -18,25 +18,28 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api.contract
+package com.saltedge.authenticator.sdk.v2.tools.json
 
-import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.api.ERROR_CLASS_API_REQUEST
-import com.saltedge.authenticator.sdk.v2.api.KEY_AUTHENTICATION_URL
-import com.saltedge.authenticator.sdk.v2.api.KEY_CONNECTION_ID
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponseData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.DescriptionData
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
+import org.junit.Assert.assertTrue
+import org.junit.Test
 
-/**
- * Create SCA Connection request result
- */
-interface ConnectionCreateListener {
-    fun onConnectionCreateSuccess(authenticationUrl: String, connectionId: String)
-    fun onConnectionCreateFailure(error: ApiErrorData)
-}
+class JsonToolsTest {
 
-fun ConnectionCreateListener.error(message: String) {
-    this.onConnectionCreateFailure(
-        error = ApiErrorData(errorClassName = ERROR_CLASS_API_REQUEST, errorMessage = message)
-    )
+    @Test
+    @Throws(Exception::class)
+    fun createDefaultGsonTest() {
+        val gson = createDefaultGson()
+        val data = AuthorizationData(
+            title = "",
+            description = DescriptionData(),
+            authorizationCode = "Qwerty1+==",
+            expiresAt = DateTime(0).withZone(DateTimeZone.UTC)
+        )
+        assertTrue(gson.toJson(data).contains("Qwerty1+=="))
+        assertTrue(gson.toJson(data).contains("1970-01-01T00:00:00.000Z"))
+    }
 }

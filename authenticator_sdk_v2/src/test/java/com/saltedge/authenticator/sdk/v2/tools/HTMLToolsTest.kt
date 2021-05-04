@@ -18,25 +18,21 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api.contract
+package com.saltedge.authenticator.sdk.v2.tools
 
-import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.api.ERROR_CLASS_API_REQUEST
-import com.saltedge.authenticator.sdk.v2.api.KEY_AUTHENTICATION_URL
-import com.saltedge.authenticator.sdk.v2.api.KEY_CONNECTION_ID
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponseData
+import junit.framework.Assert.assertFalse
+import junit.framework.Assert.assertTrue
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
-/**
- * Create SCA Connection request result
- */
-interface ConnectionCreateListener {
-    fun onConnectionCreateSuccess(authenticationUrl: String, connectionId: String)
-    fun onConnectionCreateFailure(error: ApiErrorData)
-}
+@RunWith(RobolectricTestRunner::class)
+class HTMLToolsTest {
 
-fun ConnectionCreateListener.error(message: String) {
-    this.onConnectionCreateFailure(
-        error = ApiErrorData(errorClassName = ERROR_CLASS_API_REQUEST, errorMessage = message)
-    )
+    @Test
+    @Throws(Exception::class)
+    fun hasHTMLTagsTest() {
+        assertTrue("<a href='https://www.fentury.com/'>Fentury</a>".hasHTMLTags())
+        assertFalse("Fentury.com".hasHTMLTags())
+    }
 }

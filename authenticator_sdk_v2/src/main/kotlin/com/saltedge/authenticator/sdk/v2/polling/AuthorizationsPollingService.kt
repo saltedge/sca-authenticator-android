@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.v2.polling
 
-import com.saltedge.authenticator.sdk.v2.api.contract.FetchAuthorizationsContract
+import com.saltedge.authenticator.sdk.v2.api.contract.PollingAuthorizationsContract
 import com.saltedge.authenticator.sdk.v2.api.retrofit.RestClient
 import com.saltedge.authenticator.sdk.v2.api.connector.AuthorizationsIndexConnector
 
@@ -29,9 +29,9 @@ import com.saltedge.authenticator.sdk.v2.api.connector.AuthorizationsIndexConnec
  *
  * @see PollingServiceAbs
  */
-class AuthorizationsPollingService : PollingServiceAbs<FetchAuthorizationsContract>() {
+class AuthorizationsPollingService : PollingServiceAbs<PollingAuthorizationsContract>() {
 
-    override var contract: FetchAuthorizationsContract? = null
+    override var contract: PollingAuthorizationsContract? = null
 
     override fun forcedFetch() {
         try {

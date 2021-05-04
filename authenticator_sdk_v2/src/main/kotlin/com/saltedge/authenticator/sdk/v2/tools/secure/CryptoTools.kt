@@ -21,14 +21,17 @@
 package com.saltedge.authenticator.sdk.v2.tools.secure
 
 import android.util.Base64
+import com.saltedge.authenticator.sdk.v2.api.model.EncryptedBundle
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
 import com.saltedge.authenticator.sdk.v2.tools.decodeFromPemBase64String
 import com.saltedge.authenticator.sdk.v2.tools.json.createDefaultGson
+import timber.log.Timber
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.PublicKey
+import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
@@ -41,15 +44,14 @@ object CryptoTools : CryptoToolsAbs {
     private const val RSA_ECB = "RSA/ECB/PKCS1Padding"
     private val passcodeEncryptionIv = byteArrayOf(65, 1, 2, 23, 4, 5, 6, 7, 32, 21, 10, 11)
 
-    override fun rsaEncrypt(input: String, publicKey: PublicKey): String? {
+    override fun rsaEncrypt(input: ByteArray, publicKey: PublicKey): String? {
         return try {
             val encryptCipher = rsaCipherInstance()
-            if (encryptCipher == null || input.isBlank()) return null
+            if (encryptCipher == null || input.isEmpty()) return null
             encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey)
-            val encryptedBytes = encryptCipher.doFinal(input.toByteArray())
-            Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
+            Base64.encodeToString(encryptCipher.doFinal(input), Base64.DEFAULT)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             null
         }
     }
@@ -59,10 +61,9 @@ object CryptoTools : CryptoToolsAbs {
             val decryptCipher = rsaCipherInstance()
             if (decryptCipher == null || encryptedText.isBlank()) return null
             decryptCipher.init(Cipher.DECRYPT_MODE, privateKey)
-            val decodedText = decodeFromPemBase64String(encryptedText)
-            decryptCipher.doFinal(decodedText)
+            decryptCipher.doFinal(decodeFromPemBase64String(encryptedText))
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             null
         }
     }
@@ -75,7 +76,7 @@ object CryptoTools : CryptoToolsAbs {
             val encryptedBytes: ByteArray = aesEncrypt(data, key = keyBytes, iv = ivBytes) ?: return ""
             return Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
         } catch (e: java.lang.Exception) {
-            e.printStackTrace()
+            Timber.e(e)
         }
         return ""
     }
@@ -95,7 +96,7 @@ object CryptoTools : CryptoToolsAbs {
             val ivBytes: ByteArray = aesKeyHash.copyOfRange(0, 16)
             aesDecrypt(encryptedText, key = keyBytes, iv = ivBytes)
         } catch (e: java.lang.Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             ""
         }
     }
@@ -112,7 +113,22 @@ object CryptoTools : CryptoToolsAbs {
             val decryptedBytes = decryptCipher.doFinal(decodeFromPemBase64String(encryptedText))
             String(decryptedBytes)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
+            null
+        }
+    }
+
+    override fun createEncryptedBundle(payload: String, rsaPublicKey: PublicKey): EncryptedBundle? {
+        return try {
+            val key = ByteArray(32).also { SecureRandom().nextBytes(it) }
+            val iv = ByteArray(16).also { SecureRandom().nextBytes(it) }
+            return EncryptedBundle(
+                encryptedAesKey = rsaEncrypt(input = key, publicKey = rsaPublicKey) ?: return null,
+                encryptedAesIv = rsaEncrypt(input = iv, publicKey = rsaPublicKey) ?: return null,
+                encryptedData = Base64.encodeToString(aesEncrypt(data = payload, key = key, iv = iv), Base64.DEFAULT)
+            )
+        } catch (e: Exception) {
+            Timber.e(e)
             null
         }
     }
@@ -131,7 +147,7 @@ object CryptoTools : CryptoToolsAbs {
             val jsonString = aesDecrypt(encryptedMessage, key = key, iv = iv)
             createDefaultGson().fromJson(jsonString, AuthorizationData::class.java)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             null
         }
     }
@@ -142,18 +158,16 @@ object CryptoTools : CryptoToolsAbs {
             // AndroidKeyStoreBCWorkaround causes error in android 5: NoSuchProviderException: Provider not available (AndroidOpenSSL)
             Cipher.getInstance(RSA_ECB)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             null
         }
     }
 }
 
 interface CryptoToolsAbs {
-    fun rsaEncrypt(input: String, publicKey: PublicKey): String?
+    fun rsaEncrypt(input: ByteArray, publicKey: PublicKey): String?
     fun rsaDecrypt(encryptedText: String, privateKey: PrivateKey): ByteArray?
     fun aesDecrypt(encryptedText: String, key: ByteArray, iv: ByteArray): String?
-    fun decryptAuthorizationData(
-        encryptedData: AuthorizationResponseData,
-        rsaPrivateKey: PrivateKey?
-    ): AuthorizationData?
+    fun createEncryptedBundle(payload: String, rsaPublicKey: PublicKey): EncryptedBundle?
+    fun decryptAuthorizationData(encryptedData: AuthorizationResponseData, rsaPrivateKey: PrivateKey?): AuthorizationData?
 }

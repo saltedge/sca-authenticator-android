@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.sdk.v2.api.connector
 
 import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationDenyListener
+import com.saltedge.authenticator.sdk.v2.api.model.EncryptedBundle
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponse
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
@@ -33,7 +34,7 @@ internal class AuthorizationDenyConnector(
     var callback: AuthorizationDenyListener?
 ) : AuthorizationUpdateBaseConnector(authorizationId = authorizationId, isConfirmRequest = false) {
 
-    fun denyAuthorization(richConnection: RichConnection, encryptedPayload: String) {
+    fun denyAuthorization(richConnection: RichConnection, encryptedPayload: EncryptedBundle) {
         val request = super.body(encryptedPayload)
         apiInterface.denyAuthorization(
             requestUrl = super.url(richConnection),

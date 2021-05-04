@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.sdk.v2.polling
 
 import com.saltedge.authenticator.sdk.v2.api.connector.AuthorizationShowConnector
-import com.saltedge.authenticator.sdk.v2.api.contract.FetchAuthorizationContract
+import com.saltedge.authenticator.sdk.v2.api.contract.PollingAuthorizationContract
 import com.saltedge.authenticator.sdk.v2.api.retrofit.RestClient
 
 /**
@@ -29,10 +29,10 @@ import com.saltedge.authenticator.sdk.v2.api.retrofit.RestClient
  *
  * @see PollingServiceAbs
  */
-open class SingleAuthorizationPollingService : PollingServiceAbs<FetchAuthorizationContract>() {
+open class SingleAuthorizationPollingService : PollingServiceAbs<PollingAuthorizationContract>() {
 
     internal var connector: AuthorizationShowConnector? = null
-    override var contract: FetchAuthorizationContract? = null
+    override var contract: PollingAuthorizationContract? = null
     private var authorizationId: String = ""
 
     fun start(authorizationId: String) {

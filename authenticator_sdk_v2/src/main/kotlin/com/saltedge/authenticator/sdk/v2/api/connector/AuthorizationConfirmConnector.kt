@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.sdk.v2.api.connector
 
 import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationConfirmListener
+import com.saltedge.authenticator.sdk.v2.api.model.EncryptedBundle
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponse
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
@@ -33,11 +34,11 @@ internal class AuthorizationConfirmConnector(
     var callback: AuthorizationConfirmListener?
 ) : AuthorizationUpdateBaseConnector(authorizationId = authorizationId, isConfirmRequest = true) {
 
-    fun confirmAuthorization(richConnection: RichConnection, encryptedPayload: String) {
+    fun confirmAuthorization(connection: RichConnection, encryptedPayload: EncryptedBundle) {
         val request = super.body(encryptedPayload)
         apiInterface.confirmAuthorization(
-            requestUrl = super.url(richConnection),
-            headersMap = super.headers(richConnection, request),
+            requestUrl = super.url(connection),
+            headersMap = super.headers(connection, request),
             requestBody = request
         ).enqueue(this)
     }
