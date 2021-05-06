@@ -399,7 +399,7 @@ class AuthorizationDetailsViewModelTest {
         //given expired authorization that should marked as TIME_OUT
         viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), closeAppOnBackPress = true, titleRes = null)
         viewModel.authorizationModel.value = viewModel1
-            .copy(endTime = DateTime.now().minusMinutes(1), viewMode = ViewMode.DEFAULT)
+            ?.copy(endTime = DateTime.now().minusMinutes(1), viewMode = ViewMode.DEFAULT)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
         //when
@@ -417,7 +417,7 @@ class AuthorizationDetailsViewModelTest {
     fun onTimerTickTest_case3() {
         //given authorization that should be destroyed (has destroyAt param)
         viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), closeAppOnBackPress = true, titleRes = null)
-        viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.TIME_OUT).apply {
+        viewModel.authorizationModel.value = viewModel1?.copy(viewMode = ViewMode.TIME_OUT)?.apply {
             destroyAt = DateTime.now().minusMinutes(1)
         }
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
@@ -435,7 +435,7 @@ class AuthorizationDetailsViewModelTest {
     fun onTimerTickTest_case4() {
         //given DEFAULT authorization
         viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), closeAppOnBackPress = true, titleRes = null)
-        viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.DEFAULT)
+        viewModel.authorizationModel.value = viewModel1?.copy(viewMode = ViewMode.DEFAULT)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
         //when
@@ -451,7 +451,7 @@ class AuthorizationDetailsViewModelTest {
     fun onTimerTickTest_case5() {
         //given LOADING authorization
         viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), closeAppOnBackPress = true, titleRes = null)
-        viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.LOADING)
+        viewModel.authorizationModel.value = viewModel1?.copy(viewMode = ViewMode.LOADING)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
         //when
@@ -467,7 +467,7 @@ class AuthorizationDetailsViewModelTest {
     fun onTimerTickTest_case6() {
         //given CONFIRM_PROCESSING authorization
         viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), closeAppOnBackPress = true, titleRes = null)
-        viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.CONFIRM_PROCESSING)
+        viewModel.authorizationModel.value = viewModel1?.copy(viewMode = ViewMode.CONFIRM_PROCESSING)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
         //when
@@ -483,7 +483,7 @@ class AuthorizationDetailsViewModelTest {
     fun onTimerTickTest_case7() {
         //given DENY_PROCESSING authorization
         viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), closeAppOnBackPress = true, titleRes = null)
-        viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.DENY_PROCESSING)
+        viewModel.authorizationModel.value = viewModel1?.copy(viewMode = ViewMode.DENY_PROCESSING)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
         //when
@@ -499,7 +499,7 @@ class AuthorizationDetailsViewModelTest {
     fun onTimerTickTest_case8() {
         //given CONFIRM_SUCCESS authorization
         viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), closeAppOnBackPress = true, titleRes = null)
-        viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.CONFIRM_SUCCESS)
+        viewModel.authorizationModel.value = viewModel1?.copy(viewMode = ViewMode.CONFIRM_SUCCESS)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
         //when
@@ -515,7 +515,7 @@ class AuthorizationDetailsViewModelTest {
     fun onTimerTickTest_case9() {
         //given DENY_SUCCESS authorization
         viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), closeAppOnBackPress = true, titleRes = null)
-        viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.DENY_SUCCESS)
+        viewModel.authorizationModel.value = viewModel1?.copy(viewMode = ViewMode.DENY_SUCCESS)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
         //when
@@ -531,7 +531,7 @@ class AuthorizationDetailsViewModelTest {
     fun onTimerTickTest_case10() {
         //given ERROR authorization
         viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), closeAppOnBackPress = true, titleRes = null)
-        viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.ERROR)
+        viewModel.authorizationModel.value = viewModel1?.copy(viewMode = ViewMode.ERROR)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
         //when
@@ -547,7 +547,7 @@ class AuthorizationDetailsViewModelTest {
     fun onTimerTickTest_case11() {
         //given TIME_OUT authorization
         viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), closeAppOnBackPress = true, titleRes = null)
-        viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.TIME_OUT)
+        viewModel.authorizationModel.value = viewModel1?.copy(viewMode = ViewMode.TIME_OUT)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
         //when
@@ -563,7 +563,7 @@ class AuthorizationDetailsViewModelTest {
     fun onTimerTickTest_case12() {
         //given UNAVAILABLE authorization
         viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), closeAppOnBackPress = true, titleRes = null)
-        viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.UNAVAILABLE)
+        viewModel.authorizationModel.value = viewModel1?.copy(viewMode = ViewMode.UNAVAILABLE)
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
 
         //when
@@ -612,13 +612,13 @@ class AuthorizationDetailsViewModelTest {
     fun onFetchAuthorizationResultTest_case2() {
         //given DENY_PROCESSING authorization and success result
         viewModel.setInitialData(identifier = AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), closeAppOnBackPress = true, titleRes = null)
-        viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.DENY_PROCESSING)
+        viewModel.authorizationModel.value = viewModel1?.copy(viewMode = ViewMode.DENY_PROCESSING)
 
         //when
         viewModel.onFetchAuthorizationResult(result = encryptedData1, error = null)
 
         //then
-        assertThat(viewModel.authorizationModel.value, equalTo(viewModel1.copy(viewMode = ViewMode.DENY_PROCESSING)))
+        assertThat(viewModel.authorizationModel.value, equalTo(viewModel1?.copy(viewMode = ViewMode.DENY_PROCESSING)))
     }
 
     @Test
@@ -712,7 +712,7 @@ class AuthorizationDetailsViewModelTest {
     fun onConfirmDenySuccessTest_case2() {
         //given TIME_OUT result
         viewModel.setInitialData(identifier = AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), closeAppOnBackPress = true, titleRes = null)
-        viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.TIME_OUT)
+        viewModel.authorizationModel.value = viewModel1?.copy(viewMode = ViewMode.TIME_OUT)
         clearInvocations(mockPollingService)
 
         //when
@@ -723,7 +723,7 @@ class AuthorizationDetailsViewModelTest {
 
         //then
         verifyNoMoreInteractions(mockPollingService)
-        assertThat(viewModel.authorizationModel.value, equalTo(viewModel1.copy(viewMode = ViewMode.ERROR)))
+        assertThat(viewModel.authorizationModel.value, equalTo(viewModel1?.copy(viewMode = ViewMode.ERROR)))
     }
 
     @Test
@@ -731,7 +731,7 @@ class AuthorizationDetailsViewModelTest {
     fun onConfirmDenySuccessTest_case3() {
         //given CONFIRM_PROCESSING authorization
         viewModel.setInitialData(identifier = AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), closeAppOnBackPress = true, titleRes = null)
-        viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.CONFIRM_PROCESSING)
+        viewModel.authorizationModel.value = viewModel1?.copy(viewMode = ViewMode.CONFIRM_PROCESSING)
 
         //when
         viewModel.onConfirmDenySuccess(
@@ -748,7 +748,7 @@ class AuthorizationDetailsViewModelTest {
     fun onConfirmDenySuccessTest_case4() {
         //given DENY_PROCESSING authorization
         viewModel.setInitialData(identifier = AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), closeAppOnBackPress = true, titleRes = null)
-        viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.DENY_PROCESSING)
+        viewModel.authorizationModel.value = viewModel1?.copy(viewMode = ViewMode.DENY_PROCESSING)
 
         //when
         viewModel.onConfirmDenySuccess(

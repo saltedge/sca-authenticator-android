@@ -21,7 +21,6 @@
 package com.saltedge.authenticator.features.main
 
 import android.content.Intent
-import android.location.LocationManager
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil

@@ -31,6 +31,7 @@ import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.encryptWithTestKey
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.*
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.features.menu.BottomMenuDialog
@@ -97,7 +98,7 @@ class AuthorizationsListViewModelTest {
     private val mockConnectionAndKey = ConnectionAndKey(mockConnection, CommonTestTools.testPrivateKey)
     private val authorizations: List<AuthorizationData> = listOf(createAuthorization(id = 1), createAuthorization(id = 2))
     private val encryptedAuthorizations = authorizations.map { it.encryptWithTestKey() }
-    private val items = authorizations.map { it.toAuthorizationItemViewModel(mockConnection) }
+    private val items: List<AuthorizationItemViewModel> = authorizations.map { it.toAuthorizationItemViewModel(mockConnection)!! }
 
     @Before
     fun setUp() {
