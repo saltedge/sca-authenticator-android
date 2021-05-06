@@ -40,42 +40,42 @@ abstract class ConnectProviderInteractor(
     private val keyStoreManager: KeyStoreManagerAbs,
     private val preferenceRepository: PreferenceRepositoryAbs,
     private val connectionsRepository: ConnectionsRepositoryAbs,
-) {
-    var contract: ConnectProviderInteractorCallback? = null
-    var authenticationUrl: String = ""
-    val hasConfigUrl: Boolean
+) : ConnectProviderInteractorAbs {
+    override var contract: ConnectProviderInteractorCallback? = null
+    override var authenticationUrl: String = ""
+    override val hasConfigUrl: Boolean
         get() = initialConnectData?.configurationUrl != null
-    val hasConnection: Boolean
+    override val hasConnection: Boolean
         get() = connection.guid.isNotEmpty()
-    val connectionName: String
+    override val connectionName: String
         get() = connection.name
-    val geolocationRequired: Boolean?
+    override val geolocationRequired: Boolean?
         get() = connection.geolocationRequired
 
     private var initialConnectData: ConnectAppLinkDataV2? = null
     private var connection = Connection()
 
-    fun setInitialData(initialConnectData: ConnectAppLinkDataV2?, connectionGuid: GUID?) {
+    override fun setInitialData(initialConnectData: ConnectAppLinkDataV2?, connectionGuid: GUID?) {
         this.initialConnectData = initialConnectData
         this.connection = connectionsRepository.getByGuid(connectionGuid) ?: Connection()
     }
 
-    fun fetchScaConfiguration() {
+    override fun fetchScaConfiguration() {
         initialConnectData?.configurationUrl?.let {
             requestProviderConfiguration(url = it)
         } ?: contract?.onReceiveApiError(ApiErrorData(errorClassName = ERROR_INVALID_DEEPLINK))
     }
 
-    abstract fun requestProviderConfiguration(url: String)
+    abstract override fun requestProviderConfiguration(url: String)
 
-    fun setNewConnection(newConnection: Connection?) {
+    override fun setNewConnection(newConnection: Connection?) {
         newConnection?.let {
             this.connection = it
             requestCreateConnection()
         } ?: contract?.onReceiveApiError(ApiErrorData(errorClassName = ERROR_INVALID_RESPONSE))
     }
 
-    fun requestCreateConnection() {
+    override fun requestCreateConnection() {
         requestCreateConnection(
             connection = connection,
             cloudMessagingToken = preferenceRepository.cloudMessagingToken,
@@ -83,9 +83,9 @@ abstract class ConnectProviderInteractor(
         )
     }
 
-    abstract fun requestCreateConnection(connection: Connection, cloudMessagingToken: String, connectQuery: String?)
+    abstract override fun requestCreateConnection(connection: Connection, cloudMessagingToken: String, connectQuery: String?)
 
-    fun onConnectionCreateSuccess(authenticationUrl: String, connectionId: String) {
+    override fun onConnectionCreateSuccess(authenticationUrl: String, connectionId: String) {
         if (authenticationUrl.isNotEmpty()) {
             if (authenticationUrl.isReturnToUrl()) {
                 onReceiveReturnToUrl(authenticationUrl)
@@ -99,7 +99,7 @@ abstract class ConnectProviderInteractor(
         }
     }
 
-    fun onReceiveReturnToUrl(url: String) {
+    override fun onReceiveReturnToUrl(url: String) {
         parseRedirect(
             url = url,
             success = { connectionID, resultAccessToken ->
@@ -111,7 +111,7 @@ abstract class ConnectProviderInteractor(
         )
     }
 
-    fun onConnectionSuccessAuthentication(connectionId: ConnectionID, accessToken: Token) {
+    override fun onConnectionSuccessAuthentication(connectionId: ConnectionID, accessToken: Token) {
         connection.id = connectionId
         connection.accessToken = accessToken
         connection.status = "${ConnectionStatus.ACTIVE}"
@@ -123,11 +123,31 @@ abstract class ConnectProviderInteractor(
         contract?.onConnectionSuccessAuthentication()
     }
 
-    fun destroyConnectionIfNotAuthorized() {
+    override fun destroyConnectionIfNotAuthorized() {
         if (connection.guid.isNotEmpty() && connection.accessToken.isEmpty()) {
             keyStoreManager.deleteKeyPair(connection.guid)
         }
     }
+}
+
+interface ConnectProviderInteractorAbs {
+    var contract: ConnectProviderInteractorCallback?
+    var authenticationUrl: String
+    val hasConfigUrl: Boolean
+    val hasConnection: Boolean
+    val connectionName: String
+    val geolocationRequired: Boolean?
+
+    fun setInitialData(initialConnectData: ConnectAppLinkDataV2?, connectionGuid: GUID?)
+    fun fetchScaConfiguration()
+    fun requestProviderConfiguration(url: String)
+    fun setNewConnection(newConnection: Connection?)
+    fun requestCreateConnection()
+    fun requestCreateConnection(connection: Connection, cloudMessagingToken: String, connectQuery: String?)
+    fun onConnectionCreateSuccess(authenticationUrl: String, connectionId: String)
+    fun onReceiveReturnToUrl(url: String)
+    fun onConnectionSuccessAuthentication(connectionId: ConnectionID, accessToken: Token)
+    fun destroyConnectionIfNotAuthorized()
 }
 
 interface ConnectProviderInteractorCallback {

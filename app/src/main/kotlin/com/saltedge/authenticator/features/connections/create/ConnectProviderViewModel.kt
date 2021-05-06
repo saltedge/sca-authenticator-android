@@ -43,7 +43,7 @@ import com.saltedge.authenticator.tools.postUnitEvent
 class ConnectProviderViewModel(
     private val appContext: Context,
     private val locationManager: DeviceLocationManagerAbs,
-    private val interactor: ConnectProviderInteractor
+    private val interactor: ConnectProviderInteractorAbs
 ) : ViewModel(), LifecycleObserver, ConnectProviderInteractorCallback {
 
     val backActionIconRes: MutableLiveData<ResId?> = MutableLiveData(R.drawable.ic_appbar_action_close)
@@ -73,7 +73,7 @@ class ConnectProviderViewModel(
             interactor.hasConfigUrl -> ViewMode.START_NEW_CONNECT
             else -> ViewMode.COMPLETE_ERROR
         }
-        titleRes = if (interactor.hasConnection) R.string.actions_reconnect else R.string.connections_new_connection
+        titleRes = if (viewMode == ViewMode.START_NEW_CONNECT) R.string.connections_new_connection else R.string.actions_reconnect
     }
 
     fun onBackPress(webViewCanGoBack: Boolean?): Boolean {
@@ -102,6 +102,7 @@ class ConnectProviderViewModel(
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
         interactor.destroyConnectionIfNotAuthorized()
+        interactor.contract = null
     }
 
     fun onViewClick(viewId: Int) {
@@ -152,7 +153,6 @@ class ConnectProviderViewModel(
         get() = if (viewMode.isCompleteWithSuccess) R.string.actions_done else R.string.actions_try_again
 
     private fun checkGeolocationRequirements() {
-
         interactor.geolocationRequired?.let {
             val permissionGranted: Boolean = locationManager.locationPermissionsGranted(appContext)
             if (permissionGranted) locationManager.startLocationUpdates(appContext)

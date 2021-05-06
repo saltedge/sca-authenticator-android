@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.models.db
 
-import com.saltedge.authenticator.models.toConnection
+import com.saltedge.authenticator.features.connections.create.toConnection
 import com.saltedge.authenticator.sdk.api.model.configuration.ProviderConfigurationData
 import com.saltedge.authenticator.sdk.api.model.connection.ConnectionStatus
 import junit.framework.TestCase.assertFalse
