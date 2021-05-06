@@ -32,19 +32,23 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
-import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
 import com.saltedge.authenticator.sdk.api.model.AuthorizationID
 import com.saltedge.authenticator.sdk.api.model.ConnectionID
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.error.*
+import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.api.model.error.isAuthorizationNotFound
+import com.saltedge.authenticator.sdk.api.model.error.isConnectionNotFound
+import com.saltedge.authenticator.sdk.api.model.error.isConnectivityError
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
+import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
+import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.getErrorMessage
 import com.saltedge.authenticator.tools.postUnitEvent
 import org.joda.time.DateTime
 

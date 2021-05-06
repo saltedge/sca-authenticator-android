@@ -79,7 +79,7 @@ fun ConfigurationDataV2.toConnection(): Connection {
         it.guid = createRandomGuid()
         it.name = this.providerName
         it.code = this.providerId
-        it.logoUrl = this.providerLogoUrl ?: ""
+        it.logoUrl = this.providerLogoUrl
         it.connectUrl = this.scaServiceUrl
         it.status = "${ConnectionStatus.INACTIVE}"
         it.createdAt = DateTime.now().withZone(DateTimeZone.UTC).millis

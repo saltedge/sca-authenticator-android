@@ -33,15 +33,15 @@ import com.saltedge.authenticator.features.connections.select.SelectConnectionsF
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
 import com.saltedge.authenticator.sdk.api.model.GUID
 import com.saltedge.authenticator.sdk.api.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.api.model.error.getErrorMessage
 import com.saltedge.authenticator.sdk.api.model.response.SubmitActionResponseData
+import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.tools.getErrorMessage
 import com.saltedge.authenticator.tools.postUnitEvent
 import timber.log.Timber
 
