@@ -129,13 +129,13 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
             }
         })
         viewModel.onShowConnectEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { connectAppLinkData ->
-                findNavController(R.id.navHostFragment).navigate(R.id.connectProviderFragment, connectAppLinkData)
+            event.getContentIfNotHandled()?.let { bundle ->
+                findNavController(R.id.navHostFragment).navigate(R.id.connectProviderFragment, bundle)
             }
         })
         viewModel.onShowSubmitActionEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { actionAppLinkData ->
-                findNavController(R.id.navHostFragment).navigate(R.id.submitActionFragment, actionAppLinkData)
+            event.getContentIfNotHandled()?.let { bundle ->
+                findNavController(R.id.navHostFragment).navigate(R.id.submitActionFragment, bundle)
             }
         })
         viewModel.onQrScanClickEvent.observe(this, Observer { event ->

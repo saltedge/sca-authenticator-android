@@ -115,8 +115,7 @@ class ConnectionsListFragment : BaseFragment(),
     }
 
     private fun setupViewModel() {
-        viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(ConnectionsListViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(ConnectionsListViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
         viewModel.listItems.observe(this, Observer<List<ConnectionItemViewModel>> {

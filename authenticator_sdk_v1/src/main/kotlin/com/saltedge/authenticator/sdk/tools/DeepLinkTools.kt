@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.sdk.tools
 
 import android.net.Uri
+import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.api.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.api.model.appLink.ConnectAppLinkData
 
@@ -29,6 +30,10 @@ const val KEY_CONNECT_QUERY_PARAM = "connect_query"
 const val KEY_ACTION_UUID_PARAM = "action_uuid"
 const val KEY_CONNECT_URL_PARAM = "connect_url"
 const val KEY_RETURN_TO_PARAM = "return_to"
+
+fun String.isReturnToUrl(): Boolean {
+    return this.startsWith(AuthenticatorApiManager.authenticationReturnUrl)
+}
 
 /**
  * Validates deep link

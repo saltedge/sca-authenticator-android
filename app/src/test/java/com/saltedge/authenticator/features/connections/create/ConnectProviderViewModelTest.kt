@@ -373,7 +373,7 @@ class ConnectProviderViewModelTest {
     @Test
     @Throws(Exception::class)
     fun webAuthFinishErrorTest() {
-        viewModel.webAuthFinishError(errorClass = "WRONG_URL", errorMessage = "not relevant url")
+        viewModel.onConnectionFailAuthentication(errorClass = "WRONG_URL", errorMessage = "not relevant url")
 
         assertThat(viewModel.statusIconRes.value, equalTo(R.drawable.ic_status_error))
         assertThat(
@@ -584,7 +584,7 @@ class ConnectProviderViewModelTest {
         given(mockConnectionsRepository.getConnectionsCount("demobank1")).willReturn(1L)
 
         viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
-        viewModel.webAuthFinishError(errorClass = "ERROR", errorMessage = null)
+        viewModel.onConnectionFailAuthentication(errorClass = "ERROR", errorMessage = null)
 
         assertThat(
             viewModel.completeDescription.value,
@@ -703,7 +703,7 @@ class ConnectProviderViewModelTest {
         given(mockConnectionsRepository.getConnectionsCount("demobank1")).willReturn(1L)
 
         viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
-        viewModel.webAuthFinishError(errorClass = "ERROR", errorMessage = "ERROR")
+        viewModel.onConnectionFailAuthentication(errorClass = "ERROR", errorMessage = "ERROR")
 
         clearInvocations(mockConnectionsRepository)
 
@@ -774,7 +774,7 @@ class ConnectProviderViewModelTest {
         given(mockConnectionsRepository.getConnectionsCount("demobank1")).willReturn(1L)
 
         viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
-        viewModel.webAuthFinishError(errorClass = "ERROR", errorMessage = "ERROR")
+        viewModel.onConnectionFailAuthentication(errorClass = "ERROR", errorMessage = "ERROR")
         viewModel.onResume()
 
         assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
