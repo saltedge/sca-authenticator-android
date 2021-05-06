@@ -56,5 +56,5 @@ open class Connection : RealmObject(), ConnectionAbs, ConnectionV2Abs {
     @Keep
     override var geolocationRequired: Boolean? = null
     @Keep @Required
-    override var providerRsaPublicKeyPem: String = ""//TODO add migration
+    override var providerRsaPublicKeyPem: String = ""
 }

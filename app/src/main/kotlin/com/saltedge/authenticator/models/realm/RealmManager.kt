@@ -27,7 +27,7 @@ import com.saltedge.authenticator.app.AppTools
 import io.realm.Realm
 import io.realm.RealmConfiguration
 
-const val DB_SCHEMA_VERSION = 3L
+const val DB_SCHEMA_VERSION = 4L
 
 interface RealmManagerAbs {
     val initialized: Boolean

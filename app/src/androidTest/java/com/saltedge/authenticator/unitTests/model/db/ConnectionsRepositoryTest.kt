@@ -99,8 +99,11 @@ class ConnectionsRepositoryTest : DatabaseTestCase() {
         Assert.assertTrue(ConnectionsRepository.isEmpty())
 
         Connection().setGuid("guid1").setAccessToken("").setStatus(ConnectionStatus.INACTIVE).save()
+        Thread.sleep(100);
         Connection().setGuid("guid2").setAccessToken("").setStatus(ConnectionStatus.ACTIVE).save()
+        Thread.sleep(100);
         Connection().setGuid("guid3").setAccessToken("token3").setStatus(ConnectionStatus.INACTIVE).save()
+        Thread.sleep(100);
         Connection().setGuid("guid4").setAccessToken("token4").setStatus(ConnectionStatus.ACTIVE).save()
 
         assertThat(
@@ -272,12 +275,19 @@ class ConnectionsRepositoryTest : DatabaseTestCase() {
     @Throws(Exception::class)
     fun fixNameAndSaveTest() {
         Connection().setGuid("guid1").setCode("demo").setName("Demo").save()
+        Thread.sleep(100);
         Connection().setGuid("guid2").setCode("test").setName("Test").save()
-
+        Thread.sleep(100);
         ConnectionsRepository.fixNameAndSave(Connection().setGuid("guid3").setCode("demo").setName("Demo"))
 
+        val models = ConnectionsRepository.getAllConnections()
+
         assertThat(
-            ConnectionsRepository.getAllConnections().map { it.name },
+            models.map { it.guid },
+            equalTo(listOf("guid1", "guid2", "guid3"))
+        )
+        assertThat(
+            models.map { it.name },
             equalTo(listOf("Demo", "Test", "Demo (2)"))
         )
     }
@@ -287,8 +297,10 @@ class ConnectionsRepositoryTest : DatabaseTestCase() {
     fun getByConnectUrlTest() {
         val connection1 = Connection().setGuid("guid1").setCode("demo1").setName("Demo1").setStatus(ConnectionStatus.ACTIVE)
             .apply { connectUrl = "https://www.saltedge.com/" }.save()
+        Thread.sleep(100);
         val connection2 = Connection().setGuid("guid2").setCode("demo2").setName("Demo2").setStatus(ConnectionStatus.ACTIVE)
             .apply { connectUrl = "https://www.saltedge.com/" }.save()
+        Thread.sleep(100);
         val connection3 = Connection().setGuid("guid3").setCode("demo3").setName("Demo3").setStatus(ConnectionStatus.ACTIVE)
             .apply { connectUrl = "https://www.fentury.com/" }.save()
 

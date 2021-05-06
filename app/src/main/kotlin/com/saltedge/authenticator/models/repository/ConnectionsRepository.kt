@@ -113,6 +113,7 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
             realmDb.where(Connection::class.java)
                 .equalTo(DB_KEY_CONNECT_URL, connectionUrl)
                 .equalTo(KEY_STATUS, ConnectionStatus.ACTIVE.toString())
+                .sort(KEY_CREATED_AT)
                 .findAll().map {
                 realmDb.copyFromRealm(it)
             }
@@ -225,6 +226,7 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
      * @return saved Connection
      */
     override fun saveModel(connection: Connection): Connection? {
+        if (connection.createdAt == 0L) connection.createdAt = DateTime.now().withZone(DateTimeZone.UTC).millis
         connection.updatedAt = DateTime.now().withZone(DateTimeZone.UTC).millis
         var result: Connection? = null
         RealmManager.getDefaultInstance().use {

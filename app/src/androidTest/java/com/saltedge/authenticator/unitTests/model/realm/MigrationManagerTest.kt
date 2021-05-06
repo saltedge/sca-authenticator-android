@@ -59,6 +59,8 @@ class MigrationManagerTest {
 
         Realm.getInstance(config).use {
             testMigration2(it)
+            testMigration3(it)
+            testMigration4(it)
         }
     }
 
@@ -66,6 +68,19 @@ class MigrationManagerTest {
         val connection = realm.where(Connection::class.java).findFirst()
 
         assertNull(connection?.supportEmail)
+    }
+
+    private fun testMigration3(realm: Realm) {
+        val connection = realm.where(Connection::class.java).findFirst()
+
+        assertNull(connection?.consentManagementSupported)
+        assertNull(connection?.geolocationRequired)
+    }
+
+    private fun testMigration4(realm: Realm) {
+        val connection = realm.where(Connection::class.java).findFirst()
+
+        assertThat(connection?.providerRsaPublicKeyPem, equalTo(""))
     }
 
     private fun copyInitialRealmFile(sourcePath: String, targetPath: String): Int {

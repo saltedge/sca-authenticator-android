@@ -38,7 +38,7 @@ class RealmManagerTest {
     fun valuesTest() {
         RealmManager.resetError()
 
-        assertThat(DB_SCHEMA_VERSION, equalTo(2L))
+        assertThat(DB_SCHEMA_VERSION, equalTo(4L))
         Assert.assertFalse(RealmManager.initialized)
         Assert.assertFalse(RealmManager.errorOccurred)
 
