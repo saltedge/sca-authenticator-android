@@ -36,13 +36,12 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.authenticatorApp
+import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.databinding.ConnectProviderBinding
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManager
-import com.saltedge.authenticator.sdk.api.model.ConnectionID
-import com.saltedge.authenticator.sdk.api.model.Token
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.v2.api.model.appLink.ConnectAppLinkDataV2
 import com.saltedge.authenticator.sdk.web.ConnectWebClient
@@ -65,9 +64,6 @@ class ConnectProviderFragment : BaseFragment(),
     private val webViewClient = ConnectWebClient(contract = this)
     private lateinit var binding: ConnectProviderBinding
     private var alertDialog: AlertDialog? = null
-    private val safeArgs: ConnectProviderFragmentArgs by navArgs()
-    private val guid: String
-        get() = safeArgs.guid
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -165,19 +161,13 @@ class ConnectProviderFragment : BaseFragment(),
             completeView?.setMainActionText(it)
         })
         viewModel.backActionIconRes.observe(this, Observer<ResId?> {
-            activityComponents?.updateAppbar(
-                titleResId = viewModel.titleRes,
-                backActionImageResId = it
-            )
+            activityComponents?.updateAppbar(titleResId = viewModel.titleRes, backActionImageResId = it)
         })
         viewModel.onAskPermissionsEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let {
                 requestPermissions(DeviceLocationManager.permissions, LOCATION_PERMISSION_REQUEST_CODE)
             }
         })
-        viewModel.setInitialData(
-            initialConnectData = appLinkData,
-            connectionGuid = safeArgs.guid
-        )
+        viewModel.setInitialData(initialConnectData = appLinkData, connectionGuid = arguments?.guid)
     }
 }
