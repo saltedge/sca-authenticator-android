@@ -20,21 +20,16 @@
  */
 package com.saltedge.authenticator.models.realm
 
+import io.realm.FieldAttribute
 import io.realm.RealmSchema
 
 /**
- * Add the consentManagementSupported field to the Connection model
- * Add the geolocationRequired field to the Connection model
+ * Add the providerRsaPublicKeyPem field to the Connection model
  */
-fun RealmSchema.runMigration3() {
+fun RealmSchema.runMigration4() {
     get("Connection")?.let { schema ->
         schema
-            .addField("consentManagementSupported", Boolean::class.java)
-            .setNullable("consentManagementSupported", true)
-            .transform { it.set("consentManagementSupported", null) }
-//        schema
-            .addField("geolocationRequired", Boolean::class.java)
-            .setNullable("geolocationRequired", true)
-            .transform { it.set("geolocationRequired", null) }
+            .addField("providerRsaPublicKeyPem", String::class.java, FieldAttribute.REQUIRED)
+            .transform { it.set("providerRsaPublicKeyPem", "") }
     }
 }

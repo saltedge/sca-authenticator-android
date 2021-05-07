@@ -21,9 +21,7 @@
 package com.saltedge.authenticator.app.di
 
 import android.content.Context
-import com.saltedge.authenticator.app.ConnectivityReceiver
-import com.saltedge.authenticator.app.ConnectivityReceiverAbs
-import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.*
 import com.saltedge.authenticator.models.realm.RealmManager
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepository
@@ -38,10 +36,9 @@ import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.v2.ScaServiceClient
 import com.saltedge.authenticator.tools.PasscodeTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
-import com.saltedge.authenticator.app.buildVersion23orGreater
-import com.saltedge.authenticator.app.buildVersion28orGreater
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptManagerV28
 import com.saltedge.authenticator.widget.biometric.BiometricsInputDialog
@@ -84,7 +81,8 @@ class AppModule(context: Context) {
         connectionsRepository: ConnectionsRepositoryAbs,
         keyStoreManager: KeyStoreManagerAbs,
         realmManager: RealmManagerAbs,
-        apiManager: AuthenticatorApiManagerAbs,
+        apiManagerV1: AuthenticatorApiManagerAbs,
+        apiManagerV2: ScaServiceClient,
         connectivityReceiver: ConnectivityReceiverAbs
     ): ViewModelsFactory {
         return ViewModelsFactory(
@@ -96,7 +94,8 @@ class AppModule(context: Context) {
             connectionsRepository = connectionsRepository,
             keyStoreManager = keyStoreManager,
             realmManager = realmManager,
-            apiManager = apiManager,
+            apiManagerV1 = apiManagerV1,
+            apiManagerV2 = apiManagerV2,
             connectivityReceiver = connectivityReceiver
         )
     }
@@ -115,7 +114,11 @@ class AppModule(context: Context) {
 
     @Provides
     @Singleton
-    fun provideAuthenticatorApiManager(): AuthenticatorApiManagerAbs = AuthenticatorApiManager
+    fun provideAuthenticatorApiManagerV1(): AuthenticatorApiManagerAbs = AuthenticatorApiManager
+
+    @Provides
+    @Singleton
+    fun provideAuthenticatorApiManagerV2(): ScaServiceClient = ScaServiceClient()
 
     @Provides
     @Singleton

@@ -20,13 +20,28 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.model.appLink
 
+import com.saltedge.authenticator.sdk.v2.api.API_VERSION
 import com.saltedge.authenticator.sdk.v2.api.API_VERSION_NAMESPACE
+import timber.log.Timber
 import java.io.Serializable
 
 data class ConnectAppLinkDataV2(
     var configurationUrl: String,
     var connectQuery: String? = null
 ) : Serializable {
+    val apiVersion: String
+        get() {
+            return try {
+                val segments = configurationUrl.split("/")//.in { it == "authenticator" }
+                val index = segments.indexOf("authenticator") + 1
+                val apiVersionValue = segments[index].replace("v", "")
+                if (apiVersionValue.isNotEmpty()) apiVersionValue else "1"
+            } catch (e: Exception) {
+                Timber.e(e)
+                "1"
+            }
+        }
+
     val isV2Api: Boolean
-        get() = configurationUrl.contains(API_VERSION_NAMESPACE)
+        get() = apiVersion == API_VERSION
 }

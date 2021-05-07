@@ -22,11 +22,12 @@ package com.saltedge.authenticator.models
 
 import androidx.annotation.Keep
 import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
+import com.saltedge.authenticator.sdk.v2.api.model.connection.ConnectionV2Abs
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.Required
 
-open class Connection : RealmObject(), ConnectionAbs {
+open class Connection : RealmObject(), ConnectionAbs, ConnectionV2Abs {
     @PrimaryKey @Keep @Required
     override var guid: String = ""
     @Keep @Required
@@ -54,4 +55,6 @@ open class Connection : RealmObject(), ConnectionAbs {
     override var consentManagementSupported: Boolean? = null
     @Keep
     override var geolocationRequired: Boolean? = null
+    @Keep @Required
+    override var providerRsaPublicKeyPem: String = ""
 }

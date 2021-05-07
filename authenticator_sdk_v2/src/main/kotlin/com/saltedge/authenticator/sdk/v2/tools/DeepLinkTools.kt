@@ -36,7 +36,7 @@ const val KEY_RETURN_TO_PARAM = "return_to"
  * @return true if deeplink contains configuration url
  */
 fun String.isValidDeeplink(): Boolean {
-    return this.extractConnectAppLinkData() != null
+    return this.extractConnectAppLinkDataV2() != null
 }
 
 /**
@@ -45,7 +45,7 @@ fun String.isValidDeeplink(): Boolean {
  * @receiver deep link String (e.g. authenticator://saltedge.com/connect?configuration=https://example.com/configuration&connect_query=1234567890)
  * @return ConnectAppLinkData object
  */
-fun String.extractConnectAppLinkData(): ConnectAppLinkDataV2? {
+fun String.extractConnectAppLinkDataV2(): ConnectAppLinkDataV2? {
     val uri = Uri.parse(this)
     val configurationUrl = uri.getQueryParameter(KEY_CONFIGURATION_PARAM) ?: return null
     val configurationUri = Uri.parse(configurationUrl)

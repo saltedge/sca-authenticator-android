@@ -36,12 +36,12 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.constants.KEY_ID
 import com.saltedge.authenticator.sdk.constants.KEY_TITLE
-import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.tools.extractActionAppLinkData
-import com.saltedge.authenticator.sdk.tools.extractConnectAppLinkData
+import com.saltedge.authenticator.sdk.v2.tools.extractConnectAppLinkDataV2
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.applyPreferenceLocale
 import com.saltedge.authenticator.tools.postUnitEvent
@@ -126,7 +126,7 @@ class MainActivityViewModel(
             }
             intent.hasDeepLinkData -> {
                 initialQrScanWasStarted = true
-                val connectionAppLinkData = intent.deepLink.extractConnectAppLinkData()
+                val connectionAppLinkData = intent.deepLink.extractConnectAppLinkDataV2()
                 val actionAppLinkData = intent.deepLink.extractActionAppLinkData()
                 if (connectionAppLinkData != null) {
                     onShowConnectEvent.postValue(ViewModelEvent(Bundle().apply {

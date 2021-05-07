@@ -27,43 +27,24 @@ import android.graphics.Typeface.BOLD
 import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.view.View
-import android.webkit.URLUtil
 import androidx.core.text.set
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
-import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
-import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.models.toConnection
-import com.saltedge.authenticator.sdk.AuthenticatorApiManager
-import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.contract.ConnectionCreateListener
-import com.saltedge.authenticator.sdk.contract.FetchProviderConfigurationListener
-import com.saltedge.authenticator.sdk.api.model.ConnectionID
 import com.saltedge.authenticator.sdk.api.model.GUID
-import com.saltedge.authenticator.sdk.api.model.Token
-import com.saltedge.authenticator.sdk.api.model.appLink.ConnectAppLinkData
-import com.saltedge.authenticator.sdk.api.model.configuration.ProviderConfigurationData
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionStatus
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.api.model.error.getErrorMessage
-import com.saltedge.authenticator.sdk.api.model.response.CreateConnectionResponseData
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.sdk.tools.parseRedirect
+import com.saltedge.authenticator.sdk.v2.api.model.appLink.ConnectAppLinkDataV2
+import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
 import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.getErrorMessage
 import com.saltedge.authenticator.tools.postUnitEvent
 
 class ConnectProviderViewModel(
     private val appContext: Context,
-    private val preferenceRepository: PreferenceRepositoryAbs,
-    private val connectionsRepository: ConnectionsRepositoryAbs,
-    private val keyStoreManager: KeyStoreManagerAbs,
-    private val apiManager: AuthenticatorApiManagerAbs,
-    private val locationManager: DeviceLocationManagerAbs
-) : ViewModel(), LifecycleObserver, ConnectionCreateListener, FetchProviderConfigurationListener {
+    private val locationManager: DeviceLocationManagerAbs,
+    private val interactor: ConnectProviderInteractorAbs
+) : ViewModel(), LifecycleObserver, ConnectProviderInteractorCallback {
 
     val backActionIconRes: MutableLiveData<ResId?> = MutableLiveData(R.drawable.ic_appbar_action_close)
     val statusIconRes: MutableLiveData<ResId> = MutableLiveData(R.drawable.ic_status_error)
@@ -80,117 +61,19 @@ class ConnectProviderViewModel(
     val onUrlChangedEvent = MutableLiveData<ViewModelEvent<String>>()
     val goBackEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onAskPermissionsEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    private var connection = Connection()
-    private var initialConnectData: ConnectAppLinkData? = null
-    private var authenticateData: CreateConnectionResponseData? = null
     private var sessionFailMessage: String? = null
     private var viewMode: ViewMode = ViewMode.START_NEW_CONNECT
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onResume() {
-        when (viewMode) {
-            ViewMode.START_NEW_CONNECT -> performFetchConfigurationRequest()
-            ViewMode.START_RECONNECT -> performCreateConnectionRequest()
-            ViewMode.WEB_ENROLL -> loadWebRedirectUrl()
-            else -> Unit
+    fun setInitialData(initialConnectData: ConnectAppLinkDataV2?, connectionGuid: GUID?) {
+        interactor.contract = this
+        interactor.setInitialData(initialConnectData, connectionGuid)
+
+        viewMode = when {
+            interactor.hasConnection -> ViewMode.START_RECONNECT
+            interactor.hasConfigUrl -> ViewMode.START_NEW_CONNECT
+            else -> ViewMode.COMPLETE_ERROR
         }
-        updateViewsContent()
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun onDestroy() {
-        if (connection.guid.isNotEmpty() && connection.accessToken.isEmpty()) {
-            keyStoreManager.deleteKeyPair(connection.guid)
-        }
-    }
-
-    override fun onFetchProviderConfigurationSuccess(result: ProviderConfigurationData) {
-        result.toConnection()?.let {
-            this.connection = it
-            performCreateConnectionRequest()
-        } ?: onShowErrorEvent.postValue(
-            ViewModelEvent(appContext.getString(R.string.errors_invalid_response))
-        )
-    }
-
-    override fun onFetchProviderConfigurationFailure(error: ApiErrorData) {
-        onShowErrorEvent.postValue(ViewModelEvent(error.getErrorMessage(appContext)))
-    }
-
-    override fun onConnectionCreateSuccess(response: CreateConnectionResponseData) {
-        val accessToken = response.accessToken
-        val redirectUrl = response.redirectUrl
-        if (accessToken?.isNotEmpty() == true) {
-            onConnectionSuccessAuthentication(
-                connectionId = response.connectionId ?: "",
-                accessToken = accessToken
-            )
-        } else if (redirectUrl?.isNotEmpty() == true) {
-            if (redirectUrl.startsWith(AuthenticatorApiManager.authenticationReturnUrl)) {
-                parseRedirect(
-                    url = redirectUrl,
-                    success = { connectionID, resultAccessToken ->
-                        onConnectionSuccessAuthentication(connectionID, resultAccessToken)
-                    },
-                    error = { errorClass, errorMessage ->
-                        webAuthFinishError(errorClass, errorMessage)
-                    }
-                )
-            } else if (URLUtil.isValidUrl(response.redirectUrl ?: "")) {
-                connection.id = response.connectionId ?: ""
-                authenticateData = response
-                viewMode = ViewMode.WEB_ENROLL
-                updateViewsContent()
-                loadWebRedirectUrl()
-            }
-        }
-    }
-
-    override fun onConnectionCreateFailure(error: ApiErrorData) {
-        onShowErrorEvent.postValue(ViewModelEvent(error.getErrorMessage(appContext)))
-    }
-
-    fun setInitialData(initialConnectData: ConnectAppLinkData?, connectionGuid: GUID?) {
-        if (initialConnectData == null && connectionGuid == null) {
-            viewMode = ViewMode.COMPLETE_ERROR
-        } else if (connectionGuid != null) {
-            this.connection = connectionsRepository.getByGuid(connectionGuid) ?: Connection()
-            viewMode = ViewMode.START_RECONNECT
-        } else {
-            this.initialConnectData = initialConnectData
-            viewMode = ViewMode.START_NEW_CONNECT
-        }
-
-        titleRes = if (this.connection.guid.isEmpty()) R.string.connections_new_connection
-        else R.string.actions_reconnect
-    }
-
-    fun onViewClick(viewId: Int) {
-        if (viewId == R.id.actionView) onCloseEvent.postUnitEvent()
-    }
-
-    fun onDialogActionIdClick(dialogActionId: Int) {
-        if (dialogActionId == DialogInterface.BUTTON_POSITIVE) onCloseEvent.postUnitEvent()
-    }
-
-    fun onConnectionSuccessAuthentication(connectionId: ConnectionID, accessToken: Token) {
-        viewMode = ViewMode.COMPLETE_SUCCESS
-        connection.id = connectionId
-        connection.accessToken = accessToken
-        connection.status = "${ConnectionStatus.ACTIVE}"
-        if (connectionsRepository.connectionExists(connection)) {
-            connectionsRepository.saveModel(connection)
-        } else {
-            connectionsRepository.fixNameAndSave(connection)
-        }
-        updateViewsContent()
-        checkGeolocationRequirements()
-    }
-
-    fun webAuthFinishError(errorClass: String, errorMessage: String?) {
-        viewMode = ViewMode.COMPLETE_ERROR
-        sessionFailMessage = errorMessage
-        updateViewsContent()
+        titleRes = if (viewMode == ViewMode.START_NEW_CONNECT) R.string.connections_new_connection else R.string.actions_reconnect
     }
 
     fun onBackPress(webViewCanGoBack: Boolean?): Boolean {
@@ -203,6 +86,57 @@ class ConnectProviderViewModel(
         ) {
             locationManager.startLocationUpdates(appContext)
         }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    fun onResume() {
+        when (viewMode) {
+            ViewMode.START_NEW_CONNECT -> interactor.fetchScaConfiguration()
+            ViewMode.START_RECONNECT -> interactor.requestCreateConnection()
+            ViewMode.WEB_ENROLL -> loadWebRedirectUrl()
+            else -> Unit
+        }
+        updateViewsContent()
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    fun onDestroy() {
+        interactor.destroyConnectionIfNotAuthorized()
+        interactor.contract = null
+    }
+
+    fun onViewClick(viewId: Int) {
+        if (viewId == R.id.actionView) onCloseEvent.postUnitEvent()
+    }
+
+    fun onDialogActionIdClick(dialogActionId: Int) {
+        if (dialogActionId == DialogInterface.BUTTON_POSITIVE) onCloseEvent.postUnitEvent()
+    }
+
+    fun onReturnToRedirect(url: String) {
+        interactor.onReceiveReturnToUrl(url)
+    }
+
+    override fun onReceiveApiError(error: ApiErrorData) {
+        onShowErrorEvent.postValue(ViewModelEvent(error.getErrorMessage(appContext)))
+    }
+
+    override fun onReceiveAuthenticationUrl() {
+        viewMode = ViewMode.WEB_ENROLL
+        updateViewsContent()
+        loadWebRedirectUrl()
+    }
+
+    override fun onConnectionFailAuthentication(errorClass: String, errorMessage: String?) {
+        viewMode = ViewMode.COMPLETE_ERROR
+        sessionFailMessage = errorMessage
+        updateViewsContent()
+    }
+
+    override fun onConnectionSuccessAuthentication() {
+        viewMode = ViewMode.COMPLETE_SUCCESS
+        updateViewsContent()
+        checkGeolocationRequirements()
     }
 
     private val webViewIsVisible: Boolean
@@ -219,36 +153,15 @@ class ConnectProviderViewModel(
         get() = if (viewMode.isCompleteWithSuccess) R.string.actions_done else R.string.actions_try_again
 
     private fun checkGeolocationRequirements() {
-        connection.geolocationRequired?.let {
+        interactor.geolocationRequired?.let {
             val permissionGranted: Boolean = locationManager.locationPermissionsGranted(appContext)
-            if (permissionGranted) {
-                locationManager.startLocationUpdates(appContext)
-            } else {
-                onAskPermissionsEvent.postUnitEvent()
-            }
+            if (permissionGranted) locationManager.startLocationUpdates(appContext)
+            else onAskPermissionsEvent.postUnitEvent()
         }
     }
 
-    private fun performFetchConfigurationRequest() {
-        initialConnectData?.configurationUrl?.let {
-            apiManager.getProviderConfigurationData(it, resultCallback = this)
-        } ?: onShowErrorEvent.postValue(
-            ViewModelEvent(appContext.getString(R.string.errors_invalid_qr))
-        )
-    }
-
-    private fun performCreateConnectionRequest() {
-        apiManager.createConnectionRequest(
-            appContext = appContext,
-            connection = connection,
-            pushToken = preferenceRepository.cloudMessagingToken,
-            connectQueryParam = initialConnectData?.connectQuery,
-            resultCallback = this
-        )
-    }
-
     private fun loadWebRedirectUrl() {
-        onUrlChangedEvent.postValue(ViewModelEvent(authenticateData?.redirectUrl ?: ""))
+        onUrlChangedEvent.postValue(ViewModelEvent(interactor.authenticationUrl))
     }
 
     private fun updateViewsContent() {
@@ -265,7 +178,7 @@ class ConnectProviderViewModel(
 
     private fun getCompleteTitle(): SpannableString {
         return if (viewMode.isCompleteWithSuccess) {
-            val connectionName = connection.name
+            val connectionName = interactor.connectionName
             val resultString = appContext.getString(R.string.connect_status_provider_success).format(connectionName)
             val start = resultString.indexOf(connectionName)
             val end = start + connectionName.length

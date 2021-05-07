@@ -23,8 +23,7 @@ package com.saltedge.authenticator.sdk.web
 import android.graphics.Bitmap
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import com.saltedge.authenticator.sdk.AuthenticatorApiManager
-import com.saltedge.authenticator.sdk.tools.parseRedirect
+import com.saltedge.authenticator.sdk.tools.isReturnToUrl
 
 private const val WEB_PAGE_Y_CORRECTION_OFFSET = 20
 
@@ -32,20 +31,10 @@ private const val WEB_PAGE_Y_CORRECTION_OFFSET = 20
 class ConnectWebClient(val contract: ConnectWebClientContract) : WebViewClient() {
 
     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-        return if (url != null && url.startsWith(AuthenticatorApiManager.authenticationReturnUrl)) {
-            parseRedirect(
-                url = url,
-                success = { connectionID, accessToken ->
-                    contract.webAuthFinishSuccess(connectionID, accessToken)
-                },
-                error = { errorClass, errorMessage ->
-                    contract.webAuthFinishError(errorClass, errorMessage)
-                }
-            )
+        return if (url?.isReturnToUrl() == true) {
+            contract.onReturnToRedirect(url)
             true
-        } else {
-            super.shouldOverrideUrlLoading(view, url)
-        }
+        } else super.shouldOverrideUrlLoading(view, url)
     }
 
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {

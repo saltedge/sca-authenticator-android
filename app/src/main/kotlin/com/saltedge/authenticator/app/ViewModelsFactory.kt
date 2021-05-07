@@ -26,6 +26,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.features.actions.SubmitActionViewModel
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsViewModel
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListViewModel
+import com.saltedge.authenticator.features.connections.create.ConnectProviderInteractorV1
+import com.saltedge.authenticator.features.connections.create.ConnectProviderInteractorV2
 import com.saltedge.authenticator.features.connections.create.ConnectProviderViewModel
 import com.saltedge.authenticator.features.connections.list.ConnectionsListViewModel
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsViewModel
@@ -48,6 +50,7 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.v2.ScaServiceClient
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
@@ -61,9 +64,18 @@ class ViewModelsFactory @Inject constructor(
     val connectionsRepository: ConnectionsRepositoryAbs,
     val keyStoreManager: KeyStoreManagerAbs,
     val realmManager: RealmManagerAbs,
-    val apiManager: AuthenticatorApiManagerAbs,
+    val apiManagerV1: AuthenticatorApiManagerAbs,
+    val apiManagerV2: ScaServiceClient,
     val connectivityReceiver: ConnectivityReceiverAbs
 ) : ViewModelProvider.Factory {
+
+    private var _scaApiVersion: String = "1"
+    private val scaApiV2IsRequired: Boolean
+        get() = _scaApiVersion == "2"
+
+    fun setScaApiVersion(version: String?) {
+        _scaApiVersion = version ?: "1"
+    }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -101,7 +113,7 @@ class ViewModelsFactory @Inject constructor(
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,
                     cryptoTools = cryptoTools,
-                    apiManager = apiManager,
+                    apiManager = apiManagerV1,
                     locationManager = DeviceLocationManager,
                     connectivityReceiver = connectivityReceiver,
                     defaultDispatcher = Dispatchers.Default
@@ -113,26 +125,19 @@ class ViewModelsFactory @Inject constructor(
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,
                     cryptoTools = cryptoTools,
-                    apiManager = apiManager,
+                    apiManager = apiManagerV1,
                     locationManager = DeviceLocationManager
                 ) as T
             }
             modelClass.isAssignableFrom(ConnectProviderViewModel::class.java) -> {
-                return ConnectProviderViewModel(
-                    appContext = appContext,
-                    preferenceRepository = preferenceRepository,
-                    connectionsRepository = connectionsRepository,
-                    keyStoreManager = keyStoreManager,
-                    apiManager = apiManager,
-                    locationManager = DeviceLocationManager
-                ) as T
+                return createConnectProviderViewModel() as T
             }
             modelClass.isAssignableFrom(ConnectionsListViewModel::class.java) -> {
                 return ConnectionsListViewModel(
                     appContext = appContext,
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,
-                    apiManager = apiManager,
+                    apiManager = apiManagerV1,
                     cryptoTools = cryptoTools
                 ) as T
             }
@@ -141,7 +146,7 @@ class ViewModelsFactory @Inject constructor(
                     appContext = appContext,
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,
-                    apiManager = apiManager,
+                    apiManager = apiManagerV1,
                     cryptoTools = cryptoTools,
                     defaultDispatcher = Dispatchers.Default
                 ) as T
@@ -151,7 +156,7 @@ class ViewModelsFactory @Inject constructor(
                     appContext = appContext,
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,
-                    apiManager = apiManager
+                    apiManager = apiManagerV1
                 ) as T
             }
             modelClass.isAssignableFrom(SelectConnectionsViewModel::class.java) -> {
@@ -164,7 +169,7 @@ class ViewModelsFactory @Inject constructor(
                     preferenceRepository = preferenceRepository,
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,
-                    apiManager = apiManager
+                    apiManager = apiManagerV1
                 ) as T
             }
             modelClass.isAssignableFrom(PasscodeEditViewModel::class.java) -> {
@@ -190,10 +195,35 @@ class ViewModelsFactory @Inject constructor(
                     appContext = appContext,
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,
-                    apiManager = apiManager
+                    apiManager = apiManagerV1
                 ) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }
+    }
+
+    private fun createConnectProviderViewModel(): ConnectProviderViewModel {
+        val interactor = if (scaApiV2IsRequired) {
+            ConnectProviderInteractorV2(
+                appContext = appContext,
+                keyStoreManager = keyStoreManager,
+                preferenceRepository = preferenceRepository,
+                connectionsRepository = connectionsRepository,
+                apiManager = apiManagerV2
+            )
+        } else {
+            ConnectProviderInteractorV1(
+                appContext = appContext,
+                keyStoreManager = keyStoreManager,
+                preferenceRepository = preferenceRepository,
+                connectionsRepository = connectionsRepository,
+                apiManager = apiManagerV1
+            )
+        }
+        return ConnectProviderViewModel(
+            appContext = appContext,
+            interactor = interactor,
+            locationManager = DeviceLocationManager
+        )
     }
 }

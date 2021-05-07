@@ -92,6 +92,7 @@ const val ERROR_CLASS_HOST_UNREACHABLE = "HostUnreachable"
 const val ERROR_CLASS_SSL_HANDSHAKE = "SSLHandshakeException"
 const val ERROR_CLASS_CONNECTION_NOT_FOUND = "ConnectionNotFound"
 const val ERROR_CLASS_AUTHORIZATION_NOT_FOUND = "AuthorizationNotFound"
+const val ERROR_CLASS_INVALID_DEEPLINK = "InvalidDeeplink"
 
 // REQUEST METHODS
 const val REQUEST_METHOD_GET = "GET"

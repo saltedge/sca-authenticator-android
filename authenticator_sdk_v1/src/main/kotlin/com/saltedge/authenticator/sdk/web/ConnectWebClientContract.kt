@@ -20,12 +20,8 @@
  */
 package com.saltedge.authenticator.sdk.web
 
-import com.saltedge.authenticator.sdk.api.model.ConnectionID
-import com.saltedge.authenticator.sdk.api.model.Token
-
 interface ConnectWebClientContract {
-    fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token)
-    fun webAuthFinishError(errorClass: String, errorMessage: String?)
+    fun onReturnToRedirect(url: String)
     fun onPageLoadStarted()
     fun onPageLoadFinished()
 }

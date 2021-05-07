@@ -47,19 +47,19 @@ class DeepLinkToolsTest {
     @Test
     @Throws(Exception::class)
     fun extractConnectAppLinkDataTest() {
-        assertNull("".extractConnectAppLinkData())
-        assertNull("test".extractConnectAppLinkData())
-        assertNull("....".extractConnectAppLinkData())
-        assertNull("////".extractConnectAppLinkData())
-        assertNull("https://google.com".extractConnectAppLinkData())
-        assertNull("authenticator://saltedge.com/connect?configuration=https://localhost/configuration".extractConnectAppLinkData())
-        assertNull("authenticator://saltedge.com/connect?configuration=https://backend/api/authenticator/v1/configuration".extractConnectAppLinkData())
+        assertNull("".extractConnectAppLinkDataV2())
+        assertNull("test".extractConnectAppLinkDataV2())
+        assertNull("....".extractConnectAppLinkDataV2())
+        assertNull("////".extractConnectAppLinkDataV2())
+        assertNull("https://google.com".extractConnectAppLinkDataV2())
+        assertNull("authenticator://saltedge.com/connect?configuration=https://localhost/configuration".extractConnectAppLinkDataV2())
+        assertNull("authenticator://saltedge.com/connect?configuration=https://backend/api/authenticator/v1/configuration".extractConnectAppLinkDataV2())
         assertThat(
-            "authenticator://saltedge.com/connect?configuration=https://example.com/configuration".extractConnectAppLinkData(),
+            "authenticator://saltedge.com/connect?configuration=https://example.com/configuration".extractConnectAppLinkDataV2(),
             equalTo(ConnectAppLinkDataV2(configurationUrl = "https://example.com/configuration", connectQuery = null))
         )
         assertThat(
-            "authenticator://saltedge.com/connect?configuration=https://example.com/configuration&connect_query=1234567890".extractConnectAppLinkData(),
+            "authenticator://saltedge.com/connect?configuration=https://example.com/configuration&connect_query=1234567890".extractConnectAppLinkDataV2(),
             equalTo(ConnectAppLinkDataV2(configurationUrl = "https://example.com/configuration", connectQuery = "1234567890"))
         )
     }

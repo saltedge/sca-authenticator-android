@@ -43,3 +43,7 @@ const val TIME_VIEW_UPDATE_TIMEOUT = 1000L
 const val LAUNCHER_SPLASH_DURATION = 1500L
 
 const val KEY_CLOSE_APP = "KEY_DESTROY_ON_BACK"
+
+const val ERROR_INVALID_DEEPLINK = "InvalidDeeplink"
+const val ERROR_INVALID_RESPONSE = "InvalidResponse"
+const val ERROR_INVALID_AUTHENTICATION_DATA = "InvalidAuthenticationData"
