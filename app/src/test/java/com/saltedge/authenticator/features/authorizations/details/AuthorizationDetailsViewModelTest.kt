@@ -417,7 +417,7 @@ class AuthorizationDetailsViewModelTest {
     fun onTimerTickTest_case3() {
         //given authorization that should be destroyed (has destroyAt param)
         viewModel.setInitialData(identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1"), closeAppOnBackPress = true, titleRes = null)
-        viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.TIME_OUT)?.apply {
+        viewModel.authorizationModel.value = viewModel1.copy(viewMode = ViewMode.TIME_OUT).apply {
             destroyAt = DateTime.now().minusMinutes(1)
         }
         clearInvocations(mockConnectionsRepository, mockPollingService, mockApiManager)
