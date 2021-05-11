@@ -28,17 +28,17 @@ import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.app.AppTools
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.model.isActive
+import com.saltedge.authenticator.core.tools.MILLIS_IN_MINUTE
+import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.core.tools.millisToRemainedMinutes
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.connection.isActive
-import com.saltedge.authenticator.sdk.tools.MILLIS_IN_MINUTE
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.sdk.tools.millisToRemainedMinutes
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.tools.postUnitEvent
 import timber.log.Timber
@@ -49,7 +49,7 @@ class LockableActivityViewModel(
     val connectionsRepository: ConnectionsRepositoryAbs,
     val preferenceRepository: PreferenceRepositoryAbs,
     val passcodeTools: PasscodeToolsAbs,
-    val keyStoreManager: KeyStoreManagerAbs,
+    val keyStoreManager: KeyManagerAbs,
     val apiManager: AuthenticatorApiManagerAbs
 ): ViewModel() {
     private var returnFromOwnActivity = false
@@ -202,13 +202,13 @@ class LockableActivityViewModel(
 
     private fun wipeApplication() {
         preferenceRepository.clearUserPreferences()
-        keyStoreManager.deleteKeyPairs(connectionsRepository.getAllConnections().map { it.guid })
+        keyStoreManager.deleteKeyPairsIfExist(connectionsRepository.getAllConnections().map { it.guid })
         connectionsRepository.deleteAllConnections()
     }
 
     private fun sendRevokeRequestForConnections(connections: List<Connection>) {//TODO move connections interactor
-        val connectionsAndKeys: List<ConnectionAndKey> = connections.filter { it.isActive() }
-            .mapNotNull { keyStoreManager.createConnectionAndKeyModel(it) }
+        val connectionsAndKeys: List<RichConnection> = connections.filter { it.isActive() }
+            .mapNotNull { keyStoreManager.enrichConnection(it) }
         apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = null)
     }
 

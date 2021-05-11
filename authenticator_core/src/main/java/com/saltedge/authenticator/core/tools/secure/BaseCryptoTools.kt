@@ -24,11 +24,13 @@ import android.util.Base64
 import com.saltedge.authenticator.core.tools.decodeFromPemBase64String
 import timber.log.Timber
 import java.nio.charset.StandardCharsets
+import java.security.Key
 import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.PublicKey
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
+import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
@@ -113,6 +115,31 @@ object BaseCryptoTools : BaseCryptoToolsAbs {
         }
     }
 
+    override fun aesGcmEncrypt(input: String, key: Key): String? {
+        try {
+            val encryptCipher = Cipher.getInstance(AES_INTERNAL_TRANSFORMATION) ?: return null
+            encryptCipher.init(Cipher.ENCRYPT_MODE, key, GCMParameterSpec(128, passcodeEncryptionIv))
+            val encryptedBytes = encryptCipher.doFinal(input.toByteArray())
+            return Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    override fun aesGcmDecrypt(encryptedText: String, key: Key): String? {
+        return try {
+            val encryptedBytes = Base64.decode(encryptedText, Base64.DEFAULT)
+            val encryptCipher = Cipher.getInstance(AES_INTERNAL_TRANSFORMATION) ?: return null
+            encryptCipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, passcodeEncryptionIv))
+            val decodedBytes = encryptCipher.doFinal(encryptedBytes)
+            String(decodedBytes)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
     private fun rsaCipherInstance(): Cipher? {
         return try {
             // AndroidOpenSSL causes error in android 6: InvalidKeyException: Need RSA private or public key (AndroidKeyStoreBCWorkaround)
@@ -129,4 +156,6 @@ interface BaseCryptoToolsAbs {
     fun rsaEncrypt(input: ByteArray, publicKey: PublicKey): String?
     fun rsaDecrypt(encryptedText: String, privateKey: PrivateKey): ByteArray?
     fun aesDecrypt(encryptedText: String, key: ByteArray, iv: ByteArray): String?
+    fun aesGcmEncrypt(input: String, key: Key): String?
+    fun aesGcmDecrypt(encryptedText: String, key: Key): String?
 }

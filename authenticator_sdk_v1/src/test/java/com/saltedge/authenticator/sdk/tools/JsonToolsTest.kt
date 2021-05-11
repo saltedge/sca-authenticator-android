@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.tools
 
+import com.saltedge.authenticator.core.tools.json.createDefaultGson
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone

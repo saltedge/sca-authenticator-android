@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.api.connector
 
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.contract.FetchProviderConfigurationListener
 
 import com.saltedge.authenticator.sdk.api.model.configuration.ProviderConfigurationData
@@ -81,7 +82,7 @@ class ProviderDataConnectorTest {
         )
 
         verify {
-            mockCallback.fetchProviderConfigurationDataResult(
+            mockCallback.onFetchProviderConfigurationSuccess(
                 result = ProviderConfigurationData(
                     connectUrl = "connectUrl",
                     name = "name",
@@ -91,8 +92,7 @@ class ProviderDataConnectorTest {
                     supportEmail = "example@example.com",
                     consentManagementSupported = true,
                     geolocationRequired = true
-                ),
-                error = null
+                )
             )
         }
         confirmVerified(mockCallback)
@@ -112,8 +112,7 @@ class ProviderDataConnectorTest {
         connector.onResponse(mockCall, get404Response())
 
         verify {
-            mockCallback.fetchProviderConfigurationDataResult(
-                result = null,
+            mockCallback.onFetchProviderConfigurationFailure(
                 error = ApiErrorData(
                     errorMessage = "Resource not found",
                     errorClassName = "NotFound"
@@ -137,6 +136,7 @@ class ProviderDataConnectorTest {
         } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
         every { mockCall.request() } returns Request.Builder().url(requestUrl).build()
-        every { mockCallback.fetchProviderConfigurationDataResult(any(), any()) } returns Unit
+        every { mockCallback.onFetchProviderConfigurationSuccess(any()) } returns Unit
+        every { mockCallback.onFetchProviderConfigurationFailure(any()) } returns Unit
     }
 }

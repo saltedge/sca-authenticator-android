@@ -29,10 +29,8 @@ const val CONSENT_REQUEST_CODE = 556
 
 const val KEY_ACCESS_TOKEN = "accessToken" // used for database queries
 const val KEY_CREATED_AT = "createdAt" // used for database queries
-const val KEY_ID = "id"
 const val KEY_CODE = "code"
 const val KEY_GUID = "guid"
-const val KEY_STATUS = "status"
 const val KEY_OPTION_ID = "option_id"
 const val KEY_ACTION = "action"
 const val KEY_DEEP_LINK = "KEY_DEEP_LINK"

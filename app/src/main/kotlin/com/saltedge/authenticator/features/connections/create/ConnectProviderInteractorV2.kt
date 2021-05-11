@@ -21,23 +21,23 @@
 package com.saltedge.authenticator.features.connections.create
 
 import android.content.Context
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ConnectionStatus
+import com.saltedge.authenticator.core.tools.createRandomGuid
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionStatus
-import com.saltedge.authenticator.sdk.tools.createRandomGuid
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClient
 import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionCreateListener
 import com.saltedge.authenticator.sdk.v2.api.contract.FetchConfigurationListener
 import com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationDataV2
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 
 class ConnectProviderInteractorV2(
     private val appContext: Context,
-    keyStoreManager: KeyStoreManagerAbs,
+    keyStoreManager: KeyManagerAbs,
     preferenceRepository: PreferenceRepositoryAbs,
     connectionsRepository: ConnectionsRepositoryAbs,
     private val apiManager: ScaServiceClient,

@@ -68,17 +68,6 @@ object CryptoTools : CryptoToolsAbs {
             null
         }
     }
-
-    private fun rsaCipherInstance(): Cipher? {
-        return try {
-            // AndroidOpenSSL causes error in android 6: InvalidKeyException: Need RSA private or public key (AndroidKeyStoreBCWorkaround)
-            // AndroidKeyStoreBCWorkaround causes error in android 5: NoSuchProviderException: Provider not available (AndroidOpenSSL)
-            Cipher.getInstance(BaseCryptoTools.RSA_ECB)
-        } catch (e: Exception) {
-            Timber.e(e)
-            null
-        }
-    }
 }
 
 fun AuthorizationResponseData.decrypt(rsaPrivateKey: PrivateKey?): AuthorizationData? {

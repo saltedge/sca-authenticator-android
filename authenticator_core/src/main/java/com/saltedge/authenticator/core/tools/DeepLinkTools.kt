@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.core.tools
 
 import android.net.Uri
+import com.saltedge.authenticator.core.model.ActionAppLinkData
 import com.saltedge.authenticator.core.model.ConnectAppLinkData
 
 const val KEY_CONFIGURATION_PARAM = "configuration"
@@ -36,7 +37,7 @@ const val KEY_RETURN_TO_PARAM = "return_to"
  * @return true if deeplink contains configuration url
  */
 fun String.isValidDeeplink(): Boolean {
-    return this.extractConnectAppLinkDataV2() != null
+    return this.extractConnectAppLinkData() != null
 }
 
 /**
@@ -45,7 +46,7 @@ fun String.isValidDeeplink(): Boolean {
  * @receiver deep link String (e.g. authenticator://saltedge.com/connect?configuration=https://example.com/configuration&connect_query=1234567890)
  * @return ConnectAppLinkData object
  */
-fun String.extractConnectAppLinkDataV2(): ConnectAppLinkData? {
+fun String.extractConnectAppLinkData(): ConnectAppLinkData? {
     val uri = Uri.parse(this)
     val configurationUrl = uri.getQueryParameter(KEY_CONFIGURATION_PARAM) ?: return null
     val configurationUri = Uri.parse(configurationUrl)
@@ -55,4 +56,19 @@ fun String.extractConnectAppLinkDataV2(): ConnectAppLinkData? {
             connectQuery = uri.getQueryParameter(KEY_CONNECT_QUERY_PARAM)
         )
     } else null
+}
+
+/**
+ * Extract Instant Action data from App Link
+ *
+ * @receiver deep link String (e.g. authenticator://saltedge.com/action?action_uuid=123456&return_to=https://return.com&connect_url=https://someurl.com)
+ * @return ActionAppLinkData object
+ */
+fun String.extractActionAppLinkData(): ActionAppLinkData? {
+    val uri = Uri.parse(this)
+    return ActionAppLinkData(
+        actionUUID = uri.getQueryParameter(KEY_ACTION_UUID_PARAM) ?: return null,
+        connectUrl = uri.getQueryParameter(KEY_CONNECT_URL_PARAM) ?: return null,
+        returnTo = uri.getQueryParameter(KEY_RETURN_TO_PARAM)
+    )
 }

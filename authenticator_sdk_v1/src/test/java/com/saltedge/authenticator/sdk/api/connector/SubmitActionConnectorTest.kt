@@ -22,13 +22,14 @@ package com.saltedge.authenticator.sdk.api.connector
 
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.getDefaultTestConnection
-import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
-
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.error.createInvalidResponseError
-import com.saltedge.authenticator.sdk.api.model.response.SubmitActionResponseData
-import com.saltedge.authenticator.sdk.api.model.response.SubmitActionResponse
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.createInvalidResponseError
+import com.saltedge.authenticator.core.model.ConnectionAbs
+import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.api.ApiInterface
+import com.saltedge.authenticator.sdk.api.model.response.SubmitActionResponse
+import com.saltedge.authenticator.sdk.api.model.response.SubmitActionResponseData
+import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
 import com.saltedge.authenticator.sdk.testTools.get404Response
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -85,7 +86,7 @@ class SubmitActionConnectorTest {
         val connector = SubmitActionConnector(mockApi, mockCallback)
         connector.updateAction(
             actionUUID = "uuid-1234",
-            connectionAndKey = ConnectionAndKey(requestConnection, privateKey)
+            connectionAndKey = RichConnection(requestConnection, privateKey)
         )
 
         verify { mockCall.enqueue(connector) }
@@ -102,7 +103,7 @@ class SubmitActionConnectorTest {
         val connector = SubmitActionConnector(mockApi, mockCallback)
         connector.updateAction(
             actionUUID = "uuid-1234",
-            connectionAndKey = ConnectionAndKey(requestConnection, privateKey)
+            connectionAndKey = RichConnection(requestConnection, privateKey)
         )
 
         verify { mockApi.updateAction(requestUrl = requestUrl, headersMap = any()) }
@@ -112,10 +113,7 @@ class SubmitActionConnectorTest {
 
         verify {
             mockCallback.onActionInitFailure(
-                ApiErrorData(
-                    errorMessage = "Resource not found",
-                    errorClassName = "NotFound"
-                )
+                ApiErrorData(errorMessage = "Resource not found", errorClassName = "NotFound")
             )
         }
         confirmVerified(mockCallback)
@@ -127,7 +125,7 @@ class SubmitActionConnectorTest {
         val connector = SubmitActionConnector(mockApi, mockCallback)
         connector.updateAction(
             actionUUID = "uuid-1234",
-            connectionAndKey = ConnectionAndKey(requestConnection, privateKey)
+            connectionAndKey = RichConnection(requestConnection, privateKey)
         )
 
         verify { mockCall.enqueue(connector) }

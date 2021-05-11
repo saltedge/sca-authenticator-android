@@ -20,6 +20,8 @@
  */
 package com.saltedge.android.test_tools
 
+import com.saltedge.authenticator.core.model.ConnectionAbs
+
 data class TestConnection(
     override var guid: String = "",
     override var id: String = "",
@@ -33,5 +35,6 @@ data class TestConnection(
     override var status: String = "",
     override var supportEmail: String? = "",
     override var consentManagementSupported: Boolean? = true,
-    override var geolocationRequired: Boolean? = true
+    override var geolocationRequired: Boolean? = true,
+    override var providerRsaPublicKeyPem: String = ""
 ) : ConnectionAbs

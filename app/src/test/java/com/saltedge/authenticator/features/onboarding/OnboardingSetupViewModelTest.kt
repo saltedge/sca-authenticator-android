@@ -24,8 +24,8 @@ import android.view.View
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.TestAppTools
+import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
 import org.hamcrest.CoreMatchers.equalTo

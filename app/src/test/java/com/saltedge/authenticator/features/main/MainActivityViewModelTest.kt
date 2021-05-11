@@ -30,15 +30,16 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_CLOSE_APP
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
+import com.saltedge.authenticator.core.api.*
+import com.saltedge.authenticator.core.model.ActionAppLinkData
+import com.saltedge.authenticator.core.model.ConnectAppLinkData
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.sdk.api.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.constants.*
-import com.saltedge.authenticator.sdk.v2.api.model.appLink.ConnectAppLinkDataV2
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertNotNull
@@ -186,8 +187,8 @@ class MainActivityViewModelTest {
         val bundle = viewModel.onShowConnectEvent.value?.peekContent()
 
         assertThat(
-            bundle?.getSerializable(KEY_DATA) as ConnectAppLinkDataV2,
-            equalTo(ConnectAppLinkDataV2(
+            bundle?.getSerializable(KEY_DATA) as ConnectAppLinkData,
+            equalTo(ConnectAppLinkData(
                 configurationUrl = "https://saltedge.com/configuration",
                 connectQuery = "1234567890"
             ))
@@ -335,8 +336,8 @@ class MainActivityViewModelTest {
         val bundle = viewModel.onShowConnectEvent.value?.peekContent()
 
         assertThat(
-            bundle?.getSerializable(KEY_DATA) as ConnectAppLinkDataV2,
-            equalTo(ConnectAppLinkDataV2(
+            bundle?.getSerializable(KEY_DATA) as ConnectAppLinkData,
+            equalTo(ConnectAppLinkData(
                 configurationUrl = "https://example.com/configuration",
                 connectQuery = "1234567890"
             ))

@@ -44,5 +44,7 @@ abstract class ApiConfig {
         this.userAgentInfo = buildUserAgent(context)
         this.authenticationReturnUrl = authenticationReturnUrl
     }
+
+    fun isReturnToUrl(url: String): Boolean = url.startsWith(authenticationReturnUrl)
 }
 

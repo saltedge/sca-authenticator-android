@@ -23,7 +23,7 @@ package com.saltedge.authenticator.features.connections.delete
 import android.content.DialogInterface
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.DELETE_ALL_REQUEST_CODE
-import com.saltedge.authenticator.sdk.api.model.GUID
+import com.saltedge.authenticator.core.model.GUID
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*
 import org.junit.Before

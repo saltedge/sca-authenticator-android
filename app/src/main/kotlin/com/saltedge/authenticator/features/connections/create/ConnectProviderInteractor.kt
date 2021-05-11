@@ -25,10 +25,12 @@ import com.saltedge.authenticator.app.ERROR_INVALID_DEEPLINK
 import com.saltedge.authenticator.app.ERROR_INVALID_RESPONSE
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.*
+import com.saltedge.authenticator.core.tools.parseRedirect
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.sdk.v2.config.ApiV2Config
 
 abstract class ConnectProviderInteractor(
     private val keyStoreManager: KeyManagerAbs,
@@ -47,7 +49,7 @@ abstract class ConnectProviderInteractor(
         get() = connection.geolocationRequired
 
     private var initialConnectData: ConnectAppLinkData? = null
-    private var connection = Connection()
+    private var connection: Connection = Connection()
 
     override fun setInitialData(initialConnectData: ConnectAppLinkData?, connectionGuid: GUID?) {
         this.initialConnectData = initialConnectData
@@ -81,7 +83,8 @@ abstract class ConnectProviderInteractor(
 
     override fun onConnectionCreateSuccess(authenticationUrl: String, connectionId: String) {
         if (authenticationUrl.isNotEmpty()) {
-            if (authenticationUrl.isReturnToUrl()) {
+
+            if (ApiV2Config.isReturnToUrl(authenticationUrl)) {
                 onReceiveReturnToUrl(authenticationUrl)
             } else {
                 connection.id = connectionId
@@ -119,7 +122,7 @@ abstract class ConnectProviderInteractor(
 
     override fun destroyConnectionIfNotAuthorized() {
         if (connection.guid.isNotEmpty() && connection.accessToken.isEmpty()) {
-            keyStoreManager.deleteKeyPair(connection.guid)
+            keyStoreManager.deleteKeyPairIfExist(connection.guid)
         }
     }
 }
@@ -132,7 +135,7 @@ interface ConnectProviderInteractorAbs {
     val connectionName: String
     val geolocationRequired: Boolean?
 
-    fun setInitialData(initialConnectData: ConnectAppLinkDataV2?, connectionGuid: GUID?)
+    fun setInitialData(initialConnectData: ConnectAppLinkData?, connectionGuid: GUID?)
     fun fetchScaConfiguration()
     fun requestProviderConfiguration(url: String)
     fun setNewConnection(newConnection: Connection?)

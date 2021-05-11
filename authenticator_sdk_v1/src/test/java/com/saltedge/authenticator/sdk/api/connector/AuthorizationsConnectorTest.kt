@@ -22,13 +22,15 @@ package com.saltedge.authenticator.sdk.api.connector
 
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.getDefaultTestConnection
+import com.saltedge.authenticator.core.api.HEADER_KEY_ACCESS_TOKEN
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ConnectionAbs
+import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationsContract
 
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.response.EncryptedListResponse
 import com.saltedge.authenticator.sdk.api.ApiInterface
-import com.saltedge.authenticator.sdk.api.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.api.RestClient
 import com.saltedge.authenticator.sdk.testTools.get404Response
 import io.mockk.*
@@ -63,7 +65,7 @@ class AuthorizationsConnectorTest {
     @Throws(Exception::class)
     fun fetchAuthorizationsTest_allSuccess() {
         val connector = AuthorizationsConnector(mockApi, mockCallback)
-        connector.fetchAuthorizations(listOf(ConnectionAndKey(requestConnection, privateKey)))
+        connector.fetchAuthorizations(listOf(RichConnection(requestConnection, privateKey)))
 
         verify { mockCall.enqueue(connector) }
 
@@ -106,7 +108,7 @@ class AuthorizationsConnectorTest {
     @Throws(Exception::class)
     fun fetchAuthorizationsTest_withError() {
         val connector = AuthorizationsConnector(mockApi, mockCallback)
-        connector.fetchAuthorizations(listOf(ConnectionAndKey(requestConnection, privateKey)))
+        connector.fetchAuthorizations(listOf(RichConnection(requestConnection, privateKey)))
 
         verify(exactly = 1) {
             mockApi.getAuthorizations(

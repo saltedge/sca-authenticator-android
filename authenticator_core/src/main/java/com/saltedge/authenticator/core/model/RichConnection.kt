@@ -29,5 +29,5 @@ import java.security.PublicKey
 data class RichConnection(
     val connection: ConnectionAbs,
     val private: PrivateKey,
-    val providerPublic: PublicKey?
+    val providerPublic: PublicKey? = null
 )

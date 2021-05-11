@@ -25,7 +25,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.authorizations.common.collectConnectionsAndKeys
+import com.saltedge.authenticator.app.guid
+import com.saltedge.authenticator.core.api.KEY_NAME
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.*
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
+import com.saltedge.authenticator.features.authorizations.common.collectRichConnections
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
 import com.saltedge.authenticator.features.connections.list.menu.MenuData
@@ -37,16 +42,10 @@ import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.constants.KEY_NAME
+import com.saltedge.authenticator.sdk.api.model.*
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener
 import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
-import com.saltedge.authenticator.sdk.api.model.*
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.connection.isActive
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.tools.postUnitEvent
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -54,7 +53,7 @@ import kotlin.coroutines.CoroutineContext
 class ConnectionsListViewModel(
     private val appContext: Context,
     private val connectionsRepository: ConnectionsRepositoryAbs,
-    private val keyStoreManager: KeyStoreManagerAbs,
+    private val keyStoreManager: KeyManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
     private val cryptoTools: CryptoToolsAbs
 ) : ViewModel(),
@@ -67,11 +66,8 @@ class ConnectionsListViewModel(
     private val decryptJob: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = decryptJob + Dispatchers.IO
-    private var connectionsAndKeys: Map<ConnectionID, ConnectionAndKey> =
-        collectConnectionsAndKeys(
-            connectionsRepository,
-            keyStoreManager
-        )
+    private var connectionsAndKeys: Map<ConnectionID, RichConnection> =
+        collectRichConnections(connectionsRepository, keyStoreManager)
     private var consents: Map<GUID, List<ConsentData>> = emptyMap()
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onListItemClickEvent = MutableLiveData<ViewModelEvent<MenuData>>()
@@ -230,7 +226,7 @@ class ConnectionsListViewModel(
         listItems.postValue(newListItems)
     }
 
-    private fun collectConsentRequestData(): List<ConnectionAndKey>? {
+    private fun collectConsentRequestData(): List<RichConnection>? {
         return if (connectionsAndKeys.isEmpty()) null else connectionsAndKeys.values.toList()
     }
 
@@ -245,7 +241,7 @@ class ConnectionsListViewModel(
         return encryptedList.mapNotNull {
             cryptoTools.decryptConsentData(
                 encryptedData = it,
-                rsaPrivateKey = connectionsAndKeys[it.connectionId]?.key
+                rsaPrivateKey = connectionsAndKeys[it.connectionId]?.private
             )
         }
     }
@@ -275,8 +271,8 @@ class ConnectionsListViewModel(
     }
 
     private fun sendRevokeRequestForConnections(connections: List<Connection>) {
-        val connectionsAndKeys: List<ConnectionAndKey> = connections.filter { it.isActive() }
-            .mapNotNull { keyStoreManager.createConnectionAndKeyModel(it) }
+        val connectionsAndKeys: List<RichConnection> = connections.filter { it.isActive() }
+            .mapNotNull { keyStoreManager.enrichConnection(it) }
 
         apiManager.revokeConnections(
             connectionsAndKeys = connectionsAndKeys,
@@ -285,7 +281,7 @@ class ConnectionsListViewModel(
     }
 
     private fun deleteConnectionsAndKeys(connectionGuid: GUID) {
-        keyStoreManager.deleteKeyPair(connectionGuid)
+        keyStoreManager.deleteKeyPairIfExist(connectionGuid)
         connectionsRepository.deleteConnection(connectionGuid)
     }
 

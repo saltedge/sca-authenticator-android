@@ -21,7 +21,11 @@
 
 package com.saltedge.authenticator.sdk.tools
 
-import com.saltedge.authenticator.sdk.api.model.appLink.ActionAppLinkData
+import com.saltedge.authenticator.core.model.ActionAppLinkData
+import com.saltedge.authenticator.core.model.ConnectAppLinkData
+import com.saltedge.authenticator.core.tools.extractActionAppLinkData
+import com.saltedge.authenticator.core.tools.extractConnectAppLinkData
+import com.saltedge.authenticator.core.tools.isValidDeeplink
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert
 import org.junit.Assert.assertNull

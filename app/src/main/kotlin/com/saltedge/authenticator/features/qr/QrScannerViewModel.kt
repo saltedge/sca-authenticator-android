@@ -29,9 +29,9 @@ import androidx.lifecycle.ViewModel
 import com.google.android.gms.vision.barcode.Barcode
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
+import com.saltedge.authenticator.core.tools.isValidDeeplink
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.sdk.tools.isValidDeeplink
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.postUnitEvent
 

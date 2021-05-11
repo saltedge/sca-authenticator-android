@@ -22,8 +22,8 @@ package com.saltedge.authenticator.sdk.api.connector
 
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.model.Token
 import com.saltedge.authenticator.sdk.api.ApiInterface
-import com.saltedge.authenticator.sdk.api.model.Token
 import com.saltedge.authenticator.sdk.api.model.request.SignedRequest
 import com.saltedge.authenticator.sdk.api.model.response.RevokeAccessTokenResponse
 import com.saltedge.authenticator.sdk.constants.API_CONNECTIONS

@@ -25,6 +25,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.guid
+import com.saltedge.authenticator.core.api.KEY_NAME
+import com.saltedge.authenticator.core.model.ConnectionStatus
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.list.menu.MenuData
 import com.saltedge.authenticator.features.menu.MenuItemData
@@ -32,14 +37,9 @@ import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.constants.KEY_NAME
 import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.sdk.api.model.ConsentSharedData
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.app.guid
 import org.hamcrest.Matchers.equalTo
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
@@ -59,7 +59,7 @@ class ConnectionsListViewModelTest {
     private lateinit var viewModel: ConnectionsListViewModel
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
-    private val mockKeyStoreManager = mock(KeyStoreManagerAbs::class.java)
+    private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
     private val mockCryptoTools = mock(CryptoToolsAbs::class.java)
@@ -87,7 +87,7 @@ class ConnectionsListViewModelTest {
             updatedAt = 300L
         }
     )
-    private val mockConnectionAndKey = ConnectionAndKey(connections[1], mockPrivateKey)
+    private val mockConnectionAndKey = RichConnection(connections[1], mockPrivateKey)
     private val consentData: List<ConsentData> = listOf(
         ConsentData(
             id = "555",
@@ -108,9 +108,7 @@ class ConnectionsListViewModelTest {
         Mockito.doReturn(connections[0]).`when`(mockConnectionsRepository).getByGuid("guid1")
         Mockito.doReturn(connections[1]).`when`(mockConnectionsRepository).getByGuid("guid2")
         given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(connections[1]))
-        given(mockKeyStoreManager.createConnectionAndKeyModel(connections[1])).willReturn(
-            mockConnectionAndKey
-        )
+        given(mockKeyStoreManager.enrichConnection(connections[1])).willReturn(mockConnectionAndKey)
 
         viewModel = ConnectionsListViewModel(
             appContext = context,
@@ -171,7 +169,7 @@ class ConnectionsListViewModelTest {
 
         //then
         Mockito.verify(mockApiManager).getConsents(
-            connectionsAndKeys = listOf(ConnectionAndKey(connections[1], mockPrivateKey)),
+            connectionsAndKeys = listOf(RichConnection(connections[1], mockPrivateKey)),
             resultCallback = viewModel
         )
     }
@@ -189,7 +187,7 @@ class ConnectionsListViewModelTest {
 
         //then
         Mockito.verify(mockApiManager).getConsents(
-            connectionsAndKeys = listOf(ConnectionAndKey(connections[1], mockPrivateKey)),
+            connectionsAndKeys = listOf(RichConnection(connections[1], mockPrivateKey)),
             resultCallback = viewModel
         )
     }
@@ -592,20 +590,19 @@ class ConnectionsListViewModelTest {
             connections.convertConnectionsToViewModels(context)
         viewModel.listItems.value = connection
         Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid2")
-        Mockito.doReturn(ConnectionAndKey(connections[1], mockPrivateKey)).`when`(
-            mockKeyStoreManager
-        ).createConnectionAndKeyModel(connections[1])
+        Mockito.doReturn(RichConnection(connections[1], mockPrivateKey)).`when`(mockKeyStoreManager)
+            .enrichConnection(connections[1])
 
         //when
         viewModel.onDeleteItemResult(guid = "guid2")
 
         //then
         Mockito.verify(mockApiManager).revokeConnections(
-            listOf(ConnectionAndKey(connections[1], mockPrivateKey)),
+            listOf(RichConnection(connections[1], mockPrivateKey)),
             viewModel
         )
         Mockito.verify(mockConnectionsRepository).deleteConnection("guid2")
-        Mockito.verify(mockKeyStoreManager).deleteKeyPair("guid2")
+        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid2")
     }
 
     /**
@@ -622,20 +619,20 @@ class ConnectionsListViewModelTest {
             connections.convertConnectionsToViewModels(context)
         viewModel.listItems.value = connection
         Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid2")
-        Mockito.doReturn(ConnectionAndKey(connections[1], mockPrivateKey)).`when`(
+        Mockito.doReturn(RichConnection(connections[1], mockPrivateKey)).`when`(
             mockKeyStoreManager
-        ).createConnectionAndKeyModel(connections[1])
+        ).enrichConnection(connections[1])
 
         //when
         viewModel.onDeleteItemResult(guid = "guid2")
 
         //then
         Mockito.verify(mockApiManager).revokeConnections(
-            listOf(ConnectionAndKey(connections[1], mockPrivateKey)),
+            listOf(RichConnection(connections[1], mockPrivateKey)),
             viewModel
         )
         Mockito.verify(mockConnectionsRepository).deleteConnection("guid2")
-        Mockito.verify(mockKeyStoreManager).deleteKeyPair("guid2")
+        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid2")
     }
 
     @Test

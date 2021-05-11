@@ -29,7 +29,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_CLOSE_APP
-import com.saltedge.authenticator.app.KEY_ID
 import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.cloud.clearNotifications
@@ -38,6 +37,7 @@ import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.app.authenticatorApp
+import com.saltedge.authenticator.core.api.KEY_ID
 import com.saltedge.authenticator.core.api.KEY_TITLE
 import com.saltedge.authenticator.tools.popBackStack
 import com.saltedge.authenticator.widget.fragment.BaseFragment

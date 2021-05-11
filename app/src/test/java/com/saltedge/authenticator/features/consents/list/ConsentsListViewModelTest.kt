@@ -30,20 +30,20 @@ import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.encryptWithTestKey
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CONSENT_REQUEST_CODE
-import com.saltedge.authenticator.app.KEY_ID
 import com.saltedge.authenticator.features.consents.common.countOfDays
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.sdk.api.model.ConsentSharedData
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.daysTillExpire
 import com.saltedge.authenticator.app.guid
+import com.saltedge.authenticator.core.api.KEY_DATA
+import com.saltedge.authenticator.core.api.KEY_ID
+import com.saltedge.authenticator.core.model.ConnectionStatus
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -67,7 +67,7 @@ class ConsentsListViewModelTest {
     private lateinit var viewModel: ConsentsListViewModel
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
-    private val mockKeyStoreManager = mock(KeyStoreManagerAbs::class.java)
+    private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockCryptoTools = mock(CryptoToolsAbs::class.java)
     private val connection = Connection().apply {
@@ -81,7 +81,7 @@ class ConsentsListViewModelTest {
         updatedAt = 300L
         logoUrl = "https://www.fentury.com/"
     }
-    private val mockConnectionAndKey = ConnectionAndKey(connection, CommonTestTools.testPrivateKey)
+    private val mockConnectionAndKey = RichConnection(connection, CommonTestTools.testPrivateKey)
     private val aispConsent = ConsentData(
             id = "555",
             connectionId = "2",
@@ -126,10 +126,10 @@ class ConsentsListViewModelTest {
     @Before
     fun setUp() {
         given(mockConnectionsRepository.getByGuid("guid2")).willReturn(connection)
-        given(mockKeyStoreManager.createConnectionAndKeyModel(connection))
+        given(mockKeyStoreManager.enrichConnection(connection))
             .willReturn(mockConnectionAndKey)
         encryptedConsents.forEachIndexed { index, encryptedData ->
-            given(mockCryptoTools.decryptConsentData(encryptedData, mockConnectionAndKey.key))
+            given(mockCryptoTools.decryptConsentData(encryptedData, mockConnectionAndKey.private))
                 .willReturn(consents[index])
         }
 

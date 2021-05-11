@@ -22,11 +22,12 @@ package com.saltedge.authenticator.sdk.polling
 
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.TestConnection
-import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.response.AuthorizationShowResponse
+import com.saltedge.authenticator.core.model.ConnectionAbs
+import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.api.ApiInterface
 import com.saltedge.authenticator.sdk.api.RestClient
+import com.saltedge.authenticator.sdk.api.model.response.AuthorizationShowResponse
+import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
 import io.mockk.every
 import io.mockk.mockkClass
 import io.mockk.verify
@@ -57,7 +58,7 @@ class SingleAuthorizationPollingServiceTest {
     fun startTest() {
         val service = SingleAuthorizationPollingService()
         service.contract = mockContract
-        every { mockContract.getConnectionDataForAuthorizationPolling() } returns ConnectionAndKey(
+        every { mockContract.getConnectionDataForAuthorizationPolling() } returns RichConnection(
             requestConnection,
             privateKey
         )
@@ -72,7 +73,7 @@ class SingleAuthorizationPollingServiceTest {
     fun forcedFetchTest() {
         val service = SingleAuthorizationPollingService()
         service.contract = mockContract
-        every { mockContract.getConnectionDataForAuthorizationPolling() } returns ConnectionAndKey(
+        every { mockContract.getConnectionDataForAuthorizationPolling() } returns RichConnection(
             requestConnection,
             privateKey
         )
@@ -86,7 +87,7 @@ class SingleAuthorizationPollingServiceTest {
     fun stopTest() {
         val service = SingleAuthorizationPollingService()
         service.contract = mockContract
-        every { mockContract.getConnectionDataForAuthorizationPolling() } returns ConnectionAndKey(
+        every { mockContract.getConnectionDataForAuthorizationPolling() } returns RichConnection(
             requestConnection,
             privateKey
         )

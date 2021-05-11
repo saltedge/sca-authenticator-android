@@ -49,8 +49,8 @@ import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
+import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClient
-import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsAbs
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject

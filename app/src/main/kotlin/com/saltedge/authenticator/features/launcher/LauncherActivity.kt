@@ -34,9 +34,9 @@ import com.saltedge.authenticator.app.LAUNCHER_SPLASH_DURATION
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.cloud.registerNotificationChannels
+import com.saltedge.authenticator.core.api.KEY_AUTHORIZATION_ID
+import com.saltedge.authenticator.core.api.KEY_CONNECTION_ID
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
-import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
 import com.saltedge.authenticator.tools.*
 import javax.inject.Inject
 

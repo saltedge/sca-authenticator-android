@@ -18,14 +18,14 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.api.model
+package com.saltedge.authenticator.tools
 
+import com.saltedge.authenticator.core.api.ERROR_CLASS_API_RESPONSE
+import com.saltedge.authenticator.core.api.ERROR_CLASS_CONNECTION_NOT_FOUND
+import com.saltedge.authenticator.core.api.ERROR_CLASS_HOST_UNREACHABLE
+import com.saltedge.authenticator.core.api.ERROR_CLASS_SSL_HANDSHAKE
+import com.saltedge.authenticator.core.api.model.error.*
 import com.saltedge.authenticator.sdk.R
-import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_API_RESPONSE
-import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_CONNECTION_NOT_FOUND
-import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_HOST_UNREACHABLE
-import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_SSL_HANDSHAKE
-import com.saltedge.authenticator.sdk.api.model.error.*
 import com.saltedge.authenticator.sdk.testTools.TestTools
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -38,7 +38,7 @@ import java.security.InvalidParameterException
 import javax.net.ssl.SSLException
 
 @RunWith(RobolectricTestRunner::class)
-class ApiErrorDataExtensionsTest {
+class ErrorExtensionsTest {
 
     @Test
     @Throws(Exception::class)

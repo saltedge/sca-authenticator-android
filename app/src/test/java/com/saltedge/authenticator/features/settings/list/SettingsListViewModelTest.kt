@@ -34,10 +34,10 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionStatus
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.app.AppToolsAbs
+import com.saltedge.authenticator.core.model.ConnectionStatus
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import junit.framework.TestCase.assertNull
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -56,7 +56,7 @@ class SettingsListViewModelTest {
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val mockAppTools = Mockito.mock(AppToolsAbs::class.java)
     private val mockPreferences = Mockito.mock(PreferenceRepositoryAbs::class.java)
-    private val mockKeyStoreManager = Mockito.mock(KeyStoreManagerAbs::class.java)
+    private val mockKeyStoreManager = Mockito.mock(KeyManagerAbs::class.java)
     private val mockApiManager = Mockito.mock(AuthenticatorApiManagerAbs::class.java)
     private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
     private val mockConnection1 = Connection().apply {
@@ -71,14 +71,14 @@ class SettingsListViewModelTest {
         updatedAt = 200L
     }
     private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
-    private val mockConnectionAndKey = ConnectionAndKey(mockConnection1, mockPrivateKey)
+    private val mockConnectionAndKey = RichConnection(mockConnection1, mockPrivateKey)
     private lateinit var viewModel: SettingsListViewModel
 
     @Before
     fun setUp() {
         Mockito.doReturn(true).`when`(mockPreferences).screenshotLockEnabled
         given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(mockConnection1))
-        given(mockKeyStoreManager.createConnectionAndKeyModel(mockConnection1)).willReturn(mockConnectionAndKey)
+        given(mockKeyStoreManager.enrichConnection(mockConnection1)).willReturn(mockConnectionAndKey)
         viewModel = SettingsListViewModel(
             appContext = context,
             appTools = mockAppTools,

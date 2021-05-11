@@ -21,9 +21,9 @@
 package com.saltedge.authenticator.models.realm
 
 import android.content.Context
-import com.saltedge.authenticator.models.repository.PreferenceRepository
-import com.saltedge.authenticator.sdk.tools.createRandomGuid
 import com.saltedge.authenticator.app.AppTools
+import com.saltedge.authenticator.core.tools.createRandomGuid
+import com.saltedge.authenticator.models.repository.PreferenceRepository
 import io.realm.Realm
 import io.realm.RealmConfiguration
 

@@ -23,6 +23,8 @@ package com.saltedge.authenticator.sdk.api.connector
 import com.saltedge.authenticator.core.api.ApiResponseInterceptor
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.api.model.error.createInvalidResponseError
+import com.saltedge.authenticator.core.model.AuthorizationID
+import com.saltedge.authenticator.core.model.ConnectionID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.constants.API_AUTHORIZATIONS
 import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_PUT

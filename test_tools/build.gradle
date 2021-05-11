@@ -33,4 +33,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation project(':authenticator_sdk_v1')
+    implementation project(':authenticator_core')
 }

@@ -21,8 +21,8 @@
 package com.saltedge.authenticator.sdk.contract
 
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.api.model.AuthorizationID
-import com.saltedge.authenticator.sdk.api.model.ConnectionID
+import com.saltedge.authenticator.core.model.AuthorizationID
+import com.saltedge.authenticator.core.model.ConnectionID
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
 
 /**

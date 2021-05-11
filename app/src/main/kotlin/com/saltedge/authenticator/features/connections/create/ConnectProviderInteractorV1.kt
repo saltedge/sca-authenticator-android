@@ -21,25 +21,25 @@
 package com.saltedge.authenticator.features.connections.create
 
 import android.content.Context
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ConnectionStatus
+import com.saltedge.authenticator.core.tools.createRandomGuid
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.configuration.ProviderConfigurationData
 import com.saltedge.authenticator.sdk.api.model.configuration.isValid
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.api.model.response.CreateConnectionResponseData
 import com.saltedge.authenticator.sdk.contract.ConnectionCreateListener
 import com.saltedge.authenticator.sdk.contract.FetchProviderConfigurationListener
-import com.saltedge.authenticator.sdk.tools.createRandomGuid
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 
 class ConnectProviderInteractorV1(
     private val appContext: Context,
-    keyStoreManager: KeyStoreManagerAbs,
+    keyStoreManager: KeyManagerAbs,
     preferenceRepository: PreferenceRepositoryAbs,
     connectionsRepository: ConnectionsRepositoryAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
@@ -57,7 +57,7 @@ class ConnectProviderInteractorV1(
         super.setNewConnection(result.toConnection())
     }
 
-    override fun onFetchProviderConfigurationFailure(error: com.saltedge.authenticator.sdk.api.model.error.ApiErrorData) {
+    override fun onFetchProviderConfigurationFailure(error: ApiErrorData) {
         postError(error)
     }
 
@@ -71,7 +71,7 @@ class ConnectProviderInteractorV1(
         )
     }
 
-    override fun onConnectionCreateFailure(error: com.saltedge.authenticator.sdk.api.model.error.ApiErrorData) {
+    override fun onConnectionCreateFailure(error: ApiErrorData) {
         postError(error)
     }
 
@@ -91,7 +91,7 @@ class ConnectProviderInteractorV1(
         }
     }
 
-    private fun postError(error: com.saltedge.authenticator.sdk.api.model.error.ApiErrorData) {
+    private fun postError(error: ApiErrorData) {
         super.contract?.onReceiveApiError(ApiErrorData(
             errorClassName = error.errorClassName,
             errorMessage = error.errorMessage,
