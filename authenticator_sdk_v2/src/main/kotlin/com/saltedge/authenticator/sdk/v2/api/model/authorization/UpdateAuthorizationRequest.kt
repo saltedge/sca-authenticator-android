@@ -21,9 +21,9 @@
 package com.saltedge.authenticator.sdk.v2.api.model.authorization
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.api.*
-import com.saltedge.authenticator.sdk.v2.api.model.EncryptedBundle
-import com.saltedge.authenticator.sdk.v2.api.retrofit.createExpiresAtTime
+import com.saltedge.authenticator.core.api.*
+import com.saltedge.authenticator.core.api.model.EncryptedBundle
+import com.saltedge.authenticator.core.tools.createExpiresAtTime
 
 data class UpdateAuthorizationRequest(
     @SerializedName(KEY_DATA) val data: EncryptedBundle,

@@ -24,9 +24,8 @@ import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.getDefaultTestConnection
 import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
+
 import com.saltedge.authenticator.sdk.api.model.response.EncryptedListResponse
 import com.saltedge.authenticator.sdk.api.ApiInterface
 import com.saltedge.authenticator.sdk.api.HEADER_KEY_ACCESS_TOKEN

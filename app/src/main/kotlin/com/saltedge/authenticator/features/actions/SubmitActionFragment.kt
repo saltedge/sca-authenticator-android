@@ -32,15 +32,15 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.authenticatorApp
+import com.saltedge.authenticator.core.api.KEY_DATA
 import com.saltedge.authenticator.databinding.SubmitActionBinding
 import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.features.main.newAuthorizationListener
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.api.model.GUID
 import com.saltedge.authenticator.sdk.api.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.tools.navigateTo
 import com.saltedge.authenticator.tools.popBackStack
 import com.saltedge.authenticator.widget.fragment.BaseFragment

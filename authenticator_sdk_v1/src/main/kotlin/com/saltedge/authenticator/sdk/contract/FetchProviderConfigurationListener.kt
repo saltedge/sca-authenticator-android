@@ -20,8 +20,8 @@
  */
 package com.saltedge.authenticator.sdk.contract
 
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.api.model.configuration.ProviderConfigurationData
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
 
 /**
  * Provider configuration request result

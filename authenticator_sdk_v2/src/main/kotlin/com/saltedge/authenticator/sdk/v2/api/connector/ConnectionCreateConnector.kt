@@ -20,16 +20,17 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.connector
 
-import com.saltedge.authenticator.sdk.v2.api.ApiResponseInterceptor
+import com.saltedge.authenticator.core.api.ApiResponseInterceptor
+import com.saltedge.authenticator.core.api.model.EncryptedBundle
 import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionCreateListener
-import com.saltedge.authenticator.sdk.v2.api.model.EncryptedBundle
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionRequest
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionRequestData
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponse
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.config.ApiConfig
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import com.saltedge.authenticator.sdk.v2.api.retrofit.createConnectionsPath
-import com.saltedge.authenticator.sdk.v2.config.ClientConfig
+import com.saltedge.authenticator.sdk.v2.config.ApiV2Config
 import retrofit2.Call
 
 /**
@@ -65,7 +66,7 @@ internal class ConnectionCreateConnector(
         val requestData = CreateConnectionRequest(
             data = CreateConnectionRequestData(
                 providerId = providerId,
-                returnUrl = ClientConfig.authenticationReturnUrl,
+                returnUrl = ApiV2Config.authenticationReturnUrl,
                 pushToken = pushToken,
                 connectQueryParam = connectQueryParam,
                 encryptedAppRsaPublicKey = encryptedRsaPublicKey,

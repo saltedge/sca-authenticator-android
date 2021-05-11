@@ -20,11 +20,11 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.connector
 
+import com.saltedge.authenticator.core.api.model.EncryptedBundle
+import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationConfirmListener
-import com.saltedge.authenticator.sdk.v2.api.model.EncryptedBundle
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponse
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import retrofit2.Call
 

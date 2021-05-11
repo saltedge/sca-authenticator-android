@@ -22,7 +22,7 @@ package com.saltedge.authenticator.sdk.v2
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
-import com.saltedge.authenticator.sdk.v2.api.model.connection.ConnectionV2Abs
+import com.saltedge.authenticator.core.model.ConnectionAbs
 import okhttp3.ResponseBody
 import retrofit2.Response
 
@@ -55,9 +55,9 @@ data class TestConnectionV2(
     override var consentManagementSupported: Boolean? = true,
     override var geolocationRequired: Boolean? = true,
     override var providerRsaPublicKeyPem: String = ""
-) : ConnectionV2Abs
+) : ConnectionAbs
 
-val defaultTestConnection: ConnectionV2Abs
+val defaultTestConnection: ConnectionAbs
     get() = TestConnectionV2(id = "333", guid = "test", connectUrl = "https://localhost", accessToken = "accessToken")
 
 @Throws(Exception::class)

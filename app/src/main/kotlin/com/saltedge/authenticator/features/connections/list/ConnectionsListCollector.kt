@@ -25,12 +25,10 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.api.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.api.model.connection.getStatus
 import com.saltedge.authenticator.sdk.tools.toDateTime
 import com.saltedge.authenticator.tools.ResId
-import com.saltedge.authenticator.tools.toDateFormatString
 
 fun collectAllConnectionsViewModels(
     repository: ConnectionsRepositoryAbs,

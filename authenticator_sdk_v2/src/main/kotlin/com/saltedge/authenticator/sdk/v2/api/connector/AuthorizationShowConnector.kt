@@ -20,11 +20,11 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.connector
 
-import com.saltedge.authenticator.sdk.v2.api.ApiResponseInterceptor
+import com.saltedge.authenticator.core.api.ApiResponseInterceptor
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.sdk.v2.api.contract.FetchAuthorizationListener
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponse
-import com.saltedge.authenticator.sdk.v2.api.model.connection.ConnectionV2Abs
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import com.saltedge.authenticator.sdk.v2.api.retrofit.authorizationsShowPath
 import com.saltedge.authenticator.sdk.v2.api.retrofit.createAccessTokenHeader
@@ -36,7 +36,7 @@ internal class AuthorizationShowConnector(
 ) : ApiResponseInterceptor<AuthorizationResponse>() {
 
     fun showAuthorization(
-        connection: ConnectionV2Abs,
+        connection: ConnectionAbs,
         authorizationId: String
     ) {
         apiInterface.showAuthorization(

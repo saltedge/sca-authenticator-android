@@ -89,7 +89,7 @@
             app:layout_constraintBottom_toTopOf="@+id/negativeActionView"
             tools:text="Payment description\n300USD for ticket"/>
 
-        <com.saltedge.authenticator.sdk.web.SEFrameWebView
+        <com.saltedge.authenticator.core.web.SEFrameWebView
             android:id="@+id/descriptionWebView"
             android:layout_width="match_parent"
             android:layout_height="0dp"

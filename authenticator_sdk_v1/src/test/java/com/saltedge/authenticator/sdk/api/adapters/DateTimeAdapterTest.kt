@@ -22,7 +22,6 @@ package com.saltedge.authenticator.sdk.api.adapters
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.saltedge.authenticator.sdk.tools.adapter.DateTimeAdapter
 import com.saltedge.authenticator.sdk.testTools.TestTools
 import net.danlew.android.joda.JodaTimeAndroid
 import org.hamcrest.CoreMatchers.equalTo

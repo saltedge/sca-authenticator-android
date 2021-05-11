@@ -23,9 +23,8 @@ package com.saltedge.authenticator.sdk.api.connector
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.getDefaultTestConnection
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
+
 import com.saltedge.authenticator.sdk.api.model.error.createInvalidResponseError
 import com.saltedge.authenticator.sdk.api.model.request.ConfirmDenyRequestData
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponse

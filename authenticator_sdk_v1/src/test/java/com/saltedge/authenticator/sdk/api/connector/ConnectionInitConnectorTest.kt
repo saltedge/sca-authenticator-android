@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.sdk.api.connector
 
 import com.saltedge.authenticator.sdk.contract.ConnectionCreateListener
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
+
 import com.saltedge.authenticator.sdk.api.model.error.createInvalidResponseError
 import com.saltedge.authenticator.sdk.api.model.request.CreateConnectionRequestData
 import com.saltedge.authenticator.sdk.api.model.request.CreateConnectionRequest

@@ -23,21 +23,15 @@ package com.saltedge.authenticator.features.connections.create
 import com.saltedge.authenticator.app.ERROR_INVALID_AUTHENTICATION_DATA
 import com.saltedge.authenticator.app.ERROR_INVALID_DEEPLINK
 import com.saltedge.authenticator.app.ERROR_INVALID_RESPONSE
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.*
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.sdk.api.model.GUID
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionStatus
-import com.saltedge.authenticator.sdk.tools.isReturnToUrl
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.sdk.tools.parseRedirect
-import com.saltedge.authenticator.sdk.v2.api.model.ConnectionID
-import com.saltedge.authenticator.sdk.v2.api.model.Token
-import com.saltedge.authenticator.sdk.v2.api.model.appLink.ConnectAppLinkDataV2
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
 
 abstract class ConnectProviderInteractor(
-    private val keyStoreManager: KeyStoreManagerAbs,
+    private val keyStoreManager: KeyManagerAbs,
     private val preferenceRepository: PreferenceRepositoryAbs,
     private val connectionsRepository: ConnectionsRepositoryAbs,
 ) : ConnectProviderInteractorAbs {
@@ -52,10 +46,10 @@ abstract class ConnectProviderInteractor(
     override val geolocationRequired: Boolean?
         get() = connection.geolocationRequired
 
-    private var initialConnectData: ConnectAppLinkDataV2? = null
+    private var initialConnectData: ConnectAppLinkData? = null
     private var connection = Connection()
 
-    override fun setInitialData(initialConnectData: ConnectAppLinkDataV2?, connectionGuid: GUID?) {
+    override fun setInitialData(initialConnectData: ConnectAppLinkData?, connectionGuid: GUID?) {
         this.initialConnectData = initialConnectData
         this.connection = connectionsRepository.getByGuid(connectionGuid) ?: Connection()
     }

@@ -20,59 +20,9 @@
  */
 package com.saltedge.authenticator.sdk.v2.api
 
-// Static links
-const val TERMS_LINK = "https://www.saltedge.com/pages/authenticator_terms"
-const val DEFAULT_SUPPORT_EMAIL_LINK = "authenticator@saltedge.com"
-
 // API endpoints
 const val DEFAULT_HOST = "https://sca.saltedge.com"
 const val API_VERSION = "2"
 const val API_VERSION_NAMESPACE = "api/authenticator/v$API_VERSION"
 const val API_CONNECTIONS = "$API_VERSION_NAMESPACE/connections"
 const val API_AUTHORIZATIONS = "$API_VERSION_NAMESPACE/authorizations"
-
-// Model fields
-const val KEY_DATA = "data"
-const val KEY_EXP = "exp"
-const val KEY_RETURN_URL = "return_url"
-const val KEY_PUSH_TOKEN = "push_token"
-const val KEY_CONNECT_QUERY = "connect_query"
-const val KEY_PLATFORM = "platform"
-const val KEY_ERROR_CLASS = "error_class"
-const val KEY_ERROR_MESSAGE = "error_message"
-const val KEY_IV = "iv"
-const val KEY_KEY = "key"
-
-const val KEY_ID = "id"
-const val KEY_AUTHORIZATION_ID = "authorization_id"
-const val KEY_CONNECTION_ID = "connection_id"
-const val KEY_STATUS = "status"
-const val KEY_AUTHENTICATION_URL = "authentication_url"
-const val KEY_SCA_SERVICE_URL = "sca_service_url"
-const val KEY_API_VERSION = "api_version"
-const val KEY_PROVIDER_ID = "provider_id"
-const val KEY_PROVIDER_NAME = "provider_name"
-const val KEY_PROVIDER_LOGO_URL = "provider_logo_url"
-const val KEY_PROVIDER_SUPPORT_EMAIL = "provider_support_email"
-const val KEY_GEOLOCATION_REQUIRED = "geolocation_required"
-const val KEY_PROVIDER_PUBLIC_KEY = "provider_public_key"
-
-const val KEY_ACCESS_TOKEN = "access_token"
-const val KEY_AUTHORIZATION_CODE = "authorization_code"
-const val KEY_CREATED_AT = "created_at"
-const val KEY_UPDATED_AT = "updated_at"
-const val KEY_TITLE = "title"
-const val KEY_DESCRIPTION = "description"
-const val KEY_EXPIRES_AT = "expires_at"
-const val KEY_GEOLOCATION = "geolocation"
-const val KEY_USER_AUTHORIZATION_TYPE = "user_authorization_type"
-const val KEY_ENC_RSA_PUBLIC = "enc_rsa_public_key"
-
-// Error classes
-const val ERROR_CLASS_AUTHENTICATION_RESPONSE = "AuthenticationError"
-const val ERROR_CLASS_API_RESPONSE = "ApiResponseError"
-const val ERROR_CLASS_API_REQUEST = "ApiRequestError"
-const val ERROR_CLASS_HOST_UNREACHABLE = "HostUnreachable"
-const val ERROR_CLASS_SSL_HANDSHAKE = "SSLHandshakeException"
-const val ERROR_CLASS_CONNECTION_NOT_FOUND = "ConnectionNotFound"
-const val ERROR_CLASS_AUTHORIZATION_NOT_FOUND = "AuthorizationNotFound"

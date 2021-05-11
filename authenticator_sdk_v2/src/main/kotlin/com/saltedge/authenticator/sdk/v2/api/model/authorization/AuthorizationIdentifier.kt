@@ -20,8 +20,8 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.model.authorization
 
-import com.saltedge.authenticator.sdk.v2.api.model.AuthorizationID
-import com.saltedge.authenticator.sdk.v2.api.model.ConnectionID
+import com.saltedge.authenticator.core.model.AuthorizationID
+import com.saltedge.authenticator.core.model.ConnectionID
 import java.io.Serializable
 
 /**

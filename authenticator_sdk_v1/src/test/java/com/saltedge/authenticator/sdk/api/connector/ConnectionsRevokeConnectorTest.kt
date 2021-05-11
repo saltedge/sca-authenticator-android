@@ -25,9 +25,8 @@ import com.saltedge.android.test_tools.getDefaultTestConnection
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_API_RESPONSE
 import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_HOST_UNREACHABLE
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
+
 import com.saltedge.authenticator.sdk.api.model.response.RevokeAccessTokenResponse
 import com.saltedge.authenticator.sdk.api.model.response.RevokeAccessTokenResponseData
 import com.saltedge.authenticator.sdk.api.ApiInterface

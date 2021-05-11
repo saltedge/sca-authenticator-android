@@ -24,10 +24,15 @@ import android.content.Context
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.AppTools
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.isAuthorizationNotFound
+import com.saltedge.authenticator.core.api.model.error.isConnectionNotFound
+import com.saltedge.authenticator.core.api.model.error.isConnectivityError
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.createConnectionAndKey
-import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -36,17 +41,11 @@ import com.saltedge.authenticator.sdk.api.model.AuthorizationID
 import com.saltedge.authenticator.sdk.api.model.ConnectionID
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.api.model.error.isAuthorizationNotFound
-import com.saltedge.authenticator.sdk.api.model.error.isConnectionNotFound
-import com.saltedge.authenticator.sdk.api.model.error.isConnectivityError
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
-import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.getErrorMessage
 import com.saltedge.authenticator.tools.postUnitEvent
@@ -56,7 +55,7 @@ class AuthorizationDetailsViewModel(
     private val appContext: Context,
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val cryptoTools: CryptoToolsAbs,
-    private val keyStoreManager: KeyStoreManagerAbs,
+    private val keyStoreManager: KeyManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
     private val locationManager: DeviceLocationManagerAbs
 ) : ViewModel(),
@@ -72,7 +71,7 @@ class AuthorizationDetailsViewModel(
     private var closeAppOnBackPress: Boolean = true
     var titleRes: ResId = R.string.authorization_feature_title//TODO TEST
         private set
-    private var connectionAndKey: ConnectionAndKey? = null
+    private var richConnection: RichConnection? = null
     private var pollingService: SingleAuthorizationPollingService = apiManager.createSingleAuthorizationPollingService()
     private val viewMode: ViewMode
         get() = authorizationModel.value?.viewMode ?: ViewMode.LOADING
@@ -97,12 +96,12 @@ class AuthorizationDetailsViewModel(
         this.closeAppOnBackPress = closeAppOnBackPress ?: true
         this.titleRes = titleRes ?: R.string.authorization_feature_title
         if (this.titleRes == 0) this.titleRes = R.string.authorization_feature_title
-        connectionAndKey = createConnectionAndKey(
+        richConnection = createConnectionAndKey(
             connectionID = identifier?.connectionID ?: "",
             repository = connectionsRepository,
             keyStoreManager = keyStoreManager
         )
-        val viewMode = if (connectionAndKey == null || identifier?.authorizationID.isNullOrEmpty()) {
+        val viewMode = if (richConnection == null || identifier?.authorizationID.isNullOrEmpty()) {
             ViewMode.UNAVAILABLE
         } else {
             ViewMode.LOADING
@@ -154,7 +153,7 @@ class AuthorizationDetailsViewModel(
         return true
     }
 
-    override fun getConnectionDataForAuthorizationPolling(): ConnectionAndKey? = this.connectionAndKey
+    override fun getConnectionDataForAuthorizationPolling(): RichConnection? = this.richConnection
 
     override fun onFetchAuthorizationResult(result: EncryptedData?, error: ApiErrorData?) {
         result?.let { processEncryptedAuthorizationResult(it) }
@@ -189,10 +188,10 @@ class AuthorizationDetailsViewModel(
 
         cryptoTools.decryptAuthorizationData(
             encryptedData = result,
-            rsaPrivateKey = connectionAndKey?.key
+            rsaPrivateKey = richConnection?.private
         )?.let {
             val newViewModel = it.toAuthorizationItemViewModel(
-                connection = connectionAndKey?.connection ?: return
+                connection = richConnection?.connection ?: return
             )
             if (!modelHasFinalMode && authorizationModel.value != newViewModel) {
                 authorizationModel.postValue(newViewModel)
@@ -203,7 +202,7 @@ class AuthorizationDetailsViewModel(
     private fun processFetchAuthorizationError(error: ApiErrorData) {
         when {
             error.isConnectionNotFound() -> {
-                connectionAndKey?.connection?.accessToken?.let {
+                richConnection?.connection?.accessToken?.let {
                     connectionsRepository.invalidateConnectionsByTokens(accessTokens = listOf(it))
                 }
                 updateToFinalViewMode(ViewMode.ERROR)
@@ -226,7 +225,7 @@ class AuthorizationDetailsViewModel(
     private fun sendConfirmRequest() {
         onStartConfirmDenyFlow(viewMode = ViewMode.CONFIRM_PROCESSING)
         apiManager.confirmAuthorization(
-            connectionAndKey = connectionAndKey ?: return,
+            connectionAndKey = richConnection ?: return,
             authorizationId = authorizationModel.value?.authorizationID ?: return,
             authorizationCode = authorizationModel.value?.authorizationCode,
             geolocation = locationManager.locationDescription,
@@ -238,7 +237,7 @@ class AuthorizationDetailsViewModel(
     private fun sendDenyRequest() {
         onStartConfirmDenyFlow(ViewMode.DENY_PROCESSING)
         apiManager.denyAuthorization(
-            connectionAndKey = connectionAndKey ?: return,
+            connectionAndKey = richConnection ?: return,
             authorizationId = authorizationModel.value?.authorizationID ?: return,
             authorizationCode = authorizationModel.value?.authorizationCode,
             geolocation = locationManager.locationDescription,

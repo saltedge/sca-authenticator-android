@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.sdk.api.model
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.constants.*
+import com.saltedge.authenticator.core.api.*
 import java.io.Serializable
 
 /**

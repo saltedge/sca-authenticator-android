@@ -21,9 +21,8 @@
 package com.saltedge.authenticator.sdk.v2.api.model.connection
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.api.KEY_AUTHENTICATION_URL
-import com.saltedge.authenticator.sdk.v2.api.KEY_CONNECTION_ID
-import com.saltedge.authenticator.sdk.v2.api.KEY_DATA
+import com.saltedge.authenticator.core.api.KEY_AUTHENTICATION_URL
+import com.saltedge.authenticator.core.api.KEY_CONNECTION_ID
 
 data class CreateConnectionResponse(@SerializedName(KEY_DATA) var data: CreateConnectionResponseData)
 

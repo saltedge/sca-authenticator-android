@@ -39,7 +39,6 @@ import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_SSL_HANDSHAKE
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.api.model.connection.ConnectionStatus
 import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData

@@ -20,11 +20,11 @@
  */
 package com.saltedge.authenticator.sdk.contract
 
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
+import com.saltedge.authenticator.core.model.RichConnection
 
 /**
  * Polling service contract
  */
 interface FetchAuthorizationContract : FetchAuthorizationListener {
-    fun getConnectionDataForAuthorizationPolling(): ConnectionAndKey?
+    fun getConnectionDataForAuthorizationPolling(): RichConnection?
 }

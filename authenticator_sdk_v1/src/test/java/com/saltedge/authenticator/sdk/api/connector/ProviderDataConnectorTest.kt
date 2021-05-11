@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.sdk.api.connector
 
 import com.saltedge.authenticator.sdk.contract.FetchProviderConfigurationListener
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
+
 import com.saltedge.authenticator.sdk.api.model.configuration.ProviderConfigurationData
 import com.saltedge.authenticator.sdk.api.model.response.ProviderConfigurationResponse
 import com.saltedge.authenticator.sdk.api.ApiInterface

@@ -21,15 +21,13 @@
 package com.saltedge.authenticator.sdk.api.connector
 
 import android.net.Uri
-import com.saltedge.authenticator.sdk.constants.DEFAULT_EXPIRATION_MINUTES
-import com.saltedge.authenticator.sdk.api.model.request.SignedRequest
-import com.saltedge.authenticator.sdk.api.HEADER_KEY_ACCESS_TOKEN
+import com.saltedge.authenticator.core.api.HEADER_KEY_ACCESS_TOKEN
+import com.saltedge.authenticator.core.tools.createExpiresAtTime
 import com.saltedge.authenticator.sdk.api.HEADER_KEY_EXPIRES_AT
 import com.saltedge.authenticator.sdk.api.HEADER_KEY_SIGNATURE
 import com.saltedge.authenticator.sdk.api.RestClient
+import com.saltedge.authenticator.sdk.api.model.request.SignedRequest
 import com.saltedge.authenticator.sdk.tools.sign.createSignatureHeader
-import org.joda.time.DateTime
-import org.joda.time.DateTimeZone
 import java.security.PrivateKey
 
 /**
@@ -94,9 +92,3 @@ private fun createHeaders(
         HEADER_KEY_SIGNATURE to signature
     )
 }
-
-/**
- * Return unix time (seconds) of current time plus timeout (by default 5 minutes)
- */
-internal fun createExpiresAtTime(withMinutesTimeOut: Int = DEFAULT_EXPIRATION_MINUTES): Int =
-    (DateTime.now(DateTimeZone.UTC).plusMinutes(withMinutesTimeOut).millis / 1000).toInt()

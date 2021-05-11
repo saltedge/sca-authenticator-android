@@ -22,6 +22,10 @@ package com.saltedge.authenticator.app.di
 
 import android.content.Context
 import com.saltedge.authenticator.app.*
+import com.saltedge.authenticator.core.tools.biometric.BiometricTools
+import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.core.tools.secure.KeyManager
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.realm.RealmManager
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepository
@@ -30,13 +34,9 @@ import com.saltedge.authenticator.models.repository.PreferenceRepository
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricTools
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
-import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools
-import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClient
+import com.saltedge.authenticator.sdk.v2.tools.CryptoTools
+import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsAbs
 import com.saltedge.authenticator.tools.PasscodeTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
@@ -79,7 +79,7 @@ class AppModule(context: Context) {
         cryptoTools: CryptoToolsAbs,
         preferences: PreferenceRepositoryAbs,
         connectionsRepository: ConnectionsRepositoryAbs,
-        keyStoreManager: KeyStoreManagerAbs,
+        keyStoreManager: KeyManagerAbs,
         realmManager: RealmManagerAbs,
         apiManagerV1: AuthenticatorApiManagerAbs,
         apiManagerV2: ScaServiceClient,
@@ -130,7 +130,7 @@ class AppModule(context: Context) {
 
     @Provides
     @Singleton
-    fun provideKeyStoreManager(): KeyStoreManagerAbs = KeyStoreManager
+    fun provideKeyStoreManager(): KeyManagerAbs = KeyManager
 
     @Provides
     @Singleton

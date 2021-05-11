@@ -21,8 +21,8 @@
 package com.saltedge.authenticator.sdk.api
 
 import com.google.gson.Gson
+import com.saltedge.authenticator.core.tools.json.createDefaultGson
 import com.saltedge.authenticator.sdk.constants.DEFAULT_HOST
-import com.saltedge.authenticator.sdk.tools.createDefaultGson
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

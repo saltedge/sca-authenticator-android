@@ -23,9 +23,8 @@ package com.saltedge.authenticator.sdk.api.connector
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.getDefaultTestConnection
 import com.saltedge.authenticator.sdk.contract.ConsentRevokeListener
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
+
 import com.saltedge.authenticator.sdk.api.model.response.ConsentRevokeResponse
 import com.saltedge.authenticator.sdk.api.model.response.ConsentRevokeResponseData
 import com.saltedge.authenticator.sdk.api.ApiInterface

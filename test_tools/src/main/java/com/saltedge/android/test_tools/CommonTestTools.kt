@@ -24,7 +24,6 @@ import com.google.gson.Gson
 import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.tools.encodeToPemBase64String
 import java.io.ByteArrayOutputStream
 import java.security.PrivateKey

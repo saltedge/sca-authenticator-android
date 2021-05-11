@@ -20,15 +20,15 @@
  */
 package com.saltedge.authenticator.sdk.api.connector
 
+import com.saltedge.authenticator.core.api.ApiResponseInterceptor
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.createInvalidResponseError
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.sdk.api.ApiInterface
+import com.saltedge.authenticator.sdk.api.model.response.ConsentRevokeResponse
 import com.saltedge.authenticator.sdk.constants.API_CONSENTS
 import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_DELETE
 import com.saltedge.authenticator.sdk.contract.ConsentRevokeListener
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.api.model.error.createInvalidResponseError
-import com.saltedge.authenticator.sdk.api.model.response.ConsentRevokeResponse
-import com.saltedge.authenticator.sdk.api.ApiInterface
-import com.saltedge.authenticator.sdk.api.ApiResponseInterceptor
 import retrofit2.Call
 
 /**
@@ -43,13 +43,13 @@ internal class ConsentRevokeConnector(
     var resultCallback: ConsentRevokeListener?
 ) : ApiResponseInterceptor<ConsentRevokeResponse>() {
 
-    fun revokeConsent(consentId: String, connectionAndKey: ConnectionAndKey) {
+    fun revokeConsent(consentId: String, connectionAndKey: RichConnection) {
         val requestData = createSignedRequestData<Nothing>(
             requestMethod = REQUEST_METHOD_DELETE,
             baseUrl = connectionAndKey.connection.connectUrl,
             apiRoutePath = "$API_CONSENTS/${consentId}",
             accessToken = connectionAndKey.connection.accessToken,
-            signPrivateKey = connectionAndKey.key
+            signPrivateKey = connectionAndKey.private
         )
 
         apiInterface.revokeConsent(

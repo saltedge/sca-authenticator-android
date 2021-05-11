@@ -20,13 +20,13 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.connector
 
+import com.saltedge.authenticator.core.api.model.EncryptedBundle
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionCreateListener
-import com.saltedge.authenticator.sdk.v2.api.model.EncryptedBundle
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionRequest
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionRequestData
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponse
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponseData
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import com.saltedge.authenticator.sdk.v2.config.ClientConfig
 import com.saltedge.authenticator.sdk.v2.get404Response

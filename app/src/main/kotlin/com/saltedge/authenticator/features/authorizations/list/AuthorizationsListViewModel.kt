@@ -29,6 +29,10 @@ import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.KEY_OPTION_ID
 import com.saltedge.authenticator.app.NetworkStateChangeListener
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.isConnectionNotFound
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.authorizations.common.*
 import com.saltedge.authenticator.features.menu.BottomMenuDialog
 import com.saltedge.authenticator.features.menu.MenuItemData
@@ -43,14 +47,10 @@ import com.saltedge.authenticator.sdk.api.model.ConnectionID
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.api.model.authorization.isNotExpired
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.api.model.error.isConnectionNotFound
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationsContract
-import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.getErrorMessage
 import com.saltedge.authenticator.tools.postUnitEvent
@@ -62,7 +62,7 @@ import kotlinx.coroutines.withContext
 class AuthorizationsListViewModel(
     private val appContext: Context,
     private val connectionsRepository: ConnectionsRepositoryAbs,
-    private val keyStoreManager: KeyStoreManagerAbs,
+    private val keyStoreManager: KeyManagerAbs,
     private val cryptoTools: CryptoToolsAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
     private val locationManager: DeviceLocationManagerAbs,
@@ -78,8 +78,8 @@ class AuthorizationsListViewModel(
 
     private var noInternetConnection: Boolean = false
     private var pollingService = apiManager.createAuthorizationsPollingService()
-    private var connectionsAndKeys: Map<ConnectionID, ConnectionAndKey> =
-        collectConnectionsAndKeys(connectionsRepository, keyStoreManager)
+    private var richConnections: Map<ConnectionID, RichConnection> =
+        collectRichConnections(connectionsRepository, keyStoreManager)
 
     val listVisibility = MutableLiveData<Int>(View.GONE)
     val emptyViewVisibility = MutableLiveData<Int>(View.GONE)
@@ -97,7 +97,7 @@ class AuthorizationsListViewModel(
     val onShowConnectionsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowSettingsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
-    override fun getCurrentConnectionsAndKeysForPolling(): List<ConnectionAndKey>? = collectAuthorizationRequestData()
+    override fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection>? = collectAuthorizationRequestData()
 
     override fun onTimeUpdate() {
         listItemsValues.let { items ->
@@ -108,7 +108,7 @@ class AuthorizationsListViewModel(
 
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
         val listItem = listItemsValues.getOrNull(itemIndex) ?: return
-        val connectionAndKey = connectionsAndKeys[listItem.connectionID] ?: return
+        val connectionAndKey = richConnections[listItem.connectionID] ?: return
         when (itemViewId) {
             R.id.positiveActionView -> sendConfirmRequest(
                 listItem = listItem,
@@ -163,7 +163,7 @@ class AuthorizationsListViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onResume() {
-        connectionsAndKeys = collectConnectionsAndKeys(connectionsRepository, keyStoreManager)
+        richConnections = collectRichConnections(connectionsRepository, keyStoreManager)
         if (listItemsValues.isNotEmpty()) postListItemsUpdate(listItemsValues)
         postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
     }
@@ -219,8 +219,8 @@ class AuthorizationsListViewModel(
         }
     }
 
-    private fun collectAuthorizationRequestData(): List<ConnectionAndKey>? {
-        return if (connectionsAndKeys.isEmpty()) null else connectionsAndKeys.values.toList()
+    private fun collectAuthorizationRequestData(): List<RichConnection>? {
+        return if (richConnections.isEmpty()) null else richConnections.values.toList()
     }
 
     private fun processEncryptedAuthorizationsResult(encryptedList: List<EncryptedData>) {
@@ -234,7 +234,7 @@ class AuthorizationsListViewModel(
         return encryptedList.mapNotNull {
             cryptoTools.decryptAuthorizationData(
                 encryptedData = it,
-                rsaPrivateKey = connectionsAndKeys[it.connectionId]?.key
+                rsaPrivateKey = richConnections[it.connectionId]?.private
             )
         }
     }
@@ -252,7 +252,7 @@ class AuthorizationsListViewModel(
 
     private fun createViewModels(authorizations: List<AuthorizationData>): List<AuthorizationItemViewModel> {
         return authorizations.mapNotNull { item ->
-            connectionsAndKeys[item.connectionId]?.let {
+            richConnections[item.connectionId]?.let {
                 item.toAuthorizationItemViewModel(connection = it.connection)
             }
         }
@@ -263,7 +263,7 @@ class AuthorizationsListViewModel(
             errors.filter { it.isConnectionNotFound() }.mapNotNull { it.accessToken }
         if (invalidTokens.isNotEmpty()) {
             connectionsRepository.invalidateConnectionsByTokens(accessTokens = invalidTokens)
-            connectionsAndKeys = collectConnectionsAndKeys(connectionsRepository, keyStoreManager)
+            richConnections = collectRichConnections(connectionsRepository, keyStoreManager)
         }
     }
 
@@ -278,7 +278,7 @@ class AuthorizationsListViewModel(
 
     private fun sendConfirmRequest(
         listItem: AuthorizationItemViewModel,
-        connectionAndKey: ConnectionAndKey
+        connectionAndKey: RichConnection
     ) {
         updateItemViewMode(
             listItem = listItem,
@@ -296,7 +296,7 @@ class AuthorizationsListViewModel(
 
     private fun sendDenyRequest(
         listItem: AuthorizationItemViewModel,
-        connectionAndKey: ConnectionAndKey
+        connectionAndKey: RichConnection
     ) {
         updateItemViewMode(
             listItem = listItem,
@@ -324,7 +324,7 @@ class AuthorizationsListViewModel(
     }
 
     private fun postMainComponentsState(itemsListIsEmpty: Boolean) {
-        val connectionsListIsEmpty = connectionsAndKeys.isEmpty()
+        val connectionsListIsEmpty = richConnections.isEmpty()
         val emptyViewIsVisible = connectionsListIsEmpty || itemsListIsEmpty
 
         emptyViewVisibility.postValue(if (emptyViewIsVisible) View.VISIBLE else View.GONE)

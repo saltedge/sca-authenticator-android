@@ -20,15 +20,15 @@
  */
 package com.saltedge.authenticator.sdk.api.connector
 
+import com.saltedge.authenticator.core.api.ApiResponseInterceptor
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.createInvalidResponseError
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.sdk.api.ApiInterface
+import com.saltedge.authenticator.sdk.api.model.response.SubmitActionResponse
 import com.saltedge.authenticator.sdk.constants.API_ACTIONS
 import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_PUT
 import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.api.model.error.createInvalidResponseError
-import com.saltedge.authenticator.sdk.api.model.response.SubmitActionResponse
-import com.saltedge.authenticator.sdk.api.ApiInterface
-import com.saltedge.authenticator.sdk.api.ApiResponseInterceptor
 import retrofit2.Call
 
 internal class SubmitActionConnector(
@@ -36,22 +36,16 @@ internal class SubmitActionConnector(
     var resultCallback: ActionSubmitListener?
 ): ApiResponseInterceptor<SubmitActionResponse>() {
 
-    fun updateAction(
-        actionUUID: String,
-        connectionAndKey: ConnectionAndKey
-    ) {
+    fun updateAction(actionUUID: String, connectionAndKey: RichConnection) {
         val requestData = createSignedRequestData<Nothing>(
             requestMethod = REQUEST_METHOD_PUT,
             baseUrl = connectionAndKey.connection.connectUrl,
             apiRoutePath = "$API_ACTIONS/${actionUUID}",
             accessToken = connectionAndKey.connection.accessToken,
-            signPrivateKey = connectionAndKey.key
+            signPrivateKey = connectionAndKey.private
         )
 
-        apiInterface.updateAction(
-            requestData.requestUrl,
-            requestData.headersMap
-        ).enqueue(this)
+        apiInterface.updateAction(requestData.requestUrl, requestData.headersMap).enqueue(this)
     }
 
 

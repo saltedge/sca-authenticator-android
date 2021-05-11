@@ -23,7 +23,6 @@ package com.saltedge.authenticator.sdk
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.TestConnection
 import com.saltedge.authenticator.sdk.contract.*
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.api.model.response.*
 import com.saltedge.authenticator.sdk.api.ApiInterface

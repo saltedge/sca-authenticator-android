@@ -20,16 +20,16 @@
  */
 package com.saltedge.authenticator.sdk.api.connector
 
-import com.saltedge.authenticator.sdk.constants.API_CONSENTS
-import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_GET
-import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.sdk.api.ApiInterface
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.api.model.isValid
 import com.saltedge.authenticator.sdk.api.model.request.SignedRequest
 import com.saltedge.authenticator.sdk.api.model.response.EncryptedListResponse
-import com.saltedge.authenticator.sdk.api.ApiInterface
+import com.saltedge.authenticator.sdk.constants.API_CONSENTS
+import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_GET
+import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
 import retrofit2.Call
 
 /**
@@ -41,7 +41,7 @@ import retrofit2.Call
  */
 internal class ConsentsConnector(
     val apiInterface: ApiInterface,
-    val connectionsAndKeys: List<ConnectionAndKey>,
+    val connectionsAndKeys: List<RichConnection>,
     var resultCallback: FetchEncryptedDataListener?
 ) : QueueConnector<EncryptedListResponse>() {
 

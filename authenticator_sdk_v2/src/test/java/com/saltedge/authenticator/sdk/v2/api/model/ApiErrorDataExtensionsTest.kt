@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.model
 
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.R
 import com.saltedge.authenticator.sdk.v2.TestTools
 import com.saltedge.authenticator.sdk.v2.api.ERROR_CLASS_API_RESPONSE

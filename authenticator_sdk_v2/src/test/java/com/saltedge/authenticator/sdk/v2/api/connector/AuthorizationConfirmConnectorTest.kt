@@ -22,12 +22,9 @@ package com.saltedge.authenticator.sdk.v2.api.connector
 
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationConfirmListener
-import com.saltedge.authenticator.sdk.v2.api.model.EncryptedBundle
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponse
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponseData
-import com.saltedge.authenticator.sdk.v2.api.model.connection.ConnectionV2Abs
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import com.saltedge.authenticator.sdk.v2.api.retrofit.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.v2.defaultTestConnection

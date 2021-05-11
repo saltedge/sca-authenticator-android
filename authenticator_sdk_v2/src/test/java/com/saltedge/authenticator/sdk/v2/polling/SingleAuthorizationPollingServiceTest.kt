@@ -24,8 +24,6 @@ import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.authenticator.sdk.v2.TestConnectionV2
 import com.saltedge.authenticator.sdk.v2.api.contract.PollingAuthorizationContract
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponse
-import com.saltedge.authenticator.sdk.v2.api.model.connection.ConnectionV2Abs
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import com.saltedge.authenticator.sdk.v2.api.retrofit.RestClient
 import io.mockk.every

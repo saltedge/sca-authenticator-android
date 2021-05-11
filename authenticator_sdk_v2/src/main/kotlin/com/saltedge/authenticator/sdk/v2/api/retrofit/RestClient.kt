@@ -22,10 +22,10 @@ package com.saltedge.authenticator.sdk.v2.api.retrofit
 
 import android.net.Uri
 import com.google.gson.Gson
+import com.saltedge.authenticator.core.tools.json.createDefaultGson
 import com.saltedge.authenticator.sdk.v2.api.API_AUTHORIZATIONS
 import com.saltedge.authenticator.sdk.v2.api.API_CONNECTIONS
 import com.saltedge.authenticator.sdk.v2.api.DEFAULT_HOST
-import com.saltedge.authenticator.sdk.v2.tools.json.createDefaultGson
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
