@@ -83,7 +83,6 @@ abstract class ConnectProviderInteractor(
 
     override fun onConnectionCreateSuccess(authenticationUrl: String, connectionId: String) {
         if (authenticationUrl.isNotEmpty()) {
-
             if (ApiV2Config.isReturnToUrl(authenticationUrl)) {
                 onReceiveReturnToUrl(authenticationUrl)
             } else {

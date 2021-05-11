@@ -28,7 +28,7 @@ import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionRe
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponse
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponseData
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
-import com.saltedge.authenticator.sdk.v2.config.ClientConfig
+import com.saltedge.authenticator.sdk.v2.config.ApiV2Config
 import com.saltedge.authenticator.sdk.v2.get404Response
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -127,7 +127,7 @@ class ConnectionCreateConnectorTest {
     private val requestData = CreateConnectionRequest(
         data = CreateConnectionRequestData(
             providerId = "111",
-            returnUrl = ClientConfig.authenticationReturnUrl,
+            returnUrl = ApiV2Config.authenticationReturnUrl,
             platform = "android",
             pushToken = "pushToken",
             connectQueryParam = "1234567890",

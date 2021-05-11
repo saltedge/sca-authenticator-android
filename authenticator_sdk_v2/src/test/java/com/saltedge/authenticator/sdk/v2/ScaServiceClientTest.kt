@@ -21,6 +21,9 @@
 package com.saltedge.authenticator.sdk.v2
 
 import com.saltedge.android.test_tools.CommonTestTools
+import com.saltedge.authenticator.core.api.model.EncryptedBundle
+import com.saltedge.authenticator.core.model.ConnectionAbs
+import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.contract.*
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponse
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationsListResponse
@@ -189,7 +192,7 @@ class ScaServiceClientTest {
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
     private var privateKey: PrivateKey = CommonTestTools.testPrivateKey
     private var publicKey: PublicKey = CommonTestTools.testPublicKey
-    private val requestConnection: ConnectionV2Abs = defaultTestConnection
+    private val requestConnection: ConnectionAbs = defaultTestConnection
 
     @Before
     @Throws(Exception::class)

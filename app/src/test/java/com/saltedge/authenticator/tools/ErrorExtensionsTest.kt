@@ -20,13 +20,13 @@
  */
 package com.saltedge.authenticator.tools
 
+import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.core.api.ERROR_CLASS_API_RESPONSE
 import com.saltedge.authenticator.core.api.ERROR_CLASS_CONNECTION_NOT_FOUND
 import com.saltedge.authenticator.core.api.ERROR_CLASS_HOST_UNREACHABLE
 import com.saltedge.authenticator.core.api.ERROR_CLASS_SSL_HANDSHAKE
 import com.saltedge.authenticator.core.api.model.error.*
 import com.saltedge.authenticator.sdk.R
-import com.saltedge.authenticator.sdk.testTools.TestTools
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert
@@ -48,36 +48,36 @@ class ErrorExtensionsTest {
             ApiErrorData(
                 errorClassName = "ErrorClass",
                 errorMessage = "ErrorMessage"
-            ).getErrorMessage(TestTools.applicationContext),
+            ).getErrorMessage(TestAppTools.applicationContext),
             equalTo("ErrorMessage")
         )
         assertThat(
             ApiErrorData(
                 errorClassName = "ErrorClass",
                 errorMessage = ""
-            ).getErrorMessage(TestTools.applicationContext),
+            ).getErrorMessage(TestAppTools.applicationContext),
             equalTo("")
         )
         assertThat(
             ApiErrorData(
                 errorClassName = ERROR_CLASS_HOST_UNREACHABLE,
                 errorMessage = ""
-            ).getErrorMessage(TestTools.applicationContext),
-            equalTo(TestTools.getString(R.string.errors_no_connection))
+            ).getErrorMessage(TestAppTools.applicationContext),
+            equalTo(TestAppTools.getString(R.string.errors_no_connection))
         )
         assertThat(
             ApiErrorData(
                 errorClassName = ERROR_CLASS_SSL_HANDSHAKE,
                 errorMessage = ""
-            ).getErrorMessage(TestTools.applicationContext),
-            equalTo(TestTools.getString(R.string.errors_secure_connection))
+            ).getErrorMessage(TestAppTools.applicationContext),
+            equalTo(TestAppTools.getString(R.string.errors_secure_connection))
         )
         assertThat(
             ApiErrorData(
                 errorClassName = ERROR_CLASS_API_RESPONSE,
                 errorMessage = ""
-            ).getErrorMessage(TestTools.applicationContext),
-            equalTo(TestTools.getString(R.string.errors_request_error))
+            ).getErrorMessage(TestAppTools.applicationContext),
+            equalTo(TestAppTools.getString(R.string.errors_request_error))
         )
     }
 

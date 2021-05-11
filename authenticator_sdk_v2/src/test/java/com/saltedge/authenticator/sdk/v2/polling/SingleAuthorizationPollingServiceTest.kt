@@ -21,6 +21,8 @@
 package com.saltedge.authenticator.sdk.v2.polling
 
 import com.saltedge.android.test_tools.CommonTestTools
+import com.saltedge.authenticator.core.model.ConnectionAbs
+import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.TestConnectionV2
 import com.saltedge.authenticator.sdk.v2.api.contract.PollingAuthorizationContract
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponse
@@ -105,7 +107,7 @@ class SingleAuthorizationPollingServiceTest {
     private val mockContract: PollingAuthorizationContract =
         mockkClass(PollingAuthorizationContract::class)
     private val mockCall = mockkClass(Call::class) as Call<AuthorizationResponse>
-    private val requestConnection: ConnectionV2Abs =
+    private val requestConnection: ConnectionAbs =
         TestConnectionV2(id = "333", guid = "test", connectUrl = "/", accessToken = "accessToken")
 
     @Before

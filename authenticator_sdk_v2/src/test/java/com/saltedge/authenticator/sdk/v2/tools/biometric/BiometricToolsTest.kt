@@ -25,8 +25,10 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.fingerprint.FingerprintManager
 import android.os.Build
+import com.saltedge.authenticator.core.tools.biometric.BiometricTools
+import com.saltedge.authenticator.core.tools.biometric.FINGERPRINT_ALIAS_FOR_PIN
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.sdk.v2.TestTools
-import com.saltedge.authenticator.sdk.v2.tools.secure.KeyManagerAbs
 import io.mockk.every
 import io.mockk.mockkClass
 import org.hamcrest.CoreMatchers.equalTo

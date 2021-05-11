@@ -23,8 +23,10 @@ package com.saltedge.authenticator.sdk.v2.tools.secure
 import android.util.Base64
 import com.google.gson.internal.LinkedTreeMap
 import com.saltedge.android.test_tools.CommonTestTools
+import com.saltedge.authenticator.core.api.model.EncryptedBundle
+import com.saltedge.authenticator.core.tools.json.createDefaultGson
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationRequest
-import com.saltedge.authenticator.sdk.v2.tools.createDefaultGson
+import com.saltedge.authenticator.sdk.v2.tools.JwsTools
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts

@@ -23,7 +23,6 @@ package com.saltedge.authenticator.core.web
 import android.graphics.Bitmap
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import com.saltedge.authenticator.core.config.ApiConfig
 
 private const val WEB_PAGE_Y_CORRECTION_OFFSET = 20
 

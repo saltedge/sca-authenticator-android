@@ -20,9 +20,9 @@
  */
 package com.saltedge.authenticator.sdk.v2.tools.json
 
+import com.saltedge.authenticator.core.tools.json.createDefaultGson
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.DescriptionData
-import com.saltedge.authenticator.sdk.v2.tools.createDefaultGson
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.junit.Assert.assertTrue
