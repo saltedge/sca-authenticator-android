@@ -50,7 +50,7 @@ import com.saltedge.authenticator.sdk.api.model.authorization.isNotExpired
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationsContract
-import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.getErrorMessage
 import com.saltedge.authenticator.tools.postUnitEvent

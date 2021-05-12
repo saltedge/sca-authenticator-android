@@ -50,7 +50,7 @@ import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.sdk.api.model.ConsentType
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
-import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
 import com.saltedge.authenticator.tools.appendColoredText
 import com.saltedge.authenticator.tools.daysTillExpire
 import kotlinx.coroutines.CoroutineDispatcher

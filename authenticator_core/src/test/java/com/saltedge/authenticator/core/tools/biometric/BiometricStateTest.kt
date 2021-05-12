@@ -18,9 +18,8 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.tools.biometric
+package com.saltedge.authenticator.core.tools.biometric
 
-import com.saltedge.authenticator.core.tools.biometric.BiometricState
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test

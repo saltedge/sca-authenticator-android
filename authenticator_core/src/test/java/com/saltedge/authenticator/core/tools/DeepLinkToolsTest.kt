@@ -18,14 +18,10 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-
-package com.saltedge.authenticator.sdk.tools
+package com.saltedge.authenticator.core.tools
 
 import com.saltedge.authenticator.core.model.ActionAppLinkData
 import com.saltedge.authenticator.core.model.ConnectAppLinkData
-import com.saltedge.authenticator.core.tools.extractActionAppLinkData
-import com.saltedge.authenticator.core.tools.extractConnectAppLinkData
-import com.saltedge.authenticator.core.tools.isValidDeeplink
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert
 import org.junit.Assert.assertNull

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2021 Salt Edge Inc.
+ * Copyright (c) 2019 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,11 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.tools
+package com.saltedge.authenticator.core.tools.secure
 
 import android.content.Context
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.saltedge.authenticator.sdk.v2.tools.secure.KeyManager
-import com.saltedge.authenticator.sdk.v2.tools.secure.publicKeyToPem
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert
@@ -32,32 +30,27 @@ import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
 
-
 @RunWith(AndroidJUnit4::class)
-class KeyManagerTest {
+class KeyStoreManagerTest {
 
     private val context: Context
         get() = InstrumentationRegistry.getInstrumentation().context
 
     @Test
     @Throws(Exception::class)
-    fun createOrReplaceRsaKeyPairTest() {
-        cleanKeystore()
-        assertNotNull(KeyManager.createOrReplaceRsaKeyPair(context, "test1"))
-        assertNotNull(KeyManager.createOrReplaceRsaKeyPair(context, "test1"))
-
-        assertThat(KeyManager.getKeyStoreAliases(), equalTo(listOf("test1")))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun createOrReplaceAesBiometricKey() {
+    fun createOrReplaceKeyPairTest() {
         cleanKeystore()
         val secretKey = KeyManager.createOrReplaceAesBiometricKey("biometric")
 
+        assertNotNull(KeyManager.createOrReplaceRsaKeyPair(context, "test1"))
+        assertNotNull(KeyManager.createOrReplaceRsaKeyPair(context, "test1"))
+
         if (secretKey == null) {
-            Assert.assertTrue(KeyManager.getKeyStoreAliases().isEmpty())
-        } else assertThat(KeyManager.getKeyStoreAliases(), equalTo(listOf("biometric")))
+            assertThat(KeyManager.getKeyStoreAliases(), equalTo(listOf("test1")))
+        } else assertThat(
+            KeyManager.getKeyStoreAliases(),
+            equalTo(listOf("test1", "biometric"))
+        )
     }
 
     @Test

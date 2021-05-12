@@ -22,6 +22,7 @@ package com.saltedge.authenticator.sdk.v2
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import com.saltedge.android.test_tools.TestConnection
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -40,25 +41,8 @@ object TestTools {
     }
 }
 
-data class TestConnectionV2(
-    override var guid: String = "",
-    override var id: String = "",
-    override var createdAt: Long = 0L,
-    override var updatedAt: Long = 0L,
-    override var name: String = "",
-    override var code: String = "",
-    override var connectUrl: String = "",
-    override var logoUrl: String = "",
-    override var accessToken: String = "",
-    override var status: String = "",
-    override var supportEmail: String? = "",
-    override var consentManagementSupported: Boolean? = true,
-    override var geolocationRequired: Boolean? = true,
-    override var providerRsaPublicKeyPem: String = ""
-) : ConnectionAbs
-
 val defaultTestConnection: ConnectionAbs
-    get() = TestConnectionV2(id = "333", guid = "test", connectUrl = "https://localhost", accessToken = "accessToken")
+    get() = TestConnection(id = "333", guid = "test", connectUrl = "https://localhost", accessToken = "accessToken")
 
 @Throws(Exception::class)
 fun <T> get404Response(): Response<T> = Response.error(404, ResponseBody.create(null, get404ResponseBody()))

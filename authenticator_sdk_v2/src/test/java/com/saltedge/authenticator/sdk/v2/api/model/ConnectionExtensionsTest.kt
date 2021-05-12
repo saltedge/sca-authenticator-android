@@ -20,8 +20,8 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.model
 
+import com.saltedge.android.test_tools.TestConnection
 import com.saltedge.authenticator.core.model.ConnectionStatus
-import com.saltedge.authenticator.sdk.v2.TestConnectionV2
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
@@ -34,7 +34,7 @@ class ConnectionExtensionsTest {
     @Test
     @Throws(Exception::class)
     fun connectionGetStatusTest() {
-        val connection = TestConnectionV2().apply { status = "${ConnectionStatus.INACTIVE}" }
+        val connection = TestConnection().apply { status = "${ConnectionStatus.INACTIVE}" }
 
         assertThat(connection.status, equalTo("${ConnectionStatus.INACTIVE}"))
     }

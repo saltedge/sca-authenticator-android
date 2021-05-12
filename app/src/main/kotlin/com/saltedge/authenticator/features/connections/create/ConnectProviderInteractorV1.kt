@@ -114,5 +114,6 @@ fun ProviderConfigurationData.toConnection(): Connection? {
         it.supportEmail = this.supportEmail
         it.consentManagementSupported = this.consentManagementSupported
         it.geolocationRequired = this.geolocationRequired
+        it.apiVersion = this.version
     }
 }

@@ -36,5 +36,6 @@ data class TestConnection(
     override var supportEmail: String? = "",
     override var consentManagementSupported: Boolean? = true,
     override var geolocationRequired: Boolean? = true,
-    override var providerRsaPublicKeyPem: String = ""
+    override var providerRsaPublicKeyPem: String = "",
+    override var apiVersion: String = ""
 ) : ConnectionAbs

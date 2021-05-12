@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.polling
+package com.saltedge.authenticator.core.polling
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver

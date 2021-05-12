@@ -36,7 +36,7 @@ import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.sdk.api.model.ConsentSharedData
-import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.tools.secure.CryptoToolsAbs
 import com.saltedge.authenticator.tools.daysTillExpire
 import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.core.api.KEY_DATA

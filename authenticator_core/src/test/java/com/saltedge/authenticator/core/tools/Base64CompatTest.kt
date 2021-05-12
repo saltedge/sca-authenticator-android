@@ -18,10 +18,8 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.tools
+package com.saltedge.authenticator.core.tools
 
-import com.saltedge.authenticator.core.tools.decodeFromPemBase64String
-import com.saltedge.authenticator.core.tools.encodeToPemBase64String
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test

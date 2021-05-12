@@ -22,7 +22,6 @@ package com.saltedge.authenticator.tools
 
 import android.content.Context
 import com.saltedge.authenticator.app.buildVersionLessThan23
-import com.saltedge.authenticator.core.tools.secure.BaseCryptoTools
 import com.saltedge.authenticator.core.tools.secure.KeyManager
 import com.saltedge.authenticator.models.repository.PreferenceRepository
 import com.saltedge.authenticator.sdk.v2.tools.CryptoTools
@@ -58,11 +57,11 @@ object PasscodeTools : PasscodeToolsAbs {
     override fun savePasscode(passcode: String): Boolean {
         val encryptedPasscode = if (buildVersionLessThan23) {
             KeyManager.getKeyPair(PASSCODE_SECURE_KEY_ALIAS)?.public?.let { key ->
-                BaseCryptoTools.rsaEncrypt(input = passcode.toByteArray(), publicKey = key)
+                CryptoTools.rsaEncrypt(inputText = passcode, publicKey = key)
             }
         } else {
             KeyManager.getSecretKey(PASSCODE_SECURE_KEY_ALIAS)?.let { key ->
-                BaseCryptoTools.aesGcmEncrypt(input = passcode, key = key)
+                CryptoTools.aesGcmEncrypt(input = passcode, key = key)
             }
         }
         PreferenceRepository.encryptedPasscode = encryptedPasscode ?: return false
@@ -80,11 +79,11 @@ object PasscodeTools : PasscodeToolsAbs {
         if (encryptedPasscode.isBlank()) return ""
         return if (buildVersionLessThan23) {
             KeyManager.getKeyPair(PASSCODE_SECURE_KEY_ALIAS)?.private?.let { key ->
-                String(BaseCryptoTools.rsaDecrypt(encryptedPasscode, key) ?: byteArrayOf())
+                String(CryptoTools.rsaDecrypt(encryptedPasscode, key) ?: byteArrayOf())
             }
         } else {
             KeyManager.getSecretKey(PASSCODE_SECURE_KEY_ALIAS)?.let { key ->
-                BaseCryptoTools.aesGcmDecrypt(encryptedPasscode, key)
+                CryptoTools.aesGcmDecrypt(encryptedPasscode, key)
             }
         } ?: return ""
     }

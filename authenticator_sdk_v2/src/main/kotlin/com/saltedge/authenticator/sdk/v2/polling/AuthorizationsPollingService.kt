@@ -20,9 +20,11 @@
  */
 package com.saltedge.authenticator.sdk.v2.polling
 
-import com.saltedge.authenticator.sdk.v2.api.contract.PollingAuthorizationsContract
-import com.saltedge.authenticator.sdk.v2.api.retrofit.RestClient
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.polling.PollingServiceAbs
 import com.saltedge.authenticator.sdk.v2.api.connector.AuthorizationsIndexConnector
+import com.saltedge.authenticator.sdk.v2.api.contract.FetchAuthorizationsListener
+import com.saltedge.authenticator.sdk.v2.api.retrofit.RestClient
 
 /**
  * Periodically query authorizations list.
@@ -44,4 +46,8 @@ class AuthorizationsPollingService : PollingServiceAbs<PollingAuthorizationsCont
             e.printStackTrace()
         }
     }
+}
+
+interface PollingAuthorizationsContract : FetchAuthorizationsListener {
+    fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection>?
 }

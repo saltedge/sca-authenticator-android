@@ -24,13 +24,11 @@ import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.encryptAesCBCString
 import com.saltedge.android.test_tools.rsaEncrypt
 import com.saltedge.android.test_tools.toJsonString
-import com.saltedge.authenticator.core.tools.secure.BaseCryptoTools.aesDecrypt
-import com.saltedge.authenticator.core.tools.secure.BaseCryptoTools.aesEncrypt
-import com.saltedge.authenticator.core.tools.secure.BaseCryptoTools.rsaDecrypt
 import com.saltedge.authenticator.sdk.v2.TestTools
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.DescriptionData
+import com.saltedge.authenticator.sdk.v2.tools.CryptoTools
 import com.saltedge.authenticator.sdk.v2.tools.CryptoTools.decryptAuthorizationData
 import net.danlew.android.joda.JodaTimeAndroid
 import org.hamcrest.CoreMatchers.equalTo
@@ -67,8 +65,8 @@ class CryptoToolsTest {
         val encryptedKey = rsaEncrypt(CommonTestTools.aesKey, CommonTestTools.testPublicKey)!!
         val encryptedIV = rsaEncrypt(CommonTestTools.aesKey, CommonTestTools.testPublicKey)!!
 
-        assertThat(rsaDecrypt(encryptedKey, CommonTestTools.testPrivateKey), equalTo(CommonTestTools.aesKey))
-        assertThat(rsaDecrypt(encryptedIV, CommonTestTools.testPrivateKey), equalTo(CommonTestTools.aesKey))
+        assertThat(CryptoTools.rsaDecrypt(encryptedKey, CommonTestTools.testPrivateKey), equalTo(CommonTestTools.aesKey))
+        assertThat(CryptoTools.rsaDecrypt(encryptedIV, CommonTestTools.testPrivateKey), equalTo(CommonTestTools.aesKey))
     }
 
     /**
@@ -78,7 +76,7 @@ class CryptoToolsTest {
     @Test
     @Throws(Exception::class)
     fun rsaEncryptDecryptTestCase2() {
-        Assert.assertNull(rsaDecrypt("", CommonTestTools.testPrivateKey)) // Empty encrypted text
+        Assert.assertNull(CryptoTools.rsaDecrypt("", CommonTestTools.testPrivateKey)) // Empty encrypted text
 
         val invalidCertificate: PublicKey = object : PublicKey {
             override fun getAlgorithm(): String = ""
@@ -102,7 +100,7 @@ class CryptoToolsTest {
             encryptedMessage,
             equalTo("MBrw7K2rCIKop50b2PmkmlAVO9Bulhl7yO8ZPw2ulVnh7MB9yI0vRJjum6xFnQMq\n9BR172WT/KAw78Zg4++EQQ==")
         )
-        assertThat(aesDecrypt(encryptedMessage, CommonTestTools.aesKey, CommonTestTools.aesIV), equalTo(errorMessage))
+        assertThat(CryptoTools.aesDecrypt(encryptedMessage, CommonTestTools.aesKey, CommonTestTools.aesIV), equalTo(errorMessage))
     }
 
     /**
@@ -114,9 +112,9 @@ class CryptoToolsTest {
         val initialTextValue = "test key"
         val testKey: SecretKey = SecretKeySpec(CommonTestTools.aesKey, 0, CommonTestTools.aesKey.size, "AES")
 
-        val encryptedMessage = aesEncrypt(initialTextValue, testKey)!!
+        val encryptedMessage = CryptoTools.aesEncrypt(initialTextValue, testKey)!!
 
-        val decryptedMessage = aesDecrypt(encryptedMessage, testKey)!!
+        val decryptedMessage = CryptoTools.aesDecrypt(encryptedMessage, testKey)!!
 
         assertThat(encryptedMessage, not(equalTo(initialTextValue)))
         assertThat(decryptedMessage, equalTo(initialTextValue))
@@ -131,7 +129,7 @@ class CryptoToolsTest {
         val errorMessage = "{\"name\":\"Andrey\", \"age\":27, \"car\":\"BMW\", \"mileage\":null}"
         val encryptedMessage = encryptAesCBCString(errorMessage, CommonTestTools.aesKey, CommonTestTools.aesIV)!!
 
-        Assert.assertNull(aesDecrypt(encryptedMessage, CommonTestTools.aesKey, CommonTestTools.aesKey)) // Invalid IV
+        Assert.assertNull(CryptoTools.aesDecrypt(encryptedMessage, CommonTestTools.aesKey, CommonTestTools.aesKey)) // Invalid IV
     }
 
     @Test

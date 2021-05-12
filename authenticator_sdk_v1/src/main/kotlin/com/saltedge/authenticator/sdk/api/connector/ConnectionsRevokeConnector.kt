@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.api.connector
 
+import com.saltedge.authenticator.core.api.RequestQueueAbs
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.model.Token
@@ -40,7 +41,7 @@ import retrofit2.Call
 internal class ConnectionsRevokeConnector(
     private val apiInterface: ApiInterface,
     var resultCallback: ConnectionsRevokeListener? = null
-) : QueueConnector<RevokeAccessTokenResponse>() {
+) : RequestQueueAbs<RevokeAccessTokenResponse>() {
 
     private var result = mutableListOf<Token>()
     private var errorResult: ApiErrorData? = null

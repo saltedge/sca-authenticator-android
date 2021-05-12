@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.sdk.v2.api.model.configuration
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.api.*
+import com.saltedge.authenticator.core.api.*
 import java.io.Serializable
 
 data class ConfigurationResponse(@SerializedName(KEY_DATA) var data: ConfigurationDataV2)

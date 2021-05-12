@@ -18,33 +18,22 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.api.connector
+package com.saltedge.authenticator.core.tools.json
 
-import com.saltedge.authenticator.core.api.ApiResponseInterceptor
+import com.saltedge.authenticator.core.model.ActionAppLinkData
+import org.junit.Assert.assertTrue
+import org.junit.Test
 
-/**
- * Implements logic for handling multiple requests queue
- *
- * @see ApiResponseInterceptor
- */
-internal abstract class QueueConnector<T> : ApiResponseInterceptor<T>() {
+class JsonToolsTest {
 
-    private var queueCount: Int = 0
-
-    fun setQueueSize(size: Int) {
-        queueCount = size
-    }
-
-    protected fun onResponseReceived() {
-        countDown()
-        if (queueIsEmpty()) onQueueFinished()
-    }
-
-    protected fun queueIsEmpty() = queueCount <= 0
-
-    protected abstract fun onQueueFinished()
-
-    private fun countDown() {
-        queueCount--
+    @Test
+    @Throws(Exception::class)
+    fun createDefaultGsonTest() {
+        val gson = createDefaultGson()
+        val data = ActionAppLinkData(
+            actionUUID = "Qwerty1+==",
+            connectUrl = "",
+            returnTo = ""        )
+        assertTrue(gson.toJson(data).contains("Qwerty1+=="))
     }
 }

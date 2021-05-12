@@ -87,5 +87,6 @@ fun ConfigurationDataV2.toConnection(): Connection {
         it.supportEmail = this.providerSupportEmail
         it.consentManagementSupported = false
         it.geolocationRequired = this.geolocationRequired
+        it.apiVersion = this.apiVersion
     }
 }

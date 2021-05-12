@@ -56,4 +56,6 @@ open class Connection : RealmObject(), ConnectionAbs {
     override var geolocationRequired: Boolean? = null
     @Keep @Required
     override var providerRsaPublicKeyPem: String = ""
+    @Keep @Required
+    override var apiVersion: String = "1"
 }

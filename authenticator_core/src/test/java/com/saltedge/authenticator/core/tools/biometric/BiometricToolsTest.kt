@@ -18,17 +18,15 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.tools.biometric
+package com.saltedge.authenticator.core.tools.biometric
 
 import android.Manifest.permission.USE_FINGERPRINT
 import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.fingerprint.FingerprintManager
 import android.os.Build
-import com.saltedge.authenticator.core.tools.biometric.BiometricTools
-import com.saltedge.authenticator.core.tools.biometric.FINGERPRINT_ALIAS_FOR_PIN
+import androidx.test.core.app.ApplicationProvider
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
-import com.saltedge.authenticator.sdk.testTools.TestTools
 import io.mockk.every
 import io.mockk.mockkClass
 import org.hamcrest.CoreMatchers.equalTo
@@ -42,6 +40,9 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class BiometricToolsTest {
+
+    private val applicationContext: Context
+        get() = ApplicationProvider.getApplicationContext<Context>().applicationContext
 
     @Test
     @Throws(Exception::class)
@@ -120,7 +121,7 @@ class BiometricToolsTest {
         every { mockKeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN) } returns false
         every { mockKeyStoreManager.createOrReplaceAesBiometricKey(FINGERPRINT_ALIAS_FOR_PIN) } returns null
 
-        val biometricIsAvailable = biometricTools.isFingerprintAuthAvailable(TestTools.applicationContext)
+        val biometricIsAvailable = biometricTools.isFingerprintAuthAvailable(applicationContext)
 
         assertThat(biometricTools.activateFingerprint(), equalTo(biometricIsAvailable))
         assertThat(mockKeyStoreManager.keyEntryExist(FINGERPRINT_ALIAS_FOR_PIN), equalTo(biometricIsAvailable))
