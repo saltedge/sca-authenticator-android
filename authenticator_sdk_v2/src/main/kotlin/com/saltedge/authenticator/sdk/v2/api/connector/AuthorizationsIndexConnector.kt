@@ -24,8 +24,8 @@ import com.saltedge.authenticator.sdk.v2.api.contract.FetchAuthorizationsListene
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationsListResponse
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.isValid
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import com.saltedge.authenticator.sdk.v2.api.retrofit.authorizationsIndexPath
 import com.saltedge.authenticator.sdk.v2.api.retrofit.createAccessTokenHeader

@@ -33,10 +33,10 @@ import android.os.CancellationSignal
 import androidx.annotation.StringRes
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_ACTION
-import com.saltedge.authenticator.sdk.constants.KEY_DESCRIPTION
-import com.saltedge.authenticator.sdk.constants.KEY_TITLE
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
-import com.saltedge.authenticator.sdk.tools.biometric.getFingerprintManager
+import com.saltedge.authenticator.core.api.KEY_DESCRIPTION
+import com.saltedge.authenticator.core.api.KEY_TITLE
+import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.core.tools.biometric.getFingerprintManager
 import com.saltedge.authenticator.tools.ResId
 import timber.log.Timber
 

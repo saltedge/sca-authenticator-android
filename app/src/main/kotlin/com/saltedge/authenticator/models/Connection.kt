@@ -21,13 +21,12 @@
 package com.saltedge.authenticator.models
 
 import androidx.annotation.Keep
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
-import com.saltedge.authenticator.sdk.v2.api.model.connection.ConnectionV2Abs
+import com.saltedge.authenticator.core.model.ConnectionAbs
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.Required
 
-open class Connection : RealmObject(), ConnectionAbs, ConnectionV2Abs {
+open class Connection : RealmObject(), ConnectionAbs {
     @PrimaryKey @Keep @Required
     override var guid: String = ""
     @Keep @Required

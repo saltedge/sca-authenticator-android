@@ -20,6 +20,8 @@
  */
 package com.saltedge.authenticator.sdk.tools
 
+import com.saltedge.authenticator.core.tools.decodeFromPemBase64String
+import com.saltedge.authenticator.core.tools.encodeToPemBase64String
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test

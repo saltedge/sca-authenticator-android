@@ -22,16 +22,17 @@ package com.saltedge.authenticator.sdk.api.connector
 
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.getDefaultTestConnection
+import com.saltedge.authenticator.core.api.HEADER_KEY_ACCESS_TOKEN
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.createInvalidResponseError
+import com.saltedge.authenticator.core.model.ConnectionAbs
+import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.api.model.error.createInvalidResponseError
+
 import com.saltedge.authenticator.sdk.api.model.request.ConfirmDenyRequestData
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponse
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.api.ApiInterface
-import com.saltedge.authenticator.sdk.api.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.testTools.get404Response
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -67,7 +68,7 @@ class ConfirmOrDenyConnectorTest {
     fun postConfirmOrDenyTest_allSuccess() {
         val connector = ConfirmOrDenyConnector(mockApi, mockCallback)
         connector.updateAuthorization(
-            connectionAndKey = ConnectionAndKey(requestConnection, privateKey),
+            connectionAndKey = RichConnection(requestConnection, privateKey),
             authorizationId = requestAuthorizationId,
             payloadData = ConfirmDenyRequestData(confirm = true, authorizationCode = "authorizationCode"),
             geolocationHeader = "GEO:52.506931;13.144558",
@@ -105,7 +106,7 @@ class ConfirmOrDenyConnectorTest {
     fun postConfirmOrDenyTest_emptyResponse() {
         val connector = ConfirmOrDenyConnector(mockApi, mockCallback)
         connector.updateAuthorization(
-            connectionAndKey = ConnectionAndKey(requestConnection, privateKey),
+            connectionAndKey = RichConnection(requestConnection, privateKey),
             authorizationId = requestAuthorizationId,
             payloadData = ConfirmDenyRequestData(confirm = true, authorizationCode = "authorizationCode"),
             geolocationHeader = "GEO:52.506931;13.144558",
@@ -125,7 +126,7 @@ class ConfirmOrDenyConnectorTest {
     fun postConfirmOrDenyTest_withError() {
         val connector = ConfirmOrDenyConnector(mockApi, mockCallback)
         connector.updateAuthorization(
-            connectionAndKey = ConnectionAndKey(requestConnection, privateKey),
+            connectionAndKey = RichConnection(requestConnection, privateKey),
             authorizationId = requestAuthorizationId,
             payloadData = ConfirmDenyRequestData(confirm = true, authorizationCode = "authorizationCode"),
             geolocationHeader = "GEO:52.506931;13.144558",

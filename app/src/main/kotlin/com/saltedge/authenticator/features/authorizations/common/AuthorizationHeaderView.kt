@@ -24,9 +24,9 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.sdk.tools.remainedSeconds
-import com.saltedge.authenticator.sdk.tools.remainedTimeDescription
-import com.saltedge.authenticator.sdk.tools.secondsBetweenDates
+import com.saltedge.authenticator.core.tools.remainedSeconds
+import com.saltedge.authenticator.core.tools.remainedTimeDescription
+import com.saltedge.authenticator.core.tools.secondsBetweenDates
 import com.saltedge.authenticator.tools.loadRoundedImage
 import kotlinx.android.synthetic.main.view_authorization_header.view.*
 import org.joda.time.DateTime

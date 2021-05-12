@@ -33,26 +33,26 @@ import androidx.lifecycle.viewModelScope
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CONSENT_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_GUID
-import com.saltedge.authenticator.app.KEY_ID
+import com.saltedge.authenticator.app.guid
+import com.saltedge.authenticator.core.api.KEY_DATA
+import com.saltedge.authenticator.core.api.KEY_ID
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.GUID
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.consents.common.countOfDays
 import com.saltedge.authenticator.features.consents.common.toCountString
 import com.saltedge.authenticator.features.consents.details.ConsentDetailsViewModel
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.constants.KEY_DATA
-import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
 import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.sdk.api.model.ConsentType
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
-import com.saltedge.authenticator.sdk.api.model.GUID
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.appendColoredText
 import com.saltedge.authenticator.tools.daysTillExpire
-import com.saltedge.authenticator.app.guid
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -62,7 +62,7 @@ import org.joda.time.DateTime
 class ConsentsListViewModel(
     private val appContext: Context,
     private val connectionsRepository: ConnectionsRepositoryAbs,
-    private val keyStoreManager: KeyStoreManagerAbs,
+    private val keyStoreManager: KeyManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
     private val cryptoTools: CryptoToolsAbs,
     private val defaultDispatcher: CoroutineDispatcher
@@ -75,7 +75,7 @@ class ConsentsListViewModel(
     val connectionTitle = MutableLiveData<String>()
     val consentsCount = MutableLiveData<String>()
     private var consents: List<ConsentData> = emptyList()
-    private var connectionAndKey: ConnectionAndKey? = null
+    private var connectionAndKey: RichConnection? = null
 
     override fun onFetchEncryptedDataResult(result: List<EncryptedData>, errors: List<ApiErrorData>) {
         viewModelScope.launch(defaultDispatcher) {
@@ -89,7 +89,7 @@ class ConsentsListViewModel(
             connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
                 logoUrl.postValue(it.logoUrl)
                 connectionTitle.postValue(it.name)
-                keyStoreManager.createConnectionAndKeyModel(it)
+                keyStoreManager.enrichConnection(it)
             }
         }
         onReceivedNewConsents(bundle?.consents ?: emptyList())
@@ -144,7 +144,7 @@ class ConsentsListViewModel(
 
     private fun decryptConsents(encryptedList: List<EncryptedData>): List<ConsentData> {
         return encryptedList.mapNotNull {
-            cryptoTools.decryptConsentData(encryptedData = it, rsaPrivateKey = connectionAndKey?.key)
+            cryptoTools.decryptConsentData(encryptedData = it, rsaPrivateKey = connectionAndKey?.private)
         }
     }
 

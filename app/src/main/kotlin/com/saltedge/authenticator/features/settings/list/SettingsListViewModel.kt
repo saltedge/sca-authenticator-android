@@ -25,9 +25,13 @@ import android.content.DialogInterface
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.AppToolsAbs
 import com.saltedge.authenticator.app.getDefaultSystemNightMode
 import com.saltedge.authenticator.app.isSystemNightModeSupported
 import com.saltedge.authenticator.app.switchDarkLightMode
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.model.isActive
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.interfaces.MenuItem
@@ -36,16 +40,12 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.connection.isActive
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.app.AppToolsAbs
 import com.saltedge.authenticator.tools.postUnitEvent
 
 class SettingsListViewModel(
     private val appContext: Context,
     private val appTools: AppToolsAbs,
-    private val keyStoreManager: KeyStoreManagerAbs,
+    private val keyStoreManager: KeyManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val preferenceRepository: PreferenceRepositoryAbs
@@ -170,15 +170,15 @@ class SettingsListViewModel(
     }
 
     private fun sendRevokeRequestForConnections(connections: List<Connection>) {
-        val connectionsAndKeys: List<ConnectionAndKey> = connections.filter { it.isActive() }
-            .mapNotNull { keyStoreManager.createConnectionAndKeyModel(it) }
+        val connectionsAndKeys: List<RichConnection> = connections.filter { it.isActive() }
+            .mapNotNull { keyStoreManager.enrichConnection(it) }
 
         apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = null)
     }
 
     private fun deleteAllConnectionsAndKeys() {
         val connectionGuids = connectionsRepository.getAllConnections().map { it.guid }
-        keyStoreManager.deleteKeyPairs(connectionGuids)
+        keyStoreManager.deleteKeyPairsIfExist(connectionGuids)
         connectionsRepository.deleteAllConnections()
     }
 }

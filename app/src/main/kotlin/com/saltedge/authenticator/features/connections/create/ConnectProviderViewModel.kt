@@ -31,11 +31,11 @@ import androidx.core.text.set
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ConnectAppLinkData
+import com.saltedge.authenticator.core.model.GUID
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
-import com.saltedge.authenticator.sdk.api.model.GUID
-import com.saltedge.authenticator.sdk.v2.api.model.appLink.ConnectAppLinkDataV2
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.getErrorMessage
 import com.saltedge.authenticator.tools.postUnitEvent
@@ -64,7 +64,7 @@ class ConnectProviderViewModel(
     private var sessionFailMessage: String? = null
     private var viewMode: ViewMode = ViewMode.START_NEW_CONNECT
 
-    fun setInitialData(initialConnectData: ConnectAppLinkDataV2?, connectionGuid: GUID?) {
+    fun setInitialData(initialConnectData: ConnectAppLinkData?, connectionGuid: GUID?) {
         interactor.contract = this
         interactor.setInitialData(initialConnectData, connectionGuid)
 

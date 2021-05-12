@@ -20,11 +20,11 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.connector
 
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionsRevokeListener
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionRequest
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionResponse
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import com.saltedge.authenticator.sdk.v2.api.retrofit.addSignatureHeader
 import com.saltedge.authenticator.sdk.v2.api.retrofit.createAccessTokenHeader
@@ -58,7 +58,7 @@ internal class ConnectionsRevokeConnector(
                 val request = RevokeConnectionRequest()
                 val headers = createAccessTokenHeader(it.connection.accessToken)
                     .addSignatureHeader(
-                        it.rsaPrivate,
+                        it.private,
                         request.data,
                         request.requestExpirationTime
                     )

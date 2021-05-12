@@ -20,11 +20,11 @@
  */
 package com.saltedge.authenticator.sdk.api.connector
 
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.constants.API_AUTHORIZATIONS
 import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_GET
 import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.isValid
 import com.saltedge.authenticator.sdk.api.model.request.SignedRequest
@@ -47,7 +47,7 @@ internal class AuthorizationsConnector(
     private var result = mutableListOf<EncryptedData>()
     private var errors = mutableListOf<ApiErrorData>()
 
-    fun fetchAuthorizations(connectionsAndKeys: List<ConnectionAndKey>) {
+    fun fetchAuthorizations(connectionsAndKeys: List<RichConnection>) {
         if (super.queueIsEmpty()) {
             val requestData: List<SignedRequest> =
                 connectionsAndKeys.map { (connection, key) ->

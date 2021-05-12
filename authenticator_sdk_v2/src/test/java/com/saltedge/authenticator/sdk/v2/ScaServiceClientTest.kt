@@ -21,16 +21,16 @@
 package com.saltedge.authenticator.sdk.v2
 
 import com.saltedge.android.test_tools.CommonTestTools
+import com.saltedge.authenticator.core.api.model.EncryptedBundle
+import com.saltedge.authenticator.core.model.ConnectionAbs
+import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.contract.*
-import com.saltedge.authenticator.sdk.v2.api.model.EncryptedBundle
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponse
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationsListResponse
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponse
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationData
-import com.saltedge.authenticator.sdk.v2.api.model.connection.ConnectionV2Abs
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponse
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionResponse
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import com.saltedge.authenticator.sdk.v2.api.retrofit.RestClient
 import io.mockk.every
@@ -192,7 +192,7 @@ class ScaServiceClientTest {
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
     private var privateKey: PrivateKey = CommonTestTools.testPrivateKey
     private var publicKey: PublicKey = CommonTestTools.testPublicKey
-    private val requestConnection: ConnectionV2Abs = defaultTestConnection
+    private val requestConnection: ConnectionAbs = defaultTestConnection
 
     @Before
     @Throws(Exception::class)

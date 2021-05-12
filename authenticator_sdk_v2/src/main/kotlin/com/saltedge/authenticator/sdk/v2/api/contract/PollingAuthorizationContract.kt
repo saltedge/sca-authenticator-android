@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.contract
 
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
+import com.saltedge.authenticator.core.model.RichConnection
 
 /**
  * Polling service contract

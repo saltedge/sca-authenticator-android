@@ -20,12 +20,8 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.contract
 
-import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.api.ERROR_CLASS_API_REQUEST
-import com.saltedge.authenticator.sdk.v2.api.KEY_AUTHENTICATION_URL
-import com.saltedge.authenticator.sdk.v2.api.KEY_CONNECTION_ID
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponseData
+import com.saltedge.authenticator.core.api.ERROR_CLASS_API_REQUEST
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 
 /**
  * Create SCA Connection request result

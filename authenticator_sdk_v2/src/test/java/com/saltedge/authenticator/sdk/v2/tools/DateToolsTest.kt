@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.v2.tools
 
+import com.saltedge.authenticator.core.tools.*
 import com.saltedge.authenticator.sdk.v2.TestTools
 import net.danlew.android.joda.JodaTimeAndroid
 import org.hamcrest.CoreMatchers.anyOf

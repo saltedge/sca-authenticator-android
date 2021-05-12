@@ -27,11 +27,11 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
+import com.saltedge.authenticator.core.api.ERROR_CLASS_API_RESPONSE
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ConnectAppLinkData
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
-import com.saltedge.authenticator.sdk.v2.api.ERROR_CLASS_API_RESPONSE
-import com.saltedge.authenticator.sdk.v2.api.model.appLink.ConnectAppLinkDataV2
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
 import net.danlew.android.joda.JodaTimeAndroid
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*
@@ -63,7 +63,7 @@ class ConnectProviderViewModelTest {
     @Throws(Exception::class)
     fun setInitialDataTestCase1() {
         //given
-        val initialConnectData = ConnectAppLinkDataV2(configurationUrl = "https://localhost/api/authenticator/v2/configuration")
+        val initialConnectData = ConnectAppLinkData(configurationUrl = "https://localhost/api/authenticator/v2/configuration")
         val connectionGuid = null
         given(mockInteractor.hasConnection).willReturn(false)
         given(mockInteractor.hasConfigUrl).willReturn(true)
@@ -82,7 +82,7 @@ class ConnectProviderViewModelTest {
     @Throws(Exception::class)
     fun setInitialDataTestCase2() {
         //given
-        val initialConnectData = ConnectAppLinkDataV2(configurationUrl = "https://localhost/api/authenticator/v2/configuration")
+        val initialConnectData = ConnectAppLinkData(configurationUrl = "https://localhost/api/authenticator/v2/configuration")
         val connectionGuid = "guid1"
         given(mockInteractor.hasConnection).willReturn(true)
         given(mockInteractor.hasConfigUrl).willReturn(true)
@@ -218,7 +218,7 @@ class ConnectProviderViewModelTest {
     @Throws(Exception::class)
     fun onResumeTestCase2() {
         //given
-        val initialConnectData = ConnectAppLinkDataV2(configurationUrl = "https://localhost/api/authenticator/v2/configuration")
+        val initialConnectData = ConnectAppLinkData(configurationUrl = "https://localhost/api/authenticator/v2/configuration")
         val connectionGuid = null
         given(mockInteractor.hasConnection).willReturn(false)
         given(mockInteractor.hasConfigUrl).willReturn(true)
@@ -235,7 +235,7 @@ class ConnectProviderViewModelTest {
     @Throws(Exception::class)
     fun onResumeTestCase3() {
         //given
-        val initialConnectData = ConnectAppLinkDataV2(configurationUrl = "https://localhost/api/authenticator/v2/configuration")
+        val initialConnectData = ConnectAppLinkData(configurationUrl = "https://localhost/api/authenticator/v2/configuration")
         val connectionGuid = "guid1"
         given(mockInteractor.hasConnection).willReturn(true)
         given(mockInteractor.hasConfigUrl).willReturn(true)

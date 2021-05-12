@@ -20,8 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.v2.tools
 
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.MatcherAssert.assertThat
+import com.saltedge.authenticator.core.tools.isNotNullOrEmpty
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -35,17 +34,5 @@ class TextToolsTest {
     fun isNotNullOrEmptyTest() {
         Assert.assertFalse("".isNotNullOrEmpty())
         Assert.assertTrue("authenticator".isNotNullOrEmpty())
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun splitToLinesTest() {
-        assertThat("abc".splitToLines(1), equalTo("a\nb\nc"))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun printToLogcatTest() {
-        printToLogcat(tag = "TEST", message = "TEST")
     }
 }

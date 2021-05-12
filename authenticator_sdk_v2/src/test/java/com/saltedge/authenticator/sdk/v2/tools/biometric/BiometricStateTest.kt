@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.v2.tools.biometric
 
+import com.saltedge.authenticator.core.tools.biometric.BiometricState
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test

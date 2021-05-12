@@ -21,11 +21,8 @@
 package com.saltedge.authenticator.sdk.v2.api.model.authorization
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.api.*
-import com.saltedge.authenticator.sdk.v2.tools.json.createDefaultGson
-import com.saltedge.authenticator.sdk.v2.tools.secure.CryptoTools
+import com.saltedge.authenticator.core.api.*
 import java.io.Serializable
-import java.security.PrivateKey
 
 data class AuthorizationsListResponse(@SerializedName(KEY_DATA) var data: List<AuthorizationResponseData>)
 
@@ -42,20 +39,4 @@ data class AuthorizationResponseData(
 
 fun AuthorizationResponseData.isValid(): Boolean {
     return key.isNotEmpty() && iv.isNotEmpty() && data.isNotEmpty() && connectionId.isNotEmpty()
-}
-
-fun AuthorizationResponseData.decrypt(rsaPrivateKey: PrivateKey?): AuthorizationData? {
-    return try {
-        val privateKey = rsaPrivateKey ?: return null
-        val encryptedKey = this.key
-        val encryptedIV = this.iv
-        val encryptedMessage = this.data
-        val key = CryptoTools.rsaDecrypt(encryptedKey, privateKey) ?: return null
-        val iv = CryptoTools.rsaDecrypt(encryptedIV, privateKey) ?: return null
-        val jsonString = CryptoTools.aesDecrypt(encryptedMessage, key = key, iv = iv)
-        createDefaultGson().fromJson(jsonString, AuthorizationData::class.java)
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
-    }
 }

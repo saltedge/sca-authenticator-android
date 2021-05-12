@@ -32,8 +32,14 @@ import com.saltedge.android.test_tools.encryptWithTestKey
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
-import com.saltedge.authenticator.app.KEY_ID
 import com.saltedge.authenticator.app.KEY_OPTION_ID
+import com.saltedge.authenticator.core.api.ERROR_CLASS_CONNECTION_NOT_FOUND
+import com.saltedge.authenticator.core.api.KEY_ID
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.createRequestError
+import com.saltedge.authenticator.core.model.ConnectionStatus
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.features.menu.BottomMenuDialog
@@ -46,15 +52,9 @@ import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionStatus
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.api.model.error.createRequestError
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
-import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_CONNECTION_NOT_FOUND
 import com.saltedge.authenticator.sdk.polling.PollingServiceAbs
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.getErrorMessage
 import com.saltedge.authenticator.widget.security.ActivityUnlockType
 import junit.framework.TestCase.assertNull
@@ -79,7 +79,7 @@ class AuthorizationsListViewModelTest {
     private val testDispatcher = TestCoroutineDispatcher()
     private lateinit var viewModel: AuthorizationsListViewModel
     private val context: Context = ApplicationProvider.getApplicationContext()
-    private val mockKeyStoreManager = mock(KeyStoreManagerAbs::class.java)
+    private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
     private val mockCryptoTools = mock(CryptoToolsAbs::class.java)
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
@@ -97,7 +97,7 @@ class AuthorizationsListViewModelTest {
         createdAt = 200L
         updatedAt = 200L
     }
-    private val mockConnectionAndKey = ConnectionAndKey(mockConnection, CommonTestTools.testPrivateKey)
+    private val mockConnectionAndKey = RichConnection(mockConnection, CommonTestTools.testPrivateKey)
     private val authorizations: List<AuthorizationData> = listOf(createAuthorization(id = 1), createAuthorization(id = 2))
     private val encryptedAuthorizations = authorizations.map { it.encryptWithTestKey() }
     private val items = authorizations.map { it.toAuthorizationItemViewModel(mockConnection) }
@@ -108,9 +108,9 @@ class AuthorizationsListViewModelTest {
         doReturn("GEO:52.506931;13.144558").`when`(mockLocationManager).locationDescription
         doReturn(mockPollingService).`when`(mockApiManager).createAuthorizationsPollingService()
         given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(mockConnection))
-        given(mockKeyStoreManager.createConnectionAndKeyModel(mockConnection)).willReturn(mockConnectionAndKey)
+        given(mockKeyStoreManager.enrichConnection(mockConnection)).willReturn(mockConnectionAndKey)
         encryptedAuthorizations.forEachIndexed { index, encryptedData ->
-            given(mockCryptoTools.decryptAuthorizationData(encryptedData, mockConnectionAndKey.key))
+            given(mockCryptoTools.decryptAuthorizationData(encryptedData, mockConnectionAndKey.private))
                 .willReturn(authorizations[index])
         }
 

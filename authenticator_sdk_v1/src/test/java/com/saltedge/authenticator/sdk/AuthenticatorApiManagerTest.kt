@@ -22,9 +22,9 @@ package com.saltedge.authenticator.sdk
 
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.TestConnection
+import com.saltedge.authenticator.core.model.ConnectionAbs
+import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.contract.*
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.api.model.response.*
 import com.saltedge.authenticator.sdk.api.ApiInterface
 import com.saltedge.authenticator.sdk.api.RestClient
@@ -71,12 +71,8 @@ class AuthenticatorApiManagerTest {
         every { mockApi.revokeConnection(requestUrl = any(), headersMap = any()) } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
         AuthenticatorApiManager.revokeConnections(
-            connectionsAndKeys = listOf(
-                ConnectionAndKey(
-                    requestConnection,
-                    privateKey
-                )
-            ), resultCallback = mockCallback
+            connectionsAndKeys = listOf(RichConnection(requestConnection, privateKey)),
+            resultCallback = mockCallback
         )
 
         verify { mockCall.enqueue(any()) }
@@ -102,9 +98,7 @@ class AuthenticatorApiManagerTest {
         every { mockApi.getAuthorizations(requestUrl = any(), headersMap = any()) } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
         AuthenticatorApiManager.getAuthorizations(
-            connectionsAndKeys = listOf(
-                ConnectionAndKey(requestConnection, privateKey)
-            ),
+            connectionsAndKeys = listOf(RichConnection(requestConnection, privateKey)),
             resultCallback = mockCallback
         )
 
@@ -119,10 +113,9 @@ class AuthenticatorApiManagerTest {
         every { mockApi.getAuthorization(requestUrl = any(), headersMap = any()) } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
         AuthenticatorApiManager.getAuthorization(
-            connectionAndKey = ConnectionAndKey(
-                requestConnection,
-                privateKey
-            ), authorizationId = "444", resultCallback = mockCallback
+            connectionAndKey = RichConnection(requestConnection, privateKey),
+            authorizationId = "444",
+            resultCallback = mockCallback
         )
 
         verify { mockCall.enqueue(any()) }
@@ -142,10 +135,7 @@ class AuthenticatorApiManagerTest {
         } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
         AuthenticatorApiManager.confirmAuthorization(
-            connectionAndKey = ConnectionAndKey(
-                requestConnection,
-                privateKey
-            ),
+            connectionAndKey = RichConnection(requestConnection, privateKey),
             authorizationId = "444",
             authorizationCode = "code",
             geolocation = "GEO:52.506931;13.144558",
@@ -170,10 +160,7 @@ class AuthenticatorApiManagerTest {
         } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
         AuthenticatorApiManager.denyAuthorization(
-            connectionAndKey = ConnectionAndKey(
-                requestConnection,
-                privateKey
-            ),
+            connectionAndKey = RichConnection(requestConnection, privateKey),
             authorizationId = "444",
             authorizationCode = "code",
             geolocation = "GEO:52.506931;13.144558",
@@ -198,10 +185,7 @@ class AuthenticatorApiManagerTest {
         every { mockCall.enqueue(any()) } returns Unit
         AuthenticatorApiManager.sendAction(
             actionUUID = "actionUUID",
-            connectionAndKey = ConnectionAndKey(
-                requestConnection,
-                privateKey
-            ),
+            connectionAndKey = RichConnection(requestConnection, privateKey),
             resultCallback = mockCallback
         )
 
@@ -216,9 +200,7 @@ class AuthenticatorApiManagerTest {
         every { mockApi.getConsents(requestUrl = any(), headersMap = any()) } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
         AuthenticatorApiManager.getConsents(
-            connectionsAndKeys = listOf(
-                ConnectionAndKey(requestConnection, privateKey)
-            ),
+            connectionsAndKeys = listOf(RichConnection(requestConnection, privateKey)),
             resultCallback = mockCallback
         )
 
@@ -239,10 +221,7 @@ class AuthenticatorApiManagerTest {
         every { mockCall.enqueue(any()) } returns Unit
         AuthenticatorApiManager.revokeConsent(
             consentId = "consentId",
-            connectionAndKey = ConnectionAndKey(
-                requestConnection,
-                privateKey
-            ),
+            connectionAndKey = RichConnection(requestConnection, privateKey),
             resultCallback = mockCallback
         )
 

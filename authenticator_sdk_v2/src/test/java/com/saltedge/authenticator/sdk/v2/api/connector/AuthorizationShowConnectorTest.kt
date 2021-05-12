@@ -20,14 +20,13 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.connector
 
-import com.saltedge.android.test_tools.CommonTestTools
+import com.saltedge.authenticator.core.api.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.v2.api.contract.FetchAuthorizationListener
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponse
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
-import com.saltedge.authenticator.sdk.v2.api.model.connection.ConnectionV2Abs
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
-import com.saltedge.authenticator.sdk.v2.api.retrofit.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.v2.defaultTestConnection
 import com.saltedge.authenticator.sdk.v2.get404Response
 import io.mockk.confirmVerified
@@ -44,8 +43,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import retrofit2.Call
 import retrofit2.Response
-import java.security.PrivateKey
-import java.security.PublicKey
 
 @RunWith(RobolectricTestRunner::class)
 class AuthorizationShowConnectorTest {
@@ -133,7 +130,7 @@ class AuthorizationShowConnectorTest {
     }
 
     private val requestUrl = "https://localhost/api/authenticator/v2/authorizations/authId"
-    private val requestConnection: ConnectionV2Abs = defaultTestConnection
+    private val requestConnection: ConnectionAbs = defaultTestConnection
     private val requestAuthorizationId = "authId"
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
     private val mockCallback = mockkClass(FetchAuthorizationListener::class)

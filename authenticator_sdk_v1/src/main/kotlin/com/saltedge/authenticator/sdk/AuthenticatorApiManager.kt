@@ -21,23 +21,23 @@
 package com.saltedge.authenticator.sdk
 
 import android.content.Context
-import com.saltedge.authenticator.sdk.constants.DEFAULT_RETURN_URL
-import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_API_REQUEST
-import com.saltedge.authenticator.sdk.contract.*
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.api.model.request.ConfirmDenyRequestData
+import com.saltedge.authenticator.core.api.ERROR_CLASS_API_REQUEST
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ConnectionAbs
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.model.guard
+import com.saltedge.authenticator.core.tools.secure.KeyManager
+import com.saltedge.authenticator.core.tools.secure.publicKeyToPem
 import com.saltedge.authenticator.sdk.api.RestClient
 import com.saltedge.authenticator.sdk.api.connector.*
+import com.saltedge.authenticator.sdk.api.model.request.ConfirmDenyRequestData
+import com.saltedge.authenticator.sdk.config.ApiV1Config
+import com.saltedge.authenticator.sdk.contract.*
 import com.saltedge.authenticator.sdk.polling.AuthorizationsPollingService
 import com.saltedge.authenticator.sdk.polling.PollingServiceAbs
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
-import com.saltedge.authenticator.sdk.tools.buildUserAgent
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
 
 interface AuthenticatorApiManagerAbs {
-    var authenticationReturnUrl: String
     fun initializeSDK(context: Context)
     fun getProviderConfigurationData(
         providerConfigurationUrl: String,
@@ -59,22 +59,22 @@ interface AuthenticatorApiManagerAbs {
         resultCallback: ConnectionCreateListener
     )
     fun revokeConnections(
-        connectionsAndKeys: List<ConnectionAndKey>,
+        connectionsAndKeys: List<RichConnection>,
         resultCallback: ConnectionsRevokeListener?
     )
     fun getAuthorizations(
-        connectionsAndKeys: List<ConnectionAndKey>,
+        connectionsAndKeys: List<RichConnection>,
         resultCallback: FetchEncryptedDataListener
     )
     fun createAuthorizationsPollingService(): PollingServiceAbs<FetchAuthorizationsContract>
     fun getAuthorization(
-        connectionAndKey: ConnectionAndKey,
+        connectionAndKey: RichConnection,
         authorizationId: String,
         resultCallback: FetchAuthorizationListener
     )
     fun createSingleAuthorizationPollingService(): SingleAuthorizationPollingService
     fun confirmAuthorization(
-        connectionAndKey: ConnectionAndKey,
+        connectionAndKey: RichConnection,
         authorizationId: String,
         authorizationCode: String?,
         geolocation: String?,
@@ -82,7 +82,7 @@ interface AuthenticatorApiManagerAbs {
         resultCallback: ConfirmAuthorizationListener
     )
     fun denyAuthorization(
-        connectionAndKey: ConnectionAndKey,
+        connectionAndKey: RichConnection,
         authorizationId: String,
         authorizationCode: String?,
         geolocation: String?,
@@ -91,16 +91,16 @@ interface AuthenticatorApiManagerAbs {
     )
     fun sendAction(
         actionUUID: String,
-        connectionAndKey: ConnectionAndKey,
+        connectionAndKey: RichConnection,
         resultCallback: ActionSubmitListener
     )
     fun getConsents(
-        connectionsAndKeys: List<ConnectionAndKey>,
+        connectionsAndKeys: List<RichConnection>,
         resultCallback: FetchEncryptedDataListener
     )
     fun revokeConsent(
         consentId: String,
-        connectionAndKey: ConnectionAndKey,
+        connectionAndKey: RichConnection,
         resultCallback: ConsentRevokeListener
     )
 }
@@ -111,19 +111,12 @@ interface AuthenticatorApiManagerAbs {
 object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
 
     /**
-     * Url where WebView will be redirected on enrollment finish
-     */
-    override var authenticationReturnUrl: String = DEFAULT_RETURN_URL
-    var userAgentInfo = ""
-        private set
-
-    /**
      * Initialize SDK
      *
      * @param context of Application
      */
     override fun initializeSDK(context: Context) {
-        userAgentInfo = buildUserAgent(context)
+        ApiV1Config.setupConfig(context)
     }
 
     /**
@@ -171,21 +164,23 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
         connectQueryParam: String?,
         resultCallback: ConnectionCreateListener
     ) {
-        val publicKey = KeyStoreManager.createRsaPublicKeyAsString(appContext, connection.guid)
-        if (publicKey == null) {
+        val appRsaPublicKey = KeyManager.createOrReplaceRsaKeyPair(
+            context = appContext,
+            alias = connection.guid
+        )?.public.guard {
             resultCallback.onConnectionCreateFailure(
                 ApiErrorData(errorClassName = ERROR_CLASS_API_REQUEST, errorMessage = "Secure material is unavailable")
             )
-        } else {
-            createConnectionRequest(
-                baseUrl = connection.connectUrl,
-                publicKey = publicKey,
-                pushToken = pushToken,
-                providerCode = connection.code,
-                connectQueryParam = connectQueryParam,
-                resultCallback = resultCallback
-            )
+            return
         }
+        createConnectionRequest(
+            baseUrl = connection.connectUrl,
+            publicKey = appRsaPublicKey.publicKeyToPem(),
+            pushToken = pushToken,
+            providerCode = connection.code,
+            connectQueryParam = connectQueryParam,
+            resultCallback = resultCallback
+        )
     }
 
     /**
@@ -193,7 +188,7 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
      * Result is returned through callback.
      */
     override fun revokeConnections(
-        connectionsAndKeys: List<ConnectionAndKey>,
+        connectionsAndKeys: List<RichConnection>,
         resultCallback: ConnectionsRevokeListener?
     ) {
         ConnectionsRevokeConnector(RestClient.apiInterface, resultCallback)
@@ -205,7 +200,7 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
      * Result is returned through callback.
      */
     override fun getAuthorizations(
-        connectionsAndKeys: List<ConnectionAndKey>,
+        connectionsAndKeys: List<RichConnection>,
         resultCallback: FetchEncryptedDataListener
     ) {
         AuthorizationsConnector(RestClient.apiInterface, resultCallback)
@@ -224,7 +219,7 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
      * Result is returned through callback.
      */
     override fun getAuthorization(
-        connectionAndKey: ConnectionAndKey,
+        connectionAndKey: RichConnection,
         authorizationId: String,
         resultCallback: FetchAuthorizationListener
     ) {
@@ -243,7 +238,7 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
      * Result is returned through callback.
      */
     override fun confirmAuthorization(
-        connectionAndKey: ConnectionAndKey,
+        connectionAndKey: RichConnection,
         authorizationId: String,
         authorizationCode: String?,
         geolocation: String?,
@@ -268,7 +263,7 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
      * Result is returned through callback.
      */
     override fun denyAuthorization(
-        connectionAndKey: ConnectionAndKey,
+        connectionAndKey: RichConnection,
         authorizationId: String,
         authorizationCode: String?,
         geolocation: String?,
@@ -294,7 +289,7 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
      */
     override fun sendAction(
         actionUUID: String,
-        connectionAndKey: ConnectionAndKey,
+        connectionAndKey: RichConnection,
         resultCallback: ActionSubmitListener
     ) {
         SubmitActionConnector(RestClient.apiInterface, resultCallback)
@@ -309,7 +304,7 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
      * Result is returned via callback.
      */
     override fun getConsents(
-        connectionsAndKeys: List<ConnectionAndKey>,
+        connectionsAndKeys: List<RichConnection>,
         resultCallback: FetchEncryptedDataListener
     ) {
         ConsentsConnector(RestClient.apiInterface, connectionsAndKeys, resultCallback).fetchConsents()
@@ -320,7 +315,7 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
      */
     override fun revokeConsent(
         consentId: String,
-        connectionAndKey: ConnectionAndKey,
+        connectionAndKey: RichConnection,
         resultCallback: ConsentRevokeListener
     ) {
         ConsentRevokeConnector(RestClient.apiInterface, resultCallback).revokeConsent(consentId, connectionAndKey)

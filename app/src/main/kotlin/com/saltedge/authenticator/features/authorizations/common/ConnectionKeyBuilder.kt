@@ -20,11 +20,11 @@
  */
 package com.saltedge.authenticator.features.authorizations.common
 
+import com.saltedge.authenticator.core.model.ConnectionAbs
+import com.saltedge.authenticator.core.model.ConnectionID
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.sdk.api.model.ConnectionID
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 
 /**
  * Collects all active Connections and related Private Keys
@@ -33,10 +33,10 @@ import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
  * @param keyStoreManager data source of keys
  * @return Map<ConnectionID, ConnectionAndKey)
  */
-fun collectConnectionsAndKeys(
+fun collectRichConnections(
     repository: ConnectionsRepositoryAbs,
-    keyStoreManager: KeyStoreManagerAbs
-): Map<ConnectionID, ConnectionAndKey> {
+    keyStoreManager: KeyManagerAbs
+): Map<ConnectionID, RichConnection> {
     return repository.getAllActiveConnections().mapNotNull {
         it.getPrivateKeyForConnection(keyStoreManager)
     }.toMap()
@@ -53,10 +53,10 @@ fun collectConnectionsAndKeys(
 fun createConnectionAndKey(
     connectionID: ConnectionID,
     repository: ConnectionsRepositoryAbs,
-    keyStoreManager: KeyStoreManagerAbs
-): ConnectionAndKey? {
+    keyStoreManager: KeyManagerAbs
+): RichConnection? {
     return repository.getById(connectionID)?.let { connection ->
-        keyStoreManager.createConnectionAndKeyModel(connection)
+        keyStoreManager.enrichConnection(connection)
     }
 }
 
@@ -68,9 +68,9 @@ fun createConnectionAndKey(
  * @return Pair<ConnectionID, ConnectionAndKey)
  */
 private fun ConnectionAbs.getPrivateKeyForConnection(
-    keyStoreManager: KeyStoreManagerAbs
-): Pair<ConnectionID, ConnectionAndKey>? {
-    return keyStoreManager.createConnectionAndKeyModel(this)?.let { model ->
+    keyStoreManager: KeyManagerAbs
+): Pair<ConnectionID, RichConnection>? {
+    return keyStoreManager.enrichConnection(this)?.let { model ->
         Pair(this.id, model)
     }
 }

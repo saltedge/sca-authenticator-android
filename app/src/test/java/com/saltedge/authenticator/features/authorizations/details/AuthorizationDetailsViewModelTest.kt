@@ -26,6 +26,14 @@ import androidx.lifecycle.LifecycleRegistry
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.app.AppTools
+import com.saltedge.authenticator.core.api.ERROR_CLASS_CONNECTION_NOT_FOUND
+import com.saltedge.authenticator.core.api.ERROR_CLASS_SSL_HANDSHAKE
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.createRequestError
+import com.saltedge.authenticator.core.model.ConnectionAbs
+import com.saltedge.authenticator.core.model.ConnectionStatus
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
@@ -34,20 +42,12 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_CONNECTION_NOT_FOUND
-import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_SSL_HANDSHAKE
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionStatus
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.api.model.error.createRequestError
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.widget.security.ActivityUnlockType
 import junit.framework.Assert.assertTrue
 import org.hamcrest.CoreMatchers.*
@@ -67,7 +67,7 @@ class AuthorizationDetailsViewModelTest {
 
     private lateinit var viewModel: AuthorizationDetailsViewModel
 
-    private val mockKeyStoreManager = mock(KeyStoreManagerAbs::class.java)
+    private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
     private val mockCryptoTools = mock(CryptoToolsAbs::class.java)
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
@@ -124,8 +124,8 @@ class AuthorizationDetailsViewModelTest {
         doReturn(connection2).`when`(mockConnectionsRepository).getById("2_noKey")
         doReturn(mockPollingService).`when`(mockApiManager)
             .createSingleAuthorizationPollingService()
-        doReturn(ConnectionAndKey(connection1, mockPrivateKey))
-            .`when`(mockKeyStoreManager).createConnectionAndKeyModel(connection1)
+        doReturn(RichConnection(connection1, mockPrivateKey))
+            .`when`(mockKeyStoreManager).enrichConnection(connection1)
         doReturn(null).`when`(mockKeyStoreManager).getKeyPair("guid2")
         doReturn(authorizationData1).`when`(mockCryptoTools)
             .decryptAuthorizationData(
@@ -329,7 +329,7 @@ class AuthorizationDetailsViewModelTest {
         verify(mockPollingService).stop()
         assertThat(viewModel.authorizationModel.value!!.viewMode, equalTo(ViewMode.CONFIRM_PROCESSING))
         verify(mockApiManager).confirmAuthorization(
-            connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
+            connectionAndKey = RichConnection(connection1, mockPrivateKey),
             authorizationId = "1",
             authorizationCode = "111",
             geolocation = "GEO:52.506931;13.144558",
@@ -353,7 +353,7 @@ class AuthorizationDetailsViewModelTest {
         verify(mockPollingService).stop()
         assertThat(viewModel.authorizationModel.value!!.viewMode, equalTo(ViewMode.DENY_PROCESSING))
         verify(mockApiManager).denyAuthorization(
-            connectionAndKey = ConnectionAndKey(connection1, mockPrivateKey),
+            connectionAndKey = RichConnection(connection1, mockPrivateKey),
             authorizationId = "1",
             authorizationCode = "111",
             geolocation = "GEO:52.506931;13.144558",
@@ -587,7 +587,7 @@ class AuthorizationDetailsViewModelTest {
 
         assertThat(
             viewModel.getConnectionDataForAuthorizationPolling(),
-            equalTo(ConnectionAndKey(connection1 as ConnectionAbs, mockPrivateKey))
+            equalTo(RichConnection(connection1 as ConnectionAbs, mockPrivateKey))
         )
     }
 

@@ -21,11 +21,13 @@
 package com.saltedge.authenticator.models.repository
 
 import com.saltedge.authenticator.app.*
+import com.saltedge.authenticator.core.api.KEY_ID
+import com.saltedge.authenticator.core.api.KEY_STATUS
+import com.saltedge.authenticator.core.model.ConnectionStatus
+import com.saltedge.authenticator.core.model.GUID
+import com.saltedge.authenticator.core.model.Token
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.realm.RealmManager
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionStatus
-import com.saltedge.authenticator.sdk.api.model.GUID
-import com.saltedge.authenticator.sdk.api.model.Token
 import io.realm.Realm
 import io.realm.RealmQuery
 import org.joda.time.DateTime

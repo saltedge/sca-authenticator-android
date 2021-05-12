@@ -23,6 +23,8 @@ package com.saltedge.authenticator.app
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.actions.SubmitActionViewModel
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsViewModel
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListViewModel
@@ -47,9 +49,7 @@ import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClient
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import kotlinx.coroutines.Dispatchers
@@ -62,7 +62,7 @@ class ViewModelsFactory @Inject constructor(
     val cryptoTools: CryptoToolsAbs,
     val preferenceRepository: PreferenceRepositoryAbs,
     val connectionsRepository: ConnectionsRepositoryAbs,
-    val keyStoreManager: KeyStoreManagerAbs,
+    val keyStoreManager: KeyManagerAbs,
     val realmManager: RealmManagerAbs,
     val apiManagerV1: AuthenticatorApiManagerAbs,
     val apiManagerV2: ScaServiceClient,

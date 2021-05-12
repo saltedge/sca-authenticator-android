@@ -22,7 +22,7 @@ package com.saltedge.authenticator.app.di
 
 import android.os.Build
 import com.saltedge.authenticator.TestAppTools
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptManagerV28
 import com.saltedge.authenticator.widget.biometric.BiometricsInputDialog
 import org.junit.Assert.assertNotNull

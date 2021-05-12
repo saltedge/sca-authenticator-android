@@ -25,8 +25,10 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.fingerprint.FingerprintManager
 import android.os.Build
+import com.saltedge.authenticator.core.tools.biometric.BiometricTools
+import com.saltedge.authenticator.core.tools.biometric.FINGERPRINT_ALIAS_FOR_PIN
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.sdk.testTools.TestTools
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import io.mockk.every
 import io.mockk.mockkClass
 import org.hamcrest.CoreMatchers.equalTo
@@ -135,6 +137,6 @@ class BiometricToolsTest {
 
     private val mockContext: Context = mockkClass(Context::class)
     private var mockFingerprintManager: FingerprintManager? = null
-    private val mockKeyStoreManager = mockkClass(KeyStoreManagerAbs::class)
+    private val mockKeyStoreManager = mockkClass(KeyManagerAbs::class)
     private val biometricTools = BiometricTools(mockContext, mockKeyStoreManager)
 }

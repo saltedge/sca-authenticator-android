@@ -22,16 +22,17 @@ package com.saltedge.authenticator.sdk.api.connector
 
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.getDefaultTestConnection
-import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_API_RESPONSE
-import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_HOST_UNREACHABLE
+import com.saltedge.authenticator.core.api.ERROR_CLASS_API_RESPONSE
+import com.saltedge.authenticator.core.api.ERROR_CLASS_HOST_UNREACHABLE
+import com.saltedge.authenticator.core.api.HEADER_KEY_ACCESS_TOKEN
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ConnectionAbs
+import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAbs
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
+
 import com.saltedge.authenticator.sdk.api.model.response.RevokeAccessTokenResponse
 import com.saltedge.authenticator.sdk.api.model.response.RevokeAccessTokenResponseData
 import com.saltedge.authenticator.sdk.api.ApiInterface
-import com.saltedge.authenticator.sdk.api.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.testTools.get404Response
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -68,7 +69,7 @@ class ConnectionsRevokeConnectorTest {
     @Throws(Exception::class)
     fun revokeTokensForTest_allSuccess() {
         val connector = ConnectionsRevokeConnector(mockApi, mockCallback)
-        connector.revokeTokensFor(listOf(ConnectionAndKey(requestConnection, privateKey)))
+        connector.revokeTokensFor(listOf(RichConnection(requestConnection, privateKey)))
 
         verify { mockCall.enqueue(connector) }
 
@@ -76,19 +77,13 @@ class ConnectionsRevokeConnectorTest {
             mockCall,
             Response.success(
                 RevokeAccessTokenResponse(
-                    RevokeAccessTokenResponseData(
-                        success = true,
-                        accessToken = "accessToken"
-                    )
+                    RevokeAccessTokenResponseData(success = true, accessToken = "accessToken")
                 )
             )
         )
 
         verify {
-            mockCallback.onConnectionsRevokeResult(
-                revokedTokens = listOf("accessToken"),
-                apiError = null
-            )
+            mockCallback.onConnectionsRevokeResult(revokedTokens = listOf("accessToken"), apiError = null)
         }
         confirmVerified(mockCallback)
     }
@@ -97,7 +92,7 @@ class ConnectionsRevokeConnectorTest {
     @Throws(Exception::class)
     fun revokeTokensForTest_withError404() {
         val connector = ConnectionsRevokeConnector(mockApi, mockCallback)
-        connector.revokeTokensFor(listOf(ConnectionAndKey(requestConnection, privateKey)))
+        connector.revokeTokensFor(listOf(RichConnection(requestConnection, privateKey)))
 
         verify { mockCall.enqueue(connector) }
 

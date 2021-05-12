@@ -52,10 +52,7 @@ open class SingleAuthorizationPollingService : PollingServiceAbs<FetchAuthorizat
     override fun forcedFetch() {
         try {
             contract?.getConnectionDataForAuthorizationPolling()?.let {
-                connector?.getAuthorization(
-                    connectionAndKey = it,
-                    authorizationId = authorizationId
-                )
+                connector?.getAuthorization(connectionAndKey = it, authorizationId = authorizationId)
             }
         } catch (e: Exception) {
             e.printStackTrace()

@@ -22,8 +22,6 @@ package com.saltedge.authenticator.sdk.constants
 
 // Static links
 const val DEFAULT_HOST = "https://www.saltedge.com"
-const val TERMS_LINK = "https://www.saltedge.com/pages/authenticator_terms"
-const val DEFAULT_SUPPORT_EMAIL_LINK = "authenticator@saltedge.com"
 
 // API endpoints
 const val API_VERSION = "1"
@@ -32,67 +30,6 @@ const val API_CONNECTIONS = "$API_VERSION_NAMESPACE/connections"
 const val API_AUTHORIZATIONS = "$API_VERSION_NAMESPACE/authorizations"
 const val API_ACTIONS = "$API_VERSION_NAMESPACE/actions"
 const val API_CONSENTS = "$API_VERSION_NAMESPACE/consents"
-
-const val DEFAULT_RETURN_URL = "authenticator://oauth/redirect"
-const val DEFAULT_PLATFORM_NAME = "android"
-const val DEFAULT_EXPIRATION_MINUTES = 5
-
-// Model fields
-const val KEY_DATA = "data"
-const val KEY_PUBLIC_KEY = "public_key"
-const val KEY_RETURN_URL = "return_url"
-const val KEY_PUSH_TOKEN = "push_token"
-const val KEY_CONNECT_QUERY = "connect_query"
-const val KEY_PLATFORM = "platform"
-const val KEY_ERROR_CLASS = "error_class"
-const val KEY_ERROR_MESSAGE = "error_message"
-const val KEY_IV = "iv"
-const val KEY_KEY = "key"
-const val KEY_ALGORITHM = "algorithm"
-
-const val KEY_ID = "id"
-const val KEY_AUTHORIZATION_ID = "authorization_id"
-const val KEY_CONNECTION_ID = "connection_id"
-const val KEY_USER_ID = "user_id"
-const val KEY_CONSENT_ID = "consent_id"
-const val KEY_CONNECT_URL = "connect_url"
-const val KEY_LOGO_URL = "logo_url"
-const val KEY_ACCESS_TOKEN = "access_token"
-const val KEY_CONFIRM = "confirm"
-const val KEY_AUTHORIZATION_CODE = "authorization_code"
-const val KEY_CODE = "code"
-const val KEY_CREATED_AT = "created_at"
-const val KEY_UPDATED_AT = "updated_at"
-
-const val KEY_TITLE = "title"
-const val KEY_DESCRIPTION = "description"
-const val KEY_EXPIRES_AT = "expires_at"
-const val KEY_PROVIDER_CODE = "provider_code"
-const val KEY_NAME = "name"
-const val KEY_SUCCESS = "success"
-const val KEY_VERSION = "version"
-const val KEY_SUPPORT_EMAIL = "support_email"
-const val KEY_CONSENT_MANAGEMENT = "consent_management"
-const val KEY_GEOLOCATION_REQUIRED = "geolocation_required"
-const val KEY_CONSENT_TYPE = "consent_type"
-const val KEY_TPP_NAME = "tpp_name"
-const val KEY_ACCOUNTS = "accounts"
-const val KEY_SHARED_DATA = "shared_data"
-const val KEY_ACCOUNT_NUMBER = "account_number"
-const val KEY_SORT_CODE = "sort_code"
-const val KEY_IBAN = "iban"
-const val KEY_BALANCE = "balance"
-const val KEY_TRANSACTIONS = "transactions"
-
-// Error classes
-const val ERROR_CLASS_AUTHENTICATION_RESPONSE = "AuthenticationError"
-const val ERROR_CLASS_API_RESPONSE = "ApiResponseError"
-const val ERROR_CLASS_API_REQUEST = "ApiRequestError"
-const val ERROR_CLASS_HOST_UNREACHABLE = "HostUnreachable"
-const val ERROR_CLASS_SSL_HANDSHAKE = "SSLHandshakeException"
-const val ERROR_CLASS_CONNECTION_NOT_FOUND = "ConnectionNotFound"
-const val ERROR_CLASS_AUTHORIZATION_NOT_FOUND = "AuthorizationNotFound"
-const val ERROR_CLASS_INVALID_DEEPLINK = "InvalidDeeplink"
 
 // REQUEST METHODS
 const val REQUEST_METHOD_GET = "GET"

@@ -38,12 +38,12 @@ import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.app.buildVersion26orGreater
+import com.saltedge.authenticator.core.tools.secure.KeyManager
 import com.saltedge.authenticator.features.main.buildWarningSnack
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.models.repository.ConnectionsRepository
 import com.saltedge.authenticator.models.repository.PreferenceRepository
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
@@ -71,7 +71,7 @@ abstract class LockableActivity : AppCompatActivity(),
         connectionsRepository = ConnectionsRepository,
         preferenceRepository = PreferenceRepository,
         passcodeTools = PasscodeTools,
-        keyStoreManager = KeyStoreManager,
+        keyStoreManager = KeyManager,
         apiManager = AuthenticatorApiManager
     )
     private var biometricPrompt: BiometricPromptAbs? = null

@@ -22,6 +22,8 @@ package com.saltedge.authenticator.app.di
 
 import android.content.Context
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.actions.SubmitActionFragment
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsFragment
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListFragment
@@ -42,8 +44,6 @@ import com.saltedge.authenticator.features.settings.passcode.PasscodeEditFragmen
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.security.LockableActivity
@@ -56,7 +56,7 @@ interface AppComponent {
     fun appContext(): Context
     fun preferenceRepository(): PreferenceRepositoryAbs
     fun connectionsRepository(): ConnectionsRepositoryAbs
-    fun keyStoreManager(): KeyStoreManagerAbs
+    fun keyStoreManager(): KeyManagerAbs
     fun passcodeTools(): PasscodeToolsAbs
     fun biometricTools(): BiometricToolsAbs
     fun biometricPrompt(): BiometricPromptAbs?

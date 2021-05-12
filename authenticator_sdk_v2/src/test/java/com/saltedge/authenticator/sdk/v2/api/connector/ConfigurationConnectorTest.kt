@@ -23,7 +23,7 @@ package com.saltedge.authenticator.sdk.v2.api.connector
 import com.saltedge.authenticator.sdk.v2.api.contract.FetchConfigurationListener
 import com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationDataV2
 import com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationResponse
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import com.saltedge.authenticator.sdk.v2.get404Response
 import io.mockk.confirmVerified

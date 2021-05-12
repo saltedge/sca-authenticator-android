@@ -21,16 +21,16 @@
 package com.saltedge.authenticator.sdk.v2.api.connector
 
 import com.saltedge.android.test_tools.CommonTestTools
-import com.saltedge.authenticator.sdk.v2.api.ERROR_CLASS_API_RESPONSE
-import com.saltedge.authenticator.sdk.v2.api.ERROR_CLASS_HOST_UNREACHABLE
+import com.saltedge.authenticator.core.api.ERROR_CLASS_API_RESPONSE
+import com.saltedge.authenticator.core.api.ERROR_CLASS_HOST_UNREACHABLE
+import com.saltedge.authenticator.core.api.HEADER_KEY_ACCESS_TOKEN
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ConnectionAbs
+import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionsRevokeListener
-import com.saltedge.authenticator.sdk.v2.api.model.connection.ConnectionV2Abs
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionResponse
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionResponseData
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
-import com.saltedge.authenticator.sdk.v2.api.retrofit.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.v2.defaultTestConnection
 import com.saltedge.authenticator.sdk.v2.get404Response
 import io.mockk.confirmVerified
@@ -167,7 +167,7 @@ class ConnectionsRevokeConnectorTest {
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
     private val mockCallback: ConnectionsRevokeListener = mockkClass(ConnectionsRevokeListener::class)
     private val mockCall = mockkClass(Call::class) as Call<RevokeConnectionResponse>
-    private val requestConnection: ConnectionV2Abs = defaultTestConnection
+    private val requestConnection: ConnectionAbs = defaultTestConnection
     private val privateKey: PrivateKey = CommonTestTools.testPrivateKey
     private val publicKey: PublicKey = CommonTestTools.testPublicKey
     private val richConnection = RichConnection(requestConnection, privateKey, publicKey)

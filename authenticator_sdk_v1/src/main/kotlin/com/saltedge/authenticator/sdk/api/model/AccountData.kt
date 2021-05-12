@@ -21,10 +21,10 @@
 package com.saltedge.authenticator.sdk.api.model
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.constants.KEY_ACCOUNT_NUMBER
-import com.saltedge.authenticator.sdk.constants.KEY_IBAN
-import com.saltedge.authenticator.sdk.constants.KEY_NAME
-import com.saltedge.authenticator.sdk.constants.KEY_SORT_CODE
+import com.saltedge.authenticator.core.api.KEY_ACCOUNT_NUMBER
+import com.saltedge.authenticator.core.api.KEY_IBAN
+import com.saltedge.authenticator.core.api.KEY_NAME
+import com.saltedge.authenticator.core.api.KEY_SORT_CODE
 import java.io.Serializable
 
 /**

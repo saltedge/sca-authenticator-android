@@ -27,10 +27,10 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.app.AppTools
+import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
@@ -47,7 +47,7 @@ class LockableActivityViewModelTest {
     private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
     private val mockPreferenceRepository = Mockito.mock(PreferenceRepositoryAbs::class.java)
     private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)
-    private val mockKeyStoreManager = Mockito.mock(KeyStoreManagerAbs::class.java)
+    private val mockKeyStoreManager = Mockito.mock(KeyManagerAbs::class.java)
     private val mockAuthenticatorApiManager = Mockito.mock(AuthenticatorApiManagerAbs::class.java)
     private val mockBiometricTools = Mockito.mock(BiometricToolsAbs::class.java)
 

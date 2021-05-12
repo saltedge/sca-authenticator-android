@@ -20,18 +20,20 @@
  */
 package com.saltedge.authenticator.sdk.api.connector
 
+import com.saltedge.authenticator.core.api.ApiResponseInterceptor
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.createInvalidResponseError
+import com.saltedge.authenticator.core.model.AuthorizationID
+import com.saltedge.authenticator.core.model.ConnectionID
+import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.constants.API_AUTHORIZATIONS
 import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_PUT
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
 import com.saltedge.authenticator.sdk.api.model.*
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.api.model.error.createInvalidResponseError
 import com.saltedge.authenticator.sdk.api.model.request.ConfirmDenyRequestData
 import com.saltedge.authenticator.sdk.api.model.request.ConfirmDenyRequest
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponse
 import com.saltedge.authenticator.sdk.api.ApiInterface
-import com.saltedge.authenticator.sdk.api.ApiResponseInterceptor
 import com.saltedge.authenticator.sdk.api.addAuthorizationTypeHeader
 import com.saltedge.authenticator.sdk.api.addLocationHeader
 import retrofit2.Call
@@ -45,7 +47,7 @@ internal class ConfirmOrDenyConnector(
     private var authorizationId: AuthorizationID = ""
 
     fun updateAuthorization(
-        connectionAndKey: ConnectionAndKey,
+        connectionAndKey: RichConnection,
         authorizationId: String,
         geolocationHeader: String?,
         authorizationTypeHeader: String?,
@@ -59,7 +61,7 @@ internal class ConfirmOrDenyConnector(
             baseUrl = connectionAndKey.connection.connectUrl,
             apiRoutePath = "$API_AUTHORIZATIONS/$authorizationId",
             accessToken = connectionAndKey.connection.accessToken,
-            signPrivateKey = connectionAndKey.key,
+            signPrivateKey = connectionAndKey.private,
             requestBodyObject = requestBody
         )
         apiInterface.updateAuthorization(

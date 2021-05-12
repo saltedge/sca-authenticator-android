@@ -21,14 +21,14 @@
 package com.saltedge.authenticator.sdk.v2.api.connector
 
 import com.saltedge.android.test_tools.CommonTestTools
+import com.saltedge.authenticator.core.api.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.v2.api.contract.FetchAuthorizationsListener
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationsListResponse
-import com.saltedge.authenticator.sdk.v2.api.model.connection.ConnectionV2Abs
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
-import com.saltedge.authenticator.sdk.v2.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ConnectionAbs
+import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
-import com.saltedge.authenticator.sdk.v2.api.retrofit.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.v2.api.retrofit.RestClient
 import com.saltedge.authenticator.sdk.v2.defaultTestConnection
 import com.saltedge.authenticator.sdk.v2.get404Response
@@ -134,7 +134,7 @@ class AuthorizationsIndexConnectorTest {
     }
 
     private val requestUrl = "https://localhost/api/authenticator/v2/authorizations"
-    private val requestConnection: ConnectionV2Abs = defaultTestConnection
+    private val requestConnection: ConnectionAbs = defaultTestConnection
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
     private val mockCallback = mockk<FetchAuthorizationsListener>(relaxed = true)
     private val mockCall = mockkClass(Call::class) as Call<AuthorizationsListResponse>

@@ -21,9 +21,9 @@
 package com.saltedge.authenticator.sdk.api.model.response
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.constants.KEY_ACCESS_TOKEN
-import com.saltedge.authenticator.sdk.constants.KEY_DATA
-import com.saltedge.authenticator.sdk.constants.KEY_SUCCESS
+import com.saltedge.authenticator.core.api.KEY_ACCESS_TOKEN
+import com.saltedge.authenticator.core.api.KEY_DATA
+import com.saltedge.authenticator.core.api.KEY_SUCCESS
 
 data class RevokeAccessTokenResponse(
     @SerializedName(KEY_DATA) var data: RevokeAccessTokenResponseData? = null

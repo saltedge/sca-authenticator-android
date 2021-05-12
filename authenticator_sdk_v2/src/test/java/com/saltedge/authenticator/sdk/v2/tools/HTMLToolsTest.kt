@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.v2.tools
 
+import com.saltedge.authenticator.core.tools.hasHTMLTags
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
 import org.junit.Test

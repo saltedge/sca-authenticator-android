@@ -28,15 +28,15 @@ import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.sdk.api.model.ConsentSharedData
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionStatus
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.api.model.response.ConsentRevokeResponseData
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.TestAppTools
+import com.saltedge.authenticator.core.api.KEY_DATA
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ConnectionStatus
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.tools.toDateFormatString
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -58,7 +58,7 @@ class ConsentDetailsViewModelTest {
     private lateinit var viewModel: ConsentDetailsViewModel
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
-    private val mockKeyStoreManager = mock(KeyStoreManagerAbs::class.java)
+    private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
     private val defaultConnection = Connection().apply {
@@ -70,7 +70,7 @@ class ConsentDetailsViewModelTest {
             createdAt = 0L
             updatedAt = 0L
         }
-    private val mockConnectionAndKey = ConnectionAndKey(defaultConnection, mockPrivateKey)
+    private val mockConnectionAndKey = RichConnection(defaultConnection, mockPrivateKey)
     private val defaultConsent = ConsentData(
         id = "consent1",
         userId = "user1",
@@ -86,7 +86,7 @@ class ConsentDetailsViewModelTest {
     @Before
     fun setUp() {
         Mockito.doReturn(defaultConnection).`when`(mockConnectionsRepository).getByGuid("connection1")
-        given(mockKeyStoreManager.createConnectionAndKeyModel(defaultConnection)).willReturn(mockConnectionAndKey)
+        given(mockKeyStoreManager.enrichConnection(defaultConnection)).willReturn(mockConnectionAndKey)
 
         viewModel = ConsentDetailsViewModel(
             appContext = context,

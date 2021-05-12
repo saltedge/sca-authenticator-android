@@ -31,21 +31,21 @@ import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.navArgs
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.app.guid
+import com.saltedge.authenticator.core.api.KEY_DATA
+import com.saltedge.authenticator.core.model.ConnectAppLinkData
+import com.saltedge.authenticator.core.web.ConnectWebClient
+import com.saltedge.authenticator.core.web.ConnectWebClientContract
 import com.saltedge.authenticator.databinding.ConnectProviderBinding
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManager
-import com.saltedge.authenticator.sdk.constants.KEY_DATA
-import com.saltedge.authenticator.sdk.v2.api.model.appLink.ConnectAppLinkDataV2
-import com.saltedge.authenticator.sdk.web.ConnectWebClient
-import com.saltedge.authenticator.sdk.web.ConnectWebClientContract
+import com.saltedge.authenticator.sdk.v2.config.ApiV2Config
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.popBackStack
 import com.saltedge.authenticator.tools.showErrorDialog
@@ -61,7 +61,10 @@ class ConnectProviderFragment : BaseFragment(),
 {
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: ConnectProviderViewModel
-    private val webViewClient = ConnectWebClient(contract = this)
+    private val webViewClient = ConnectWebClient(
+        authenticationReturnUrl = ApiV2Config.authenticationReturnUrl,
+        contract = this
+    )
     private lateinit var binding: ConnectProviderBinding
     private var alertDialog: AlertDialog? = null
 
@@ -129,7 +132,7 @@ class ConnectProviderFragment : BaseFragment(),
     }
 
     private fun setupViewModel() {
-        val appLinkData = arguments?.getSerializable(KEY_DATA) as? ConnectAppLinkDataV2
+        val appLinkData = arguments?.getSerializable(KEY_DATA) as? ConnectAppLinkData
         viewModelFactory.setScaApiVersion(appLinkData?.apiVersion)
         viewModel = ViewModelProvider(this, viewModelFactory).get(ConnectProviderViewModel::class.java)
         lifecycle.addObserver(viewModel)

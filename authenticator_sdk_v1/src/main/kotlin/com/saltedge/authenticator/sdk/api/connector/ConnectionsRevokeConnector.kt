@@ -20,15 +20,15 @@
  */
 package com.saltedge.authenticator.sdk.api.connector
 
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.model.Token
+import com.saltedge.authenticator.sdk.api.ApiInterface
+import com.saltedge.authenticator.sdk.api.model.request.SignedRequest
+import com.saltedge.authenticator.sdk.api.model.response.RevokeAccessTokenResponse
 import com.saltedge.authenticator.sdk.constants.API_CONNECTIONS
 import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_DELETE
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.Token
-import com.saltedge.authenticator.sdk.api.model.request.SignedRequest
-import com.saltedge.authenticator.sdk.api.model.response.RevokeAccessTokenResponse
-import com.saltedge.authenticator.sdk.api.ApiInterface
 import retrofit2.Call
 
 /**
@@ -51,7 +51,7 @@ internal class ConnectionsRevokeConnector(
      *
      * @param connections - list of ConnectionAndKey (alias to Pairs of Connection and related PrivateKey)
      */
-    fun revokeTokensFor(connections: List<ConnectionAndKey>) {
+    fun revokeTokensFor(connections: List<RichConnection>) {
         if (super.queueIsEmpty()) {
             val requestData: List<SignedRequest> = connections.map { (connection, key) ->
                 createSignedRequestData<Nothing>(

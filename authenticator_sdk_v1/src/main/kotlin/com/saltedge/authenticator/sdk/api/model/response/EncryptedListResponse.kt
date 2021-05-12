@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.sdk.api.model.response
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.constants.KEY_DATA
+import com.saltedge.authenticator.core.api.KEY_DATA
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
 
 data class EncryptedListResponse(

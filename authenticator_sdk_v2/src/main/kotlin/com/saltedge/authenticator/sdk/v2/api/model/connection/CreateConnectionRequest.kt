@@ -21,10 +21,8 @@
 package com.saltedge.authenticator.sdk.v2.api.model.connection
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.api.*
-import com.saltedge.authenticator.sdk.v2.api.model.EncryptedBundle
-import com.saltedge.authenticator.sdk.v2.config.ClientConfig
-import com.saltedge.authenticator.sdk.v2.config.DEFAULT_PLATFORM_NAME
+import com.saltedge.authenticator.core.api.*
+import com.saltedge.authenticator.core.api.model.EncryptedBundle
 
 data class CreateConnectionRequest(@SerializedName(KEY_DATA) val data: CreateConnectionRequestData)
 

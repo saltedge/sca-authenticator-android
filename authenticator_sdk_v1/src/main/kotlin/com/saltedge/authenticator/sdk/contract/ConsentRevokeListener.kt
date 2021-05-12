@@ -20,13 +20,13 @@
  */
 package com.saltedge.authenticator.sdk.contract
 
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.api.model.response.ConsentRevokeResponseData
 
 /**
  * Consent revoke request result
  */
 interface ConsentRevokeListener {
-    fun onConsentRevokeFailure(error: ApiErrorData)
     fun onConsentRevokeSuccess(result: ConsentRevokeResponseData)
+    fun onConsentRevokeFailure(error: ApiErrorData)
 }

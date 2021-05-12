@@ -32,17 +32,21 @@ import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.guid
+import com.saltedge.authenticator.core.api.KEY_DATA
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.GUID
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.consents.common.countOfDaysLeft
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.constants.KEY_DATA
-import com.saltedge.authenticator.sdk.contract.ConsentRevokeListener
-import com.saltedge.authenticator.sdk.api.model.*
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.api.model.AccountData
+import com.saltedge.authenticator.sdk.api.model.ConsentData
+import com.saltedge.authenticator.sdk.api.model.ConsentType
 import com.saltedge.authenticator.sdk.api.model.response.ConsentRevokeResponseData
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.api.model.toConsentType
+import com.saltedge.authenticator.sdk.contract.ConsentRevokeListener
 import com.saltedge.authenticator.tools.CustomTypefaceSpan
 import com.saltedge.authenticator.tools.daysTillExpire
 import com.saltedge.authenticator.tools.toDateFormatString
@@ -51,7 +55,7 @@ import org.joda.time.DateTime
 class ConsentDetailsViewModel(
     private val appContext: Context,
     private val connectionsRepository: ConnectionsRepositoryAbs,
-    private val keyStoreManager: KeyStoreManagerAbs,
+    private val keyStoreManager: KeyManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs
 ) : ViewModel(), ConsentRevokeListener {
 
@@ -69,7 +73,7 @@ class ConsentDetailsViewModel(
     val revokeErrorEvent = MutableLiveData<ViewModelEvent<String>>()
     val revokeSuccessEvent = MutableLiveData<ViewModelEvent<String>>()
     private var consentData: ConsentData? = null
-    private var connectionAndKey: ConnectionAndKey? = null
+    private var connectionAndKey: RichConnection? = null
 
     override fun onConsentRevokeFailure(error: ApiErrorData) {
         revokeErrorEvent.postValue(ViewModelEvent(error.errorMessage))
@@ -81,7 +85,7 @@ class ConsentDetailsViewModel(
 
     fun setInitialData(arguments: Bundle?) {
         val connection = connectionsRepository.getByGuid(connectionGuid = arguments?.guid) ?: return
-        connectionAndKey = keyStoreManager.createConnectionAndKeyModel(connection)
+        connectionAndKey = keyStoreManager.enrichConnection(connection)
         fragmentTitle.postValue(connection.name)
         this.consentData = arguments?.consent
         this.consentData?.let { consent ->

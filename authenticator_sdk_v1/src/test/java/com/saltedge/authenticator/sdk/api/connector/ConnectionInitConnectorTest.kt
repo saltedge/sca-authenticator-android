@@ -20,9 +20,10 @@
  */
 package com.saltedge.authenticator.sdk.api.connector
 
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.createInvalidResponseError
 import com.saltedge.authenticator.sdk.contract.ConnectionCreateListener
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.api.model.error.createInvalidResponseError
+
 import com.saltedge.authenticator.sdk.api.model.request.CreateConnectionRequestData
 import com.saltedge.authenticator.sdk.api.model.request.CreateConnectionRequest
 import com.saltedge.authenticator.sdk.api.model.response.CreateConnectionResponse
@@ -128,10 +129,7 @@ class ConnectionInitConnectorTest {
 
         verify {
             mockCallback.onConnectionCreateFailure(
-                ApiErrorData(
-                    errorMessage = "Resource not found",
-                    errorClassName = "NotFound"
-                )
+                ApiErrorData(errorMessage = "Resource not found", errorClassName = "NotFound")
             )
         }
         confirmVerified(mockCallback)

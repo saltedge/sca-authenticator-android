@@ -22,9 +22,9 @@
 package com.saltedge.authenticator.sdk.v2.api.model.authorization
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.api.KEY_DATA
-import com.saltedge.authenticator.sdk.v2.api.KEY_ID
-import com.saltedge.authenticator.sdk.v2.api.KEY_STATUS
+import com.saltedge.authenticator.core.api.KEY_DATA
+import com.saltedge.authenticator.core.api.KEY_ID
+import com.saltedge.authenticator.core.api.KEY_STATUS
 
 data class ConfirmDenyResponse(@SerializedName(KEY_DATA) var data: ConfirmDenyResponseData)
 

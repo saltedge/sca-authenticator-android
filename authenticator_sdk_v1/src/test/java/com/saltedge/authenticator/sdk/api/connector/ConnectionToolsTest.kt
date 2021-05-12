@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.api.connector
 
+import com.saltedge.authenticator.core.tools.createExpiresAtTime
 import com.saltedge.authenticator.sdk.constants.API_AUTHORIZATIONS
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat

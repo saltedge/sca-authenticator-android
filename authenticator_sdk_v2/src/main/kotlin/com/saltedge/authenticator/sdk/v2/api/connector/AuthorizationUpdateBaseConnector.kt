@@ -20,12 +20,12 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.connector
 
-import com.saltedge.authenticator.sdk.v2.api.ApiResponseInterceptor
-import com.saltedge.authenticator.sdk.v2.api.model.AuthorizationID
-import com.saltedge.authenticator.sdk.v2.api.model.EncryptedBundle
+import com.saltedge.authenticator.core.api.ApiResponseInterceptor
+import com.saltedge.authenticator.core.api.model.EncryptedBundle
+import com.saltedge.authenticator.core.model.AuthorizationID
+import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponse
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationRequest
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.retrofit.addSignatureHeader
 import com.saltedge.authenticator.sdk.v2.api.retrofit.authorizationsConfirmPath
 import com.saltedge.authenticator.sdk.v2.api.retrofit.authorizationsDenyPath
@@ -44,7 +44,7 @@ internal abstract class AuthorizationUpdateBaseConnector(
 
     protected fun headers(richConnection: RichConnection, request: UpdateAuthorizationRequest): Map<String, String> {
         return createAccessTokenHeader(richConnection.connection.accessToken).addSignatureHeader(
-            richConnection.rsaPrivate,
+            richConnection.private,
             request.data,
             request.requestExpirationTime
         )

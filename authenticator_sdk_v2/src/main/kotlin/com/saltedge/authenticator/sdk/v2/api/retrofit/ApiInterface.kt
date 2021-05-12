@@ -21,8 +21,6 @@
 package com.saltedge.authenticator.sdk.v2.api.retrofit
 
 import com.saltedge.authenticator.sdk.v2.api.API_AUTHORIZATIONS
-import com.saltedge.authenticator.sdk.v2.api.API_CONNECTIONS
-import com.saltedge.authenticator.sdk.v2.api.KEY_ID
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponse
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationsListResponse
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationRequest

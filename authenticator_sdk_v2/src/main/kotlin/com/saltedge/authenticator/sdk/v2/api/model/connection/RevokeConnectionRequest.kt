@@ -21,9 +21,9 @@
 package com.saltedge.authenticator.sdk.v2.api.model.connection
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.sdk.v2.api.KEY_DATA
-import com.saltedge.authenticator.sdk.v2.api.KEY_EXP
-import com.saltedge.authenticator.sdk.v2.api.retrofit.createExpiresAtTime
+import com.saltedge.authenticator.core.api.KEY_DATA
+import com.saltedge.authenticator.core.api.KEY_EXP
+import com.saltedge.authenticator.core.tools.createExpiresAtTime
 
 data class RevokeConnectionRequest(
     @SerializedName(KEY_DATA) val data: Any = Any(),

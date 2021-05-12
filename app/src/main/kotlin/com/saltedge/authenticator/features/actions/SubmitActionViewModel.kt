@@ -28,19 +28,19 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ActionAppLinkData
+import com.saltedge.authenticator.core.model.GUID
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.connections.list.convertConnectionsToViewModels
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment.Companion.dataBundle
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.api.model.GUID
-import com.saltedge.authenticator.sdk.api.model.appLink.ActionAppLinkData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.sdk.api.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.api.model.response.SubmitActionResponseData
 import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.getErrorMessage
 import com.saltedge.authenticator.tools.postUnitEvent
 import timber.log.Timber
@@ -48,13 +48,13 @@ import timber.log.Timber
 class SubmitActionViewModel(
     private val appContext: Context,
     private val connectionsRepository: ConnectionsRepositoryAbs,
-    private val keyStoreManager: KeyStoreManagerAbs,
+    private val keyStoreManager: KeyManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs
 ) : ViewModel(), LifecycleObserver, ActionSubmitListener {
 
     private var viewMode: ViewMode = ViewMode.START
     private var actionAppLinkData: ActionAppLinkData? = null
-    private var connectionAndKey: ConnectionAndKey? = null
+    private var connectionAndKey: RichConnection? = null
     val onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onOpenLinkEvent = MutableLiveData<ViewModelEvent<Uri>>()
     val showConnectionsSelectorFragmentEvent = MutableLiveData<ViewModelEvent<Bundle>>()
@@ -95,7 +95,7 @@ class SubmitActionViewModel(
             }
             connections.size == 1 -> {
                 this.connectionAndKey = connections.firstOrNull()?.let {
-                    keyStoreManager.createConnectionAndKeyModel(it)
+                    keyStoreManager.enrichConnection(it)
                 }
                 if (connectionAndKey == null) viewMode = ViewMode.ACTION_ERROR
             }
@@ -111,7 +111,7 @@ class SubmitActionViewModel(
 
     fun showConnectionSelector(connectionGuid: GUID) {
         this.connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
-            keyStoreManager.createConnectionAndKeyModel(it)
+            keyStoreManager.enrichConnection(it)
         }
         viewMode = if (connectionAndKey == null) ViewMode.ACTION_ERROR else ViewMode.START
         onViewCreated()

@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.connector
 
-import com.saltedge.authenticator.sdk.v2.api.ApiResponseInterceptor
+import com.saltedge.authenticator.core.api.ApiResponseInterceptor
 
 /**
  * Implements logic for handling multiple requests queue
