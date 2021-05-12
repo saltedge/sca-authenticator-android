@@ -150,6 +150,31 @@ class AuthorizationDetailsViewModelTest {
 
     @Test
     @Throws(Exception::class)
+    fun onFetchAuthorizationResultTest_case6() {
+        //given
+        val authorizationDataTitle = AuthorizationData::class.java.getDeclaredField("title")
+        authorizationDataTitle.let {
+            val mutableProp = it
+            it.isAccessible = true
+            mutableProp.set(authorizationData1, null)
+        }
+
+        viewModel.setInitialData(
+            identifier = AuthorizationIdentifier(
+                connectionID = "1", authorizationID = "1"
+            ),
+            closeAppOnBackPress = true, titleRes = null
+        )
+
+        //when
+        viewModel.onFetchAuthorizationResult(result = encryptedData1, error = null)
+
+        //then
+        assertThat(viewModel.authorizationModel.value!!.viewMode, equalTo(ViewMode.ERROR))
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun setInitialDataTest_case1() {
         //given valid identifier
         val identifier = AuthorizationIdentifier(authorizationID = "1", connectionID = "1")
