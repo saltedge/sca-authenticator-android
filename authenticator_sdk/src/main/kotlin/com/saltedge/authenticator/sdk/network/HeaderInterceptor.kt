@@ -23,6 +23,7 @@ package com.saltedge.authenticator.sdk.network
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import okhttp3.Interceptor
 import okhttp3.Response
+import timber.log.Timber
 
 const val HEADER_CONTENT_TYPE = "Content-Type"
 const val HEADER_KEY_ACCEPT_LANGUAGE = "Accept-Language"

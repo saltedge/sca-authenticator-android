@@ -23,6 +23,7 @@ package com.saltedge.authenticator.sdk.polling
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import timber.log.Timber
 import java.util.*
 
 private const val POLLING_TIMEOUT = 3000L

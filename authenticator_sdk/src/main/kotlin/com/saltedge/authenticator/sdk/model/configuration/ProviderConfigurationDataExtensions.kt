@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.sdk.model.configuration
 
 import com.saltedge.authenticator.sdk.constants.API_VERSION
+import timber.log.Timber
 
 /**
  * Checks validity of Provider model

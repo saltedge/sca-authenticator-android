@@ -26,6 +26,7 @@ import com.saltedge.authenticator.sdk.model.EncryptedData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.tools.createDefaultGson
 import com.saltedge.authenticator.sdk.tools.decodeFromPemBase64String
+import timber.log.Timber
 import java.security.Key
 import java.security.PrivateKey
 import java.security.PublicKey

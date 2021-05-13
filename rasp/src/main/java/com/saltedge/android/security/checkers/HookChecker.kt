@@ -93,7 +93,7 @@ private fun checkMemory(): Boolean {
         }
         reader.close()
     } catch (e: Exception) {
-        Timber.e(e)
+        e.printStackTrace()
     }
     return result
 }

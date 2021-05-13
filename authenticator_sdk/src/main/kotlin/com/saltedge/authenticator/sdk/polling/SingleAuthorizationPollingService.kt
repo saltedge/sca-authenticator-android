@@ -23,6 +23,7 @@ package com.saltedge.authenticator.sdk.polling
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
 import com.saltedge.authenticator.sdk.network.RestClient
 import com.saltedge.authenticator.sdk.network.connector.AuthorizationConnector
+import timber.log.Timber
 
 /**
  * Periodically query authorization

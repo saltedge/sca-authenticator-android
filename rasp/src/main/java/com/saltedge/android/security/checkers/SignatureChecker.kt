@@ -41,11 +41,11 @@ internal fun Context.checkAppSignatures(appSignatures: List<String>): String? {
     val result = try {
         getSignaturesHashes(this).intersect(appSignatures).isEmpty()
     } catch (e: NameNotFoundException) {
-        Timber.e(e)
+        e.printStackTrace()
         exceptionMessage = e.localizedMessage ?: "NameNotFoundException"
         true
     } catch (e: NoSuchAlgorithmException) {
-        Timber.e(e)
+        e.printStackTrace()
         exceptionMessage = e.localizedMessage ?: "NoSuchAlgorithmException"
         true
     }
