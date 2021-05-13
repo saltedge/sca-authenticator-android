@@ -58,7 +58,7 @@ open class SingleAuthorizationPollingService : PollingServiceAbs<FetchAuthorizat
                 )
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
         }
     }
 }

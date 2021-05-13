@@ -41,7 +41,7 @@ class AuthorizationsPollingService : PollingServiceAbs<FetchAuthorizationsContra
             )
             contract?.getCurrentConnectionsAndKeysForPolling()?.let { connector.fetchAuthorizations(connectionsAndKeys = it) }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
         }
     }
 }

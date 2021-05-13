@@ -70,7 +70,7 @@ internal abstract class ApiResponseInterceptor<T> : Callback<T> {
                 if (errorObject.errorMessage.isEmpty()) null else errorObject
             } ?: createRequestError(response.code())
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             createRequestError(response.code())
         }
     }

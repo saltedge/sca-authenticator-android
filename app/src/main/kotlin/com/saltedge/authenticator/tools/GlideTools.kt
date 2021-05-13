@@ -32,6 +32,6 @@ fun ImageView.loadRoundedImage(imageUrl: String?, placeholderId: ResId, cornerRa
             ))
             .into(this)
     } catch (e: Exception) {
-        e.printStackTrace()
+        Timber.e(e)
     }
 }

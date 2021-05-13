@@ -41,7 +41,7 @@ abstract class PollingServiceAbs<T> : LifecycleObserver {
                 }
             }, 0, POLLING_TIMEOUT)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
         }
     }
 
@@ -51,7 +51,7 @@ abstract class PollingServiceAbs<T> : LifecycleObserver {
             timer?.cancel()
             timer?.purge()
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
         }
         timer = null
     }

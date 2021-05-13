@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.widget.biometric
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.animation.CycleInterpolator
 import android.widget.ImageView
@@ -71,7 +72,7 @@ class BiometricsInputDialog(
 
     override fun dismissBiometricPrompt() {
         try {
-            dismiss()
+            if (isAdded) dismiss()
         } catch (e: Exception) {
             Timber.e(e)
         }

@@ -50,7 +50,7 @@ internal class HeaderInterceptor : Interceptor {
                 .header(HEADER_KEY_USER_AGENT, AuthenticatorApiManager.userAgentInfo)
             chain.proceed(requestBuilder.build())
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             chain.proceed(chain.request())
         }
     }

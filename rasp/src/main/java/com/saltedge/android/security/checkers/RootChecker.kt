@@ -224,10 +224,10 @@ private fun runtimeReader(command: String): Array<String>? {
         val resultValue = Scanner(inputStream).useDelimiter("\\A").next()
         return resultValue.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
     } catch (e: IOException) {
-        e.printStackTrace()
+        Timber.e(e)
         return null
     } catch (e: NoSuchElementException) {
-        e.printStackTrace()
+        Timber.e(e)
         return null
     }
 }

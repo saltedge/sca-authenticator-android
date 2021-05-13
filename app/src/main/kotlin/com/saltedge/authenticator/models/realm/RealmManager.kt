@@ -81,7 +81,7 @@ object RealmManager : RealmManagerAbs {
             initErrorOccurred = false
             Realm.getDefaultInstance()
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             initErrorOccurred = true
         }
     }
