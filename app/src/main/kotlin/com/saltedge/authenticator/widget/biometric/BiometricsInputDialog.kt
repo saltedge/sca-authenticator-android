@@ -66,7 +66,12 @@ class BiometricsInputDialog(
             arguments = BiometricsInputPresenter.dataBundle(titleResId, descriptionResId, negativeActionTextResId)
             if (!isAdded) context.showDialogFragment(this)
         } else {
-            Toast.makeText(context, R.string.errors_internal_error, Toast.LENGTH_SHORT).show()
+            try {
+                Timber.e("Can't show BiometricPrompt. FingerprintState: ${biometricTools.getFingerprintState(context)}")
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
+            Toast.makeText(context, R.string.errors_cant_show_biometric, Toast.LENGTH_SHORT).show()
         }
     }
 
