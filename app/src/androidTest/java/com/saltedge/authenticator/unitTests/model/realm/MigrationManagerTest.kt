@@ -107,7 +107,7 @@ class MigrationManagerTest {
                 bytesRead = inputStream.read(buffer)
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
         } finally {
             inputStream?.close()
             outputStream?.close()

@@ -44,7 +44,7 @@ import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
-import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
+import com.saltedge.authenticator.sdk.polling.FetchAuthorizationContract
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
 import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
 import com.saltedge.authenticator.tools.ResId
@@ -195,7 +195,11 @@ class AuthorizationDetailsViewModel(
                 connection = richConnection?.connection ?: return
             )
             if (!modelHasFinalMode && authorizationModel.value != newViewModel) {
-                authorizationModel.postValue(newViewModel)
+                if (newViewModel == null) {
+                    updateToFinalViewMode(ViewMode.ERROR)
+                } else {
+                    authorizationModel.postValue(newViewModel)
+                }
             }
         } ?: updateToFinalViewMode(ViewMode.UNAVAILABLE)
     }

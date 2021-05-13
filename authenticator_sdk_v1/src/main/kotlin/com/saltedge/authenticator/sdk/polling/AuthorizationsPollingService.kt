@@ -25,6 +25,7 @@ import com.saltedge.authenticator.core.polling.PollingServiceAbs
 import com.saltedge.authenticator.sdk.api.RestClient
 import com.saltedge.authenticator.sdk.api.connector.AuthorizationsConnector
 import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
+import timber.log.Timber
 
 /**
  * Periodically query authorizations list.
@@ -43,7 +44,7 @@ class AuthorizationsPollingService : PollingServiceAbs<FetchAuthorizationsContra
             )
             contract?.getCurrentConnectionsAndKeysForPolling()?.let { connector.fetchAuthorizations(connectionsAndKeys = it) }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
         }
     }
 }

@@ -30,16 +30,8 @@ import androidx.test.core.app.ApplicationProvider
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.encryptWithTestKey
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.AppTools
-import com.saltedge.authenticator.app.ConnectivityReceiverAbs
-import com.saltedge.authenticator.app.KEY_OPTION_ID
-import com.saltedge.authenticator.core.api.ERROR_CLASS_CONNECTION_NOT_FOUND
-import com.saltedge.authenticator.core.api.KEY_ID
-import com.saltedge.authenticator.core.api.model.error.ApiErrorData
-import com.saltedge.authenticator.core.api.model.error.createRequestError
-import com.saltedge.authenticator.core.model.ConnectionStatus
-import com.saltedge.authenticator.core.model.RichConnection
-import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
+import com.saltedge.authenticator.app.*
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.features.menu.BottomMenuDialog
@@ -54,8 +46,8 @@ import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.polling.PollingServiceAbs
+import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.tools.secure.CryptoToolsAbs
-import com.saltedge.authenticator.tools.getErrorMessage
 import com.saltedge.authenticator.widget.security.ActivityUnlockType
 import junit.framework.TestCase.assertNull
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -100,7 +92,7 @@ class AuthorizationsListViewModelTest {
     private val mockConnectionAndKey = RichConnection(mockConnection, CommonTestTools.testPrivateKey)
     private val authorizations: List<AuthorizationData> = listOf(createAuthorization(id = 1), createAuthorization(id = 2))
     private val encryptedAuthorizations = authorizations.map { it.encryptWithTestKey() }
-    private val items = authorizations.map { it.toAuthorizationItemViewModel(mockConnection) }
+    private val items: List<AuthorizationItemViewModel> = authorizations.map { it.toAuthorizationItemViewModel(mockConnection)!! }
 
     @Before
     fun setUp() {

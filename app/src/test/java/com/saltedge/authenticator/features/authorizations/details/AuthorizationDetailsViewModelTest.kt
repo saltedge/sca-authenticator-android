@@ -101,7 +101,7 @@ class AuthorizationDetailsViewModelTest {
     private val encryptedData2 = EncryptedData(id = "2_noKey", connectionId = "1")
     private val authorizationData1 = createAuthorizationData(id = 1)
     private val authorizationData2 = createAuthorizationData(id = 2)
-    private val viewModel1 = authorizationData1.toAuthorizationItemViewModel(connection1)
+    private val viewModel1 = authorizationData1.toAuthorizationItemViewModel(connection1)!!
 
     private fun createAuthorizationData(id: Int): AuthorizationData {
         val createdAt = DateTime.now(DateTimeZone.UTC)
@@ -146,6 +146,31 @@ class AuthorizationDetailsViewModelTest {
             apiManager = mockApiManager,
             locationManager = mockLocationManager
         )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onFetchAuthorizationResultTest_case6() {
+        //given
+        val authorizationDataTitle = AuthorizationData::class.java.getDeclaredField("title")
+        authorizationDataTitle.let {
+            val mutableProp = it
+            it.isAccessible = true
+            mutableProp.set(authorizationData1, null)
+        }
+
+        viewModel.setInitialData(
+            identifier = AuthorizationIdentifier(
+                connectionID = "1", authorizationID = "1"
+            ),
+            closeAppOnBackPress = true, titleRes = null
+        )
+
+        //when
+        viewModel.onFetchAuthorizationResult(result = encryptedData1, error = null)
+
+        //then
+        assertThat(viewModel.authorizationModel.value!!.viewMode, equalTo(ViewMode.ERROR))
     }
 
     @Test
