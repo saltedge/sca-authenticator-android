@@ -7,6 +7,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.widget.RoundedBitmapTransformation
+import timber.log.Timber
 
 private val imageLoaderOptions = RequestOptions()
     .diskCacheStrategy(DiskCacheStrategy.ALL)
