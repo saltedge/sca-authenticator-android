@@ -30,7 +30,6 @@ import com.saltedge.authenticator.features.authorizations.common.createConnectio
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
-import com.saltedge.authenticator.models.location.headerValue
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
@@ -192,7 +191,11 @@ class AuthorizationDetailsViewModel(
                 connection = connectionAndKey?.connection ?: return
             )
             if (!modelHasFinalMode && authorizationModel.value != newViewModel) {
-                authorizationModel.postValue(newViewModel)
+                if (newViewModel == null) {
+                    updateToFinalViewMode(ViewMode.ERROR)
+                } else {
+                    authorizationModel.postValue(newViewModel)
+                }
             }
         } ?: updateToFinalViewMode(ViewMode.UNAVAILABLE)
     }
