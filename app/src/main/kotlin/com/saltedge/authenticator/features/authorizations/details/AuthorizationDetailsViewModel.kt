@@ -195,7 +195,11 @@ class AuthorizationDetailsViewModel(
                 connection = richConnection?.connection ?: return
             )
             if (!modelHasFinalMode && authorizationModel.value != newViewModel) {
-                authorizationModel.postValue(newViewModel)
+                if (newViewModel == null) {
+                    updateToFinalViewMode(ViewMode.ERROR)
+                } else {
+                    authorizationModel.postValue(newViewModel)
+                }
             }
         } ?: updateToFinalViewMode(ViewMode.UNAVAILABLE)
     }

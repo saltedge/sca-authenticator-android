@@ -26,6 +26,7 @@ import com.saltedge.authenticator.core.tools.createRandomGuid
 import com.saltedge.authenticator.models.repository.PreferenceRepository
 import io.realm.Realm
 import io.realm.RealmConfiguration
+import timber.log.Timber
 
 const val DB_SCHEMA_VERSION = 4L
 
@@ -81,7 +82,7 @@ object RealmManager : RealmManagerAbs {
             initErrorOccurred = false
             Realm.getDefaultInstance()
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             initErrorOccurred = true
         }
     }

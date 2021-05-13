@@ -32,6 +32,7 @@ import android.security.keystore.KeyProperties
 import androidx.annotation.RequiresApi
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.RichConnection
+import timber.log.Timber
 import java.math.BigInteger
 import java.security.*
 import java.util.*
@@ -145,7 +146,7 @@ object KeyManager : KeyManagerAbs {
             mKeyGenerator.init(spec)
             mKeyGenerator.generateKey()
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             null
         }
     }
@@ -173,7 +174,7 @@ object KeyManager : KeyManagerAbs {
             mKeyGenerator.init(builder.build())
             mKeyGenerator.generateKey()
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             null
         }
     }
@@ -259,7 +260,7 @@ object KeyManager : KeyManagerAbs {
             androidKeyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
             androidKeyStore?.load(null)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
         }
     }
 }

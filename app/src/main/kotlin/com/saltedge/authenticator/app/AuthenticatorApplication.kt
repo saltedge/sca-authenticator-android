@@ -86,7 +86,7 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
 
     private fun initFirebaseModules() {
-        FirebaseApp.initializeApp(this);
+        FirebaseApp.initializeApp(this)
         createCrashlyticsKit()
     }
 

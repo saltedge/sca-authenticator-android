@@ -24,6 +24,7 @@ import com.saltedge.authenticator.core.api.*
 import com.saltedge.authenticator.sdk.config.ApiV1Config
 import okhttp3.Interceptor
 import okhttp3.Response
+import timber.log.Timber
 
 const val HEADER_KEY_EXPIRES_AT = "Expires-at"
 const val HEADER_KEY_SIGNATURE = "Signature"
@@ -42,7 +43,7 @@ internal class HeaderInterceptor : Interceptor {
                 .header(HEADER_KEY_USER_AGENT, ApiV1Config.userAgentInfo)
             chain.proceed(requestBuilder.build())
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             chain.proceed(chain.request())
         }
     }

@@ -23,6 +23,7 @@ package com.saltedge.authenticator.sdk.polling
 import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
 import com.saltedge.authenticator.sdk.api.RestClient
 import com.saltedge.authenticator.sdk.api.connector.AuthorizationConnector
+import timber.log.Timber
 
 /**
  * Periodically query authorization
@@ -55,7 +56,7 @@ open class SingleAuthorizationPollingService : PollingServiceAbs<FetchAuthorizat
                 connector?.getAuthorization(connectionAndKey = it, authorizationId = authorizationId)
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
         }
     }
 }

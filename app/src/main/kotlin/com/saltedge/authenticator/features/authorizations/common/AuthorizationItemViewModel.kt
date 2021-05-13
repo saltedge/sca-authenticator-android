@@ -29,6 +29,7 @@ import com.saltedge.authenticator.core.tools.remainedTimeDescription
 import com.saltedge.authenticator.core.tools.secondsBetweenDates
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import org.joda.time.DateTime
+import timber.log.Timber
 import java.io.Serializable
 
 data class AuthorizationItemViewModel(
@@ -147,19 +148,29 @@ data class AuthorizationItemViewModel(
  * @param connection - Connection
  * @return AuthorizationViewModel
  */
-fun AuthorizationData.toAuthorizationItemViewModel(connection: ConnectionAbs): AuthorizationItemViewModel {
-    return AuthorizationItemViewModel(
-        title = this.title,
-        description = this.description,
-        connectionID = connection.id,
-        connectionName = connection.name,
-        connectionLogoUrl = connection.logoUrl,
-        validSeconds = authorizationExpirationPeriod(this),
-        endTime = this.expiresAt,
-        startTime = this.createdAt ?: DateTime(0L),
-        authorizationID = this.id,
-        authorizationCode = this.authorizationCode ?: ""
-    )
+fun AuthorizationData.toAuthorizationItemViewModel(connection: ConnectionAbs): AuthorizationItemViewModel? {
+    return try {
+        AuthorizationItemViewModel(
+            title = this.title,
+            description = this.description,
+            connectionID = connection.id,
+            connectionName = connection.name,
+            connectionLogoUrl = connection.logoUrl,
+            validSeconds = authorizationExpirationPeriod(this),
+            endTime = this.expiresAt,
+            startTime = this.createdAt ?: DateTime(0L),
+            authorizationID = this.id,
+            authorizationCode = this.authorizationCode ?: ""
+        )
+    } catch (e: Exception) {
+        Timber.e(
+            e,
+            "Something went wrong %s %s",
+            "Provider name: ${connection.name}",
+            "id: ${connection.id}"
+        )
+        null
+    }
 }
 
 /**

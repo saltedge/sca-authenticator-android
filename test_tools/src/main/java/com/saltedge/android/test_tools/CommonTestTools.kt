@@ -85,7 +85,7 @@ fun rsaEncrypt(input: ByteArray, publicKey: PublicKey): String? {
         cipherOutputStream.close()
         return encodeToPemBase64String(outputStream.toByteArray())
     } catch (e: Exception) {
-        e.printStackTrace()
+        Timber.e(e)
     }
     return null
 }
