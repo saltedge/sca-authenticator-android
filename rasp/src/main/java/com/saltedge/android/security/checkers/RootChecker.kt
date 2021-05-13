@@ -27,7 +27,6 @@ import com.saltedge.android.security.checkers.RaspConstants.Companion.BINARY_MAG
 import com.saltedge.android.security.checkers.RaspConstants.Companion.BINARY_SU
 import java.io.BufferedReader
 import java.io.File
-import java.io.IOException
 import java.io.InputStreamReader
 import java.util.*
 
@@ -223,10 +222,7 @@ private fun runtimeReader(command: String): Array<String>? {
         val inputStream = Runtime.getRuntime().exec(command).inputStream ?: return null
         val resultValue = Scanner(inputStream).useDelimiter("\\A").next()
         return resultValue.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-    } catch (e: IOException) {
-        e.printStackTrace()
-        return null
-    } catch (e: NoSuchElementException) {
+    } catch (e: Exception) {
         e.printStackTrace()
         return null
     }

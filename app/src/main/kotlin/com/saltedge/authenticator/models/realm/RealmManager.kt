@@ -21,11 +21,12 @@
 package com.saltedge.authenticator.models.realm
 
 import android.content.Context
+import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.models.repository.PreferenceRepository
 import com.saltedge.authenticator.sdk.tools.createRandomGuid
-import com.saltedge.authenticator.app.AppTools
 import io.realm.Realm
 import io.realm.RealmConfiguration
+import timber.log.Timber
 
 const val DB_SCHEMA_VERSION = 3L
 
@@ -81,7 +82,7 @@ object RealmManager : RealmManagerAbs {
             initErrorOccurred = false
             Realm.getDefaultInstance()
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             initErrorOccurred = true
         }
     }

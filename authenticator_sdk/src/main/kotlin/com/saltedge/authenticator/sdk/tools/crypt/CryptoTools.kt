@@ -26,6 +26,7 @@ import com.saltedge.authenticator.sdk.model.EncryptedData
 import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.tools.createDefaultGson
 import com.saltedge.authenticator.sdk.tools.decodeFromPemBase64String
+import timber.log.Timber
 import java.security.Key
 import java.security.PrivateKey
 import java.security.PublicKey
@@ -49,7 +50,7 @@ object CryptoTools : CryptoToolsAbs {
             val encryptedBytes = encryptCipher.doFinal(input.toByteArray())
             Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             null
         }
     }
@@ -62,7 +63,7 @@ object CryptoTools : CryptoToolsAbs {
             val decodedText = decodeFromPemBase64String(encryptedText)
             decryptCipher.doFinal(decodedText)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             null
         }
     }
@@ -74,7 +75,7 @@ object CryptoTools : CryptoToolsAbs {
             val encryptedBytes = encryptCipher.doFinal(input.toByteArray())
             return Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
         }
         return null
     }
@@ -87,7 +88,7 @@ object CryptoTools : CryptoToolsAbs {
             val decodedBytes = encryptCipher.doFinal(encryptedBytes)
             String(decodedBytes)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             null
         }
     }
@@ -103,7 +104,7 @@ object CryptoTools : CryptoToolsAbs {
             val decryptedBytes = decryptCipher.doFinal(decodeFromPemBase64String(encryptedText))
             String(decryptedBytes)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             null
         }
     }
@@ -123,7 +124,7 @@ object CryptoTools : CryptoToolsAbs {
             val jsonString = aesDecrypt(encryptedMessage, key = key, iv = iv)
             createDefaultGson().fromJson(jsonString, AuthorizationData::class.java)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             null
         }
     }
@@ -145,7 +146,7 @@ object CryptoTools : CryptoToolsAbs {
                 this.connectionId = encryptedData.connectionId
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             null
         }
     }
@@ -156,7 +157,7 @@ object CryptoTools : CryptoToolsAbs {
             // AndroidKeyStoreBCWorkaround causes error in android 5: NoSuchProviderException: Provider not available (AndroidOpenSSL)
             Cipher.getInstance("RSA/ECB/PKCS1Padding")
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             null
         }
     }

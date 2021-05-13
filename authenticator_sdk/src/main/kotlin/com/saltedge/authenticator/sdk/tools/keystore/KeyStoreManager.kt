@@ -32,6 +32,7 @@ import androidx.annotation.RequiresApi
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
 import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.tools.encodeToPemBase64String
+import timber.log.Timber
 import java.math.BigInteger
 import java.security.*
 import java.util.*
@@ -159,7 +160,7 @@ object KeyStoreManager : KeyStoreManagerAbs {
             mKeyGenerator.init(spec)
             mKeyGenerator.generateKey()
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             null
         }
     }
@@ -187,7 +188,7 @@ object KeyStoreManager : KeyStoreManagerAbs {
             mKeyGenerator.init(builder.build())
             mKeyGenerator.generateKey()
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             null
         }
     }
@@ -283,7 +284,7 @@ object KeyStoreManager : KeyStoreManagerAbs {
             androidKeyStore = KeyStore.getInstance(STORE_TYPE)
             androidKeyStore?.load(null)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
         }
     }
 }
