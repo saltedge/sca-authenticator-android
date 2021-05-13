@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2021 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.tools
+package com.saltedge.authenticator.core.tools
 
-import com.saltedge.authenticator.core.tools.*
-import com.saltedge.authenticator.sdk.testTools.TestTools
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import net.danlew.android.joda.JodaTimeAndroid
 import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.CoreMatchers.equalTo
@@ -36,9 +36,12 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class DateToolsTest {
 
+    private val applicationContext: Context
+        get() = ApplicationProvider.getApplicationContext<Context>().applicationContext
+
     @Before
     fun setUp() {
-        JodaTimeAndroid.init(TestTools.applicationContext)
+        JodaTimeAndroid.init(applicationContext)
     }
 
     @Test

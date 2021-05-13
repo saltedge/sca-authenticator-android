@@ -28,11 +28,11 @@ import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.sdk.api.model.ConsentSharedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.testTools.TestTools
-import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools.aesDecrypt
-import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools.aesEncrypt
-import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools.decryptAuthorizationData
-import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools.decryptConsentData
-import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools.rsaDecrypt
+import com.saltedge.authenticator.sdk.tools.secure.CryptoTools.aesDecrypt
+import com.saltedge.authenticator.sdk.tools.secure.CryptoTools.aesEncrypt
+import com.saltedge.authenticator.sdk.tools.secure.CryptoTools.decryptAuthorizationData
+import com.saltedge.authenticator.sdk.tools.secure.CryptoTools.decryptConsentData
+import com.saltedge.authenticator.sdk.tools.secure.CryptoTools.rsaDecrypt
 import net.danlew.android.joda.JodaTimeAndroid
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.not

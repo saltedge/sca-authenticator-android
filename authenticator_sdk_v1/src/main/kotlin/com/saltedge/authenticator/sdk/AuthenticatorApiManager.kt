@@ -26,6 +26,7 @@ import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.model.guard
+import com.saltedge.authenticator.core.polling.PollingServiceAbs
 import com.saltedge.authenticator.core.tools.secure.KeyManager
 import com.saltedge.authenticator.core.tools.secure.publicKeyToPem
 import com.saltedge.authenticator.sdk.api.RestClient
@@ -34,7 +35,7 @@ import com.saltedge.authenticator.sdk.api.model.request.ConfirmDenyRequestData
 import com.saltedge.authenticator.sdk.config.ApiV1Config
 import com.saltedge.authenticator.sdk.contract.*
 import com.saltedge.authenticator.sdk.polling.AuthorizationsPollingService
-import com.saltedge.authenticator.sdk.polling.PollingServiceAbs
+import com.saltedge.authenticator.sdk.polling.FetchAuthorizationsContract
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
 
 interface AuthenticatorApiManagerAbs {

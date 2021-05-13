@@ -51,4 +51,5 @@ interface ConnectionAbs {
     var consentManagementSupported: Boolean?
     var geolocationRequired: Boolean?
     var providerRsaPublicKeyPem: String
+    var apiVersion: String
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2021 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,11 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.polling
+package com.saltedge.authenticator.core.polling
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
-import timber.log.Timber
 import java.util.*
 
 private const val POLLING_TIMEOUT = 3000L
@@ -42,7 +41,7 @@ abstract class PollingServiceAbs<T> : LifecycleObserver {
                 }
             }, 0, POLLING_TIMEOUT)
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printStackTrace()
         }
     }
 
@@ -52,7 +51,7 @@ abstract class PollingServiceAbs<T> : LifecycleObserver {
             timer?.cancel()
             timer?.purge()
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printStackTrace()
         }
         timer = null
     }

@@ -31,5 +31,7 @@ fun RealmSchema.runMigration4() {
         schema
             .addField("providerRsaPublicKeyPem", String::class.java, FieldAttribute.REQUIRED)
             .transform { it.set("providerRsaPublicKeyPem", "") }
+            .addField("apiVersion", String::class.java, FieldAttribute.REQUIRED)
+            .transform { it.set("apiVersion", "1") }
     }
 }

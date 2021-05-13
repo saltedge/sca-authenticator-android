@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.api.connector
 
+import com.saltedge.authenticator.core.api.RequestQueueAbs
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.api.ApiInterface
@@ -37,13 +38,13 @@ import retrofit2.Call
  *
  * @param apiInterface - instance of ApiInterface
  * @param resultCallback - instance of FetchEncryptedDataResult for returning query result
- * @see QueueConnector
+ * @see RequestQueueAbs
  */
 internal class ConsentsConnector(
     val apiInterface: ApiInterface,
     val connectionsAndKeys: List<RichConnection>,
     var resultCallback: FetchEncryptedDataListener?
-) : QueueConnector<EncryptedListResponse>() {
+) : RequestQueueAbs<EncryptedListResponse>() {
 
     private var result = mutableListOf<EncryptedData>()
     private var errors = mutableListOf<ApiErrorData>()

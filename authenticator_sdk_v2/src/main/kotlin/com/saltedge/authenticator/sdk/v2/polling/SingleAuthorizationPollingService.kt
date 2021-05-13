@@ -20,8 +20,10 @@
  */
 package com.saltedge.authenticator.sdk.v2.polling
 
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.polling.PollingServiceAbs
 import com.saltedge.authenticator.sdk.v2.api.connector.AuthorizationShowConnector
-import com.saltedge.authenticator.sdk.v2.api.contract.PollingAuthorizationContract
+import com.saltedge.authenticator.sdk.v2.api.contract.FetchAuthorizationListener
 import com.saltedge.authenticator.sdk.v2.api.retrofit.RestClient
 
 /**
@@ -61,4 +63,8 @@ open class SingleAuthorizationPollingService : PollingServiceAbs<PollingAuthoriz
             e.printStackTrace()
         }
     }
+}
+
+interface PollingAuthorizationContract : FetchAuthorizationListener {
+    fun getConnectionDataForAuthorizationPolling(): RichConnection?
 }

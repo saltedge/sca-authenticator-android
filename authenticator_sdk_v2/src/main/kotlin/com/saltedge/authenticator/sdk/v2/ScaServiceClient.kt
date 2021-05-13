@@ -25,6 +25,7 @@ import com.saltedge.authenticator.core.api.model.EncryptedBundle
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.model.guard
+import com.saltedge.authenticator.core.polling.PollingServiceAbs
 import com.saltedge.authenticator.core.tools.createRandomGuid
 import com.saltedge.authenticator.core.tools.json.toJsonString
 import com.saltedge.authenticator.core.tools.secure.KeyAlgorithm
@@ -36,7 +37,7 @@ import com.saltedge.authenticator.sdk.v2.api.contract.*
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationData
 import com.saltedge.authenticator.sdk.v2.api.retrofit.RestClient
 import com.saltedge.authenticator.sdk.v2.polling.AuthorizationsPollingService
-import com.saltedge.authenticator.sdk.v2.polling.PollingServiceAbs
+import com.saltedge.authenticator.sdk.v2.polling.PollingAuthorizationsContract
 import com.saltedge.authenticator.sdk.v2.polling.SingleAuthorizationPollingService
 import com.saltedge.authenticator.sdk.v2.tools.CryptoTools
 

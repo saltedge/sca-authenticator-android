@@ -34,19 +34,22 @@ import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-object BaseCryptoTools : BaseCryptoToolsAbs {
+const val SUPPORTED_AES_ALGORITHM = "AES-256-CBC"
+private const val AES_INTERNAL_TRANSFORMATION = "AES/GCM/NoPadding"
+private const val AES_EXTERNAL_TRANSFORMATION = "AES/CBC/PKCS5Padding"
+private const val RSA_ECB = "RSA/ECB/PKCS1Padding"
 
-    private const val AES_INTERNAL_TRANSFORMATION = "AES/GCM/NoPadding"
-    private const val AES_EXTERNAL_TRANSFORMATION = "AES/CBC/PKCS5Padding"
-    const val RSA_ECB = "RSA/ECB/PKCS1Padding"
-    private val passcodeEncryptionIv = byteArrayOf(65, 1, 2, 23, 4, 5, 6, 7, 32, 21, 10, 11)
+abstract class BaseCryptoTools : BaseCryptoToolsAbs {
 
-    override fun rsaEncrypt(input: ByteArray, publicKey: PublicKey): String? {
+    override fun rsaEncrypt(inputText: String, publicKey: PublicKey): String? =
+        rsaEncrypt(inputText.toByteArray(), publicKey)
+
+    override fun rsaEncrypt(inputBytes: ByteArray, publicKey: PublicKey): String? {
         return try {
             val encryptCipher = rsaCipherInstance()
-            if (encryptCipher == null || input.isEmpty()) return null
+            if (encryptCipher == null || inputBytes.isEmpty()) return null
             encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey)
-            Base64.encodeToString(encryptCipher.doFinal(input), Base64.DEFAULT)
+            Base64.encodeToString(encryptCipher.doFinal(inputBytes), Base64.DEFAULT)
         } catch (e: Exception) {
             Timber.e(e)
             null
@@ -65,7 +68,7 @@ object BaseCryptoTools : BaseCryptoToolsAbs {
         }
     }
 
-    fun aesEncrypt(data: String, key: SecretKey): String {
+    override fun aesEncrypt(data: String, key: SecretKey): String {
         try {
             val keyBytes: ByteArray = key.encoded
             val aesKeyHash: ByteArray = MessageDigest.getInstance("SHA-256").digest(keyBytes)
@@ -79,14 +82,14 @@ object BaseCryptoTools : BaseCryptoToolsAbs {
     }
 
     @Throws(java.lang.Exception::class)
-    fun aesEncrypt(data: String, key: ByteArray, iv: ByteArray): ByteArray? {
+    override fun aesEncrypt(data: String, key: ByteArray, iv: ByteArray): ByteArray? {
         val cipher = Cipher.getInstance(AES_EXTERNAL_TRANSFORMATION)
         cipher.init(Cipher.ENCRYPT_MODE, SecretKeySpec(key, KeyAlgorithm.AES), IvParameterSpec(iv))
         return cipher.doFinal(data.toByteArray(StandardCharsets.UTF_8))
     }
 
     @Throws(java.lang.Exception::class)
-    fun aesDecrypt(encryptedText: String, key: SecretKey): String? {
+    override fun aesDecrypt(encryptedText: String, key: SecretKey): String? {
         return try {
             val keyBytes: ByteArray = key.encoded
             val aesKeyHash: ByteArray = MessageDigest.getInstance("SHA-256").digest(keyBytes)
@@ -118,7 +121,7 @@ object BaseCryptoTools : BaseCryptoToolsAbs {
     override fun aesGcmEncrypt(input: String, key: Key): String? {
         try {
             val encryptCipher = Cipher.getInstance(AES_INTERNAL_TRANSFORMATION) ?: return null
-            encryptCipher.init(Cipher.ENCRYPT_MODE, key, GCMParameterSpec(128, passcodeEncryptionIv))
+            encryptCipher.init(Cipher.ENCRYPT_MODE, key, GCMParameterSpec(128, gcmEncryptionIv))
             val encryptedBytes = encryptCipher.doFinal(input.toByteArray())
             return Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
         } catch (e: Exception) {
@@ -131,7 +134,7 @@ object BaseCryptoTools : BaseCryptoToolsAbs {
         return try {
             val encryptedBytes = Base64.decode(encryptedText, Base64.DEFAULT)
             val encryptCipher = Cipher.getInstance(AES_INTERNAL_TRANSFORMATION) ?: return null
-            encryptCipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, passcodeEncryptionIv))
+            encryptCipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, gcmEncryptionIv))
             val decodedBytes = encryptCipher.doFinal(encryptedBytes)
             String(decodedBytes)
         } catch (e: Exception) {
@@ -139,6 +142,8 @@ object BaseCryptoTools : BaseCryptoToolsAbs {
             null
         }
     }
+
+    private val gcmEncryptionIv = byteArrayOf(65, 1, 2, 23, 4, 5, 6, 7, 32, 21, 10, 11)
 
     private fun rsaCipherInstance(): Cipher? {
         return try {
@@ -153,8 +158,12 @@ object BaseCryptoTools : BaseCryptoToolsAbs {
 }
 
 interface BaseCryptoToolsAbs {
-    fun rsaEncrypt(input: ByteArray, publicKey: PublicKey): String?
+    fun rsaEncrypt(inputText: String, publicKey: PublicKey): String?
+    fun rsaEncrypt(inputBytes: ByteArray, publicKey: PublicKey): String?
     fun rsaDecrypt(encryptedText: String, privateKey: PrivateKey): ByteArray?
+    fun aesEncrypt(data: String, key: SecretKey): String
+    fun aesEncrypt(data: String, key: ByteArray, iv: ByteArray): ByteArray?
+    fun aesDecrypt(encryptedText: String, key: SecretKey): String?
     fun aesDecrypt(encryptedText: String, key: ByteArray, iv: ByteArray): String?
     fun aesGcmEncrypt(input: String, key: Key): String?
     fun aesGcmDecrypt(encryptedText: String, key: Key): String?

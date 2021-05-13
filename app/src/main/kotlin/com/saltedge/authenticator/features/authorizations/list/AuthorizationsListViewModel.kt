@@ -49,8 +49,8 @@ import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.api.model.authorization.isNotExpired
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
-import com.saltedge.authenticator.sdk.contract.FetchAuthorizationsContract
-import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.polling.FetchAuthorizationsContract
+import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.getErrorMessage
 import com.saltedge.authenticator.tools.postUnitEvent
@@ -145,7 +145,7 @@ class AuthorizationsListViewModel(
         connectionID: ConnectionID,
         authorizationID: AuthorizationID
     ) {
-        onConfirmErrorEvent.postValue(ViewModelEvent(error.getErrorMessage(appContext)))
+            onConfirmErrorEvent.postValue(ViewModelEvent(error.getErrorMessage(appContext)))
         findListItem(connectionID, authorizationID)?.let { item ->
             updateItemViewMode(listItem = item, newViewMode = ViewMode.ERROR)
         }

@@ -77,6 +77,7 @@ const val KEY_GEOLOCATION = "geolocation"
 const val KEY_USER_AUTHORIZATION_TYPE = "user_authorization_type"
 const val KEY_ENC_RSA_PUBLIC = "enc_rsa_public_key"
 
+const val KEY_CODE = "code"
 const val KEY_NAME = "name"
 const val KEY_ACCOUNT_NUMBER = "account_number"
 const val KEY_SORT_CODE = "sort_code"
@@ -89,6 +90,10 @@ const val KEY_SHARED_DATA = "shared_data"
 const val KEY_CONSENT_TYPE = "consent_type"
 const val KEY_BALANCE = "balance"
 const val KEY_TRANSACTIONS = "transactions"
+const val KEY_LOGO_URL = "logo_url"
+const val KEY_VERSION = "version"
+const val KEY_SUPPORT_EMAIL = "support_email"
+const val KEY_CONSENT_MANAGEMENT = "consent_management"
 
 // Error classes
 const val ERROR_CLASS_AUTHENTICATION_RESPONSE = "AuthenticationError"

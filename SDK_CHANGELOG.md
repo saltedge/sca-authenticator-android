@@ -1,6 +1,10 @@
 [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
 # Salt Edge Authenticator Android SDK CHANGELOG
 
+## 2.0.0
+
+## 1.4.0
+
 ## 1.3.0
 ### Add
 * Geolocation and authorization type info header

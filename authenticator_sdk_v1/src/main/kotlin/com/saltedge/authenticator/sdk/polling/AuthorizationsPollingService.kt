@@ -20,9 +20,11 @@
  */
 package com.saltedge.authenticator.sdk.polling
 
-import com.saltedge.authenticator.sdk.contract.FetchAuthorizationsContract
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.polling.PollingServiceAbs
 import com.saltedge.authenticator.sdk.api.RestClient
 import com.saltedge.authenticator.sdk.api.connector.AuthorizationsConnector
+import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
 import timber.log.Timber
 
 /**
@@ -45,4 +47,8 @@ class AuthorizationsPollingService : PollingServiceAbs<FetchAuthorizationsContra
             Timber.e(e)
         }
     }
+}
+
+interface FetchAuthorizationsContract : FetchEncryptedDataListener {
+    fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection>?
 }

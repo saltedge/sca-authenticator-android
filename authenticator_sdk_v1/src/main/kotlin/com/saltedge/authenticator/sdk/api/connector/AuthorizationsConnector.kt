@@ -20,16 +20,17 @@
  */
 package com.saltedge.authenticator.sdk.api.connector
 
+import com.saltedge.authenticator.core.api.RequestQueueAbs
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.RichConnection
-import com.saltedge.authenticator.sdk.constants.API_AUTHORIZATIONS
-import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_GET
-import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
+import com.saltedge.authenticator.sdk.api.ApiInterface
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.isValid
 import com.saltedge.authenticator.sdk.api.model.request.SignedRequest
 import com.saltedge.authenticator.sdk.api.model.response.EncryptedListResponse
-import com.saltedge.authenticator.sdk.api.ApiInterface
+import com.saltedge.authenticator.sdk.constants.API_AUTHORIZATIONS
+import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_GET
+import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
 import retrofit2.Call
 
 /**
@@ -37,12 +38,13 @@ import retrofit2.Call
  *
  * @param apiInterface - instance of ApiInterface
  * @param resultCallback - instance of FetchEncryptedDataResult for returning query result
- * @see QueueConnector
+ *
+ * @see RequestQueueAbs
  */
 internal class AuthorizationsConnector(
     val apiInterface: ApiInterface,
     var resultCallback: FetchEncryptedDataListener?
-) : QueueConnector<EncryptedListResponse>() {
+) : RequestQueueAbs<EncryptedListResponse>() {
 
     private var result = mutableListOf<EncryptedData>()
     private var errors = mutableListOf<ApiErrorData>()

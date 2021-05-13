@@ -27,7 +27,7 @@ import com.saltedge.authenticator.sdk.api.HEADER_KEY_EXPIRES_AT
 import com.saltedge.authenticator.sdk.api.HEADER_KEY_SIGNATURE
 import com.saltedge.authenticator.sdk.api.RestClient
 import com.saltedge.authenticator.sdk.api.model.request.SignedRequest
-import com.saltedge.authenticator.sdk.tools.sign.createSignatureHeader
+import com.saltedge.authenticator.sdk.tools.createSignatureHeader
 import java.security.PrivateKey
 
 /**

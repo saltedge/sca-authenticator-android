@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2021 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +18,31 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.tools
+package com.saltedge.authenticator.core.api
 
-import com.saltedge.authenticator.core.tools.hasHTMLTags
-import junit.framework.Assert.assertFalse
-import junit.framework.Assert.assertTrue
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
+/**
+ * Implements logic for handling multiple requests queue
+ *
+ * @see ApiResponseInterceptor
+ */
+abstract class RequestQueueAbs<T> : ApiResponseInterceptor<T>() {
 
-@RunWith(RobolectricTestRunner::class)
-class HTMLToolsTest {
+    private var queueCount: Int = 0
 
-    @Test
-    @Throws(Exception::class)
-    fun hasHTMLTagsTest() {
-        assertTrue("<a href='https://www.fentury.com/'>Fentury</a>".hasHTMLTags())
-        assertFalse("Fentury.com".hasHTMLTags())
+    fun setQueueSize(size: Int) {
+        queueCount = size
+    }
+
+    protected fun onResponseReceived() {
+        countDown()
+        if (queueIsEmpty()) onQueueFinished()
+    }
+
+    protected fun queueIsEmpty() = queueCount <= 0
+
+    protected abstract fun onQueueFinished()
+
+    private fun countDown() {
+        queueCount--
     }
 }

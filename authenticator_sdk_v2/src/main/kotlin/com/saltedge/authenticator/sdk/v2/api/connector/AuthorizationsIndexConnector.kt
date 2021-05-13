@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.connector
 
+import com.saltedge.authenticator.core.api.RequestQueueAbs
 import com.saltedge.authenticator.sdk.v2.api.contract.FetchAuthorizationsListener
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationsListResponse

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2021 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,35 +18,20 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.tools
+package com.saltedge.authenticator.core.tools
 
-import com.saltedge.authenticator.core.tools.decodeFromPemBase64String
-import com.saltedge.authenticator.core.tools.encodeToPemBase64String
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class Base64CompatTest {
-
-    private val testString =
-        "Salt Edge Solution for PISP is designed to help your business embrace the open source technology opportunities."
-    private val base64String =
-        "U2FsdCBFZGdlIFNvbHV0aW9uIGZvciBQSVNQIGlzIGRlc2lnbmVkIHRvIGhlbHAg\n" +
-            "eW91ciBidXNpbmVzcyBlbWJyYWNlIHRoZSBvcGVuIHNvdXJjZSB0ZWNobm9sb2d5\n" +
-            "IG9wcG9ydHVuaXRpZXMu"
+class TextToolsTest {
 
     @Test
     @Throws(Exception::class)
-    fun decodeFromPemBase64StringTest() {
-        assertThat(String(decodeFromPemBase64String(base64String)!!), equalTo(testString))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun encodeToPemBase64StringTest() {
-        assertThat(encodeToPemBase64String(testString.toByteArray())!!, equalTo(base64String))
+    fun isNotNullOrEmptyTest() {
+        Assert.assertFalse("".isNotNullOrEmpty())
+        Assert.assertTrue("authenticator".isNotNullOrEmpty())
     }
 }

@@ -18,13 +18,21 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api.contract
+package com.saltedge.authenticator.core.tools
 
-import com.saltedge.authenticator.core.model.RichConnection
+import junit.framework.Assert.assertFalse
+import junit.framework.Assert.assertTrue
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
-/**
- * Polling service contract
- */
-interface PollingAuthorizationsContract : FetchAuthorizationsListener {
-    fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection>?
+@RunWith(RobolectricTestRunner::class)
+class HTMLToolsTest {
+
+    @Test
+    @Throws(Exception::class)
+    fun hasHTMLTagsTest() {
+        assertTrue("<a href='https://www.fentury.com/'>Fentury</a>".hasHTMLTags())
+        assertFalse("Fentury.com".hasHTMLTags())
+    }
 }
