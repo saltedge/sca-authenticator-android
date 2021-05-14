@@ -20,66 +20,38 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.KEY_OPTION_ID
 import com.saltedge.authenticator.app.NetworkStateChangeListener
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
-import com.saltedge.authenticator.core.api.model.error.isConnectionNotFound
-import com.saltedge.authenticator.core.model.AuthorizationID
-import com.saltedge.authenticator.core.model.ConnectionID
-import com.saltedge.authenticator.core.model.RichConnection
-import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
-import com.saltedge.authenticator.features.authorizations.common.*
+import com.saltedge.authenticator.core.model.ID
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
+import com.saltedge.authenticator.features.authorizations.common.TimerUpdateListener
+import com.saltedge.authenticator.features.authorizations.common.ViewMode
+import com.saltedge.authenticator.features.authorizations.common.joinViewModels
 import com.saltedge.authenticator.features.menu.BottomMenuDialog
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
-import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.api.model.EncryptedData
-import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
-import com.saltedge.authenticator.sdk.api.model.authorization.isNotExpired
-import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
-import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
-import com.saltedge.authenticator.sdk.polling.FetchAuthorizationsContract
-import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
 import com.saltedge.authenticator.tools.ResId
-import com.saltedge.authenticator.tools.getErrorMessage
 import com.saltedge.authenticator.tools.postUnitEvent
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.CoroutineScope
 
 class AuthorizationsListViewModel(
-    private val appContext: Context,
-    private val connectionsRepository: ConnectionsRepositoryAbs,
-    private val keyStoreManager: KeyManagerAbs,
-    private val cryptoTools: CryptoToolsAbs,
-    private val apiManager: AuthenticatorApiManagerAbs,
-    private val locationManager: DeviceLocationManagerAbs,
-    private val connectivityReceiver: ConnectivityReceiverAbs,
-    private val defaultDispatcher: CoroutineDispatcher
+    private val interactor: AuthorizationsListInteractor,
+    private val connectivityReceiver: ConnectivityReceiverAbs
 ) : ViewModel(),
     LifecycleObserver,
     ListItemClickListener,
-    FetchAuthorizationsContract,
-    ConfirmAuthorizationListener,
     TimerUpdateListener,
-    NetworkStateChangeListener {
+    NetworkStateChangeListener, AuthorizationsListInteractorCallback {
 
     private var noInternetConnection: Boolean = false
-    private var pollingService = apiManager.createAuthorizationsPollingService()
-    private var richConnections: Map<ConnectionID, RichConnection> =
-        collectRichConnections(connectionsRepository, keyStoreManager)
 
     val listVisibility = MutableLiveData<Int>(View.GONE)
     val emptyViewVisibility = MutableLiveData<Int>(View.GONE)
@@ -91,69 +63,14 @@ class AuthorizationsListViewModel(
     val listItemsValues: List<AuthorizationItemViewModel>
         get() = listItems.value ?: emptyList()
     val listItemUpdateEvent = MutableLiveData<ViewModelEvent<Int>>()
-    val onConfirmErrorEvent = MutableLiveData<ViewModelEvent<String>>()
+    val errorEvent = MutableLiveData<ViewModelEvent<ApiErrorData>>()
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onMoreMenuClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onShowConnectionsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowSettingsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
-    override fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection>? = collectAuthorizationRequestData()
-
-    override fun onTimeUpdate() {
-        listItemsValues.let { items ->
-            if (items.any { it.isExpired }) cleanExpiredItems()
-            if (items.any { it.shouldBeDestroyed }) cleanDeadItems()
-        }
-    }
-
-    override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
-        val listItem = listItemsValues.getOrNull(itemIndex) ?: return
-        val connectionAndKey = richConnections[listItem.connectionID] ?: return
-        when (itemViewId) {
-            R.id.positiveActionView -> sendConfirmRequest(
-                listItem = listItem,
-                connectionAndKey = connectionAndKey
-            )
-            R.id.negativeActionView -> sendDenyRequest(
-                listItem = listItem,
-                connectionAndKey = connectionAndKey
-            )
-        }
-    }
-
-    override fun onFetchEncryptedDataResult(
-        result: List<EncryptedData>,
-        errors: List<ApiErrorData>
-    ) {
-        processAuthorizationsErrors(errors = errors)
-        processEncryptedAuthorizationsResult(encryptedList = result)
-    }
-
-    override fun onConfirmDenySuccess(result: ConfirmDenyResponseData, connectionID: ConnectionID) {
-        findListItem(
-            connectionID = connectionID,
-            authorizationID = result.authorizationID ?: ""
-        )?.let { item ->
-            val viewMode = if (item.viewMode == ViewMode.DENY_PROCESSING)
-                ViewMode.DENY_SUCCESS else ViewMode.CONFIRM_SUCCESS
-            updateItemViewMode(listItem = item, newViewMode = viewMode)
-        }
-    }
-
-    override fun onConfirmDenyFailure(
-        error: ApiErrorData,
-        connectionID: ConnectionID,
-        authorizationID: AuthorizationID
-    ) {
-            onConfirmErrorEvent.postValue(ViewModelEvent(error.getErrorMessage(appContext)))
-        findListItem(connectionID, authorizationID)?.let { item ->
-            updateItemViewMode(listItem = item, newViewMode = ViewMode.ERROR)
-        }
-    }
-
-    override fun onNetworkConnectionChanged(isConnected: Boolean) {
-        noInternetConnection = !isConnected
-        postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
+    init {
+        interactor.contract = this
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -163,7 +80,7 @@ class AuthorizationsListViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onResume() {
-        richConnections = collectRichConnections(connectionsRepository, keyStoreManager)
+        interactor.updateConnections()
         if (listItemsValues.isNotEmpty()) postListItemsUpdate(listItemsValues)
         postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
     }
@@ -177,10 +94,8 @@ class AuthorizationsListViewModel(
         lifecycle.let {
             it.removeObserver(this)
             it.addObserver(this)
-            it.removeObserver(pollingService)
-            it.addObserver(pollingService)
+            interactor.bindLifecycleObserver(lifecycle)
         }
-        pollingService.contract = this
     }
 
     fun onEmptyViewActionClick() {
@@ -219,97 +134,72 @@ class AuthorizationsListViewModel(
         }
     }
 
-    private fun collectAuthorizationRequestData(): List<RichConnection>? {
-        return if (richConnections.isEmpty()) null else richConnections.values.toList()
-    }
-
-    private fun processEncryptedAuthorizationsResult(encryptedList: List<EncryptedData>) {
-        viewModelScope.launch(defaultDispatcher) {
-            val data = decryptAuthorizations(encryptedList = encryptedList)
-            withContext(Dispatchers.Main) { processDecryptedAuthorizationsResult(result = data) }
+    override fun onTimeUpdate() {
+        listItemsValues.let { items ->
+            if (items.any { it.isExpired }) cleanExpiredItems()
+            if (items.any { it.shouldBeDestroyed }) cleanDeadItems()
         }
     }
 
-    private fun decryptAuthorizations(encryptedList: List<EncryptedData>): List<AuthorizationData> {
-        return encryptedList.mapNotNull {
-            cryptoTools.decryptAuthorizationData(
-                encryptedData = it,
-                rsaPrivateKey = richConnections[it.connectionId]?.private
-            )
+    override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
+        listItemsValues.getOrNull(itemIndex)?.let {
+            when (itemViewId) {
+                R.id.positiveActionView -> updateAuthorization(listItem = it, confirm = true)
+                R.id.negativeActionView -> updateAuthorization(listItem = it, confirm = false)
+            }
         }
     }
 
-    private fun processDecryptedAuthorizationsResult(result: List<AuthorizationData>) {
-        val newAuthorizationsData = result
-            .filter { it.isNotExpired() }
-            .sortedWith(compareBy({ it.createdAt }, { it.id }))
+    override fun onNetworkConnectionChanged(isConnected: Boolean) {
+        noInternetConnection = !isConnected
+        postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
+    }
+
+    override fun onAuthorizationsReceived(data: List<AuthorizationItemViewModel>) {
         val joinedViewModels = joinViewModels(
-            newViewModels = createViewModels(newAuthorizationsData),
+            newViewModels = data,
             oldViewModels = this.listItemsValues
         )
         if (listItemsValues != joinedViewModels) postListItemsUpdate(newItems = joinedViewModels)
     }
 
-    private fun createViewModels(authorizations: List<AuthorizationData>): List<AuthorizationItemViewModel> {
-        return authorizations.mapNotNull { item ->
-            richConnections[item.connectionId]?.let {
-                item.toAuthorizationItemViewModel(connection = it.connection)
-            }
+    override fun onConfirmDenySuccess(connectionID: ID, authorizationID: ID) {
+        findListItem(connectionID = connectionID, authorizationID = authorizationID)?.let { item ->
+            val viewMode = if (item.viewMode == ViewMode.DENY_PROCESSING)
+                ViewMode.DENY_SUCCESS else ViewMode.CONFIRM_SUCCESS
+            updateItemViewMode(listItem = item, newViewMode = viewMode)
         }
     }
 
-    private fun processAuthorizationsErrors(errors: List<ApiErrorData>) {
-        val invalidTokens =
-            errors.filter { it.isConnectionNotFound() }.mapNotNull { it.accessToken }
-        if (invalidTokens.isNotEmpty()) {
-            connectionsRepository.invalidateConnectionsByTokens(accessTokens = invalidTokens)
-            richConnections = collectRichConnections(connectionsRepository, keyStoreManager)
+    override fun onConfirmDenyFailure(error: ApiErrorData, connectionID: ID, authorizationID: ID) {
+        errorEvent.postValue(ViewModelEvent(error))
+        findListItem(connectionID, authorizationID)?.let { item ->
+            updateItemViewMode(listItem = item, newViewMode = ViewMode.ERROR)
         }
     }
 
-    private fun findListItem(
-        connectionID: ConnectionID,
-        authorizationID: AuthorizationID
-    ): AuthorizationItemViewModel? {
+    override val coroutineScope: CoroutineScope
+        get() = viewModelScope
+
+    private fun findListItem(connectionID: ID, authorizationID: ID): AuthorizationItemViewModel? {
         return listItemsValues.find {
             it.authorizationID == authorizationID && it.connectionID == connectionID
         }
     }
 
-    private fun sendConfirmRequest(
-        listItem: AuthorizationItemViewModel,
-        connectionAndKey: RichConnection
-    ) {
-        updateItemViewMode(
-            listItem = listItem,
-            newViewMode = ViewMode.CONFIRM_PROCESSING
-        )
-        apiManager.confirmAuthorization(
-            connectionAndKey = connectionAndKey,
-            authorizationId = listItem.authorizationID,
+    private fun updateAuthorization(listItem: AuthorizationItemViewModel, confirm: Boolean) {
+        val result = interactor.updateAuthorization(
+            connectionID = listItem.connectionID,
+            authorizationID = listItem.authorizationID,
             authorizationCode = listItem.authorizationCode,
-            geolocation = locationManager.locationDescription,
-            authorizationType = AppTools.lastUnlockType.description,
-            resultCallback = this
+            confirm = confirm
         )
-    }
-
-    private fun sendDenyRequest(
-        listItem: AuthorizationItemViewModel,
-        connectionAndKey: RichConnection
-    ) {
-        updateItemViewMode(
-            listItem = listItem,
-            newViewMode = ViewMode.DENY_PROCESSING
-        )
-        apiManager.denyAuthorization(
-            connectionAndKey = connectionAndKey,
-            authorizationId = listItem.authorizationID,
-            authorizationCode = listItem.authorizationCode,
-            geolocation = locationManager.locationDescription,
-            authorizationType = AppTools.lastUnlockType.description,
-            resultCallback = this
-        )
+        if (result) {
+            updateItemViewMode(
+                listItem = listItem,
+                newViewMode = if (confirm) ViewMode.CONFIRM_PROCESSING else ViewMode.DENY_PROCESSING
+            )
+        }
     }
 
     private fun updateItemViewMode(listItem: AuthorizationItemViewModel, newViewMode: ViewMode) {
@@ -324,7 +214,7 @@ class AuthorizationsListViewModel(
     }
 
     private fun postMainComponentsState(itemsListIsEmpty: Boolean) {
-        val connectionsListIsEmpty = richConnections.isEmpty()
+        val connectionsListIsEmpty = interactor.noConnections
         val emptyViewIsVisible = connectionsListIsEmpty || itemsListIsEmpty
 
         emptyViewVisibility.postValue(if (emptyViewIsVisible) View.VISIBLE else View.GONE)

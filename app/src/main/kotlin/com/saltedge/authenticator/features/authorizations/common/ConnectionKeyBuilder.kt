@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.features.authorizations.common
 
 import com.saltedge.authenticator.core.model.ConnectionAbs
-import com.saltedge.authenticator.core.model.ConnectionID
+import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -31,12 +31,12 @@ import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
  *
  * @param repository data source of connections
  * @param keyStoreManager data source of keys
- * @return Map<ConnectionID, ConnectionAndKey)
+ * @return Map<ID, ConnectionAndKey)
  */
 fun collectRichConnections(
     repository: ConnectionsRepositoryAbs,
     keyStoreManager: KeyManagerAbs
-): Map<ConnectionID, RichConnection> {
+): Map<ID, RichConnection> {
     return repository.getAllActiveConnections().mapNotNull {
         it.getPrivateKeyForConnection(keyStoreManager)
     }.toMap()
@@ -51,7 +51,7 @@ fun collectRichConnections(
  * @return ConnectionAndKey
  */
 fun createConnectionAndKey(
-    connectionID: ConnectionID,
+    connectionID: ID,
     repository: ConnectionsRepositoryAbs,
     keyStoreManager: KeyManagerAbs
 ): RichConnection? {
@@ -65,11 +65,11 @@ fun createConnectionAndKey(
  *
  * @receiver Connection object
  * @param keyStoreManager data source of keys
- * @return Pair<ConnectionID, ConnectionAndKey)
+ * @return Pair<ID, ConnectionAndKey)
  */
 private fun ConnectionAbs.getPrivateKeyForConnection(
     keyStoreManager: KeyManagerAbs
-): Pair<ConnectionID, RichConnection>? {
+): Pair<ID, RichConnection>? {
     return keyStoreManager.enrichConnection(this)?.let { model ->
         Pair(this.id, model)
     }

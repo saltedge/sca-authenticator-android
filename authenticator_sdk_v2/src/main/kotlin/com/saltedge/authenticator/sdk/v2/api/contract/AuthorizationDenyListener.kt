@@ -22,7 +22,7 @@ package com.saltedge.authenticator.sdk.v2.api.contract
 
 import com.saltedge.authenticator.core.api.ERROR_CLASS_API_REQUEST
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
-import com.saltedge.authenticator.core.model.AuthorizationID
+import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponseData
 
 /**
@@ -30,10 +30,10 @@ import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResp
  */
 interface AuthorizationDenyListener {
     fun onAuthorizationDenySuccess(result: ConfirmDenyResponseData)
-    fun onAuthorizationDenyFailure(error: ApiErrorData, authorizationID: AuthorizationID)
+    fun onAuthorizationDenyFailure(error: ApiErrorData, authorizationID: ID)
 }
 
-fun AuthorizationDenyListener.error(message: String, authorizationID: AuthorizationID) {
+fun AuthorizationDenyListener.error(message: String, authorizationID: ID) {
     this.onAuthorizationDenyFailure(
         error = ApiErrorData(errorClassName = ERROR_CLASS_API_REQUEST, errorMessage = message),
         authorizationID = authorizationID

@@ -22,8 +22,7 @@ package com.saltedge.authenticator.core.model
 
 typealias GUID = String
 typealias Token = String
-typealias ConnectionID = String
-typealias AuthorizationID = String
+typealias ID = String
 
 inline fun<T> T?.guard(nullClause: () -> Nothing): T {
     return this ?: nullClause()

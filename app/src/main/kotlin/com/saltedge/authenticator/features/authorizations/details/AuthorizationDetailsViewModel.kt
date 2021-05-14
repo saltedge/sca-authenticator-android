@@ -28,8 +28,7 @@ import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.api.model.error.isAuthorizationNotFound
 import com.saltedge.authenticator.core.api.model.error.isConnectionNotFound
 import com.saltedge.authenticator.core.api.model.error.isConnectivityError
-import com.saltedge.authenticator.core.model.AuthorizationID
-import com.saltedge.authenticator.core.model.ConnectionID
+import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
@@ -162,7 +161,7 @@ class AuthorizationDetailsViewModel(
             ?: updateToFinalViewMode(ViewMode.UNAVAILABLE)
     }
 
-    override fun onConfirmDenySuccess(result: ConfirmDenyResponseData, connectionID: ConnectionID) {
+    override fun onConfirmDenySuccess(result: ConfirmDenyResponseData, connectionID: ID) {
         val newViewMode = if (result.success == true) {
             when (viewMode) {
                 ViewMode.CONFIRM_PROCESSING -> ViewMode.CONFIRM_SUCCESS
@@ -178,8 +177,8 @@ class AuthorizationDetailsViewModel(
 
     override fun onConfirmDenyFailure(
         error: ApiErrorData,
-        connectionID: ConnectionID,
-        authorizationID: AuthorizationID
+        connectionID: ID,
+        authorizationID: ID
     ) {
         processFetchAuthorizationError(error)
     }

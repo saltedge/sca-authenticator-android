@@ -21,9 +21,8 @@
 package com.saltedge.authenticator.features.authorizations.common
 
 import android.view.View
-import com.saltedge.authenticator.core.model.AuthorizationID
 import com.saltedge.authenticator.core.model.ConnectionAbs
-import com.saltedge.authenticator.core.model.ConnectionID
+import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.tools.remainedSeconds
 import com.saltedge.authenticator.core.tools.remainedTimeDescription
 import com.saltedge.authenticator.core.tools.secondsBetweenDates
@@ -33,14 +32,14 @@ import timber.log.Timber
 import java.io.Serializable
 
 data class AuthorizationItemViewModel(
-    val authorizationID: AuthorizationID,
+    val authorizationID: ID,
     val authorizationCode: String,
     val title: String,
     val description: String,
     val validSeconds: Int,
     val endTime: DateTime,
     val startTime: DateTime,
-    val connectionID: ConnectionID,
+    val connectionID: ID,
     val connectionName: String,
     val connectionLogoUrl: String?,
     var viewMode: ViewMode = ViewMode.DEFAULT
@@ -191,17 +190,11 @@ fun joinViewModels(
     return (newModelsWithoutExitingFinalModels + finalModels).sortedBy { it.startTime }
 }
 
-private fun List<AuthorizationItemViewModel>.containsIdentifier(
-    authorizationID: AuthorizationID,
-    connectionID: ConnectionID): Boolean
-{
+private fun List<AuthorizationItemViewModel>.containsIdentifier(authorizationID: ID, connectionID: ID): Boolean {
     return this.any { it.hasIdentifier(authorizationID, connectionID) }
 }
 
-private fun AuthorizationItemViewModel.hasIdentifier(
-    authorizationID: AuthorizationID,
-    connectionID: ConnectionID
-): Boolean {
+private fun AuthorizationItemViewModel.hasIdentifier(authorizationID: ID, connectionID: ID): Boolean {
     return this.authorizationID == authorizationID && this.connectionID == connectionID
 }
 

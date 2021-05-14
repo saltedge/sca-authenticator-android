@@ -20,17 +20,25 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
-import androidx.test.core.app.ApplicationProvider
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.encryptWithTestKey
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.*
+import com.saltedge.authenticator.app.AppTools
+import com.saltedge.authenticator.app.ConnectivityReceiverAbs
+import com.saltedge.authenticator.app.KEY_OPTION_ID
+import com.saltedge.authenticator.core.api.ERROR_CLASS_CONNECTION_NOT_FOUND
+import com.saltedge.authenticator.core.api.KEY_ID
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.createRequestError
+import com.saltedge.authenticator.core.model.ConnectionStatus
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.polling.PollingServiceAbs
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
@@ -45,9 +53,7 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
-import com.saltedge.authenticator.sdk.polling.PollingServiceAbs
-import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
-import com.saltedge.authenticator.sdk.tools.secure.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
 import com.saltedge.authenticator.widget.security.ActivityUnlockType
 import junit.framework.TestCase.assertNull
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -60,7 +66,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
 
@@ -70,13 +75,13 @@ class AuthorizationsListViewModelTest {
 
     private val testDispatcher = TestCoroutineDispatcher()
     private lateinit var viewModel: AuthorizationsListViewModel
-    private val context: Context = ApplicationProvider.getApplicationContext()
+    private lateinit var interactor: AuthorizationsListInteractor
     private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
     private val mockCryptoTools = mock(CryptoToolsAbs::class.java)
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockPollingService = mock(PollingServiceAbs::class.java)
-    private val mockConnectivityReceiver = Mockito.mock(ConnectivityReceiverAbs::class.java)
+    private val mockConnectivityReceiver = mock(ConnectivityReceiverAbs::class.java)
     private val mockLocationManager = mock(DeviceLocationManagerAbs::class.java)
     private val mockConnection = Connection().apply {
         guid = "guid1"
@@ -105,16 +110,17 @@ class AuthorizationsListViewModelTest {
             given(mockCryptoTools.decryptAuthorizationData(encryptedData, mockConnectionAndKey.private))
                 .willReturn(authorizations[index])
         }
-
-        viewModel = AuthorizationsListViewModel(
-            appContext = context,
+        interactor = AuthorizationsListInteractor(
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
             cryptoTools = mockCryptoTools,
             apiManager = mockApiManager,
-            connectivityReceiver = mockConnectivityReceiver,
             locationManager = mockLocationManager,
             defaultDispatcher = testDispatcher
+        )
+        viewModel = AuthorizationsListViewModel(
+            interactor = interactor,
+            connectivityReceiver = mockConnectivityReceiver
         )
     }
 
@@ -238,7 +244,7 @@ class AuthorizationsListViewModelTest {
         clearInvocations(mockConnectionsRepository)
 
         //when
-        viewModel.onFetchEncryptedDataResult(
+        interactor.onFetchEncryptedDataResult(
             result = emptyList(),
             errors = listOf(createRequestError(404))
         )
@@ -254,7 +260,7 @@ class AuthorizationsListViewModelTest {
         clearInvocations(mockConnectionsRepository)
 
         //when
-        viewModel.onFetchEncryptedDataResult(
+        interactor.onFetchEncryptedDataResult(
             result = emptyList(),
             errors = listOf(ApiErrorData(errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND))
         )
@@ -270,7 +276,7 @@ class AuthorizationsListViewModelTest {
         clearInvocations(mockConnectionsRepository)
 
         //when
-        viewModel.onFetchEncryptedDataResult(
+        interactor.onFetchEncryptedDataResult(
             result = emptyList(),
             errors = listOf(
                 ApiErrorData(
@@ -293,7 +299,7 @@ class AuthorizationsListViewModelTest {
         val requestResult = encryptedAuthorizations
 
         //when
-        viewModel.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
+        interactor.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
 
         //then
         assertThat(viewModel.listItemsValues, equalTo(items))
@@ -309,7 +315,7 @@ class AuthorizationsListViewModelTest {
         val requestResult = emptyList<EncryptedData>()
 
         //when
-        viewModel.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
+        interactor.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
 
         //then
         assertThat(viewModel.listItemsValues, equalTo(emptyList()))
@@ -325,7 +331,7 @@ class AuthorizationsListViewModelTest {
         val requestResult = encryptedAuthorizations
 
         //when
-        viewModel.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
+        interactor.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
 
         //then
         assertThat(viewModel.listItemsValues, equalTo(items))
@@ -340,7 +346,7 @@ class AuthorizationsListViewModelTest {
         val requestResult = encryptedAuthorizations
 
         //when
-        viewModel.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
+        interactor.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
 
         //then
         assertThat(viewModel.listItemsValues.size, equalTo(2))
@@ -355,10 +361,10 @@ class AuthorizationsListViewModelTest {
         viewModel.onResume()
 
         //when
-        val result = viewModel.getCurrentConnectionsAndKeysForPolling()
+        val result = interactor.getCurrentConnectionsAndKeysForPolling()
 
         //then
-        assertThat(result, `is`(nullValue()))
+        assertThat(result, `is`(empty()))
     }
 
     @Test
@@ -367,7 +373,7 @@ class AuthorizationsListViewModelTest {
         //given view model
 
         //when
-        val result = viewModel.getCurrentConnectionsAndKeysForPolling()
+        val result = interactor.getCurrentConnectionsAndKeysForPolling()
 
         //then
         assertThat(result, equalTo(listOf(mockConnectionAndKey)))
@@ -423,7 +429,7 @@ class AuthorizationsListViewModelTest {
     @Throws(Exception::class)
     fun onListItemClickTestCase2() {
         //given no connections
-        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(emptyList<Connection>())
+        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(emptyList())
         viewModel.listItems.postValue(items)
 
         //when
@@ -473,7 +479,7 @@ class AuthorizationsListViewModelTest {
             authorizationCode = items[0].authorizationCode,
             geolocation = "GEO:52.506931;13.144558",
             authorizationType = "biometrics",
-            resultCallback = viewModel
+            resultCallback = interactor
         )
     }
 
@@ -502,7 +508,7 @@ class AuthorizationsListViewModelTest {
             authorizationCode = items[0].authorizationCode,
             geolocation = "GEO:52.506931;13.144558",
             authorizationType = "biometrics",
-            resultCallback = viewModel
+            resultCallback = interactor
         )
     }
 
@@ -519,7 +525,7 @@ class AuthorizationsListViewModelTest {
         val result = ConfirmDenyResponseData(success = true, authorizationID = "2")
 
         //when
-        viewModel.onConfirmDenySuccess(result = result, connectionID = "1")
+        interactor.onConfirmDenySuccess(result = result, connectionID = "1")
 
         //then
         assertThat(
@@ -541,7 +547,7 @@ class AuthorizationsListViewModelTest {
         val result = ConfirmDenyResponseData(success = true, authorizationID = "2")
 
         //when
-        viewModel.onConfirmDenySuccess(result = result, connectionID = "1")
+        interactor.onConfirmDenySuccess(result = result, connectionID = "1")
 
         //then
         assertThat(
@@ -563,7 +569,7 @@ class AuthorizationsListViewModelTest {
         val result = ConfirmDenyResponseData(success = true, authorizationID = "101")
 
         //when
-        viewModel.onConfirmDenySuccess(result = result, connectionID = "1")
+        interactor.onConfirmDenySuccess(result = result, connectionID = "1")
 
         //then
         assertThat(
@@ -590,7 +596,7 @@ class AuthorizationsListViewModelTest {
         val result = ConfirmDenyResponseData(success = true, authorizationID = "1")
 
         //when
-        viewModel.onConfirmDenySuccess(result = result, connectionID = "101")
+        interactor.onConfirmDenySuccess(result = result, connectionID = "101")
 
         //then
         assertThat(
@@ -624,10 +630,7 @@ class AuthorizationsListViewModelTest {
             viewModel.listItemsValues,
             equalTo(listOf(items.first(), items[1].copy(viewMode = ViewMode.ERROR)))
         )
-        assertThat(
-            viewModel.onConfirmErrorEvent.value,
-            equalTo(ViewModelEvent(error.getErrorMessage(context)))
-        )
+        assertThat(viewModel.errorEvent.value, equalTo(ViewModelEvent(error)))
     }
 
     @Test
@@ -651,8 +654,8 @@ class AuthorizationsListViewModelTest {
             equalTo(listOf(items.first(), items[1].copy(viewMode = ViewMode.DENY_PROCESSING)))
         )
         assertThat(
-            viewModel.onConfirmErrorEvent.value,
-            equalTo(ViewModelEvent("Request Error (404)"))
+            viewModel.errorEvent.value,
+            equalTo(ViewModelEvent(ApiErrorData(errorClassName = "ApiResponseError", errorMessage = "Request Error (404)")))
         )
     }
 

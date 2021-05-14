@@ -42,7 +42,8 @@ import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.api.model.*
+import com.saltedge.authenticator.sdk.api.model.ConsentData
+import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener
 import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
 import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
@@ -66,7 +67,7 @@ class ConnectionsListViewModel(
     private val decryptJob: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = decryptJob + Dispatchers.IO
-    private var connectionsAndKeys: Map<ConnectionID, RichConnection> =
+    private var connectionsAndKeys: Map<ID, RichConnection> =
         collectRichConnections(connectionsRepository, keyStoreManager)
     private var consents: Map<GUID, List<ConsentData>> = emptyMap()
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
@@ -260,7 +261,7 @@ class ConnectionsListViewModel(
 
     private fun updateItemsWithConsentData(
         items: List<ConnectionItemViewModel>,
-        consents: Map<ConnectionID, List<ConsentData>>
+        consents: Map<ID, List<ConsentData>>
     ): List<ConnectionItemViewModel> {
         return items.apply {
             forEach {
