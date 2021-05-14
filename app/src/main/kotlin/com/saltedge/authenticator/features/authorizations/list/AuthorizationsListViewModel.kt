@@ -43,7 +43,7 @@ import com.saltedge.authenticator.tools.postUnitEvent
 import kotlinx.coroutines.CoroutineScope
 
 class AuthorizationsListViewModel(
-    private val interactor: AuthorizationsListInteractor,
+    private val v1Interactor: AuthorizationsListV1Interactor,
     private val connectivityReceiver: ConnectivityReceiverAbs
 ) : ViewModel(),
     LifecycleObserver,
@@ -70,7 +70,7 @@ class AuthorizationsListViewModel(
     val onShowSettingsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
     init {
-        interactor.contract = this
+        v1Interactor.contract = this
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -80,7 +80,7 @@ class AuthorizationsListViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onResume() {
-        interactor.updateConnections()
+        v1Interactor.updateConnections()
         if (listItemsValues.isNotEmpty()) postListItemsUpdate(listItemsValues)
         postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
     }
@@ -94,7 +94,7 @@ class AuthorizationsListViewModel(
         lifecycle.let {
             it.removeObserver(this)
             it.addObserver(this)
-            interactor.bindLifecycleObserver(lifecycle)
+            v1Interactor.bindLifecycleObserver(lifecycle)
         }
     }
 
@@ -188,7 +188,7 @@ class AuthorizationsListViewModel(
     }
 
     private fun updateAuthorization(listItem: AuthorizationItemViewModel, confirm: Boolean) {
-        val result = interactor.updateAuthorization(
+        val result = v1Interactor.updateAuthorization(
             connectionID = listItem.connectionID,
             authorizationID = listItem.authorizationID,
             authorizationCode = listItem.authorizationCode,
@@ -214,7 +214,7 @@ class AuthorizationsListViewModel(
     }
 
     private fun postMainComponentsState(itemsListIsEmpty: Boolean) {
-        val connectionsListIsEmpty = interactor.noConnections
+        val connectionsListIsEmpty = v1Interactor.noConnections
         val emptyViewIsVisible = connectionsListIsEmpty || itemsListIsEmpty
 
         emptyViewVisibility.postValue(if (emptyViewIsVisible) View.VISIBLE else View.GONE)

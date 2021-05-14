@@ -24,8 +24,8 @@ package com.saltedge.authenticator.sdk.constants
 const val DEFAULT_HOST = "https://www.saltedge.com"
 
 // API endpoints
-const val API_VERSION = "1"
-private const val API_VERSION_NAMESPACE = "api/authenticator/v$API_VERSION"
+const val API_V1_VERSION = "1"
+private const val API_VERSION_NAMESPACE = "api/authenticator/v$API_V1_VERSION"
 const val API_CONNECTIONS = "$API_VERSION_NAMESPACE/connections"
 const val API_AUTHORIZATIONS = "$API_VERSION_NAMESPACE/authorizations"
 const val API_ACTIONS = "$API_VERSION_NAMESPACE/actions"

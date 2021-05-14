@@ -33,7 +33,7 @@ import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
-import com.saltedge.authenticator.features.authorizations.common.createConnectionAndKey
+import com.saltedge.authenticator.models.createRichConnection
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
@@ -96,7 +96,7 @@ class AuthorizationDetailsViewModel(
         this.closeAppOnBackPress = closeAppOnBackPress ?: true
         this.titleRes = titleRes ?: R.string.authorization_feature_title
         if (this.titleRes == 0) this.titleRes = R.string.authorization_feature_title
-        richConnection = createConnectionAndKey(
+        richConnection = createRichConnection(
             connectionID = identifier?.connectionID ?: "",
             repository = connectionsRepository,
             keyStoreManager = keyStoreManager

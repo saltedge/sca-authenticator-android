@@ -75,7 +75,7 @@ class AuthorizationsListViewModelTest {
 
     private val testDispatcher = TestCoroutineDispatcher()
     private lateinit var viewModel: AuthorizationsListViewModel
-    private lateinit var interactor: AuthorizationsListInteractor
+    private lateinit var v1Interactor: AuthorizationsListV1Interactor
     private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
     private val mockCryptoTools = mock(CryptoToolsAbs::class.java)
@@ -110,7 +110,7 @@ class AuthorizationsListViewModelTest {
             given(mockCryptoTools.decryptAuthorizationData(encryptedData, mockConnectionAndKey.private))
                 .willReturn(authorizations[index])
         }
-        interactor = AuthorizationsListInteractor(
+        v1Interactor = AuthorizationsListV1Interactor(
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
             cryptoTools = mockCryptoTools,
@@ -119,7 +119,7 @@ class AuthorizationsListViewModelTest {
             defaultDispatcher = testDispatcher
         )
         viewModel = AuthorizationsListViewModel(
-            interactor = interactor,
+            interactor = v1Interactor,
             connectivityReceiver = mockConnectivityReceiver
         )
     }
@@ -244,7 +244,7 @@ class AuthorizationsListViewModelTest {
         clearInvocations(mockConnectionsRepository)
 
         //when
-        interactor.onFetchEncryptedDataResult(
+        v1Interactor.onFetchEncryptedDataResult(
             result = emptyList(),
             errors = listOf(createRequestError(404))
         )
@@ -260,7 +260,7 @@ class AuthorizationsListViewModelTest {
         clearInvocations(mockConnectionsRepository)
 
         //when
-        interactor.onFetchEncryptedDataResult(
+        v1Interactor.onFetchEncryptedDataResult(
             result = emptyList(),
             errors = listOf(ApiErrorData(errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND))
         )
@@ -276,7 +276,7 @@ class AuthorizationsListViewModelTest {
         clearInvocations(mockConnectionsRepository)
 
         //when
-        interactor.onFetchEncryptedDataResult(
+        v1Interactor.onFetchEncryptedDataResult(
             result = emptyList(),
             errors = listOf(
                 ApiErrorData(
@@ -299,7 +299,7 @@ class AuthorizationsListViewModelTest {
         val requestResult = encryptedAuthorizations
 
         //when
-        interactor.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
+        v1Interactor.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
 
         //then
         assertThat(viewModel.listItemsValues, equalTo(items))
@@ -315,7 +315,7 @@ class AuthorizationsListViewModelTest {
         val requestResult = emptyList<EncryptedData>()
 
         //when
-        interactor.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
+        v1Interactor.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
 
         //then
         assertThat(viewModel.listItemsValues, equalTo(emptyList()))
@@ -331,7 +331,7 @@ class AuthorizationsListViewModelTest {
         val requestResult = encryptedAuthorizations
 
         //when
-        interactor.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
+        v1Interactor.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
 
         //then
         assertThat(viewModel.listItemsValues, equalTo(items))
@@ -346,7 +346,7 @@ class AuthorizationsListViewModelTest {
         val requestResult = encryptedAuthorizations
 
         //when
-        interactor.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
+        v1Interactor.onFetchEncryptedDataResult(result = requestResult, errors = emptyList())
 
         //then
         assertThat(viewModel.listItemsValues.size, equalTo(2))
@@ -361,7 +361,7 @@ class AuthorizationsListViewModelTest {
         viewModel.onResume()
 
         //when
-        val result = interactor.getCurrentConnectionsAndKeysForPolling()
+        val result = v1Interactor.getCurrentConnectionsAndKeysForPolling()
 
         //then
         assertThat(result, `is`(empty()))
@@ -373,7 +373,7 @@ class AuthorizationsListViewModelTest {
         //given view model
 
         //when
-        val result = interactor.getCurrentConnectionsAndKeysForPolling()
+        val result = v1Interactor.getCurrentConnectionsAndKeysForPolling()
 
         //then
         assertThat(result, equalTo(listOf(mockConnectionAndKey)))
@@ -479,7 +479,7 @@ class AuthorizationsListViewModelTest {
             authorizationCode = items[0].authorizationCode,
             geolocation = "GEO:52.506931;13.144558",
             authorizationType = "biometrics",
-            resultCallback = interactor
+            resultCallback = v1Interactor
         )
     }
 
@@ -508,7 +508,7 @@ class AuthorizationsListViewModelTest {
             authorizationCode = items[0].authorizationCode,
             geolocation = "GEO:52.506931;13.144558",
             authorizationType = "biometrics",
-            resultCallback = interactor
+            resultCallback = v1Interactor
         )
     }
 
@@ -525,7 +525,7 @@ class AuthorizationsListViewModelTest {
         val result = ConfirmDenyResponseData(success = true, authorizationID = "2")
 
         //when
-        interactor.onConfirmDenySuccess(result = result, connectionID = "1")
+        v1Interactor.onConfirmDenySuccess(result = result, connectionID = "1")
 
         //then
         assertThat(
@@ -547,7 +547,7 @@ class AuthorizationsListViewModelTest {
         val result = ConfirmDenyResponseData(success = true, authorizationID = "2")
 
         //when
-        interactor.onConfirmDenySuccess(result = result, connectionID = "1")
+        v1Interactor.onConfirmDenySuccess(result = result, connectionID = "1")
 
         //then
         assertThat(
@@ -569,7 +569,7 @@ class AuthorizationsListViewModelTest {
         val result = ConfirmDenyResponseData(success = true, authorizationID = "101")
 
         //when
-        interactor.onConfirmDenySuccess(result = result, connectionID = "1")
+        v1Interactor.onConfirmDenySuccess(result = result, connectionID = "1")
 
         //then
         assertThat(
@@ -596,7 +596,7 @@ class AuthorizationsListViewModelTest {
         val result = ConfirmDenyResponseData(success = true, authorizationID = "1")
 
         //when
-        interactor.onConfirmDenySuccess(result = result, connectionID = "101")
+        v1Interactor.onConfirmDenySuccess(result = result, connectionID = "101")
 
         //then
         assertThat(

@@ -30,7 +30,7 @@ import com.saltedge.authenticator.core.api.KEY_NAME
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.*
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
-import com.saltedge.authenticator.features.authorizations.common.collectRichConnections
+import com.saltedge.authenticator.models.collectRichConnections
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
 import com.saltedge.authenticator.features.connections.list.menu.MenuData

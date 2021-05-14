@@ -27,7 +27,7 @@ import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.actions.SubmitActionViewModel
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsViewModel
-import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListInteractor
+import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListV1Interactor
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListViewModel
 import com.saltedge.authenticator.features.connections.create.ConnectProviderInteractorV1
 import com.saltedge.authenticator.features.connections.create.ConnectProviderInteractorV2
@@ -114,7 +114,7 @@ class ViewModelsFactory @Inject constructor(
             }
             modelClass.isAssignableFrom(AuthorizationsListViewModel::class.java) -> {
                 return AuthorizationsListViewModel(
-                    interactor = AuthorizationsListInteractor(
+                    interactor = AuthorizationsListV1Interactor(
                         connectionsRepository = connectionsRepository,
                         keyStoreManager = keyStoreManager,
                         cryptoTools = cryptoTools,

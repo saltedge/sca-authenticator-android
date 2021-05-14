@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2020 Salt Edge Inc.
+ * Copyright (c) 2021 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,38 +28,39 @@ import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
-import com.saltedge.authenticator.features.authorizations.common.collectRichConnections
-import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
+import com.saltedge.authenticator.models.collectRichConnections
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.api.model.EncryptedData
-import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
-import com.saltedge.authenticator.sdk.api.model.authorization.isNotExpired
-import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
-import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
-import com.saltedge.authenticator.sdk.polling.FetchAuthorizationsContract
-import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
+import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
+import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationConfirmListener
+import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationDenyListener
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponseData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationData
+import com.saltedge.authenticator.sdk.v2.polling.PollingAuthorizationsContract
+import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsAbs
+
 import kotlinx.coroutines.*
 
-class AuthorizationsListInteractor(
+class AuthorizationsListV2Interactor(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyManagerAbs,
     private val cryptoTools: CryptoToolsAbs,
-    private val apiManager: AuthenticatorApiManagerAbs,
+    private val apiManager: ScaServiceClientAbs,
     private val locationManager: DeviceLocationManagerAbs,
     private val defaultDispatcher: CoroutineDispatcher
-) : FetchAuthorizationsContract, ConfirmAuthorizationListener {
+) : AuthorizationConfirmListener, AuthorizationDenyListener, PollingAuthorizationsContract {
 
     var contract: AuthorizationsListInteractorCallback? = null
     val noConnections: Boolean
         get() = richConnections.isEmpty()
     private var pollingService = apiManager.createAuthorizationsPollingService()
     private var richConnections: Map<ID, RichConnection> =
-        collectRichConnections(connectionsRepository, keyStoreManager)
+        collectRichConnections(connectionsRepository, keyStoreManager, API_V2_VERSION)
 
     fun updateConnections() {
-        richConnections = collectRichConnections(connectionsRepository, keyStoreManager)
+        richConnections = collectRichConnections(connectionsRepository, keyStoreManager, API_V2_VERSION)
     }
 
     fun bindLifecycleObserver(lifecycle: Lifecycle) {
@@ -69,40 +70,52 @@ class AuthorizationsListInteractor(
     }
 
     fun updateAuthorization(connectionID: ID, authorizationID: ID, authorizationCode: String, confirm: Boolean): Boolean {
+        val authorizationData = UpdateAuthorizationData(
+            authorizationCode = authorizationCode,
+            geolocation = locationManager.locationDescription ?: "",
+            userAuthorizationType = AppTools.lastUnlockType.description
+        )
         if (confirm) {
             apiManager.confirmAuthorization(
-                connectionAndKey = richConnections[connectionID] ?: return false,
+                connection = richConnections[connectionID] ?: return false,
                 authorizationId = authorizationID,
-                authorizationCode = authorizationCode,
-                geolocation = locationManager.locationDescription,
-                authorizationType = AppTools.lastUnlockType.description,
-                resultCallback = this
+                authorizationData = authorizationData,
+                callback = this
             )
         } else {
             apiManager.denyAuthorization(
-                connectionAndKey = richConnections[connectionID] ?: return false,
+                connection = richConnections[connectionID] ?: return false,
                 authorizationId = authorizationID,
-                authorizationCode = authorizationCode,
-                geolocation = locationManager.locationDescription,
-                authorizationType = AppTools.lastUnlockType.description,
-                resultCallback = this
+                authorizationData = authorizationData,
+                callback = this
             )
         }
         return true
     }
 
-    override fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection> = richConnections.values.toList()//TODO REMOVE
+    override fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection> = richConnections.values.toList()
 
-    override fun onFetchEncryptedDataResult(result: List<EncryptedData>, errors: List<ApiErrorData>) {
+    override fun onFetchAuthorizationsResult(
+        result: List<AuthorizationResponseData>,
+        errors: List<ApiErrorData>
+    ) {
         processAuthorizationsErrors(errors = errors)
         processEncryptedAuthorizationsResult(encryptedList = result)
     }
 
-    override fun onConfirmDenySuccess(result: ConfirmDenyResponseData, connectionID: ID) {
+    override fun onAuthorizationConfirmSuccess(result: ConfirmDenyResponseData) {
+        contract?.onConfirmDenySuccess(connectionID, result.authorizationID)//TODO ERROR
+    }
+
+    override fun onAuthorizationConfirmFailure(error: ApiErrorData, authorizationID: ID) {
+        contract?.onConfirmDenyFailure(error, connectionID, authorizationID)
+    }
+
+    override fun onAuthorizationDenySuccess(result: ConfirmDenyResponseData) {
         contract?.onConfirmDenySuccess(connectionID, result.authorizationID ?: return)//TODO ERROR
     }
 
-    override fun onConfirmDenyFailure(error: ApiErrorData, connectionID: ID, authorizationID: ID) {
+    override fun onAuthorizationDenyFailure(error: ApiErrorData, authorizationID: ID) {
         contract?.onConfirmDenyFailure(error, connectionID, authorizationID)
     }
 
@@ -143,11 +156,4 @@ class AuthorizationsListInteractor(
             }
         }
     }
-}
-
-interface AuthorizationsListInteractorCallback {
-    fun onAuthorizationsReceived(data: List<AuthorizationItemViewModel>)
-    fun onConfirmDenySuccess(connectionID: ID, authorizationID: ID)
-    fun onConfirmDenyFailure(error: ApiErrorData, connectionID: ID, authorizationID: ID)
-    val coroutineScope: CoroutineScope
 }
