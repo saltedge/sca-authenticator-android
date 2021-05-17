@@ -29,13 +29,14 @@ import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResp
  * Deny SCA Authorization request result
  */
 interface AuthorizationDenyListener {
-    fun onAuthorizationDenySuccess(result: ConfirmDenyResponseData)
-    fun onAuthorizationDenyFailure(error: ApiErrorData, authorizationID: ID)
+    fun onAuthorizationDenySuccess(result: ConfirmDenyResponseData, connectionID: ID)
+    fun onAuthorizationDenyFailure(error: ApiErrorData, connectionID: ID, authorizationID: ID)
 }
 
-fun AuthorizationDenyListener.error(message: String, authorizationID: ID) {
+fun AuthorizationDenyListener.error(message: String, connectionID: ID, authorizationID: ID) {
     this.onAuthorizationDenyFailure(
         error = ApiErrorData(errorClassName = ERROR_CLASS_API_REQUEST, errorMessage = message),
-        authorizationID = authorizationID
+        authorizationID = authorizationID,
+        connectionID = connectionID
     )
 }

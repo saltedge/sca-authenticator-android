@@ -31,14 +31,16 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_CLOSE_APP
 import com.saltedge.authenticator.app.TIME_VIEW_UPDATE_TIMEOUT
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.cloud.clearNotifications
+import com.saltedge.authenticator.core.api.KEY_ID
+import com.saltedge.authenticator.core.api.KEY_TITLE
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.app.authenticatorApp
-import com.saltedge.authenticator.core.api.KEY_ID
-import com.saltedge.authenticator.core.api.KEY_TITLE
+import com.saltedge.authenticator.tools.getErrorMessage
 import com.saltedge.authenticator.tools.popBackStack
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_authorization_details.*
@@ -115,9 +117,12 @@ class AuthorizationDetailsFragment : BaseFragment(),
                 headerView?.onTimeUpdate()
             }
         })
-        viewModel.onErrorEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
-            event.getContentIfNotHandled()?.let { message ->
-                view?.let { anchor -> Snackbar.make(anchor, message, Snackbar.LENGTH_LONG).show() }
+        viewModel.onErrorEvent.observe(this, Observer<ViewModelEvent<ApiErrorData>> { event ->
+            event.getContentIfNotHandled()?.let { error ->
+                view?.let { anchor ->
+                    val message = error.getErrorMessage(anchor.context)
+                    Snackbar.make(anchor, message, Snackbar.LENGTH_LONG).show()
+                }
             }
         })
         viewModel.onCloseAppEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
@@ -132,7 +137,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
             headerView?.ignoreTimeUpdate = it.ignoreTimeUpdate
             headerView?.visibility = it.timeViewVisibility
             contentView?.setTitleAndDescription(it.title, it.description)
-            contentView?.setViewMode(it.viewMode)
+            contentView?.setViewMode(it.status)
         })
 
         viewModel.setInitialData(

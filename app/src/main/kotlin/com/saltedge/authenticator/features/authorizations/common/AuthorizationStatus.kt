@@ -22,21 +22,22 @@ package com.saltedge.authenticator.features.authorizations.common
 
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.ResId
+import java.util.*
 
-enum class ViewMode {
+enum class AuthorizationStatus {//pending confirm_processing deny_processing confirmed denied closed
     LOADING,
-    DEFAULT,
+    PENDING,
     CONFIRM_PROCESSING,
     DENY_PROCESSING,
-    CONFIRM_SUCCESS,
-    DENY_SUCCESS,
+    CONFIRMED,
+    DENIED,
     ERROR,
     TIME_OUT,
     UNAVAILABLE;
 
-    fun isFinalMode(): Boolean {
-        return this == CONFIRM_SUCCESS
-            || this == DENY_SUCCESS
+    fun isFinalStatus(): Boolean {
+        return this == CONFIRMED
+            || this == DENIED
             || this == ERROR
             || this == TIME_OUT
             || this == UNAVAILABLE
@@ -49,8 +50,8 @@ enum class ViewMode {
     val statusImageResId: ResId?
         get() {
             return when(this) {
-                CONFIRM_SUCCESS -> R.drawable.ic_status_success
-                DENY_SUCCESS -> R.drawable.ic_status_denied
+                CONFIRMED -> R.drawable.ic_status_success
+                DENIED -> R.drawable.ic_status_denied
                 ERROR -> R.drawable.ic_status_error
                 TIME_OUT -> R.drawable.ic_status_timeout
                 UNAVAILABLE -> R.drawable.ic_status_unavailable
@@ -61,10 +62,10 @@ enum class ViewMode {
     val statusTitleResId: ResId
         get() {
             return when(this) {
-                LOADING, DEFAULT -> R.string.authorizations_loading
+                LOADING, PENDING -> R.string.authorizations_loading
                 CONFIRM_PROCESSING, DENY_PROCESSING -> R.string.authorizations_processing
-                CONFIRM_SUCCESS -> R.string.authorizations_confirmed
-                DENY_SUCCESS -> R.string.authorizations_denied
+                CONFIRMED -> R.string.authorizations_confirmed
+                DENIED -> R.string.authorizations_denied
                 ERROR -> R.string.authorizations_error
                 TIME_OUT -> R.string.authorizations_time_out
                 UNAVAILABLE -> R.string.authorizations_unavailable
@@ -74,10 +75,10 @@ enum class ViewMode {
     val statusDescriptionResId: ResId
         get() {
             return when(this) {
-                LOADING, DEFAULT -> R.string.authorizations_loading_description
+                LOADING, PENDING -> R.string.authorizations_loading_description
                 CONFIRM_PROCESSING, DENY_PROCESSING -> R.string.authorizations_processing_description
-                CONFIRM_SUCCESS -> R.string.authorizations_confirmed_description
-                DENY_SUCCESS -> R.string.authorizations_denied_description
+                CONFIRMED -> R.string.authorizations_confirmed_description
+                DENIED -> R.string.authorizations_denied_description
                 ERROR -> R.string.authorizations_error_description
                 TIME_OUT -> R.string.authorizations_time_out_description
                 UNAVAILABLE -> R.string.authorizations_unavailable_description
@@ -86,4 +87,13 @@ enum class ViewMode {
 
     val processingMode: Boolean
         get() = this === LOADING || this === CONFIRM_PROCESSING || this === DENY_PROCESSING
+}
+
+fun String.toAuthorizationStatus(): AuthorizationStatus? {
+    return try {
+        if ("closed" == this) AuthorizationStatus.ERROR
+        else AuthorizationStatus.valueOf(toUpperCase(Locale.US))
+    } catch (e: Exception) {
+        null
+    }
 }

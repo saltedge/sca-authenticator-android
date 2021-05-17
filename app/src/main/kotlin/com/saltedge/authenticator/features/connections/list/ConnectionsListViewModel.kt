@@ -46,7 +46,7 @@ import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener
 import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
-import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
 import com.saltedge.authenticator.tools.postUnitEvent
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -56,7 +56,7 @@ class ConnectionsListViewModel(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
-    private val cryptoTools: CryptoToolsAbs
+    private val cryptoTools: CryptoToolsV1Abs
 ) : ViewModel(),
     LifecycleObserver,
     ConnectionsRevokeListener,

@@ -40,7 +40,7 @@ import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.polling.PollingServiceAbs
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
-import com.saltedge.authenticator.features.authorizations.common.ViewMode
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationStatus
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.features.menu.BottomMenuDialog
 import com.saltedge.authenticator.features.menu.MenuItemData
@@ -53,7 +53,7 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
-import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
 import com.saltedge.authenticator.widget.security.ActivityUnlockType
 import junit.framework.TestCase.assertNull
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -75,10 +75,10 @@ class AuthorizationsListViewModelTest {
 
     private val testDispatcher = TestCoroutineDispatcher()
     private lateinit var viewModel: AuthorizationsListViewModel
-    private lateinit var v1Interactor: AuthorizationsListV1Interactor
+    private lateinit var v1Interactor: AuthorizationsListInteractorV1
     private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
-    private val mockCryptoTools = mock(CryptoToolsAbs::class.java)
+    private val mockCryptoTools = mock(CryptoToolsV1Abs::class.java)
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockPollingService = mock(PollingServiceAbs::class.java)
     private val mockConnectivityReceiver = mock(ConnectivityReceiverAbs::class.java)
@@ -110,7 +110,7 @@ class AuthorizationsListViewModelTest {
             given(mockCryptoTools.decryptAuthorizationData(encryptedData, mockConnectionAndKey.private))
                 .willReturn(authorizations[index])
         }
-        v1Interactor = AuthorizationsListV1Interactor(
+        v1Interactor = AuthorizationsListInteractorV1(
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
             cryptoTools = mockCryptoTools,
@@ -341,7 +341,7 @@ class AuthorizationsListViewModelTest {
     @Throws(Exception::class)
     fun onFetchEncryptedDataResultTestCase7() {
         //given initial list with denied item and not empty result
-        val initialItems = listOf(items[0], items[1].copy(viewMode = ViewMode.DENY_SUCCESS))
+        val initialItems = listOf(items[0], items[1].copy(status = AuthorizationStatus.DENIED))
         viewModel.listItems.value = initialItems
         val requestResult = encryptedAuthorizations
 
@@ -391,7 +391,7 @@ class AuthorizationsListViewModelTest {
         //then
         assertThat(
             viewModel.listItemsValues[1],
-            equalTo(items[1].copy(endTime = DateTime(0), viewMode = ViewMode.TIME_OUT))
+            equalTo(items[1].copy(endTime = DateTime(0), status = AuthorizationStatus.TIME_OUT))
         )
     }
 
@@ -401,7 +401,7 @@ class AuthorizationsListViewModelTest {
         //given list with expired item
         viewModel.listItems.postValue(listOf(
             items[0],
-            items[1].copy(viewMode = ViewMode.TIME_OUT).apply { destroyAt = DateTime(0) }
+            items[1].copy(status = AuthorizationStatus.TIME_OUT).apply { destroyAt = DateTime(0) }
         ))
 
         //when
@@ -471,7 +471,7 @@ class AuthorizationsListViewModelTest {
         assertThat(viewModel.listItemUpdateEvent.value, equalTo(ViewModelEvent(0)))
         assertThat(
             viewModel.listItemsValues.first(),
-            equalTo(items[0].copy(viewMode = ViewMode.CONFIRM_PROCESSING))
+            equalTo(items[0].copy(status = AuthorizationStatus.CONFIRM_PROCESSING))
         )
         verify(mockApiManager).confirmAuthorization(
             connectionAndKey = mockConnectionAndKey,
@@ -500,7 +500,7 @@ class AuthorizationsListViewModelTest {
         assertThat(viewModel.listItemUpdateEvent.value, equalTo(ViewModelEvent(0)))
         assertThat(
             viewModel.listItemsValues.first(),
-            equalTo(items[0].copy(viewMode = ViewMode.DENY_PROCESSING))
+            equalTo(items[0].copy(status = AuthorizationStatus.DENY_PROCESSING))
         )
         verify(mockApiManager).denyAuthorization(
             connectionAndKey = mockConnectionAndKey,
@@ -519,7 +519,7 @@ class AuthorizationsListViewModelTest {
         viewModel.listItems.postValue(
             listOf(
                 items.first().copy(),
-                items[1].copy(viewMode = ViewMode.CONFIRM_PROCESSING)
+                items[1].copy(status = AuthorizationStatus.CONFIRM_PROCESSING)
             )
         )
         val result = ConfirmDenyResponseData(success = true, authorizationID = "2")
@@ -530,7 +530,7 @@ class AuthorizationsListViewModelTest {
         //then
         assertThat(
             viewModel.listItemsValues,
-            equalTo(listOf(items.first(), items[1].copy(viewMode = ViewMode.CONFIRM_SUCCESS)))
+            equalTo(listOf(items.first(), items[1].copy(status = AuthorizationStatus.CONFIRMED)))
         )
     }
 
@@ -541,7 +541,7 @@ class AuthorizationsListViewModelTest {
         viewModel.listItems.postValue(
             listOf(
                 items.first().copy(),
-                items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
+                items[1].copy(status = AuthorizationStatus.DENY_PROCESSING)
             )
         )
         val result = ConfirmDenyResponseData(success = true, authorizationID = "2")
@@ -552,7 +552,7 @@ class AuthorizationsListViewModelTest {
         //then
         assertThat(
             viewModel.listItemsValues,
-            equalTo(listOf(items.first(), items[1].copy(viewMode = ViewMode.DENY_SUCCESS)))
+            equalTo(listOf(items.first(), items[1].copy(status = AuthorizationStatus.DENIED)))
         )
     }
 
@@ -563,7 +563,7 @@ class AuthorizationsListViewModelTest {
         viewModel.listItems.postValue(
             listOf(
                 items.first().copy(),
-                items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
+                items[1].copy(status = AuthorizationStatus.DENY_PROCESSING)
             )
         )
         val result = ConfirmDenyResponseData(success = true, authorizationID = "101")
@@ -577,7 +577,7 @@ class AuthorizationsListViewModelTest {
             equalTo(
                 listOf(
                     items.first(),
-                    items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
+                    items[1].copy(status = AuthorizationStatus.DENY_PROCESSING)
                 )
             )
         )
@@ -590,7 +590,7 @@ class AuthorizationsListViewModelTest {
         viewModel.listItems.postValue(
             listOf(
                 items.first().copy(),
-                items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
+                items[1].copy(status = AuthorizationStatus.DENY_PROCESSING)
             )
         )
         val result = ConfirmDenyResponseData(success = true, authorizationID = "1")
@@ -604,7 +604,7 @@ class AuthorizationsListViewModelTest {
             equalTo(
                 listOf(
                     items.first().copy(),
-                    items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
+                    items[1].copy(status = AuthorizationStatus.DENY_PROCESSING)
                 )
             )
         )
@@ -617,7 +617,7 @@ class AuthorizationsListViewModelTest {
         viewModel.listItems.postValue(
             listOf(
                 items.first().copy(),
-                items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
+                items[1].copy(status = AuthorizationStatus.DENY_PROCESSING)
             )
         )
         val error = createRequestError(404)
@@ -628,7 +628,7 @@ class AuthorizationsListViewModelTest {
         //then
         assertThat(
             viewModel.listItemsValues,
-            equalTo(listOf(items.first(), items[1].copy(viewMode = ViewMode.ERROR)))
+            equalTo(listOf(items.first(), items[1].copy(status = AuthorizationStatus.ERROR)))
         )
         assertThat(viewModel.errorEvent.value, equalTo(ViewModelEvent(error)))
     }
@@ -640,7 +640,7 @@ class AuthorizationsListViewModelTest {
         viewModel.listItems.postValue(
             listOf(
                 items.first().copy(),
-                items[1].copy(viewMode = ViewMode.DENY_PROCESSING)
+                items[1].copy(status = AuthorizationStatus.DENY_PROCESSING)
             )
         )
         val error = createRequestError(404)
@@ -651,7 +651,7 @@ class AuthorizationsListViewModelTest {
         //then
         assertThat(
             viewModel.listItemsValues,
-            equalTo(listOf(items.first(), items[1].copy(viewMode = ViewMode.DENY_PROCESSING)))
+            equalTo(listOf(items.first(), items[1].copy(status = AuthorizationStatus.DENY_PROCESSING)))
         )
         assertThat(
             viewModel.errorEvent.value,

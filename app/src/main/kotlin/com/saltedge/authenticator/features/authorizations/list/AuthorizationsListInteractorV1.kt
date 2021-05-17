@@ -28,8 +28,9 @@ import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
-import com.saltedge.authenticator.models.collectRichConnections
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationStatus
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
+import com.saltedge.authenticator.models.collectRichConnections
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
@@ -40,13 +41,13 @@ import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
 import com.saltedge.authenticator.sdk.polling.FetchAuthorizationsContract
-import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
 import kotlinx.coroutines.*
 
-class AuthorizationsListV1Interactor(
+class AuthorizationsListInteractorV1(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyManagerAbs,
-    private val cryptoTools: CryptoToolsAbs,
+    private val cryptoTools: CryptoToolsV1Abs,
     private val apiManager: AuthenticatorApiManagerAbs,
     private val locationManager: DeviceLocationManagerAbs,
     private val defaultDispatcher: CoroutineDispatcher
@@ -100,7 +101,10 @@ class AuthorizationsListV1Interactor(
     }
 
     override fun onConfirmDenySuccess(result: ConfirmDenyResponseData, connectionID: ID) {
-        contract?.onConfirmDenySuccess(connectionID, result.authorizationID ?: return)//TODO ERROR
+        contract?.onConfirmDenySuccess(
+            connectionID = connectionID,
+            authorizationID = result.authorizationID ?: return
+        )//TODO ERROR
     }
 
     override fun onConfirmDenyFailure(error: ApiErrorData, connectionID: ID, authorizationID: ID) {
@@ -148,7 +152,7 @@ class AuthorizationsListV1Interactor(
 
 interface AuthorizationsListInteractorCallback {
     fun onAuthorizationsReceived(data: List<AuthorizationItemViewModel>)
-    fun onConfirmDenySuccess(connectionID: ID, authorizationID: ID)
+    fun onConfirmDenySuccess(connectionID: ID, authorizationID: ID, newStatus: AuthorizationStatus? = null)
     fun onConfirmDenyFailure(error: ApiErrorData, connectionID: ID, authorizationID: ID)
     val coroutineScope: CoroutineScope
 }

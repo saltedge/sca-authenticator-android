@@ -27,7 +27,8 @@ import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.actions.SubmitActionViewModel
 import com.saltedge.authenticator.features.authorizations.details.AuthorizationDetailsViewModel
-import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListV1Interactor
+import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListInteractorV1
+import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListInteractorV2
 import com.saltedge.authenticator.features.authorizations.list.AuthorizationsListViewModel
 import com.saltedge.authenticator.features.connections.create.ConnectProviderInteractorV1
 import com.saltedge.authenticator.features.connections.create.ConnectProviderInteractorV2
@@ -50,8 +51,9 @@ import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClient
+import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2Abs
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
@@ -60,7 +62,8 @@ class ViewModelsFactory @Inject constructor(
     val appContext: Context,
     val passcodeTools: PasscodeToolsAbs,
     val biometricTools: BiometricToolsAbs,
-    val cryptoTools: CryptoToolsAbs,
+    val cryptoToolsV1: CryptoToolsV1Abs,
+    val cryptoToolsV2: CryptoToolsV2Abs,
     val preferenceRepository: PreferenceRepositoryAbs,
     val connectionsRepository: ConnectionsRepositoryAbs,
     val keyStoreManager: KeyManagerAbs,
@@ -114,11 +117,19 @@ class ViewModelsFactory @Inject constructor(
             }
             modelClass.isAssignableFrom(AuthorizationsListViewModel::class.java) -> {
                 return AuthorizationsListViewModel(
-                    interactor = AuthorizationsListV1Interactor(
+                    interactorV1 = AuthorizationsListInteractorV1(
                         connectionsRepository = connectionsRepository,
                         keyStoreManager = keyStoreManager,
-                        cryptoTools = cryptoTools,
+                        cryptoTools = cryptoToolsV1,
                         apiManager = apiManagerV1,
+                        locationManager = DeviceLocationManager,
+                        defaultDispatcher = Dispatchers.Default
+                    ),
+                    interactorV2 = AuthorizationsListInteractorV2(
+                        connectionsRepository = connectionsRepository,
+                        keyStoreManager = keyStoreManager,
+                        cryptoTools = cryptoToolsV2,
+                        apiManager = apiManagerV2,
                         locationManager = DeviceLocationManager,
                         defaultDispatcher = Dispatchers.Default
                     ),
@@ -127,10 +138,9 @@ class ViewModelsFactory @Inject constructor(
             }
             modelClass.isAssignableFrom(AuthorizationDetailsViewModel::class.java) -> {
                 return AuthorizationDetailsViewModel(
-                    appContext = appContext,
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,
-                    cryptoTools = cryptoTools,
+                    cryptoTools = cryptoToolsV1,
                     apiManager = apiManagerV1,
                     locationManager = DeviceLocationManager
                 ) as T
@@ -144,7 +154,7 @@ class ViewModelsFactory @Inject constructor(
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,
                     apiManager = apiManagerV1,
-                    cryptoTools = cryptoTools
+                    cryptoTools = cryptoToolsV1
                 ) as T
             }
             modelClass.isAssignableFrom(ConsentsListViewModel::class.java) -> {
@@ -153,7 +163,7 @@ class ViewModelsFactory @Inject constructor(
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,
                     apiManager = apiManagerV1,
-                    cryptoTools = cryptoTools,
+                    cryptoTools = cryptoToolsV1,
                     defaultDispatcher = Dispatchers.Default
                 ) as T
             }

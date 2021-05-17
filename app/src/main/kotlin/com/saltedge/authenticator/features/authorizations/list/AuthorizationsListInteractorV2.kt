@@ -28,6 +28,8 @@ import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
+import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
+import com.saltedge.authenticator.features.authorizations.common.toAuthorizationStatus
 import com.saltedge.authenticator.models.collectRichConnections
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -35,18 +37,18 @@ import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationConfirmListener
 import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationDenyListener
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponseData
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.*
 import com.saltedge.authenticator.sdk.v2.polling.PollingAuthorizationsContract
-import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2Abs
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-import kotlinx.coroutines.*
-
-class AuthorizationsListV2Interactor(
+class AuthorizationsListInteractorV2(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyManagerAbs,
-    private val cryptoTools: CryptoToolsAbs,
+    private val cryptoTools: CryptoToolsV2Abs,
     private val apiManager: ScaServiceClientAbs,
     private val locationManager: DeviceLocationManagerAbs,
     private val defaultDispatcher: CoroutineDispatcher
@@ -78,14 +80,14 @@ class AuthorizationsListV2Interactor(
         if (confirm) {
             apiManager.confirmAuthorization(
                 connection = richConnections[connectionID] ?: return false,
-                authorizationId = authorizationID,
+                authorizationID = authorizationID,
                 authorizationData = authorizationData,
                 callback = this
             )
         } else {
             apiManager.denyAuthorization(
                 connection = richConnections[connectionID] ?: return false,
-                authorizationId = authorizationID,
+                authorizationID = authorizationID,
                 authorizationData = authorizationData,
                 callback = this
             )
@@ -103,20 +105,36 @@ class AuthorizationsListV2Interactor(
         processEncryptedAuthorizationsResult(encryptedList = result)
     }
 
-    override fun onAuthorizationConfirmSuccess(result: ConfirmDenyResponseData) {
-        contract?.onConfirmDenySuccess(connectionID, result.authorizationID)//TODO ERROR
+    override fun onAuthorizationConfirmSuccess(result: ConfirmDenyResponseData, connectionID: ID) {
+        contract?.onConfirmDenySuccess(
+            connectionID = connectionID,
+            authorizationID = result.authorizationID,
+            newStatus = result.status.toAuthorizationStatus()
+        )
     }
 
-    override fun onAuthorizationConfirmFailure(error: ApiErrorData, authorizationID: ID) {
-        contract?.onConfirmDenyFailure(error, connectionID, authorizationID)
+    override fun onAuthorizationConfirmFailure(error: ApiErrorData, connectionID: ID, authorizationID: ID) {
+        contract?.onConfirmDenyFailure(
+            error = error,
+            connectionID = connectionID,
+            authorizationID = authorizationID
+        )
     }
 
-    override fun onAuthorizationDenySuccess(result: ConfirmDenyResponseData) {
-        contract?.onConfirmDenySuccess(connectionID, result.authorizationID ?: return)//TODO ERROR
+    override fun onAuthorizationDenySuccess(result: ConfirmDenyResponseData, connectionID: ID) {
+        contract?.onConfirmDenySuccess(
+            connectionID = connectionID,
+            authorizationID = result.authorizationID,
+            newStatus = result.status.toAuthorizationStatus()
+        )
     }
 
-    override fun onAuthorizationDenyFailure(error: ApiErrorData, authorizationID: ID) {
-        contract?.onConfirmDenyFailure(error, connectionID, authorizationID)
+    override fun onAuthorizationDenyFailure(error: ApiErrorData, connectionID: ID, authorizationID: ID) {
+        contract?.onConfirmDenyFailure(
+            error = error,
+            connectionID = connectionID,
+            authorizationID = authorizationID
+        )
     }
 
     private fun processAuthorizationsErrors(errors: List<ApiErrorData>) {
@@ -128,19 +146,19 @@ class AuthorizationsListV2Interactor(
         }
     }
 
-    private fun processEncryptedAuthorizationsResult(encryptedList: List<EncryptedData>) {
+    private fun processEncryptedAuthorizationsResult(encryptedList: List<AuthorizationResponseData>) {
         contract?.coroutineScope?.launch(defaultDispatcher) {
-            val data = decryptAuthorizations(encryptedList = encryptedList)
+            val data: List<AuthorizationV2Data> = decryptAuthorizations(encryptedList = encryptedList)
             withContext(Dispatchers.Main) {
                 val newAuthorizationsData = data
                     .filter { it.isNotExpired() }
-                    .sortedWith(compareBy({ it.createdAt }, { it.id }))
+                    .sortedWith(compareBy { it.createdAt })
                 contract?.onAuthorizationsReceived(createViewModels(newAuthorizationsData))
             }
         }
     }
 
-    private fun decryptAuthorizations(encryptedList: List<EncryptedData>): List<AuthorizationData> {
+    private fun decryptAuthorizations(encryptedList: List<AuthorizationResponseData>): List<AuthorizationV2Data> {
         return encryptedList.mapNotNull {
             cryptoTools.decryptAuthorizationData(
                 encryptedData = it,
@@ -149,7 +167,7 @@ class AuthorizationsListV2Interactor(
         }
     }
 
-    private fun createViewModels(authorizations: List<AuthorizationData>): List<AuthorizationItemViewModel> {
+    private fun createViewModels(authorizations: List<AuthorizationV2Data>): List<AuthorizationItemViewModel> {
         return authorizations.mapNotNull { item ->
             richConnections[item.connectionId]?.let {
                 item.toAuthorizationItemViewModel(connection = it.connection)

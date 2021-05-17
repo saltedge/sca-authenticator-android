@@ -24,6 +24,7 @@ import android.content.Context
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.AppTools
+import com.saltedge.authenticator.core.api.model.DescriptionData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.api.model.error.isAuthorizationNotFound
 import com.saltedge.authenticator.core.api.model.error.isConnectionNotFound
@@ -32,10 +33,10 @@ import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
-import com.saltedge.authenticator.features.authorizations.common.ViewMode
-import com.saltedge.authenticator.models.createRichConnection
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationStatus
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.createRichConnection
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
@@ -45,16 +46,15 @@ import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
 import com.saltedge.authenticator.sdk.polling.FetchAuthorizationContract
 import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
-import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.getErrorMessage
 import com.saltedge.authenticator.tools.postUnitEvent
 import org.joda.time.DateTime
 
 class AuthorizationDetailsViewModel(
-    private val appContext: Context,
     private val connectionsRepository: ConnectionsRepositoryAbs,
-    private val cryptoTools: CryptoToolsAbs,
+    private val cryptoTools: CryptoToolsV1Abs,
     private val keyStoreManager: KeyManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
     private val locationManager: DeviceLocationManagerAbs
@@ -63,7 +63,7 @@ class AuthorizationDetailsViewModel(
     FetchAuthorizationContract,
     ConfirmAuthorizationListener
 {
-    val onErrorEvent = MutableLiveData<ViewModelEvent<String>>()
+    val onErrorEvent = MutableLiveData<ViewModelEvent<ApiErrorData>>()
     val onCloseAppEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onCloseViewEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onTimeUpdateEvent = MutableLiveData<ViewModelEvent<Unit>>()
@@ -73,10 +73,10 @@ class AuthorizationDetailsViewModel(
         private set
     private var richConnection: RichConnection? = null
     private var pollingService: SingleAuthorizationPollingService = apiManager.createSingleAuthorizationPollingService()
-    private val viewMode: ViewMode
-        get() = authorizationModel.value?.viewMode ?: ViewMode.LOADING
+    private val viewMode: AuthorizationStatus
+        get() = authorizationModel.value?.status ?: AuthorizationStatus.LOADING
     private val modelHasFinalMode: Boolean
-        get() = authorizationModel.value?.hasFinalMode ?: false
+        get() = authorizationModel.value?.hasFinalStatus ?: false
 
     fun bindLifecycleObserver(lifecycle: Lifecycle) {
         lifecycle.let {
@@ -101,29 +101,30 @@ class AuthorizationDetailsViewModel(
             repository = connectionsRepository,
             keyStoreManager = keyStoreManager
         )
-        val viewMode = if (richConnection == null || identifier?.authorizationID.isNullOrEmpty()) {
-            ViewMode.UNAVAILABLE
+        val status = if (richConnection == null || identifier?.authorizationID.isNullOrEmpty()) {
+            AuthorizationStatus.UNAVAILABLE
         } else {
-            ViewMode.LOADING
+            AuthorizationStatus.LOADING
         }
         authorizationModel.value = AuthorizationItemViewModel(
             authorizationID = identifier?.authorizationID ?: "",
             authorizationCode = "",
             title = "",
-            description = "",
+            description = DescriptionData(),
             validSeconds = 0,
             endTime = DateTime(0L),
             startTime = DateTime(0L),
             connectionID = identifier?.connectionID ?: "",
             connectionName = "",
             connectionLogoUrl = "",
-            viewMode = viewMode
+            status = status,
+            apiVersion = "1"
         )
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onFragmentResume() {
-        if (viewMode === ViewMode.LOADING || viewMode === ViewMode.DEFAULT) startPolling()
+        if (viewMode === AuthorizationStatus.LOADING || viewMode === AuthorizationStatus.PENDING) startPolling()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
@@ -141,7 +142,7 @@ class AuthorizationDetailsViewModel(
     fun onTimerTick() {
         authorizationModel.value?.also { model ->
             when {
-                model.shouldBeSetTimeOutMode -> updateToFinalViewMode(ViewMode.TIME_OUT)
+                model.shouldBeSetTimeOutMode -> updateToFinalViewMode(AuthorizationStatus.TIME_OUT)
                 model.shouldBeDestroyed -> closeView()
                 !model.ignoreTimeUpdate -> onTimeUpdateEvent.postUnitEvent()
             }
@@ -158,19 +159,19 @@ class AuthorizationDetailsViewModel(
     override fun onFetchAuthorizationResult(result: EncryptedData?, error: ApiErrorData?) {
         result?.let { processEncryptedAuthorizationResult(it) }
             ?: error?.let { processFetchAuthorizationError(it) }
-            ?: updateToFinalViewMode(ViewMode.UNAVAILABLE)
+            ?: updateToFinalViewMode(AuthorizationStatus.UNAVAILABLE)
     }
 
     override fun onConfirmDenySuccess(result: ConfirmDenyResponseData, connectionID: ID) {
         val newViewMode = if (result.success == true) {
             when (viewMode) {
-                ViewMode.CONFIRM_PROCESSING -> ViewMode.CONFIRM_SUCCESS
-                ViewMode.DENY_PROCESSING -> ViewMode.DENY_SUCCESS
-                else -> ViewMode.ERROR
+                AuthorizationStatus.CONFIRM_PROCESSING -> AuthorizationStatus.CONFIRMED
+                AuthorizationStatus.DENY_PROCESSING -> AuthorizationStatus.DENIED
+                else -> AuthorizationStatus.ERROR
             }
         } else {
             startPolling()
-            ViewMode.DEFAULT
+            AuthorizationStatus.PENDING
         }
         updateViewMode(newViewMode)
     }
@@ -195,12 +196,12 @@ class AuthorizationDetailsViewModel(
             )
             if (!modelHasFinalMode && authorizationModel.value != newViewModel) {
                 if (newViewModel == null) {
-                    updateToFinalViewMode(ViewMode.ERROR)
+                    updateToFinalViewMode(AuthorizationStatus.ERROR)
                 } else {
                     authorizationModel.postValue(newViewModel)
                 }
             }
-        } ?: updateToFinalViewMode(ViewMode.UNAVAILABLE)
+        } ?: updateToFinalViewMode(AuthorizationStatus.UNAVAILABLE)
     }
 
     private fun processFetchAuthorizationError(error: ApiErrorData) {
@@ -209,25 +210,25 @@ class AuthorizationDetailsViewModel(
                 richConnection?.connection?.accessToken?.let {
                     connectionsRepository.invalidateConnectionsByTokens(accessTokens = listOf(it))
                 }
-                updateToFinalViewMode(ViewMode.ERROR)
+                updateToFinalViewMode(AuthorizationStatus.ERROR)
             }
-            shouldSetUnavailableState(error) -> updateToFinalViewMode(ViewMode.UNAVAILABLE)
+            shouldSetUnavailableState(error) -> updateToFinalViewMode(AuthorizationStatus.UNAVAILABLE)
             !error.isConnectivityError() -> {
-                if (viewMode != ViewMode.ERROR) {
-                    onErrorEvent.postValue(ViewModelEvent(error.getErrorMessage(appContext)))
-                    updateToFinalViewMode(ViewMode.ERROR)
+                if (viewMode != AuthorizationStatus.ERROR) {
+                    onErrorEvent.postValue(ViewModelEvent(error))
+                    updateToFinalViewMode(AuthorizationStatus.ERROR)
                 }
             }
-            else -> onErrorEvent.postValue(ViewModelEvent(error.getErrorMessage(appContext)))
+            else -> onErrorEvent.postValue(ViewModelEvent(error))
         }
     }
 
     private fun shouldSetUnavailableState(error: ApiErrorData): Boolean {
-        return error.isAuthorizationNotFound() && (viewMode === ViewMode.LOADING || viewMode === ViewMode.DEFAULT)
+        return error.isAuthorizationNotFound() && (viewMode === AuthorizationStatus.LOADING || viewMode === AuthorizationStatus.PENDING)
     }
 
     private fun sendConfirmRequest() {
-        onStartConfirmDenyFlow(viewMode = ViewMode.CONFIRM_PROCESSING)
+        onStartConfirmDenyFlow(viewMode = AuthorizationStatus.CONFIRM_PROCESSING)
         apiManager.confirmAuthorization(
             connectionAndKey = richConnection ?: return,
             authorizationId = authorizationModel.value?.authorizationID ?: return,
@@ -239,7 +240,7 @@ class AuthorizationDetailsViewModel(
     }
 
     private fun sendDenyRequest() {
-        onStartConfirmDenyFlow(ViewMode.DENY_PROCESSING)
+        onStartConfirmDenyFlow(AuthorizationStatus.DENY_PROCESSING)
         apiManager.denyAuthorization(
             connectionAndKey = richConnection ?: return,
             authorizationId = authorizationModel.value?.authorizationID ?: return,
@@ -250,26 +251,26 @@ class AuthorizationDetailsViewModel(
         )
     }
 
-    private fun onStartConfirmDenyFlow(viewMode: ViewMode) {
+    private fun onStartConfirmDenyFlow(viewMode: AuthorizationStatus) {
         stopPolling()
         updateViewMode(viewMode)
     }
 
-    private fun updateToFinalViewMode(newViewMode: ViewMode) {
+    private fun updateToFinalViewMode(newViewMode: AuthorizationStatus) {
         stopPolling()
         updateViewMode(newViewMode)
         onTimeUpdateEvent.postUnitEvent()
     }
 
-    private fun updateViewMode(newViewMode: ViewMode) {
+    private fun updateViewMode(newViewMode: AuthorizationStatus) {
         authorizationModel.value?.let {
-            it.setNewViewMode(newViewMode = newViewMode)
+            it.setNewStatus(newStatus = newViewMode)
             authorizationModel.postValue(it)
         }
     }
 
     private fun startPolling() {
-        if (viewMode != ViewMode.UNAVAILABLE) {
+        if (viewMode != AuthorizationStatus.UNAVAILABLE) {
             authorizationModel.value?.authorizationID?.let {
                 pollingService.contract = this
                 pollingService.start(authorizationId = it)

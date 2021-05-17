@@ -21,10 +21,11 @@
 package com.saltedge.authenticator.sdk.v2.api.connector
 
 import com.saltedge.authenticator.core.api.model.EncryptedBundle
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationDenyListener
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponse
-import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import retrofit2.Call
 
@@ -34,8 +35,11 @@ internal class AuthorizationDenyConnector(
     var callback: AuthorizationDenyListener?
 ) : AuthorizationUpdateBaseConnector(authorizationId = authorizationId, isConfirmRequest = false) {
 
+    private var connectionID: ID = ""
+
     fun denyAuthorization(richConnection: RichConnection, encryptedPayload: EncryptedBundle) {
         val request = super.body(encryptedPayload)
+        this.connectionID = richConnection.connection.id
         apiInterface.denyAuthorization(
             requestUrl = super.url(richConnection),
             headersMap = super.headers(richConnection, request),
@@ -44,10 +48,14 @@ internal class AuthorizationDenyConnector(
     }
 
     override fun onSuccessResponse(call: Call<ConfirmDenyResponse>, response: ConfirmDenyResponse) {
-        callback?.onAuthorizationDenySuccess(result = response.data)
+        callback?.onAuthorizationDenySuccess(result = response.data, connectionID = connectionID)
     }
 
     override fun onFailureResponse(call: Call<ConfirmDenyResponse>, error: ApiErrorData) {
-        callback?.onAuthorizationDenyFailure(error = error, authorizationID = authorizationId)
+        callback?.onAuthorizationDenyFailure(
+            error = error,
+            connectionID = connectionID,
+            authorizationID = authorizationId
+        )
     }
 }

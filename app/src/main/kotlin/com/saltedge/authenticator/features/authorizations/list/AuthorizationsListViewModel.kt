@@ -30,8 +30,8 @@ import com.saltedge.authenticator.app.NetworkStateChangeListener
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationStatus
 import com.saltedge.authenticator.features.authorizations.common.TimerUpdateListener
-import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.joinViewModels
 import com.saltedge.authenticator.features.menu.BottomMenuDialog
 import com.saltedge.authenticator.features.menu.MenuItemData
@@ -43,7 +43,8 @@ import com.saltedge.authenticator.tools.postUnitEvent
 import kotlinx.coroutines.CoroutineScope
 
 class AuthorizationsListViewModel(
-    private val v1Interactor: AuthorizationsListV1Interactor,
+    private val interactorV1: AuthorizationsListInteractorV1,
+    private val interactorV2: AuthorizationsListInteractorV2,
     private val connectivityReceiver: ConnectivityReceiverAbs
 ) : ViewModel(),
     LifecycleObserver,
@@ -70,7 +71,8 @@ class AuthorizationsListViewModel(
     val onShowSettingsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
     init {
-        v1Interactor.contract = this
+        interactorV1.contract = this
+        interactorV2.contract = this
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -80,7 +82,8 @@ class AuthorizationsListViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onResume() {
-        v1Interactor.updateConnections()
+        interactorV1.updateConnections()
+        interactorV2.updateConnections()
         if (listItemsValues.isNotEmpty()) postListItemsUpdate(listItemsValues)
         postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
     }
@@ -94,7 +97,8 @@ class AuthorizationsListViewModel(
         lifecycle.let {
             it.removeObserver(this)
             it.addObserver(this)
-            v1Interactor.bindLifecycleObserver(lifecycle)
+            interactorV1.bindLifecycleObserver(lifecycle)
+            interactorV2.bindLifecycleObserver(lifecycle)
         }
     }
 
@@ -163,18 +167,18 @@ class AuthorizationsListViewModel(
         if (listItemsValues != joinedViewModels) postListItemsUpdate(newItems = joinedViewModels)
     }
 
-    override fun onConfirmDenySuccess(connectionID: ID, authorizationID: ID) {
+    override fun onConfirmDenySuccess(connectionID: ID, authorizationID: ID, newStatus: AuthorizationStatus?) {
         findListItem(connectionID = connectionID, authorizationID = authorizationID)?.let { item ->
-            val viewMode = if (item.viewMode == ViewMode.DENY_PROCESSING)
-                ViewMode.DENY_SUCCESS else ViewMode.CONFIRM_SUCCESS
-            updateItemViewMode(listItem = item, newViewMode = viewMode)
+            val calculatedStatus = if (item.status == AuthorizationStatus.DENY_PROCESSING)
+                AuthorizationStatus.DENIED else AuthorizationStatus.CONFIRMED
+            updateItemStatus(listItem = item, newStatus = newStatus ?: calculatedStatus)
         }
     }
 
     override fun onConfirmDenyFailure(error: ApiErrorData, connectionID: ID, authorizationID: ID) {
         errorEvent.postValue(ViewModelEvent(error))
         findListItem(connectionID, authorizationID)?.let { item ->
-            updateItemViewMode(listItem = item, newViewMode = ViewMode.ERROR)
+            updateItemStatus(listItem = item, newStatus = AuthorizationStatus.ERROR)
         }
     }
 
@@ -188,23 +192,32 @@ class AuthorizationsListViewModel(
     }
 
     private fun updateAuthorization(listItem: AuthorizationItemViewModel, confirm: Boolean) {
-        val result = v1Interactor.updateAuthorization(
-            connectionID = listItem.connectionID,
-            authorizationID = listItem.authorizationID,
-            authorizationCode = listItem.authorizationCode,
-            confirm = confirm
-        )
+        val result = if (listItem.isV2Api) {
+            interactorV1.updateAuthorization(
+                connectionID = listItem.connectionID,
+                authorizationID = listItem.authorizationID,
+                authorizationCode = listItem.authorizationCode,
+                confirm = confirm
+            )
+        } else {
+            interactorV2.updateAuthorization(
+                connectionID = listItem.connectionID,
+                authorizationID = listItem.authorizationID,
+                authorizationCode = listItem.authorizationCode,
+                confirm = confirm
+            )
+        }
         if (result) {
-            updateItemViewMode(
+            updateItemStatus(
                 listItem = listItem,
-                newViewMode = if (confirm) ViewMode.CONFIRM_PROCESSING else ViewMode.DENY_PROCESSING
+                newStatus = if (confirm) AuthorizationStatus.CONFIRM_PROCESSING else AuthorizationStatus.DENY_PROCESSING
             )
         }
     }
 
-    private fun updateItemViewMode(listItem: AuthorizationItemViewModel, newViewMode: ViewMode) {
+    private fun updateItemStatus(listItem: AuthorizationItemViewModel, newStatus: AuthorizationStatus) {
         val itemIndex = listItemsValues.indexOf(listItem)
-        listItem.setNewViewMode(newViewMode = newViewMode)
+        listItem.setNewStatus(newStatus = newStatus)
         listItemUpdateEvent.postValue(ViewModelEvent(itemIndex))
     }
 
@@ -214,7 +227,7 @@ class AuthorizationsListViewModel(
     }
 
     private fun postMainComponentsState(itemsListIsEmpty: Boolean) {
-        val connectionsListIsEmpty = v1Interactor.noConnections
+        val connectionsListIsEmpty = interactorV1.noConnections && interactorV2.noConnections
         val emptyViewIsVisible = connectionsListIsEmpty || itemsListIsEmpty
 
         emptyViewVisibility.postValue(if (emptyViewIsVisible) View.VISIBLE else View.GONE)
@@ -251,7 +264,7 @@ class AuthorizationsListViewModel(
 
     private fun cleanExpiredItems() {
         listItemsValues.filter { it.shouldBeSetTimeOutMode }.forEach {
-            updateItemViewMode(listItem = it, newViewMode = ViewMode.TIME_OUT)
+            updateItemStatus(listItem = it, newStatus = AuthorizationStatus.TIME_OUT)
         }
     }
 
