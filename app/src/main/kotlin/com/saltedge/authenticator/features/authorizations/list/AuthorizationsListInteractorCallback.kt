@@ -18,29 +18,17 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.tools.json
+package com.saltedge.authenticator.features.authorizations.list
 
-import com.saltedge.authenticator.core.api.model.DescriptionData
-import com.saltedge.authenticator.core.tools.json.createDefaultGson
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
-import org.joda.time.DateTime
-import org.joda.time.DateTimeZone
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ID
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationStatus
+import kotlinx.coroutines.CoroutineScope
 
-class JsonToolsTest {
-
-    @Test
-    @Throws(Exception::class)
-    fun createDefaultGsonTest() {
-        val gson = createDefaultGson()
-        val data = AuthorizationV2Data(
-            title = "",
-            description = DescriptionData(),
-            authorizationCode = "Qwerty1+==",
-            expiresAt = DateTime(0).withZone(DateTimeZone.UTC)
-        )
-        assertTrue(gson.toJson(data).contains("Qwerty1+=="))
-        assertTrue(gson.toJson(data).contains("1970-01-01T00:00:00.000Z"))
-    }
+interface AuthorizationsListInteractorCallback {
+    fun onAuthorizationsReceived(data: List<AuthorizationItemViewModel>, newModelsApiVersion: String)
+    fun onConfirmDenySuccess(connectionID: ID, authorizationID: ID, newStatus: AuthorizationStatus? = null)
+    fun onConfirmDenyFailure(error: ApiErrorData, connectionID: ID, authorizationID: ID)
+    val coroutineScope: CoroutineScope
 }

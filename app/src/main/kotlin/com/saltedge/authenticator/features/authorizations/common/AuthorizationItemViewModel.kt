@@ -31,6 +31,8 @@ import com.saltedge.authenticator.core.tools.remainedSeconds
 import com.saltedge.authenticator.core.tools.remainedTimeDescription
 import com.saltedge.authenticator.core.tools.secondsBetweenDates
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
+import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
+import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
 import org.joda.time.DateTime
 import timber.log.Timber
@@ -169,7 +171,7 @@ fun AuthorizationData.toAuthorizationItemViewModel(connection: ConnectionAbs): A
             startTime = this.createdAt ?: DateTime(0L),
             authorizationID = this.id,
             authorizationCode = this.authorizationCode ?: "",
-            apiVersion = connection.apiVersion,
+            apiVersion = API_V1_VERSION,
             status = AuthorizationStatus.PENDING
         )
     } catch (e: Exception) {
@@ -203,7 +205,7 @@ fun AuthorizationV2Data.toAuthorizationItemViewModel(connection: ConnectionAbs):
             startTime = this.createdAt ?: DateTime(0L),
             authorizationID = this.authorizationId ?: "",
             authorizationCode = this.authorizationCode ?: "",
-            apiVersion = connection.apiVersion,
+            apiVersion = API_V2_VERSION,
             status = this.status?.toAuthorizationStatus() ?: AuthorizationStatus.PENDING
         )
     } catch (e: Exception) {
@@ -218,18 +220,18 @@ fun AuthorizationV2Data.toAuthorizationItemViewModel(connection: ConnectionAbs):
 }
 
 /**
- * Joins collections of AuthorizationItemViewModel
+ * Merging of collections of AuthorizationItemViewModel
  *
+ * @receiver oldViewModels previously stored list of AuthorizationViewModel's
  * @param newViewModels newly received list of AuthorizationViewModel's
- * @param oldViewModels previously stored list of AuthorizationViewModel's
+ *
  * @return List, result of merging
  */
-fun joinViewModels(
+fun List<AuthorizationItemViewModel>.merge(
     newViewModels: List<AuthorizationItemViewModel>,
-    oldViewModels: List<AuthorizationItemViewModel>
+    newModelsApiVersion: String
 ): List<AuthorizationItemViewModel> {
-    val newModelsApiVersion = newViewModels.firstOrNull()?.apiVersion
-    val filteredOldModels = oldViewModels.filter {
+    val filteredOldModels = this.filter {
         it.hasFinalStatus || it.apiVersion != newModelsApiVersion
     }
     val filteredNewModels = newViewModels.filter {

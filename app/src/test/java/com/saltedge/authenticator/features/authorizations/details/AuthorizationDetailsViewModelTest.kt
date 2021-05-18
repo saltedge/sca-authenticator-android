@@ -24,10 +24,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.core.api.ERROR_CLASS_CONNECTION_NOT_FOUND
 import com.saltedge.authenticator.core.api.ERROR_CLASS_SSL_HANDSHAKE
+import com.saltedge.authenticator.core.api.model.DescriptionData
+import com.saltedge.authenticator.core.api.model.DescriptionTextData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.api.model.error.createRequestError
 import com.saltedge.authenticator.core.model.ConnectionAbs
@@ -139,7 +140,6 @@ class AuthorizationDetailsViewModelTest {
             )
 
         viewModel = AuthorizationDetailsViewModel(
-            appContext = TestAppTools.applicationContext,
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
             cryptoTools = mockCryptoTools,
@@ -187,14 +187,15 @@ class AuthorizationDetailsViewModelTest {
             authorizationID = "1",
             authorizationCode = "",
             title = "",
-            description = "",
+            description = DescriptionData(text = DescriptionTextData("")),
             validSeconds = 0,
             endTime = DateTime(0L),
             startTime = DateTime(0L),
             connectionID = "1",
             connectionName = "",
             connectionLogoUrl = "",
-            status = AuthorizationStatus.LOADING
+            status = AuthorizationStatus.LOADING,
+            apiVersion = "1"
         )))
 
         viewModel.setInitialData(identifier = AuthorizationIdentifier("1", ""), closeAppOnBackPress = true, titleRes = null)
@@ -203,14 +204,15 @@ class AuthorizationDetailsViewModelTest {
             authorizationID = "1",
             authorizationCode = "",
             title = "",
-            description = "",
+            description = DescriptionData(text = DescriptionTextData("")),
             validSeconds = 0,
             endTime = DateTime(0L),
             startTime = DateTime(0L),
             connectionID = "",
             connectionName = "",
             connectionLogoUrl = "",
-            status = AuthorizationStatus.UNAVAILABLE
+            status = AuthorizationStatus.UNAVAILABLE,
+            apiVersion = "1"
         )))
 
         viewModel.setInitialData(identifier = AuthorizationIdentifier("1", ""), closeAppOnBackPress = true, titleRes = null)
@@ -219,14 +221,15 @@ class AuthorizationDetailsViewModelTest {
             authorizationID = "1",
             authorizationCode = "",
             title = "",
-            description = "",
+            description = DescriptionData(text = DescriptionTextData("")),
             validSeconds = 0,
             endTime = DateTime(0L),
             startTime = DateTime(0L),
             connectionID = "",
             connectionName = "",
             connectionLogoUrl = "",
-            status = AuthorizationStatus.UNAVAILABLE
+            status = AuthorizationStatus.UNAVAILABLE,
+            apiVersion = "1"
         )))
     }
 
@@ -244,14 +247,15 @@ class AuthorizationDetailsViewModelTest {
             authorizationID = "1",
             authorizationCode = "",
             title = "",
-            description = "",
+            description = DescriptionData(text = DescriptionTextData("")),
             validSeconds = 0,
             endTime = DateTime(0L),
             startTime = DateTime(0L),
             connectionID = "",
             connectionName = "",
             connectionLogoUrl = "",
-            status = AuthorizationStatus.UNAVAILABLE
+            status = AuthorizationStatus.UNAVAILABLE,
+            apiVersion = "1"
         )))
     }
 
@@ -269,14 +273,15 @@ class AuthorizationDetailsViewModelTest {
             authorizationID = "",
             authorizationCode = "",
             title = "",
-            description = "",
+            description = DescriptionData(text = DescriptionTextData("")),
             validSeconds = 0,
             endTime = DateTime(0L),
             startTime = DateTime(0L),
             connectionID = "1",
             connectionName = "",
             connectionLogoUrl = "",
-            status = AuthorizationStatus.UNAVAILABLE
+            status = AuthorizationStatus.UNAVAILABLE,
+            apiVersion = "1"
         )))
     }
 
@@ -294,14 +299,15 @@ class AuthorizationDetailsViewModelTest {
             authorizationID = "",
             authorizationCode = "",
             title = "",
-            description = "",
+            description = DescriptionData(text = DescriptionTextData("")),
             validSeconds = 0,
             endTime = DateTime(0L),
             startTime = DateTime(0L),
             connectionID = "",
             connectionName = "",
             connectionLogoUrl = "",
-            status = AuthorizationStatus.UNAVAILABLE
+            status = AuthorizationStatus.UNAVAILABLE,
+            apiVersion = "1"
         )))
     }
 

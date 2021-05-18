@@ -54,6 +54,8 @@ import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
+import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
+import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2Abs
 import com.saltedge.authenticator.widget.security.ActivityUnlockType
 import junit.framework.TestCase.assertNull
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -76,11 +78,15 @@ class AuthorizationsListViewModelTest {
     private val testDispatcher = TestCoroutineDispatcher()
     private lateinit var viewModel: AuthorizationsListViewModel
     private lateinit var v1Interactor: AuthorizationsListInteractorV1
+    private lateinit var v2Interactor: AuthorizationsListInteractorV2
     private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
-    private val mockCryptoTools = mock(CryptoToolsV1Abs::class.java)
-    private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
-    private val mockPollingService = mock(PollingServiceAbs::class.java)
+    private val mockCryptoToolsV1 = mock(CryptoToolsV1Abs::class.java)
+    private val mockCryptoToolsV2 = mock(CryptoToolsV2Abs::class.java)
+    private val mockApiManagerV1 = mock(AuthenticatorApiManagerAbs::class.java)
+    private val mockApiManagerV2 = mock(ScaServiceClientAbs::class.java)
+    private val mockPollingServiceV1 = mock(PollingServiceAbs::class.java)
+    private val mockPollingServiceV2 = mock(PollingServiceAbs::class.java)
     private val mockConnectivityReceiver = mock(ConnectivityReceiverAbs::class.java)
     private val mockLocationManager = mock(DeviceLocationManagerAbs::class.java)
     private val mockConnection = Connection().apply {
@@ -103,23 +109,33 @@ class AuthorizationsListViewModelTest {
     fun setUp() {
         AppTools.lastUnlockType = ActivityUnlockType.BIOMETRICS
         doReturn("GEO:52.506931;13.144558").`when`(mockLocationManager).locationDescription
-        doReturn(mockPollingService).`when`(mockApiManager).createAuthorizationsPollingService()
+        doReturn(mockPollingServiceV1).`when`(mockApiManagerV1).createAuthorizationsPollingService()
+        doReturn(mockPollingServiceV2).`when`(mockApiManagerV2).createAuthorizationsPollingService()
         given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(mockConnection))
         given(mockKeyStoreManager.enrichConnection(mockConnection)).willReturn(mockConnectionAndKey)
         encryptedAuthorizations.forEachIndexed { index, encryptedData ->
-            given(mockCryptoTools.decryptAuthorizationData(encryptedData, mockConnectionAndKey.private))
+            given(mockCryptoToolsV1.decryptAuthorizationData(encryptedData, mockConnectionAndKey.private))
                 .willReturn(authorizations[index])
         }
         v1Interactor = AuthorizationsListInteractorV1(
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
-            cryptoTools = mockCryptoTools,
-            apiManager = mockApiManager,
+            cryptoTools = mockCryptoToolsV1,
+            apiManager = mockApiManagerV1,
+            locationManager = mockLocationManager,
+            defaultDispatcher = testDispatcher
+        )
+        v2Interactor = AuthorizationsListInteractorV2(
+            connectionsRepository = mockConnectionsRepository,
+            keyStoreManager = mockKeyStoreManager,
+            cryptoTools = mockCryptoToolsV2,
+            apiManager = mockApiManagerV2,
             locationManager = mockLocationManager,
             defaultDispatcher = testDispatcher
         )
         viewModel = AuthorizationsListViewModel(
-            interactor = v1Interactor,
+            interactorV1 = v1Interactor,
+            interactorV2 = v2Interactor,
             connectivityReceiver = mockConnectivityReceiver
         )
     }
@@ -421,8 +437,8 @@ class AuthorizationsListViewModelTest {
         viewModel.onListItemClick(itemIndex = 5, itemCode = "", itemViewId = 1)
 
         //then
-        verify(mockApiManager).createAuthorizationsPollingService()
-        verifyNoMoreInteractions(mockApiManager)
+        verify(mockApiManagerV1).createAuthorizationsPollingService()
+        verifyNoMoreInteractions(mockApiManagerV1)
     }
 
     @Test
@@ -436,8 +452,8 @@ class AuthorizationsListViewModelTest {
         viewModel.onListItemClick(itemIndex = 0, itemCode = "", itemViewId = R.id.titleTextView)
 
         //then
-        verify(mockApiManager).createAuthorizationsPollingService()
-        verifyNoMoreInteractions(mockApiManager)
+        verify(mockApiManagerV1).createAuthorizationsPollingService()
+        verifyNoMoreInteractions(mockApiManagerV1)
     }
 
     @Test
@@ -450,8 +466,8 @@ class AuthorizationsListViewModelTest {
         viewModel.onListItemClick(itemIndex = 0, itemCode = "", itemViewId = R.id.titleTextView)
 
         //then
-        verify(mockApiManager).createAuthorizationsPollingService()
-        verifyNoMoreInteractions(mockApiManager)
+        verify(mockApiManagerV1).createAuthorizationsPollingService()
+        verifyNoMoreInteractions(mockApiManagerV1)
     }
 
     @Test
@@ -473,7 +489,7 @@ class AuthorizationsListViewModelTest {
             viewModel.listItemsValues.first(),
             equalTo(items[0].copy(status = AuthorizationStatus.CONFIRM_PROCESSING))
         )
-        verify(mockApiManager).confirmAuthorization(
+        verify(mockApiManagerV1).confirmAuthorization(
             connectionAndKey = mockConnectionAndKey,
             authorizationId = items[0].authorizationID,
             authorizationCode = items[0].authorizationCode,
@@ -502,7 +518,7 @@ class AuthorizationsListViewModelTest {
             viewModel.listItemsValues.first(),
             equalTo(items[0].copy(status = AuthorizationStatus.DENY_PROCESSING))
         )
-        verify(mockApiManager).denyAuthorization(
+        verify(mockApiManagerV1).denyAuthorization(
             connectionAndKey = mockConnectionAndKey,
             authorizationId = items[0].authorizationID,
             authorizationCode = items[0].authorizationCode,

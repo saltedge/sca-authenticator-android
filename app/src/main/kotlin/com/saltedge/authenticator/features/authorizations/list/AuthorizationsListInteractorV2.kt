@@ -153,7 +153,10 @@ class AuthorizationsListInteractorV2(
                 val newAuthorizationsData = data
                     .filter { it.isNotExpired() }
                     .sortedWith(compareBy { it.createdAt })
-                contract?.onAuthorizationsReceived(createViewModels(newAuthorizationsData))
+                contract?.onAuthorizationsReceived(
+                    data = createViewModels(newAuthorizationsData),
+                    newModelsApiVersion = API_V2_VERSION
+                )
             }
         }
     }

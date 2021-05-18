@@ -28,11 +28,6 @@ import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.sdk.api.model.ConsentSharedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.testTools.TestTools
-import com.saltedge.authenticator.sdk.tools.secure.CryptoTools.aesDecrypt
-import com.saltedge.authenticator.sdk.tools.secure.CryptoTools.aesEncrypt
-import com.saltedge.authenticator.sdk.tools.secure.CryptoTools.decryptAuthorizationData
-import com.saltedge.authenticator.sdk.tools.secure.CryptoTools.decryptConsentData
-import com.saltedge.authenticator.sdk.tools.secure.CryptoTools.rsaDecrypt
 import net.danlew.android.joda.JodaTimeAndroid
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.not
@@ -49,7 +44,7 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
 
 @RunWith(RobolectricTestRunner::class)
-class CryptoToolsTest {
+class CryptoToolsV1Test {
 
     @Before
     fun setUp() {
@@ -68,8 +63,8 @@ class CryptoToolsTest {
         val encryptedKey = rsaEncrypt(CommonTestTools.aesKey, CommonTestTools.testPublicKey)!!
         val encryptedIV = rsaEncrypt(CommonTestTools.aesKey, CommonTestTools.testPublicKey)!!
 
-        assertThat(rsaDecrypt(encryptedKey, CommonTestTools.testPrivateKey), equalTo(CommonTestTools.aesKey))
-        assertThat(rsaDecrypt(encryptedIV, CommonTestTools.testPrivateKey), equalTo(CommonTestTools.aesKey))
+        assertThat(CryptoToolsV1.rsaDecrypt(encryptedKey, CommonTestTools.testPrivateKey), equalTo(CommonTestTools.aesKey))
+        assertThat(CryptoToolsV1.rsaDecrypt(encryptedIV, CommonTestTools.testPrivateKey), equalTo(CommonTestTools.aesKey))
     }
 
     /**
@@ -79,7 +74,7 @@ class CryptoToolsTest {
     @Test
     @Throws(Exception::class)
     fun rsaEncryptDecryptTestCase2() {
-        Assert.assertNull(rsaDecrypt("", CommonTestTools.testPrivateKey)) // Empty encrypted text
+        Assert.assertNull(CryptoToolsV1.rsaDecrypt("", CommonTestTools.testPrivateKey)) // Empty encrypted text
 
         val invalidCertificate: PublicKey = object : PublicKey {
             override fun getAlgorithm(): String = ""
@@ -103,7 +98,7 @@ class CryptoToolsTest {
             encryptedMessage,
             equalTo("MBrw7K2rCIKop50b2PmkmlAVO9Bulhl7yO8ZPw2ulVnh7MB9yI0vRJjum6xFnQMq\n9BR172WT/KAw78Zg4++EQQ==")
         )
-        assertThat(aesDecrypt(encryptedMessage, CommonTestTools.aesKey, CommonTestTools.aesIV), equalTo(errorMessage))
+        assertThat(CryptoToolsV1.aesDecrypt(encryptedMessage, CommonTestTools.aesKey, CommonTestTools.aesIV), equalTo(errorMessage))
     }
 
     /**
@@ -115,9 +110,9 @@ class CryptoToolsTest {
         val initialTextValue = "test key"
         val testKey: SecretKey = SecretKeySpec(CommonTestTools.aesKey, 0, CommonTestTools.aesKey.size, "AES")
 
-        val encryptedMessage = aesEncrypt(initialTextValue, testKey)!!
+        val encryptedMessage = CryptoToolsV1.aesEncrypt(initialTextValue, testKey)!!
 
-        val decryptedMessage = aesDecrypt(encryptedMessage, testKey)!!
+        val decryptedMessage = CryptoToolsV1.aesDecrypt(encryptedMessage, testKey)!!
 
         assertThat(encryptedMessage, not(equalTo(initialTextValue)))
         assertThat(decryptedMessage, equalTo(initialTextValue))
@@ -132,7 +127,7 @@ class CryptoToolsTest {
         val errorMessage = "{\"name\":\"Andrey\", \"age\":27, \"car\":\"BMW\", \"mileage\":null}"
         val encryptedMessage = encryptAesCBCString(errorMessage, CommonTestTools.aesKey, CommonTestTools.aesIV)!!
 
-        Assert.assertNull(aesDecrypt(encryptedMessage, CommonTestTools.aesKey, CommonTestTools.aesKey)) // Invalid IV
+        Assert.assertNull(CryptoToolsV1.aesDecrypt(encryptedMessage, CommonTestTools.aesKey, CommonTestTools.aesKey)) // Invalid IV
     }
 
     @Test
@@ -141,50 +136,50 @@ class CryptoToolsTest {
         val encryptedData = authData.encryptWithTestKey()
 
         assertThat(
-            decryptAuthorizationData(
+            CryptoToolsV1.decryptAuthorizationData(
                 encryptedData = encryptedData,
                 rsaPrivateKey = CommonTestTools.testPrivateKey
             ),
             equalTo(authData)
         )
         Assert.assertNull(
-            decryptAuthorizationData(
+            CryptoToolsV1.decryptAuthorizationData(
                 encryptedData = encryptedData,
                 rsaPrivateKey = null
             )
         )
         Assert.assertNull(
-            decryptAuthorizationData(
+            CryptoToolsV1.decryptAuthorizationData(
                 encryptedData = encryptedData.copy(key = null),
                 rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
-            decryptAuthorizationData(
+            CryptoToolsV1.decryptAuthorizationData(
                 encryptedData = encryptedData.copy(iv = null),
                 rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
-            decryptAuthorizationData(
+            CryptoToolsV1.decryptAuthorizationData(
                 encryptedData = encryptedData.copy(data = null),
                 rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
-            decryptAuthorizationData(
+            CryptoToolsV1.decryptAuthorizationData(
                 encryptedData = encryptedData.copy(key = ""),
                 rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
-            decryptAuthorizationData(
+            CryptoToolsV1.decryptAuthorizationData(
                 encryptedData = encryptedData.copy(iv = ""),
                 rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
-            decryptAuthorizationData(
+            CryptoToolsV1.decryptAuthorizationData(
                 encryptedData = encryptedData.copy(data = ""),
                 rsaPrivateKey = CommonTestTools.testPrivateKey
             )
@@ -197,50 +192,50 @@ class CryptoToolsTest {
         val encryptedData = consentData.encryptWithTestKey()
 
         assertThat(
-            decryptConsentData(
+            CryptoToolsV1.decryptConsentData(
                 encryptedData = encryptedData,
                 rsaPrivateKey = CommonTestTools.testPrivateKey
             ),
             equalTo(consentData)
         )
         Assert.assertNull(
-            decryptConsentData(
+            CryptoToolsV1. decryptConsentData(
                 encryptedData = encryptedData,
                 rsaPrivateKey = null
             )
         )
         Assert.assertNull(
-            decryptAuthorizationData(
+            CryptoToolsV1.decryptAuthorizationData(
                 encryptedData = encryptedData.copy(key = null),
                 rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
-            decryptConsentData(
+            CryptoToolsV1.decryptConsentData(
                 encryptedData = encryptedData.copy(iv = null),
                 rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
-            decryptAuthorizationData(
+            CryptoToolsV1.decryptAuthorizationData(
                 encryptedData = encryptedData.copy(data = null),
                 rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
-            decryptConsentData(
+            CryptoToolsV1.decryptConsentData(
                 encryptedData = encryptedData.copy(key = ""),
                 rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
-            decryptAuthorizationData(
+            CryptoToolsV1.decryptAuthorizationData(
                 encryptedData = encryptedData.copy(iv = ""),
                 rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
-            decryptConsentData(
+            CryptoToolsV1.decryptConsentData(
                 encryptedData = encryptedData.copy(data = ""),
                 rsaPrivateKey = CommonTestTools.testPrivateKey
             )

@@ -28,7 +28,6 @@ import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationStatus
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.models.collectRichConnections
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
@@ -42,7 +41,10 @@ import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
 import com.saltedge.authenticator.sdk.polling.FetchAuthorizationsContract
 import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AuthorizationsListInteractorV1(
     private val connectionsRepository: ConnectionsRepositoryAbs,
@@ -127,7 +129,10 @@ class AuthorizationsListInteractorV1(
                 val newAuthorizationsData = data
                     .filter { it.isNotExpired() }
                     .sortedWith(compareBy({ it.createdAt }, { it.id }))
-                contract?.onAuthorizationsReceived(createViewModels(newAuthorizationsData))
+                contract?.onAuthorizationsReceived(
+                    data = createViewModels(newAuthorizationsData),
+                    newModelsApiVersion = API_V1_VERSION
+                )
             }
         }
     }
@@ -148,11 +153,4 @@ class AuthorizationsListInteractorV1(
             }
         }
     }
-}
-
-interface AuthorizationsListInteractorCallback {
-    fun onAuthorizationsReceived(data: List<AuthorizationItemViewModel>)
-    fun onConfirmDenySuccess(connectionID: ID, authorizationID: ID, newStatus: AuthorizationStatus? = null)
-    fun onConfirmDenyFailure(error: ApiErrorData, connectionID: ID, authorizationID: ID)
-    val coroutineScope: CoroutineScope
 }

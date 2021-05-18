@@ -32,7 +32,7 @@ import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationStatus
 import com.saltedge.authenticator.features.authorizations.common.TimerUpdateListener
-import com.saltedge.authenticator.features.authorizations.common.joinViewModels
+import com.saltedge.authenticator.features.authorizations.common.merge
 import com.saltedge.authenticator.features.menu.BottomMenuDialog
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.ListItemClickListener
@@ -159,12 +159,15 @@ class AuthorizationsListViewModel(
         postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
     }
 
-    override fun onAuthorizationsReceived(data: List<AuthorizationItemViewModel>) {
-        val joinedViewModels = joinViewModels(
+    override fun onAuthorizationsReceived(
+        data: List<AuthorizationItemViewModel>,
+        newModelsApiVersion: String
+    ) {
+        val joinedViewModels = this.listItemsValues.merge(
             newViewModels = data,
-            oldViewModels = this.listItemsValues
+            newModelsApiVersion = newModelsApiVersion
         )
-        if (listItemsValues != joinedViewModels) postListItemsUpdate(newItems = joinedViewModels)
+        if (this.listItemsValues != joinedViewModels) postListItemsUpdate(newItems = joinedViewModels)
     }
 
     override fun onConfirmDenySuccess(connectionID: ID, authorizationID: ID, newStatus: AuthorizationStatus?) {
