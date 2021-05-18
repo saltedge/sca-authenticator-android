@@ -20,9 +20,9 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.model
 
+import com.saltedge.authenticator.core.api.model.DescriptionData
 import com.saltedge.authenticator.sdk.v2.TestTools
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationData
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.DescriptionData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.isNotExpired
 import net.danlew.android.joda.JodaTimeAndroid
 import org.joda.time.DateTime
@@ -44,7 +44,7 @@ class AuthorizationDataExtensionsTest {
     @Test
     @Throws(Exception::class)
     fun isNotExpiredTest() {
-        val authData = AuthorizationData(
+        val authData = AuthorizationV2Data(
             title = "title",
             description = DescriptionData(),
             expiresAt = DateTime().withZone(DateTimeZone.UTC),

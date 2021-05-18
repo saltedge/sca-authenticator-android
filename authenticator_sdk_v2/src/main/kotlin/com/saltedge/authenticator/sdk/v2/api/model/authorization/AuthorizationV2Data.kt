@@ -22,6 +22,8 @@ package com.saltedge.authenticator.sdk.v2.api.model.authorization
 
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.core.api.*
+import com.saltedge.authenticator.core.api.model.DescriptionData
+import com.saltedge.authenticator.core.model.ID
 import org.joda.time.DateTime
 import java.io.Serializable
 
@@ -29,40 +31,15 @@ import java.io.Serializable
  * Plain (not encrypted) authorization model
  * with annotation for GSON parsing
  */
-data class AuthorizationData(
+data class AuthorizationV2Data(
     @SerializedName(KEY_TITLE) var title: String,
     @SerializedName(KEY_DESCRIPTION) var description: DescriptionData,
     @SerializedName(KEY_AUTHORIZATION_CODE) var authorizationCode: String? = null,
     @SerializedName(KEY_CREATED_AT) var createdAt: DateTime? = null,
-    @SerializedName(KEY_EXPIRES_AT) var expiresAt: DateTime
+    @SerializedName(KEY_EXPIRES_AT) var expiresAt: DateTime,
+    var connectionId: ID? = null,
+    var authorizationId: ID? = null,
+    var status: String? = null,
 ) : Serializable
 
-fun AuthorizationData.isNotExpired(): Boolean = expiresAt.isAfterNow
-
-data class DescriptionData(
-    val payment: DescriptionPaymentData? = null,
-    val text: DescriptionTextData? = null,
-    val html: DescriptionHTMLData? = null,
-    val extra: ExtraData? = null
-)
-
-data class DescriptionPaymentData(
-    @SerializedName("payee") var payee: String? = null,
-    @SerializedName("amount") var amount: String? = null,
-    @SerializedName("account") var account: String? = null,
-    @SerializedName("payment_date") var paymentDate: DateTime? = null,
-    @SerializedName("reference") var reference: String? = null,
-    @SerializedName("fee") var fee: String? = null,
-    @SerializedName("exchange_rate") var exchangeRate: String? = null
-)
-
-data class DescriptionTextData(@SerializedName("text") var text: String? = null)
-
-data class DescriptionHTMLData(@SerializedName("html") var html: String? = null)
-
-data class ExtraData(
-    @SerializedName("action_date") var actionDate: String? = null,
-    @SerializedName("device") var device: String? = null,
-    @SerializedName("location") var location: String? = null,
-    @SerializedName("ip") var ip: String? = null
-)
+fun AuthorizationV2Data.isNotExpired(): Boolean = expiresAt.isAfterNow

@@ -34,9 +34,11 @@ import com.saltedge.authenticator.models.repository.PreferenceRepository
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.tools.CryptoTools
-import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.tools.CryptoToolsV1
+import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClient
+import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2
+import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2Abs
 import com.saltedge.authenticator.tools.PasscodeTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
@@ -76,7 +78,8 @@ class AppModule(context: Context) {
         appContext: Context,
         passcodeTools: PasscodeToolsAbs,
         biometricTools: BiometricToolsAbs,
-        cryptoTools: CryptoToolsAbs,
+        cryptoToolsV1: com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs,
+        cryptoToolsV2: com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2Abs,
         preferences: PreferenceRepositoryAbs,
         connectionsRepository: ConnectionsRepositoryAbs,
         keyStoreManager: KeyManagerAbs,
@@ -89,7 +92,8 @@ class AppModule(context: Context) {
             appContext = appContext,
             passcodeTools = passcodeTools,
             biometricTools = biometricTools,
-            cryptoTools = cryptoTools,
+            cryptoToolsV1 = cryptoToolsV1,
+            cryptoToolsV2 = cryptoToolsV2,
             preferenceRepository = preferences,
             connectionsRepository = connectionsRepository,
             keyStoreManager = keyStoreManager,
@@ -110,7 +114,11 @@ class AppModule(context: Context) {
 
     @Provides
     @Singleton
-    fun provideCryptoTools(): CryptoToolsAbs = CryptoTools
+    fun provideCryptoToolsV1(): CryptoToolsV1Abs = CryptoToolsV1
+
+    @Provides
+    @Singleton
+    fun provideCryptoToolsV2(): CryptoToolsV2Abs = CryptoToolsV2
 
     @Provides
     @Singleton

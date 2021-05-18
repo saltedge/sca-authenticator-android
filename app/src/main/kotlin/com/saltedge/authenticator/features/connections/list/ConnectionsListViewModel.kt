@@ -30,7 +30,7 @@ import com.saltedge.authenticator.core.api.KEY_NAME
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.*
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
-import com.saltedge.authenticator.features.authorizations.common.collectRichConnections
+import com.saltedge.authenticator.models.collectRichConnections
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
 import com.saltedge.authenticator.features.connections.list.menu.MenuData
@@ -42,10 +42,11 @@ import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.api.model.*
+import com.saltedge.authenticator.sdk.api.model.ConsentData
+import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener
 import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
-import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
 import com.saltedge.authenticator.tools.postUnitEvent
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -55,7 +56,7 @@ class ConnectionsListViewModel(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
-    private val cryptoTools: CryptoToolsAbs
+    private val cryptoTools: CryptoToolsV1Abs
 ) : ViewModel(),
     LifecycleObserver,
     ConnectionsRevokeListener,
@@ -66,7 +67,7 @@ class ConnectionsListViewModel(
     private val decryptJob: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = decryptJob + Dispatchers.IO
-    private var connectionsAndKeys: Map<ConnectionID, RichConnection> =
+    private var connectionsAndKeys: Map<ID, RichConnection> =
         collectRichConnections(connectionsRepository, keyStoreManager)
     private var consents: Map<GUID, List<ConsentData>> = emptyMap()
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
@@ -260,7 +261,7 @@ class ConnectionsListViewModel(
 
     private fun updateItemsWithConsentData(
         items: List<ConnectionItemViewModel>,
-        consents: Map<ConnectionID, List<ConsentData>>
+        consents: Map<ID, List<ConsentData>>
     ): List<ConnectionItemViewModel> {
         return items.apply {
             forEach {

@@ -24,10 +24,10 @@ import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.TestConnection
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.RichConnection
-import com.saltedge.authenticator.sdk.contract.*
-import com.saltedge.authenticator.sdk.api.model.response.*
 import com.saltedge.authenticator.sdk.api.ApiInterface
 import com.saltedge.authenticator.sdk.api.RestClient
+import com.saltedge.authenticator.sdk.api.model.response.*
+import com.saltedge.authenticator.sdk.contract.*
 import io.mockk.every
 import io.mockk.mockkClass
 import io.mockk.verify
@@ -108,7 +108,7 @@ class AuthenticatorApiManagerTest {
     @Test
     @Throws(Exception::class)
     fun getAuthorizationTest() {
-        val mockCallback = mockkClass(FetchAuthorizationContract::class)
+        val mockCallback = mockkClass(FetchAuthorizationListener::class)
         val mockCall = mockkClass(Call::class) as Call<AuthorizationShowResponse>
         every { mockApi.getAuthorization(requestUrl = any(), headersMap = any()) } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit

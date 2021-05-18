@@ -28,6 +28,9 @@ data class AuthorizationsListResponse(@SerializedName(KEY_DATA) var data: List<A
 
 data class AuthorizationResponse(@SerializedName(KEY_DATA) var data: AuthorizationResponseData)
 
+/**
+ * @status - pending confirm_processing deny_processing confirmed denied closed
+ */
 data class AuthorizationResponseData(
     @SerializedName(KEY_ID) var id: String,
     @SerializedName(KEY_CONNECTION_ID) var connectionId: String,

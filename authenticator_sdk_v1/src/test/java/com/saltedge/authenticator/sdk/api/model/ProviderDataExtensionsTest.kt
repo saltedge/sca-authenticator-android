@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.api.model
 
-import com.saltedge.authenticator.sdk.constants.API_VERSION
+import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import com.saltedge.authenticator.sdk.api.model.configuration.ProviderConfigurationData
 import com.saltedge.authenticator.sdk.api.model.configuration.isValid
 import org.junit.Assert
@@ -88,7 +88,7 @@ class ProviderDataExtensionsTest {
         model.name = "Demobank"
         model.connectUrl = "http://localhost"
         model.logoUrl = "requestUrl"
-        model.version = API_VERSION
+        model.version = API_V1_VERSION
         model.supportEmail = ""
 
         Assert.assertFalse(model.isValid())
@@ -97,7 +97,7 @@ class ProviderDataExtensionsTest {
         model.name = "Demobank"
         model.connectUrl = "requestUrl"
         model.logoUrl = "requestUrl"
-        model.version = API_VERSION
+        model.version = API_V1_VERSION
         model.supportEmail = ""
 
         Assert.assertTrue(model.isValid())

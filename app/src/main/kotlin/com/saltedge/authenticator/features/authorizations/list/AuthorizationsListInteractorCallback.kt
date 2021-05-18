@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2021 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,23 +18,17 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.models.repository
+package com.saltedge.authenticator.features.authorizations.list
 
-/**
- * Abstraction of PreferenceRepository
- * @see PreferenceRepository
- */
-interface PreferenceRepositoryAbs {
-    var dbKey: String
-    var encryptedPasscode: String
-    var nightMode: Int
-    var systemNightMode: Boolean
-    var cloudMessagingToken: String
-    var notificationsEnabled: Boolean
-    var currentLocale: String?
-    var pinInputAttempts: Int
-    var blockPinInputTillTime: Long
-    var screenshotLockEnabled: Boolean
-    fun passcodeExist(): Boolean
-    fun clearUserPreferences()
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ID
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationStatus
+import kotlinx.coroutines.CoroutineScope
+
+interface AuthorizationsListInteractorCallback {
+    fun onAuthorizationsReceived(data: List<AuthorizationItemViewModel>, newModelsApiVersion: String)
+    fun onConfirmDenySuccess(connectionID: ID, authorizationID: ID, newStatus: AuthorizationStatus? = null)
+    fun onConfirmDenyFailure(error: ApiErrorData, connectionID: ID, authorizationID: ID)
+    val coroutineScope: CoroutineScope
 }

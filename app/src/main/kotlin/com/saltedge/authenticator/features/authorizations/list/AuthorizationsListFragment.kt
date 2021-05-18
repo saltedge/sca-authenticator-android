@@ -34,6 +34,7 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.cloud.clearNotifications
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.databinding.AuthorizationsListBinding
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.list.pagers.AuthorizationsContentPagerAdapter
@@ -132,9 +133,12 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
                 }
             }
         })
-        viewModel.onConfirmErrorEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
-            event.getContentIfNotHandled()?.let { errorMessage ->
-                view?.let { Snackbar.make(it, errorMessage, Snackbar.LENGTH_LONG).show() }
+        viewModel.errorEvent.observe(this, Observer<ViewModelEvent<ApiErrorData>> { event ->
+            event.getContentIfNotHandled()?.let { error ->
+                view?.let {
+                    val errorMessage = error.getErrorMessage(it.context)
+                    Snackbar.make(it, errorMessage, Snackbar.LENGTH_LONG).show()
+                }
             }
         })
         viewModel.onQrScanClickEvent.observe(this, Observer { event ->
@@ -175,7 +179,7 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
             }
         }
         pagersScrollSynchronizer.initViews(headerViewPager, contentViewPager)
-        emptyView?.setActionOnClickListener(View.OnClickListener { viewModel.onEmptyViewActionClick() })
+        emptyView?.setActionOnClickListener { viewModel.onEmptyViewActionClick() }
     }
 
     private fun setupSharedObserver() {

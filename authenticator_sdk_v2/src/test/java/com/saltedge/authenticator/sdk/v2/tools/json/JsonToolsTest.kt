@@ -20,9 +20,9 @@
  */
 package com.saltedge.authenticator.sdk.v2.tools.json
 
+import com.saltedge.authenticator.core.api.model.DescriptionData
 import com.saltedge.authenticator.core.tools.json.createDefaultGson
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationData
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.DescriptionData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.junit.Assert.assertTrue
@@ -34,7 +34,7 @@ class JsonToolsTest {
     @Throws(Exception::class)
     fun createDefaultGsonTest() {
         val gson = createDefaultGson()
-        val data = AuthorizationData(
+        val data = AuthorizationV2Data(
             title = "",
             description = DescriptionData(),
             authorizationCode = "Qwerty1+==",

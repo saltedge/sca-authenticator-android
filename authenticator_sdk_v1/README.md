@@ -207,7 +207,7 @@ Open url:
 and wait for access token:  
 ```kotlin
   private val webViewClient = ConnectWebClient(contract = object : ConnectWebClientContract {
-      override fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token) {
+      override fun webAuthFinishSuccess(id: ID, accessToken: Token) {
           // save access token  
       }
 

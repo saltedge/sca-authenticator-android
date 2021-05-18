@@ -86,10 +86,13 @@ class AuthorizationConfirmConnectorTest {
         )
 
         verify {
-            mockCallback.onAuthorizationConfirmSuccess(ConfirmDenyResponseData(
-                status = "processing",
-                authorizationID = requestAuthorizationId
-            ))
+            mockCallback.onAuthorizationConfirmSuccess(
+                ConfirmDenyResponseData(
+                    status = "processing",
+                    authorizationID = requestAuthorizationId
+                ),
+                connectionID = requestConnection.id
+            )
         }
         confirmVerified(mockCallback)
     }
@@ -118,7 +121,8 @@ class AuthorizationConfirmConnectorTest {
                     errorClassName = "NotFound",
                     accessToken = "accessToken"
                 ),
-                authorizationID = requestAuthorizationId
+                authorizationID = requestAuthorizationId,
+                connectionID = requestConnection.id
             )
         }
         confirmVerified(mockCallback)
@@ -147,8 +151,8 @@ class AuthorizationConfirmConnectorTest {
         every { mockCall.request() } returns Request.Builder().url(requestUrl)
             .addHeader(HEADER_KEY_ACCESS_TOKEN, "accessToken").build()
         every {
-            mockCallback.onAuthorizationConfirmFailure(error = any(), authorizationID = requestAuthorizationId)
+            mockCallback.onAuthorizationConfirmFailure(error = any(), authorizationID = requestAuthorizationId, connectionID = requestConnection.id)
         } returns Unit
-        every { mockCallback.onAuthorizationConfirmSuccess(result = any()) } returns Unit
+        every { mockCallback.onAuthorizationConfirmSuccess(result = any(), connectionID = requestConnection.id) } returns Unit
     }
 }

@@ -37,6 +37,7 @@ abstract class ConnectProviderInteractor(
     private val preferenceRepository: PreferenceRepositoryAbs,
     private val connectionsRepository: ConnectionsRepositoryAbs,
 ) : ConnectProviderInteractorAbs {
+
     override var contract: ConnectProviderInteractorCallback? = null
     override var authenticationUrl: String = ""
     override val hasConfigUrl: Boolean
@@ -107,7 +108,7 @@ abstract class ConnectProviderInteractor(
         )
     }
 
-    override fun onConnectionSuccessAuthentication(connectionId: ConnectionID, accessToken: Token) {
+    override fun onConnectionSuccessAuthentication(connectionId: ID, accessToken: Token) {
         connection.id = connectionId
         connection.accessToken = accessToken
         connection.status = "${ConnectionStatus.ACTIVE}"
@@ -142,7 +143,7 @@ interface ConnectProviderInteractorAbs {
     fun requestCreateConnection(connection: Connection, cloudMessagingToken: String, connectQuery: String?)
     fun onConnectionCreateSuccess(authenticationUrl: String, connectionId: String)
     fun onReceiveReturnToUrl(url: String)
-    fun onConnectionSuccessAuthentication(connectionId: ConnectionID, accessToken: Token)
+    fun onConnectionSuccessAuthentication(connectionId: ID, accessToken: Token)
     fun destroyConnectionIfNotAuthorized()
 }
 

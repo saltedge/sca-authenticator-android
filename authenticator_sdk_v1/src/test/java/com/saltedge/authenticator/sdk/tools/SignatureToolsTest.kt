@@ -23,7 +23,6 @@ package com.saltedge.authenticator.sdk.tools
 import android.util.Base64
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.authenticator.core.tools.createExpiresAtTime
-import com.saltedge.authenticator.sdk.tools.secure.createSignatureHeader
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith

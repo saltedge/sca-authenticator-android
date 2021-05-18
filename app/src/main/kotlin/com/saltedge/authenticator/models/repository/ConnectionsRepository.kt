@@ -88,12 +88,12 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
      */
     override fun getAllConnections(): List<Connection> {
         return RealmManager.getDefaultInstance().use {
-            it.where(Connection::class.java).sort(KEY_CREATED_AT).findAll()
+            it.where(Connection::class.java).sort(DB_KEY_CREATED_AT).findAll()
         }
     }
 
     /**
-     * Get all valid connections from database
+     * Get all valid/active connections from database
      *
      * @return list of connections
      * @see createActiveConnectionsQuery
@@ -101,6 +101,22 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
     override fun getAllActiveConnections(): List<Connection> {
         return RealmManager.getDefaultInstance().use {
             it.copyFromRealm(it.createActiveConnectionsQuery().findAll())
+        }
+    }
+
+    /**
+     * Get all valid/active connections from database filtered by apin version
+     *
+     * @return list of connections with specified api version
+     * @see createActiveConnectionsQuery
+     */
+    override fun getAllActiveConnections(apiVersion: String): List<Connection> {
+        return RealmManager.getDefaultInstance().use {
+            it.copyFromRealm(
+                it.createActiveConnectionsQuery()
+                    .equalTo(DB_KEY_API_VERSION, apiVersion)
+                    .findAll()
+            )
         }
     }
 
@@ -115,7 +131,7 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
             realmDb.where(Connection::class.java)
                 .equalTo(DB_KEY_CONNECT_URL, connectionUrl)
                 .equalTo(KEY_STATUS, ConnectionStatus.ACTIVE.toString())
-                .sort(KEY_CREATED_AT)
+                .sort(DB_KEY_CREATED_AT)
                 .findAll().map {
                 realmDb.copyFromRealm(it)
             }
@@ -159,7 +175,7 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
         RealmManager.getDefaultInstance().use {
             it.executeTransaction { realmDb ->
                 realmDb.where(Connection::class.java)
-                    .`in`(KEY_ACCESS_TOKEN, accessTokens.toTypedArray())
+                    .`in`(DB_KEY_ACCESS_TOKEN, accessTokens.toTypedArray())
                     .findAll()
                     .forEach { model ->
                         model.status = ConnectionStatus.INACTIVE.toString()
@@ -275,7 +291,28 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
     private fun Realm.createActiveConnectionsQuery(): RealmQuery<Connection> {
         return this.where(Connection::class.java)
             .equalTo(KEY_STATUS, ConnectionStatus.ACTIVE.toString())
-            .notEqualTo(KEY_ACCESS_TOKEN, "")
-            .sort(KEY_CREATED_AT)
+            .notEqualTo(DB_KEY_ACCESS_TOKEN, "")
+            .sort(DB_KEY_CREATED_AT)
     }
+}
+
+interface ConnectionsRepositoryAbs {
+    fun isEmpty(): Boolean
+    fun getConnectionsCount(): Long
+    fun getConnectionsCount(providerCode: String): Long
+    fun hasActiveConnections(): Boolean
+    fun connectionExists(connection: Connection): Boolean
+    fun connectionExists(connectionGuid: GUID?): Boolean
+    fun getAllConnections(): List<Connection>
+    fun getAllActiveConnections(): List<Connection>
+    fun getAllActiveConnections(apiVersion: String): List<Connection>
+    fun getByGuid(connectionGuid: GUID?): Connection?
+    fun getById(connectionId: String): Connection?
+    fun getByConnectUrl(connectionUrl: String): List<Connection>
+    fun deleteAllConnections()
+    fun deleteConnection(connectionGuid: GUID): Boolean
+    fun invalidateConnectionsByTokens(accessTokens: List<Token>)
+    fun saveModel(connection: Connection): Connection?
+    fun fixNameAndSave(connection: Connection)
+    fun updateNameAndSave(connection: Connection, newName: String)
 }

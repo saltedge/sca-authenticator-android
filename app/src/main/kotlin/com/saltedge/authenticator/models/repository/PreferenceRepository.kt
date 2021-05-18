@@ -243,5 +243,19 @@ object PreferenceRepository : PreferenceRepositoryAbs {
     private fun SharedPreferences.saveValue(key: String, value: Long) {
         this.edit()?.putLong(key, value)?.apply()
     }
+}
 
+interface PreferenceRepositoryAbs {
+    var dbKey: String
+    var encryptedPasscode: String
+    var nightMode: Int
+    var systemNightMode: Boolean
+    var cloudMessagingToken: String
+    var notificationsEnabled: Boolean
+    var currentLocale: String?
+    var pinInputAttempts: Int
+    var blockPinInputTillTime: Long
+    var screenshotLockEnabled: Boolean
+    fun passcodeExist(): Boolean
+    fun clearUserPreferences()
 }

@@ -22,12 +22,12 @@ package com.saltedge.authenticator.core.tools
 
 import android.net.Uri
 import com.saltedge.authenticator.core.api.*
-import com.saltedge.authenticator.core.model.ConnectionID
+import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.Token
 
 fun parseRedirect(
     url: String,
-    success: (connectionID: ConnectionID, accessToken: Token) -> Unit,
+    success: (connectionID: ID, accessToken: Token) -> Unit,
     error: (errorClass: String, errorMessage: String?) -> Unit
 ) {
     val uri = Uri.parse(url)

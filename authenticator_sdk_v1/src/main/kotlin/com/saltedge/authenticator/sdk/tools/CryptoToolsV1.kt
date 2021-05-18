@@ -29,7 +29,7 @@ import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import java.security.PrivateKey
 
-object CryptoTools : BaseCryptoTools(), CryptoToolsAbs {
+object CryptoToolsV1 : BaseCryptoTools(), CryptoToolsV1Abs {
 
     override fun decryptAuthorizationData(
         encryptedData: EncryptedData,
@@ -74,7 +74,7 @@ object CryptoTools : BaseCryptoTools(), CryptoToolsAbs {
     }
 }
 
-interface CryptoToolsAbs : BaseCryptoToolsAbs {
+interface CryptoToolsV1Abs : BaseCryptoToolsAbs {
     fun decryptAuthorizationData(encryptedData: EncryptedData, rsaPrivateKey: PrivateKey?): AuthorizationData?
     fun decryptConsentData(encryptedData: EncryptedData, rsaPrivateKey: PrivateKey?): ConsentData?
 }
