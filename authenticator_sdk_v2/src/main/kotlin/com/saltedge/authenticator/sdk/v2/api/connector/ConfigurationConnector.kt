@@ -21,9 +21,9 @@
 package com.saltedge.authenticator.sdk.v2.api.connector
 
 import com.saltedge.authenticator.core.api.ApiResponseInterceptor
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.v2.api.contract.FetchConfigurationListener
 import com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationResponse
-import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import retrofit2.Call
 

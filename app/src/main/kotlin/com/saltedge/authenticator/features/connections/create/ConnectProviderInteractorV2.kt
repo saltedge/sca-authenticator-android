@@ -88,5 +88,6 @@ fun ConfigurationDataV2.toConnection(): Connection {
         it.consentManagementSupported = false
         it.geolocationRequired = this.geolocationRequired
         it.apiVersion = this.apiVersion
+        it.providerRsaPublicKeyPem = this.providerPublicKey
     }
 }
