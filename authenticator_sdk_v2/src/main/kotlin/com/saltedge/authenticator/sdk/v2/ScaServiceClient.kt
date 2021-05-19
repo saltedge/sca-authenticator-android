@@ -94,7 +94,7 @@ class ScaServiceClient : ScaServiceClientAbs {
         val providerRsaPublicKey = connection.providerRsaPublicKeyPem.pemToPublicKey(
             algorithm = KeyAlgorithm.RSA
         ).guard {
-            callback.error("Diffie-Hellman secure material of provider is invalid")
+            callback.error("RSA secure material of provider is invalid")
             return
         }
         val rsaAlias = createRandomGuid()

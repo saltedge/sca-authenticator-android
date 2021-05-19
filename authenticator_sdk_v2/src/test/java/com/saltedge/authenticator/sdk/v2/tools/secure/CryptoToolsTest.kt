@@ -192,7 +192,10 @@ class CryptoToolsTest {
         title = "title",
         description = DescriptionData(),
         expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
-        authorizationCode = "111"
+        authorizationCode = "111",
+        connectionId = "333",
+        authorizationId = "444",
+        status = "pending"
     )
 
     private fun AuthorizationV2Data.encryptWithTestKey(): AuthorizationResponseData {
