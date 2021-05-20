@@ -28,18 +28,8 @@ import com.saltedge.authenticator.core.model.getStatus
 import com.saltedge.authenticator.core.tools.toDateTime
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.models.Connection
-import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.toDateFormatString
-
-fun collectAllConnectionsViewModels(
-    repository: ConnectionsRepositoryAbs,
-    context: Context
-): List<ConnectionItemViewModel> {
-    return repository.getAllConnections()
-        .sortedBy { it.createdAt }
-        .convertConnectionsToViewModels(context)
-}
 
 fun Connection.convertConnectionToViewModel(context: Context): ConnectionItemViewModel {
     return ConnectionItemViewModel(
