@@ -21,59 +21,108 @@
 package com.saltedge.authenticator.features.connections.list
 
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.model.Token
+import com.saltedge.authenticator.core.model.isActive
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
+import com.saltedge.authenticator.models.Connection
+import com.saltedge.authenticator.models.collectRichConnections
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
+import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener
 import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
-import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 class ConnectionsListInteractorV1(
     private val apiManager: AuthenticatorApiManagerAbs,
-    connectionsRepository: ConnectionsRepositoryAbs,
-    keyStoreManager: KeyManagerAbs,
-    cryptoTools: CryptoToolsAbs
-) : ConnectionsListInteractor(
-    connectionsRepository = connectionsRepository,
-    keyStoreManager = keyStoreManager,
-    cryptoTools = cryptoTools
-), ConnectionsRevokeListener, FetchEncryptedDataListener, CoroutineScope {
+    private val connectionsRepository: ConnectionsRepositoryAbs,
+    private val keyStoreManager: KeyManagerAbs,
+    private val cryptoTools: CryptoToolsV1Abs
+) : ConnectionsRevokeListener, FetchEncryptedDataListener, CoroutineScope {
 
+    var contract: ConnectionsListInteractorCallback? = null
     private val decryptJob: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = decryptJob + Dispatchers.IO
-
-    override fun onDestroy() {
-        decryptJob.cancel()
-    }
-
-    override fun revokeConnections(connectionsAndKeys: List<RichConnection>) {
-        apiManager.revokeConnections(
-            connectionsAndKeys = connectionsAndKeys,
-            resultCallback = this
-        )
-    }
+    private var richConnections: Map<ID, RichConnection> =
+        collectRichConnections(connectionsRepository, keyStoreManager, API_V1_VERSION)
 
     override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?) {}
-
-    override fun getConsents(connectionsAndKeys: List<RichConnection>) {
-        apiManager.getConsents(
-            connectionsAndKeys = connectionsAndKeys,
-            resultCallback = this
-        )
-    }
 
     override fun onFetchEncryptedDataResult(
         result: List<EncryptedData>,
         errors: List<ApiErrorData>
     ) {
         processOfEncryptedConsentsResult(encryptedList = result)
+    }
+
+    fun onDestroy() {
+        decryptJob.cancel()
+    }
+
+    fun getConnection(guid: String) {
+        connectionsRepository.getByGuid(guid)?.let { connection ->
+            contract?.renameConnection(guid = guid, name = connection.name)
+        }
+    }
+
+    fun getConnectionSupportEmail(guid: String) {
+        connectionsRepository.getByGuid(guid)?.supportEmail?.let {
+            contract?.selectSupportForConnection(guid)
+        }
+    }
+
+    fun updateNameAndSave(listItem: ConnectionItemViewModel, newConnectionName: String) {
+        connectionsRepository.getByGuid(listItem.guid)?.let { connection ->
+            connectionsRepository.updateNameAndSave(connection, newConnectionName)
+            contract?.updateName(newConnectionName, listItem)
+        }
+    }
+
+    fun sendRevokeRequestForConnections(guid: String) {
+        connectionsRepository.getByGuid(guid)?.let { connection ->
+            sendRevokeRequestForConnections(listOf(connection))
+        }
+    }
+
+    fun getConsents() {
+        val consentRequestData = if (richConnections.isEmpty()) null else richConnections.values.toList()
+        consentRequestData?.let {
+            apiManager.getConsents(
+                connectionsAndKeys = it,
+                resultCallback = this
+            )
+        }
+    }
+
+    fun collectAllConnectionsViewModels(): List<Connection> {
+        return connectionsRepository.getAllConnections()
+            .sortedBy { it.createdAt }
+    }
+
+    fun deleteConnectionsAndKeys(guid: String) {
+        keyStoreManager.deleteKeyPairIfExist(guid)
+        connectionsRepository.deleteConnection(guid)
+    }
+
+    private fun sendRevokeRequestForConnections(connections: List<Connection>) {
+        val connectionsAndKeys: List<RichConnection> = connections.filter { it.isActive() }
+            .mapNotNull { keyStoreManager.enrichConnection(it) }
+        revokeConnections(connectionsAndKeys = connectionsAndKeys)
+    }
+
+    private fun revokeConnections(connectionsAndKeys: List<RichConnection>) {
+        apiManager.revokeConnections(
+            connectionsAndKeys = connectionsAndKeys,
+            resultCallback = this
+        )
     }
 
     private fun processOfEncryptedConsentsResult(encryptedList: List<EncryptedData>) {
@@ -87,12 +136,12 @@ class ConnectionsListInteractorV1(
         return encryptedList.mapNotNull {
             cryptoTools.decryptConsentData(
                 encryptedData = it,
-                rsaPrivateKey = connectionsAndKeys[it.connectionId]?.private
+                rsaPrivateKey = richConnections[it.connectionId]?.private
             )
         }
     }
 
     private fun processDecryptedConsentsResult(result: List<ConsentData>) {
-        super.contract?.processDecryptedConsentsResult(result)
+        contract?.processDecryptedConsentsResult(result)
     }
 }

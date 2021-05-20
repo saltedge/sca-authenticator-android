@@ -40,7 +40,8 @@ fun Connection.convertConnectionToViewModel(context: Context): ConnectionItemVie
         statusDescriptionColorRes = getConnectionStatusColor(connection = this),
         logoUrl = this.logoUrl,
         isActive = isActiveConnection(this),
-        isChecked = false
+        isChecked = false,
+        apiVersion = this.apiVersion
     )
 }
 

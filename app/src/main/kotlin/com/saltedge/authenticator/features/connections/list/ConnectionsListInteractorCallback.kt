@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2021 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +18,14 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.connections.common
+package com.saltedge.authenticator.features.connections.list
 
-import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
+import com.saltedge.authenticator.sdk.api.model.ConsentData
 
-data class ConnectionItemViewModel(
-    val guid: String,
-    val connectionId: String,
-    var name: String,
-    val logoUrl: String,
-    var consentsDescription: String = "",
-    var statusDescription: String,
-    var statusDescriptionColorRes: ResId,
-    val isActive: Boolean,
-    var isChecked: Boolean,
-    val apiVersion: String
-) {
-    val isV2Api: Boolean
-        get() = apiVersion == "2"
+interface ConnectionsListInteractorCallback {
+    fun renameConnection(guid: String, name: String)
+    fun selectSupportForConnection(guid: String)
+    fun updateName(newConnectionName: String, listItem: ConnectionItemViewModel)
+    fun processDecryptedConsentsResult(result: List<ConsentData>)
 }

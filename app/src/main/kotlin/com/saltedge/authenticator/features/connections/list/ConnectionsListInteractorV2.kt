@@ -22,29 +22,71 @@ package com.saltedge.authenticator.features.connections.list
 
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.model.isActive
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
+import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
+import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClient
 import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionsRevokeListener
+import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2Abs
 
 class ConnectionsListInteractorV2(
     private val apiManager: ScaServiceClient,
-    connectionsRepository: ConnectionsRepositoryAbs,
-    keyStoreManager: KeyManagerAbs,
-    cryptoTools: CryptoToolsAbs
-) : ConnectionsListInteractor(
-    connectionsRepository = connectionsRepository,
-    keyStoreManager = keyStoreManager,
-    cryptoTools = cryptoTools
-), ConnectionsRevokeListener {
+    private val connectionsRepository: ConnectionsRepositoryAbs,
+    private val keyStoreManager: KeyManagerAbs,
+    private val cryptoTools: CryptoToolsV2Abs
+): ConnectionsRevokeListener {
 
-    override fun revokeConnections(connectionsAndKeys: List<RichConnection>) {
+    var contract: ConnectionsListInteractorCallback? = null
+
+    override fun onConnectionsRevokeResult(apiError: ApiErrorData?) {}
+
+    fun getConnection(guid: String) {
+        connectionsRepository.getByGuid(guid)?.let { connection ->
+            contract?.renameConnection(guid = guid, name = connection.name)
+        }
+    }
+
+    fun getConnectionSupportEmail(guid: String) {
+        connectionsRepository.getByGuid(guid)?.supportEmail?.let {
+            contract?.selectSupportForConnection(guid)
+        }
+    }
+
+    fun updateNameAndSave(listItem: ConnectionItemViewModel, newConnectionName: String) {
+        connectionsRepository.getByGuid(listItem.guid)?.let { connection ->
+            connectionsRepository.updateNameAndSave(connection, newConnectionName)
+            contract?.updateName(newConnectionName, listItem)
+        }
+    }
+
+    fun sendRevokeRequestForConnections(guid: String) {
+        connectionsRepository.getByGuid(guid)?.let { connection ->
+            sendRevokeRequestForConnections(listOf(connection))
+        }
+    }
+
+    fun collectAllConnectionsViewModels(): List<Connection> {
+        return connectionsRepository.getAllConnections()
+            .sortedBy { it.createdAt }
+    }
+
+    fun deleteConnectionsAndKeys(guid: String) {
+        keyStoreManager.deleteKeyPairIfExist(guid)
+        connectionsRepository.deleteConnection(guid)
+    }
+
+    private fun revokeConnections(connectionsAndKeys: List<RichConnection>) {
         apiManager.revokeConnections(
             connections = connectionsAndKeys,
             callback = this
         )
     }
 
-    override fun onConnectionsRevokeResult(apiError: ApiErrorData?) {}
+    private fun sendRevokeRequestForConnections(connections: List<Connection>) {
+        val connectionsAndKeys: List<RichConnection> = connections.filter { it.isActive() }
+            .mapNotNull { keyStoreManager.enrichConnection(it) }
+        revokeConnections(connectionsAndKeys = connectionsAndKeys)
+    }
 }

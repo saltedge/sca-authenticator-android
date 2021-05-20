@@ -41,7 +41,8 @@ import com.saltedge.authenticator.tools.postUnitEvent
 
 class ConnectionsListViewModel(
     private val appContext: Context,
-    private val interactor: ConnectionsListInteractorAbs
+    private val interactorV1: ConnectionsListInteractorV1,
+    private val interactorV2: ConnectionsListInteractorV2,
 ) : ViewModel(),
     ConnectionsListInteractorCallback,
     LifecycleObserver,
@@ -62,6 +63,11 @@ class ConnectionsListViewModel(
         get() = listItems.value ?: emptyList()
     val updateListItemEvent = MutableLiveData<ConnectionItemViewModel>()
 
+    init {
+        interactorV1.contract = this
+        interactorV2.contract = this
+    }
+
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStart() {
         updateViewsContent()
@@ -70,15 +76,27 @@ class ConnectionsListViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
-        interactor.onDestroy()
+        interactorV1.onDestroy()
     }
 
     override fun onMenuItemClick(menuId: Int, itemId: Int) {
         val item = listItemsValues.getOrNull(menuId) ?: return
         when (PopupMenuItem.values()[itemId]) {
             PopupMenuItem.RECONNECT -> onReconnectClickEvent.postValue(ViewModelEvent(item.guid))
-            PopupMenuItem.RENAME -> interactor.getConnection(item.guid) //for rename
-            PopupMenuItem.SUPPORT -> interactor.getConnectionSupportEmail(item.guid)
+            PopupMenuItem.RENAME -> {
+                if (item.isV2Api) {
+                    interactorV2.getConnection(item.guid)
+                } else {
+                    interactorV1.getConnection(item.guid)
+                }
+            }
+            PopupMenuItem.SUPPORT -> {
+                if (item.isV2Api) {
+                    interactorV2.getConnectionSupportEmail(item.guid)
+                } else {
+                    interactorV1.getConnectionSupportEmail(item.guid)
+                }
+            }
             PopupMenuItem.CONSENTS -> {
                 onViewConsentsClickEvent.postValue(
                     ViewModelEvent(
@@ -89,7 +107,11 @@ class ConnectionsListViewModel(
             PopupMenuItem.DELETE -> {
                 if (item.isActive) onDeleteClickEvent.postValue(ViewModelEvent(item.guid))
                 else {
-                    interactor.deleteConnectionsAndKeys(item.guid)
+                    if (item.isV2Api) {
+                        interactorV2.deleteConnectionsAndKeys(item.guid)
+                    } else {
+                        interactorV1.deleteConnectionsAndKeys(item.guid)
+                    }
                     updateViewsContent()
                 }
             }
@@ -122,7 +144,11 @@ class ConnectionsListViewModel(
         val listItem = listItemsValues.find { it.guid == data.guid } ?: return
         val newConnectionName = data.getString(KEY_NAME) ?: return
         if (listItem.name != newConnectionName && newConnectionName.isNotEmpty()) {
-            interactor.updateNameAndSave(listItem, newConnectionName)
+            if (listItem.isV2Api) {
+                interactorV2.updateNameAndSave(listItem, newConnectionName)
+            } else {
+                interactorV1.updateNameAndSave(listItem, newConnectionName)
+            }
         }
     }
 
@@ -134,8 +160,10 @@ class ConnectionsListViewModel(
 
     fun onDeleteItemResult(guid: GUID) {
         val listItem = listItemsValues.find { it.guid == guid } ?: return
-        interactor.sendRevokeRequestForConnections(listItem.guid)
-        interactor.deleteConnectionsAndKeys(listItem.guid)
+        interactorV1.sendRevokeRequestForConnections(listItem.guid)
+        interactorV2.sendRevokeRequestForConnections(listItem.guid)
+        interactorV1.deleteConnectionsAndKeys(listItem.guid)
+        interactorV2.deleteConnectionsAndKeys(listItem.guid)
         updateViewsContent()
     }
 
@@ -197,12 +225,18 @@ class ConnectionsListViewModel(
     }
 
     fun refreshConsents() {
-        interactor.getConsents()
+        interactorV1.getConsents()
     }
 
     private fun updateViewsContent() {
-        val newListItems = interactor.collectAllConnectionsViewModels()
-        listItems.postValue(updateItemsWithConsentData(newListItems.convertConnectionsToViewModels(appContext), consents))
+        val newListItems = interactorV1.collectAllConnectionsViewModels() + interactorV2.collectAllConnectionsViewModels()
+        listItems.postValue(
+            updateItemsWithConsentData(
+                newListItems.convertConnectionsToViewModels(
+                    appContext
+                ), consents
+            )
+        )
         if (newListItems.isEmpty()) {
             emptyViewVisibility.postValue(View.VISIBLE)
             listVisibility.postValue(View.GONE)

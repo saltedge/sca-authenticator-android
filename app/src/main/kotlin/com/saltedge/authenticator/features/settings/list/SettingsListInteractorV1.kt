@@ -20,29 +20,33 @@
  */
 package com.saltedge.authenticator.features.settings.list
 
-import android.content.Context
-import com.saltedge.authenticator.app.AppToolsAbs
 import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.model.isActive
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 
 class SettingsListInteractorV1(
-    private val appContext: Context,
-    appTools: AppToolsAbs,
-    keyStoreManager: KeyManagerAbs,
-    connectionsRepository: ConnectionsRepositoryAbs,
-    preferenceRepository: PreferenceRepositoryAbs,
-    private val apiManager: AuthenticatorApiManagerAbs,
-) : SettingsListInteractor(
-    appTools = appTools,
-    keyStoreManager = keyStoreManager,
-    connectionsRepository = connectionsRepository,
-    preferenceRepository = preferenceRepository
+    private val keyStoreManager: KeyManagerAbs,
+    private val connectionsRepository: ConnectionsRepositoryAbs,
+    private val apiManager: AuthenticatorApiManagerAbs
 ) {
 
-    override fun revokeConnections(connectionsAndKeys: List<RichConnection>) {
+    fun sendRevokeRequestForConnections() {
+        val connectionsAndKeys: List<RichConnection> =
+            connectionsRepository.getAllActiveConnections().filter { it.isActive() }
+                .mapNotNull { keyStoreManager.enrichConnection(it) }
+
+        revokeConnections(connectionsAndKeys = connectionsAndKeys)
+    }
+
+    fun deleteAllConnectionsAndKeys() {
+        val connectionGuids = connectionsRepository.getAllConnections().map { it.guid }
+        keyStoreManager.deleteKeyPairsIfExist(connectionGuids)
+        connectionsRepository.deleteAllConnections()
+    }
+
+    private fun revokeConnections(connectionsAndKeys: List<RichConnection>) {
         apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = null)
     }
 }

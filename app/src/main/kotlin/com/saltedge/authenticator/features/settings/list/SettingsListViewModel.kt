@@ -25,6 +25,7 @@ import android.content.DialogInterface
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.AppToolsAbs
 import com.saltedge.authenticator.app.getDefaultSystemNightMode
 import com.saltedge.authenticator.app.isSystemNightModeSupported
 import com.saltedge.authenticator.app.switchDarkLightMode
@@ -32,11 +33,15 @@ import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.tools.postUnitEvent
 
 class SettingsListViewModel(
     private val appContext: Context,
-    private val interactor: SettingsListInteractorAbs
+    private val interactorV1: SettingsListInteractorV1,
+    private val interactorV2: SettingsListInteractorV2,
+    private val appTools: AppToolsAbs,
+    private val preferenceRepository: PreferenceRepositoryAbs
 ) : ViewModel(), ListItemClickListener {
 
     val languageClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
@@ -70,16 +75,16 @@ class SettingsListViewModel(
         }
         when (itemId) {
             R.string.settings_screenshot_lock -> {
-                if (interactor.screenshotLockEnabled != checked) {
-                    interactor.screenshotLockEnabled = checked
+                if (preferenceRepository.screenshotLockEnabled != checked) {
+                    preferenceRepository.screenshotLockEnabled = checked
                     screenshotClickEvent.postUnitEvent()
                 }
             }
             R.string.settings_system_dark_mode -> {
-                interactor.systemNightMode = checked
+                preferenceRepository.systemNightMode = checked
                 val defaultNightMode = getDefaultSystemNightMode()
-                if (interactor.nightMode != defaultNightMode && checked) {
-                    interactor.nightMode = defaultNightMode
+                if (preferenceRepository.nightMode != defaultNightMode && checked) {
+                    preferenceRepository.nightMode = defaultNightMode
                     setNightModelEvent.postValue(ViewModelEvent(defaultNightMode))
                 }
             }
@@ -88,9 +93,9 @@ class SettingsListViewModel(
 
     fun onAppbarMenuItemClick(menuItem: MenuItem) {
         if (menuItem != MenuItem.CUSTOM_NIGHT_MODE) return
-        val newNighMode = appContext.switchDarkLightMode(interactor.nightMode)
-        interactor.nightMode = newNighMode
-        interactor.systemNightMode = false
+        val newNighMode = appContext.switchDarkLightMode(preferenceRepository.nightMode)
+        preferenceRepository.nightMode = newNighMode
+        preferenceRepository.systemNightMode = false
         listItemsValues?.firstOrNull { it.titleId == R.string.settings_system_dark_mode }?.let {
             it.switchIsChecked = false
         }
@@ -99,8 +104,10 @@ class SettingsListViewModel(
 
     fun onDialogActionIdClick(dialogActionId: Int) {
         if (dialogActionId == DialogInterface.BUTTON_POSITIVE) {
-            interactor.sendRevokeRequestForConnections()
-            interactor.deleteAllConnectionsAndKeys()
+            interactorV1.sendRevokeRequestForConnections()
+            interactorV2.sendRevokeRequestForConnections()
+            interactorV1.deleteAllConnectionsAndKeys()
+            interactorV2.deleteAllConnectionsAndKeys()
             clearSuccessEvent.postUnitEvent()
         }
     }
@@ -124,14 +131,14 @@ class SettingsListViewModel(
             SettingsItemViewModel(
                 iconId = R.drawable.ic_setting_screenshots,
                 titleId = R.string.settings_screenshot_lock,
-                switchIsChecked = interactor.screenshotLockEnabled
+                switchIsChecked = preferenceRepository.screenshotLockEnabled
             )
         )
-        if (isSystemNightModeSupported(interactor.getSDKVersion())) listItems.add(
+        if (isSystemNightModeSupported(appTools.getSDKVersion())) listItems.add(
             SettingsItemViewModel(
                 iconId = R.drawable.ic_settings_dark_mode,
                 titleId = R.string.settings_system_dark_mode,
-                switchIsChecked = interactor.systemNightMode
+                switchIsChecked = preferenceRepository.systemNightMode
             )
         )
         listItems.addAll(

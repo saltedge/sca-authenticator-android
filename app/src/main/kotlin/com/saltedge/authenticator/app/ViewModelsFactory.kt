@@ -153,7 +153,21 @@ class ViewModelsFactory @Inject constructor(
                 return createConnectProviderViewModel() as T
             }
             modelClass.isAssignableFrom(ConnectionsListViewModel::class.java) -> {
-                return createConnectionsListViewModel() as T
+                return ConnectionsListViewModel(
+                    appContext = appContext,
+                    interactorV1 = ConnectionsListInteractorV1(
+                        keyStoreManager = keyStoreManager,
+                        connectionsRepository = connectionsRepository,
+                        apiManager = apiManagerV1,
+                        cryptoTools = cryptoToolsV1
+                    ),
+                    interactorV2 = ConnectionsListInteractorV2(
+                        keyStoreManager = keyStoreManager,
+                        connectionsRepository = connectionsRepository,
+                        apiManager = apiManagerV2,
+                        cryptoTools = cryptoToolsV2
+                    )
+                ) as T
             }
             modelClass.isAssignableFrom(ConsentsListViewModel::class.java) -> {
                 return ConsentsListViewModel(
@@ -177,7 +191,21 @@ class ViewModelsFactory @Inject constructor(
                 return SelectConnectionsViewModel() as T
             }
             modelClass.isAssignableFrom(SettingsListViewModel::class.java) -> {
-                return createSettingsListViewModel() as T
+                return SettingsListViewModel(
+                    appContext = appContext,
+                    interactorV1 = SettingsListInteractorV1(
+                        keyStoreManager = keyStoreManager,
+                        connectionsRepository = connectionsRepository,
+                        apiManager = apiManagerV1
+                    ),
+                    interactorV2 = SettingsListInteractorV2(
+                        keyStoreManager = keyStoreManager,
+                        connectionsRepository = connectionsRepository,
+                        apiManager = apiManagerV2
+                    ),
+                    appTools = AppTools,
+                    preferenceRepository = preferenceRepository
+                ) as T
             }
             modelClass.isAssignableFrom(PasscodeEditViewModel::class.java) -> {
                 return PasscodeEditViewModel(
@@ -207,54 +235,6 @@ class ViewModelsFactory @Inject constructor(
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }
-    }
-
-    private fun createSettingsListViewModel(): SettingsListViewModel {
-        val interactor = if (scaApiV2IsRequired) {
-            SettingsListInteractorV2(
-                appContext = appContext,
-                appTools = AppTools, //??
-                keyStoreManager = keyStoreManager,
-                preferenceRepository = preferenceRepository,
-                connectionsRepository = connectionsRepository,
-                apiManager = apiManagerV2
-            )
-        } else {
-            SettingsListInteractorV1(
-                appContext = appContext,
-                appTools = AppTools,
-                keyStoreManager = keyStoreManager,
-                preferenceRepository = preferenceRepository,
-                connectionsRepository = connectionsRepository,
-                apiManager = apiManagerV1
-            )
-        }
-        return SettingsListViewModel(
-            appContext = appContext,
-            interactor = interactor
-        )
-    }
-
-    private fun createConnectionsListViewModel(): ConnectionsListViewModel {
-        val interactor = if (scaApiV2IsRequired) {
-            ConnectionsListInteractorV2(
-                connectionsRepository = connectionsRepository,
-                keyStoreManager = keyStoreManager,
-                apiManager = apiManagerV2,
-                cryptoTools = cryptoToolsV2
-            )
-        } else {
-            ConnectionsListInteractorV1(
-                connectionsRepository = connectionsRepository,
-                keyStoreManager = keyStoreManager,
-                apiManager = apiManagerV1,
-                cryptoTools = cryptoToolsV1
-            )
-        }
-        return ConnectionsListViewModel(
-            appContext = appContext,
-            interactor = interactor
-        )
     }
 
     private fun createConnectProviderViewModel(): ConnectProviderViewModel {
