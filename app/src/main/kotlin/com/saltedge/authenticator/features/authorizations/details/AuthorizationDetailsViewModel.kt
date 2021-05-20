@@ -131,26 +131,6 @@ class AuthorizationDetailsViewModel(
         return true
     }
 
-//    override fun onFetchAuthorizationResult(result: EncryptedData?, error: ApiErrorData?) {
-//        result?.let { processEncryptedAuthorizationResult(it) }
-//            ?: error?.let { processFetchAuthorizationError(it) }
-//            ?: updateToFinalViewMode(AuthorizationStatus.UNAVAILABLE)
-//    }
-
-//    override fun onConfirmDenySuccess(result: ConfirmDenyResponseData, connectionID: ID) {
-//        val newViewMode = if (result.success == true) {
-//            when (currentStatus) {
-//                AuthorizationStatus.CONFIRM_PROCESSING -> AuthorizationStatus.CONFIRMED
-//                AuthorizationStatus.DENY_PROCESSING -> AuthorizationStatus.DENIED
-//                else -> AuthorizationStatus.ERROR
-//            }
-//        } else {
-//            startPolling()
-//            AuthorizationStatus.PENDING
-//        }
-//        updateViewMode(newViewMode)
-//    }
-
     override fun onAuthorizationReceived(
         data: AuthorizationItemViewModel?,
         newModelsApiVersion: String
@@ -189,78 +169,6 @@ class AuthorizationDetailsViewModel(
 
     override val coroutineScope: CoroutineScope
         get() = viewModelScope
-
-//    private fun processEncryptedAuthorizationResult(result: EncryptedData) {
-//        if (viewMode.isProcessingMode()) return
-//
-//        cryptoTools.decryptAuthorizationData(
-//            encryptedData = result,
-//            rsaPrivateKey = richConnection?.private
-//        )?.let {
-//            val newViewModel = it.toAuthorizationItemViewModel(
-//                connection = richConnection?.connection ?: return
-//            )
-//            if (!authorizationHasFinalMode && authorizationModel.value != newViewModel) {
-//                if (newViewModel == null) {
-//                    updateToFinalViewMode(AuthorizationStatus.ERROR)
-//                } else {
-//                    authorizationModel.postValue(newViewModel)
-//                }
-//            }
-//        } ?: updateToFinalViewMode(AuthorizationStatus.UNAVAILABLE)
-//    }
-
-//    private fun processFetchAuthorizationError(error: ApiErrorData) {
-//        when {
-//            error.isConnectionNotFound() -> {
-//                richConnection?.connection?.accessToken?.let {
-//                    connectionsRepository.invalidateConnectionsByTokens(accessTokens = listOf(it))
-//                }
-//                updateToFinalViewMode(AuthorizationStatus.ERROR)
-//            }
-//            shouldSetUnavailableState(error) -> updateToFinalViewMode(AuthorizationStatus.UNAVAILABLE)
-//            !error.isConnectivityError() -> {
-//                if (viewMode != AuthorizationStatus.ERROR) {
-//                    onErrorEvent.postValue(ViewModelEvent(error))
-//                    updateToFinalViewMode(AuthorizationStatus.ERROR)
-//                }
-//            }
-//            else -> onErrorEvent.postValue(ViewModelEvent(error))
-//        }
-//    }
-
-//    private fun shouldSetUnavailableState(error: ApiErrorData): Boolean {
-//        return error.isAuthorizationNotFound() && (viewMode === AuthorizationStatus.LOADING || viewMode === AuthorizationStatus.PENDING)
-//    }
-
-//    private fun sendConfirmRequest() {
-//        onStartConfirmDenyFlow(viewMode = AuthorizationStatus.CONFIRM_PROCESSING)
-//        apiManager.confirmAuthorization(
-//            connectionAndKey = richConnection ?: return,
-//            authorizationId = authorizationModel.value?.authorizationID ?: return,
-//            authorizationCode = authorizationModel.value?.authorizationCode,
-//            geolocation = locationManager.locationDescription,
-//            authorizationType = AppTools.lastUnlockType.description,
-//            resultCallback = this
-//        )
-//    }
-//
-//    private fun sendDenyRequest() {
-//        onStartConfirmDenyFlow(AuthorizationStatus.DENY_PROCESSING)
-//        apiManager.denyAuthorization(
-//            connectionAndKey = richConnection ?: return,
-//            authorizationId = authorizationModel.value?.authorizationID ?: return,
-//            authorizationCode = authorizationModel.value?.authorizationCode,
-//            geolocation = locationManager.locationDescription,
-//            authorizationType = AppTools.lastUnlockType.description,
-//            resultCallback = this
-//        )
-//    }
-
-//    private fun onStartConfirmDenyFlow(viewMode: AuthorizationStatus) {
-//        stopPolling()
-//        updateViewMode(viewMode)
-//    }
 
     private fun updateAuthorization(model: AuthorizationItemViewModel, confirm: Boolean) {
         updateAuthorizationStatus(if (confirm) AuthorizationStatus.CONFIRM_PROCESSING else AuthorizationStatus.DENY_PROCESSING)
