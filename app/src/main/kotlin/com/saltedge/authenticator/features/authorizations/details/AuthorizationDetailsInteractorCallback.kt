@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2020 Salt Edge Inc.
+ * Copyright (c) 2021 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,20 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.api.model.authorization
+package com.saltedge.authenticator.features.authorizations.details
 
-import java.io.Serializable
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationStatus
+import kotlinx.coroutines.CoroutineScope
 
-/**
- * Container for authorizationID and connectionID
- */
-//TODO: Use where we use authorizationID with connectionID
-data class AuthorizationIdentifier(val authorizationID: String, val connectionID: String) : Serializable {
-    val hasAuthorizationID: Boolean
-        get() = authorizationID.isNotEmpty()
+interface AuthorizationDetailsInteractorCallback {
+    fun onAuthorizationReceived(data: AuthorizationItemViewModel?, newModelsApiVersion: String)
+    fun onConfirmDenySuccess(newStatus: AuthorizationStatus? = null)
+    fun onConnectionNotFoundError()
+    fun onAuthorizationNotFoundError()
+    fun onConnectivityError(error: ApiErrorData)
+    fun onError(error: ApiErrorData)
+
+    val coroutineScope: CoroutineScope
 }

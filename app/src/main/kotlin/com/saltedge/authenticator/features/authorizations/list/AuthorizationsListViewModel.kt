@@ -29,10 +29,7 @@ import com.saltedge.authenticator.app.KEY_OPTION_ID
 import com.saltedge.authenticator.app.NetworkStateChangeListener
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ID
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationStatus
-import com.saltedge.authenticator.features.authorizations.common.TimerUpdateListener
-import com.saltedge.authenticator.features.authorizations.common.merge
+import com.saltedge.authenticator.features.authorizations.common.*
 import com.saltedge.authenticator.features.menu.BottomMenuDialog
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.ListItemClickListener
@@ -172,9 +169,7 @@ class AuthorizationsListViewModel(
 
     override fun onConfirmDenySuccess(connectionID: ID, authorizationID: ID, newStatus: AuthorizationStatus?) {
         findListItem(connectionID = connectionID, authorizationID = authorizationID)?.let { item ->
-            val calculatedStatus = if (item.status == AuthorizationStatus.DENY_PROCESSING)
-                AuthorizationStatus.DENIED else AuthorizationStatus.CONFIRMED
-            updateItemStatus(listItem = item, newStatus = newStatus ?: calculatedStatus)
+            updateItemStatus(listItem = item, newStatus = newStatus ?: item.status.computeConfirmedStatus())
         }
     }
 

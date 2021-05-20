@@ -36,10 +36,10 @@ open class SingleAuthorizationPollingService : PollingServiceAbs<FetchAuthorizat
 
     internal var connector: AuthorizationConnector? = null
     override var contract: FetchAuthorizationContract? = null
-    private var authorizationId: String = ""
+    private var authorizationID: String = ""
 
-    fun start(authorizationId: String) {
-        this.authorizationId = authorizationId
+    fun start(authorizationID: String) {
+        this.authorizationID = authorizationID
         connector = AuthorizationConnector(
             apiInterface = RestClient.apiInterface,
             resultCallback = contract
@@ -55,7 +55,7 @@ open class SingleAuthorizationPollingService : PollingServiceAbs<FetchAuthorizat
     override fun forcedFetch() {
         try {
             contract?.getConnectionDataForAuthorizationPolling()?.let {
-                connector?.getAuthorization(connectionAndKey = it, authorizationId = authorizationId)
+                connector?.getAuthorization(connectionAndKey = it, authorizationID = authorizationID)
             }
         } catch (e: Exception) {
             Timber.e(e)

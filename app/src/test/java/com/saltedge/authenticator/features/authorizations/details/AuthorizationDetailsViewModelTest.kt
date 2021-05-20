@@ -326,7 +326,7 @@ class AuthorizationDetailsViewModelTest {
 
         //then
         verify(mockPollingService).contract = viewModel
-        verify(mockPollingService).start(authorizationId = "1")
+        verify(mockPollingService).start(authorizationID = "1")
     }
 
     @Test
