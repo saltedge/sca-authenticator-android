@@ -21,7 +21,6 @@
 package com.saltedge.authenticator.features.authorizations.common
 
 import android.content.Context
-import android.os.Build
 import android.text.method.ScrollingMovementMethod
 import android.util.AttributeSet
 import android.view.View
@@ -31,9 +30,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.fivehundredpx.android.blur.BlurringView
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tools.applyAlphaToColor
 import com.saltedge.authenticator.app.buildVersionLessThan23
-import com.saltedge.authenticator.core.tools.hasHTMLTags
+import com.saltedge.authenticator.core.api.model.DescriptionData
+import com.saltedge.authenticator.tools.applyAlphaToColor
 import com.saltedge.authenticator.tools.setVisible
 import kotlinx.android.synthetic.main.view_authorization_content.view.*
 
@@ -54,8 +53,8 @@ class AuthorizationContentView : LinearLayout {
         }
     }
 
-    fun setViewMode(viewMode: ViewMode) {
-        val showStatus = viewMode !== ViewMode.DEFAULT
+    fun setViewMode(viewMode: AuthorizationStatus) {
+        val showStatus = viewMode !== AuthorizationStatus.PENDING
         if (showStatus) {
             if (!statusLayout.isVisible) {
                 statusLayout.alpha = 0.1f
@@ -73,7 +72,7 @@ class AuthorizationContentView : LinearLayout {
         }
     }
 
-    fun setTitleAndDescription(title: String, description: String) {
+    fun setTitleAndDescription(title: String, description: DescriptionData) {
         setTitle(title)
         setDescription(description)
     }
@@ -87,17 +86,17 @@ class AuthorizationContentView : LinearLayout {
         titleTextView?.text = title
     }
 
-    private fun setDescription(description: String) {
-        description.hasHTMLTags().let { showWebView ->
-            descriptionTextView?.setVisible(show = !showWebView)
-            descriptionWebView?.setVisible(show = showWebView)
-            if (showWebView) {
-                val encodedHtml = android.util.Base64.encodeToString(description.toByteArray(), android.util.Base64.NO_PADDING)
-                descriptionWebView?.loadData(encodedHtml, "text/html", "base64")
-            } else {
-                descriptionTextView?.movementMethod = ScrollingMovementMethod()
-                descriptionTextView?.text = description
-            }
+    private fun setDescription(description: DescriptionData) {
+        val htmlContent = description.hasHtmlContent
+        descriptionTextView?.setVisible(show = !htmlContent)
+        descriptionWebView?.setVisible(show = htmlContent)
+        if (htmlContent) {
+            val html = description.html?.html ?: ""
+            val encodedHtml = android.util.Base64.encodeToString(html.toByteArray(), android.util.Base64.NO_PADDING)
+            descriptionWebView?.loadData(encodedHtml, "text/html", "base64")
+        } else {
+            descriptionTextView?.movementMethod = ScrollingMovementMethod()
+            descriptionTextView?.text = description.text?.text ?: ""
         }
     }
 

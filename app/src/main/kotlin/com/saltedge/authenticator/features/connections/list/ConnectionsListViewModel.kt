@@ -28,6 +28,7 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.core.api.KEY_NAME
 import com.saltedge.authenticator.core.model.*
+import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
 import com.saltedge.authenticator.features.connections.list.menu.MenuData
@@ -36,7 +37,6 @@ import com.saltedge.authenticator.features.consents.common.consentsCountPrefixFo
 import com.saltedge.authenticator.features.consents.list.ConsentsListViewModel
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.sdk.api.model.*
 import com.saltedge.authenticator.tools.postUnitEvent
 
 class ConnectionsListViewModel(
@@ -214,7 +214,7 @@ class ConnectionsListViewModel(
 
     private fun updateItemsWithConsentData(
         items: List<ConnectionItemViewModel>,
-        consents: Map<ConnectionID, List<ConsentData>>
+        consents: Map<ID, List<ConsentData>>
     ): List<ConnectionItemViewModel> {
         return items.apply {
             forEach {

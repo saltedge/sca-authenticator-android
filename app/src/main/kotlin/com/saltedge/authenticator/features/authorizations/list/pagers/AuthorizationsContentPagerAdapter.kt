@@ -55,7 +55,7 @@ class AuthorizationsContentPagerAdapter(val context: Context) : AuthorizationsPa
     private fun updateViewContent(pageView: View, model: AuthorizationItemViewModel) {
         (pageView as AuthorizationContentView).also {
             it.setTitleAndDescription(model.title, model.description)
-            it.setViewMode(model.viewMode)
+            it.setViewMode(model.status)
         }
     }
 }

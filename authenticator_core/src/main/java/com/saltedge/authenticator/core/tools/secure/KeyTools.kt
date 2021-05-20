@@ -24,6 +24,7 @@ package com.saltedge.authenticator.core.tools.secure
 
 import android.util.Base64
 import com.saltedge.authenticator.core.tools.encodeToPemBase64String
+import timber.log.Timber
 import java.security.KeyFactory
 import java.security.KeyPair
 import java.security.PrivateKey
@@ -78,13 +79,14 @@ fun PublicKey.publicKeyToPem(): String {
 fun String.pemToPrivateKey(algorithm: String): PrivateKey? {
     return try {
         val keyContent = this
+            .replace("\\r\\n", "")
             .replace("\\n", "")
             .replace("-----BEGIN PRIVATE KEY-----", "")
             .replace("-----END PRIVATE KEY-----", "")
         val keySpec: KeySpec = PKCS8EncodedKeySpec(Base64.decode(keyContent, Base64.NO_WRAP))
         KeyFactory.getInstance(algorithm).generatePrivate(keySpec)
     } catch (e: Exception) {
-        //TODO log
+        Timber.e(e)
         null
     }
 }
@@ -98,13 +100,14 @@ fun String.pemToPrivateKey(algorithm: String): PrivateKey? {
 fun String.pemToPublicKey(algorithm: String): PublicKey? {
     return try {
         val keyContent = this
+            .replace("\\r\\n", "")
             .replace("\\n", "")
             .replace("-----BEGIN PUBLIC KEY-----", "")
             .replace("-----END PUBLIC KEY-----", "")
         val keySpecX509: KeySpec = X509EncodedKeySpec(Base64.decode(keyContent, Base64.NO_WRAP))
         KeyFactory.getInstance(algorithm).generatePublic(keySpecX509)
     } catch (e: Exception) {
-        //TODO log
+        Timber.e(e, "PEM key: $this")
         null
     }
 }

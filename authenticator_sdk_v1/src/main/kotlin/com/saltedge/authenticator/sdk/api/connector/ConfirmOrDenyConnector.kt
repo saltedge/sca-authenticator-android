@@ -23,19 +23,17 @@ package com.saltedge.authenticator.sdk.api.connector
 import com.saltedge.authenticator.core.api.ApiResponseInterceptor
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.api.model.error.createInvalidResponseError
-import com.saltedge.authenticator.core.model.AuthorizationID
-import com.saltedge.authenticator.core.model.ConnectionID
+import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
-import com.saltedge.authenticator.sdk.constants.API_AUTHORIZATIONS
-import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_PUT
-import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
-import com.saltedge.authenticator.sdk.api.model.*
-import com.saltedge.authenticator.sdk.api.model.request.ConfirmDenyRequestData
-import com.saltedge.authenticator.sdk.api.model.request.ConfirmDenyRequest
-import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponse
 import com.saltedge.authenticator.sdk.api.ApiInterface
 import com.saltedge.authenticator.sdk.api.addAuthorizationTypeHeader
 import com.saltedge.authenticator.sdk.api.addLocationHeader
+import com.saltedge.authenticator.sdk.api.model.request.ConfirmDenyRequest
+import com.saltedge.authenticator.sdk.api.model.request.ConfirmDenyRequestData
+import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponse
+import com.saltedge.authenticator.sdk.constants.API_AUTHORIZATIONS
+import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_PUT
+import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
 import retrofit2.Call
 
 internal class ConfirmOrDenyConnector(
@@ -43,8 +41,8 @@ internal class ConfirmOrDenyConnector(
     var resultCallback: ConfirmAuthorizationListener?
 ) : ApiResponseInterceptor<ConfirmDenyResponse>() {
 
-    private var connectionId: ConnectionID = ""
-    private var authorizationId: AuthorizationID = ""
+    private var connectionId: ID = ""
+    private var authorizationId: ID = ""
 
     fun updateAuthorization(
         connectionAndKey: RichConnection,

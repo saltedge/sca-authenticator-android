@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.api.model.configuration
 
-import com.saltedge.authenticator.sdk.constants.API_VERSION
+import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import timber.log.Timber
 
 /**
@@ -36,7 +36,7 @@ fun ProviderConfigurationData.isValid(): Boolean {
             code.isNotEmpty() &&
             connectUrl.isNotEmpty() &&
             !connectUrl.contains("/localhost") &&
-            version == API_VERSION
+            version == API_V1_VERSION
     } catch (e: Exception) {
         Timber.e(e)
         false

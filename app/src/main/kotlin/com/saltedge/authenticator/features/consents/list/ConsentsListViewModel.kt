@@ -50,7 +50,7 @@ import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.sdk.api.model.ConsentType
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
-import com.saltedge.authenticator.sdk.tools.CryptoToolsAbs
+import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
 import com.saltedge.authenticator.tools.appendColoredText
 import com.saltedge.authenticator.tools.daysTillExpire
 import kotlinx.coroutines.CoroutineDispatcher
@@ -64,7 +64,7 @@ class ConsentsListViewModel(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyManagerAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
-    private val cryptoTools: CryptoToolsAbs,
+    private val cryptoTools: CryptoToolsV1Abs,
     private val defaultDispatcher: CoroutineDispatcher
 ) : ViewModel(), LifecycleObserver, FetchEncryptedDataListener {
 

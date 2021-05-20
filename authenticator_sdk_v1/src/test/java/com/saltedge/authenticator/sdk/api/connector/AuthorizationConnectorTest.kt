@@ -26,11 +26,11 @@ import com.saltedge.authenticator.core.api.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.RichConnection
-import com.saltedge.authenticator.sdk.contract.FetchAuthorizationContract
 
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.response.AuthorizationShowResponse
 import com.saltedge.authenticator.sdk.api.ApiInterface
+import com.saltedge.authenticator.sdk.polling.FetchAuthorizationContract
 import com.saltedge.authenticator.sdk.testTools.get404Response
 import io.mockk.confirmVerified
 import io.mockk.every

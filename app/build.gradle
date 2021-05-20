@@ -108,9 +108,7 @@ android {
     testOptions {
         animationsDisabled true
 
-        unitTests {
-            includeAndroidResources = true
-        }
+        unitTests.includeAndroidResources = true
     }
 }
 

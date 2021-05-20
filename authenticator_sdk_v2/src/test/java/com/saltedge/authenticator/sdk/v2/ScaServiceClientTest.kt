@@ -128,7 +128,7 @@ class ScaServiceClientTest {
         every { mockCall.enqueue(any()) } returns Unit
         ScaServiceClient().getAuthorization(
             connection = RichConnection(requestConnection, privateKey, publicKey),
-            authorizationId = "444",
+            authorizationID = "444",
             callback = mockCallback
         )
 
@@ -150,7 +150,7 @@ class ScaServiceClientTest {
         every { mockCall.enqueue(any()) } returns Unit
         ScaServiceClient().confirmAuthorization(
             connection = RichConnection(requestConnection, privateKey, publicKey),
-            authorizationId = "444",
+            authorizationID = "444",
             authorizationData = UpdateAuthorizationData(
                 authorizationCode = "Code123",
                 userAuthorizationType = "biometrics",
@@ -177,7 +177,7 @@ class ScaServiceClientTest {
         every { mockCall.enqueue(any()) } returns Unit
         ScaServiceClient().denyAuthorization(
             connection = RichConnection(requestConnection, privateKey, publicKey),
-            authorizationId = "444",
+            authorizationID = "444",
             authorizationData = UpdateAuthorizationData(
                 authorizationCode = "Code123",
                 userAuthorizationType = "biometrics",

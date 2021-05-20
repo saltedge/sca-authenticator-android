@@ -18,10 +18,10 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.authorizations.common
+package com.saltedge.authenticator.models
 
 import com.saltedge.authenticator.core.model.ConnectionAbs
-import com.saltedge.authenticator.core.model.ConnectionID
+import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -31,15 +31,16 @@ import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
  *
  * @param repository data source of connections
  * @param keyStoreManager data source of keys
- * @return Map<ConnectionID, ConnectionAndKey)
+ * @return Map<ID, ConnectionAndKey)
  */
 fun collectRichConnections(
     repository: ConnectionsRepositoryAbs,
-    keyStoreManager: KeyManagerAbs
-): Map<ConnectionID, RichConnection> {
-    return repository.getAllActiveConnections().mapNotNull {
-        it.getPrivateKeyForConnection(keyStoreManager)
-    }.toMap()
+    keyStoreManager: KeyManagerAbs,
+    apiVersion: String? = null
+): Map<ID, RichConnection> {//TODO TEST
+    val connections = apiVersion?.let { repository.getAllActiveConnections(apiVersion)  }
+        ?: repository.getAllActiveConnections()
+    return connections.mapNotNull { it.getPrivateKeyForConnection(keyStoreManager) }.toMap()
 }
 
 /**
@@ -50,8 +51,8 @@ fun collectRichConnections(
  * @param keyStoreManager data source of keys
  * @return ConnectionAndKey
  */
-fun createConnectionAndKey(
-    connectionID: ConnectionID,
+fun createRichConnection(
+    connectionID: ID,
     repository: ConnectionsRepositoryAbs,
     keyStoreManager: KeyManagerAbs
 ): RichConnection? {
@@ -65,12 +66,10 @@ fun createConnectionAndKey(
  *
  * @receiver Connection object
  * @param keyStoreManager data source of keys
- * @return Pair<ConnectionID, ConnectionAndKey)
+ * @return Pair<ID, ConnectionAndKey)
  */
 private fun ConnectionAbs.getPrivateKeyForConnection(
     keyStoreManager: KeyManagerAbs
-): Pair<ConnectionID, RichConnection>? {
-    return keyStoreManager.enrichConnection(this)?.let { model ->
-        Pair(this.id, model)
-    }
+): Pair<ID, RichConnection>? {
+    return keyStoreManager.enrichConnection(this)?.let { model -> Pair(this.id, model) }
 }

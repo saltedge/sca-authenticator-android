@@ -25,14 +25,14 @@ import com.saltedge.authenticator.core.api.model.EncryptedBundle
 import com.saltedge.authenticator.core.tools.json.createDefaultGson
 import com.saltedge.authenticator.core.tools.secure.BaseCryptoTools
 import com.saltedge.authenticator.core.tools.secure.BaseCryptoToolsAbs
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
 import timber.log.Timber
 import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.SecureRandom
 
-object CryptoTools : BaseCryptoTools(), CryptoToolsAbs {
+object CryptoToolsV2 : BaseCryptoTools(), CryptoToolsV2Abs {
 
     override fun createEncryptedBundle(payload: String, rsaPublicKey: PublicKey?): EncryptedBundle? {
         return try {
@@ -53,7 +53,7 @@ object CryptoTools : BaseCryptoTools(), CryptoToolsAbs {
     override fun decryptAuthorizationData(
         encryptedData: AuthorizationResponseData,
         rsaPrivateKey: PrivateKey?
-    ): AuthorizationData? {
+    ): AuthorizationV2Data? {
         return try {
             val privateKey = rsaPrivateKey ?: return null
             val encryptedKey = encryptedData.key
@@ -62,7 +62,11 @@ object CryptoTools : BaseCryptoTools(), CryptoToolsAbs {
             val key = rsaDecrypt(encryptedKey, privateKey) ?: return null
             val iv = rsaDecrypt(encryptedIV, privateKey) ?: return null
             val jsonString = aesDecrypt(encryptedMessage, key = key, iv = iv)
-            createDefaultGson().fromJson(jsonString, AuthorizationData::class.java)
+            val result = createDefaultGson().fromJson(jsonString, AuthorizationV2Data::class.java)
+            result.connectionId = encryptedData.connectionId
+            result.authorizationId = encryptedData.id
+            result.status = encryptedData.status
+            return result
         } catch (e: Exception) {
             Timber.e(e)
             null
@@ -70,7 +74,7 @@ object CryptoTools : BaseCryptoTools(), CryptoToolsAbs {
     }
 }
 
-interface CryptoToolsAbs : BaseCryptoToolsAbs {
+interface CryptoToolsV2Abs : BaseCryptoToolsAbs {
     fun createEncryptedBundle(payload: String, rsaPublicKey: PublicKey?): EncryptedBundle?
-    fun decryptAuthorizationData(encryptedData: AuthorizationResponseData, rsaPrivateKey: PrivateKey?): AuthorizationData?
+    fun decryptAuthorizationData(encryptedData: AuthorizationResponseData, rsaPrivateKey: PrivateKey?): AuthorizationV2Data?
 }

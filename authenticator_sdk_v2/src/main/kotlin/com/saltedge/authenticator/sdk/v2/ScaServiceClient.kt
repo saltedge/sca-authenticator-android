@@ -23,6 +23,7 @@ package com.saltedge.authenticator.sdk.v2
 import android.content.Context
 import com.saltedge.authenticator.core.api.model.EncryptedBundle
 import com.saltedge.authenticator.core.model.ConnectionAbs
+import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.model.guard
 import com.saltedge.authenticator.core.polling.PollingServiceAbs
@@ -39,7 +40,7 @@ import com.saltedge.authenticator.sdk.v2.api.retrofit.RestClient
 import com.saltedge.authenticator.sdk.v2.polling.AuthorizationsPollingService
 import com.saltedge.authenticator.sdk.v2.polling.PollingAuthorizationsContract
 import com.saltedge.authenticator.sdk.v2.polling.SingleAuthorizationPollingService
-import com.saltedge.authenticator.sdk.v2.tools.CryptoTools
+import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2
 
 /**
  * Wrap network communication with Salt Edge SCA Service (Authenticator API v2)
@@ -93,7 +94,7 @@ class ScaServiceClient : ScaServiceClientAbs {
         val providerRsaPublicKey = connection.providerRsaPublicKeyPem.pemToPublicKey(
             algorithm = KeyAlgorithm.RSA
         ).guard {
-            callback.error("Diffie-Hellman secure material of provider is invalid")
+            callback.error("RSA secure material of provider is invalid")
             return
         }
         val rsaAlias = createRandomGuid()
@@ -104,7 +105,7 @@ class ScaServiceClient : ScaServiceClientAbs {
             callback.error("RSA secure material is unavailable")
             return
         }
-        val rsaPublicKeyEncryptedBundle = CryptoTools.createEncryptedBundle(
+        val rsaPublicKeyEncryptedBundle = CryptoToolsV2.createEncryptedBundle(
             payload = appRsaPublicKey.publicKeyToPem(),
             rsaPublicKey = providerRsaPublicKey
         ).guard {
@@ -153,11 +154,11 @@ class ScaServiceClient : ScaServiceClientAbs {
      */
     override fun getAuthorization(
         connection: RichConnection,
-        authorizationId: String,
+        authorizationID: ID,
         callback: FetchAuthorizationListener
     ) {
         AuthorizationShowConnector(RestClient.apiInterface, callback)
-            .showAuthorization(connection.connection, authorizationId)
+            .showAuthorization(connection.connection, authorizationID)
     }
 
     /**
@@ -172,20 +173,24 @@ class ScaServiceClient : ScaServiceClientAbs {
      */
     override fun confirmAuthorization(
         connection: RichConnection,
-        authorizationId: String,
+        authorizationID: ID,
         authorizationData: UpdateAuthorizationData,
         callback: AuthorizationConfirmListener
     ) {
-        val encryptedPayload = CryptoTools.createEncryptedBundle(
+        val encryptedPayload = CryptoToolsV2.createEncryptedBundle(
             payload = authorizationData.toJsonString(),
             rsaPublicKey = connection.providerPublic
         ).guard {
-            callback.error(message = "User data encryption failed", authorizationID = authorizationId)
+            callback.error(
+                message = "User data encryption failed",
+                authorizationID = authorizationID,
+                connectionID = connection.connection.id
+            )
             return
         }
         AuthorizationConfirmConnector(
             apiInterface = RestClient.apiInterface,
-            authorizationId = authorizationId,
+            authorizationId = authorizationID,
             callback = callback
         ).confirmAuthorization(connection = connection, encryptedPayload = encryptedPayload)
     }
@@ -196,20 +201,24 @@ class ScaServiceClient : ScaServiceClientAbs {
      */
     override fun denyAuthorization(
         connection: RichConnection,
-        authorizationId: String,
+        authorizationID: ID,
         authorizationData: UpdateAuthorizationData,
         callback: AuthorizationDenyListener
     ) {
-        val encryptedPayload = CryptoTools.createEncryptedBundle(
+        val encryptedPayload = CryptoToolsV2.createEncryptedBundle(
             payload = authorizationData.toJsonString(),
             rsaPublicKey = connection.providerPublic
         ).guard {
-            callback.error(message = "User data encryption failed", authorizationID = authorizationId)
+            callback.error(
+                message = "User data encryption failed",
+                authorizationID = authorizationID,
+                connectionID = connection.connection.id
+            )
             return
         }
         AuthorizationDenyConnector(
             apiInterface = RestClient.apiInterface,
-            authorizationId = authorizationId,
+            authorizationId = authorizationID,
             callback = callback
         ).denyAuthorization(richConnection = connection, encryptedPayload = encryptedPayload)
     }
@@ -235,17 +244,17 @@ interface ScaServiceClientAbs {
     fun revokeConnections(connections: List<RichConnection>, callback: ConnectionsRevokeListener?)
     fun getAuthorizations(connections: List<RichConnection>, callback: FetchAuthorizationsListener)
     fun createAuthorizationsPollingService(): PollingServiceAbs<PollingAuthorizationsContract>
-    fun getAuthorization(connection: RichConnection, authorizationId: String, callback: FetchAuthorizationListener)
+    fun getAuthorization(connection: RichConnection, authorizationID: ID, callback: FetchAuthorizationListener)
     fun createSingleAuthorizationPollingService(): SingleAuthorizationPollingService
     fun confirmAuthorization(
         connection: RichConnection,
-        authorizationId: String,
+        authorizationID: ID,
         authorizationData: UpdateAuthorizationData,
         callback: AuthorizationConfirmListener
     )
     fun denyAuthorization(
         connection: RichConnection,
-        authorizationId: String,
+        authorizationID: ID,
         authorizationData: UpdateAuthorizationData,
         callback: AuthorizationDenyListener
     )
