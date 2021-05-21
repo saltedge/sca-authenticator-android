@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.connections.common
 
+import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import com.saltedge.authenticator.tools.ResId
 
 data class ConnectionItemViewModel(
@@ -35,5 +36,5 @@ data class ConnectionItemViewModel(
     val apiVersion: String
 ) {
     val isV2Api: Boolean
-        get() = apiVersion == "2"
+        get() = apiVersion == API_V2_VERSION
 }

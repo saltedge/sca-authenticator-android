@@ -42,7 +42,7 @@ class ConnectionsListInteractorV2(
 
     override fun onConnectionsRevokeResult(apiError: ApiErrorData?) {}
 
-    fun getConnection(guid: String) {
+    fun renameConnection(guid: String) {
         connectionsRepository.getByGuid(guid)?.let { connection ->
             contract?.renameConnection(guid = guid, name = connection.name)
         }

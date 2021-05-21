@@ -84,18 +84,16 @@ class ConnectionsListViewModel(
         when (PopupMenuItem.values()[itemId]) {
             PopupMenuItem.RECONNECT -> onReconnectClickEvent.postValue(ViewModelEvent(item.guid))
             PopupMenuItem.RENAME -> {
-                if (item.isV2Api) {
-                    interactorV2.getConnection(item.guid)
-                } else {
-                    interactorV1.getConnection(item.guid)
-                }
+                if (item.isV2Api)
+                    interactorV2.renameConnection(item.guid)
+                else
+                    interactorV1.renameConnection(item.guid)
             }
             PopupMenuItem.SUPPORT -> {
-                if (item.isV2Api) {
+                if (item.isV2Api)
                     interactorV2.getConnectionSupportEmail(item.guid)
-                } else {
+                else
                     interactorV1.getConnectionSupportEmail(item.guid)
-                }
             }
             PopupMenuItem.CONSENTS -> {
                 onViewConsentsClickEvent.postValue(
@@ -107,11 +105,10 @@ class ConnectionsListViewModel(
             PopupMenuItem.DELETE -> {
                 if (item.isActive) onDeleteClickEvent.postValue(ViewModelEvent(item.guid))
                 else {
-                    if (item.isV2Api) {
+                    if (item.isV2Api)
                         interactorV2.deleteConnectionsAndKeys(item.guid)
-                    } else {
+                    else
                         interactorV1.deleteConnectionsAndKeys(item.guid)
-                    }
                     updateViewsContent()
                 }
             }
@@ -160,7 +157,10 @@ class ConnectionsListViewModel(
 
     fun onDeleteItemResult(guid: GUID) {
         val listItem = listItemsValues.find { it.guid == guid } ?: return
-        interactorV1.sendRevokeRequestForConnections(listItem.guid)
+        if (listItem.isV2Api)
+            interactorV2.sendRevokeRequestForConnections(listItem.guid)
+        else
+            interactorV1.sendRevokeRequestForConnections(listItem.guid)
         interactorV2.sendRevokeRequestForConnections(listItem.guid)
         interactorV1.deleteConnectionsAndKeys(listItem.guid)
         interactorV2.deleteConnectionsAndKeys(listItem.guid)
@@ -229,7 +229,7 @@ class ConnectionsListViewModel(
     }
 
     private fun updateViewsContent() {
-        val newListItems = interactorV1.collectAllConnectionsViewModels() + interactorV2.collectAllConnectionsViewModels()
+        val newListItems = interactorV1.collectAllConnectionsViewModels() //TODO: collectAllConnectionsViewModels in each interactor collect the models it needs, without using a filter in them(maybe create 1 interactor)
         listItems.postValue(
             updateItemsWithConsentData(
                 newListItems.convertConnectionsToViewModels(

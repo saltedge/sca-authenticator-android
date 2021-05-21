@@ -67,7 +67,7 @@ class ConnectionsListInteractorV1(
         decryptJob.cancel()
     }
 
-    fun getConnection(guid: String) {
+    fun renameConnection(guid: String) {
         connectionsRepository.getByGuid(guid)?.let { connection ->
             contract?.renameConnection(guid = guid, name = connection.name)
         }
