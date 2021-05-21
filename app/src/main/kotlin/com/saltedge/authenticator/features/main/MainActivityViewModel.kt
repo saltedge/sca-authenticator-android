@@ -48,8 +48,7 @@ import com.saltedge.authenticator.tools.postUnitEvent
 class MainActivityViewModel(
     private val appContext: Context,
     private val realmManager: RealmManagerAbs,
-    private val interactorV1: MainActivityInteractorV1,
-    private val interactorV2: MainActivityInteractorV2
+    private val interactor: MainActivityInteractor
 ) : ViewModel(),
     LifecycleObserver,
     NewAuthorizationListener,
@@ -141,15 +140,6 @@ class MainActivityViewModel(
         }
     }
 
-    fun onActivityStart(intent: Intent?) {
-        if (intent?.getBooleanExtra(KEY_CLEAR_APP_DATA, false) == true) {
-            interactorV1.sendRevokeRequestForConnections()
-            interactorV2.sendRevokeRequestForConnections()
-        }
-        wipeApplication()
-        onShowOnboardingEvent.postUnitEvent()
-    }
-
     /**
      * Handle click on appbar actions
      */
@@ -163,7 +153,7 @@ class MainActivityViewModel(
     }
 
     fun onUnlock() {
-        if (!initialQrScanWasStarted && interactorV1.noConnections && interactorV2.noConnections) {
+        if (!initialQrScanWasStarted && interactor.noConnections) {
             onQrScanClickEvent.postUnitEvent()
             initialQrScanWasStarted = true
         }
@@ -202,8 +192,9 @@ class MainActivityViewModel(
         onRestartActivityEvent.postUnitEvent()
     }
 
-    private fun wipeApplication() {
-        interactorV1.wipeApplication()
-        interactorV2.wipeApplication()
+    fun onClearAppDataEvent() {
+        interactor.sendRevokeRequestForConnections()
+        interactor.wipeApplication()
+        onShowOnboardingEvent.postUnitEvent()
     }
 }

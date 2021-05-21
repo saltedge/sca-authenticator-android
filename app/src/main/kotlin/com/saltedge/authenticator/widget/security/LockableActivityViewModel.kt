@@ -28,13 +28,10 @@ import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.app.AppTools
-import com.saltedge.authenticator.core.model.RichConnection
-import com.saltedge.authenticator.core.model.isActive
 import com.saltedge.authenticator.core.tools.MILLIS_IN_MINUTE
 import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.core.tools.millisToRemainedMinutes
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
-import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
@@ -68,6 +65,7 @@ class LockableActivityViewModel(
     val enablePasscodeInputEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val disablePasscodeInputEvent = MutableLiveData<ViewModelEvent<Int>>()
     val showAppClearWarningEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onWipeApplicationEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val successVibrateEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val showBiometricPromptEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val isBiometricInputReady: Boolean
@@ -114,7 +112,7 @@ class LockableActivityViewModel(
         when {
             shouldBlockInput(inputAttempt) -> disableUnlockInput()
             shouldWipeApplication(inputAttempt) -> {
-                wipeApplication()
+                onWipeApplicationEvent.postUnitEvent()
                 showAppClearWarningEvent.postUnitEvent()
             }
         }
@@ -194,12 +192,6 @@ class LockableActivityViewModel(
 
     //User exceeded passcode input attempts
     private fun shouldWipeApplication(inputAttempt: Int): Boolean = inputAttempt >= 11
-
-    private fun wipeApplication() { //TODO: Move to MainActivityInteractor's
-        preferenceRepository.clearUserPreferences()
-        keyStoreManager.deleteKeyPairsIfExist(connectionsRepository.getAllConnections().map { it.guid })
-        connectionsRepository.deleteAllConnections()
-    }
 
     private fun calculateWrongAttemptWaitTime(attemptNumber: Int): Long = when {
         attemptNumber < 4 -> 0L

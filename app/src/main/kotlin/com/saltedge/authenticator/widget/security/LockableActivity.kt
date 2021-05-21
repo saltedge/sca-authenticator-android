@@ -36,11 +36,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_CLEAR_APP_DATA
 import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.app.buildVersion26orGreater
 import com.saltedge.authenticator.core.tools.secure.KeyManager
-import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.main.buildWarningSnack
 import com.saltedge.authenticator.models.repository.ConnectionsRepository
 import com.saltedge.authenticator.models.repository.PreferenceRepository
@@ -65,8 +63,7 @@ enum class ActivityUnlockType {
 abstract class LockableActivity : AppCompatActivity(),
     PasscodeInputListener,
     BiometricPromptCallback,
-    DialogInterface.OnClickListener
-{
+    DialogInterface.OnClickListener {
     private var inactivityWarningSnackbar: Snackbar? = null
     private var viewModel = LockableActivityViewModel(
         connectionsRepository = ConnectionsRepository,
@@ -159,7 +156,7 @@ abstract class LockableActivity : AppCompatActivity(),
 
     override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
         when (dialogActionId) {
-            DialogInterface.BUTTON_POSITIVE -> clearAppData()
+            DialogInterface.BUTTON_POSITIVE -> onClearAppDataEvent()
             DialogInterface.BUTTON_NEGATIVE -> listener?.dismiss()
         }
     }
@@ -194,6 +191,9 @@ abstract class LockableActivity : AppCompatActivity(),
                 inactivityWarningSnackbar?.dismiss()
                 inactivityWarningSnackbar = null
             }
+        })
+        viewModel.onWipeApplicationEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { onClearAppDataEvent() }
         })
         viewModel.showAppClearWarningEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
@@ -256,12 +256,7 @@ abstract class LockableActivity : AppCompatActivity(),
         alertDialog = showLockWarningDialog(message = "$wrongPasscodeMessage\n$retryMessage")
     }
 
-    private fun clearAppData() {
-        finish()
-        startActivity(Intent(this, MainActivity::class.java).apply {
-            putExtra(KEY_CLEAR_APP_DATA, true)
-        })
-    }
+    abstract fun onClearAppDataEvent()
 
     /**
      * Display biometric prompt if resultCallback is already set on Activity start

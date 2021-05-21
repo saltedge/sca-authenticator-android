@@ -108,6 +108,11 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
 
     override fun getSnackbarAnchorView(): View? = activityRootLayout
 
+
+    override fun onClearAppDataEvent() {
+        viewModel.onClearAppDataEvent()
+    }
+
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainActivityViewModel::class.java)
         viewModel.bindLifecycleObserver(lifecycle = lifecycle)

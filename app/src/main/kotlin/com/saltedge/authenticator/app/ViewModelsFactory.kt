@@ -40,8 +40,7 @@ import com.saltedge.authenticator.features.connections.select.SelectConnectionsV
 import com.saltedge.authenticator.features.consents.details.ConsentDetailsViewModel
 import com.saltedge.authenticator.features.consents.list.ConsentsListViewModel
 import com.saltedge.authenticator.features.launcher.LauncherViewModel
-import com.saltedge.authenticator.features.main.MainActivityInteractorV1
-import com.saltedge.authenticator.features.main.MainActivityInteractorV2
+import com.saltedge.authenticator.features.main.MainActivityInteractor
 import com.saltedge.authenticator.features.main.MainActivityViewModel
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupViewModel
 import com.saltedge.authenticator.features.qr.QrScannerViewModel
@@ -102,16 +101,11 @@ class ViewModelsFactory @Inject constructor(
                 return MainActivityViewModel(
                     appContext = appContext,
                     realmManager = realmManager,
-                    interactorV1 = MainActivityInteractorV1(
+                    interactor = MainActivityInteractor(
                         keyStoreManager = keyStoreManager,
                         connectionsRepository = connectionsRepository,
-                        apiManager = apiManagerV1,
-                        preferenceRepository = preferenceRepository
-                    ),
-                    interactorV2 = MainActivityInteractorV2(
-                        keyStoreManager = keyStoreManager,
-                        connectionsRepository = connectionsRepository,
-                        apiManager = apiManagerV2,
+                        apiManagerV1 = apiManagerV1,
+                        apiManagerV2 = apiManagerV2,
                         preferenceRepository = preferenceRepository
                     )
                 ) as T
