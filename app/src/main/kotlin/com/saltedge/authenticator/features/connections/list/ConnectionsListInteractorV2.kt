@@ -36,7 +36,7 @@ class ConnectionsListInteractorV2(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyManagerAbs,
     private val cryptoTools: CryptoToolsV2Abs
-): ConnectionsRevokeListener {
+) : ConnectionsRevokeListener {
 
     var contract: ConnectionsListInteractorCallback? = null
 
@@ -77,16 +77,12 @@ class ConnectionsListInteractorV2(
         connectionsRepository.deleteConnection(guid)
     }
 
-    private fun revokeConnections(connectionsAndKeys: List<RichConnection>) {
+    private fun sendRevokeRequestForConnections(connections: List<Connection>) {
+        val connectionsAndKeys: List<RichConnection> = connections.filter { it.isActive() }
+            .mapNotNull { keyStoreManager.enrichConnection(it) }
         apiManager.revokeConnections(
             connections = connectionsAndKeys,
             callback = this
         )
-    }
-
-    private fun sendRevokeRequestForConnections(connections: List<Connection>) {
-        val connectionsAndKeys: List<RichConnection> = connections.filter { it.isActive() }
-            .mapNotNull { keyStoreManager.enrichConnection(it) }
-        revokeConnections(connectionsAndKeys = connectionsAndKeys)
     }
 }

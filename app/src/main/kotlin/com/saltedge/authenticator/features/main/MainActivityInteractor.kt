@@ -18,31 +18,38 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.features.settings.list
+package com.saltedge.authenticator.features.main
 
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.model.isActive
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
+import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
+import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
+import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 
-class SettingsListInteractorV1(
-    private val keyStoreManager: KeyManagerAbs,
+class MainActivityInteractor(
+    private val apiManagerV1: AuthenticatorApiManagerAbs,
+    private val apiManagerV2: ScaServiceClientAbs,
     private val connectionsRepository: ConnectionsRepositoryAbs,
-    private val apiManager: AuthenticatorApiManagerAbs
+    private val keyStoreManager: KeyManagerAbs,
+    private val preferenceRepository: PreferenceRepositoryAbs
 ) {
+    val noConnections: Boolean
+        get() = connectionsRepository.isEmpty()
 
     fun sendRevokeRequestForConnections() {
-        val connectionsAndKeys: List<RichConnection> =
-            connectionsRepository.getAllActiveConnections().filter { it.isActive() }
-                .mapNotNull { keyStoreManager.enrichConnection(it) }
-
-        apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = null)
+        val connectionsAndKeys: List<RichConnection> = connectionsRepository.getAllActiveConnections().filter { it.isActive() }
+            .mapNotNull { keyStoreManager.enrichConnection(it) }
+        apiManagerV1.revokeConnections(connectionsAndKeys = connectionsAndKeys.filter { it.connection.apiVersion == API_V1_VERSION }, resultCallback = null)
+        apiManagerV2.revokeConnections(connections = connectionsAndKeys.filter { it.connection.apiVersion == API_V2_VERSION }, callback = null)
     }
 
-    fun deleteAllConnectionsAndKeys() {
-        val connectionGuids = connectionsRepository.getAllConnections().map { it.guid }
-        keyStoreManager.deleteKeyPairsIfExist(connectionGuids)
+    fun wipeApplication() {
+        preferenceRepository.clearUserPreferences()
+        keyStoreManager.deleteKeyPairsIfExist(connectionsRepository.getAllConnections().map { it.guid })
         connectionsRepository.deleteAllConnections()
     }
 }

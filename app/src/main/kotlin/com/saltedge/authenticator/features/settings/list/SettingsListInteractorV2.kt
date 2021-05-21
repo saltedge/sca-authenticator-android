@@ -37,16 +37,12 @@ class SettingsListInteractorV2(
             connectionsRepository.getAllActiveConnections().filter { it.isActive() }
                 .mapNotNull { keyStoreManager.enrichConnection(it) }
 
-        revokeConnections(connectionsAndKeys = connectionsAndKeys)
+        apiManager.revokeConnections(connections = connectionsAndKeys, callback = null)
     }
 
     fun deleteAllConnectionsAndKeys() {
         val connectionGuids = connectionsRepository.getAllConnections().map { it.guid }
         keyStoreManager.deleteKeyPairsIfExist(connectionGuids)
         connectionsRepository.deleteAllConnections()
-    }
-
-    private fun revokeConnections(connectionsAndKeys: List<RichConnection>) {
-        apiManager.revokeConnections(connections = connectionsAndKeys, callback = null)
     }
 }

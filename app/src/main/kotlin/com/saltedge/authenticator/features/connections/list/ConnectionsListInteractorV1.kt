@@ -115,10 +115,6 @@ class ConnectionsListInteractorV1(
     private fun sendRevokeRequestForConnections(connections: List<Connection>) {
         val connectionsAndKeys: List<RichConnection> = connections.filter { it.isActive() }
             .mapNotNull { keyStoreManager.enrichConnection(it) }
-        revokeConnections(connectionsAndKeys = connectionsAndKeys)
-    }
-
-    private fun revokeConnections(connectionsAndKeys: List<RichConnection>) {
         apiManager.revokeConnections(
             connectionsAndKeys = connectionsAndKeys,
             resultCallback = this

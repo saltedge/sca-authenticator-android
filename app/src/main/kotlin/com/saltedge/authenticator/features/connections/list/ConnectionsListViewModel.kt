@@ -42,7 +42,7 @@ import com.saltedge.authenticator.tools.postUnitEvent
 class ConnectionsListViewModel(
     private val appContext: Context,
     private val interactorV1: ConnectionsListInteractorV1,
-    private val interactorV2: ConnectionsListInteractorV2,
+    private val interactorV2: ConnectionsListInteractorV2
 ) : ViewModel(),
     ConnectionsListInteractorCallback,
     LifecycleObserver,
@@ -161,7 +161,6 @@ class ConnectionsListViewModel(
             interactorV2.sendRevokeRequestForConnections(listItem.guid)
         else
             interactorV1.sendRevokeRequestForConnections(listItem.guid)
-        interactorV2.sendRevokeRequestForConnections(listItem.guid)
         interactorV1.deleteConnectionsAndKeys(listItem.guid)
         interactorV2.deleteConnectionsAndKeys(listItem.guid)
         updateViewsContent()
