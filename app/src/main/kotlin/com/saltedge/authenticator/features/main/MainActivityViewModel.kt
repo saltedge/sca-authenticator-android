@@ -60,7 +60,6 @@ class MainActivityViewModel(
     val onBackActionClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onRestartActivityEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowAuthorizationDetailsEvent = MutableLiveData<ViewModelEvent<Bundle>>()
-    val onShowActionAuthorizationEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onShowConnectEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onShowSubmitActionEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
@@ -164,7 +163,7 @@ class MainActivityViewModel(
      * Handle new authorization event (e.g. from ActionSubmit)
      */
     override fun onNewAuthorization(authorizationIdentifier: AuthorizationIdentifier) {
-        onShowActionAuthorizationEvent.postValue(ViewModelEvent(Bundle().apply {
+        onShowAuthorizationDetailsEvent.postValue(ViewModelEvent(Bundle().apply {
             putSerializable(KEY_ID, authorizationIdentifier)
             putBoolean(KEY_CLOSE_APP, true)
             putInt(KEY_TITLE, R.string.action_new_action_title)

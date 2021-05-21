@@ -24,46 +24,39 @@ import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.core.api.model.DescriptionData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationStatus
 import com.saltedge.authenticator.features.authorizations.common.computeConfirmedStatus
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
+import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
+import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.postUnitEvent
 import kotlinx.coroutines.CoroutineScope
 import org.joda.time.DateTime
 
 class AuthorizationDetailsViewModel(
-    private val interactor: AuthorizationDetailsInteractor
+    private val interactorV1: AuthorizationDetailsInteractorAbs,
+    private val interactorV2: AuthorizationDetailsInteractorAbs
 ) : ViewModel(),
     LifecycleObserver,
     AuthorizationDetailsInteractorCallback
 {
+    private lateinit var interactor: AuthorizationDetailsInteractorAbs
     val onErrorEvent = MutableLiveData<ViewModelEvent<ApiErrorData>>()
     val onCloseAppEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onCloseViewEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onTimeUpdateEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val authorizationModel = MutableLiveData<AuthorizationItemViewModel>()
     private var closeAppOnBackPress: Boolean = true
-    var titleRes: ResId = R.string.authorization_feature_title//TODO TEST
+    var titleRes: ResId = R.string.authorization_feature_title
         private set
     private val currentStatus: AuthorizationStatus
         get() = authorizationModel.value?.status ?: AuthorizationStatus.LOADING
     private val authorizationHasFinalMode: Boolean
         get() = authorizationModel.value?.hasFinalStatus ?: false
-
-    init {
-        interactor.contract = this
-    }
-
-    fun bindLifecycleObserver(lifecycle: Lifecycle) {
-        lifecycle.let {
-            it.removeObserver(this)
-            it.addObserver(this)
-        }
-        interactor.bindLifecycleObserver(lifecycle)
-    }
 
     fun setInitialData(
         identifier: AuthorizationIdentifier?,
@@ -73,26 +66,23 @@ class AuthorizationDetailsViewModel(
         this.closeAppOnBackPress = closeAppOnBackPress ?: true
         this.titleRes = titleRes ?: R.string.authorization_feature_title
         if (this.titleRes == 0) this.titleRes = R.string.authorization_feature_title
-        interactor.setInitialData(identifier?.connectionID ?: "")
-        val status = if (interactor.richConnection == null || identifier == null || !identifier.hasAuthorizationID) {
+
+        initInteractor(connectionID = identifier?.connectionID ?: "")
+
+        val status = if (interactor.noConnection || identifier == null || !identifier.hasAuthorizationID) {
             AuthorizationStatus.UNAVAILABLE
         } else {
             AuthorizationStatus.LOADING
         }
-        authorizationModel.value = AuthorizationItemViewModel(
-            authorizationID = identifier?.authorizationID ?: "",
-            authorizationCode = "",
-            title = "",
-            description = DescriptionData(),
-            validSeconds = 0,
-            endTime = DateTime(0L),
-            startTime = DateTime(0L),
-            connectionID = identifier?.connectionID ?: "",
-            connectionName = "",
-            connectionLogoUrl = "",
-            status = status,
-            apiVersion = "1"
-        )
+        createInitialItem(identifier, status, interactor.connectionApiVersion)
+    }
+
+    fun bindLifecycleObserver(lifecycle: Lifecycle) {
+        lifecycle.let {
+            it.removeObserver(this)
+            it.addObserver(this)
+        }
+        interactor.bindLifecycleObserver(lifecycle)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
@@ -119,7 +109,10 @@ class AuthorizationDetailsViewModel(
     fun onTimerTick() {
         authorizationModel.value?.also { model ->
             when {
-                model.shouldBeSetTimeOutMode -> updateToFinalViewMode(AuthorizationStatus.TIME_OUT)
+                model.shouldBeSetTimeOutMode -> {
+                    interactor.stopPolling()
+                    updateToFinalViewMode(AuthorizationStatus.TIME_OUT)
+                }
                 model.shouldBeDestroyed -> closeView()
                 !model.ignoreTimeUpdate -> onTimeUpdateEvent.postUnitEvent()
             }
@@ -131,19 +124,12 @@ class AuthorizationDetailsViewModel(
         return true
     }
 
-    override fun onAuthorizationReceived(
-        data: AuthorizationItemViewModel?,
-        newModelsApiVersion: String
-    ) {
+    override fun onAuthorizationReceived(data: AuthorizationItemViewModel?, newModelsApiVersion: String) {
         if (currentStatus.isProcessingMode()) return//skip polling result if confirm/deny is in progress
         if (!authorizationHasFinalMode && authorizationModel.value != data) {
             if (data == null) updateToFinalViewMode(AuthorizationStatus.ERROR)
             else authorizationModel.postValue(data)
         }
-    }
-
-    override fun onConfirmDenySuccess(newStatus: AuthorizationStatus?) {
-        updateAuthorizationStatus(newStatus = newStatus ?: currentStatus.computeConfirmedStatus())
     }
 
     override fun onConnectionNotFoundError() {
@@ -165,6 +151,10 @@ class AuthorizationDetailsViewModel(
             onErrorEvent.postValue(ViewModelEvent(error))
             updateToFinalViewMode(AuthorizationStatus.ERROR)
         }
+    }
+
+    override fun onConfirmDenySuccess(newStatus: AuthorizationStatus?) {
+        updateAuthorizationStatus(newStatus = newStatus ?: currentStatus.computeConfirmedStatus())
     }
 
     override val coroutineScope: CoroutineScope
@@ -202,5 +192,33 @@ class AuthorizationDetailsViewModel(
     private fun closeView() {
         if (closeAppOnBackPress) onCloseAppEvent.postUnitEvent()
         else onCloseViewEvent.postUnitEvent()
+    }
+
+    private fun initInteractor(connectionID: ID) {
+        interactorV2.setInitialData(connectionID)
+        interactor = if (interactorV2.connectionApiVersion == API_V2_VERSION) interactorV2
+        else interactorV1.apply { setInitialData(connectionID) }
+        interactor.contract = this
+    }
+
+    private fun createInitialItem(
+        identifier: AuthorizationIdentifier?,
+        status: AuthorizationStatus,
+        apiVersion: String?
+    ) {
+        authorizationModel.value = AuthorizationItemViewModel(
+            authorizationID = identifier?.authorizationID ?: "",
+            authorizationCode = "",
+            title = "",
+            description = DescriptionData(),
+            validSeconds = 0,
+            endTime = DateTime(0L),
+            startTime = DateTime(0L),
+            connectionID = identifier?.connectionID ?: "",
+            connectionName = "",
+            connectionLogoUrl = "",
+            status = status,
+            apiVersion = apiVersion ?: API_V1_VERSION
+        )
     }
 }

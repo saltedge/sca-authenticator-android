@@ -21,7 +21,6 @@
 package com.saltedge.authenticator.features.authorizations.details
 
 import androidx.lifecycle.Lifecycle
-import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.api.model.error.isAuthorizationNotFound
 import com.saltedge.authenticator.core.api.model.error.isConnectionNotFound
@@ -29,39 +28,22 @@ import com.saltedge.authenticator.core.api.model.error.isConnectivityError
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
-import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.models.createRichConnection
-import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.api.model.EncryptedData
-import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
-import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
-import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
-import com.saltedge.authenticator.sdk.polling.FetchAuthorizationContract
-import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
-import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
 
-class AuthorizationDetailsInteractor(
+abstract class AuthorizationDetailsInteractor(
     private val connectionsRepository: ConnectionsRepositoryAbs,
-    private val cryptoTools: CryptoToolsV1Abs,
     private val keyStoreManager: KeyManagerAbs,
-    private val apiManager: AuthenticatorApiManagerAbs,
-    private val locationManager: DeviceLocationManagerAbs
-) : FetchAuthorizationContract, ConfirmAuthorizationListener {
-    var contract: AuthorizationDetailsInteractorCallback? = null
+) : AuthorizationDetailsInteractorAbs {
+    override var contract: AuthorizationDetailsInteractorCallback? = null
     var richConnection: RichConnection? = null
         private set
-    private var pollingService: SingleAuthorizationPollingService = apiManager.createSingleAuthorizationPollingService()
+    override val noConnection: Boolean
+        get() = richConnection == null
+    override val connectionApiVersion: String?
+        get() = richConnection?.connection?.apiVersion
 
-    fun bindLifecycleObserver(lifecycle: Lifecycle) {
-        lifecycle.removeObserver(pollingService)
-        lifecycle.addObserver(pollingService)
-        pollingService.contract = this
-    }
-
-    fun setInitialData(connectionID: ID) {
+    override fun setInitialData(connectionID: ID) {
         richConnection = createRichConnection(
             connectionID = connectionID,
             repository = connectionsRepository,
@@ -69,64 +51,7 @@ class AuthorizationDetailsInteractor(
         )
     }
 
-    fun startPolling(authorizationID: ID) {
-        pollingService.contract = this
-        pollingService.start(authorizationID = authorizationID)
-    }
-
-    fun stopPolling() {
-        pollingService.contract = null
-        pollingService.stop()
-    }
-
-    fun updateAuthorization(authorizationID: ID, authorizationCode: String, confirm: Boolean): Boolean {
-        if (confirm) {
-            apiManager.confirmAuthorization(
-                connectionAndKey = richConnection ?: return false,
-                authorizationId = authorizationID,
-                authorizationCode = authorizationCode,
-                geolocation = locationManager.locationDescription,
-                authorizationType = AppTools.lastUnlockType.description,
-                resultCallback = this
-            )
-        } else {
-            apiManager.denyAuthorization(
-                connectionAndKey = richConnection ?: return false,
-                authorizationId = authorizationID,
-                authorizationCode = authorizationCode,
-                geolocation = locationManager.locationDescription,
-                authorizationType = AppTools.lastUnlockType.description,
-                resultCallback = this
-            )
-        }
-        return true
-    }
-
-    override fun getConnectionDataForAuthorizationPolling(): RichConnection? = this.richConnection
-
-    override fun onFetchAuthorizationResult(result: EncryptedData?, error: ApiErrorData?) {
-        result?.let { processEncryptedAuthorizationResult(it) }
-            ?: error?.let { processApiError(it) }
-            ?: contract?.onAuthorizationNotFoundError()
-    }
-
-    override fun onConfirmDenySuccess(result: ConfirmDenyResponseData, connectionID: ID) {
-        contract?.onConfirmDenySuccess()
-    }
-
-    override fun onConfirmDenyFailure(error: ApiErrorData, connectionID: ID, authorizationID: ID) {
-        processApiError(error)
-    }
-
-    private fun processEncryptedAuthorizationResult(result: EncryptedData) {
-        val newViewModel: AuthorizationItemViewModel? = cryptoTools.decryptAuthorizationData(
-                encryptedData = result,
-                rsaPrivateKey = richConnection?.private
-            )?.toAuthorizationItemViewModel(connection = richConnection?.connection ?: return)
-        contract?.onAuthorizationReceived(newViewModel, API_V1_VERSION)
-    }
-
-    private fun processApiError(error: ApiErrorData) {
+    protected fun processApiError(error: ApiErrorData) {
         when {
             error.isConnectionNotFound() -> {
                 richConnection?.connection?.accessToken?.let {
@@ -143,4 +68,17 @@ class AuthorizationDetailsInteractor(
             else -> contract?.onError(error)
         }
     }
+
+    abstract override fun stopPolling()
+}
+
+interface AuthorizationDetailsInteractorAbs {
+    var contract: AuthorizationDetailsInteractorCallback?
+    val connectionApiVersion: String?
+    val noConnection: Boolean
+    fun bindLifecycleObserver(lifecycle: Lifecycle)
+    fun setInitialData(connectionID: ID)
+    fun startPolling(authorizationID: ID)
+    fun stopPolling()
+    fun updateAuthorization(authorizationID: ID, authorizationCode: String, confirm: Boolean): Boolean
 }

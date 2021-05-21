@@ -122,11 +122,6 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
                 findNavController(R.id.navHostFragment).navigate(R.id.authorizationDetailsFragment, bundle)
             }
         })
-        viewModel.onShowActionAuthorizationEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { bundle ->
-                findNavController(R.id.navHostFragment).navigate(R.id.authorizationDetailsFragment, bundle)
-            }
-        })
         viewModel.onShowConnectEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { bundle ->
                 findNavController(R.id.navHostFragment).navigate(R.id.connectProviderFragment, bundle)
