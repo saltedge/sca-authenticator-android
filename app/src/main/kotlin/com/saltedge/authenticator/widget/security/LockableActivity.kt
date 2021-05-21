@@ -36,11 +36,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.KEY_CLEAR_APP_DATA
 import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.app.buildVersion26orGreater
 import com.saltedge.authenticator.core.tools.secure.KeyManager
+import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.main.buildWarningSnack
-import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.models.repository.ConnectionsRepository
 import com.saltedge.authenticator.models.repository.PreferenceRepository
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
@@ -158,10 +159,7 @@ abstract class LockableActivity : AppCompatActivity(),
 
     override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
         when (dialogActionId) {
-            DialogInterface.BUTTON_POSITIVE -> {
-                viewModel.onUserConfirmedClearAppData()
-                showOnboardingActivity()
-            }
+            DialogInterface.BUTTON_POSITIVE -> clearAppData()
             DialogInterface.BUTTON_NEGATIVE -> listener?.dismiss()
         }
     }
@@ -258,6 +256,13 @@ abstract class LockableActivity : AppCompatActivity(),
         alertDialog = showLockWarningDialog(message = "$wrongPasscodeMessage\n$retryMessage")
     }
 
+    private fun clearAppData() {
+        finish()
+        startActivity(Intent(this, MainActivity::class.java).apply {
+            putExtra(KEY_CLEAR_APP_DATA, true)
+        })
+    }
+
     /**
      * Display biometric prompt if resultCallback is already set on Activity start
      */
@@ -271,11 +276,6 @@ abstract class LockableActivity : AppCompatActivity(),
                 negativeActionTextResId = R.string.actions_cancel
             )
         }
-    }
-
-    private fun showOnboardingActivity() {
-        finish()
-        startActivity(Intent(this, OnboardingSetupActivity::class.java))
     }
 
     private fun showResetView() {

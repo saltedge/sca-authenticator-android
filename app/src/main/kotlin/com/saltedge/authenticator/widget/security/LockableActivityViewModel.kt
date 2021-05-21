@@ -130,11 +130,6 @@ class LockableActivityViewModel(
         lockScreen()
     }
 
-    fun onUserConfirmedClearAppData() {
-        sendRevokeRequestForConnections(connectionsRepository.getAllActiveConnections())
-        wipeApplication()
-    }
-
     fun onTouch(lockViewIsNotVisible: Boolean) {
         if (lockViewIsNotVisible) restartInactivityTimer()
     }
@@ -200,16 +195,10 @@ class LockableActivityViewModel(
     //User exceeded passcode input attempts
     private fun shouldWipeApplication(inputAttempt: Int): Boolean = inputAttempt >= 11
 
-    private fun wipeApplication() {
+    private fun wipeApplication() { //TODO: Move to MainActivityInteractor's
         preferenceRepository.clearUserPreferences()
         keyStoreManager.deleteKeyPairsIfExist(connectionsRepository.getAllConnections().map { it.guid })
         connectionsRepository.deleteAllConnections()
-    }
-
-    private fun sendRevokeRequestForConnections(connections: List<Connection>) {//TODO move connections interactor
-        val connectionsAndKeys: List<RichConnection> = connections.filter { it.isActive() }
-            .mapNotNull { keyStoreManager.enrichConnection(it) }
-        apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = null)
     }
 
     private fun calculateWrongAttemptWaitTime(attemptNumber: Int): Long = when {

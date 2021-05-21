@@ -35,6 +35,7 @@ import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.interfaces.*
 import com.saltedge.authenticator.models.location.DeviceLocationManager
 import com.saltedge.authenticator.app.authenticatorApp
+import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.tools.currentFragmentOnTop
 import com.saltedge.authenticator.tools.showQrScannerActivity
 import com.saltedge.authenticator.tools.updateScreenshotLocking
@@ -67,6 +68,11 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         viewModel.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.onActivityStart(intent)
     }
 
     override fun onResume() {
@@ -139,6 +145,12 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
         })
         viewModel.onQrScanClickEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { this.showQrScannerActivity() }
+        })
+        viewModel.onShowOnboardingEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let {
+                finish()
+                startActivity(Intent(this, OnboardingSetupActivity::class.java))
+            }
         })
     }
 

@@ -27,6 +27,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.KEY_CLEAR_APP_DATA
 import com.saltedge.authenticator.app.KEY_CLOSE_APP
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.core.api.KEY_DATA
@@ -39,18 +40,16 @@ import com.saltedge.authenticator.interfaces.ActivityComponentsContract
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
-import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.applyPreferenceLocale
 import com.saltedge.authenticator.tools.postUnitEvent
 
 class MainActivityViewModel(
-    val appContext: Context,
-    val realmManager: RealmManagerAbs,
-    val preferenceRepository: PreferenceRepositoryAbs,
-    val connectionsRepository: ConnectionsRepositoryAbs
+    private val appContext: Context,
+    private val realmManager: RealmManagerAbs,
+    private val interactorV1: MainActivityInteractorV1,
+    private val interactorV2: MainActivityInteractorV2
 ) : ViewModel(),
     LifecycleObserver,
     NewAuthorizationListener,
@@ -64,6 +63,7 @@ class MainActivityViewModel(
     val onShowConnectEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onShowSubmitActionEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onShowOnboardingEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val appBarTitle = MutableLiveData<String>()
     val appBarBackActionImageResource = MutableLiveData<ResId>(R.drawable.ic_appbar_action_back)
     val appBarBackActionVisibility = MutableLiveData<Int>(View.GONE)
@@ -141,6 +141,15 @@ class MainActivityViewModel(
         }
     }
 
+    fun onActivityStart(intent: Intent?) {
+        if (intent?.getBooleanExtra(KEY_CLEAR_APP_DATA, false) == true) {
+            interactorV1.sendRevokeRequestForConnections()
+            interactorV2.sendRevokeRequestForConnections()
+        }
+        wipeApplication()
+        onShowOnboardingEvent.postUnitEvent()
+    }
+
     /**
      * Handle click on appbar actions
      */
@@ -154,7 +163,7 @@ class MainActivityViewModel(
     }
 
     fun onUnlock() {
-        if (!initialQrScanWasStarted && connectionsRepository.isEmpty()) {
+        if (!initialQrScanWasStarted && interactorV1.noConnections && interactorV2.noConnections) {
             onQrScanClickEvent.postUnitEvent()
             initialQrScanWasStarted = true
         }
@@ -191,5 +200,10 @@ class MainActivityViewModel(
     override fun onLanguageChanged() {
         appContext.applyPreferenceLocale()
         onRestartActivityEvent.postUnitEvent()
+    }
+
+    private fun wipeApplication() {
+        interactorV1.wipeApplication()
+        interactorV2.wipeApplication()
     }
 }
