@@ -70,11 +70,6 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
         viewModel.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun onStart() {
-        super.onStart()
-        viewModel.onActivityStart(intent)
-    }
-
     override fun onResume() {
         super.onResume()
         DeviceLocationManager.startLocationUpdates(context = this)
