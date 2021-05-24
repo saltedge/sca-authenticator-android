@@ -53,8 +53,10 @@ import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
+import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
+import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2Abs
 import com.saltedge.authenticator.widget.security.ActivityUnlockType
 import junit.framework.TestCase.assertNull
@@ -89,7 +91,7 @@ class AuthorizationsListViewModelTest {
     private val mockPollingServiceV2 = mock(PollingServiceAbs::class.java)
     private val mockConnectivityReceiver = mock(ConnectivityReceiverAbs::class.java)
     private val mockLocationManager = mock(DeviceLocationManagerAbs::class.java)
-    private val mockConnection = Connection().apply {
+    private val mockConnectionV1 = Connection().apply {
         guid = "guid1"
         id = "1"
         code = "demobank3"
@@ -99,11 +101,25 @@ class AuthorizationsListViewModelTest {
         logoUrl = "url"
         createdAt = 200L
         updatedAt = 200L
+        apiVersion = API_V1_VERSION
     }
-    private val mockConnectionAndKey = RichConnection(mockConnection, CommonTestTools.testPrivateKey)
+    private val mockConnectionV2 = Connection().apply {
+        guid = "guid2"
+        id = "2"
+        code = "demobank1"
+        name = "Demobank1"
+        status = "${ConnectionStatus.ACTIVE}"
+        accessToken = "token2"
+        logoUrl = "url"
+        createdAt = 200L
+        updatedAt = 200L
+        apiVersion = API_V2_VERSION
+    }
+    private val mockConnectionAndKeyV1 = RichConnection(mockConnectionV1, CommonTestTools.testPrivateKey)
+    private val mockConnectionAndKeyV2 = RichConnection(mockConnectionV2, CommonTestTools.testPrivateKey)
     private val authorizations: List<AuthorizationData> = listOf(createAuthorization(id = 1), createAuthorization(id = 2))
     private val encryptedAuthorizations = authorizations.map { it.encryptWithTestKey() }
-    private val items: List<AuthorizationItemViewModel> = authorizations.map { it.toAuthorizationItemViewModel(mockConnection)!! }
+    private val items: List<AuthorizationItemViewModel> = authorizations.map { it.toAuthorizationItemViewModel(mockConnectionV1)!! }
 
     @Before
     fun setUp() {
@@ -111,10 +127,11 @@ class AuthorizationsListViewModelTest {
         doReturn("GEO:52.506931;13.144558").`when`(mockLocationManager).locationDescription
         doReturn(mockPollingServiceV1).`when`(mockApiManagerV1).createAuthorizationsPollingService()
         doReturn(mockPollingServiceV2).`when`(mockApiManagerV2).createAuthorizationsPollingService()
-        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(mockConnection))
-        given(mockKeyStoreManager.enrichConnection(mockConnection)).willReturn(mockConnectionAndKey)
+        given(mockConnectionsRepository.getAllActiveConnections(API_V1_VERSION)).willReturn(listOf(mockConnectionV1))
+        given(mockConnectionsRepository.getAllActiveConnections(API_V2_VERSION)).willReturn(listOf(mockConnectionV2))
+        given(mockKeyStoreManager.enrichConnection(mockConnectionV1)).willReturn(mockConnectionAndKeyV1)
         encryptedAuthorizations.forEachIndexed { index, encryptedData ->
-            given(mockCryptoToolsV1.decryptAuthorizationData(encryptedData, mockConnectionAndKey.private))
+            given(mockCryptoToolsV1.decryptAuthorizationData(encryptedData, mockConnectionAndKeyV1.private))
                 .willReturn(authorizations[index])
         }
         v1Interactor = AuthorizationsListInteractorV1(
@@ -186,15 +203,15 @@ class AuthorizationsListViewModelTest {
         assertThat(viewModel.listVisibility.value, equalTo(View.GONE))
         assertThat(
             viewModel.emptyViewActionText.value,
-            equalTo(R.string.actions_connect)
+            equalTo(R.string.actions_scan_qr)
         )
         assertThat(
             viewModel.emptyViewTitleText.value,
-            equalTo(R.string.connections_list_empty_title)
+            equalTo(R.string.authorizations_empty_title)
         )
         assertThat(
             viewModel.emptyViewDescriptionText.value,
-            equalTo(R.string.connections_list_empty_description)
+            equalTo(R.string.authorizations_empty_description)
         )
     }
 
@@ -304,7 +321,7 @@ class AuthorizationsListViewModelTest {
 
         //then
         verify(mockConnectionsRepository).invalidateConnectionsByTokens(listOf("token"))
-        verify(mockConnectionsRepository).getAllActiveConnections()
+        verify(mockConnectionsRepository).getAllActiveConnections(API_V1_VERSION)
     }
 
     @Test
@@ -367,32 +384,6 @@ class AuthorizationsListViewModelTest {
         //then
         assertThat(viewModel.listItemsValues.size, equalTo(2))
         assertThat(viewModel.listItemsValues, equalTo(initialItems))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun getCurrentConnectionsAndKeysForPollingTestCase1() {
-        //given
-        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(emptyList<Connection>())
-        viewModel.onResume()
-
-        //when
-        val result = v1Interactor.getCurrentConnectionsAndKeysForPolling()
-
-        //then
-        assertThat(result, `is`(empty()))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun getCurrentConnectionsAndKeysForPollingTestCase2() {
-        //given view model
-
-        //when
-        val result = v1Interactor.getCurrentConnectionsAndKeysForPolling()
-
-        //then
-        assertThat(result, equalTo(listOf(mockConnectionAndKey)))
     }
 
     @Test
@@ -484,13 +475,14 @@ class AuthorizationsListViewModelTest {
         )
 
         //then
+        assertThat(viewModel.listItems.value!![0].apiVersion, equalTo(API_V1_VERSION))
         assertThat(viewModel.listItemUpdateEvent.value, equalTo(ViewModelEvent(0)))
         assertThat(
             viewModel.listItemsValues.first(),
             equalTo(items[0].copy(status = AuthorizationStatus.CONFIRM_PROCESSING))
         )
         verify(mockApiManagerV1).confirmAuthorization(
-            connectionAndKey = mockConnectionAndKey,
+            connectionAndKey = mockConnectionAndKeyV1,
             authorizationId = items[0].authorizationID,
             authorizationCode = items[0].authorizationCode,
             geolocation = "GEO:52.506931;13.144558",
@@ -519,7 +511,7 @@ class AuthorizationsListViewModelTest {
             equalTo(items[0].copy(status = AuthorizationStatus.DENY_PROCESSING))
         )
         verify(mockApiManagerV1).denyAuthorization(
-            connectionAndKey = mockConnectionAndKey,
+            connectionAndKey = mockConnectionAndKeyV1,
             authorizationId = items[0].authorizationID,
             authorizationCode = items[0].authorizationCode,
             geolocation = "GEO:52.506931;13.144558",
@@ -878,7 +870,7 @@ class AuthorizationsListViewModelTest {
             expiresAt = createdAt.plusMinutes(3),
             title = "title$id",
             description = "desc$id",
-            connectionId = "1"
+            connectionId = "1",
         )
     }
 }

@@ -32,6 +32,7 @@ import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -50,6 +51,9 @@ class JwsToolsTest {
             expiresAt = request.requestExpirationTime,
             key = privateKey
         )
+
+        Assert.assertTrue(jwsSignature.contains(".."))
+
         val rawRequestBody = createDefaultGson().toJson(request)
 
         val jwsParts = jwsSignature.split(".").toMutableList()

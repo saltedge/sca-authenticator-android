@@ -497,13 +497,13 @@ class AuthorizationItemViewModelTest {
     @Throws(Exception::class)
     fun authorizationDataV2ToAuthorizationViewModelTest() {
         val data = AuthorizationV2Data(
-            authorizationId = "444",
+            authorizationID = "444",
             authorizationCode = "111",
             title = "title",
             description = DescriptionData(text = DescriptionTextData("description")),
             createdAt = DateTime(0L),
             expiresAt = DateTime(300000L),
-            connectionId = "333",
+            connectionID = "333",
             status = "confirm_processing"
         )
         val connection = Connection().apply {

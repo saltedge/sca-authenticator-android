@@ -69,7 +69,7 @@ class AuthorizationConnectorTest {
         val connector = AuthorizationConnector(mockApi, mockCallback)
         connector.getAuthorization(
             connectionAndKey = RichConnection(requestConnection, privateKey),
-            authorizationId = requestAuthorizationId
+            authorizationID = requestAuthorizationId
         )
 
         verify { mockCall.enqueue(connector) }
@@ -111,7 +111,7 @@ class AuthorizationConnectorTest {
         val connector = AuthorizationConnector(mockApi, mockCallback)
         connector.getAuthorization(
             connectionAndKey = RichConnection(requestConnection, privateKey),
-            authorizationId = requestAuthorizationId
+            authorizationID = requestAuthorizationId
         )
 
         verify(exactly = 1) {

@@ -61,7 +61,7 @@ class SingleAuthorizationPollingServiceTest {
         every {
             mockContract.getConnectionDataForAuthorizationPolling()
         } returns RichConnection(requestConnection, privateKey, publicKey)
-        service.start(authorizationId = "1")
+        service.start(authorizationID = "1")
 
         Assert.assertTrue(service.isRunning())
         Assert.assertNotNull(service.connector)

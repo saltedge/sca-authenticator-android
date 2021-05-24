@@ -97,3 +97,11 @@ fun String.toAuthorizationStatus(): AuthorizationStatus? {
         null
     }
 }
+fun AuthorizationStatus.computeConfirmedStatus(): AuthorizationStatus {
+    return when (this) {
+        AuthorizationStatus.CONFIRM_PROCESSING -> AuthorizationStatus.CONFIRMED
+        AuthorizationStatus.DENY_PROCESSING -> AuthorizationStatus.DENIED
+        else -> AuthorizationStatus.ERROR
+    }
+}
+

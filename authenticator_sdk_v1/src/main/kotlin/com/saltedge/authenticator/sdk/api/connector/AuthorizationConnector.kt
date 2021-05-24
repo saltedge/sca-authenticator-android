@@ -37,12 +37,12 @@ internal class AuthorizationConnector(
 
     fun getAuthorization(
         connectionAndKey: RichConnection,
-        authorizationId: String
+        authorizationID: String
     ) {
         val requestData = createSignedRequestData<Nothing>(
             requestMethod = REQUEST_METHOD_GET,
             baseUrl = connectionAndKey.connection.connectUrl,
-            apiRoutePath = "$API_AUTHORIZATIONS/$authorizationId",
+            apiRoutePath = "$API_AUTHORIZATIONS/$authorizationID",
             accessToken = connectionAndKey.connection.accessToken,
             signPrivateKey = connectionAndKey.private
         )

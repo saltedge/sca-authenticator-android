@@ -57,7 +57,6 @@ class AuthorizationDetailsFragment : BaseFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        authenticatorApp?.appComponent?.inject(this)
         setupViewModel()
     }
 
@@ -109,7 +108,13 @@ class AuthorizationDetailsFragment : BaseFragment(),
     }
 
     private fun setupViewModel() {
+        authenticatorApp?.appComponent?.inject(this)
         viewModel = ViewModelProvider(this, viewModelFactory).get(AuthorizationDetailsViewModel::class.java)
+        viewModel.setInitialData(
+            identifier = arguments?.getSerializable(KEY_ID) as? AuthorizationIdentifier,
+            closeAppOnBackPress = arguments?.getBoolean(KEY_CLOSE_APP, true),
+            titleRes = arguments?.getInt(KEY_TITLE, R.string.authorization_feature_title)
+        )
         viewModel.bindLifecycleObserver(lifecycle = lifecycle)
 
         viewModel.onTimeUpdateEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
@@ -139,11 +144,5 @@ class AuthorizationDetailsFragment : BaseFragment(),
             contentView?.setTitleAndDescription(it.title, it.description)
             contentView?.setViewMode(it.status)
         })
-
-        viewModel.setInitialData(
-            identifier = arguments?.getSerializable(KEY_ID) as? AuthorizationIdentifier,
-            closeAppOnBackPress = arguments?.getBoolean(KEY_CLOSE_APP, true),
-            titleRes = arguments?.getInt(KEY_TITLE, R.string.authorization_feature_title)
-        )
     }
 }

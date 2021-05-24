@@ -193,8 +193,8 @@ class CryptoToolsTest {
         description = DescriptionData(),
         expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
         authorizationCode = "111",
-        connectionId = "333",
-        authorizationId = "444",
+        connectionID = "333",
+        authorizationID = "444",
         status = "pending"
     )
 

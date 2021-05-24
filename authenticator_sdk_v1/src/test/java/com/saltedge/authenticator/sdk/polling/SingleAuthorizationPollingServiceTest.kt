@@ -61,7 +61,7 @@ class SingleAuthorizationPollingServiceTest {
             requestConnection,
             privateKey
         )
-        service.start(authorizationId = "1")
+        service.start(authorizationID = "1")
 
         Assert.assertTrue(service.isRunning())
         Assert.assertNotNull(service.connector)

@@ -39,7 +39,6 @@ import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.sdk.constants.*
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertNotNull
@@ -483,17 +482,16 @@ class MainActivityViewModelTest {
          * given authorizationIdentifier
          */
         val viewModel = createViewModel()
-        val authorizationIdentifier =
-            AuthorizationIdentifier(connectionID = "1", authorizationID = "2")
+        val authorizationIdentifier = AuthorizationIdentifier(connectionID = "1", authorizationID = "2")
 
         //when
         viewModel.onNewAuthorization(authorizationIdentifier)
 
         //then onShowAuthorizationDetailsEvent is posted
-        val bundle = viewModel.onShowActionAuthorizationEvent.value?.peekContent()
-        assertThat(bundle?.getBoolean(KEY_CLOSE_APP), equalTo(true))
-        assertThat(bundle?.getSerializable(KEY_ID), equalTo(authorizationIdentifier ?: ""))
-        assertThat(bundle?.getInt(KEY_TITLE), equalTo(R.string.action_new_action_title))
+        val bundle = viewModel.onShowAuthorizationDetailsEvent.value?.peekContent()!!
+        assertThat(bundle.getBoolean(KEY_CLOSE_APP), equalTo(true))
+        assertThat(bundle.getSerializable(KEY_ID), equalTo(authorizationIdentifier ?: ""))
+        assertThat(bundle.getInt(KEY_TITLE), equalTo(R.string.action_new_action_title))
     }
 
     @Test

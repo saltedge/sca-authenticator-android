@@ -35,10 +35,10 @@ open class SingleAuthorizationPollingService : PollingServiceAbs<PollingAuthoriz
 
     internal var connector: AuthorizationShowConnector? = null
     override var contract: PollingAuthorizationContract? = null
-    private var authorizationId: String = ""
+    private var authorizationID: String = ""
 
-    fun start(authorizationId: String) {
-        this.authorizationId = authorizationId
+    fun start(authorizationID: String) {
+        this.authorizationID = authorizationID
         connector = AuthorizationShowConnector(
             apiInterface = RestClient.apiInterface,
             resultCallback = contract
@@ -56,7 +56,7 @@ open class SingleAuthorizationPollingService : PollingServiceAbs<PollingAuthoriz
             contract?.getConnectionDataForAuthorizationPolling()?.let {
                 connector?.showAuthorization(
                     connection = it.connection,
-                    authorizationId = authorizationId
+                    authorizationId = authorizationID
                 )
             }
         } catch (e: Exception) {

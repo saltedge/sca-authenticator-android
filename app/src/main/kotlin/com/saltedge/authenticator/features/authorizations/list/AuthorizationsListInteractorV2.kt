@@ -172,7 +172,7 @@ class AuthorizationsListInteractorV2(
 
     private fun createViewModels(authorizations: List<AuthorizationV2Data>): List<AuthorizationItemViewModel> {
         return authorizations.mapNotNull { item ->
-            richConnections[item.connectionId]?.let {
+            richConnections[item.connectionID]?.let {
                 item.toAuthorizationItemViewModel(connection = it.connection)
             }
         }
