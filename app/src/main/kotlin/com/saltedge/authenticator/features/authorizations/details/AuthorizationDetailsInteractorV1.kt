@@ -56,6 +56,24 @@ class AuthorizationDetailsInteractorV1(
         pollingService.contract = this
     }
 
+    override fun startPolling(authorizationID: ID) {
+        pollingService.contract = this
+        pollingService.start(authorizationID = authorizationID)
+    }
+
+    override fun stopPolling() {
+        pollingService.contract = null
+        pollingService.stop()
+    }
+
+    override fun getConnectionDataForAuthorizationPolling(): RichConnection? = this.richConnection
+
+    override fun onFetchAuthorizationResult(result: EncryptedData?, error: ApiErrorData?) {
+        result?.let { processEncryptedAuthorizationResult(it) }
+            ?: error?.let { processApiError(it) }
+            ?: contract?.onAuthorizationNotFoundError()
+    }
+
     override fun updateAuthorization(authorizationID: ID, authorizationCode: String, confirm: Boolean): Boolean {
         if (confirm) {
             apiManager.confirmAuthorization(
@@ -77,24 +95,6 @@ class AuthorizationDetailsInteractorV1(
             )
         }
         return true
-    }
-
-    override fun startPolling(authorizationID: ID) {
-        pollingService.contract = this
-        pollingService.start(authorizationID = authorizationID)
-    }
-
-    override fun stopPolling() {
-        pollingService.contract = null
-        pollingService.stop()
-    }
-
-    override fun getConnectionDataForAuthorizationPolling(): RichConnection? = this.richConnection
-
-    override fun onFetchAuthorizationResult(result: EncryptedData?, error: ApiErrorData?) {
-        result?.let { processEncryptedAuthorizationResult(it) }
-            ?: error?.let { processApiError(it) }
-            ?: contract?.onAuthorizationNotFoundError()
     }
 
     override fun onConfirmDenySuccess(result: ConfirmDenyResponseData, connectionID: ID) {

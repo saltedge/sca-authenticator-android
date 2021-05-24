@@ -65,6 +65,25 @@ class AuthorizationDetailsInteractorV2(
         pollingService.start(authorizationID = authorizationID)
     }
 
+    override fun stopPolling() {
+        pollingService.contract = null
+        pollingService.stop()
+    }
+
+    override fun getConnectionDataForAuthorizationPolling(): RichConnection? = this.richConnection
+
+    override fun onFetchAuthorizationSuccess(result: AuthorizationResponseData) {
+        val newViewModel: AuthorizationItemViewModel? = cryptoTools.decryptAuthorizationData(
+            encryptedData = result,
+            rsaPrivateKey = richConnection?.private
+        )?.toAuthorizationItemViewModel(connection = richConnection?.connection ?: return)
+        contract?.onAuthorizationReceived(newViewModel, API_V2_VERSION)
+    }
+
+    override fun onFetchAuthorizationFailed(error: ApiErrorData?) {
+        error?.let { processApiError(it) } ?: contract?.onAuthorizationNotFoundError()
+    }
+
     override fun updateAuthorization(authorizationID: ID, authorizationCode: String, confirm: Boolean): Boolean {
         val authorizationData = UpdateAuthorizationData(
             authorizationCode = authorizationCode,
@@ -87,25 +106,6 @@ class AuthorizationDetailsInteractorV2(
             )
         }
         return true
-    }
-
-    override fun stopPolling() {
-        pollingService.contract = null
-        pollingService.stop()
-    }
-
-    override fun getConnectionDataForAuthorizationPolling(): RichConnection? = this.richConnection
-
-    override fun onFetchAuthorizationSuccess(result: AuthorizationResponseData) {
-        val newViewModel: AuthorizationItemViewModel? = cryptoTools.decryptAuthorizationData(
-            encryptedData = result,
-            rsaPrivateKey = richConnection?.private
-        )?.toAuthorizationItemViewModel(connection = richConnection?.connection ?: return)
-        contract?.onAuthorizationReceived(newViewModel, API_V2_VERSION)
-    }
-
-    override fun onFetchAuthorizationFailed(error: ApiErrorData?) {
-        error?.let { processApiError(it) } ?: contract?.onAuthorizationNotFoundError()
     }
 
     override fun onAuthorizationConfirmSuccess(result: ConfirmDenyResponseData, connectionID: ID) {

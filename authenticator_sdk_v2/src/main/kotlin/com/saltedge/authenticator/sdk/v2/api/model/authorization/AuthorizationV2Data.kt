@@ -37,8 +37,8 @@ data class AuthorizationV2Data(
     @SerializedName(KEY_AUTHORIZATION_CODE) var authorizationCode: String? = null,
     @SerializedName(KEY_CREATED_AT) var createdAt: DateTime? = null,
     @SerializedName(KEY_EXPIRES_AT) var expiresAt: DateTime,
-    var connectionId: ID? = null,
-    var authorizationId: ID? = null,
+    var connectionID: ID? = null,
+    var authorizationID: ID? = null,
     var status: String? = null,
 ) : Serializable
 

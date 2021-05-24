@@ -148,7 +148,7 @@ data class AuthorizationItemViewModel(
         get() = endTime.remainedSeconds().remainedTimeDescription()
 
     val isV2Api: Boolean
-        get() = apiVersion == "2"
+        get() = apiVersion == API_V2_VERSION
 }
 
 /**
@@ -203,7 +203,7 @@ fun AuthorizationV2Data.toAuthorizationItemViewModel(connection: ConnectionAbs):
             validSeconds = authorizationExpirationPeriod(this.createdAt, this.expiresAt),
             endTime = this.expiresAt,
             startTime = this.createdAt ?: DateTime(0L),
-            authorizationID = this.authorizationId ?: "",
+            authorizationID = this.authorizationID ?: "",
             authorizationCode = this.authorizationCode ?: "",
             apiVersion = API_V2_VERSION,
             status = this.status?.toAuthorizationStatus() ?: AuthorizationStatus.PENDING

@@ -26,23 +26,27 @@ import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.core.api.ERROR_CLASS_AUTHORIZATION_NOT_FOUND
 import com.saltedge.authenticator.core.api.ERROR_CLASS_CONNECTION_NOT_FOUND
 import com.saltedge.authenticator.core.api.ERROR_CLASS_SSL_HANDSHAKE
+import com.saltedge.authenticator.core.api.model.DescriptionData
+import com.saltedge.authenticator.core.api.model.DescriptionTextData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.api.model.error.createRequestError
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.ConnectionStatus
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationStatus
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.api.model.EncryptedData
-import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
-import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
-import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
-import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
-import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
+import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
+import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponseData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationData
+import com.saltedge.authenticator.sdk.v2.polling.SingleAuthorizationPollingService
+import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2Abs
 import com.saltedge.authenticator.widget.security.ActivityUnlockType
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -57,14 +61,14 @@ import org.robolectric.RobolectricTestRunner
 import java.security.PrivateKey
 
 @RunWith(RobolectricTestRunner::class)
-class AuthorizationDetailsInteractorV1Test {
+class AuthorizationDetailsInteractorV2Test {
 
-    private lateinit var interactor: AuthorizationDetailsInteractorV1
+    private lateinit var interactor: AuthorizationDetailsInteractorV2
 
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
     private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
-    private val mockCryptoToolsV1 = mock(CryptoToolsV1Abs::class.java)
-    private val mockApiManagerV1 = mock(AuthenticatorApiManagerAbs::class.java)
+    private val mockCryptoToolsV2 = mock(CryptoToolsV2Abs::class.java)
+    private val mockApiManagerV2 = mock(ScaServiceClientAbs::class.java)
     private val mockPollingServiceV1 = mock(SingleAuthorizationPollingService::class.java)
     private val mockLocationManager = mock(DeviceLocationManagerAbs::class.java)
     private val mockPrivateKey = mock(PrivateKey::class.java)
@@ -92,20 +96,19 @@ class AuthorizationDetailsInteractorV1Test {
         createdAt = 300L
         updatedAt = 300L
     }
-    private val encryptedData1 = EncryptedData(id = "1", connectionId = "1")
-    private val encryptedData2 = EncryptedData(id = "2_noKey", connectionId = "1")
+    private val encryptedData1 = AuthorizationResponseData(id = "1", connectionId = "1", status = "pending", iv = "", key = "", data = "")
     private val authorizationData1 = createAuthorizationData(id = 1)
-    private val authorizationData2 = createAuthorizationData(id = 2)
     private val testViewItem1 = authorizationData1.toAuthorizationItemViewModel(connection1)!!
 
-    private fun createAuthorizationData(id: Int): AuthorizationData {
+    private fun createAuthorizationData(id: Int): AuthorizationV2Data {
         val createdAt = DateTime.now(DateTimeZone.UTC)
-        return AuthorizationData(
-            id = "$id",
+        return AuthorizationV2Data(
+            authorizationID = "$id",
+            connectionID = "$id",
+            status = "pending",
             authorizationCode = "$id$id$id",
             title = "title$id",
-            description = "desc$id",
-            connectionId = "1",
+            description = DescriptionData(text = DescriptionTextData("desc$id")),
             createdAt = createdAt,
             expiresAt = createdAt.plusHours(id)
         )
@@ -117,27 +120,22 @@ class AuthorizationDetailsInteractorV1Test {
         doReturn("GEO:52.506931;13.144558").`when`(mockLocationManager).locationDescription
         doReturn(connection1).`when`(mockConnectionsRepository).getById("1")
         doReturn(connection2).`when`(mockConnectionsRepository).getById("2_noKey")
-        doReturn(mockPollingServiceV1).`when`(mockApiManagerV1)
+        doReturn(mockPollingServiceV1).`when`(mockApiManagerV2)
             .createSingleAuthorizationPollingService()
         doReturn(RichConnection(connection1, mockPrivateKey))
             .`when`(mockKeyStoreManager).enrichConnection(connection1)
         doReturn(null).`when`(mockKeyStoreManager).getKeyPair("guid2")
-        doReturn(authorizationData1).`when`(mockCryptoToolsV1)
+        doReturn(authorizationData1).`when`(mockCryptoToolsV2)
             .decryptAuthorizationData(
                 encryptedData = encryptedData1,
                 rsaPrivateKey = mockPrivateKey
             )
-        doReturn(authorizationData2).`when`(mockCryptoToolsV1)
-            .decryptAuthorizationData(
-                encryptedData = encryptedData2,
-                rsaPrivateKey = mockPrivateKey
-            )
 
-        interactor = AuthorizationDetailsInteractorV1(
+        interactor = AuthorizationDetailsInteractorV2(
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
-            cryptoTools = mockCryptoToolsV1,
-            apiManager = mockApiManagerV1,
+            cryptoTools = mockCryptoToolsV2,
+            apiManager = mockApiManagerV2,
             locationManager = mockLocationManager
         )
         interactor.contract = mockCallback
@@ -200,26 +198,26 @@ class AuthorizationDetailsInteractorV1Test {
 
     @Test
     @Throws(Exception::class)
-    fun onFetchAuthorizationResultTestCase1() {
+    fun onFetchAuthorizationSuccessTest() {
         //given
         interactor.setInitialData(connectionID = "1")
 
         //when
-        interactor.onFetchAuthorizationResult(result = encryptedData1, error = null)
+        interactor.onFetchAuthorizationSuccess(result = encryptedData1)
 
         //then
-        verify(mockCallback).onAuthorizationReceived(testViewItem1, API_V1_VERSION)
+        verify(mockCallback).onAuthorizationReceived(testViewItem1, API_V2_VERSION)
     }
 
     @Test
     @Throws(Exception::class)
-    fun onFetchAuthorizationResultTestCase2() {
+    fun onFetchAuthorizationFailedTestCase2() {
         //given 404 error
         val error = createRequestError(404)
         interactor.setInitialData(connectionID = "1")
 
         //when
-        interactor.onFetchAuthorizationResult(result = null, error = error)
+        interactor.onFetchAuthorizationFailed(error = error)
 
         //then
         verify(mockCallback).onError(error)
@@ -227,13 +225,13 @@ class AuthorizationDetailsInteractorV1Test {
 
     @Test
     @Throws(Exception::class)
-    fun onFetchAuthorizationResultTestCase3() {
+    fun onFetchAuthorizationFailedTestCase3() {
         //given Connectivity error
         val error = ApiErrorData(errorClassName = ERROR_CLASS_SSL_HANDSHAKE, errorMessage = "ErrorMessage")
         interactor.setInitialData(connectionID = "1")
 
         //when
-        interactor.onFetchAuthorizationResult(result = null, error = error)
+        interactor.onFetchAuthorizationFailed(error = error)
 
         //then
         verify(mockCallback).onConnectivityError(error)
@@ -241,7 +239,7 @@ class AuthorizationDetailsInteractorV1Test {
 
     @Test
     @Throws(Exception::class)
-    fun onFetchAuthorizationResultTestCase4() {
+    fun onFetchAuthorizationFailedTestCase4() {
         //given ConnectionNotFound error
         val error = ApiErrorData(
             errorClassName = ERROR_CLASS_CONNECTION_NOT_FOUND,
@@ -250,7 +248,7 @@ class AuthorizationDetailsInteractorV1Test {
         interactor.setInitialData(connectionID = "1")
 
         //when
-        interactor.onFetchAuthorizationResult(result = null, error = error)
+        interactor.onFetchAuthorizationFailed(error = error)
 
         //then
         verify(mockConnectionsRepository).invalidateConnectionsByTokens(
@@ -262,7 +260,7 @@ class AuthorizationDetailsInteractorV1Test {
 
     @Test
     @Throws(Exception::class)
-    fun onFetchAuthorizationResultTestCase5() {
+    fun onFetchAuthorizationFailedTestCase5() {
         //given AuthorizationNotFound error
         val error = ApiErrorData(
             errorClassName = ERROR_CLASS_AUTHORIZATION_NOT_FOUND,
@@ -271,7 +269,7 @@ class AuthorizationDetailsInteractorV1Test {
         interactor.setInitialData(connectionID = "1")
 
         //when
-        interactor.onFetchAuthorizationResult(result = null, error = error)
+        interactor.onFetchAuthorizationFailed(error = error)
 
         //then
         verify(mockPollingServiceV1).stop()
@@ -280,12 +278,12 @@ class AuthorizationDetailsInteractorV1Test {
 
     @Test
     @Throws(Exception::class)
-    fun onFetchAuthorizationResultTestCase6() {
+    fun onFetchAuthorizationFailedCase6() {
         //given NULL error
         interactor.setInitialData(connectionID = "1")
 
         //when
-        interactor.onFetchAuthorizationResult(result = null, error = null)
+        interactor.onFetchAuthorizationFailed(error = null)
 
         //then
         verify(mockCallback).onAuthorizationNotFoundError()
@@ -306,13 +304,15 @@ class AuthorizationDetailsInteractorV1Test {
         )
 
         //then
-        verify(mockApiManagerV1).confirmAuthorization(
-            connectionAndKey = RichConnection(connection1, mockPrivateKey),
-            authorizationId = "1",
-            authorizationCode = "111",
-            geolocation = "GEO:52.506931;13.144558",
-            authorizationType = "biometrics",
-            resultCallback = interactor
+        verify(mockApiManagerV2).confirmAuthorization(
+            connection = RichConnection(connection1, mockPrivateKey),
+            authorizationID = "1",
+            authorizationData = UpdateAuthorizationData(
+                authorizationCode = "111",
+                geolocation = "GEO:52.506931;13.144558",
+                userAuthorizationType = "biometrics"
+            ),
+            callback = interactor
         )
         Assert.assertTrue(result)
     }
@@ -332,13 +332,15 @@ class AuthorizationDetailsInteractorV1Test {
         )
 
         //then
-        verify(mockApiManagerV1).denyAuthorization(
-            connectionAndKey = RichConnection(connection1, mockPrivateKey),
-            authorizationId = "1",
-            authorizationCode = "111",
-            geolocation = "GEO:52.506931;13.144558",
-            authorizationType = "biometrics",
-            resultCallback = interactor
+        verify(mockApiManagerV2).denyAuthorization(
+            connection = RichConnection(connection1, mockPrivateKey),
+            authorizationID = "1",
+            authorizationData = UpdateAuthorizationData(
+                authorizationCode = "111",
+                geolocation = "GEO:52.506931;13.144558",
+                userAuthorizationType = "biometrics"
+            ),
+            callback = interactor
         )
         Assert.assertTrue(result)
     }
@@ -349,7 +351,7 @@ class AuthorizationDetailsInteractorV1Test {
         //given
         val confirm = false
         interactor.setInitialData(connectionID = "wrong")
-        clearInvocations(mockApiManagerV1)
+        clearInvocations(mockApiManagerV2)
 
         //when
         val result = interactor.updateAuthorization(
@@ -359,19 +361,19 @@ class AuthorizationDetailsInteractorV1Test {
         )
 
         //then
-        verifyNoInteractions(mockApiManagerV1)
+        verifyNoInteractions(mockApiManagerV2)
         Assert.assertFalse(result)
     }
 
     @Test
     @Throws(Exception::class)
-    fun onConfirmDenyFailureTest() {
+    fun onAuthorizationConfirmFailureTest() {
         //given 404 error
         val error = createRequestError(404)
         interactor.setInitialData(connectionID = "1")
 
         //when
-        interactor.onConfirmDenyFailure(error = error, connectionID = "1", authorizationID = "1")
+        interactor.onAuthorizationConfirmFailure(error = error, connectionID = "1", authorizationID = "1")
 
         //then
         verify(mockCallback).onError(error)
@@ -379,11 +381,17 @@ class AuthorizationDetailsInteractorV1Test {
 
     @Test
     @Throws(Exception::class)
-    fun onConfirmDenySuccessTest() {
+    fun onAuthorizationConfirmSuccessTest() {
         //when
-        interactor.onConfirmDenySuccess(result = ConfirmDenyResponseData(), connectionID = "1")
+        interactor.onAuthorizationConfirmSuccess(
+            result = ConfirmDenyResponseData(
+                authorizationID = "1",
+                status = "confirmed"
+            ),
+            connectionID = "1"
+        )
 
         //then
-        verify(mockCallback).onConfirmDenySuccess()
+        verify(mockCallback).onConfirmDenySuccess(newStatus = AuthorizationStatus.CONFIRMED)
     }
 }

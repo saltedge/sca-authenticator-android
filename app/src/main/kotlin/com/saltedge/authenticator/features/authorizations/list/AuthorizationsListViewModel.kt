@@ -191,14 +191,14 @@ class AuthorizationsListViewModel(
 
     private fun updateAuthorization(listItem: AuthorizationItemViewModel, confirm: Boolean) {
         val result = if (listItem.isV2Api) {
-            interactorV1.updateAuthorization(
+            interactorV2.updateAuthorization(
                 connectionID = listItem.connectionID,
                 authorizationID = listItem.authorizationID,
                 authorizationCode = listItem.authorizationCode,
                 confirm = confirm
             )
         } else {
-            interactorV2.updateAuthorization(
+            interactorV1.updateAuthorization(
                 connectionID = listItem.connectionID,
                 authorizationID = listItem.authorizationID,
                 authorizationCode = listItem.authorizationCode,
