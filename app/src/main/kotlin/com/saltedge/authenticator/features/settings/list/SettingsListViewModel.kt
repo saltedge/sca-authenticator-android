@@ -29,25 +29,18 @@ import com.saltedge.authenticator.app.AppToolsAbs
 import com.saltedge.authenticator.app.getDefaultSystemNightMode
 import com.saltedge.authenticator.app.isSystemNightModeSupported
 import com.saltedge.authenticator.app.switchDarkLightMode
-import com.saltedge.authenticator.core.model.RichConnection
-import com.saltedge.authenticator.core.model.isActive
-import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.interfaces.MenuItem
-import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.tools.postUnitEvent
 
 class SettingsListViewModel(
     private val appContext: Context,
+    private val interactorV1: SettingsListInteractorV1,
+    private val interactorV2: SettingsListInteractorV2,
     private val appTools: AppToolsAbs,
-    private val keyStoreManager: KeyManagerAbs,
-    private val apiManager: AuthenticatorApiManagerAbs,
-    private val connectionsRepository: ConnectionsRepositoryAbs,
     private val preferenceRepository: PreferenceRepositoryAbs
 ) : ViewModel(), ListItemClickListener {
 
@@ -111,8 +104,10 @@ class SettingsListViewModel(
 
     fun onDialogActionIdClick(dialogActionId: Int) {
         if (dialogActionId == DialogInterface.BUTTON_POSITIVE) {
-            sendRevokeRequestForConnections(connectionsRepository.getAllActiveConnections())
-            deleteAllConnectionsAndKeys()
+            interactorV1.sendRevokeRequestForConnections()
+            interactorV2.sendRevokeRequestForConnections()
+            interactorV1.deleteAllConnectionsAndKeys()
+            interactorV2.deleteAllConnectionsAndKeys()
             clearSuccessEvent.postUnitEvent()
         }
     }
@@ -167,18 +162,5 @@ class SettingsListViewModel(
             )
         )
         return listItems
-    }
-
-    private fun sendRevokeRequestForConnections(connections: List<Connection>) {
-        val connectionsAndKeys: List<RichConnection> = connections.filter { it.isActive() }
-            .mapNotNull { keyStoreManager.enrichConnection(it) }
-
-        apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = null)
-    }
-
-    private fun deleteAllConnectionsAndKeys() {
-        val connectionGuids = connectionsRepository.getAllConnections().map { it.guid }
-        keyStoreManager.deleteKeyPairsIfExist(connectionGuids)
-        connectionsRepository.deleteAllConnections()
     }
 }

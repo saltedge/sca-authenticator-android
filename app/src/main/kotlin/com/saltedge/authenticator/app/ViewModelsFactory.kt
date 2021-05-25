@@ -35,17 +35,22 @@ import com.saltedge.authenticator.features.authorizations.list.AuthorizationsLis
 import com.saltedge.authenticator.features.connections.create.ConnectProviderInteractorV1
 import com.saltedge.authenticator.features.connections.create.ConnectProviderInteractorV2
 import com.saltedge.authenticator.features.connections.create.ConnectProviderViewModel
+import com.saltedge.authenticator.features.connections.list.ConnectionsListInteractorV1
+import com.saltedge.authenticator.features.connections.list.ConnectionsListInteractorV2
 import com.saltedge.authenticator.features.connections.list.ConnectionsListViewModel
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsViewModel
 import com.saltedge.authenticator.features.consents.details.ConsentDetailsViewModel
 import com.saltedge.authenticator.features.consents.list.ConsentsListViewModel
 import com.saltedge.authenticator.features.launcher.LauncherViewModel
+import com.saltedge.authenticator.features.main.MainActivityInteractor
 import com.saltedge.authenticator.features.main.MainActivityViewModel
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupViewModel
 import com.saltedge.authenticator.features.qr.QrScannerViewModel
 import com.saltedge.authenticator.features.settings.about.AboutViewModel
 import com.saltedge.authenticator.features.settings.language.LanguageSelectViewModel
 import com.saltedge.authenticator.features.settings.licenses.LicensesViewModel
+import com.saltedge.authenticator.features.settings.list.SettingsListInteractorV1
+import com.saltedge.authenticator.features.settings.list.SettingsListInteractorV2
 import com.saltedge.authenticator.features.settings.list.SettingsListViewModel
 import com.saltedge.authenticator.features.settings.passcode.PasscodeEditViewModel
 import com.saltedge.authenticator.models.location.DeviceLocationManager
@@ -98,8 +103,13 @@ class ViewModelsFactory @Inject constructor(
                 return MainActivityViewModel(
                     appContext = appContext,
                     realmManager = realmManager,
-                    preferenceRepository = preferenceRepository,
-                    connectionsRepository = connectionsRepository
+                    interactor = MainActivityInteractor(
+                        keyStoreManager = keyStoreManager,
+                        connectionsRepository = connectionsRepository,
+                        apiManagerV1 = apiManagerV1,
+                        apiManagerV2 = apiManagerV2,
+                        preferenceRepository = preferenceRepository
+                    )
                 ) as T
             }
             modelClass.isAssignableFrom(OnboardingSetupViewModel::class.java) -> {
@@ -147,10 +157,18 @@ class ViewModelsFactory @Inject constructor(
             modelClass.isAssignableFrom(ConnectionsListViewModel::class.java) -> {
                 return ConnectionsListViewModel(
                     appContext = appContext,
-                    connectionsRepository = connectionsRepository,
-                    keyStoreManager = keyStoreManager,
-                    apiManager = apiManagerV1,
-                    cryptoTools = cryptoToolsV1
+                    interactorV1 = ConnectionsListInteractorV1(
+                        keyStoreManager = keyStoreManager,
+                        connectionsRepository = connectionsRepository,
+                        apiManager = apiManagerV1,
+                        cryptoTools = cryptoToolsV1
+                    ),
+                    interactorV2 = ConnectionsListInteractorV2(
+                        keyStoreManager = keyStoreManager,
+                        connectionsRepository = connectionsRepository,
+                        apiManager = apiManagerV2,
+                        cryptoTools = cryptoToolsV2
+                    )
                 ) as T
             }
             modelClass.isAssignableFrom(ConsentsListViewModel::class.java) -> {
@@ -177,11 +195,18 @@ class ViewModelsFactory @Inject constructor(
             modelClass.isAssignableFrom(SettingsListViewModel::class.java) -> {
                 return SettingsListViewModel(
                     appContext = appContext,
+                    interactorV1 = SettingsListInteractorV1(
+                        keyStoreManager = keyStoreManager,
+                        connectionsRepository = connectionsRepository,
+                        apiManager = apiManagerV1
+                    ),
+                    interactorV2 = SettingsListInteractorV2(
+                        keyStoreManager = keyStoreManager,
+                        connectionsRepository = connectionsRepository,
+                        apiManager = apiManagerV2
+                    ),
                     appTools = AppTools,
-                    preferenceRepository = preferenceRepository,
-                    connectionsRepository = connectionsRepository,
-                    keyStoreManager = keyStoreManager,
-                    apiManager = apiManagerV1
+                    preferenceRepository = preferenceRepository
                 ) as T
             }
             modelClass.isAssignableFrom(PasscodeEditViewModel::class.java) -> {
