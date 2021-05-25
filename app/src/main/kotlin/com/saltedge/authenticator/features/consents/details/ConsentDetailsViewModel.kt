@@ -153,8 +153,6 @@ class ConsentDetailsViewModel(
         return spannedDescription
     }
 
-
-
     private fun getGrantedDate(grantedAt: DateTime): String {
         return "${appContext.getString(R.string.granted)}: ${grantedAt.toDateFormatString(appContext)}"
     }
