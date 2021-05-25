@@ -27,7 +27,7 @@ import com.saltedge.authenticator.core.model.Token
 
 fun parseRedirect(
     url: String,
-    success: (connectionID: ID, accessToken: Token) -> Unit,
+    success: (connectionID: ID?, accessToken: Token) -> Unit,
     error: (errorClass: String, errorMessage: String?) -> Unit
 ) {
     val uri = Uri.parse(url)
@@ -36,7 +36,7 @@ fun parseRedirect(
     val errorClass = uri.getQueryParameter(KEY_ERROR_CLASS)
     val errorMessage = uri.getQueryParameter(KEY_ERROR_MESSAGE)
 
-    if (connectionID != null && accessToken?.isNotEmpty() == true) {
+    if (accessToken?.isNotEmpty() == true) {
         success(connectionID, accessToken)
     } else {
         error(errorClass ?: ERROR_CLASS_AUTHENTICATION_RESPONSE, errorMessage)

@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.connections.list
 
 import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -31,9 +32,9 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tools.appendColoredText
-import com.saltedge.authenticator.tools.appendFacedText
 import com.saltedge.authenticator.tools.inflateListItemView
 import com.saltedge.authenticator.tools.loadRoundedImage
+import com.saltedge.authenticator.tools.mediumTypefaceSpan
 
 class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClickListener?) :
     RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_connection)) {
@@ -62,7 +63,7 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
 
         titleView.text = item.name
         subTitleView.text = SpannableStringBuilder()
-            .appendFacedText(item.consentsDescription, R.font.roboto_medium, subTitleView.context)
+            .append(item.consentsDescription, subTitleView.context.mediumTypefaceSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             .appendColoredText(item.statusDescription, item.statusDescriptionColorRes, subTitleView.context)
     }
 }

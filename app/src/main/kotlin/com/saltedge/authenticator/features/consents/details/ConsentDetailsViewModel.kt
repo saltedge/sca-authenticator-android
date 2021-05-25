@@ -26,7 +26,6 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.view.View
-import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
@@ -47,8 +46,8 @@ import com.saltedge.authenticator.sdk.api.model.ConsentType
 import com.saltedge.authenticator.sdk.api.model.response.ConsentRevokeResponseData
 import com.saltedge.authenticator.sdk.api.model.toConsentType
 import com.saltedge.authenticator.sdk.contract.ConsentRevokeListener
-import com.saltedge.authenticator.tools.CustomTypefaceSpan
 import com.saltedge.authenticator.tools.daysTillExpire
+import com.saltedge.authenticator.tools.mediumTypefaceSpan
 import com.saltedge.authenticator.tools.toDateFormatString
 import org.joda.time.DateTime
 
@@ -136,24 +135,25 @@ class ConsentDetailsViewModel(
         val providerNameIndex = consentDescription.indexOf(providerName, 0)
         val spannedDescription = SpannableStringBuilder(consentDescription)
         spannedDescription.apply {
-            setSpan(
-                ResourcesCompat.getFont(appContext, R.font.roboto_medium)?.let {
-                    CustomTypefaceSpan(typeface = it)
-                }, tppNameIndex, tppNameIndex + tppName.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-            setSpan(
-                ResourcesCompat.getFont(appContext, R.font.roboto_medium)?.let {
-                    CustomTypefaceSpan(typeface = it)
-                },
-                providerNameIndex,
-                providerNameIndex + providerName.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+            if (tppName.isNotEmpty()) {
+                setSpan(
+                    appContext.mediumTypefaceSpan, tppNameIndex, tppNameIndex + tppName.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+            if (providerName.isNotEmpty()) {
+                setSpan(
+                    appContext.mediumTypefaceSpan,
+                    providerNameIndex,
+                    providerNameIndex + providerName.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
         }
-
         return spannedDescription
     }
+
+
 
     private fun getGrantedDate(grantedAt: DateTime): String {
         return "${appContext.getString(R.string.granted)}: ${grantedAt.toDateFormatString(appContext)}"
