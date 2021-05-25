@@ -108,8 +108,8 @@ abstract class ConnectProviderInteractor(
         )
     }
 
-    override fun onConnectionSuccessAuthentication(connectionId: ID, accessToken: Token) {
-        connection.id = connectionId
+    override fun onConnectionSuccessAuthentication(connectionId: ID?, accessToken: Token) {
+        connectionId?.let { connection.id = it }
         connection.accessToken = accessToken
         connection.status = "${ConnectionStatus.ACTIVE}"
         if (connectionsRepository.connectionExists(connection)) {
@@ -143,7 +143,7 @@ interface ConnectProviderInteractorAbs {
     fun requestCreateConnection(connection: Connection, cloudMessagingToken: String, connectQuery: String?)
     fun onConnectionCreateSuccess(authenticationUrl: String, connectionId: String)
     fun onReceiveReturnToUrl(url: String)
-    fun onConnectionSuccessAuthentication(connectionId: ID, accessToken: Token)
+    fun onConnectionSuccessAuthentication(connectionId: ID?, accessToken: Token)
     fun destroyConnectionIfNotAuthorized()
 }
 

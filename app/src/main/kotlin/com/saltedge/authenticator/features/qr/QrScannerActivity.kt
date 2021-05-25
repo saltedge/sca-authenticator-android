@@ -115,6 +115,10 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
         })
     }
 
+    override fun onClearAppDataEvent() {
+        //empty
+    }
+
     private fun setupViews() {
         closeImageView?.setOnClickListener { view -> viewModel.onViewClick(view.id) }
         descriptionView?.setText(viewModel.descriptionRes)

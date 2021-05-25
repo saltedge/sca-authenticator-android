@@ -54,7 +54,7 @@ interface ApiInterface {
         @Body requestBody: RevokeConnectionRequest
     ): Call<RevokeConnectionResponse>
 
-    @GET(API_AUTHORIZATIONS)
+    @GET
     fun activeAuthorizations(
         @Url requestUrl: String,
         @HeaderMap headersMap: Map<String, String>

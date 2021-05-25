@@ -51,8 +51,7 @@ class ConnectionsListInteractorV1(
     private val decryptJob: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = decryptJob + Dispatchers.IO
-    private var richConnections: Map<ID, RichConnection> =
-        collectRichConnections(connectionsRepository, keyStoreManager, API_V1_VERSION)
+    private var richConnections: Map<ID, RichConnection> = emptyMap()
 
     override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?) {}
 
@@ -61,6 +60,10 @@ class ConnectionsListInteractorV1(
         errors: List<ApiErrorData>
     ) {
         processOfEncryptedConsentsResult(encryptedList = result)
+    }
+
+    fun updateConnections() {
+        richConnections = collectRichConnections(connectionsRepository, keyStoreManager, API_V1_VERSION)
     }
 
     fun onDestroy() {
@@ -93,18 +96,15 @@ class ConnectionsListInteractorV1(
     }
 
     fun getConsents() {
-        val consentRequestData = if (richConnections.isEmpty()) null else richConnections.values.toList()
-        consentRequestData?.let {
-            apiManager.getConsents(
-                connectionsAndKeys = it,
-                resultCallback = this
-            )
-        }
+        if (richConnections.isEmpty()) return
+        apiManager.getConsents(
+            connectionsAndKeys = richConnections.values.toList(),
+            resultCallback = this
+        )
     }
 
     fun collectAllConnectionsViewModels(): List<Connection> {
-        return connectionsRepository.getAllConnections()
-            .sortedBy { it.createdAt }
+        return connectionsRepository.getAllConnections().sortedBy { it.createdAt }
     }
 
     fun deleteConnectionsAndKeys(guid: String) {
