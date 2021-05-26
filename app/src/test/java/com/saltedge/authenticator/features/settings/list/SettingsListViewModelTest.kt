@@ -38,6 +38,7 @@ import com.saltedge.authenticator.app.AppToolsAbs
 import com.saltedge.authenticator.core.model.ConnectionStatus
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
+import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import junit.framework.TestCase.assertNull
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -57,7 +58,6 @@ class SettingsListViewModelTest {
     private val mockAppTools = Mockito.mock(AppToolsAbs::class.java)
     private val mockPreferences = Mockito.mock(PreferenceRepositoryAbs::class.java)
     private val mockKeyStoreManager = Mockito.mock(KeyManagerAbs::class.java)
-    private val mockApiManager = Mockito.mock(AuthenticatorApiManagerAbs::class.java)
     private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
     private val mockConnection1 = Connection().apply {
         guid = "guid1"
@@ -73,18 +73,32 @@ class SettingsListViewModelTest {
     private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
     private val mockConnectionAndKey = RichConnection(mockConnection1, mockPrivateKey)
     private lateinit var viewModel: SettingsListViewModel
+    private lateinit var interactorV1: SettingsListInteractorV1
+    private lateinit var interactorV2: SettingsListInteractorV2
+    private val mockApiManagerV1 = Mockito.mock(AuthenticatorApiManagerAbs::class.java)
+    private val mockApiManagerV2 = Mockito.mock(ScaServiceClientAbs::class.java)
 
     @Before
     fun setUp() {
         Mockito.doReturn(true).`when`(mockPreferences).screenshotLockEnabled
         given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(mockConnection1))
         given(mockKeyStoreManager.enrichConnection(mockConnection1)).willReturn(mockConnectionAndKey)
+
+        interactorV1 = SettingsListInteractorV1(
+            connectionsRepository = mockConnectionsRepository,
+            keyStoreManager = mockKeyStoreManager,
+            apiManager = mockApiManagerV1
+        )
+        interactorV2 = SettingsListInteractorV2(
+            connectionsRepository = mockConnectionsRepository,
+            keyStoreManager = mockKeyStoreManager,
+            apiManager = mockApiManagerV2
+        )
         viewModel = SettingsListViewModel(
             appContext = context,
             appTools = mockAppTools,
-            keyStoreManager = mockKeyStoreManager,
-            apiManager = mockApiManager,
-            connectionsRepository = mockConnectionsRepository,
+            interactorV1 = interactorV1,
+            interactorV2 = interactorV2,
             preferenceRepository = mockPreferences
         )
     }
@@ -97,9 +111,8 @@ class SettingsListViewModelTest {
         viewModel = SettingsListViewModel(
             appContext = context,
             appTools = mockAppTools,
-            keyStoreManager = mockKeyStoreManager,
-            apiManager = mockApiManager,
-            connectionsRepository = mockConnectionsRepository,
+            interactorV1 = interactorV1,
+            interactorV2 = interactorV2,
             preferenceRepository = mockPreferences
         )
 
@@ -161,9 +174,8 @@ class SettingsListViewModelTest {
         viewModel = SettingsListViewModel(
             appContext = context,
             appTools = mockAppTools,
-            keyStoreManager = mockKeyStoreManager,
-            apiManager = mockApiManager,
-            connectionsRepository = mockConnectionsRepository,
+            interactorV1 = interactorV1,
+            interactorV2 = interactorV2,
             preferenceRepository = mockPreferences
         )
 
@@ -220,7 +232,7 @@ class SettingsListViewModelTest {
 
         //then
         Mockito.verify(mockConnectionsRepository).deleteAllConnections()
-        Mockito.verify(mockApiManager).revokeConnections(
+        Mockito.verify(mockApiManagerV1).revokeConnections(
             connectionsAndKeys = listOf(mockConnectionAndKey),
             resultCallback = null
         )

@@ -159,12 +159,13 @@ class ConnectionsListViewModel(
 
     fun onDeleteItemResult(guid: GUID) {
         val listItem = listItemsValues.find { it.guid == guid } ?: return
-        if (listItem.isV2Api)
+        if (listItem.isV2Api)  {
             interactorV2.sendRevokeRequestForConnections(listItem.guid)
-        else
+            interactorV2.deleteConnectionsAndKeys(listItem.guid)
+        } else {
             interactorV1.sendRevokeRequestForConnections(listItem.guid)
-        interactorV1.deleteConnectionsAndKeys(listItem.guid)
-        interactorV2.deleteConnectionsAndKeys(listItem.guid)
+            interactorV1.deleteConnectionsAndKeys(listItem.guid)
+        }
         updateViewsContent()
     }
 
