@@ -33,12 +33,15 @@ import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.core.api.*
 import com.saltedge.authenticator.core.model.ActionAppLinkData
 import com.saltedge.authenticator.core.model.ConnectAppLinkData
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
+import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertNotNull
@@ -53,17 +56,28 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class MainActivityViewModelTest {
 
+    private lateinit var interactor: MainActivityInteractor
+
     private val mockRealmManager = mock(RealmManagerAbs::class.java)
-    private val mockPreferenceRepository = mock(PreferenceRepositoryAbs::class.java)
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
+    private val mockPreferenceRepository = mock(PreferenceRepositoryAbs::class.java)
     private val context: Context = ApplicationProvider.getApplicationContext()
+    private val mockApiManagerV1 = mock(AuthenticatorApiManagerAbs::class.java)
+    private val mockApiManagerV2 = mock(ScaServiceClientAbs::class.java)
+    private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
 
     private fun createViewModel(): MainActivityViewModel {
+        interactor = MainActivityInteractor(
+            apiManagerV1 = mockApiManagerV1,
+            apiManagerV2 = mockApiManagerV2,
+            connectionsRepository = mockConnectionsRepository,
+            keyStoreManager = mockKeyStoreManager,
+            preferenceRepository = mockPreferenceRepository
+        )
         return MainActivityViewModel(
             appContext = context,
             realmManager = mockRealmManager,
-            preferenceRepository = mockPreferenceRepository,
-            connectionsRepository = mockConnectionsRepository
+            interactor = interactor
         )
     }
 
