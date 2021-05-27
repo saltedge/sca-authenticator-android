@@ -27,12 +27,12 @@ import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.sdk.v2.ScaServiceClient
+import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionsRevokeListener
 import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2Abs
 
 class ConnectionsListInteractorV2(
-    private val apiManager: ScaServiceClient,
+    private val apiManager: ScaServiceClientAbs,
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyManagerAbs,
     private val cryptoTools: CryptoToolsV2Abs
@@ -49,8 +49,8 @@ class ConnectionsListInteractorV2(
     }
 
     fun getConnectionSupportEmail(guid: String) {
-        connectionsRepository.getByGuid(guid)?.supportEmail?.let {
-            contract?.selectSupportForConnection(guid)
+        connectionsRepository.getByGuid(guid)?.supportEmail?.let { supportEmail ->
+            contract?.selectSupportForConnection(supportEmail)
         }
     }
 

@@ -39,7 +39,10 @@ import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.sdk.api.model.ConsentSharedData
+import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
+import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
+import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2Abs
 import org.hamcrest.Matchers.equalTo
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
@@ -48,6 +51,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.verifyNoInteractions
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.robolectric.RobolectricTestRunner
@@ -57,12 +61,17 @@ import java.security.PrivateKey
 class ConnectionsListViewModelTest {
 
     private lateinit var viewModel: ConnectionsListViewModel
+    private lateinit var interactorV1: ConnectionsListInteractorV1
+    private lateinit var interactorV2: ConnectionsListInteractorV2
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
     private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
-    private val mockCryptoTools = mock(CryptoToolsV1Abs::class.java)
+    private val mockCryptoToolsV1 = mock(CryptoToolsV1Abs::class.java)
+    private val mockCryptoToolsV2 = mock(CryptoToolsV2Abs::class.java)
+    private val mockApiManagerV1 = mock(AuthenticatorApiManagerAbs::class.java)
+    private val mockApiManagerV2 = mock(ScaServiceClientAbs::class.java)
     private val connections = listOf(
         Connection().apply {
             id = "1"
@@ -85,6 +94,7 @@ class ConnectionsListViewModelTest {
             accessToken = "token2"
             createdAt = 300L
             updatedAt = 300L
+            apiVersion = "1"
         }
     )
     private val mockConnectionAndKey = RichConnection(connections[1], mockPrivateKey)
@@ -105,17 +115,29 @@ class ConnectionsListViewModelTest {
     @Before
     fun setUp() {
         Mockito.doReturn(connections).`when`(mockConnectionsRepository).getAllConnections()
+        Mockito.doReturn(connections).`when`(mockConnectionsRepository).getAllActiveConnections(API_V1_VERSION)
         Mockito.doReturn(connections[0]).`when`(mockConnectionsRepository).getByGuid("guid1")
         Mockito.doReturn(connections[1]).`when`(mockConnectionsRepository).getByGuid("guid2")
         given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(connections[1]))
         given(mockKeyStoreManager.enrichConnection(connections[1])).willReturn(mockConnectionAndKey)
 
-        viewModel = ConnectionsListViewModel(
-            appContext = context,
+        interactorV1 = ConnectionsListInteractorV1(
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
-            apiManager = mockApiManager,
-            cryptoTools = mockCryptoTools
+            cryptoTools = mockCryptoToolsV1,
+            apiManager = mockApiManagerV1
+        )
+        interactorV2 = ConnectionsListInteractorV2(
+            connectionsRepository = mockConnectionsRepository,
+            keyStoreManager = mockKeyStoreManager,
+            cryptoTools = mockCryptoToolsV2,
+            apiManager = mockApiManagerV2
+        )
+
+        viewModel = ConnectionsListViewModel(
+            appContext = context,
+            interactorV1 = interactorV1,
+            interactorV2 = interactorV2
         )
     }
 
@@ -161,6 +183,21 @@ class ConnectionsListViewModelTest {
     fun onStartTestCase3() {
         //given
         val connection: List<ConnectionItemViewModel> =
+            listOf(connections[0]).convertConnectionsToViewModels(context)
+        viewModel.listItems.value = connection
+
+        //when
+        viewModel.onStart()
+
+        //then
+        Mockito.verify(mockConnectionsRepository).getAllActiveConnections(API_V1_VERSION)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onStartTestCase4() {
+        //given
+        val connection: List<ConnectionItemViewModel> =
             listOf(connections[1]).convertConnectionsToViewModels(context)
         viewModel.listItems.value = connection
 
@@ -168,9 +205,10 @@ class ConnectionsListViewModelTest {
         viewModel.onStart()
 
         //then
-        Mockito.verify(mockApiManager).getConsents(
+        Mockito.verify(mockConnectionsRepository).getAllActiveConnections(API_V1_VERSION)
+        Mockito.verify(mockApiManagerV1).getConsents(
             connectionsAndKeys = listOf(RichConnection(connections[1], mockPrivateKey)),
-            resultCallback = viewModel
+            resultCallback = interactorV1
         )
     }
 
@@ -186,10 +224,7 @@ class ConnectionsListViewModelTest {
         viewModel.refreshConsents()
 
         //then
-        Mockito.verify(mockApiManager).getConsents(
-            connectionsAndKeys = listOf(RichConnection(connections[1], mockPrivateKey)),
-            resultCallback = viewModel
-        )
+        verifyNoInteractions(mockConnectionsRepository, mockApiManager)
     }
 
     @Test
@@ -218,7 +253,8 @@ class ConnectionsListViewModelTest {
                 statusDescriptionColorRes = R.color.dark_60_and_grey_100,
                 logoUrl = "",
                 isActive = true,
-                isChecked = false
+                isChecked = false,
+                apiVersion = API_V1_VERSION
             )
         )
 
@@ -228,19 +264,22 @@ class ConnectionsListViewModelTest {
         //then
         assertThat(
             viewModel.listItems.value,
-            equalTo(listOf(
-                ConnectionItemViewModel(
-                    guid = "guid2",
-                    connectionId = "2",
-                    name = "Demobank2",
-                    statusDescription = "Linked on 1 January 1970",
-                    statusDescriptionColorRes = R.color.dark_60_and_grey_100,
-                    logoUrl = "",
-                    consentsDescription = "1 consent\u30FB",
-                    isActive = true,
-                    isChecked = false
+            equalTo(
+                listOf(
+                    ConnectionItemViewModel(
+                        guid = "guid2",
+                        connectionId = "2",
+                        name = "Demobank2",
+                        statusDescription = "Linked on 1 January 1970",
+                        statusDescriptionColorRes = R.color.dark_60_and_grey_100,
+                        logoUrl = "",
+                        consentsDescription = "1 consent\u30FB",
+                        isActive = true,
+                        isChecked = false,
+                        apiVersion = API_V1_VERSION
+                    )
                 )
-            ))
+            )
         )
     }
 
@@ -257,7 +296,8 @@ class ConnectionsListViewModelTest {
                 statusDescriptionColorRes = R.color.red_and_red_light,
                 logoUrl = "",
                 isActive = true,
-                isChecked = false
+                isChecked = false,
+                apiVersion = API_V1_VERSION
             )
         )
         viewModel.listItems.value = connection
@@ -277,7 +317,8 @@ class ConnectionsListViewModelTest {
                     statusDescriptionColorRes = R.color.red_and_red_light,
                     logoUrl = "",
                     isActive = true,
-                    isChecked = false
+                    isChecked = false,
+                    apiVersion = API_V1_VERSION
                 )
             )
         )
@@ -302,7 +343,8 @@ class ConnectionsListViewModelTest {
                     statusDescriptionColorRes = R.color.red_and_red_light,
                     logoUrl = "",
                     isActive = false,
-                    isChecked = false
+                    isChecked = false,
+                    apiVersion = API_V1_VERSION
                 )
             )
         )
@@ -327,7 +369,8 @@ class ConnectionsListViewModelTest {
                     statusDescriptionColorRes = R.color.dark_60_and_grey_100,
                     logoUrl = "",
                     isActive = true,
-                    isChecked = false
+                    isChecked = false,
+                    apiVersion = API_V1_VERSION
                 )
             )
         )
@@ -362,31 +405,35 @@ class ConnectionsListViewModelTest {
         //then
         assertThat(
             viewModel.onListItemClickEvent.value,
-            equalTo(ViewModelEvent(MenuData(
-                menuId = activeItemIndex,
-                items = listOf(
-                    MenuItemData(
-                        id = ConnectionsListViewModel.PopupMenuItem.RENAME.ordinal,
-                        iconRes = R.drawable.ic_menu_edit_24dp,
-                        textRes = R.string.actions_rename
-                    ),
-                    MenuItemData(
-                        id = ConnectionsListViewModel.PopupMenuItem.SUPPORT.ordinal,
-                        iconRes = R.drawable.ic_contact_support_24dp,
-                        textRes = R.string.actions_contact_support
-                    ),
-                    MenuItemData(
-                        id = ConnectionsListViewModel.PopupMenuItem.CONSENTS.ordinal,
-                        iconRes = R.drawable.ic_view_consents_24dp,
-                        textRes = R.string.actions_view_consents
-                    ),
-                    MenuItemData(
-                        id = ConnectionsListViewModel.PopupMenuItem.DELETE.ordinal,
-                        iconRes = R.drawable.ic_menu_delete_24dp,
-                        textRes = R.string.actions_delete
+            equalTo(
+                ViewModelEvent(
+                    MenuData(
+                        menuId = activeItemIndex,
+                        items = listOf(
+                            MenuItemData(
+                                id = ConnectionsListViewModel.PopupMenuItem.RENAME.ordinal,
+                                iconRes = R.drawable.ic_menu_edit_24dp,
+                                textRes = R.string.actions_rename
+                            ),
+                            MenuItemData(
+                                id = ConnectionsListViewModel.PopupMenuItem.SUPPORT.ordinal,
+                                iconRes = R.drawable.ic_contact_support_24dp,
+                                textRes = R.string.actions_contact_support
+                            ),
+                            MenuItemData(
+                                id = ConnectionsListViewModel.PopupMenuItem.CONSENTS.ordinal,
+                                iconRes = R.drawable.ic_view_consents_24dp,
+                                textRes = R.string.actions_view_consents
+                            ),
+                            MenuItemData(
+                                id = ConnectionsListViewModel.PopupMenuItem.DELETE.ordinal,
+                                iconRes = R.drawable.ic_menu_delete_24dp,
+                                textRes = R.string.actions_delete
+                            )
+                        )
                     )
                 )
-            )))
+            )
         )
     }
 
@@ -405,31 +452,35 @@ class ConnectionsListViewModelTest {
         //then
         assertThat(
             viewModel.onListItemClickEvent.value,
-            equalTo(ViewModelEvent(MenuData(
-                menuId = inactiveItemIndex,
-                items = listOf(
-                    MenuItemData(
-                        id = ConnectionsListViewModel.PopupMenuItem.RECONNECT.ordinal,
-                        iconRes = R.drawable.ic_menu_reconnect_24dp,
-                        textRes = R.string.actions_reconnect
-                    ),
-                    MenuItemData(
-                        id = ConnectionsListViewModel.PopupMenuItem.RENAME.ordinal,
-                        iconRes = R.drawable.ic_menu_edit_24dp,
-                        textRes = R.string.actions_rename
-                    ),
-                    MenuItemData(
-                        id = ConnectionsListViewModel.PopupMenuItem.SUPPORT.ordinal,
-                        iconRes = R.drawable.ic_contact_support_24dp,
-                        textRes = R.string.actions_contact_support
-                    ),
-                    MenuItemData(
-                        id = ConnectionsListViewModel.PopupMenuItem.DELETE.ordinal,
-                        iconRes = R.drawable.ic_menu_remove_24dp,
-                        textRes = R.string.actions_remove
+            equalTo(
+                ViewModelEvent(
+                    MenuData(
+                        menuId = inactiveItemIndex,
+                        items = listOf(
+                            MenuItemData(
+                                id = ConnectionsListViewModel.PopupMenuItem.RECONNECT.ordinal,
+                                iconRes = R.drawable.ic_menu_reconnect_24dp,
+                                textRes = R.string.actions_reconnect
+                            ),
+                            MenuItemData(
+                                id = ConnectionsListViewModel.PopupMenuItem.RENAME.ordinal,
+                                iconRes = R.drawable.ic_menu_edit_24dp,
+                                textRes = R.string.actions_rename
+                            ),
+                            MenuItemData(
+                                id = ConnectionsListViewModel.PopupMenuItem.SUPPORT.ordinal,
+                                iconRes = R.drawable.ic_contact_support_24dp,
+                                textRes = R.string.actions_contact_support
+                            ),
+                            MenuItemData(
+                                id = ConnectionsListViewModel.PopupMenuItem.DELETE.ordinal,
+                                iconRes = R.drawable.ic_menu_remove_24dp,
+                                textRes = R.string.actions_remove
+                            )
+                        )
                     )
                 )
-            )))
+            )
         )
     }
 
@@ -477,7 +528,10 @@ class ConnectionsListViewModelTest {
         viewModel.onMenuItemClick(menuId = activeItemIndex, itemId = itemId)
 
         //then
-        assertThat(viewModel.onSupportClickEvent.value!!.peekContent(), equalTo("example@example.com"))
+        assertThat(
+            viewModel.onSupportClickEvent.value!!.peekContent(),
+            equalTo("example@example.com")
+        )
     }
 
     @Test
@@ -597,9 +651,9 @@ class ConnectionsListViewModelTest {
         viewModel.onDeleteItemResult(guid = "guid2")
 
         //then
-        Mockito.verify(mockApiManager).revokeConnections(
+        Mockito.verify(mockApiManagerV1).revokeConnections(
             listOf(RichConnection(connections[1], mockPrivateKey)),
-            viewModel
+            interactorV1
         )
         Mockito.verify(mockConnectionsRepository).deleteConnection("guid2")
         Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid2")
@@ -627,9 +681,9 @@ class ConnectionsListViewModelTest {
         viewModel.onDeleteItemResult(guid = "guid2")
 
         //then
-        Mockito.verify(mockApiManager).revokeConnections(
+        Mockito.verify(mockApiManagerV1).revokeConnections(
             listOf(RichConnection(connections[1], mockPrivateKey)),
-            viewModel
+            interactorV1
         )
         Mockito.verify(mockConnectionsRepository).deleteConnection("guid2")
         Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid2")
@@ -640,13 +694,15 @@ class ConnectionsListViewModelTest {
     fun menuItemTest() {
         assertThat(
             ConnectionsListViewModel.PopupMenuItem.values(),
-            equalTo(arrayOf(
-                ConnectionsListViewModel.PopupMenuItem.RECONNECT,
-                ConnectionsListViewModel.PopupMenuItem.RENAME,
-                ConnectionsListViewModel.PopupMenuItem.SUPPORT,
-                ConnectionsListViewModel.PopupMenuItem.CONSENTS,
-                ConnectionsListViewModel.PopupMenuItem.DELETE
-            ))
+            equalTo(
+                arrayOf(
+                    ConnectionsListViewModel.PopupMenuItem.RECONNECT,
+                    ConnectionsListViewModel.PopupMenuItem.RENAME,
+                    ConnectionsListViewModel.PopupMenuItem.SUPPORT,
+                    ConnectionsListViewModel.PopupMenuItem.CONSENTS,
+                    ConnectionsListViewModel.PopupMenuItem.DELETE
+                )
+            )
         )
     }
 }

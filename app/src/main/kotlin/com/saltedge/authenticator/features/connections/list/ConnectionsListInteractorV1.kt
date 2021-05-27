@@ -77,8 +77,8 @@ class ConnectionsListInteractorV1(
     }
 
     fun getConnectionSupportEmail(guid: String) {
-        connectionsRepository.getByGuid(guid)?.supportEmail?.let {
-            contract?.selectSupportForConnection(guid)
+        connectionsRepository.getByGuid(guid)?.supportEmail?.let { supportEmail ->
+            contract?.selectSupportForConnection(supportEmail)
         }
     }
 

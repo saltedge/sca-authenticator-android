@@ -107,7 +107,6 @@ class SettingsListViewModel(
             interactorV1.sendRevokeRequestForConnections()
             interactorV2.sendRevokeRequestForConnections()
             interactorV1.deleteAllConnectionsAndKeys()
-            interactorV2.deleteAllConnectionsAndKeys()
             clearSuccessEvent.postUnitEvent()
         }
     }
