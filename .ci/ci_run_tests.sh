@@ -19,13 +19,13 @@
 
 #!/usr/bin/env bash
 
-sdk_report_file="authenticator_sdk/build/reports/jacocoTestReport/html/index.html"
+sdk_report_file="authenticator_sdk_v1/build/reports/jacocoTestReport/html/index.html"
 app_report_file="app/build/reports/jacocoTestReport/html/index.html"
 
 ./gradlew clean
-./gradlew --stacktrace authenticator_sdk:jacocoTestReport 2>&1
+./gradlew --stacktrace authenticator_sdk_v1:jacocoTestReport 2>&1
 status=$?
-echo "authenticator_sdk test:$status"
+echo "authenticator_sdk_v1 test:$status"
 [[ ${status} -ne 0 ]] && exit ${status}
 ./gradlew --stacktrace app:jacocoTestReport 2>&1
 status=$?
