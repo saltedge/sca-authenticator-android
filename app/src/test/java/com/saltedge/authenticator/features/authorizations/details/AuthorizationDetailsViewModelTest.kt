@@ -26,7 +26,6 @@ import androidx.lifecycle.LifecycleRegistry
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.core.api.ERROR_CLASS_SSL_HANDSHAKE
 import com.saltedge.authenticator.core.api.model.DescriptionData
-import com.saltedge.authenticator.core.api.model.DescriptionTextData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.api.model.error.createRequestError
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
@@ -56,7 +55,7 @@ class AuthorizationDetailsViewModelTest {
         authorizationID = "1",
         authorizationCode = "111",
         title = "Test Authorization",
-        description = DescriptionData(text = DescriptionTextData("Authorization Description")),
+        description = DescriptionData(text = "Authorization Description"),
         validSeconds = 0,
         endTime = DateTime(0L),
         startTime = DateTime(0L),

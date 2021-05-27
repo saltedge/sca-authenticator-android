@@ -91,12 +91,12 @@ class AuthorizationContentView : LinearLayout {
         descriptionTextView?.setVisible(show = !htmlContent)
         descriptionWebView?.setVisible(show = htmlContent)
         if (htmlContent) {
-            val html = description.html?.html ?: ""
+            val html = description.html ?: ""
             val encodedHtml = android.util.Base64.encodeToString(html.toByteArray(), android.util.Base64.NO_PADDING)
             descriptionWebView?.loadData(encodedHtml, "text/html", "base64")
         } else {
             descriptionTextView?.movementMethod = ScrollingMovementMethod()
-            descriptionTextView?.text = description.text?.text ?: ""
+            descriptionTextView?.text = description.text ?: ""
         }
     }
 

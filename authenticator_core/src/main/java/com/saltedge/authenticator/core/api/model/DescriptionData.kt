@@ -30,8 +30,8 @@ import java.io.Serializable
  */
 data class DescriptionData(
     val payment: DescriptionPaymentData? = null,
-    val text: DescriptionTextData? = null,
-    val html: DescriptionHTMLData? = null,
+    val text: String? = null,
+    val html: String? = null,
     val extra: ExtraData? = null
 ) : Serializable {
     val hasHtmlContent: Boolean
@@ -49,10 +49,6 @@ data class DescriptionPaymentData(
     @SerializedName("fee") var fee: String? = null,
     @SerializedName("exchange_rate") var exchangeRate: String? = null
 )
-
-data class DescriptionTextData(@SerializedName("text") var text: String? = null)
-
-data class DescriptionHTMLData(@SerializedName("html") var html: String? = null)
 
 data class ExtraData(
     @SerializedName("action_date") var actionDate: String? = null,

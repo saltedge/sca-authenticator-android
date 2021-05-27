@@ -22,8 +22,6 @@ package com.saltedge.authenticator.features.authorizations.common
 
 import android.view.View
 import com.saltedge.authenticator.core.api.model.DescriptionData
-import com.saltedge.authenticator.core.api.model.DescriptionHTMLData
-import com.saltedge.authenticator.core.api.model.DescriptionTextData
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.tools.hasHTMLTags
@@ -253,6 +251,5 @@ private fun authorizationExpirationPeriod(startDate: DateTime?, endDate: DateTim
 }
 
 private fun String.toDescriptionData(): DescriptionData {
-    return if (this.hasHTMLTags()) DescriptionData(html = DescriptionHTMLData(html = this))
-    else DescriptionData(text = DescriptionTextData(text = this))
+    return if (this.hasHTMLTags()) DescriptionData(html = this) else DescriptionData(text = this)
 }
