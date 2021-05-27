@@ -27,7 +27,6 @@ import com.saltedge.authenticator.core.api.ERROR_CLASS_AUTHORIZATION_NOT_FOUND
 import com.saltedge.authenticator.core.api.ERROR_CLASS_CONNECTION_NOT_FOUND
 import com.saltedge.authenticator.core.api.ERROR_CLASS_SSL_HANDSHAKE
 import com.saltedge.authenticator.core.api.model.DescriptionData
-import com.saltedge.authenticator.core.api.model.DescriptionTextData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.api.model.error.createRequestError
 import com.saltedge.authenticator.core.model.ConnectionAbs
@@ -108,7 +107,7 @@ class AuthorizationDetailsInteractorV2Test {
             status = "pending",
             authorizationCode = "$id$id$id",
             title = "title$id",
-            description = DescriptionData(text = DescriptionTextData("desc$id")),
+            description = DescriptionData(text = "desc$id"),
             createdAt = createdAt,
             expiresAt = createdAt.plusHours(id)
         )

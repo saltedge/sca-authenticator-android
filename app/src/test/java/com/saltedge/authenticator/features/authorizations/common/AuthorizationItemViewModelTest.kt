@@ -23,7 +23,6 @@ package com.saltedge.authenticator.features.authorizations.common
 import android.view.View
 import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.core.api.model.DescriptionData
-import com.saltedge.authenticator.core.api.model.DescriptionTextData
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
@@ -52,7 +51,7 @@ class AuthorizationItemViewModelTest {
             authorizationID = "444",
             authorizationCode = "111",
             title = "title",
-            description = DescriptionData(text = DescriptionTextData("description")),
+            description = DescriptionData(text = "description"),
             endTime = DateTime(),
             connectionID = "333",
             connectionName = "Demobank",
@@ -299,7 +298,7 @@ class AuthorizationItemViewModelTest {
             authorizationID = "$index",
             authorizationCode = "$index",
             title = "$index",
-            description = DescriptionData(text = DescriptionTextData("$index")),
+            description = DescriptionData(text = "$index"),
             endTime = DateTime(index.toLong()),
             connectionID = "$index",
             connectionName = "$index",
@@ -479,7 +478,7 @@ class AuthorizationItemViewModelTest {
                     authorizationID = "444",
                     authorizationCode = "111",
                     title = "title",
-                    description = DescriptionData(text = DescriptionTextData("description")),
+                    description = DescriptionData(text = "description"),
                     endTime = DateTime(300000L),
                     connectionID = "333",
                     connectionName = "Demobank",
@@ -500,7 +499,7 @@ class AuthorizationItemViewModelTest {
             authorizationID = "444",
             authorizationCode = "111",
             title = "title",
-            description = DescriptionData(text = DescriptionTextData("description")),
+            description = DescriptionData(text = "description"),
             createdAt = DateTime(0L),
             expiresAt = DateTime(300000L),
             connectionID = "333",
@@ -519,7 +518,7 @@ class AuthorizationItemViewModelTest {
                     authorizationID = "444",
                     authorizationCode = "111",
                     title = "title",
-                    description = DescriptionData(text = DescriptionTextData("description")),
+                    description = DescriptionData(text = "description"),
                     endTime = DateTime(300000L),
                     connectionID = "333",
                     connectionName = "Demobank",
