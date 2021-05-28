@@ -37,7 +37,7 @@ import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.core.model.GUID
 import com.saltedge.authenticator.databinding.ConnectionsListBinding
-import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItem
 import com.saltedge.authenticator.features.connections.list.menu.MenuData
 import com.saltedge.authenticator.features.connections.list.menu.PopupMenuBuilder
 import com.saltedge.authenticator.features.main.SharedViewModel
@@ -118,7 +118,7 @@ class ConnectionsListFragment : BaseFragment(),
         viewModel = ViewModelProvider(this, viewModelFactory).get(ConnectionsListViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
-        viewModel.listItems.observe(this, Observer<List<ConnectionItemViewModel>> {
+        viewModel.listItems.observe(this, Observer<List<ConnectionItem>> {
             headerDecorator?.setHeaderForAllItems(it.count())
             headerDecorator?.footerPositions = arrayOf(it.count() - 1)
             adapter.data = it
@@ -146,10 +146,7 @@ class ConnectionsListFragment : BaseFragment(),
         })
         viewModel.onViewConsentsClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                navigateTo(
-                    actionRes = R.id.consents_list,
-                    bundle = bundle
-                )
+                navigateTo(actionRes = R.id.consents_list, bundle = bundle)
             }
         })
         viewModel.onSupportClickEvent.observe(this, Observer<ViewModelEvent<String?>> { event ->
@@ -157,7 +154,7 @@ class ConnectionsListFragment : BaseFragment(),
                 activity?.startMailApp(supportEmail)
             }
         })
-        viewModel.updateListItemEvent.observe(this, Observer<ConnectionItemViewModel> { itemIndex ->
+        viewModel.updateListItemEvent.observe(this, Observer<ConnectionItem> { itemIndex ->
             adapter.updateListItem(itemIndex)
         })
     }
@@ -178,10 +175,10 @@ class ConnectionsListFragment : BaseFragment(),
         swipeRefreshLayout?.setColorSchemeResources(R.color.primary, R.color.red, R.color.green)
         binding.executePendingBindings()
         sharedViewModel.newConnectionNameEntered.observe(viewLifecycleOwner, Observer<Bundle> { result ->
-            viewModel.onEditNameResult(result)
+            viewModel.onItemNameChanged(result)
         })
         sharedViewModel.connectionDeleted.observe(viewLifecycleOwner, Observer<GUID> { result ->
-            viewModel.onDeleteItemResult(result)
+            viewModel.onItemDeleted(result)
         })
     }
 

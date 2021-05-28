@@ -29,7 +29,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItem
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tools.appendColoredText
 import com.saltedge.authenticator.tools.inflateListItemView
@@ -52,7 +52,7 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
         }
     }
 
-    fun bind(item: ConnectionItemViewModel) {
+    fun bind(item: ConnectionItem) {
         logoImageView.loadRoundedImage(
             imageUrl = item.logoUrl,
             placeholderId = R.drawable.shape_bg_app_logo,
