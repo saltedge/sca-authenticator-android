@@ -58,4 +58,8 @@ open class Connection : RealmObject(), ConnectionAbs {
     override var providerRsaPublicKeyPem: String = ""
     @Keep @Required
     override var apiVersion: String = "1"
+
+    override fun toString(): String {
+        return "Connection(guid='$guid', id='$id', createdAt=$createdAt, updatedAt=$updatedAt, name='$name', code='$code', connectUrl='$connectUrl', logoUrl='$logoUrl', accessToken='$accessToken', status='$status', supportEmail=$supportEmail, consentManagementSupported=$consentManagementSupported, geolocationRequired=$geolocationRequired, providerRsaPublicKeyPem='$providerRsaPublicKeyPem', apiVersion='$apiVersion')"
+    }
 }

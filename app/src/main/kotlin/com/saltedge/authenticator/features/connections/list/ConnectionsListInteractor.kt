@@ -69,7 +69,7 @@ class ConnectionsListInteractor(
         decryptJob.cancel()
     }
 
-    fun collectAllConnectionsViewModels(): List<Connection> {
+    fun getAllConnections(): List<Connection> {
         return connectionsRepository.getAllConnections().sortedBy { it.createdAt }
     }
 
@@ -80,11 +80,9 @@ class ConnectionsListInteractor(
     }
 
     fun getConsents() {
-        if (richConnections.isEmpty()) return
-        apiManagerV1.getConsents(
-            connectionsAndKeys = richConnections.values.toList(),
-            resultCallback = this
-        )
+        val v1RichConnections = richConnections.values.filter { it.connection.apiVersion == API_V1_VERSION }
+        if (v1RichConnections.isEmpty()) return
+        apiManagerV1.getConsents(connectionsAndKeys = v1RichConnections.toList(), resultCallback = this)
     }
 
     fun revokeConnection(guid: String) {

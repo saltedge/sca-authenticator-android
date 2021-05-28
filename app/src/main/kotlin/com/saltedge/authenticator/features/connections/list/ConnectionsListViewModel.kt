@@ -111,8 +111,7 @@ class ConnectionsListViewModel(
                 viewModel.connectionId == it.connectionId
             }?.guid ?: ""
         }
-        val newListItems = updateItemsWithConsentData(listItemsValues, consents)
-        listItems.postValue(newListItems)
+        listItems.postValue(updateItemsWithConsentData(listItemsValues, consents))
     }
 
     fun onItemNameChanged(data: Bundle) {
@@ -138,56 +137,40 @@ class ConnectionsListViewModel(
     }
 
     fun onListItemClick(itemIndex: Int) {
-        listItemsValues.getOrNull(itemIndex)?.let { item ->
-            val menuItems = mutableListOf<MenuItemData>()
-            if (!item.isActive) {
-                menuItems.add(
-                    MenuItemData(
-                        id = PopupMenuItem.RECONNECT.ordinal,
-                        iconRes = R.drawable.ic_menu_reconnect_24dp,
-                        textRes = R.string.actions_reconnect
-                    )
-                )
-            }
-            menuItems.addAll(
-                listOf(
-                    MenuItemData(
-                        id = PopupMenuItem.RENAME.ordinal,
-                        iconRes = R.drawable.ic_menu_edit_24dp,
-                        textRes = R.string.actions_rename
-                    ),
-                    MenuItemData(
-                        id = PopupMenuItem.SUPPORT.ordinal,
-                        iconRes = R.drawable.ic_contact_support_24dp,
-                        textRes = R.string.actions_contact_support
-                    )
-                )
-            )
-            if ((consents[item.guid]?.count() ?: 0) > 0) {
-                menuItems.add(
-                    MenuItemData(
-                        id = PopupMenuItem.CONSENTS.ordinal,
-                        iconRes = R.drawable.ic_view_consents_24dp,
-                        textRes = R.string.actions_view_consents
-                    )
-                )
-            }
-            menuItems.add(
-                MenuItemData(
-                    id = PopupMenuItem.DELETE.ordinal,
-                    iconRes = if (item.isActive) R.drawable.ic_menu_delete_24dp else R.drawable.ic_menu_remove_24dp,
-                    textRes = if (item.isActive) R.string.actions_delete else R.string.actions_remove
-                )
-            )
-            onListItemClickEvent.postValue(
-                ViewModelEvent(
-                    MenuData(
-                        menuId = itemIndex,
-                        items = menuItems
-                    )
-                )
-            )
+        val item = listItemsValues.getOrNull(itemIndex) ?: return
+        val menuItems = mutableListOf<MenuItemData>()
+        if (!item.isActive) {
+            menuItems.add(MenuItemData(
+                id = PopupMenuItem.RECONNECT.ordinal,
+                iconRes = R.drawable.ic_menu_reconnect_24dp,
+                textRes = R.string.actions_reconnect
+            ))
         }
+        menuItems.addAll(listOf(
+            MenuItemData(
+                id = PopupMenuItem.RENAME.ordinal,
+                iconRes = R.drawable.ic_menu_edit_24dp,
+                textRes = R.string.actions_rename
+            ),
+            MenuItemData(
+                id = PopupMenuItem.SUPPORT.ordinal,
+                iconRes = R.drawable.ic_contact_support_24dp,
+                textRes = R.string.actions_contact_support
+            )
+        ))
+        if (consents[item.guid]?.isNotEmpty() == true) {
+            menuItems.add(MenuItemData(
+                id = PopupMenuItem.CONSENTS.ordinal,
+                iconRes = R.drawable.ic_view_consents_24dp,
+                textRes = R.string.actions_view_consents
+            ))
+        }
+        menuItems.add(MenuItemData(
+            id = PopupMenuItem.DELETE.ordinal,
+            iconRes = if (item.isActive) R.drawable.ic_menu_delete_24dp else R.drawable.ic_menu_remove_24dp,
+            textRes = if (item.isActive) R.string.actions_delete else R.string.actions_remove
+        ))
+        onListItemClickEvent.postValue(ViewModelEvent(MenuData(menuId = itemIndex, items = menuItems)))
     }
 
     fun refreshConsents() {
@@ -195,7 +178,7 @@ class ConnectionsListViewModel(
     }
 
     private fun updateViewsContent() {
-        val items = interactor.collectAllConnectionsViewModels().convertConnectionsToViewModels(appContext)
+        val items = interactor.getAllConnections().convertConnectionsToViewModels(appContext)
         listItems.postValue(updateItemsWithConsentData(items, consents))
         emptyViewVisibility.postValue(if (items.isEmpty()) View.VISIBLE else View.GONE)
         listVisibility.postValue(if (items.isEmpty()) View.GONE else View.VISIBLE)
@@ -205,11 +188,9 @@ class ConnectionsListViewModel(
         items: List<ConnectionItem>,
         consents: Map<ID, List<ConsentData>>
     ): List<ConnectionItem> {
-        return items.apply {
-            forEach {
-                val count = consents[it.guid]?.count() ?: 0
-                it.consentsDescription = consentsCountPrefixForConnection(count, appContext)
-            }
+        return items.onEach {
+            val count = consents[it.guid]?.count() ?: 0
+            it.consentsDescription = consentsCountPrefixForConnection(count, appContext)
         }
     }
 
