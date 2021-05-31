@@ -167,9 +167,16 @@ class AuthorizationsListViewModel(
         if (this.listItemsValues != joinedViewModels) postListItemsUpdate(newItems = joinedViewModels)
     }
 
-    override fun onConfirmDenySuccess(connectionID: ID, authorizationID: ID, newStatus: AuthorizationStatus?) {
+    override fun onConfirmDenySuccess(
+        connectionID: ID,
+        authorizationID: ID,
+        newStatus: AuthorizationStatus?
+    ) {
         findListItem(connectionID = connectionID, authorizationID = authorizationID)?.let { item ->
-            updateItemStatus(listItem = item, newStatus = newStatus ?: item.status.computeConfirmedStatus())
+            updateItemStatus(
+                listItem = item,
+                newStatus = newStatus ?: item.status.computeConfirmedStatus()
+            )
         }
     }
 
@@ -213,7 +220,10 @@ class AuthorizationsListViewModel(
         }
     }
 
-    private fun updateItemStatus(listItem: AuthorizationItemViewModel, newStatus: AuthorizationStatus) {
+    private fun updateItemStatus(
+        listItem: AuthorizationItemViewModel,
+        newStatus: AuthorizationStatus
+    ) {
         val itemIndex = listItemsValues.indexOf(listItem)
         listItem.setNewStatus(newStatus = newStatus)
         listItemUpdateEvent.postValue(ViewModelEvent(itemIndex))

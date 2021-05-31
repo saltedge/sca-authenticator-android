@@ -222,4 +222,16 @@
     <string name="consent_revoked_for">Consent revoked for \%s</string>
 
     <string name="scan_qr_code">Scan QR Code</string>
+
+    <string name="description_payee">Payee</string>
+    <string name="description_amount">Amount</string>
+    <string name="description_account">Account</string>
+    <string name="description_payment_date">Date</string>
+    <string name="description_fees">Fees</string>
+    <string name="description_exchange_rate">Exchange rate</string>
+    <string name="description_reference">Reference</string>
+    <string name="description_extra_date">Date:</string>
+    <string name="description_extra_from">From:</string>
+    <string name="description_extra_location">Location:</string>
+    <string name="description_extra_ip">IP address:</string>
 </resources>

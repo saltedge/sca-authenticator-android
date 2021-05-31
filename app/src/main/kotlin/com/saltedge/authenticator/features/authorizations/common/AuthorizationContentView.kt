@@ -34,6 +34,8 @@ import com.saltedge.authenticator.app.buildVersionLessThan23
 import com.saltedge.authenticator.core.api.model.DescriptionData
 import com.saltedge.authenticator.tools.applyAlphaToColor
 import com.saltedge.authenticator.tools.setVisible
+import com.saltedge.authenticator.tools.toDateFormatString
+import com.saltedge.authenticator.tools.toDateFormatStringWithUTC
 import kotlinx.android.synthetic.main.view_authorization_content.view.*
 
 class AuthorizationContentView : LinearLayout {
@@ -88,16 +90,53 @@ class AuthorizationContentView : LinearLayout {
 
     private fun setDescription(description: DescriptionData) {
         val htmlContent = description.hasHtmlContent
+        val textContent = description.hasTextContent
+        val extraContent = description.hasExtraContent
+        val paymentContent = description.hasPaymentContent
+
         descriptionTextView?.setVisible(show = !htmlContent)
         descriptionWebView?.setVisible(show = htmlContent)
-        if (htmlContent) {
-            val html = description.html ?: ""
-            val encodedHtml = android.util.Base64.encodeToString(html.toByteArray(), android.util.Base64.NO_PADDING)
-            descriptionWebView?.loadData(encodedHtml, "text/html", "base64")
-        } else {
-            descriptionTextView?.movementMethod = ScrollingMovementMethod()
-            descriptionTextView?.text = description.text ?: ""
+        paymentView?.setVisible(show = paymentContent)
+        when {
+            htmlContent -> {
+                val html = description.html ?: ""
+                val encodedHtml = android.util.Base64.encodeToString(html.toByteArray(), android.util.Base64.NO_PADDING)
+                descriptionWebView?.loadData(encodedHtml, "text/html", "base64")
+            }
+            paymentContent -> {
+                payeeView?.setTitle(R.string.description_payee)
+                payeeView?.setDescription(description.payment?.payee ?: "")
+                amountView?.setTitle(R.string.description_amount)
+                amountView?.setDescription(description.payment?.amount ?: "")
+                accountView?.setTitle(R.string.description_account)
+                accountView?.setDescription(description.payment?.account ?: "")
+                paymentDateView?.setTitle(R.string.description_payment_date)
+                paymentDateView?.setDescription(description.payment?.paymentDate?.toDateFormatString(appContext = context) ?: "")
+                feeView?.setTitle(R.string.description_fees)
+                feeView?.setDescription(description.payment?.fee ?: "")
+                exchangeRateView?.setTitle(R.string.description_exchange_rate)
+                exchangeRateView?.setDescription(description.payment?.exchangeRate ?: "")
+                referenceView?.setTitle(R.string.description_reference)
+                referenceView?.setDescription(description.payment?.reference ?: "")
+                if (extraContent) showExtraContent(description = description)
+            }
+            textContent -> {
+                descriptionTextView?.movementMethod = ScrollingMovementMethod()
+                descriptionTextView?.text = description.text ?: ""
+                if (extraContent) showExtraContent(description = description)
+            }
         }
+    }
+
+    private fun showExtraContent(description: DescriptionData) {
+        dateView?.setTitle(R.string.description_extra_date)
+        dateView?.setDescription(description.extra?.actionDate?.toDateFormatStringWithUTC(appContext = context) ?: "")
+        deviceView?.setTitle(R.string.description_extra_from)
+        deviceView?.setDescription(description.extra?.device ?: "")
+        locationView?.setTitle(R.string.description_extra_location)
+        locationView?.setDescription(description.extra?.location ?: "")
+        ipView?.setTitle(R.string.description_extra_ip)
+        ipView?.setDescription(description.extra?.ip ?: "")
     }
 
     private fun initBlurringView() {

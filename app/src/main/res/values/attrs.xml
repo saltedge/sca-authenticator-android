@@ -42,6 +42,16 @@
         <attr name="iconSrc" />
     </declare-styleable>
 
+    <declare-styleable name="PaymentView">
+        <attr name="title" />
+        <attr name="description" />
+    </declare-styleable>
+
+    <declare-styleable name="ExtraView">
+        <attr name="title" />
+        <attr name="description" />
+    </declare-styleable>
+
     <declare-styleable name="DotsPageIndicatorView">
         <attr name="select" format="integer" />
         <attr name="unselectedColor" format="color" />
