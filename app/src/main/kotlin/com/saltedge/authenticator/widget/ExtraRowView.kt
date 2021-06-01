@@ -25,13 +25,13 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.tools.setVisible
 import kotlinx.android.synthetic.main.view_extra.view.*
 
 class ExtraRowView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_extra, this)
-        initAttributes(context, attrs)
     }
 
     fun setTitle(title: String) {
@@ -50,13 +50,7 @@ class ExtraRowView(context: Context, attrs: AttributeSet) : LinearLayout(context
         setDescription(context.getString(textResId))
     }
 
-    private fun initAttributes(context: Context, attrs: AttributeSet) {
-        val attributes = context.obtainStyledAttributes(attrs, R.styleable.EmptyView)
-        try {
-            attributes.getString(R.styleable.ExtraView_title)?.let { setTitle(it) }
-            attributes.getString(R.styleable.ExtraView_description)?.let { setDescription(it) }
-        } finally {
-            attributes.recycle()
-        }
+    fun setVisible(show: Boolean) {
+        contentView?.setVisible(show = show)
     }
 }

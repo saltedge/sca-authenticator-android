@@ -25,13 +25,13 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.tools.setVisible
 import kotlinx.android.synthetic.main.view_payment.view.*
 
 class PaymentRowView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_payment, this)
-        initAttributes(context, attrs)
     }
 
     fun setTitle(title: String) {
@@ -50,13 +50,7 @@ class PaymentRowView(context: Context, attrs: AttributeSet) : LinearLayout(conte
         setDescription(context.getString(textResId))
     }
 
-    private fun initAttributes(context: Context, attrs: AttributeSet) {
-        val attributes = context.obtainStyledAttributes(attrs, R.styleable.PaymentView)
-        try {
-            attributes.getString(R.styleable.PaymentView_title)?.let { setTitle(it) }
-            attributes.getString(R.styleable.PaymentView_description)?.let { setDescription(it) }
-        } finally {
-            attributes.recycle()
-        }
+    fun setVisible(show: Boolean) {
+        contentView?.setVisible(show = show)
     }
 }

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2020 Salt Edge Inc.
@@ -78,100 +77,106 @@
         <FrameLayout
             android:id="@+id/contentView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/extraView"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/negativeActionView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/titleTextView">
 
-            <TextView
-                android:id="@+id/descriptionTextView"
-                style="@style/Text16Primary"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/dp_16"
-                android:gravity="start"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/extraView"
-                tools:text="Payment description\n300USD for ticket" />
+                android:layout_height="wrap_content">
 
-            <LinearLayout
-                android:id="@+id/paymentView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_18"
-                android:orientation="vertical"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/extraView">
-
-                <com.saltedge.authenticator.widget.PaymentRowView
-                    android:id="@+id/payeeView"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_18"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toTopOf="@+id/negativeActionView">
 
-                <com.saltedge.authenticator.widget.PaymentRowView
-                    android:id="@+id/amountView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    <TextView
+                        android:id="@+id/descriptionTextView"
+                        style="@style/Text16Primary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/dp_16"
+                        android:gravity="start"
+                        android:visibility="gone"
+                        tools:text="Payment description\n300USD for ticket" />
 
-                <com.saltedge.authenticator.widget.PaymentRowView
-                    android:id="@+id/accountView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    <LinearLayout
+                        android:id="@+id/paymentView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
-                <com.saltedge.authenticator.widget.PaymentRowView
-                    android:id="@+id/paymentDateView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                        <com.saltedge.authenticator.widget.PaymentRowView
+                            android:id="@+id/payeeView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
 
-                <com.saltedge.authenticator.widget.PaymentRowView
-                    android:id="@+id/feeView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                        <com.saltedge.authenticator.widget.PaymentRowView
+                            android:id="@+id/amountView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
 
-                <com.saltedge.authenticator.widget.PaymentRowView
-                    android:id="@+id/exchangeRateView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                        <com.saltedge.authenticator.widget.PaymentRowView
+                            android:id="@+id/accountView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
 
-                <com.saltedge.authenticator.widget.PaymentRowView
-                    android:id="@+id/referenceView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+                        <com.saltedge.authenticator.widget.PaymentRowView
+                            android:id="@+id/paymentDateView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <com.saltedge.authenticator.widget.PaymentRowView
+                            android:id="@+id/feeView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <com.saltedge.authenticator.widget.PaymentRowView
+                            android:id="@+id/exchangeRateView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <com.saltedge.authenticator.widget.PaymentRowView
+                            android:id="@+id/referenceView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/extraView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_8"
+                        android:orientation="vertical">
+
+                        <com.saltedge.authenticator.widget.ExtraRowView
+                            android:id="@+id/dateView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <com.saltedge.authenticator.widget.ExtraRowView
+                            android:id="@+id/deviceView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <com.saltedge.authenticator.widget.ExtraRowView
+                            android:id="@+id/locationView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <com.saltedge.authenticator.widget.ExtraRowView
+                            android:id="@+id/ipView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                </LinearLayout>
+            </ScrollView>
         </FrameLayout>
-
-        <LinearLayout
-            android:id="@+id/extraView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="@dimen/dp_8"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toTopOf="@+id/negativeActionView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/contentView">
-
-            <com.saltedge.authenticator.widget.ExtraRowView
-                android:id="@+id/dateView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <com.saltedge.authenticator.widget.ExtraRowView
-                android:id="@+id/deviceView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <com.saltedge.authenticator.widget.ExtraRowView
-                android:id="@+id/locationView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <com.saltedge.authenticator.widget.ExtraRowView
-                android:id="@+id/ipView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
 
         <com.saltedge.authenticator.core.web.SEFrameWebView
             android:id="@+id/descriptionWebView"
