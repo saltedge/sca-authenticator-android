@@ -30,7 +30,7 @@ import com.saltedge.authenticator.core.api.KEY_NAME
 import com.saltedge.authenticator.core.model.ConnectionStatus
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
-import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItem
 import com.saltedge.authenticator.features.connections.list.menu.MenuData
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.models.Connection
@@ -42,11 +42,12 @@ import com.saltedge.authenticator.sdk.api.model.ConsentSharedData
 import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
-import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2Abs
+import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
-import org.junit.Assert.*
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -61,47 +62,60 @@ import java.security.PrivateKey
 class ConnectionsListViewModelTest {
 
     private lateinit var viewModel: ConnectionsListViewModel
-    private lateinit var interactorV1: ConnectionsListInteractorV1
-    private lateinit var interactorV2: ConnectionsListInteractorV2
+    private lateinit var interactor: ConnectionsListInteractor
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
     private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
-    private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
-    private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
+    private val mockPrivateKey = mock(PrivateKey::class.java)
     private val mockCryptoToolsV1 = mock(CryptoToolsV1Abs::class.java)
-    private val mockCryptoToolsV2 = mock(CryptoToolsV2Abs::class.java)
     private val mockApiManagerV1 = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockApiManagerV2 = mock(ScaServiceClientAbs::class.java)
-    private val connections = listOf(
-        Connection().apply {
-            id = "1"
-            guid = "guid1"
-            code = "demobank1"
-            name = "Demobank1"
-            status = "${ConnectionStatus.INACTIVE}"
-            accessToken = "token1"
-            supportEmail = "example@example.com"
-            createdAt = 100L
-            updatedAt = 100L
-        },
-        Connection().apply {
-            id = "2"
-            guid = "guid2"
-            code = "demobank2"
-            name = "Demobank2"
-            status = "${ConnectionStatus.ACTIVE}"
-            supportEmail = "example@example.com"
-            accessToken = "token2"
-            createdAt = 300L
-            updatedAt = 300L
-            apiVersion = "1"
-        }
-    )
-    private val mockConnectionAndKey = RichConnection(connections[1], mockPrivateKey)
+
+    private val connection1 = Connection().apply {
+        id = "1"
+        guid = "guid1"
+        code = "demobank1"
+        name = "Demobank1"
+        status = "${ConnectionStatus.ACTIVE}"
+        accessToken = "token1"
+        supportEmail = "example@example.com"
+        createdAt = 100L
+        updatedAt = 100L
+        apiVersion = API_V1_VERSION
+    }
+    private val connection2 = Connection().apply {
+        id = "2"
+        guid = "guid2"
+        code = "demobank2"
+        name = "Demobank2"
+        status = "${ConnectionStatus.ACTIVE}"
+        supportEmail = "example@example.com"
+        accessToken = "token2"
+        createdAt = 200L
+        updatedAt = 200L
+        apiVersion = API_V2_VERSION
+    }
+    private val connection3Inactive = Connection().apply {
+        id = "3"
+        guid = "guid3"
+        code = "demobank3"
+        name = "Demobank3"
+        status = "${ConnectionStatus.INACTIVE}"
+        supportEmail = "example@example.com"
+        accessToken = "token3"
+        createdAt = 300L
+        updatedAt = 300L
+        apiVersion = API_V1_VERSION
+    }
+    private val richConnection1 = RichConnection(connection1, mockPrivateKey)
+    private val richConnection2 = RichConnection(connection2, mockPrivateKey)
+    private val richConnection3 = RichConnection(connection3Inactive, mockPrivateKey)
+    private val allConnections = listOf(connection1, connection2, connection3Inactive)
+    private val allActiveConnections = listOf(connection1, connection2)
     private val consentData: List<ConsentData> = listOf(
         ConsentData(
             id = "555",
-            connectionId = "2",
+            connectionId = "1",
             userId = "1",
             tppName = "title",
             consentTypeString = "aisp",
@@ -114,41 +128,30 @@ class ConnectionsListViewModelTest {
 
     @Before
     fun setUp() {
-        Mockito.doReturn(connections).`when`(mockConnectionsRepository).getAllConnections()
-        Mockito.doReturn(connections).`when`(mockConnectionsRepository).getAllActiveConnections(API_V1_VERSION)
-        Mockito.doReturn(connections[0]).`when`(mockConnectionsRepository).getByGuid("guid1")
-        Mockito.doReturn(connections[1]).`when`(mockConnectionsRepository).getByGuid("guid2")
-        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(connections[1]))
-        given(mockKeyStoreManager.enrichConnection(connections[1])).willReturn(mockConnectionAndKey)
+        given(mockConnectionsRepository.getByGuid(connection1.guid)).willReturn(connection1)
+        given(mockConnectionsRepository.getByGuid(connection2.guid)).willReturn(connection2)
+        given(mockConnectionsRepository.getByGuid(connection3Inactive.guid)).willReturn(connection3Inactive)
+        given(mockConnectionsRepository.getAllConnections()).willReturn(allConnections)
+        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(allActiveConnections)
+        given(mockKeyStoreManager.enrichConnection(connection1)).willReturn(richConnection1)
+        given(mockKeyStoreManager.enrichConnection(connection2)).willReturn(richConnection2)
+        given(mockKeyStoreManager.enrichConnection(connection3Inactive)).willReturn(richConnection3)
 
-        interactorV1 = ConnectionsListInteractorV1(
+        interactor = ConnectionsListInteractor(
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
             cryptoTools = mockCryptoToolsV1,
-            apiManager = mockApiManagerV1
+            apiManagerV1 = mockApiManagerV1,
+            apiManagerV2 = mockApiManagerV2
         )
-        interactorV2 = ConnectionsListInteractorV2(
-            connectionsRepository = mockConnectionsRepository,
-            keyStoreManager = mockKeyStoreManager,
-            cryptoTools = mockCryptoToolsV2,
-            apiManager = mockApiManagerV2
-        )
-
-        viewModel = ConnectionsListViewModel(
-            appContext = context,
-            interactorV1 = interactorV1,
-            interactorV2 = interactorV2
-        )
+        viewModel = ConnectionsListViewModel(appContext = context, interactor = interactor)
     }
 
-    /**
-     * Test onStart when db is empty
-     */
     @Test
     @Throws(Exception::class)
     fun onStartTestCase1() {
         //given
-        Mockito.doReturn(listOf<Connection>()).`when`(mockConnectionsRepository).getAllConnections()
+        given(mockConnectionsRepository.getAllConnections()).willReturn(emptyList())
 
         //when
         viewModel.onStart()
@@ -158,73 +161,57 @@ class ConnectionsListViewModelTest {
         assertThat(viewModel.listVisibility.value, equalTo(View.GONE))
     }
 
-    /**
-     * Test onStart when db isn't empty
-     */
     @Test
     @Throws(Exception::class)
     fun onStartTestCase2() {
         //given
-        val connection: List<ConnectionItemViewModel> =
-            connections.convertConnectionsToViewModels(context)
-        viewModel.listItems.value = connection
+        val expectedItems: List<ConnectionItem> = allConnections.convertConnectionsToViewModels(context)
 
         //when
         viewModel.onStart()
 
         //then
-        assertThat(viewModel.listItemsValues, equalTo(connection))
+        assertThat(viewModel.listItemsValues, equalTo(expectedItems))
         assertThat(viewModel.emptyViewVisibility.value, equalTo(View.GONE))
         assertThat(viewModel.listVisibility.value, equalTo(View.VISIBLE))
-    }
 
-    @Test
-    @Throws(Exception::class)
-    fun onStartTestCase3() {
-        //given
-        val connection: List<ConnectionItemViewModel> =
-            listOf(connections[0]).convertConnectionsToViewModels(context)
-        viewModel.listItems.value = connection
-
-        //when
-        viewModel.onStart()
-
-        //then
-        Mockito.verify(mockConnectionsRepository).getAllActiveConnections(API_V1_VERSION)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onStartTestCase4() {
-        //given
-        val connection: List<ConnectionItemViewModel> =
-            listOf(connections[1]).convertConnectionsToViewModels(context)
-        viewModel.listItems.value = connection
-
-        //when
-        viewModel.onStart()
-
-        //then
-        Mockito.verify(mockConnectionsRepository).getAllActiveConnections(API_V1_VERSION)
+        Mockito.verify(mockConnectionsRepository).getAllActiveConnections()
+        Mockito.verify(mockConnectionsRepository).getAllConnections()
         Mockito.verify(mockApiManagerV1).getConsents(
-            connectionsAndKeys = listOf(RichConnection(connections[1], mockPrivateKey)),
-            resultCallback = interactorV1
+            connectionsAndKeys = listOf(richConnection1),
+            resultCallback = interactor
         )
+        verifyNoInteractions(mockApiManagerV2)
     }
 
     @Test
     @Throws(Exception::class)
-    fun refreshConsentsTest() {
+    fun refreshConsentsTestCase1() {
         //given
-        val connection: List<ConnectionItemViewModel> =
-            listOf(connections[1]).convertConnectionsToViewModels(context)
-        viewModel.listItems.value = connection
+        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(emptyList())
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
 
         //when
         viewModel.refreshConsents()
 
         //then
-        verifyNoInteractions(mockConnectionsRepository, mockApiManager)
+        verifyNoInteractions(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun refreshConsentsTestCase2() {
+        //given
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+
+        //when
+        viewModel.refreshConsents()
+
+        //then
+        Mockito.verify(mockApiManagerV1).getConsents(connectionsAndKeys = listOf(richConnection1), resultCallback = interactor)
+        verifyNoInteractions(mockApiManagerV2)
     }
 
     @Test
@@ -244,19 +231,8 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun processDecryptedConsentsResultTestCase2() {
         //given
-        viewModel.listItems.value = listOf(
-            ConnectionItemViewModel(
-                guid = "guid2",
-                connectionId = "2",
-                name = "Demobank2",
-                statusDescription = "Linked on 1 January 1970",
-                statusDescriptionColorRes = R.color.dark_60_and_grey_100,
-                logoUrl = "",
-                isActive = true,
-                isChecked = false,
-                apiVersion = API_V1_VERSION
-            )
-        )
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
 
         //when
         viewModel.processDecryptedConsentsResult(result = consentData)
@@ -266,17 +242,44 @@ class ConnectionsListViewModelTest {
             viewModel.listItems.value,
             equalTo(
                 listOf(
-                    ConnectionItemViewModel(
-                        guid = "guid2",
-                        connectionId = "2",
-                        name = "Demobank2",
+                    ConnectionItem(
+                        guid = "guid1",
+                        connectionId = "1",
+                        name = "Demobank1",
                         statusDescription = "Linked on 1 January 1970",
                         statusDescriptionColorRes = R.color.dark_60_and_grey_100,
                         logoUrl = "",
                         consentsDescription = "1 consent\u30FB",
                         isActive = true,
                         isChecked = false,
-                        apiVersion = API_V1_VERSION
+                        apiVersion = API_V1_VERSION,
+                        email = "example@example.com"
+                    ),
+                    ConnectionItem(
+                        guid = "guid2",
+                        connectionId = "2",
+                        name = "Demobank2",
+                        statusDescription = "Linked on 1 January 1970",
+                        statusDescriptionColorRes = R.color.dark_60_and_grey_100,
+                        logoUrl = "",
+                        consentsDescription = "",
+                        isActive = true,
+                        isChecked = false,
+                        apiVersion = API_V2_VERSION,
+                        email = "example@example.com"
+                    ),
+                    ConnectionItem(
+                        guid = "guid3",
+                        connectionId = "3",
+                        name = "Demobank3",
+                        statusDescription = "Inactive. Please reconnect.",
+                        statusDescriptionColorRes = R.color.red_and_red_light,
+                        logoUrl = "",
+                        consentsDescription = "",
+                        isActive = false,
+                        isChecked = false,
+                        apiVersion = API_V1_VERSION,
+                        email = "example@example.com"
                     )
                 )
             )
@@ -285,119 +288,26 @@ class ConnectionsListViewModelTest {
 
     @Test
     @Throws(Exception::class)
-    fun processDecryptedConsentsResultTestCase3() {
-        //given
-        val connection: List<ConnectionItemViewModel> = listOf(
-            ConnectionItemViewModel(
-                guid = "guid1",
-                connectionId = "1",
-                name = "Demobank1",
-                statusDescription = "Inactive. Please reconnect.",
-                statusDescriptionColorRes = R.color.red_and_red_light,
-                logoUrl = "",
-                isActive = true,
-                isChecked = false,
-                apiVersion = API_V1_VERSION
-            )
-        )
-        viewModel.listItems.value = connection
-
-        //when
-        viewModel.processDecryptedConsentsResult(result = emptyList())
-
-        //then
-        assertThat(
-            viewModel.listItems.value, equalTo(
-            listOf(
-                ConnectionItemViewModel(
-                    guid = "guid1",
-                    connectionId = "1",
-                    name = "Demobank1",
-                    statusDescription = "Inactive. Please reconnect.",
-                    statusDescriptionColorRes = R.color.red_and_red_light,
-                    logoUrl = "",
-                    isActive = true,
-                    isChecked = false,
-                    apiVersion = API_V1_VERSION
-                )
-            )
-        )
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun getConnectionStatusDescriptionTestCase1() {
-        //given inactive connection
-        viewModel.listItems.value = listOf(connections[0]).convertConnectionsToViewModels(context)
-
-        //then
-        assertThat(
-            viewModel.listItems.value, equalTo(
-            listOf(
-                ConnectionItemViewModel(
-                    guid = "guid1",
-                    connectionId = "1",
-                    name = "Demobank1",
-                    statusDescription = "Inactive. Please reconnect.",
-                    statusDescriptionColorRes = R.color.red_and_red_light,
-                    logoUrl = "",
-                    isActive = false,
-                    isChecked = false,
-                    apiVersion = API_V1_VERSION
-                )
-            )
-        )
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun getConnectionStatusDescriptionTestCase2() {
-        //given active connection
-        viewModel.listItems.value = listOf(connections[1]).convertConnectionsToViewModels(context)
-
-        //then
-        assertThat(
-            viewModel.listItems.value, equalTo(
-            listOf(
-                ConnectionItemViewModel(
-                    guid = "guid2",
-                    connectionId = "2",
-                    name = "Demobank2",
-                    statusDescription = "Linked on 1 January 1970",
-                    statusDescriptionColorRes = R.color.dark_60_and_grey_100,
-                    logoUrl = "",
-                    isActive = true,
-                    isChecked = false,
-                    apiVersion = API_V1_VERSION
-                )
-            )
-        )
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
     fun onViewClickTest() {
         viewModel.onViewClick(-1)
 
-        assertNull(viewModel.onQrScanClickEvent.value)
+        Assert.assertNull(viewModel.onQrScanClickEvent.value)
 
         viewModel.onViewClick(R.id.actionView)
 
-        assertNotNull(viewModel.onQrScanClickEvent.value)
+        Assert.assertNotNull(viewModel.onQrScanClickEvent.value)
     }
 
     @Test
     @Throws(Exception::class)
     fun onListItemClickTestCase1() {
         //given list of items, list of consents and index of active item
-        viewModel.listItems.value = connections.convertConnectionsToViewModels(context)
+        viewModel.onStart()
         viewModel.processDecryptedConsentsResult(result = consentData)
-        val activeItemIndex = 1
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+        val activeItemIndex = 0
 
-        assertNull(viewModel.onListItemClickEvent.value)
+        Assert.assertNull(viewModel.onListItemClickEvent.value)
 
         //when
         viewModel.onListItemClick(activeItemIndex)
@@ -440,55 +350,53 @@ class ConnectionsListViewModelTest {
     @Test
     @Throws(Exception::class)
     fun onListItemClickTestCase2() {
-        //given list of items, empty list of consents and index of active item
-        viewModel.listItems.value = connections.convertConnectionsToViewModels(context)
-        val inactiveItemIndex = 0
+        //given list of items, empty list of consents and index of inactive item
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+        val inactiveItemIndex = 2
 
-        assertNull(viewModel.onListItemClickEvent.value)
+        Assert.assertNull(viewModel.onListItemClickEvent.value)
 
         //when
         viewModel.onListItemClick(inactiveItemIndex)
 
         //then
-        assertThat(
-            viewModel.onListItemClickEvent.value,
-            equalTo(
-                ViewModelEvent(
-                    MenuData(
-                        menuId = inactiveItemIndex,
-                        items = listOf(
-                            MenuItemData(
-                                id = ConnectionsListViewModel.PopupMenuItem.RECONNECT.ordinal,
-                                iconRes = R.drawable.ic_menu_reconnect_24dp,
-                                textRes = R.string.actions_reconnect
-                            ),
-                            MenuItemData(
-                                id = ConnectionsListViewModel.PopupMenuItem.RENAME.ordinal,
-                                iconRes = R.drawable.ic_menu_edit_24dp,
-                                textRes = R.string.actions_rename
-                            ),
-                            MenuItemData(
-                                id = ConnectionsListViewModel.PopupMenuItem.SUPPORT.ordinal,
-                                iconRes = R.drawable.ic_contact_support_24dp,
-                                textRes = R.string.actions_contact_support
-                            ),
-                            MenuItemData(
-                                id = ConnectionsListViewModel.PopupMenuItem.DELETE.ordinal,
-                                iconRes = R.drawable.ic_menu_remove_24dp,
-                                textRes = R.string.actions_remove
-                            )
-                        )
-                    )
+        val menuData: MenuData = viewModel.onListItemClickEvent.value!!.peekContent()
+        val expectedMenuData = MenuData(
+            menuId = inactiveItemIndex,
+            items = listOf(
+                MenuItemData(
+                    id = ConnectionsListViewModel.PopupMenuItem.RECONNECT.ordinal,
+                    iconRes = R.drawable.ic_menu_reconnect_24dp,
+                    textRes = R.string.actions_reconnect
+                ),
+                MenuItemData(
+                    id = ConnectionsListViewModel.PopupMenuItem.RENAME.ordinal,
+                    iconRes = R.drawable.ic_menu_edit_24dp,
+                    textRes = R.string.actions_rename
+                ),
+                MenuItemData(
+                    id = ConnectionsListViewModel.PopupMenuItem.SUPPORT.ordinal,
+                    iconRes = R.drawable.ic_contact_support_24dp,
+                    textRes = R.string.actions_contact_support
+                ),
+                MenuItemData(
+                    id = ConnectionsListViewModel.PopupMenuItem.DELETE.ordinal,
+                    iconRes = R.drawable.ic_menu_remove_24dp,
+                    textRes = R.string.actions_remove
                 )
             )
         )
+        assertThat(menuData.items.size, equalTo(4))
+        assertThat(menuData, equalTo(expectedMenuData))
     }
 
     @Test
     @Throws(Exception::class)
-    fun onReconnectOptionSelectedTest() {
+    fun onMenuItemClickTestVase1() {
         //given itemId RECONNECT
-        viewModel.listItems.value = connections.convertConnectionsToViewModels(context)
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
         val activeItemIndex = 1
         val itemId = ConnectionsListViewModel.PopupMenuItem.RECONNECT.ordinal
 
@@ -503,7 +411,8 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun onMenuItemClickTestCase2() {
         //given itemId RENAME
-        viewModel.listItems.value = connections.convertConnectionsToViewModels(context)
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
         val activeItemIndex = 1
         val itemId = ConnectionsListViewModel.PopupMenuItem.RENAME.ordinal
 
@@ -520,7 +429,8 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun onMenuItemClickTestCase3() {
         //given itemId SUPPORT
-        viewModel.listItems.value = connections.convertConnectionsToViewModels(context)
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
         val activeItemIndex = 1
         val itemId = ConnectionsListViewModel.PopupMenuItem.SUPPORT.ordinal
 
@@ -538,7 +448,8 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun onMenuItemClickTestCase5() {
         //given itemId DELETE
-        viewModel.listItems.value = connections.convertConnectionsToViewModels(context)
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
         val activeItemIndex = 1
         val itemId = ConnectionsListViewModel.PopupMenuItem.DELETE.ordinal
 
@@ -557,14 +468,12 @@ class ConnectionsListViewModelTest {
      */
     @Test
     @Throws(Exception::class)
-    fun onEditNameResultTestCase1() {
-        viewModel.onEditNameResult(
-            data = Bundle().apply { putString(KEY_NAME, "new name") }
-        )
+    fun onItemNameChangedTestCase1() {
+        viewModel.onItemNameChanged(data = Bundle().apply { putString(KEY_NAME, "new name") })
 
         Mockito.never()
 
-        viewModel.onEditNameResult(
+        viewModel.onItemNameChanged(
             data = Bundle().apply {
                 putString(KEY_NAME, "new name")
                 guid = "guidX"
@@ -573,7 +482,7 @@ class ConnectionsListViewModelTest {
 
         Mockito.never()
 
-        viewModel.onEditNameResult(
+        viewModel.onItemNameChanged(
             data = Bundle().apply {
                 putString(KEY_NAME, "new name")
                 guid = "guid2"
@@ -582,7 +491,7 @@ class ConnectionsListViewModelTest {
 
         Mockito.never()
 
-        viewModel.onEditNameResult(
+        viewModel.onItemNameChanged(
             data = Bundle().apply {
                 putString(KEY_NAME, "")
                 guid = "guid2"
@@ -591,7 +500,7 @@ class ConnectionsListViewModelTest {
 
         Mockito.never()
 
-        viewModel.onEditNameResult(
+        viewModel.onItemNameChanged(
             data = Bundle().apply {
                 putString(KEY_NAME, "Demobank2")
                 guid = "guid2"
@@ -602,21 +511,20 @@ class ConnectionsListViewModelTest {
     }
 
     /**
-     * test onEditNameResult,
+     * test onItemNameChanged,
      * GUID != null.
      *
      * User entered new Connection name
      */
     @Test
     @Throws(Exception::class)
-    fun onEditNameResultTestCase2() {
+    fun onItemNameChangedTestCase2() {
         //given
-        val connection: List<ConnectionItemViewModel> =
-            connections.convertConnectionsToViewModels(context)
-        viewModel.listItems.value = connection
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
 
         //when
-        viewModel.onEditNameResult(
+        viewModel.onItemNameChanged(
             data = Bundle().apply {
                 putString(KEY_NAME, "new name")
                 guid = "guid2"
@@ -624,69 +532,59 @@ class ConnectionsListViewModelTest {
         )
 
         //then
-        assertNotNull(viewModel.updateListItemEvent.value)
-        Mockito.verify(mockConnectionsRepository)
-            .updateNameAndSave(connection = connections[1], newName = "new name")
+        Assert.assertNotNull(viewModel.updateListItemEvent.value)
+        Mockito.verify(mockConnectionsRepository).updateNameAndSave(connection = connection2, newName = "new name")
     }
 
-    /**
-     * test onDeleteItemResult,
-     * GUID != null.
-     * viewContract == null
-     *
-     * User confirmed single Connection deletion
-     */
     @Test
     @Throws(Exception::class)
     fun onDeleteItemResultTestCase1() {
         //when
-        val connection: List<ConnectionItemViewModel> =
-            connections.convertConnectionsToViewModels(context)
-        viewModel.listItems.value = connection
-        Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid2")
-        Mockito.doReturn(RichConnection(connections[1], mockPrivateKey)).`when`(mockKeyStoreManager)
-            .enrichConnection(connections[1])
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+        Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid1")
 
         //when
-        viewModel.onDeleteItemResult(guid = "guid2")
+        viewModel.onItemDeleted(guid = "guid1")
 
         //then
-        Mockito.verify(mockApiManagerV1).revokeConnections(
-            listOf(RichConnection(connections[1], mockPrivateKey)),
-            interactorV1
-        )
+        Mockito.verify(mockApiManagerV1).revokeConnections(listOf(richConnection1), null)
+        Mockito.verify(mockConnectionsRepository).deleteConnection("guid1")
+        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid1")
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDeleteItemResultTestCase2() {
+        //when
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+        Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid2")
+
+        //when
+        viewModel.onItemDeleted(guid = "guid2")
+
+        //then
+        Mockito.verify(mockApiManagerV2).revokeConnections(listOf(richConnection2), null)
         Mockito.verify(mockConnectionsRepository).deleteConnection("guid2")
         Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid2")
     }
 
-    /**
-     * test onDeleteItemResult,
-     * GUID != null.
-     *
-     * User confirmed single Connection deletion
-     */
     @Test
     @Throws(Exception::class)
-    fun onDeleteItemResultTestCase2() {
+    fun onDeleteItemResultTestCase3() {
         //given
-        val connection: List<ConnectionItemViewModel> =
-            connections.convertConnectionsToViewModels(context)
-        viewModel.listItems.value = connection
-        Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid2")
-        Mockito.doReturn(RichConnection(connections[1], mockPrivateKey)).`when`(
-            mockKeyStoreManager
-        ).enrichConnection(connections[1])
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+        Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid3")
 
         //when
-        viewModel.onDeleteItemResult(guid = "guid2")
+        viewModel.onItemDeleted(guid = "guid3")
 
         //then
-        Mockito.verify(mockApiManagerV1).revokeConnections(
-            listOf(RichConnection(connections[1], mockPrivateKey)),
-            interactorV1
-        )
-        Mockito.verify(mockConnectionsRepository).deleteConnection("guid2")
-        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid2")
+        Mockito.verifyNoInteractions(mockApiManagerV1, mockApiManagerV2)
+        Mockito.verify(mockConnectionsRepository).deleteConnection("guid3")
+        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid3")
     }
 
     @Test

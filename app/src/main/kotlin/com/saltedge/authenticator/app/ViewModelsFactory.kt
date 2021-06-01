@@ -35,8 +35,7 @@ import com.saltedge.authenticator.features.authorizations.list.AuthorizationsLis
 import com.saltedge.authenticator.features.connections.create.ConnectProviderInteractorV1
 import com.saltedge.authenticator.features.connections.create.ConnectProviderInteractorV2
 import com.saltedge.authenticator.features.connections.create.ConnectProviderViewModel
-import com.saltedge.authenticator.features.connections.list.ConnectionsListInteractorV1
-import com.saltedge.authenticator.features.connections.list.ConnectionsListInteractorV2
+import com.saltedge.authenticator.features.connections.list.ConnectionsListInteractor
 import com.saltedge.authenticator.features.connections.list.ConnectionsListViewModel
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsViewModel
 import com.saltedge.authenticator.features.consents.details.ConsentDetailsViewModel
@@ -157,17 +156,12 @@ class ViewModelsFactory @Inject constructor(
             modelClass.isAssignableFrom(ConnectionsListViewModel::class.java) -> {
                 return ConnectionsListViewModel(
                     appContext = appContext,
-                    interactorV1 = ConnectionsListInteractorV1(
-                        keyStoreManager = keyStoreManager,
+                    interactor = ConnectionsListInteractor(
                         connectionsRepository = connectionsRepository,
-                        apiManager = apiManagerV1,
+                        keyStoreManager = keyStoreManager,
+                        apiManagerV1 = apiManagerV1,
+                        apiManagerV2 = apiManagerV2,
                         cryptoTools = cryptoToolsV1
-                    ),
-                    interactorV2 = ConnectionsListInteractorV2(
-                        keyStoreManager = keyStoreManager,
-                        connectionsRepository = connectionsRepository,
-                        apiManager = apiManagerV2,
-                        cryptoTools = cryptoToolsV2
                     )
                 ) as T
             }

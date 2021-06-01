@@ -23,11 +23,12 @@ package com.saltedge.authenticator.features.connections.common
 import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import com.saltedge.authenticator.tools.ResId
 
-data class ConnectionItemViewModel(
+data class ConnectionItem(
     val guid: String,
     val connectionId: String,
     var name: String,
     val logoUrl: String,
+    val email: String?,
     var consentsDescription: String = "",
     var statusDescription: String,
     var statusDescriptionColorRes: ResId,

@@ -20,12 +20,8 @@
  */
 package com.saltedge.authenticator.features.connections.list
 
-import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
 import com.saltedge.authenticator.sdk.api.model.ConsentData
 
 interface ConnectionsListInteractorCallback {
-    fun renameConnection(guid: String, name: String)
-    fun selectSupportForConnection(guid: String)
-    fun updateName(newConnectionName: String, listItem: ConnectionItemViewModel)
     fun processDecryptedConsentsResult(result: List<ConsentData>)
 }

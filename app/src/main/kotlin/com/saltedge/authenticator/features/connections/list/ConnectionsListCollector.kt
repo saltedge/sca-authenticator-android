@@ -22,35 +22,32 @@ package com.saltedge.authenticator.features.connections.list
 
 import android.content.Context
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.ConnectionStatus
 import com.saltedge.authenticator.core.model.getStatus
+import com.saltedge.authenticator.core.model.isActive
 import com.saltedge.authenticator.core.tools.toDateTime
-import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItem
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.toDateFormatString
 
-fun Connection.convertConnectionToViewModel(context: Context): ConnectionItemViewModel {
-    return ConnectionItemViewModel(
+fun Connection.convertConnectionToViewModel(context: Context): ConnectionItem {
+    return ConnectionItem(
         guid = this.guid,
         connectionId = this.id,
         name = this.name,
         statusDescription = getConnectionStatusDescription(context = context, connection = this),
         statusDescriptionColorRes = getConnectionStatusColor(connection = this),
         logoUrl = this.logoUrl,
-        isActive = isActiveConnection(this),
+        isActive = this.isActive(),
         isChecked = false,
-        apiVersion = this.apiVersion
+        apiVersion = this.apiVersion,
+        email = this.supportEmail
     )
 }
 
-fun List<Connection>.convertConnectionsToViewModels(context: Context): List<ConnectionItemViewModel> {
+fun List<Connection>.convertConnectionsToViewModels(context: Context): List<ConnectionItem> {
     return this.map { connection -> connection.convertConnectionToViewModel(context) }
-}
-
-private fun isActiveConnection(connection: ConnectionAbs): Boolean {
-    return connection.getStatus() === com.saltedge.authenticator.core.model.ConnectionStatus.ACTIVE
 }
 
 private fun getConnectionStatusDescription(context: Context, connection: Connection): String {

@@ -24,18 +24,18 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.core.model.GUID
-import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItem
 import com.saltedge.authenticator.models.ViewModelEvent
 
 class SelectConnectionsViewModel : ViewModel(), LifecycleObserver {
 
-    val listItems = MutableLiveData<List<ConnectionItemViewModel>>()
-    val listItemsValues: List<ConnectionItemViewModel>
+    val listItems = MutableLiveData<List<ConnectionItem>>()
+    val listItemsValues: List<ConnectionItem>
         get() = listItems.value ?: emptyList()
     val onListItemClickEvent = MutableLiveData<ViewModelEvent<Int>>()
     val onProceedClickEvent = MutableLiveData<GUID>()
 
-    fun setInitialData(data: List<ConnectionItemViewModel>) {
+    fun setInitialData(data: List<ConnectionItem>) {
         listItems.postValue(data)
     }
 
@@ -43,7 +43,7 @@ class SelectConnectionsViewModel : ViewModel(), LifecycleObserver {
         onListItemClickEvent.postValue(ViewModelEvent(itemIndex))
     }
 
-    fun changeStateItem(item: ConnectionItemViewModel) {
+    fun changeStateItem(item: ConnectionItem) {
         listItemsValues.forEach { it.isChecked = false }
         item.isChecked = true
     }
