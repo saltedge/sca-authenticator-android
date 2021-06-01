@@ -40,12 +40,15 @@
 
     <TextView
         android:id="@+id/titleView"
-        style="@style/Text16Primary"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/dp_16"
         android:layout_marginTop="@dimen/dp_8"
         android:layout_marginEnd="@dimen/dp_16"
+        android:ellipsize="end"
+        android:fontFamily="@font/roboto_regular"
+        android:textColor="@color/dark_80_and_grey_100"
+        android:textSize="@dimen/text_16"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/verticalCenterGuideline"
         app:layout_constraintStart_toStartOf="parent"

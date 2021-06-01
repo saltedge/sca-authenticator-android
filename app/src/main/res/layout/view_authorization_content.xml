@@ -65,7 +65,7 @@
 
         <TextView
             android:id="@+id/titleTextView"
-            style="@style/Title22"
+            style="@style/Title24"
             android:layout_marginStart="@dimen/dp_16"
             android:layout_marginTop="@dimen/dp_8"
             android:layout_marginEnd="@dimen/dp_16"
