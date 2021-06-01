@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2020 Salt Edge Inc.
@@ -49,8 +48,8 @@
             android:layout_marginBottom="@dimen/dp_16"
             android:text="@string/actions_deny"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/verticalCenter" />
+            app:layout_constraintEnd_toStartOf="@+id/verticalCenter"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/positiveActionView"
@@ -66,50 +65,140 @@
 
         <TextView
             android:id="@+id/titleTextView"
-            style="@style/Title22"
-            android:layout_marginTop="@dimen/dp_8"
+            style="@style/Title24"
             android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_8"
             android:layout_marginEnd="@dimen/dp_16"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Create payment" />
 
-        <TextView
-            android:id="@+id/descriptionTextView"
-            style="@style/Text16Primary"
+        <FrameLayout
+            android:id="@+id/contentView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="@dimen/dp_16"
-            android:gravity="start"
-            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/negativeActionView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleTextView"
-            app:layout_constraintBottom_toTopOf="@+id/negativeActionView"
-            tools:text="Payment description\n300USD for ticket"/>
+            app:layout_constraintTop_toBottomOf="@+id/titleTextView">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_18"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toTopOf="@+id/negativeActionView">
+
+                    <TextView
+                        android:id="@+id/descriptionTextView"
+                        style="@style/Text16Primary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/dp_16"
+                        android:gravity="start"
+                        android:visibility="gone"
+                        tools:text="Payment description\n300USD for ticket" />
+
+                    <LinearLayout
+                        android:id="@+id/paymentView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <com.saltedge.authenticator.widget.PaymentRowView
+                            android:id="@+id/payeeView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <com.saltedge.authenticator.widget.PaymentRowView
+                            android:id="@+id/amountView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <com.saltedge.authenticator.widget.PaymentRowView
+                            android:id="@+id/accountView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <com.saltedge.authenticator.widget.PaymentRowView
+                            android:id="@+id/paymentDateView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <com.saltedge.authenticator.widget.PaymentRowView
+                            android:id="@+id/feeView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <com.saltedge.authenticator.widget.PaymentRowView
+                            android:id="@+id/exchangeRateView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <com.saltedge.authenticator.widget.PaymentRowView
+                            android:id="@+id/referenceView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/extraView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_8"
+                        android:orientation="vertical">
+
+                        <com.saltedge.authenticator.widget.ExtraRowView
+                            android:id="@+id/dateView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <com.saltedge.authenticator.widget.ExtraRowView
+                            android:id="@+id/deviceView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <com.saltedge.authenticator.widget.ExtraRowView
+                            android:id="@+id/locationView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <com.saltedge.authenticator.widget.ExtraRowView
+                            android:id="@+id/ipView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                </LinearLayout>
+            </ScrollView>
+        </FrameLayout>
 
         <com.saltedge.authenticator.core.web.SEFrameWebView
             android:id="@+id/descriptionWebView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_margin="@dimen/dp_16"
+            app:layout_constraintBottom_toTopOf="@+id/negativeActionView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleTextView"
-            app:layout_constraintBottom_toTopOf="@+id/negativeActionView" />
+            app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/statusLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:clickable="true"
-        android:focusable="true">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/horizontalCenter"
@@ -122,39 +211,39 @@
             android:id="@+id/statusProgressOrImageContainer"
             android:layout_width="@dimen/dp_76"
             android:layout_height="@dimen/dp_76"
-            android:elevation="@dimen/dp_10"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/statusTitleTextView"
             android:layout_marginBottom="@dimen/dp_26"
-            android:background="@drawable/shape_bg_process_status">
+            android:background="@drawable/shape_bg_process_status"
+            android:elevation="@dimen/dp_10"
+            app:layout_constraintBottom_toTopOf="@+id/statusTitleTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <ProgressBar
                 android:id="@+id/progressStatusView"
                 style="?android:attr/progressBarStyleLarge"
                 android:layout_width="@dimen/dp_56"
                 android:layout_height="@dimen/dp_56"
-                android:indeterminateTint="@color/primary"
                 android:layout_gravity="center"
+                android:indeterminateTint="@color/primary"
                 android:indeterminateTintMode="src_in" />
 
             <ImageView
                 android:id="@id/statusImageView"
                 android:layout_width="@dimen/dp_56"
                 android:layout_height="@dimen/dp_56"
-                android:contentDescription="@string/authorizations_processing"
                 android:layout_gravity="center"
-                tools:src="@drawable/ic_status_success"/>
+                android:contentDescription="@string/authorizations_processing"
+                tools:src="@drawable/ic_status_success" />
         </FrameLayout>
 
         <TextView
             android:id="@+id/statusTitleTextView"
             style="@style/Title22"
             android:layout_marginBottom="@dimen/dp_10"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:text="@string/authorizations_loading"
             app:layout_constraintBottom_toTopOf="@+id/statusDescriptionTextView"
-            android:text="@string/authorizations_loading" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/statusDescriptionTextView"
@@ -164,9 +253,9 @@
             android:layout_marginStart="@dimen/dp_16"
             android:layout_marginEnd="@dimen/dp_16"
             android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@+id/horizontalCenter"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/horizontalCenter"
-            tools:text="@string/authorizations_loading_description"/>
+            tools:text="@string/authorizations_loading_description" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

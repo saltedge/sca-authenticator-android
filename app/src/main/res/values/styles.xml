@@ -75,6 +75,15 @@
         <item name="android:maxLines">2</item>
     </style>
 
+    <style name="Title24" parent="Text24Primary">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/dp_32</item>
+        <item name="android:layout_marginEnd">@dimen/dp_32</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:maxLines">2</item>
+    </style>
+
     <style name="Description18" parent="Text18Primary">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
