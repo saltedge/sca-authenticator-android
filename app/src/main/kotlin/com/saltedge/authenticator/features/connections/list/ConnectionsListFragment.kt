@@ -21,8 +21,11 @@
 package com.saltedge.authenticator.features.connections.list
 
 import android.Manifest
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -187,7 +190,9 @@ class ConnectionsListFragment : BaseFragment(),
         })
         viewModel.onGoToSettingsEvent.observe(this, { event ->
             event.getContentIfNotHandled()?.let {
-                //TODO: GO TO SETTINGS
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                intent.data = Uri.fromParts("package", requireActivity().packageName, null)
+                startActivity(intent)
             }
         })
         viewModel.onAskPermissionsEvent.observe(this, Observer<ViewModelEvent<Unit>> {
