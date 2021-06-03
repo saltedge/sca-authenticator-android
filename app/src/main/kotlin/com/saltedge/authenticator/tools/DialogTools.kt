@@ -143,12 +143,15 @@ fun FragmentActivity.showResetDataAndSettingsDialog(listener: DialogInterface.On
  * @param listener - on dialog action click listener
  * @return AlertDialog object or null
  */
-fun FragmentActivity.showGrantAccessToLocationDialog(listener: DialogInterface.OnClickListener): AlertDialog? {
+fun FragmentActivity.showGrantAccessToLocationDialog(
+    @StringRes positiveButtonResId: Int,
+    listener: DialogInterface.OnClickListener
+): AlertDialog? {
     return try {
         AlertDialog.Builder(this, R.style.AlertDialogTheme)
             .setTitle(R.string.grant_access_location_title)
             .setMessage(R.string.grant_access_location_description)
-            .setPositiveButton(R.string.actions_proceed, listener)
+            .setPositiveButton(positiveButtonResId, listener)
             .setNegativeButton(R.string.actions_cancel, listener)
             .show()
     } catch (e: java.lang.Exception) {

@@ -63,6 +63,7 @@ class ConnectionsListViewModel(
     val onDeleteClickEvent = MutableLiveData<ViewModelEvent<String>>()
     val onViewConsentsClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onAskPermissionsEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onGoToSettingsEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val listVisibility = MutableLiveData<Int>()
     val emptyViewVisibility = MutableLiveData<Int>()
     val listItems = MutableLiveData<List<ConnectionItem>>()
@@ -128,9 +129,9 @@ class ConnectionsListViewModel(
         if (listItem.name != newConnectionName
             && newConnectionName.isNotEmpty()
             && interactor.updateNameAndSave(listItem.guid, newConnectionName)) {
-                val itemIndex = listItemsValues.indexOf(listItem)
-                listItems.value?.get(itemIndex)?.name = newConnectionName
-                updateListItemEvent.postValue(listItem)
+            val itemIndex = listItemsValues.indexOf(listItem)
+            listItems.value?.get(itemIndex)?.name = newConnectionName
+            updateListItemEvent.postValue(listItem)
         }
     }
 
@@ -194,6 +195,9 @@ class ConnectionsListViewModel(
         ) {
             locationManager.startLocationUpdates(appContext)
             updateViewsContent()
+        } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+//            onAskPermissionsEvent.postUnitEvent()
+            //TODO smth
         }
     }
 
@@ -218,9 +222,13 @@ class ConnectionsListViewModel(
         }
     }
 
-    fun onDialogActionIdClick(dialogActionId: Int) {
+    fun onDialogActionIdClick(dialogActionId: Int, actionsGoToSettings: Int) {
         if (dialogActionId == DialogInterface.BUTTON_POSITIVE) {
-            onAskPermissionsEvent.postUnitEvent()
+            if (actionsGoToSettings == R.string.actions_proceed) {
+                onAskPermissionsEvent.postUnitEvent()
+            } else if (actionsGoToSettings == R.string.actions_go_to_settings) {
+                onGoToSettingsEvent.postUnitEvent()
+            }
         }
     }
 

@@ -20,7 +20,8 @@
  */
 package com.saltedge.authenticator.features.connections.list
 
-import android.content.DialogInterface
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -167,9 +168,26 @@ class ConnectionsListFragment : BaseFragment(),
         })
         viewModel.onAccessToLocationClickEvent.observe(this, { event ->
             event.getContentIfNotHandled()?.let {
-                alertDialog = activity?.showGrantAccessToLocationDialog(DialogInterface.OnClickListener { _, dialogActionId ->
-                    viewModel.onDialogActionIdClick(dialogActionId)
-                })
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alertDialog = if (activity?.shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) == false) {
+                        activity?.showGrantAccessToLocationDialog(
+                            positiveButtonResId = R.string.actions_go_to_settings,
+                            listener = { _, dialogActionId ->
+                                viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_go_to_settings)
+                            })
+                    } else {
+                        activity?.showGrantAccessToLocationDialog(
+                            positiveButtonResId = R.string.actions_proceed,
+                            listener = { _, dialogActionId ->
+                                viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_proceed)
+                            })
+                    }
+                }
+            }
+        })
+        viewModel.onGoToSettingsEvent.observe(this, { event ->
+            event.getContentIfNotHandled()?.let {
+                //TODO: GO TO SETTINGS
             }
         })
         viewModel.onAskPermissionsEvent.observe(this, Observer<ViewModelEvent<Unit>> {

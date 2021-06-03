@@ -45,6 +45,7 @@
     <string name="actions_clear">Clear</string>
     <string name="actions_view_consents">View consents</string>
     <string name="actions_view_location">Access to Locations</string>
+    <string name="actions_go_to_settings">GO TO SETTINGS</string>
 
     <string name="passcode_enter_passcode_title">Enter passcode</string>
     <string name="passcode_enter_passcode_or_fingerprint_title">Enter passcode or use fingerprint</string>
