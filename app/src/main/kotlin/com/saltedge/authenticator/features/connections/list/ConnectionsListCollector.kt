@@ -28,41 +28,63 @@ import com.saltedge.authenticator.core.model.isActive
 import com.saltedge.authenticator.core.tools.toDateTime
 import com.saltedge.authenticator.features.connections.common.ConnectionItem
 import com.saltedge.authenticator.models.Connection
+import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.toDateFormatString
 
-fun Connection.convertConnectionToViewModel(context: Context): ConnectionItem {
+fun Connection.convertConnectionToViewModel(context: Context, deviceLocationManager: DeviceLocationManagerAbs): ConnectionItem {
+    val locationPermissionsIsGranted: Boolean = deviceLocationManager.locationPermissionsGranted(context)
+    val grantAccessToLocationData = checkGrantAccessToLocationData(geolocationRequired = this.geolocationRequired, locationPermissionsIsGranted = locationPermissionsIsGranted)
     return ConnectionItem(
         guid = this.guid,
         connectionId = this.id,
         name = this.name,
-        statusDescription = getConnectionStatusDescription(context = context, connection = this),
-        statusDescriptionColorRes = getConnectionStatusColor(connection = this),
+        statusDescription = getConnectionStatusDescription(context = context, connection = this, grantAccessToLocationData = grantAccessToLocationData),
+        statusDescriptionColorRes = getConnectionStatusColor(connection = this, grantAccessToLocationData = grantAccessToLocationData),
         logoUrl = this.logoUrl,
         isActive = this.isActive(),
         isChecked = false,
         apiVersion = this.apiVersion,
-        email = this.supportEmail
+        email = this.supportEmail,
+        locationPermissionRequired = grantAccessToLocationData
     )
 }
 
-fun List<Connection>.convertConnectionsToViewModels(context: Context): List<ConnectionItem> {
-    return this.map { connection -> connection.convertConnectionToViewModel(context) }
+fun List<Connection>.convertConnectionsToViewModels(context: Context, locationManager: DeviceLocationManagerAbs): List<ConnectionItem> {
+    return this.map { connection -> connection.convertConnectionToViewModel(context, locationManager) }
 }
 
-private fun getConnectionStatusDescription(context: Context, connection: Connection): String {
+private fun getConnectionStatusDescription(
+    context: Context,
+    connection: Connection,
+    grantAccessToLocationData: Boolean
+): String {
     return when (connection.getStatus()) {
         ConnectionStatus.INACTIVE -> context.getString(R.string.connection_status_inactive)
         ConnectionStatus.ACTIVE -> {
             val date = connection.updatedAt.toDateTime().toDateFormatString(context)
-            "${context.getString(R.string.connection_status_linked_on)} $date"
+            if (grantAccessToLocationData) {
+                context.getString(R.string.connection_status_access_location)
+            }
+            else "${context.getString(R.string.connection_status_linked_on)} $date"
         }
     }
 }
 
-fun getConnectionStatusColor(connection: Connection): ResId {
+fun getConnectionStatusColor(connection: Connection, grantAccessToLocationData: Boolean): ResId {
     return when (connection.getStatus()) {
         ConnectionStatus.INACTIVE -> R.color.red_and_red_light
-        ConnectionStatus.ACTIVE -> R.color.dark_60_and_grey_100
+        ConnectionStatus.ACTIVE -> {
+            if (grantAccessToLocationData) R.color.yellow
+            else R.color.dark_60_and_grey_100
+        }
     }
+}
+
+fun checkGrantAccessToLocationData(geolocationRequired: Boolean?, locationPermissionsIsGranted: Boolean): Boolean {
+    return (geolocationRequired == null
+        || geolocationRequired == false)
+        || !locationPermissionsIsGranted
+        || geolocationRequired == true && !locationPermissionsIsGranted
+        || geolocationRequired == false && locationPermissionsIsGranted
 }

@@ -44,6 +44,7 @@
     <string name="actions_confirm">Confirm</string>
     <string name="actions_clear">Clear</string>
     <string name="actions_view_consents">View consents</string>
+    <string name="actions_view_location">Access to Locations</string>
 
     <string name="passcode_enter_passcode_title">Enter passcode</string>
     <string name="passcode_enter_passcode_or_fingerprint_title">Enter passcode or use fingerprint</string>
@@ -108,6 +109,7 @@
     <string name="connections_list_delete_all_connections">Delete all connections and stop receiving confirmations until another Provider is connected.</string>
     <string name="connection_status_linked_on">Linked on</string>
     <string name="connection_status_inactive">Inactive. Please reconnect.</string>
+    <string name="connection_status_access_location">Grant access to location data</string>
     <string name="connect_status_encrypted_connection">Your connection is encrypted and\nsecurely transmitted using SSL</string>
     <string name="connect_status_in_progress">Processing…</string>
     <string name="connect_status_in_progress_description">This may take some time.</string>
@@ -234,4 +236,7 @@
     <string name="description_extra_from">From:</string>
     <string name="description_extra_location">Location:</string>
     <string name="description_extra_ip">IP address:</string>
+
+    <string name="grant_access_location_title">Grant access to location</string>
+    <string name="grant_access_location_description">Your service provider is requesting you to provide your location data every time you are authorizing an action for accurate risk analysis.</string>
 </resources>

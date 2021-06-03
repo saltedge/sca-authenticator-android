@@ -34,7 +34,8 @@ data class ConnectionItem(
     var statusDescriptionColorRes: ResId,
     val isActive: Boolean,
     var isChecked: Boolean,
-    val apiVersion: String
+    val apiVersion: String,
+    val locationPermissionRequired: Boolean
 ) {
     val isV2Api: Boolean
         get() = apiVersion == API_V2_VERSION

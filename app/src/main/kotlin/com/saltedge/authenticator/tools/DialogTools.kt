@@ -137,6 +137,27 @@ fun FragmentActivity.showResetDataAndSettingsDialog(listener: DialogInterface.On
 }
 
 /**
+ * Show grant access to location dialog
+ *
+ * @receiver FragmentActivity
+ * @param listener - on dialog action click listener
+ * @return AlertDialog object or null
+ */
+fun FragmentActivity.showGrantAccessToLocationDialog(listener: DialogInterface.OnClickListener): AlertDialog? {
+    return try {
+        AlertDialog.Builder(this, R.style.AlertDialogTheme)
+            .setTitle(R.string.grant_access_location_title)
+            .setMessage(R.string.grant_access_location_description)
+            .setPositiveButton(R.string.actions_proceed, listener)
+            .setNegativeButton(R.string.actions_cancel, listener)
+            .show()
+    } catch (e: java.lang.Exception) {
+        Timber.e(e)
+        null
+    }
+}
+
+/**
  * Show dialog for lock screen with warning message. Dialog will block user interaction.
  *
  * @receiver FragmentActivity

@@ -162,7 +162,8 @@ class ViewModelsFactory @Inject constructor(
                         apiManagerV1 = apiManagerV1,
                         apiManagerV2 = apiManagerV2,
                         cryptoTools = cryptoToolsV1
-                    )
+                    ),
+                    locationManager = DeviceLocationManager
                 ) as T
             }
             modelClass.isAssignableFrom(ConsentsListViewModel::class.java) -> {
@@ -180,7 +181,8 @@ class ViewModelsFactory @Inject constructor(
                     appContext = appContext,
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,
-                    apiManager = apiManagerV1
+                    apiManager = apiManagerV1,
+                    locationManager = DeviceLocationManager
                 ) as T
             }
             modelClass.isAssignableFrom(SelectConnectionsViewModel::class.java) -> {

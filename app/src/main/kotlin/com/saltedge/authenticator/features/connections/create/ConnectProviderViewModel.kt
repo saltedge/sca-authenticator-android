@@ -26,6 +26,7 @@ import android.content.pm.PackageManager
 import android.graphics.Typeface.BOLD
 import android.text.SpannableString
 import android.text.style.StyleSpan
+import android.util.Log
 import android.view.View
 import androidx.core.text.set
 import androidx.lifecycle.*
@@ -81,6 +82,7 @@ class ConnectProviderViewModel(
     }
 
     fun onRequestPermissionsResult(requestCode: Int, grantResults: IntArray) {
+        Log.d("some", "onRequestPermissionsResult requestCode$requestCode, grantResults:$grantResults")
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE
             && grantResults.any { it == PackageManager.PERMISSION_GRANTED }
         ) {
@@ -155,8 +157,11 @@ class ConnectProviderViewModel(
     private fun checkGeolocationRequirements() {
         interactor.geolocationRequired?.let {
             val permissionGranted: Boolean = locationManager.locationPermissionsGranted(appContext)
+            Log.d("some", "permissionGranted: $permissionGranted")
             if (permissionGranted) locationManager.startLocationUpdates(appContext)
-            else onAskPermissionsEvent.postUnitEvent()
+            else {
+                onAskPermissionsEvent.postUnitEvent()
+            }
         }
     }
 

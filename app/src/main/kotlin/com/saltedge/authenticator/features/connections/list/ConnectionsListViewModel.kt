@@ -21,10 +21,13 @@
 package com.saltedge.authenticator.features.connections.list
 
 import android.content.Context
+import android.content.DialogInterface
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.core.api.KEY_NAME
 import com.saltedge.authenticator.core.model.GUID
@@ -37,12 +40,14 @@ import com.saltedge.authenticator.features.consents.common.consentsCountPrefixFo
 import com.saltedge.authenticator.features.consents.list.ConsentsListViewModel
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.tools.postUnitEvent
 
 class ConnectionsListViewModel(
     private val appContext: Context,
     private val interactor: ConnectionsListInteractor,
+    private val locationManager: DeviceLocationManagerAbs
 ) : ViewModel(),
     ConnectionsListInteractorCallback,
     LifecycleObserver,
@@ -54,8 +59,10 @@ class ConnectionsListViewModel(
     val onSupportClickEvent = MutableLiveData<ViewModelEvent<String?>>()
     val onReconnectClickEvent = MutableLiveData<ViewModelEvent<String>>()
     val onRenameClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
+    val onAccessToLocationClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onDeleteClickEvent = MutableLiveData<ViewModelEvent<String>>()
     val onViewConsentsClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
+    val onAskPermissionsEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val listVisibility = MutableLiveData<Int>()
     val emptyViewVisibility = MutableLiveData<Int>()
     val listItems = MutableLiveData<List<ConnectionItem>>()
@@ -94,6 +101,7 @@ class ConnectionsListViewModel(
                     ViewModelEvent(ConsentsListViewModel.newBundle(item.guid, consents[item.guid]))
                 )
             }
+            PopupMenuItem.LOCATION -> onAccessToLocationClickEvent.postUnitEvent()
             PopupMenuItem.DELETE -> {
                 if (item.isActive) {
                     onDeleteClickEvent.postValue(ViewModelEvent(item.guid))
@@ -165,6 +173,13 @@ class ConnectionsListViewModel(
                 textRes = R.string.actions_view_consents
             ))
         }
+        if (item.locationPermissionRequired) {
+            menuItems.add(MenuItemData(
+                id = PopupMenuItem.LOCATION.ordinal,
+                iconRes = R.drawable.ic_view_location_24dp,
+                textRes = R.string.actions_view_location
+            ))
+        }
         menuItems.add(MenuItemData(
             id = PopupMenuItem.DELETE.ordinal,
             iconRes = if (item.isActive) R.drawable.ic_menu_delete_24dp else R.drawable.ic_menu_remove_24dp,
@@ -173,12 +188,21 @@ class ConnectionsListViewModel(
         onListItemClickEvent.postValue(ViewModelEvent(MenuData(menuId = itemIndex, items = menuItems)))
     }
 
+    fun onRequestPermissionsResult(requestCode: Int, grantResults: IntArray) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE
+            && grantResults.any { it == PackageManager.PERMISSION_GRANTED }
+        ) {
+            locationManager.startLocationUpdates(appContext)
+            updateViewsContent()
+        }
+    }
+
     fun refreshConsents() {
         interactor.getConsents()
     }
 
     private fun updateViewsContent() {
-        val items = interactor.getAllConnections().convertConnectionsToViewModels(appContext)
+        val items = interactor.getAllConnections().convertConnectionsToViewModels(appContext, locationManager)
         listItems.postValue(updateItemsWithConsentData(items, consents))
         emptyViewVisibility.postValue(if (items.isEmpty()) View.VISIBLE else View.GONE)
         listVisibility.postValue(if (items.isEmpty()) View.GONE else View.VISIBLE)
@@ -194,7 +218,13 @@ class ConnectionsListViewModel(
         }
     }
 
+    fun onDialogActionIdClick(dialogActionId: Int) {
+        if (dialogActionId == DialogInterface.BUTTON_POSITIVE) {
+            onAskPermissionsEvent.postUnitEvent()
+        }
+    }
+
     enum class PopupMenuItem {
-        RECONNECT, RENAME, SUPPORT, CONSENTS, DELETE
+        RECONNECT, RENAME, SUPPORT, CONSENTS, DELETE, LOCATION
     }
 }
