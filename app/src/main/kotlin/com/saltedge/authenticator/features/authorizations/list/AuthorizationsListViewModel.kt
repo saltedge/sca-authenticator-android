@@ -20,6 +20,8 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
+import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
@@ -35,13 +37,16 @@ import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.postUnitEvent
 import kotlinx.coroutines.CoroutineScope
 
 class AuthorizationsListViewModel(
+    private val appContext: Context,
     private val interactorV1: AuthorizationsListInteractorV1,
     private val interactorV2: AuthorizationsListInteractorV2,
+    private val locationManager: DeviceLocationManagerAbs,
     private val connectivityReceiver: ConnectivityReceiverAbs
 ) : ViewModel(),
     LifecycleObserver,
@@ -66,6 +71,9 @@ class AuthorizationsListViewModel(
     val onMoreMenuClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onShowConnectionsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowSettingsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onAccessToLocationClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onAskPermissionsEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onGoToSettingsEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
     init {
         interactorV1.contract = this
@@ -135,6 +143,16 @@ class AuthorizationsListViewModel(
         }
     }
 
+    fun onDialogActionIdClick(dialogActionId: Int, actionsGoToSettings: Int) {
+        if (dialogActionId == DialogInterface.BUTTON_POSITIVE) {
+            if (actionsGoToSettings == R.string.actions_proceed) {
+                onAskPermissionsEvent.postUnitEvent()
+            } else if (actionsGoToSettings == R.string.actions_go_to_settings) {
+                onGoToSettingsEvent.postUnitEvent()
+            }
+        }
+    }
+
     override fun onTimeUpdate() {
         listItemsValues.let { items ->
             if (items.any { it.isExpired }) cleanExpiredItems()
@@ -145,8 +163,23 @@ class AuthorizationsListViewModel(
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
         listItemsValues.getOrNull(itemIndex)?.let {
             when (itemViewId) {
-                R.id.positiveActionView -> updateAuthorization(listItem = it, confirm = true)
-                R.id.negativeActionView -> updateAuthorization(listItem = it, confirm = false)
+                R.id.positiveActionView -> {
+                    if (interactorV2.shouldRequestPermission(
+                            it.connectionID,
+                            locationManager.locationPermissionsGranted(context = appContext)
+                        )
+                    ) onAccessToLocationClickEvent.postUnitEvent()
+                    else updateAuthorization(listItem = it, confirm = true)
+                }
+                R.id.negativeActionView -> {
+                    if (interactorV2.shouldRequestPermission(
+                            it.connectionID,
+                            locationManager.locationPermissionsGranted(context = appContext)
+                        )
+                    ) onAccessToLocationClickEvent.postUnitEvent()
+                    else updateAuthorization(listItem = it, confirm = false)
+                }
+                else -> Unit
             }
         }
     }
@@ -202,7 +235,8 @@ class AuthorizationsListViewModel(
                 connectionID = listItem.connectionID,
                 authorizationID = listItem.authorizationID,
                 authorizationCode = listItem.authorizationCode,
-                confirm = confirm
+                confirm = confirm,
+                locationDescription = locationManager.locationDescription
             )
         } else {
             interactorV1.updateAuthorization(

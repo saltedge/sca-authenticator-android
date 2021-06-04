@@ -34,7 +34,7 @@ import com.saltedge.authenticator.tools.toDateFormatString
 
 fun Connection.convertConnectionToViewModel(context: Context, deviceLocationManager: DeviceLocationManagerAbs): ConnectionItem {
     val locationPermissionsIsGranted: Boolean = deviceLocationManager.locationPermissionsGranted(context)
-    val shouldGrantAccess = checkGrantAccessToLocationData(geolocationRequired = this.geolocationRequired, locationPermissionsIsGranted = locationPermissionsIsGranted)
+    val shouldGrantAccess = checkGrantAccessToLocationData(geolocationRequired = this.geolocationRequired, locationPermissionsAreGranted = locationPermissionsIsGranted)
     return ConnectionItem(
         guid = this.guid,
         connectionId = this.id,
@@ -52,6 +52,19 @@ fun Connection.convertConnectionToViewModel(context: Context, deviceLocationMana
 
 fun List<Connection>.convertConnectionsToViewModels(context: Context, locationManager: DeviceLocationManagerAbs): List<ConnectionItem> {
     return this.map { connection -> connection.convertConnectionToViewModel(context, locationManager) }
+}
+
+/**
+ * Check if location permissions are granted and geolocation is required
+ *
+ * @return Boolean, true Connection geolocation is required and locations permissions are granted
+ */
+fun checkGrantAccessToLocationData(geolocationRequired: Boolean?, locationPermissionsAreGranted: Boolean): Boolean {
+    return (geolocationRequired == null
+        || geolocationRequired == false)
+        || !locationPermissionsAreGranted
+        || geolocationRequired == true && !locationPermissionsAreGranted
+        || geolocationRequired == false && locationPermissionsAreGranted
 }
 
 private fun getConnectionStatusDescription(
@@ -79,15 +92,4 @@ private fun getConnectionStatusColor(connection: Connection, grantAccessToLocati
             else R.color.dark_60_and_grey_100
         }
     }
-}
-
-/**
- * Check if location permissions are granted and geolocation is required
- */
-private fun checkGrantAccessToLocationData(geolocationRequired: Boolean?, locationPermissionsIsGranted: Boolean): Boolean {
-    return (geolocationRequired == null
-        || geolocationRequired == false)
-        || !locationPermissionsIsGranted
-        || geolocationRequired == true && !locationPermissionsIsGranted
-        || geolocationRequired == false && locationPermissionsIsGranted
 }

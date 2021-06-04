@@ -30,8 +30,8 @@ import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationStatus
+import com.saltedge.authenticator.features.connections.list.checkGrantAccessToLocationData
 import com.saltedge.authenticator.models.collectRichConnections
-import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
@@ -50,7 +50,6 @@ class AuthorizationsListInteractorV2(
     private val keyStoreManager: KeyManagerAbs,
     private val cryptoTools: CryptoToolsV2Abs,
     private val apiManager: ScaServiceClientAbs,
-    private val locationManager: DeviceLocationManagerAbs,
     private val defaultDispatcher: CoroutineDispatcher
 ) : AuthorizationConfirmListener, AuthorizationDenyListener, PollingAuthorizationsContract {
 
@@ -60,6 +59,14 @@ class AuthorizationsListInteractorV2(
     private var pollingService = apiManager.createAuthorizationsPollingService()
     private var richConnections: Map<ID, RichConnection> =
         collectRichConnections(connectionsRepository, keyStoreManager, API_V2_VERSION)
+
+    fun shouldRequestPermission(connectionId: ID, locationPermissionsIsGranted: Boolean): Boolean {
+        val richConnection: RichConnection? = richConnections[connectionId]
+        return checkGrantAccessToLocationData(
+            geolocationRequired = richConnection?.connection?.geolocationRequired,
+            locationPermissionsAreGranted = locationPermissionsIsGranted
+        )
+    }
 
     fun updateConnections() {
         richConnections = collectRichConnections(connectionsRepository, keyStoreManager, API_V2_VERSION)
@@ -71,10 +78,13 @@ class AuthorizationsListInteractorV2(
         pollingService.contract = this
     }
 
-    fun updateAuthorization(connectionID: ID, authorizationID: ID, authorizationCode: String, confirm: Boolean): Boolean {
+    fun updateAuthorization(
+        connectionID: ID, authorizationID: ID, authorizationCode: String,
+        confirm: Boolean, locationDescription: String?
+    ): Boolean {
         val authorizationData = UpdateAuthorizationData(
             authorizationCode = authorizationCode,
-            geolocation = locationManager.locationDescription ?: "",
+            geolocation = locationDescription ?: "",
             userAuthorizationType = AppTools.lastUnlockType.description
         )
         if (confirm) {
