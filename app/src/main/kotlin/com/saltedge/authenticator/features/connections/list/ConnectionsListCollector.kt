@@ -34,19 +34,19 @@ import com.saltedge.authenticator.tools.toDateFormatString
 
 fun Connection.convertConnectionToViewModel(context: Context, deviceLocationManager: DeviceLocationManagerAbs): ConnectionItem {
     val locationPermissionsIsGranted: Boolean = deviceLocationManager.locationPermissionsGranted(context)
-    val grantAccessToLocationData = checkGrantAccessToLocationData(geolocationRequired = this.geolocationRequired, locationPermissionsIsGranted = locationPermissionsIsGranted)
+    val shouldGrantAccess = checkGrantAccessToLocationData(geolocationRequired = this.geolocationRequired, locationPermissionsIsGranted = locationPermissionsIsGranted)
     return ConnectionItem(
         guid = this.guid,
         connectionId = this.id,
         name = this.name,
-        statusDescription = getConnectionStatusDescription(context = context, connection = this, grantAccessToLocationData = grantAccessToLocationData),
-        statusDescriptionColorRes = getConnectionStatusColor(connection = this, grantAccessToLocationData = grantAccessToLocationData),
+        statusDescription = getConnectionStatusDescription(context = context, connection = this, grantAccessToLocationData = shouldGrantAccess),
+        statusDescriptionColorRes = getConnectionStatusColor(connection = this, grantAccessToLocationData = shouldGrantAccess),
         logoUrl = this.logoUrl,
         isActive = this.isActive(),
         isChecked = false,
         apiVersion = this.apiVersion,
         email = this.supportEmail,
-        locationPermissionRequired = grantAccessToLocationData
+        locationPermissionRequired = shouldGrantAccess
     )
 }
 
@@ -71,7 +71,7 @@ private fun getConnectionStatusDescription(
     }
 }
 
-fun getConnectionStatusColor(connection: Connection, grantAccessToLocationData: Boolean): ResId {
+private fun getConnectionStatusColor(connection: Connection, grantAccessToLocationData: Boolean): ResId {
     return when (connection.getStatus()) {
         ConnectionStatus.INACTIVE -> R.color.red_and_red_light
         ConnectionStatus.ACTIVE -> {
@@ -81,7 +81,10 @@ fun getConnectionStatusColor(connection: Connection, grantAccessToLocationData: 
     }
 }
 
-fun checkGrantAccessToLocationData(geolocationRequired: Boolean?, locationPermissionsIsGranted: Boolean): Boolean {
+/**
+ * Check if location permissions are granted and geolocation is required
+ */
+private fun checkGrantAccessToLocationData(geolocationRequired: Boolean?, locationPermissionsIsGranted: Boolean): Boolean {
     return (geolocationRequired == null
         || geolocationRequired == false)
         || !locationPermissionsIsGranted

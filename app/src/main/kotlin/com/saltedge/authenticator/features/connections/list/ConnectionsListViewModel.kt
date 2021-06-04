@@ -195,9 +195,6 @@ class ConnectionsListViewModel(
         ) {
             locationManager.startLocationUpdates(appContext)
             updateViewsContent()
-        } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-//            onAskPermissionsEvent.postUnitEvent()
-            //TODO smth
         }
     }
 

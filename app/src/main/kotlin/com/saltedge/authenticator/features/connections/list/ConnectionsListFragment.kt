@@ -172,12 +172,13 @@ class ConnectionsListFragment : BaseFragment(),
         viewModel.onAccessToLocationClickEvent.observe(this, { event ->
             event.getContentIfNotHandled()?.let {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    alertDialog = if (activity?.shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) == false) {
-                        activity?.showGrantAccessToLocationDialog(
-                            positiveButtonResId = R.string.actions_go_to_settings,
-                            listener = { _, dialogActionId ->
-                                viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_go_to_settings)
-                            })
+                    alertDialog = if (activity?.shouldShowRequestPermissionRationale(DeviceLocationManager.permissions[0]) == false
+                        || activity?.shouldShowRequestPermissionRationale(DeviceLocationManager.permissions[1]) == false) {
+                            activity?.showGrantAccessToLocationDialog(
+                                positiveButtonResId = R.string.actions_go_to_settings,
+                                listener = { _, dialogActionId ->
+                                    viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_go_to_settings)
+                                })
                     } else {
                         activity?.showGrantAccessToLocationDialog(
                             positiveButtonResId = R.string.actions_proceed,
