@@ -125,7 +125,7 @@ androidExtensions {
 dependencies { //TODO After changing dependencies list, review third-party libraries licenses list
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    kapt 'com.google.dagger:dagger-compiler:2.36'//2.28.3
+    kapt 'com.google.dagger:dagger-compiler:2.36'
     implementation 'com.google.dagger:dagger:2.36'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.3.0'
@@ -165,7 +165,7 @@ dependencies { //TODO After changing dependencies list, review third-party libra
     testImplementation 'org.robolectric:robolectric:4.5.1'
     testImplementation 'org.robolectric:shadows-playservices:4.5.1'
     testImplementation 'org.mockito:mockito-core:3.6.28'
-    testImplementation "io.mockk:mockk:1.10.2"
+    testImplementation 'io.mockk:mockk:1.10.2'
     testImplementation project(':test_tools')
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
