@@ -27,6 +27,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Looper
+import android.provider.Settings
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.*
 
@@ -36,6 +37,7 @@ interface DeviceLocationManagerAbs {
     fun startLocationUpdates(context: Context)
     fun locationPermissionsGranted(context: Context): Boolean
     fun stopLocationUpdates()
+    fun isLocationProviderActive(context: Context): Boolean
 }
 
 object DeviceLocationManager : DeviceLocationManagerAbs {
@@ -79,6 +81,11 @@ object DeviceLocationManager : DeviceLocationManagerAbs {
 
     override fun locationPermissionsGranted(context: Context): Boolean {
         return permissions.any { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED }
+    }
+
+    override fun isLocationProviderActive(context: Context): Boolean {
+        val providerInfo = Settings.Secure.getString(context.contentResolver, Settings.Secure.LOCATION_PROVIDERS_ALLOWED)
+        return providerInfo?.isNotEmpty() == true
     }
 
     override fun stopLocationUpdates() {

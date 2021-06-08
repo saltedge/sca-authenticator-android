@@ -35,6 +35,7 @@ import com.saltedge.authenticator.features.connections.list.menu.MenuData
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.ConsentData
@@ -70,6 +71,7 @@ class ConnectionsListViewModelTest {
     private val mockCryptoToolsV1 = mock(CryptoToolsV1Abs::class.java)
     private val mockApiManagerV1 = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockApiManagerV2 = mock(ScaServiceClientAbs::class.java)
+    private val mockLocationManager = mock(DeviceLocationManagerAbs::class.java)
 
     private val connection1 = Connection().apply {
         id = "1"
@@ -144,7 +146,11 @@ class ConnectionsListViewModelTest {
             apiManagerV1 = mockApiManagerV1,
             apiManagerV2 = mockApiManagerV2
         )
-        viewModel = ConnectionsListViewModel(appContext = context, interactor = interactor)
+        viewModel = ConnectionsListViewModel(
+            appContext = context,
+            interactor = interactor,
+            locationManager = mockLocationManager
+        )
     }
 
     @Test
@@ -165,7 +171,7 @@ class ConnectionsListViewModelTest {
     @Throws(Exception::class)
     fun onStartTestCase2() {
         //given
-        val expectedItems: List<ConnectionItem> = allConnections.convertConnectionsToViewModels(context)
+        val expectedItems: List<ConnectionItem> = allConnections.convertConnectionsToViewModels(context, mockLocationManager)
 
         //when
         viewModel.onStart()
@@ -246,27 +252,29 @@ class ConnectionsListViewModelTest {
                         guid = "guid1",
                         connectionId = "1",
                         name = "Demobank1",
-                        statusDescription = "Linked on 1 January 1970",
-                        statusDescriptionColorRes = R.color.dark_60_and_grey_100,
+                        statusDescription = "Grant access to location data",
+                        statusDescriptionColorRes = R.color.yellow,
                         logoUrl = "",
                         consentsDescription = "1 consent\u30FB",
                         isActive = true,
                         isChecked = false,
                         apiVersion = API_V1_VERSION,
-                        email = "example@example.com"
+                        email = "example@example.com",
+                        locationPermissionRequired = true
                     ),
                     ConnectionItem(
                         guid = "guid2",
                         connectionId = "2",
                         name = "Demobank2",
-                        statusDescription = "Linked on 1 January 1970",
-                        statusDescriptionColorRes = R.color.dark_60_and_grey_100,
+                        statusDescription = "Grant access to location data",
+                        statusDescriptionColorRes = R.color.yellow,
                         logoUrl = "",
                         consentsDescription = "",
                         isActive = true,
                         isChecked = false,
                         apiVersion = API_V2_VERSION,
-                        email = "example@example.com"
+                        email = "example@example.com",
+                        locationPermissionRequired = true
                     ),
                     ConnectionItem(
                         guid = "guid3",
@@ -279,7 +287,8 @@ class ConnectionsListViewModelTest {
                         isActive = false,
                         isChecked = false,
                         apiVersion = API_V1_VERSION,
-                        email = "example@example.com"
+                        email = "example@example.com",
+                        locationPermissionRequired = true
                     )
                 )
             )
@@ -336,6 +345,11 @@ class ConnectionsListViewModelTest {
                                 textRes = R.string.actions_view_consents
                             ),
                             MenuItemData(
+                                id = ConnectionsListViewModel.PopupMenuItem.LOCATION.ordinal,
+                                iconRes = R.drawable.ic_view_location_24dp,
+                                textRes = R.string.actions_view_location
+                            ),
+                            MenuItemData(
                                 id = ConnectionsListViewModel.PopupMenuItem.DELETE.ordinal,
                                 iconRes = R.drawable.ic_menu_delete_24dp,
                                 textRes = R.string.actions_delete
@@ -381,13 +395,18 @@ class ConnectionsListViewModelTest {
                     textRes = R.string.actions_contact_support
                 ),
                 MenuItemData(
+                    id = ConnectionsListViewModel.PopupMenuItem.LOCATION.ordinal,
+                    iconRes = R.drawable.ic_view_location_24dp,
+                    textRes = R.string.actions_view_location
+                ),
+                MenuItemData(
                     id = ConnectionsListViewModel.PopupMenuItem.DELETE.ordinal,
                     iconRes = R.drawable.ic_menu_remove_24dp,
                     textRes = R.string.actions_remove
                 )
             )
         )
-        assertThat(menuData.items.size, equalTo(4))
+        assertThat(menuData.items.size, equalTo(5))
         assertThat(menuData, equalTo(expectedMenuData))
     }
 
@@ -598,7 +617,8 @@ class ConnectionsListViewModelTest {
                     ConnectionsListViewModel.PopupMenuItem.RENAME,
                     ConnectionsListViewModel.PopupMenuItem.SUPPORT,
                     ConnectionsListViewModel.PopupMenuItem.CONSENTS,
-                    ConnectionsListViewModel.PopupMenuItem.DELETE
+                    ConnectionsListViewModel.PopupMenuItem.DELETE,
+                    ConnectionsListViewModel.PopupMenuItem.LOCATION
                 )
             )
         )

@@ -28,6 +28,7 @@ import androidx.lifecycle.LifecycleRegistry
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.encryptWithTestKey
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.KEY_OPTION_ID
@@ -147,13 +148,14 @@ class AuthorizationsListViewModelTest {
             keyStoreManager = mockKeyStoreManager,
             cryptoTools = mockCryptoToolsV2,
             apiManager = mockApiManagerV2,
-            locationManager = mockLocationManager,
             defaultDispatcher = testDispatcher
         )
         viewModel = AuthorizationsListViewModel(
+            appContext = TestAppTools.applicationContext,
             interactorV1 = v1Interactor,
             interactorV2 = v2Interactor,
-            connectivityReceiver = mockConnectivityReceiver
+            connectivityReceiver = mockConnectivityReceiver,
+            locationManager = mockLocationManager
         )
     }
 

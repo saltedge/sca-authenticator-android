@@ -169,8 +169,8 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         viewModel.onShowSettingsListEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { navigateTo(actionRes = R.id.settings_list) }
         })
-        viewModel.onAccessToLocationClickEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let {
+        viewModel.onRequestPermissionEvent.observe(this, Observer { event ->
+            event?.let {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     alertDialog = if (activity?.shouldShowRequestPermissionRationale(DeviceLocationManager.permissions[0]) == false
                         || activity?.shouldShowRequestPermissionRationale(DeviceLocationManager.permissions[1]) == false) {
@@ -182,7 +182,7 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
                                 viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_go_to_settings)
                             })
                     } else {
-                        activity?.showInfoDialog(
+                        activity?.showInfoDialog( //TODO: Discuss with AlexL
                             titleResId = R.string.grant_access_location_title,
                             messageResId = R.string.grant_access_location_description,
                             positiveButtonResId = R.string.actions_proceed,
@@ -217,13 +217,7 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         viewModel.emptyViewDescriptionText.observe(this, Observer<ResId> {
             emptyView.setDescription(it)
         })
-        viewModel.onGpsStateEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it.getContentIfNotHandled()?.let {
-                val provider = Settings.Secure.getString(activity?.contentResolver, Settings.Secure.LOCATION_PROVIDERS_ALLOWED)
-                viewModel.turnOnGps(provider = provider)
-            }
-        })
-        viewModel.onShowGpsDialogEvent.observe(this, Observer { event ->
+        viewModel.onRequestLocationProviderEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
                 activity?.showInfoDialog(
                     titleResId = R.string.enable_gps_title,

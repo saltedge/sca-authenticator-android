@@ -73,11 +73,10 @@ class AuthorizationsListViewModel(
     val onMoreMenuClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onShowConnectionsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowSettingsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onAccessToLocationClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onRequestPermissionEvent = MutableLiveData<Triple<String, String, Boolean>>()
     val onAskPermissionsEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onGoToSettingsEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onGpsStateEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onShowGpsDialogEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onRequestLocationProviderEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onEnableGpsEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
     init {
@@ -163,7 +162,18 @@ class AuthorizationsListViewModel(
             && grantResults.any { it == PackageManager.PERMISSION_GRANTED }
         ) {
             locationManager.startLocationUpdates(appContext)
-            onGpsStateEvent.postUnitEvent()
+            if (locationManager.isLocationProviderActive(appContext)) {
+               findListItem(
+                    connectionID = onRequestPermissionEvent.value?.first ?: "",
+                    authorizationID = onRequestPermissionEvent.value?.second ?: ""
+                )?.let {
+                        updateAuthorization(
+                            listItem = it,
+                            confirm = onRequestPermissionEvent.value?.third ?: false)
+                }
+            } else {
+                onRequestLocationProviderEvent.postUnitEvent()
+            }
         }
     }
 
@@ -176,24 +186,23 @@ class AuthorizationsListViewModel(
 
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
         listItemsValues.getOrNull(itemIndex)?.let {
-            when (itemViewId) {
-                R.id.positiveActionView -> {
-                    if (interactorV2.shouldRequestPermission(
-                            it.connectionID,
-                            locationManager.locationPermissionsGranted(context = appContext)
-                        )
-                    ) onAccessToLocationClickEvent.postUnitEvent()
-                    else updateAuthorization(listItem = it, confirm = true)
+            val confirm = when (itemViewId) {
+                R.id.positiveActionView -> true
+                R.id.negativeActionView -> false
+                else -> return
+            }
+            if (interactorV2.shouldRequestPermission(
+                    it.connectionID,
+                    locationManager.locationPermissionsGranted(context = appContext)
+                )
+            ) {
+                onRequestPermissionEvent.postValue(Triple(it.connectionID, it.authorizationID, confirm))
+            } else {
+                if (locationManager.isLocationProviderActive(appContext)) {
+                    updateAuthorization(listItem = it, confirm = confirm)
+                } else {
+                    onRequestLocationProviderEvent.postUnitEvent()
                 }
-                R.id.negativeActionView -> {
-                    if (interactorV2.shouldRequestPermission(
-                            it.connectionID,
-                            locationManager.locationPermissionsGranted(context = appContext)
-                        )
-                    ) onAccessToLocationClickEvent.postUnitEvent()
-                    else updateAuthorization(listItem = it, confirm = false)
-                }
-                else -> Unit
             }
         }
     }
@@ -327,10 +336,5 @@ class AuthorizationsListViewModel(
     private fun cleanDeadItems() {
         val currentItems = listItemsValues.filter { !it.shouldBeDestroyed }
         if (currentItems != listItemsValues) postListItemsUpdate(newItems = currentItems)
-    }
-
-    fun turnOnGps(provider: String?) {
-        if (provider?.contains("gps") == true) return
-        else onShowGpsDialogEvent.postUnitEvent()
     }
 }
