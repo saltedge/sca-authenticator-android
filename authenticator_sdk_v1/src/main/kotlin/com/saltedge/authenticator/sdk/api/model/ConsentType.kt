@@ -34,7 +34,7 @@ enum class ConsentType {
  */
 fun String.toConsentType(): ConsentType? {
     return try {
-        ConsentType.valueOf(this.toUpperCase(Locale.US))
+        ConsentType.valueOf(this.uppercase(Locale.US))
     } catch (e: Exception) {
         null
     }
