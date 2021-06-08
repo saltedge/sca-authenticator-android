@@ -26,6 +26,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
+import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_CLOSE_APP
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
@@ -54,10 +55,9 @@ import org.mockito.Mockito.verify
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class MainActivityViewModelTest {
+class MainActivityViewModelTest : ViewModelTest() {
 
     private lateinit var interactor: MainActivityInteractor
-
     private val mockRealmManager = mock(RealmManagerAbs::class.java)
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
     private val mockPreferenceRepository = mock(PreferenceRepositoryAbs::class.java)

@@ -25,8 +25,13 @@ import android.content.DialogInterface
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.test.core.app.ApplicationProvider
+import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.AppToolsAbs
 import com.saltedge.authenticator.app.getDefaultSystemNightMode
+import com.saltedge.authenticator.core.model.ConnectionStatus
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.Connection
@@ -34,10 +39,6 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.app.AppToolsAbs
-import com.saltedge.authenticator.core.model.ConnectionStatus
-import com.saltedge.authenticator.core.model.RichConnection
-import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import junit.framework.TestCase.assertNull
 import org.hamcrest.CoreMatchers.equalTo
@@ -52,7 +53,7 @@ import org.robolectric.RobolectricTestRunner
 import java.security.PrivateKey
 
 @RunWith(RobolectricTestRunner::class)
-class SettingsListViewModelTest {
+class SettingsListViewModelTest : ViewModelTest() {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val mockAppTools = Mockito.mock(AppToolsAbs::class.java)

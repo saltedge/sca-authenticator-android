@@ -161,18 +161,19 @@ dependencies { //TODO After changing dependencies list, review third-party libra
     androidTestUtil 'com.android.support.test:orchestrator:1.0.2'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'androidx.test:core:1.3.0'
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.3'
     testImplementation 'org.robolectric:robolectric:4.5.1'
     testImplementation 'org.robolectric:shadows-playservices:4.5.1'
     testImplementation 'org.mockito:mockito-core:3.6.28'
     testImplementation 'io.mockk:mockk:1.10.2'
+    testImplementation 'org.hamcrest:hamcrest-core:2.2'
+    testImplementation 'org.hamcrest:hamcrest-library:2.2'
     testImplementation project(':test_tools')
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test:runner:1.3.0'
-    androidTestImplementation 'org.hamcrest:hamcrest-core:1.3'
-    androidTestImplementation 'org.hamcrest:hamcrest-integration:1.3'
-    androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
+    androidTestImplementation 'org.hamcrest:hamcrest-core:2.2'
+    androidTestImplementation 'org.hamcrest:hamcrest-integration:2.2'
+    androidTestImplementation 'org.hamcrest:hamcrest-library:2.2'
     androidTestImplementation 'org.mockito:mockito-android:3.2.4'
     androidTestImplementation 'com.google.code.findbugs:jsr305:3.0.2'//for compatibility with last realm plugin version
     androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"

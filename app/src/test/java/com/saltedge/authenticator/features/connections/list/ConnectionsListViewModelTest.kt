@@ -24,6 +24,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
+import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.core.api.KEY_NAME
@@ -59,7 +60,7 @@ import org.robolectric.RobolectricTestRunner
 import java.security.PrivateKey
 
 @RunWith(RobolectricTestRunner::class)
-class ConnectionsListViewModelTest {
+class ConnectionsListViewModelTest : ViewModelTest() {
 
     private lateinit var viewModel: ConnectionsListViewModel
     private lateinit var interactor: ConnectionsListInteractor
