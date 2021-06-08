@@ -126,6 +126,11 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         if (alertDialog?.isShowing == true) alertDialog?.dismiss()
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        viewModel.onRequestPermissionsResult(requestCode, grantResults)
+    }
+
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(AuthorizationsListViewModel::class.java)
         viewModel.bindLifecycleObserver(lifecycle = lifecycle)
@@ -169,13 +174,17 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     alertDialog = if (activity?.shouldShowRequestPermissionRationale(DeviceLocationManager.permissions[0]) == false
                         || activity?.shouldShowRequestPermissionRationale(DeviceLocationManager.permissions[1]) == false) {
-                        activity?.showGrantAccessToLocationDialog(
+                        activity?.showInfoDialog(
+                            titleResId = R.string.grant_access_location_title,
+                            messageResId = R.string.grant_access_location_description,
                             positiveButtonResId = R.string.actions_go_to_settings,
                             listener = { _, dialogActionId ->
                                 viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_go_to_settings)
                             })
                     } else {
-                        activity?.showGrantAccessToLocationDialog(
+                        activity?.showInfoDialog(
+                            titleResId = R.string.grant_access_location_title,
+                            messageResId = R.string.grant_access_location_description,
                             positiveButtonResId = R.string.actions_proceed,
                             listener = { _, dialogActionId ->
                                 viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_proceed)
@@ -207,6 +216,28 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         })
         viewModel.emptyViewDescriptionText.observe(this, Observer<ResId> {
             emptyView.setDescription(it)
+        })
+        viewModel.onGpsStateEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let {
+                val provider = Settings.Secure.getString(activity?.contentResolver, Settings.Secure.LOCATION_PROVIDERS_ALLOWED)
+                viewModel.turnOnGps(provider = provider)
+            }
+        })
+        viewModel.onShowGpsDialogEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let {
+                activity?.showInfoDialog(
+                    titleResId = R.string.enable_gps_title,
+                    messageResId = R.string.enable_gps_description,
+                    positiveButtonResId = R.string.actions_enable,
+                    listener = { _, dialogActionId ->
+                        viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_enable)
+                    })
+            }
+        })
+        viewModel.onEnableGpsEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let {
+                startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+            }
         })
     }
 

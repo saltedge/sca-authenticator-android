@@ -37,6 +37,7 @@
     <string name="actions_contact_support">Contact Support</string>
     <string name="actions_search">Search</string>
     <string name="actions_skip">Skip</string>
+    <string name="actions_enable">Enable</string>
     <string name="actions_try_again">Try Again</string>
     <string name="actions_unlock_authenticator">Unlock Salt Edge Authenticator</string>
     <string name="actions_view_more">View More</string>
@@ -238,6 +239,8 @@
     <string name="description_extra_location">Location:</string>
     <string name="description_extra_ip">IP address:</string>
 
+    <string name="enable_gps_title">Enable GPS</string>
+    <string name="enable_gps_description">Please enable GPS. Your service provider is requesting your location for accurate risk analysis.</string>
     <string name="grant_access_location_title">Grant access to location</string>
     <string name="grant_access_location_description">Your service provider is requesting you to provide your location data every time you are authorizing an action for accurate risk analysis.</string>
 </resources>

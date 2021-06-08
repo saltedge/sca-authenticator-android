@@ -137,20 +137,25 @@ fun FragmentActivity.showResetDataAndSettingsDialog(listener: DialogInterface.On
 }
 
 /**
- * Show grant access to location dialog
+ * Show info dialog
  *
  * @receiver FragmentActivity
+ * @param titleResId - the title that appears in the dialog
+ * @param messageResId - the message that appears in the dialog
+ * @param positiveButtonResId - the positive button that appears in the dialog
  * @param listener - on dialog action click listener
  * @return AlertDialog object or null
  */
-fun FragmentActivity.showGrantAccessToLocationDialog(
+fun FragmentActivity.showInfoDialog(
+    @StringRes titleResId: Int,
+    @StringRes messageResId: Int,
     @StringRes positiveButtonResId: Int,
     listener: DialogInterface.OnClickListener
 ): AlertDialog? {
     return try {
         AlertDialog.Builder(this, R.style.AlertDialogTheme)
-            .setTitle(R.string.grant_access_location_title)
-            .setMessage(R.string.grant_access_location_description)
+            .setTitle(titleResId)
+            .setMessage(messageResId)
             .setPositiveButton(positiveButtonResId, listener)
             .setNegativeButton(R.string.actions_cancel, listener)
             .show()

@@ -22,12 +22,14 @@ package com.saltedge.authenticator.features.authorizations.list
 
 import android.content.Context
 import android.content.DialogInterface
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.KEY_OPTION_ID
+import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.NetworkStateChangeListener
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ID
@@ -74,6 +76,9 @@ class AuthorizationsListViewModel(
     val onAccessToLocationClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onAskPermissionsEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onGoToSettingsEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onGpsStateEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onShowGpsDialogEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onEnableGpsEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
     init {
         interactorV1.contract = this
@@ -143,13 +148,22 @@ class AuthorizationsListViewModel(
         }
     }
 
-    fun onDialogActionIdClick(dialogActionId: Int, actionsGoToSettings: Int) {
+    fun onDialogActionIdClick(dialogActionId: Int, actionResId: ResId) {
         if (dialogActionId == DialogInterface.BUTTON_POSITIVE) {
-            if (actionsGoToSettings == R.string.actions_proceed) {
-                onAskPermissionsEvent.postUnitEvent()
-            } else if (actionsGoToSettings == R.string.actions_go_to_settings) {
-                onGoToSettingsEvent.postUnitEvent()
+            when (actionResId) {
+                R.string.actions_proceed -> onAskPermissionsEvent.postUnitEvent()
+                R.string.actions_go_to_settings -> onGoToSettingsEvent.postUnitEvent()
+                R.string.actions_enable -> onEnableGpsEvent.postUnitEvent()
             }
+        }
+    }
+
+    fun onRequestPermissionsResult(requestCode: Int, grantResults: IntArray) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE
+            && grantResults.any { it == PackageManager.PERMISSION_GRANTED }
+        ) {
+            locationManager.startLocationUpdates(appContext)
+            onGpsStateEvent.postUnitEvent()
         }
     }
 
@@ -313,5 +327,10 @@ class AuthorizationsListViewModel(
     private fun cleanDeadItems() {
         val currentItems = listItemsValues.filter { !it.shouldBeDestroyed }
         if (currentItems != listItemsValues) postListItemsUpdate(newItems = currentItems)
+    }
+
+    fun turnOnGps(provider: String?) {
+        if (provider?.contains("gps") == true) return
+        else onShowGpsDialogEvent.postUnitEvent()
     }
 }

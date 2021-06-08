@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.connections.list
 
-import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -174,13 +173,17 @@ class ConnectionsListFragment : BaseFragment(),
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     alertDialog = if (activity?.shouldShowRequestPermissionRationale(DeviceLocationManager.permissions[0]) == false
                         || activity?.shouldShowRequestPermissionRationale(DeviceLocationManager.permissions[1]) == false) {
-                            activity?.showGrantAccessToLocationDialog(
+                            activity?.showInfoDialog(
+                                titleResId = R.string.grant_access_location_title,
+                                messageResId = R.string.grant_access_location_description,
                                 positiveButtonResId = R.string.actions_go_to_settings,
                                 listener = { _, dialogActionId ->
                                     viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_go_to_settings)
                                 })
                     } else {
-                        activity?.showGrantAccessToLocationDialog(
+                        activity?.showInfoDialog(
+                            titleResId = R.string.grant_access_location_title,
+                            messageResId = R.string.grant_access_location_description,
                             positiveButtonResId = R.string.actions_proceed,
                             listener = { _, dialogActionId ->
                                 viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_proceed)
