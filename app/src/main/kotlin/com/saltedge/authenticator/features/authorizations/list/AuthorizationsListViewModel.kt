@@ -160,7 +160,6 @@ class AuthorizationsListViewModel(
         data: List<AuthorizationItemViewModel>,
         newModelsApiVersion: String
     ) {
-        println("onAuthorizationsReceived data:${data.size}")
         val joinedViewModels = this.listItemsValues.merge(
             newViewModels = data,
             newModelsApiVersion = newModelsApiVersion

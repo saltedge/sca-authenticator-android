@@ -123,15 +123,12 @@ class AuthorizationsListInteractorV1(
     }
 
     private fun processEncryptedAuthorizationsResult(encryptedList: List<EncryptedData>) {
-        println("processEncryptedAuthorizationsResult encryptedList:${encryptedList.size}")
         contract?.coroutineScope?.launch(defaultDispatcher) {
             val decryptedList = decryptAuthorizations(encryptedList = encryptedList)
-            println("processEncryptedAuthorizationsResult decryptedList:${decryptedList.size}")
             withContext(Dispatchers.Main) {
                 val newAuthorizationsData = decryptedList
                     .filter { it.isNotExpired() }
                     .sortedWith(compareBy({ it.createdAt }, { it.id }))
-                println("processEncryptedAuthorizationsResult newAuthorizationsData:${newAuthorizationsData.size}")
                 contract?.onAuthorizationsReceived(
                     data = createViewModels(newAuthorizationsData),
                     newModelsApiVersion = API_V1_VERSION
@@ -141,7 +138,6 @@ class AuthorizationsListInteractorV1(
     }
 
     private fun decryptAuthorizations(encryptedList: List<EncryptedData>): List<AuthorizationData> {
-        println("decryptAuthorizations encryptedList:${encryptedList.size}")
         return encryptedList.mapNotNull {
             cryptoTools.decryptAuthorizationData(
                 encryptedData = it,
