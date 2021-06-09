@@ -134,9 +134,9 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         given(mockConnectionsRepository.getByGuid(connection3Inactive.guid)).willReturn(connection3Inactive)
         given(mockConnectionsRepository.getAllConnections()).willReturn(allConnections)
         given(mockConnectionsRepository.getAllActiveConnections()).willReturn(allActiveConnections)
-        given(mockKeyStoreManager.enrichConnection(connection1)).willReturn(richConnection1)
-        given(mockKeyStoreManager.enrichConnection(connection2)).willReturn(richConnection2)
-        given(mockKeyStoreManager.enrichConnection(connection3Inactive)).willReturn(richConnection3)
+        given(mockKeyStoreManager.enrichConnection(connection1, addProviderKey = false)).willReturn(richConnection1)
+        given(mockKeyStoreManager.enrichConnection(connection2, addProviderKey = true)).willReturn(richConnection2)
+        given(mockKeyStoreManager.enrichConnection(connection3Inactive, addProviderKey = false)).willReturn(richConnection3)
 
         interactor = ConnectionsListInteractor(
             connectionsRepository = mockConnectionsRepository,

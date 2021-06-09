@@ -82,7 +82,6 @@ class AuthorizationDetailsViewModel(
             it.removeObserver(this)
             it.addObserver(this)
         }
-        interactor.bindLifecycleObserver(lifecycle)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
@@ -124,7 +123,7 @@ class AuthorizationDetailsViewModel(
         return true
     }
 
-    override fun onAuthorizationReceived(data: AuthorizationItemViewModel?, newModelsApiVersion: String) {
+    override fun onAuthorizationReceived(data: AuthorizationItemViewModel?, newModelApiVersion: String) {
         if (currentStatus.isProcessingMode()) return//skip polling result if confirm/deny is in progress
         if (!authorizationHasFinalMode && authorizationModel.value != data) {
             if (data == null) updateToFinalViewMode(AuthorizationStatus.ERROR)
@@ -182,10 +181,9 @@ class AuthorizationDetailsViewModel(
     }
 
     private fun startPolling() {
-        if (currentStatus != AuthorizationStatus.UNAVAILABLE) {
-            authorizationModel.value?.authorizationID?.let {
-                interactor.startPolling(authorizationID = it)
-            }
+        val authorizationID = authorizationModel.value?.authorizationID ?: return
+        if (currentStatus != AuthorizationStatus.UNAVAILABLE && !currentStatus.isFinalStatus()) {
+            interactor.startPolling(authorizationID = authorizationID)
         }
     }
 

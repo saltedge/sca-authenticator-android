@@ -35,10 +35,7 @@ internal class AuthorizationShowConnector(
     var resultCallback: FetchAuthorizationListener?
 ) : ApiResponseInterceptor<AuthorizationResponse>() {
 
-    fun showAuthorization(
-        connection: ConnectionAbs,
-        authorizationId: String
-    ) {
+    fun showAuthorization(connection: ConnectionAbs, authorizationId: String) {
         apiInterface.showAuthorization(
             requestUrl = connection.connectUrl.authorizationsShowPath(authorizationId),
             headersMap = createAccessTokenHeader(connection.accessToken)

@@ -29,6 +29,7 @@ import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.collectRichConnections
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.toRichConnection
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
@@ -93,7 +94,7 @@ class ConnectionsListInteractor(
 
     private fun sendRevokeRequestForConnection(connection: Connection) {
         if (!connection.isActive()) return
-        val richConnection = keyStoreManager.enrichConnection(connection) ?: return
+        val richConnection = connection.toRichConnection(keyStoreManager) ?: return
         if (connection.apiVersion == API_V1_VERSION) {
             apiManagerV1.revokeConnections(connectionsAndKeys = listOf(richConnection), resultCallback = null)
         } else if (connection.apiVersion == API_V2_VERSION) {

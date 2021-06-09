@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.authorizations.details
 
-import androidx.lifecycle.Lifecycle
 import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ID
@@ -54,12 +53,6 @@ class AuthorizationDetailsInteractorV2(
 ), PollingAuthorizationContract, AuthorizationConfirmListener, AuthorizationDenyListener {
     private var pollingService: SingleAuthorizationPollingService = apiManager.createSingleAuthorizationPollingService()
 
-    override fun bindLifecycleObserver(lifecycle: Lifecycle) {
-        lifecycle.removeObserver(pollingService)
-        lifecycle.addObserver(pollingService)
-        pollingService.contract = this
-    }
-
     override fun startPolling(authorizationID: ID) {
         pollingService.contract = this
         pollingService.start(authorizationID = authorizationID)
@@ -73,11 +66,17 @@ class AuthorizationDetailsInteractorV2(
     override fun getConnectionDataForAuthorizationPolling(): RichConnection? = this.richConnection
 
     override fun onFetchAuthorizationSuccess(result: AuthorizationResponseData) {
-        val newViewModel: AuthorizationItemViewModel? = cryptoTools.decryptAuthorizationData(
-            encryptedData = result,
-            rsaPrivateKey = richConnection?.private
-        )?.toAuthorizationItemViewModel(connection = richConnection?.connection ?: return)
-        contract?.onAuthorizationReceived(newViewModel, API_V2_VERSION)
+        val newStatus = result.status.toAuthorizationStatus()
+        if (newStatus?.isFinalStatus() == true) {
+            stopPolling()
+            contract?.onConfirmDenySuccess(newStatus)
+        } else {
+            val newViewModel: AuthorizationItemViewModel? = cryptoTools.decryptAuthorizationData(
+                encryptedData = result,
+                rsaPrivateKey = richConnection?.private
+            )?.toAuthorizationItemViewModel(connection = richConnection?.connection ?: return)
+            contract?.onAuthorizationReceived(newViewModel, API_V2_VERSION)
+        }
     }
 
     override fun onFetchAuthorizationFailed(error: ApiErrorData?) {

@@ -25,6 +25,7 @@ import com.saltedge.authenticator.core.model.isActive
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.models.toRichConnection
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
@@ -41,10 +42,13 @@ class MainActivityInteractor(
         get() = connectionsRepository.isEmpty()
 
     fun sendRevokeRequestForConnections() {
-        val connectionsAndKeys: List<RichConnection> = connectionsRepository.getAllActiveConnections().filter { it.isActive() }
-            .mapNotNull { keyStoreManager.enrichConnection(it) }
-        apiManagerV1.revokeConnections(connectionsAndKeys = connectionsAndKeys.filter { it.connection.apiVersion == API_V1_VERSION }, resultCallback = null)
-        apiManagerV2.revokeConnections(connections = connectionsAndKeys.filter { it.connection.apiVersion == API_V2_VERSION }, callback = null)
+        val richConnections: List<RichConnection> = connectionsRepository.getAllActiveConnections()
+            .filter { it.isActive() }
+            .mapNotNull { it.toRichConnection(keyStoreManager) }
+        apiManagerV1.revokeConnections(connectionsAndKeys = richConnections
+            .filter { it.connection.apiVersion == API_V1_VERSION }, resultCallback = null)
+        apiManagerV2.revokeConnections(connections = richConnections
+            .filter { it.connection.apiVersion == API_V2_VERSION }, callback = null)
     }
 
     fun wipeApplication() {
