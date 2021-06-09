@@ -191,7 +191,10 @@ class AuthorizationsListViewModel(
                 R.id.negativeActionView -> false
                 else -> return
             }
-            if (interactorV2.shouldRequestPermission(
+            if (interactorV1.shouldRequestPermission(
+                    it.connectionID,
+                    locationManager.locationPermissionsGranted(context = appContext)
+                ) || interactorV2.shouldRequestPermission(
                     it.connectionID,
                     locationManager.locationPermissionsGranted(context = appContext)
                 )

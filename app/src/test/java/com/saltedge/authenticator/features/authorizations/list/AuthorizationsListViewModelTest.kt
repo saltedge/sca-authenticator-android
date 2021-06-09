@@ -872,7 +872,7 @@ class AuthorizationsListViewModelTest {
             expiresAt = createdAt.plusMinutes(3),
             title = "title$id",
             description = "desc$id",
-            connectionId = "1",
+            connectionId = "$id",
         )
     }
 }
