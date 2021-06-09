@@ -173,7 +173,7 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
             event?.let {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     alertDialog = if (activity?.shouldShowRequestPermissionRationale(DeviceLocationManager.permissions[0]) == false
-                        || activity?.shouldShowRequestPermissionRationale(DeviceLocationManager.permissions[1]) == false) {
+                        || activity?.shouldShowRequestPermissionRationale(DeviceLocationManager.permissions[1]) == false) { //TODO: try to extract business logic in vm
                         activity?.showInfoDialog(
                             titleResId = R.string.grant_access_location_title,
                             messageResId = R.string.grant_access_location_description,
@@ -182,7 +182,7 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
                                 viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_go_to_settings)
                             })
                     } else {
-                        activity?.showInfoDialog( //TODO: Discuss with AlexL
+                        activity?.showInfoDialog(
                             titleResId = R.string.grant_access_location_title,
                             messageResId = R.string.grant_access_location_description,
                             positiveButtonResId = R.string.actions_proceed,

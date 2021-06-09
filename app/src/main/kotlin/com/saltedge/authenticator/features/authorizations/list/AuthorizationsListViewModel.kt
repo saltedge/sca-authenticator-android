@@ -169,7 +169,8 @@ class AuthorizationsListViewModel(
                 )?.let {
                         updateAuthorization(
                             listItem = it,
-                            confirm = onRequestPermissionEvent.value?.third ?: false)
+                            confirm = onRequestPermissionEvent.value?.third ?: false
+                        )
                 }
             } else {
                 onRequestLocationProviderEvent.postUnitEvent()

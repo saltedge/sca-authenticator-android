@@ -34,7 +34,7 @@ import com.saltedge.authenticator.tools.toDateFormatString
 
 fun Connection.convertConnectionToViewModel(context: Context, deviceLocationManager: DeviceLocationManagerAbs): ConnectionItem {
     val locationPermissionsIsGranted: Boolean = deviceLocationManager.locationPermissionsGranted(context)
-    val shouldGrantAccess = checkGrantAccessToLocationData(geolocationRequired = this.geolocationRequired, locationPermissionsAreGranted = locationPermissionsIsGranted)
+    val shouldGrantAccess = shouldRequestPermission(geolocationRequired = this.geolocationRequired, locationPermissionsAreGranted = locationPermissionsIsGranted)
     return ConnectionItem(
         guid = this.guid,
         connectionId = this.id,
@@ -55,11 +55,14 @@ fun List<Connection>.convertConnectionsToViewModels(context: Context, locationMa
 }
 
 /**
- * Check if location permissions are granted and geolocation is required
+ * Should request permission if geolocationRequired is null or false
+ * or locationPermissionsAreGranted is false
+ * or geolocationRequired is true and locationPermissionsAreGranted is false
+ * or geolocationRequired is true and locationPermissionsAreGranted is true
  *
- * @return Boolean, true Connection geolocation is required and locations permissions are granted
+ * @return Boolean, falseg when Connection geolocationRequired is false and locationPermissionsAreGranted is false
  */
-fun checkGrantAccessToLocationData(geolocationRequired: Boolean?, locationPermissionsAreGranted: Boolean): Boolean {
+fun shouldRequestPermission(geolocationRequired: Boolean?, locationPermissionsAreGranted: Boolean): Boolean {
     return (geolocationRequired == null
         || geolocationRequired == false)
         || !locationPermissionsAreGranted

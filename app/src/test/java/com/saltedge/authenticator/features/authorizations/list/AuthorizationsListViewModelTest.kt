@@ -872,7 +872,7 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
             expiresAt = createdAt.plusMinutes(3),
             title = "title$id",
             description = "desc$id",
-            connectionId = "$id",
+            connectionId = "1",
         )
     }
 }

@@ -30,7 +30,7 @@ import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationStatus
-import com.saltedge.authenticator.features.connections.list.checkGrantAccessToLocationData
+import com.saltedge.authenticator.features.connections.list.shouldRequestPermission
 import com.saltedge.authenticator.models.collectRichConnections
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
@@ -62,7 +62,7 @@ class AuthorizationsListInteractorV2(
 
     fun shouldRequestPermission(connectionId: ID, locationPermissionsIsGranted: Boolean): Boolean {
         val richConnection: RichConnection? = richConnections[connectionId]
-        return checkGrantAccessToLocationData(
+        return shouldRequestPermission(
             geolocationRequired = richConnection?.connection?.geolocationRequired,
             locationPermissionsAreGranted = locationPermissionsIsGranted
         )
