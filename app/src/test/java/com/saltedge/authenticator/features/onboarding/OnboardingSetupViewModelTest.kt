@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.onboarding
 
 import android.view.View
+import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
@@ -39,7 +40,7 @@ import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class OnboardingSetupViewModelTest {
+class OnboardingSetupViewModelTest : ViewModelTest() {
 
     private val mockPreferenceRepository = Mockito.mock(PreferenceRepositoryAbs::class.java)
     private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)

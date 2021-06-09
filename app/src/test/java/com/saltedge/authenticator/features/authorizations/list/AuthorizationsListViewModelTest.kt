@@ -26,6 +26,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import com.saltedge.android.test_tools.CommonTestTools
+import com.saltedge.android.test_tools.CoroutineViewModelTest
 import com.saltedge.android.test_tools.encryptWithTestKey
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.AppTools
@@ -61,9 +62,8 @@ import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2Abs
 import com.saltedge.authenticator.widget.security.ActivityUnlockType
 import junit.framework.TestCase.assertNull
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.*
+import org.hamcrest.CoreMatchers.*
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.junit.Before
@@ -73,11 +73,10 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
 
-@RunWith(RobolectricTestRunner::class)
 @ExperimentalCoroutinesApi
-class AuthorizationsListViewModelTest {
+@RunWith(RobolectricTestRunner::class)
+class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
 
-    private val testDispatcher = TestCoroutineDispatcher()
     private lateinit var viewModel: AuthorizationsListViewModel
     private lateinit var v1Interactor: AuthorizationsListInteractorV1
     private lateinit var v2Interactor: AuthorizationsListInteractorV2
@@ -122,7 +121,8 @@ class AuthorizationsListViewModelTest {
     private val items: List<AuthorizationItemViewModel> = authorizations.map { it.toAuthorizationItemViewModel(mockConnectionV1)!! }
 
     @Before
-    fun setUp() {
+    override fun setUp() {
+        super.setUp()
         AppTools.lastUnlockType = ActivityUnlockType.BIOMETRICS
         doReturn("GEO:52.506931;13.144558").`when`(mockLocationManager).locationDescription
         doReturn(mockPollingServiceV1).`when`(mockApiManagerV1).createAuthorizationsPollingService()

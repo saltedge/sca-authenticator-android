@@ -24,6 +24,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
+import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -53,7 +54,7 @@ import org.robolectric.RobolectricTestRunner
 import java.security.PrivateKey
 
 @RunWith(RobolectricTestRunner::class)
-class ConsentDetailsViewModelTest {
+class ConsentDetailsViewModelTest : ViewModelTest() {
 
     private lateinit var viewModel: ConsentDetailsViewModel
     private val context: Context = ApplicationProvider.getApplicationContext()

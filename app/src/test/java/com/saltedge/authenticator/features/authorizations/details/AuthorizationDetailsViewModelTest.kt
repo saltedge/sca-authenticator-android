@@ -23,6 +23,7 @@ package com.saltedge.authenticator.features.authorizations.details
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
+import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.core.api.ERROR_CLASS_SSL_HANDSHAKE
 import com.saltedge.authenticator.core.api.model.DescriptionData
@@ -45,7 +46,7 @@ import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class AuthorizationDetailsViewModelTest {
+class AuthorizationDetailsViewModelTest : ViewModelTest() {
 
     private lateinit var viewModel: AuthorizationDetailsViewModel
 

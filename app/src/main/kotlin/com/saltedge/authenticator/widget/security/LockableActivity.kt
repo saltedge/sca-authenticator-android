@@ -56,7 +56,7 @@ enum class ActivityUnlockType {
     PASSCODE, BIOMETRICS;
 
     val description: String
-        get() = this.toString().toLowerCase(Locale.ROOT)
+        get() = this.toString().lowercase(Locale.ROOT)
 }
 
 @SuppressLint("Registered")
