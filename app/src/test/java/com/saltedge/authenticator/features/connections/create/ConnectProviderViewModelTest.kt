@@ -23,6 +23,7 @@ package com.saltedge.authenticator.features.connections.create
 import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.view.View
+import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
@@ -43,7 +44,7 @@ import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class ConnectProviderViewModelTest {
+class ConnectProviderViewModelTest : ViewModelTest() {
 
     private lateinit var viewModel: ConnectProviderViewModel
     private val mockInteractor = mock(ConnectProviderInteractorAbs::class.java)

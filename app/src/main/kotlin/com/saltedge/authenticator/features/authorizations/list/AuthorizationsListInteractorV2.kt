@@ -79,8 +79,11 @@ class AuthorizationsListInteractorV2(
     }
 
     fun updateAuthorization(
-        connectionID: ID, authorizationID: ID, authorizationCode: String,
-        confirm: Boolean, locationDescription: String?
+        connectionID: ID,
+        authorizationID: ID,
+        authorizationCode: String,
+        confirm: Boolean,
+        locationDescription: String?
     ): Boolean {
         val authorizationData = UpdateAuthorizationData(
             authorizationCode = authorizationCode,

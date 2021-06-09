@@ -27,9 +27,16 @@ import android.os.Bundle
 import android.text.SpannableStringBuilder
 import androidx.test.core.app.ApplicationProvider
 import com.saltedge.android.test_tools.CommonTestTools
+import com.saltedge.android.test_tools.CoroutineViewModelTest
 import com.saltedge.android.test_tools.encryptWithTestKey
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CONSENT_REQUEST_CODE
+import com.saltedge.authenticator.app.guid
+import com.saltedge.authenticator.core.api.KEY_DATA
+import com.saltedge.authenticator.core.api.KEY_ID
+import com.saltedge.authenticator.core.model.ConnectionStatus
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.consents.common.countOfDays
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -38,15 +45,8 @@ import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.sdk.api.model.ConsentSharedData
 import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
 import com.saltedge.authenticator.tools.daysTillExpire
-import com.saltedge.authenticator.app.guid
-import com.saltedge.authenticator.core.api.KEY_DATA
-import com.saltedge.authenticator.core.api.KEY_ID
-import com.saltedge.authenticator.core.model.ConnectionStatus
-import com.saltedge.authenticator.core.model.RichConnection
-import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.hamcrest.CoreMatchers.equalTo
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
@@ -61,9 +61,8 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 @ExperimentalCoroutinesApi
-class ConsentsListViewModelTest {
+class ConsentsListViewModelTest : CoroutineViewModelTest() {
 
-    private val testDispatcher = TestCoroutineDispatcher()
     private lateinit var viewModel: ConsentsListViewModel
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
@@ -124,7 +123,8 @@ class ConsentsListViewModelTest {
     )
 
     @Before
-    fun setUp() {
+    override fun setUp() {
+        super.setUp()
         given(mockConnectionsRepository.getByGuid("guid2")).willReturn(connection)
         given(mockKeyStoreManager.enrichConnection(connection))
             .willReturn(mockConnectionAndKey)

@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.settings.language
 
+import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.TestAppTools
@@ -33,7 +34,7 @@ import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class LanguageSelectViewModelTest {
+class LanguageSelectViewModelTest : ViewModelTest() {
 
     private val mockPreferenceRepository = Mockito.mock(PreferenceRepositoryAbs::class.java)
     private lateinit var viewModel: LanguageSelectViewModel

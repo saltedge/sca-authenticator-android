@@ -22,6 +22,7 @@ package com.saltedge.authenticator.features.connections.select
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.core.model.ConnectionStatus
 import com.saltedge.authenticator.features.connections.list.convertConnectionsToViewModels
 import com.saltedge.authenticator.models.Connection
@@ -36,7 +37,7 @@ import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class SelectConnectionsViewModelTest {
+class SelectConnectionsViewModelTest : ViewModelTest() {
 
     private lateinit var viewModel: SelectConnectionsViewModel
     private val context: Context = ApplicationProvider.getApplicationContext()

@@ -23,6 +23,7 @@ package com.saltedge.authenticator.widget.security
 import android.content.Intent
 import android.os.SystemClock
 import android.view.View
+import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
@@ -42,7 +43,7 @@ import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class LockableActivityViewModelTest {
+class LockableActivityViewModelTest : ViewModelTest() {
 
     private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
     private val mockPreferenceRepository = Mockito.mock(PreferenceRepositoryAbs::class.java)

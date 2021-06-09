@@ -20,18 +20,14 @@
  */
 package com.saltedge.authenticator.features.settings.passcode
 
+import com.saltedge.android.test_tools.CoroutineViewModelTest
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -40,11 +36,17 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 @ExperimentalCoroutinesApi
-class PasscodeEditViewModelTest {
+class PasscodeEditViewModelTest : CoroutineViewModelTest() {
 
-    private val testDispatcher = TestCoroutineDispatcher()
     private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)
     private lateinit var viewModel: PasscodeEditViewModel
+
+    @Before
+    override fun setUp() {
+        super.setUp()
+        Mockito.doReturn("1357").`when`(mockPasscodeTools).getPasscode()
+        viewModel = PasscodeEditViewModel(passcodeTools = mockPasscodeTools, defaultDispatcher = testDispatcher)
+    }
 
     @Test
     @Throws(Exception::class)
@@ -108,22 +110,5 @@ class PasscodeEditViewModelTest {
         viewModel.onPasscodeInputCanceledByUser()
 
         assertThat(viewModel.closeViewEvent.value, equalTo(ViewModelEvent(Unit)))
-    }
-
-    @Before
-    fun setUp() {
-        Dispatchers.setMain(testDispatcher)
-        Mockito.doReturn("1357").`when`(mockPasscodeTools).getPasscode()
-        viewModel = PasscodeEditViewModel(passcodeTools = mockPasscodeTools, defaultDispatcher = testDispatcher)
-    }
-
-    @After
-    fun tearDown() {
-        // Resets state of the [Dispatchers.Main] to the original main dispatcher.
-        // For example, in Android Main thread dispatcher will be set as [Dispatchers.Main].
-        Dispatchers.resetMain()
-
-        // Clean up the TestCoroutineDispatcher to make sure no other work is running.
-        testDispatcher.cleanupTestCoroutines()
     }
 }

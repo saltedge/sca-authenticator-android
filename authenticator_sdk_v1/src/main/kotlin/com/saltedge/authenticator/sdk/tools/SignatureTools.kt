@@ -34,7 +34,7 @@ fun createSignatureHeader(
     requestBody: String,
     privateKey: PrivateKey
 ): String {
-    val payload = "${requestMethod.toLowerCase(Locale.US)}|$requestUrl|$expiresAt|$requestBody"
+    val payload = "${requestMethod.lowercase(Locale.US)}|$requestUrl|$expiresAt|$requestBody"
     return runCatching {
         return payload.toByteArray(StandardCharsets.UTF_8).signWith(privateKey)?.let {
             Base64.encodeToString(it, Base64.NO_WRAP)

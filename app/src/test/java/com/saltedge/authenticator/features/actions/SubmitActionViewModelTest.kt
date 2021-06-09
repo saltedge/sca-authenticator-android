@@ -22,6 +22,7 @@ package com.saltedge.authenticator.features.actions
 
 import android.net.Uri
 import android.view.View
+import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.core.api.ERROR_CLASS_API_RESPONSE
@@ -48,7 +49,7 @@ import java.security.KeyPair
 import java.security.PrivateKey
 
 @RunWith(RobolectricTestRunner::class)
-class SubmitActionViewModelTest {
+class SubmitActionViewModelTest : ViewModelTest() {
 
     private lateinit var viewModel: SubmitActionViewModel
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)

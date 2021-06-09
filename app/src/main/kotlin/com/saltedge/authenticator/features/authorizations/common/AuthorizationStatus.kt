@@ -92,7 +92,7 @@ enum class AuthorizationStatus {//pending confirm_processing deny_processing con
 fun String.toAuthorizationStatus(): AuthorizationStatus? {
     return try {
         if ("closed" == this) AuthorizationStatus.ERROR
-        else AuthorizationStatus.valueOf(toUpperCase(Locale.US))
+        else AuthorizationStatus.valueOf(this.uppercase(Locale.US))
     } catch (e: Exception) {
         null
     }

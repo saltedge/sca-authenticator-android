@@ -191,14 +191,13 @@ class AuthorizationsListViewModel(
                 R.id.negativeActionView -> false
                 else -> return
             }
-            if (interactorV1.shouldRequestPermission(
-                    it.connectionID,
-                    locationManager.locationPermissionsGranted(context = appContext)
-                ) || interactorV2.shouldRequestPermission(
-                    it.connectionID,
-                    locationManager.locationPermissionsGranted(context = appContext)
-                )
-            ) {
+            val locationPermissionsGranted = locationManager.locationPermissionsGranted(context = appContext)
+            val shouldRequestPermission = if (it.isV2Api) {
+                interactorV2.shouldRequestPermission(it.connectionID, locationPermissionsGranted)
+            } else {
+                interactorV1.shouldRequestPermission(it.connectionID, locationPermissionsGranted)
+            }
+            if (shouldRequestPermission) {
                 onRequestPermissionEvent.postValue(Triple(it.connectionID, it.authorizationID, confirm))
             } else {
                 if (locationManager.isLocationProviderActive(appContext)) {

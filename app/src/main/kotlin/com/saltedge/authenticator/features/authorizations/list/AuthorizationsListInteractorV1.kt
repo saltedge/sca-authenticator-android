@@ -133,9 +133,9 @@ class AuthorizationsListInteractorV1(
 
     private fun processEncryptedAuthorizationsResult(encryptedList: List<EncryptedData>) {
         contract?.coroutineScope?.launch(defaultDispatcher) {
-            val data = decryptAuthorizations(encryptedList = encryptedList)
+            val decryptedList = decryptAuthorizations(encryptedList = encryptedList)
             withContext(Dispatchers.Main) {
-                val newAuthorizationsData = data
+                val newAuthorizationsData = decryptedList
                     .filter { it.isNotExpired() }
                     .sortedWith(compareBy({ it.createdAt }, { it.id }))
                 contract?.onAuthorizationsReceived(
