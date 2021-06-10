@@ -187,9 +187,11 @@ object KeyManager : KeyManagerAbs {
      */
     override fun enrichConnection(connection: ConnectionAbs): RichConnection? {
         val appRsaPair = getKeyPair(alias = connection.guid) ?: return null
-        val providerRsaPublic = connection.providerRsaPublicKeyPem.pemToPublicKey(
-            algorithm = KeyAlgorithm.RSA
-        )
+        val providerRsaPublic = if (connection.providerRsaPublicKeyPem.isNotEmpty()) {
+             connection.providerRsaPublicKeyPem.pemToPublicKey(
+                algorithm = KeyAlgorithm.RSA
+            )
+        } else null
         return RichConnection(connection, appRsaPair.private, providerRsaPublic)
     }
 

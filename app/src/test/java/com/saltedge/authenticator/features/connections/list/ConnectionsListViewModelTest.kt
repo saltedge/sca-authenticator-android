@@ -85,6 +85,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         createdAt = 100L
         updatedAt = 100L
         apiVersion = API_V1_VERSION
+        geolocationRequired = true
     }
     private val connection2 = Connection().apply {
         id = "2"
@@ -267,15 +268,15 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                         guid = "guid2",
                         connectionId = "2",
                         name = "Demobank2",
-                        statusDescription = "Grant access to location data",
-                        statusDescriptionColorRes = R.color.yellow,
+                        statusDescription = "Linked on 1 January 1970",
+                        statusDescriptionColorRes = R.color.dark_60_and_grey_100,
                         logoUrl = "",
                         consentsDescription = "",
                         isActive = true,
                         isChecked = false,
                         apiVersion = API_V2_VERSION,
                         email = "example@example.com",
-                        locationPermissionRequired = true
+                        locationPermissionRequired = false
                     ),
                     ConnectionItem(
                         guid = "guid3",
@@ -289,7 +290,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                         isChecked = false,
                         apiVersion = API_V1_VERSION,
                         email = "example@example.com",
-                        locationPermissionRequired = true
+                        locationPermissionRequired = false
                     )
                 )
             )
@@ -396,18 +397,13 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                     textRes = R.string.actions_contact_support
                 ),
                 MenuItemData(
-                    id = ConnectionsListViewModel.PopupMenuItem.LOCATION.ordinal,
-                    iconRes = R.drawable.ic_view_location_24dp,
-                    textRes = R.string.actions_view_location
-                ),
-                MenuItemData(
                     id = ConnectionsListViewModel.PopupMenuItem.DELETE.ordinal,
                     iconRes = R.drawable.ic_menu_remove_24dp,
                     textRes = R.string.actions_remove
                 )
             )
         )
-        assertThat(menuData.items.size, equalTo(5))
+        assertThat(menuData.items.size, equalTo(4))
         assertThat(menuData, equalTo(expectedMenuData))
     }
 

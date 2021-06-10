@@ -130,7 +130,9 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
         doReturn(mockPollingServiceV2).`when`(mockApiManagerV2).createAuthorizationsPollingService()
         given(mockConnectionsRepository.getAllActiveConnections(API_V1_VERSION)).willReturn(listOf(mockConnectionV1))
         given(mockConnectionsRepository.getAllActiveConnections(API_V2_VERSION)).willReturn(listOf(mockConnectionV2))
+        doReturn(true).`when`(mockLocationManager).isLocationProviderActive(TestAppTools.applicationContext)
         given(mockKeyStoreManager.enrichConnection(mockConnectionV1)).willReturn(mockConnectionAndKeyV1)
+        given(mockKeyStoreManager.enrichConnection(mockConnectionV2)).willReturn(mockConnectionAndKeyV2)
         encryptedAuthorizations.forEachIndexed { index, encryptedData ->
             given(mockCryptoToolsV1.decryptAuthorizationData(encryptedData, mockConnectionAndKeyV1.private))
                 .willReturn(authorizations[index])

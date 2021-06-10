@@ -55,19 +55,12 @@ fun List<Connection>.convertConnectionsToViewModels(context: Context, locationMa
 }
 
 /**
- * Should request permission if geolocationRequired is null or false
- * or locationPermissionsAreGranted is false
- * or geolocationRequired is true and locationPermissionsAreGranted is false
- * or geolocationRequired is true and locationPermissionsAreGranted is true
+ * Should request permission if geolocationRequired is mandatory and location permissions are not granted
  *
- * @return Boolean, falseg when Connection geolocationRequired is false and locationPermissionsAreGranted is false
+ * @return Boolean
  */
 fun shouldRequestPermission(geolocationRequired: Boolean?, locationPermissionsAreGranted: Boolean): Boolean {
-    return (geolocationRequired == null
-        || geolocationRequired == false)
-        || !locationPermissionsAreGranted
-        || geolocationRequired == true && !locationPermissionsAreGranted
-        || geolocationRequired == false && locationPermissionsAreGranted
+    return geolocationRequired == true && !locationPermissionsAreGranted
 }
 
 private fun getConnectionStatusDescription(
