@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
-import androidx.lifecycle.Lifecycle
 import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.api.model.error.isConnectionNotFound
@@ -58,17 +57,17 @@ class AuthorizationsListInteractorV2(
     val noConnections: Boolean
         get() = richConnections.isEmpty()
     private var pollingService = apiManager.createAuthorizationsPollingService()
-    private var richConnections: Map<ID, RichConnection> =
-        collectRichConnections(connectionsRepository, keyStoreManager, API_V2_VERSION)
+    private var richConnections: Map<ID, RichConnection> = collectRichConnections()
 
-    fun updateConnections() {
-        richConnections = collectRichConnections(connectionsRepository, keyStoreManager, API_V2_VERSION)
+    fun onResume() {
+        richConnections = collectRichConnections()
+        pollingService.contract = this
+        pollingService.start()
     }
 
-    fun bindLifecycleObserver(lifecycle: Lifecycle) {
-        lifecycle.removeObserver(pollingService)
-        lifecycle.addObserver(pollingService)
-        pollingService.contract = this
+    fun onStop() {
+        pollingService.contract = null
+        pollingService.stop()
     }
 
     fun updateAuthorization(connectionID: ID, authorizationID: ID, authorizationCode: String, confirm: Boolean): Boolean {
@@ -138,11 +137,10 @@ class AuthorizationsListInteractorV2(
     }
 
     private fun processAuthorizationsErrors(errors: List<ApiErrorData>) {
-        val invalidTokens =
-            errors.filter { it.isConnectionNotFound() }.mapNotNull { it.accessToken }
+        val invalidTokens = errors.filter { it.isConnectionNotFound() }.mapNotNull { it.accessToken }
         if (invalidTokens.isNotEmpty()) {
             connectionsRepository.invalidateConnectionsByTokens(accessTokens = invalidTokens)
-            richConnections = collectRichConnections(connectionsRepository, keyStoreManager)
+            richConnections = collectRichConnections()
         }
     }
 
@@ -177,4 +175,6 @@ class AuthorizationsListInteractorV2(
             }
         }
     }
+
+    private fun collectRichConnections() = collectRichConnections(connectionsRepository, keyStoreManager, API_V2_VERSION)
 }

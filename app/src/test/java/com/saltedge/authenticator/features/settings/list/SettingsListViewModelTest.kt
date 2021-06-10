@@ -39,6 +39,7 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
+import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import junit.framework.TestCase.assertNull
 import org.hamcrest.CoreMatchers.equalTo
@@ -60,7 +61,7 @@ class SettingsListViewModelTest : ViewModelTest() {
     private val mockPreferences = Mockito.mock(PreferenceRepositoryAbs::class.java)
     private val mockKeyStoreManager = Mockito.mock(KeyManagerAbs::class.java)
     private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
-    private val mockConnection1 = Connection().apply {
+    private val mockConnectionV1 = Connection().apply {
         guid = "guid1"
         id = "1"
         code = "demobank3"
@@ -70,9 +71,10 @@ class SettingsListViewModelTest : ViewModelTest() {
         logoUrl = "url"
         createdAt = 200L
         updatedAt = 200L
+        apiVersion = API_V1_VERSION
     }
     private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
-    private val mockConnectionAndKey = RichConnection(mockConnection1, mockPrivateKey)
+    private val richConnectionV1 = RichConnection(mockConnectionV1, mockPrivateKey)
     private lateinit var viewModel: SettingsListViewModel
     private lateinit var interactorV1: SettingsListInteractorV1
     private lateinit var interactorV2: SettingsListInteractorV2
@@ -82,8 +84,8 @@ class SettingsListViewModelTest : ViewModelTest() {
     @Before
     fun setUp() {
         Mockito.doReturn(true).`when`(mockPreferences).screenshotLockEnabled
-        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(mockConnection1))
-        given(mockKeyStoreManager.enrichConnection(mockConnection1)).willReturn(mockConnectionAndKey)
+        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(mockConnectionV1))
+        given(mockKeyStoreManager.enrichConnection(mockConnectionV1, addProviderKey = false)).willReturn(richConnectionV1)
 
         interactorV1 = SettingsListInteractorV1(
             connectionsRepository = mockConnectionsRepository,
@@ -234,7 +236,7 @@ class SettingsListViewModelTest : ViewModelTest() {
         //then
         Mockito.verify(mockConnectionsRepository).deleteAllConnections()
         Mockito.verify(mockApiManagerV1).revokeConnections(
-            connectionsAndKeys = listOf(mockConnectionAndKey),
+            connectionsAndKeys = listOf(richConnectionV1),
             resultCallback = null
         )
     }

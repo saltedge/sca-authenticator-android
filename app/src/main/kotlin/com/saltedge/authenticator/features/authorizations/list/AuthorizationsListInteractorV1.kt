@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
-import androidx.lifecycle.Lifecycle
 import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.api.model.error.isConnectionNotFound
@@ -59,23 +58,24 @@ class AuthorizationsListInteractorV1(
     val noConnections: Boolean
         get() = richConnections.isEmpty()
     private var pollingService = apiManager.createAuthorizationsPollingService()
-    private var richConnections: Map<ID, RichConnection> =
-        collectRichConnections(connectionsRepository, keyStoreManager, API_V1_VERSION)
+    private var richConnections: Map<ID, RichConnection> = collectRichConnections()
 
-    fun updateConnections() {
-        richConnections = collectRichConnections(connectionsRepository, keyStoreManager, API_V1_VERSION)
+    fun onResume() {
+        richConnections = collectRichConnections()
+        pollingService.contract = this
+        pollingService.start()
     }
 
-    fun bindLifecycleObserver(lifecycle: Lifecycle) {
-        lifecycle.removeObserver(pollingService)
-        lifecycle.addObserver(pollingService)
-        pollingService.contract = this
+    fun onStop() {
+        pollingService.contract = null
+        pollingService.stop()
     }
 
     fun updateAuthorization(connectionID: ID, authorizationID: ID, authorizationCode: String, confirm: Boolean): Boolean {
+        val richConnection = richConnections[connectionID] ?: return false
         if (confirm) {
             apiManager.confirmAuthorization(
-                connectionAndKey = richConnections[connectionID] ?: return false,
+                connectionAndKey = richConnection,
                 authorizationId = authorizationID,
                 authorizationCode = authorizationCode,
                 geolocation = locationManager.locationDescription,
@@ -84,7 +84,7 @@ class AuthorizationsListInteractorV1(
             )
         } else {
             apiManager.denyAuthorization(
-                connectionAndKey = richConnections[connectionID] ?: return false,
+                connectionAndKey = richConnection,
                 authorizationId = authorizationID,
                 authorizationCode = authorizationCode,
                 geolocation = locationManager.locationDescription,
@@ -118,7 +118,7 @@ class AuthorizationsListInteractorV1(
             errors.filter { it.isConnectionNotFound() }.mapNotNull { it.accessToken }
         if (invalidTokens.isNotEmpty()) {
             connectionsRepository.invalidateConnectionsByTokens(accessTokens = invalidTokens)
-            richConnections = collectRichConnections(connectionsRepository, keyStoreManager, API_V1_VERSION)
+            richConnections = collectRichConnections()
         }
     }
 
@@ -153,4 +153,6 @@ class AuthorizationsListInteractorV1(
             }
         }
     }
+
+    private fun collectRichConnections() = collectRichConnections(connectionsRepository, keyStoreManager, API_V1_VERSION)
 }

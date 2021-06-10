@@ -92,10 +92,10 @@ fun String.pemToPrivateKey(algorithm: String): PrivateKey? {
 }
 
 /**
- * Converts string which contains public key in PEM format to PublicKey object
+ * Converts string which contains public key in PKCS#8 PEM format to PublicKey object
  *
- * @receiver public key in PEM format
- * @return PublicKey or null
+ * @receiver public key in PKCS#8 PEM format
+ * @return PublicKey or null if invalid
  */
 fun String.pemToPublicKey(algorithm: String): PublicKey? {
     return try {
@@ -107,7 +107,7 @@ fun String.pemToPublicKey(algorithm: String): PublicKey? {
         val keySpecX509: KeySpec = X509EncodedKeySpec(Base64.decode(keyContent, Base64.NO_WRAP))
         KeyFactory.getInstance(algorithm).generatePublic(keySpecX509)
     } catch (e: Exception) {
-        Timber.e(e, "PEM key: $this")
+        Timber.e(e, "Invalid PEM key: $this")
         null
     }
 }

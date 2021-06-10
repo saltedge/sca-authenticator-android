@@ -268,19 +268,6 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
 
     @Test
     @Throws(Exception::class)
-    fun bindLifecycleObserverTest() {
-        //given
-        val lifecycle = LifecycleRegistry(mock(LifecycleOwner::class.java))
-
-        //when
-        viewModel.bindLifecycleObserver(lifecycle)
-
-        //then
-        verify(mockInteractorV2).bindLifecycleObserver(lifecycle)
-    }
-
-    @Test
-    @Throws(Exception::class)
     fun onFragmentResume() {
         //given valid identifier
         val lifecycle = LifecycleRegistry(mock(LifecycleOwner::class.java))
@@ -606,7 +593,7 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
         viewModel.setInitialData(identifier = AuthorizationIdentifier(connectionID = "1", authorizationID = "1"), closeAppOnBackPress = true, titleRes = null)
 
         //when
-        viewModel.onAuthorizationReceived(data = viewModel1, newModelsApiVersion = API_V2_VERSION)
+        viewModel.onAuthorizationReceived(data = viewModel1, newModelApiVersion = API_V2_VERSION)
 
         //then
         assertThat(viewModel.authorizationModel.value, equalTo(viewModel1))
@@ -619,7 +606,7 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
         viewModel.authorizationModel.value = viewModel1.copy(status = AuthorizationStatus.DENY_PROCESSING)
 
         //when
-        viewModel.onAuthorizationReceived(data = viewModel1, newModelsApiVersion = API_V2_VERSION)
+        viewModel.onAuthorizationReceived(data = viewModel1, newModelApiVersion = API_V2_VERSION)
 
         //then
         assertThat(viewModel.authorizationModel.value, equalTo(viewModel1.copy(status = AuthorizationStatus.DENY_PROCESSING)))

@@ -40,6 +40,7 @@ import io.mockk.mockkClass
 import io.mockk.verify
 import okhttp3.Request
 import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -136,7 +137,7 @@ class ConnectionsRevokeConnectorTest {
         val connector = ConnectionsRevokeConnector(mockApi, mockCallback)
         connector.onResponse(
             mockCall,
-            Response.error(404, ResponseBody.create(null, "{\"message\":\"Unknown error\"}"))
+            Response.error(404, "{\"message\":\"Unknown error\"}".toResponseBody(null))
         )
 
         verify {

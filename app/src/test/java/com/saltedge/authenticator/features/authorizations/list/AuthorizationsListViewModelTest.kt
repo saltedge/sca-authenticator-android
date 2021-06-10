@@ -114,8 +114,8 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
         updatedAt = 200L
         apiVersion = API_V2_VERSION
     }
-    private val mockConnectionAndKeyV1 = RichConnection(mockConnectionV1, CommonTestTools.testPrivateKey)
-    private val mockConnectionAndKeyV2 = RichConnection(mockConnectionV2, CommonTestTools.testPrivateKey)
+    private val richConnectionV1 = RichConnection(mockConnectionV1, CommonTestTools.testPrivateKey)
+    private val richConnectionV2 = RichConnection(mockConnectionV2, CommonTestTools.testPrivateKey)
     private val authorizations: List<AuthorizationData> = listOf(createAuthorization(id = 1), createAuthorization(id = 2))
     private val encryptedAuthorizations = authorizations.map { it.encryptWithTestKey() }
     private val items: List<AuthorizationItemViewModel> = authorizations.map { it.toAuthorizationItemViewModel(mockConnectionV1)!! }
@@ -129,9 +129,10 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
         doReturn(mockPollingServiceV2).`when`(mockApiManagerV2).createAuthorizationsPollingService()
         given(mockConnectionsRepository.getAllActiveConnections(API_V1_VERSION)).willReturn(listOf(mockConnectionV1))
         given(mockConnectionsRepository.getAllActiveConnections(API_V2_VERSION)).willReturn(listOf(mockConnectionV2))
-        given(mockKeyStoreManager.enrichConnection(mockConnectionV1)).willReturn(mockConnectionAndKeyV1)
+        given(mockKeyStoreManager.enrichConnection(mockConnectionV1, addProviderKey = false)).willReturn(richConnectionV1)
+        given(mockKeyStoreManager.enrichConnection(mockConnectionV2, addProviderKey = true)).willReturn(richConnectionV2)
         encryptedAuthorizations.forEachIndexed { index, encryptedData ->
-            given(mockCryptoToolsV1.decryptAuthorizationData(encryptedData, mockConnectionAndKeyV1.private))
+            given(mockCryptoToolsV1.decryptAuthorizationData(encryptedData, richConnectionV1.private))
                 .willReturn(authorizations[index])
         }
         v1Interactor = AuthorizationsListInteractorV1(
@@ -476,18 +477,18 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
 
         //then
         assertThat(viewModel.listItems.value!![0].apiVersion, equalTo(API_V1_VERSION))
-        assertThat(viewModel.listItemUpdateEvent.value, equalTo(ViewModelEvent(0)))
-        assertThat(
-            viewModel.listItemsValues.first(),
-            equalTo(items[0].copy(status = AuthorizationStatus.CONFIRM_PROCESSING))
-        )
         verify(mockApiManagerV1).confirmAuthorization(
-            connectionAndKey = mockConnectionAndKeyV1,
+            connectionAndKey = richConnectionV1,
             authorizationId = items[0].authorizationID,
             authorizationCode = items[0].authorizationCode,
             geolocation = "GEO:52.506931;13.144558",
             authorizationType = "biometrics",
             resultCallback = v1Interactor
+        )
+        assertThat(viewModel.listItemUpdateEvent.value, equalTo(ViewModelEvent(0)))
+        assertThat(
+            viewModel.listItemsValues.first(),
+            equalTo(items[0].copy(status = AuthorizationStatus.CONFIRM_PROCESSING))
         )
     }
 
@@ -511,7 +512,7 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
             equalTo(items[0].copy(status = AuthorizationStatus.DENY_PROCESSING))
         )
         verify(mockApiManagerV1).denyAuthorization(
-            connectionAndKey = mockConnectionAndKeyV1,
+            connectionAndKey = richConnectionV1,
             authorizationId = items[0].authorizationID,
             authorizationCode = items[0].authorizationCode,
             geolocation = "GEO:52.506931;13.144558",
@@ -870,7 +871,7 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
             expiresAt = createdAt.plusMinutes(3),
             title = "title$id",
             description = "desc$id",
-            connectionId = "1",
+            connectionId = mockConnectionV1.id,
         )
     }
 }

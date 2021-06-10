@@ -43,14 +43,16 @@ import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.sdk.api.model.ConsentSharedData
+import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
 import com.saltedge.authenticator.tools.daysTillExpire
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.MatcherAssert.assertThat
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
-import org.junit.Assert.*
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -69,7 +71,7 @@ class ConsentsListViewModelTest : CoroutineViewModelTest() {
     private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockCryptoTools = mock(CryptoToolsV1Abs::class.java)
-    private val connection = Connection().apply {
+    private val connectionV1 = Connection().apply {
         id = "2"
         guid = "guid2"
         code = "demobank2"
@@ -79,8 +81,9 @@ class ConsentsListViewModelTest : CoroutineViewModelTest() {
         createdAt = 300L
         updatedAt = 300L
         logoUrl = "https://www.fentury.com/"
+        apiVersion = API_V1_VERSION
     }
-    private val mockConnectionAndKey = RichConnection(connection, CommonTestTools.testPrivateKey)
+    private val richConnection = RichConnection(connectionV1, CommonTestTools.testPrivateKey)
     private val aispConsent = ConsentData(
             id = "555",
             connectionId = "2",
@@ -125,11 +128,10 @@ class ConsentsListViewModelTest : CoroutineViewModelTest() {
     @Before
     override fun setUp() {
         super.setUp()
-        given(mockConnectionsRepository.getByGuid("guid2")).willReturn(connection)
-        given(mockKeyStoreManager.enrichConnection(connection))
-            .willReturn(mockConnectionAndKey)
+        given(mockConnectionsRepository.getByGuid("guid2")).willReturn(connectionV1)
+        given(mockKeyStoreManager.enrichConnection(connectionV1, addProviderKey = false)).willReturn(richConnection)
         encryptedConsents.forEachIndexed { index, encryptedData ->
-            given(mockCryptoTools.decryptConsentData(encryptedData, mockConnectionAndKey.private))
+            given(mockCryptoTools.decryptConsentData(encryptedData, richConnection.private))
                 .willReturn(consents[index])
         }
 
@@ -155,7 +157,7 @@ class ConsentsListViewModelTest : CoroutineViewModelTest() {
 
         //then
         Mockito.verify(mockApiManager).getConsents(
-            connectionsAndKeys = listOf(mockConnectionAndKey),
+            connectionsAndKeys = listOf(richConnection),
             resultCallback = viewModel
         )
     }
@@ -198,8 +200,8 @@ class ConsentsListViewModelTest : CoroutineViewModelTest() {
         viewModel.setInitialData(Bundle())
 
         //then
-        assertNull(viewModel.logoUrl.value)
-        assertNull(viewModel.connectionTitle.value)
+        Assert.assertNull(viewModel.logoUrl.value)
+        Assert.assertNull(viewModel.connectionTitle.value)
         assertThat(viewModel.consentsCount.value, equalTo(""))
     }
 
@@ -214,7 +216,7 @@ class ConsentsListViewModelTest : CoroutineViewModelTest() {
         viewModel.onListItemClick(0)
 
         //then
-        assertNotNull(viewModel.onListItemClickEvent.value)
+        Assert.assertNotNull(viewModel.onListItemClickEvent.value)
     }
 
     @Test
@@ -228,7 +230,7 @@ class ConsentsListViewModelTest : CoroutineViewModelTest() {
         viewModel.onListItemClick(0)
 
         //then
-        assertNull(viewModel.onListItemClickEvent.value)
+        Assert.assertNull(viewModel.onListItemClickEvent.value)
     }
 
     @Test
@@ -244,7 +246,7 @@ class ConsentsListViewModelTest : CoroutineViewModelTest() {
             data = intent
         )
 
-        assertNull(viewModel.listItems.value)
+        Assert.assertNull(viewModel.listItems.value)
 
         viewModel.onActivityResult(
             requestCode = requestCode,
@@ -252,7 +254,7 @@ class ConsentsListViewModelTest : CoroutineViewModelTest() {
             data = intent
         )
 
-        assertNull(viewModel.listItems.value)
+        Assert.assertNull(viewModel.listItems.value)
 
         viewModel.onActivityResult(
             requestCode = -1,
@@ -260,7 +262,7 @@ class ConsentsListViewModelTest : CoroutineViewModelTest() {
             data = intent
         )
 
-        assertNull(viewModel.listItems.value)
+        Assert.assertNull(viewModel.listItems.value)
 
         viewModel.onActivityResult(
             requestCode = requestCode,
@@ -268,7 +270,7 @@ class ConsentsListViewModelTest : CoroutineViewModelTest() {
             data = null
         )
 
-        assertNull(viewModel.listItems.value)
+        Assert.assertNull(viewModel.listItems.value)
     }
 
     @Test

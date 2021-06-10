@@ -180,16 +180,17 @@ object KeyManager : KeyManagerAbs {
     }
 
     /**
-     *  Get related private key for connection
+     *  Get related RSA keys for connection
      *
      *  @param connection Connection
+     *  @param addProviderKey flag what indicates to add provider public key or not
      *  @return RichConnection
      */
-    override fun enrichConnection(connection: ConnectionAbs): RichConnection? {
+    override fun enrichConnection(connection: ConnectionAbs, addProviderKey: Boolean): RichConnection? {
         val appRsaPair = getKeyPair(alias = connection.guid) ?: return null
-        val providerRsaPublic = connection.providerRsaPublicKeyPem.pemToPublicKey(
-            algorithm = KeyAlgorithm.RSA
-        )
+        val providerRsaPublic = if (addProviderKey) {
+            connection.providerRsaPublicKeyPem.pemToPublicKey(algorithm = KeyAlgorithm.RSA)
+        } else null
         return RichConnection(connection, appRsaPair.private, providerRsaPublic)
     }
 
@@ -274,5 +275,5 @@ interface KeyManagerAbs {
     fun deleteKeyPairsIfExist(guids: List<String>)
     fun deleteKeyPairIfExist(alias: String)
     @SuppressLint("NewApi") fun createOrReplaceAesBiometricKey(alias: String): SecretKey?
-    fun enrichConnection(connection: ConnectionAbs): RichConnection?
+    fun enrichConnection(connection: ConnectionAbs, addProviderKey: Boolean = true): RichConnection?
 }

@@ -30,7 +30,7 @@ import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.BDDMockito
+import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
 import java.security.PrivateKey
@@ -45,7 +45,7 @@ class SettingsListInteractorV1Test {
     private val mockApiManagerV1 = Mockito.mock(AuthenticatorApiManagerAbs::class.java)
     private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
 
-    private val connection = Connection().apply {
+    private val connectionV1 = Connection().apply {
         guid = "guid1"
         id = "1"
         code = "demobank3"
@@ -57,10 +57,14 @@ class SettingsListInteractorV1Test {
         updatedAt = 200L
         apiVersion = API_V1_VERSION
     }
+    private val richConnectionV1 = RichConnection(connectionV1, mockPrivateKey)
 
     @Before
     fun setUp() {
-        Mockito.doReturn(connection).`when`(mockConnectionsRepository).getById("1")
+        given(mockConnectionsRepository.getById(connectionV1.id)).willReturn(connectionV1)
+        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(connectionV1))
+        given(mockKeyStoreManager.enrichConnection(connectionV1, addProviderKey = false)).willReturn(richConnectionV1)
+
         interactor = SettingsListInteractorV1(
             apiManager = mockApiManagerV1,
             connectionsRepository = mockConnectionsRepository,
@@ -71,28 +75,22 @@ class SettingsListInteractorV1Test {
     @Test
     @Throws(Exception::class)
     fun wipeApplicationTest() {
-        Mockito.doReturn(listOf(connection)).`when`(mockConnectionsRepository).getAllActiveConnections()
-
         interactor.deleteAllConnectionsAndKeys()
 
         Mockito.verify(mockKeyStoreManager).deleteKeyPairsIfExist(
-            mockConnectionsRepository.getAllConnections().map { it.guid })
+            mockConnectionsRepository.getAllConnections().map { it.guid }
+        )
         Mockito.verify(mockConnectionsRepository).deleteAllConnections()
     }
 
     @Test
     @Throws(Exception::class)
     fun sendRevokeRequestForConnectionsTest() {
-        val mockConnectionAndKeyV1 = RichConnection(connection, mockPrivateKey)
-        Mockito.doReturn(mockConnectionAndKeyV1).`when`(mockKeyStoreManager).enrichConnection(connection)
-        BDDMockito.given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(connection))
-
         interactor.sendRevokeRequestForConnections()
 
         Mockito.verify(mockApiManagerV1).revokeConnections(
-            connectionsAndKeys = listOf(
-                mockConnectionAndKeyV1
-            ), resultCallback = null
+            connectionsAndKeys = listOf(richConnectionV1),
+            resultCallback = null
         )
     }
 }

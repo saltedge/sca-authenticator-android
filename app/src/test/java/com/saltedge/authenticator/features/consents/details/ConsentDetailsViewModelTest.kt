@@ -38,6 +38,7 @@ import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ConnectionStatus
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
+import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import com.saltedge.authenticator.tools.toDateFormatString
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -62,7 +63,7 @@ class ConsentDetailsViewModelTest : ViewModelTest() {
     private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
-    private val defaultConnection = Connection().apply {
+    private val defaultConnectionV1 = Connection().apply {
             guid = "connection1"
             code = "demobank"
             name = "Demobank"
@@ -70,8 +71,9 @@ class ConsentDetailsViewModelTest : ViewModelTest() {
             accessToken = "token"
             createdAt = 0L
             updatedAt = 0L
+            apiVersion = API_V1_VERSION
         }
-    private val mockConnectionAndKey = RichConnection(defaultConnection, mockPrivateKey)
+    private val richConnection = RichConnection(defaultConnectionV1, mockPrivateKey)
     private val defaultConsent = ConsentData(
         id = "consent1",
         userId = "user1",
@@ -86,8 +88,8 @@ class ConsentDetailsViewModelTest : ViewModelTest() {
 
     @Before
     fun setUp() {
-        Mockito.doReturn(defaultConnection).`when`(mockConnectionsRepository).getByGuid("connection1")
-        given(mockKeyStoreManager.enrichConnection(defaultConnection)).willReturn(mockConnectionAndKey)
+        Mockito.doReturn(defaultConnectionV1).`when`(mockConnectionsRepository).getByGuid(defaultConnectionV1.guid)
+        given(mockKeyStoreManager.enrichConnection(defaultConnectionV1, addProviderKey = false)).willReturn(richConnection)
 
         viewModel = ConsentDetailsViewModel(
             appContext = context,
@@ -292,7 +294,7 @@ class ConsentDetailsViewModelTest : ViewModelTest() {
         //then
         verify(mockApiManager).revokeConsent(
             consentId = "consent1",
-            connectionAndKey = mockConnectionAndKey,
+            connectionAndKey = richConnection,
             resultCallback = viewModel
         )
     }
