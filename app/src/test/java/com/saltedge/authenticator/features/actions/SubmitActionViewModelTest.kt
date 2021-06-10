@@ -71,7 +71,7 @@ class SubmitActionViewModelTest : ViewModelTest() {
         @Before
     fun setUp() {
         Mockito.`when`(mockConnectionsRepository.getByConnectUrl(connectionV1.connectUrl)).thenReturn(listOf(connectionV1))
-            Mockito.`when`(mockConnectionsRepository.getByConnectUrl("invalid_url")).thenReturn(emptyList())
+        Mockito.`when`(mockConnectionsRepository.getByConnectUrl("invalid_url")).thenReturn(emptyList())
         Mockito.`when`(mockConnectionsRepository.getByGuid(connectionV1.guid)).thenReturn(connectionV1)
         Mockito.`when`(mockKeyStoreManager.enrichConnection(connectionV1, addProviderKey = false)).thenReturn(richConnectionV1)
 
