@@ -1,0 +1,38 @@
+<!--
+    This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2021 Salt Edge Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="25dp"
+    android:height="25dp"
+    android:viewportWidth="25"
+    android:viewportHeight="25">
+  <path
+      android:pathData="M5.7473,10.1886C5.7473,13.6721 9.9363,21.2589 12.1473,21.2589C14.3584,21.2589 18.5473,13.6721 18.5473,10.1886C18.5473,6.5864 15.6861,3.6589 12.1473,3.6589C8.6085,3.6589 5.7473,6.5864 5.7473,10.1886ZM14.8491,16.1238C13.7266,18.1568 12.4665,19.659 12.1472,19.659C11.8279,19.659 10.5678,18.1568 9.4453,16.1238C8.1981,13.8648 7.3472,11.4984 7.3472,10.1886C7.3472,7.462 9.5004,5.259 12.1472,5.259C14.794,5.259 16.9472,7.462 16.9472,10.1886C16.9472,11.4984 16.0964,13.8648 14.8491,16.1238ZM12.1472,13.259C10.3799,13.259 8.9472,11.8263 8.9472,10.059C8.9472,8.2917 10.3799,6.859 12.1472,6.859C13.9145,6.859 15.3472,8.2917 15.3472,10.059C15.3472,11.8263 13.9145,13.259 12.1472,13.259ZM13.7472,10.059C13.7472,10.9426 13.0309,11.659 12.1472,11.659C11.2636,11.659 10.5472,10.9426 10.5472,10.059C10.5472,9.1753 11.2636,8.459 12.1472,8.459C13.0309,8.459 13.7472,9.1753 13.7472,10.059Z"
+      android:fillColor="#0D93F8"
+      android:fillType="evenOdd"/>
+  <group>
+    <clip-path
+        android:pathData="M5.7473,10.1886C5.7473,13.6721 9.9363,21.2589 12.1473,21.2589C14.3584,21.2589 18.5473,13.6721 18.5473,10.1886C18.5473,6.5864 15.6861,3.6589 12.1473,3.6589C8.6085,3.6589 5.7473,6.5864 5.7473,10.1886ZM14.8491,16.1238C13.7266,18.1568 12.4665,19.659 12.1472,19.659C11.8279,19.659 10.5678,18.1568 9.4453,16.1238C8.1981,13.8648 7.3472,11.4984 7.3472,10.1886C7.3472,7.462 9.5004,5.259 12.1472,5.259C14.794,5.259 16.9472,7.462 16.9472,10.1886C16.9472,11.4984 16.0964,13.8648 14.8491,16.1238ZM12.1472,13.259C10.3799,13.259 8.9472,11.8263 8.9472,10.059C8.9472,8.2917 10.3799,6.859 12.1472,6.859C13.9145,6.859 15.3472,8.2917 15.3472,10.059C15.3472,11.8263 13.9145,13.259 12.1472,13.259ZM13.7472,10.059C13.7472,10.9426 13.0309,11.659 12.1472,11.659C11.2636,11.659 10.5472,10.9426 10.5472,10.059C10.5472,9.1753 11.2636,8.459 12.1472,8.459C13.0309,8.459 13.7472,9.1753 13.7472,10.059Z"
+        android:fillType="evenOdd"/>
+    <path
+        android:pathData="M0.1472,0.459h24v24h-24z"
+        android:fillColor="#0D93F8"/>
+  </group>
+</vector>

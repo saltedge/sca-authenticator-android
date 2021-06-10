@@ -36,6 +36,7 @@ import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.connections.list.convertConnectionsToViewModels
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment.Companion.dataBundle
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.toRichConnection
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
@@ -50,7 +51,8 @@ class SubmitActionViewModel(
     private val appContext: Context,
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyManagerAbs,
-    private val apiManager: AuthenticatorApiManagerAbs
+    private val apiManager: AuthenticatorApiManagerAbs,
+    private val locationManager: DeviceLocationManagerAbs
 ) : ViewModel(), LifecycleObserver, ActionSubmitListener {
 
     private var viewMode: ViewMode = ViewMode.START
@@ -99,7 +101,10 @@ class SubmitActionViewModel(
                 if (richConnection == null) viewMode = ViewMode.ACTION_ERROR
             }
             else -> {
-                val result = connections.convertConnectionsToViewModels(context = appContext)
+                val result = connections.convertConnectionsToViewModels(
+                    context = appContext,
+                    locationManager = locationManager
+                )
                 viewMode = ViewMode.SELECT
                 showConnectionsSelectorFragmentEvent.postValue(ViewModelEvent(dataBundle(result)))
             }

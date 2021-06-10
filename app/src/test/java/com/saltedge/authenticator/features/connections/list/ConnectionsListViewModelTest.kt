@@ -36,6 +36,7 @@ import com.saltedge.authenticator.features.connections.list.menu.MenuData
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.ConsentData
@@ -71,6 +72,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     private val mockCryptoToolsV1 = mock(CryptoToolsV1Abs::class.java)
     private val mockApiManagerV1 = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockApiManagerV2 = mock(ScaServiceClientAbs::class.java)
+    private val mockLocationManager = mock(DeviceLocationManagerAbs::class.java)
 
     private val connection1 = Connection().apply {
         id = "1"
@@ -83,6 +85,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         createdAt = 100L
         updatedAt = 100L
         apiVersion = API_V1_VERSION
+        geolocationRequired = true
     }
     private val connection2 = Connection().apply {
         id = "2"
@@ -145,7 +148,11 @@ class ConnectionsListViewModelTest : ViewModelTest() {
             apiManagerV1 = mockApiManagerV1,
             apiManagerV2 = mockApiManagerV2
         )
-        viewModel = ConnectionsListViewModel(appContext = context, interactor = interactor)
+        viewModel = ConnectionsListViewModel(
+            appContext = context,
+            interactor = interactor,
+            locationManager = mockLocationManager
+        )
     }
 
     @Test
@@ -166,7 +173,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onStartTestCase2() {
         //given
-        val expectedItems: List<ConnectionItem> = allConnections.convertConnectionsToViewModels(context)
+        val expectedItems: List<ConnectionItem> = allConnections.convertConnectionsToViewModels(context, mockLocationManager)
 
         //when
         viewModel.onStart()
@@ -247,14 +254,15 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                         guid = "guid1",
                         connectionId = "1",
                         name = "Demobank1",
-                        statusDescription = "Linked on 1 January 1970",
-                        statusDescriptionColorRes = R.color.dark_60_and_grey_100,
+                        statusDescription = "Grant access to location data",
+                        statusDescriptionColorRes = R.color.yellow,
                         logoUrl = "",
                         consentsDescription = "1 consent\u30FB",
                         isActive = true,
                         isChecked = false,
                         apiVersion = API_V1_VERSION,
-                        email = "example@example.com"
+                        email = "example@example.com",
+                        locationPermissionRequired = true
                     ),
                     ConnectionItem(
                         guid = "guid2",
@@ -267,7 +275,8 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                         isActive = true,
                         isChecked = false,
                         apiVersion = API_V2_VERSION,
-                        email = "example@example.com"
+                        email = "example@example.com",
+                        locationPermissionRequired = false
                     ),
                     ConnectionItem(
                         guid = "guid3",
@@ -280,7 +289,8 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                         isActive = false,
                         isChecked = false,
                         apiVersion = API_V1_VERSION,
-                        email = "example@example.com"
+                        email = "example@example.com",
+                        locationPermissionRequired = false
                     )
                 )
             )
@@ -335,6 +345,11 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                                 id = ConnectionsListViewModel.PopupMenuItem.CONSENTS.ordinal,
                                 iconRes = R.drawable.ic_view_consents_24dp,
                                 textRes = R.string.actions_view_consents
+                            ),
+                            MenuItemData(
+                                id = ConnectionsListViewModel.PopupMenuItem.LOCATION.ordinal,
+                                iconRes = R.drawable.ic_view_location_24dp,
+                                textRes = R.string.actions_view_location
                             ),
                             MenuItemData(
                                 id = ConnectionsListViewModel.PopupMenuItem.DELETE.ordinal,
@@ -599,7 +614,8 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                     ConnectionsListViewModel.PopupMenuItem.RENAME,
                     ConnectionsListViewModel.PopupMenuItem.SUPPORT,
                     ConnectionsListViewModel.PopupMenuItem.CONSENTS,
-                    ConnectionsListViewModel.PopupMenuItem.DELETE
+                    ConnectionsListViewModel.PopupMenuItem.DELETE,
+                    ConnectionsListViewModel.PopupMenuItem.LOCATION
                 )
             )
         )

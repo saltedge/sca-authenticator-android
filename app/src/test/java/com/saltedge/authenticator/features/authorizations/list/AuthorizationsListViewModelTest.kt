@@ -29,6 +29,7 @@ import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.CoroutineViewModelTest
 import com.saltedge.android.test_tools.encryptWithTestKey
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.KEY_OPTION_ID
@@ -129,6 +130,7 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
         doReturn(mockPollingServiceV2).`when`(mockApiManagerV2).createAuthorizationsPollingService()
         given(mockConnectionsRepository.getAllActiveConnections(API_V1_VERSION)).willReturn(listOf(mockConnectionV1))
         given(mockConnectionsRepository.getAllActiveConnections(API_V2_VERSION)).willReturn(listOf(mockConnectionV2))
+        doReturn(true).`when`(mockLocationManager).isLocationProviderActive(TestAppTools.applicationContext)
         given(mockKeyStoreManager.enrichConnection(mockConnectionV1, addProviderKey = false)).willReturn(richConnectionV1)
         given(mockKeyStoreManager.enrichConnection(mockConnectionV2, addProviderKey = true)).willReturn(richConnectionV2)
         encryptedAuthorizations.forEachIndexed { index, encryptedData ->
@@ -148,13 +150,14 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
             keyStoreManager = mockKeyStoreManager,
             cryptoTools = mockCryptoToolsV2,
             apiManager = mockApiManagerV2,
-            locationManager = mockLocationManager,
             defaultDispatcher = testDispatcher
         )
         viewModel = AuthorizationsListViewModel(
+            appContext = TestAppTools.applicationContext,
             interactorV1 = v1Interactor,
             interactorV2 = v2Interactor,
-            connectivityReceiver = mockConnectivityReceiver
+            connectivityReceiver = mockConnectivityReceiver,
+            locationManager = mockLocationManager
         )
     }
 

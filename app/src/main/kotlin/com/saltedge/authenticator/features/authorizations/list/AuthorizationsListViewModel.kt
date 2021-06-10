@@ -20,12 +20,16 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
+import android.content.Context
+import android.content.DialogInterface
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.KEY_OPTION_ID
+import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.NetworkStateChangeListener
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ID
@@ -35,13 +39,16 @@ import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.postUnitEvent
 import kotlinx.coroutines.CoroutineScope
 
 class AuthorizationsListViewModel(
+    private val appContext: Context,
     private val interactorV1: AuthorizationsListInteractorV1,
     private val interactorV2: AuthorizationsListInteractorV2,
+    private val locationManager: DeviceLocationManagerAbs,
     private val connectivityReceiver: ConnectivityReceiverAbs
 ) : ViewModel(),
     LifecycleObserver,
@@ -66,6 +73,11 @@ class AuthorizationsListViewModel(
     val onMoreMenuClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onShowConnectionsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowSettingsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onRequestPermissionEvent = MutableLiveData<Triple<String, String, Boolean>>()
+    val onAskPermissionsEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onGoToSettingsEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onRequestLocationProviderEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onEnableGpsEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
     init {
         interactorV1.contract = this
@@ -135,6 +147,37 @@ class AuthorizationsListViewModel(
         }
     }
 
+    fun onDialogActionIdClick(dialogActionId: Int, actionResId: ResId) {
+        if (dialogActionId == DialogInterface.BUTTON_POSITIVE) {
+            when (actionResId) {
+                R.string.actions_proceed -> onAskPermissionsEvent.postUnitEvent()
+                R.string.actions_go_to_settings -> onGoToSettingsEvent.postUnitEvent()
+                R.string.actions_enable -> onEnableGpsEvent.postUnitEvent()
+            }
+        }
+    }
+
+    fun onRequestPermissionsResult(requestCode: Int, grantResults: IntArray) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE
+            && grantResults.any { it == PackageManager.PERMISSION_GRANTED }
+        ) {
+            locationManager.startLocationUpdates(appContext)
+            if (locationManager.isLocationProviderActive(appContext)) {
+               findListItem(
+                    connectionID = onRequestPermissionEvent.value?.first ?: "",
+                    authorizationID = onRequestPermissionEvent.value?.second ?: ""
+                )?.let {
+                        updateAuthorization(
+                            listItem = it,
+                            confirm = onRequestPermissionEvent.value?.third ?: false
+                        )
+                }
+            } else {
+                onRequestLocationProviderEvent.postUnitEvent()
+            }
+        }
+    }
+
     override fun onTimeUpdate() {
         listItemsValues.let { items ->
             if (items.any { it.isExpired }) cleanExpiredItems()
@@ -144,9 +187,25 @@ class AuthorizationsListViewModel(
 
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
         listItemsValues.getOrNull(itemIndex)?.let {
-            when (itemViewId) {
-                R.id.positiveActionView -> updateAuthorization(listItem = it, confirm = true)
-                R.id.negativeActionView -> updateAuthorization(listItem = it, confirm = false)
+            val confirm = when (itemViewId) {
+                R.id.positiveActionView -> true
+                R.id.negativeActionView -> false
+                else -> return
+            }
+            val locationPermissionsGranted = locationManager.locationPermissionsGranted(context = appContext)
+            val shouldRequestPermission = if (it.isV2Api) {
+                interactorV2.shouldRequestPermission(it.connectionID, locationPermissionsGranted)
+            } else {
+                interactorV1.shouldRequestPermission(it.connectionID, locationPermissionsGranted)
+            }
+            if (shouldRequestPermission) {
+                onRequestPermissionEvent.postValue(Triple(it.connectionID, it.authorizationID, confirm))
+            } else {
+                if (locationManager.isLocationProviderActive(appContext)) {
+                    updateAuthorization(listItem = it, confirm = confirm)
+                } else {
+                    onRequestLocationProviderEvent.postUnitEvent()
+                }
             }
         }
     }
@@ -202,7 +261,8 @@ class AuthorizationsListViewModel(
                 connectionID = listItem.connectionID,
                 authorizationID = listItem.authorizationID,
                 authorizationCode = listItem.authorizationCode,
-                confirm = confirm
+                confirm = confirm,
+                locationDescription = locationManager.locationDescription
             )
         } else {
             interactorV1.updateAuthorization(

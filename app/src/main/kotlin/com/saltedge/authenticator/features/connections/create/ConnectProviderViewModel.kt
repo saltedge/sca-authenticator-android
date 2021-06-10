@@ -156,7 +156,9 @@ class ConnectProviderViewModel(
         interactor.geolocationRequired?.let {
             val permissionGranted: Boolean = locationManager.locationPermissionsGranted(appContext)
             if (permissionGranted) locationManager.startLocationUpdates(appContext)
-            else onAskPermissionsEvent.postUnitEvent()
+            else {
+                onAskPermissionsEvent.postUnitEvent()
+            }
         }
     }
 

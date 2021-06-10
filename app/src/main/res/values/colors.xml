@@ -35,6 +35,7 @@
     <color name="grey_20">#EFF4F8</color>
     <color name="grey_light_extra">#F4F8FA</color>
     <color name="grey_light_extra_50">#80F4F8FA</color>
+    <color name="yellow">#FFC130</color>
     <color name="red">#FA5B5B</color>
     <color name="red_dark">#D54B4B</color>
     <color name="red_light">#FF7979</color>

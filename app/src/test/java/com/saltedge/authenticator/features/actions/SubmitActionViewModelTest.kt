@@ -32,6 +32,7 @@ import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
@@ -56,7 +57,8 @@ class SubmitActionViewModelTest : ViewModelTest() {
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
     private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
-    private val mockPrivateKey = mock(PrivateKey::class.java)
+    private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
+    private val mockLocationManager = mock(DeviceLocationManagerAbs::class.java)
 
     private val connectionV1 = Connection().apply {
         guid = "guid1"
@@ -79,7 +81,8 @@ class SubmitActionViewModelTest : ViewModelTest() {
             appContext = TestAppTools.applicationContext,
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
-            apiManager = mockApiManager
+            apiManager = mockApiManager,
+            locationManager = mockLocationManager
         )
     }
 

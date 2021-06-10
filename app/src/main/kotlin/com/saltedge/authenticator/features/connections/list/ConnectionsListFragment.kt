@@ -20,11 +20,16 @@
  */
 package com.saltedge.authenticator.features.connections.list
 
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
@@ -33,6 +38,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.core.model.GUID
@@ -44,6 +50,7 @@ import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.location.DeviceLocationManager
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
@@ -63,6 +70,7 @@ class ConnectionsListFragment : BaseFragment(),
     private var popupWindow: PopupWindow? = null
     private var dialogFragment: DialogFragment? = null
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private var alertDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,6 +120,12 @@ class ConnectionsListFragment : BaseFragment(),
     override fun closeActiveDialogs() {
         if (dialogFragment?.isVisible == true) dialogFragment?.dismiss()
         if (popupWindow?.isShowing == true) popupWindow?.dismiss()
+        if (alertDialog?.isShowing == true) alertDialog?.dismiss()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        viewModel.onRequestPermissionsResult(requestCode, grantResults)
     }
 
     private fun setupViewModel() {
@@ -152,6 +166,42 @@ class ConnectionsListFragment : BaseFragment(),
         viewModel.onSupportClickEvent.observe(this, Observer<ViewModelEvent<String?>> { event ->
             event.getContentIfNotHandled()?.let { supportEmail ->
                 activity?.startMailApp(supportEmail)
+            }
+        })
+        viewModel.onAccessToLocationClickEvent.observe(this, { event ->
+            event.getContentIfNotHandled()?.let {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alertDialog = if (activity?.shouldShowRequestPermissionRationale(DeviceLocationManager.permissions[0]) == false
+                        || activity?.shouldShowRequestPermissionRationale(DeviceLocationManager.permissions[1]) == false) {
+                            activity?.showInfoDialog(
+                                titleResId = R.string.grant_access_location_title,
+                                messageResId = R.string.grant_access_location_description,
+                                positiveButtonResId = R.string.actions_go_to_settings,
+                                listener = { _, dialogActionId ->
+                                    viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_go_to_settings)
+                                })
+                    } else {
+                        activity?.showInfoDialog(
+                            titleResId = R.string.grant_access_location_title,
+                            messageResId = R.string.grant_access_location_description,
+                            positiveButtonResId = R.string.actions_proceed,
+                            listener = { _, dialogActionId ->
+                                viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_proceed)
+                            })
+                    }
+                }
+            }
+        })
+        viewModel.onGoToSettingsEvent.observe(this, { event ->
+            event.getContentIfNotHandled()?.let {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                intent.data = Uri.fromParts("package", requireActivity().packageName, null)
+                startActivity(intent)
+            }
+        })
+        viewModel.onAskPermissionsEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let {
+                requestPermissions(DeviceLocationManager.permissions, LOCATION_PERMISSION_REQUEST_CODE)
             }
         })
         viewModel.updateListItemEvent.observe(this, Observer<ConnectionItem> { itemIndex ->

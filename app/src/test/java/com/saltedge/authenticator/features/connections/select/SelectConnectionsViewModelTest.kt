@@ -27,11 +27,13 @@ import com.saltedge.authenticator.core.model.ConnectionStatus
 import com.saltedge.authenticator.features.connections.list.convertConnectionsToViewModels
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
@@ -39,6 +41,7 @@ class SelectConnectionsViewModelTest : ViewModelTest() {
 
     private lateinit var viewModel: SelectConnectionsViewModel
     private val context: Context = ApplicationProvider.getApplicationContext()
+    private val mockLocationManager = Mockito.mock(DeviceLocationManagerAbs::class.java)
     private val connections = listOf(
         Connection().apply {
             guid = "guid1"
@@ -70,7 +73,7 @@ class SelectConnectionsViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onListItemClickTest() {
         //given
-        val connection = connections.convertConnectionsToViewModels(context)
+        val connection = connections.convertConnectionsToViewModels(context, mockLocationManager)
         viewModel.listItems.postValue(connection)
 
         assertNull(viewModel.onListItemClickEvent.value)
@@ -86,7 +89,7 @@ class SelectConnectionsViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun proceedConnectionTest() {
         //given
-        val connection = connections.convertConnectionsToViewModels(context)
+        val connection = connections.convertConnectionsToViewModels(context, mockLocationManager)
         viewModel.listItems.postValue(connection)
 
         assertNull(viewModel.onProceedClickEvent.value)
@@ -102,7 +105,7 @@ class SelectConnectionsViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun changeStateItemTest() {
         //given
-        val connection = connections.convertConnectionsToViewModels(context)
+        val connection = connections.convertConnectionsToViewModels(context, mockLocationManager)
         viewModel.listItems.postValue(connection)
         viewModel.listItems.value = connection
 
@@ -120,7 +123,7 @@ class SelectConnectionsViewModelTest : ViewModelTest() {
     @Test
     @Throws(Exception::class)
     fun setInitialDataTest() {
-        val connection = connections.convertConnectionsToViewModels(context)
+        val connection = connections.convertConnectionsToViewModels(context, mockLocationManager)
 
         viewModel.setInitialData(connection)
 
