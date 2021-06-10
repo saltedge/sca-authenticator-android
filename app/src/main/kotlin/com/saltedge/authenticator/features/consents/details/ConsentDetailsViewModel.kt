@@ -39,6 +39,7 @@ import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.consents.common.countOfDaysLeft
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.toRichConnection
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.AccountData
 import com.saltedge.authenticator.sdk.api.model.ConsentData
@@ -84,7 +85,7 @@ class ConsentDetailsViewModel(
 
     fun setInitialData(arguments: Bundle?) {
         val connection = connectionsRepository.getByGuid(connectionGuid = arguments?.guid) ?: return
-        connectionAndKey = keyStoreManager.enrichConnection(connection)
+        connectionAndKey = connection.toRichConnection(keyStoreManager)
         fragmentTitle.postValue(connection.name)
         this.consentData = arguments?.consent
         this.consentData?.let { consent ->

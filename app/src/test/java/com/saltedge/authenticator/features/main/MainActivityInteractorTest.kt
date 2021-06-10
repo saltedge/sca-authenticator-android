@@ -121,7 +121,7 @@ class MainActivityInteractorTest {
     @Throws(Exception::class)
     fun sendRevokeRequestForConnectionsTestCase1() {
         val mockConnectionAndKeyV1 = RichConnection(connection1, mockPrivateKey)
-        Mockito.doReturn(mockConnectionAndKeyV1).`when`(mockKeyStoreManager).enrichConnection(connection1)
+        Mockito.doReturn(mockConnectionAndKeyV1).`when`(mockKeyStoreManager).enrichConnection(connection1, addProviderKey = false)
         given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(connection1))
 
         interactor.sendRevokeRequestForConnections()

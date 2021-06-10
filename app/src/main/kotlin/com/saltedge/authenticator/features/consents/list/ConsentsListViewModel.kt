@@ -45,6 +45,7 @@ import com.saltedge.authenticator.features.consents.common.toCountString
 import com.saltedge.authenticator.features.consents.details.ConsentDetailsViewModel
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.toRichConnection
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.sdk.api.model.ConsentType
@@ -75,7 +76,7 @@ class ConsentsListViewModel(
     val connectionTitle = MutableLiveData<String>()
     val consentsCount = MutableLiveData<String>()
     private var consents: List<ConsentData> = emptyList()
-    private var connectionAndKey: RichConnection? = null
+    private var richConnection: RichConnection? = null
 
     override fun onFetchEncryptedDataResult(result: List<EncryptedData>, errors: List<ApiErrorData>) {
         viewModelScope.launch(defaultDispatcher) {
@@ -86,17 +87,17 @@ class ConsentsListViewModel(
 
     fun setInitialData(bundle: Bundle?) {
         bundle?.guid?.let { connectionGuid ->
-            connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
+            richConnection = connectionsRepository.getByGuid(connectionGuid)?.let {
                 logoUrl.postValue(it.logoUrl)
                 connectionTitle.postValue(it.name)
-                keyStoreManager.enrichConnection(it)
+                it.toRichConnection(keyStoreManager)
             }
         }
         onReceivedNewConsents(bundle?.consents ?: emptyList())
     }
 
     fun refreshConsents() {
-        connectionAndKey?.let {
+        richConnection?.let {
             apiManager.getConsents(
                 connectionsAndKeys = listOf(it),
                 resultCallback = this
@@ -136,7 +137,7 @@ class ConsentsListViewModel(
     }
 
     fun onListItemClick(itemIndex: Int) {
-        val connectionGuid = connectionAndKey?.connection?.guid ?: return
+        val connectionGuid = richConnection?.connection?.guid ?: return
         onListItemClickEvent.postValue(ViewModelEvent(
             ConsentDetailsViewModel.newBundle(connectionGuid, consents[itemIndex])
         ))
@@ -144,7 +145,7 @@ class ConsentsListViewModel(
 
     private fun decryptConsents(encryptedList: List<EncryptedData>): List<ConsentData> {
         return encryptedList.mapNotNull {
-            cryptoTools.decryptConsentData(encryptedData = it, rsaPrivateKey = connectionAndKey?.private)
+            cryptoTools.decryptConsentData(encryptedData = it, rsaPrivateKey = richConnection?.private)
         }
     }
 

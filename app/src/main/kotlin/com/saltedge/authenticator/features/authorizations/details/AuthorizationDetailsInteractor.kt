@@ -76,7 +76,6 @@ interface AuthorizationDetailsInteractorAbs {
     var contract: AuthorizationDetailsInteractorCallback?
     val connectionApiVersion: String?
     val noConnection: Boolean
-    fun bindLifecycleObserver(lifecycle: Lifecycle)
     fun setInitialData(connectionID: ID)
     fun startPolling(authorizationID: ID)
     fun stopPolling()

@@ -38,6 +38,7 @@ import com.saltedge.authenticator.features.authorizations.common.toAuthorization
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
@@ -74,27 +75,44 @@ class AuthorizationDetailsInteractorV2Test {
     private val mockCallback = mock(AuthorizationDetailsInteractorCallback::class.java)
 
     private val connection1 = Connection().apply {
-        guid = "guid1"
         id = "1"
-        code = "demobank3"
-        name = "Demobank3"
+        guid = "guid1"
+        code = "demobank1"
+        name = "Demobank1"
         status = "${ConnectionStatus.ACTIVE}"
         accessToken = "token1"
-        logoUrl = "url"
-        createdAt = 200L
-        updatedAt = 200L
+        supportEmail = "example@example.com"
+        createdAt = 100L
+        updatedAt = 100L
+        apiVersion = API_V1_VERSION
     }
     private val connection2 = Connection().apply {
+        id = "2"
         guid = "guid2"
-        id = "2_noKey"
         code = "demobank2"
         name = "Demobank2"
         status = "${ConnectionStatus.ACTIVE}"
+        supportEmail = "example@example.com"
+        accessToken = "token2"
+        createdAt = 200L
+        updatedAt = 200L
+        apiVersion = API_V2_VERSION
+    }
+    private val connection3Inactive = Connection().apply {
+        id = "3"
+        guid = "guid3"
+        code = "demobank3"
+        name = "Demobank3"
+        status = "${ConnectionStatus.INACTIVE}"
+        supportEmail = "example@example.com"
         accessToken = ""
-        logoUrl = ""
         createdAt = 300L
         updatedAt = 300L
+        apiVersion = API_V1_VERSION
     }
+    private val richConnection1 = RichConnection(connection1, mockPrivateKey)
+    private val richConnection2 = RichConnection(connection2, mockPrivateKey)
+    private val richConnection3 = RichConnection(connection3Inactive, mockPrivateKey)
     private val encryptedData1 = AuthorizationResponseData(id = "1", connectionId = "1", status = "pending", iv = "", key = "", data = "")
     private val authorizationData1 = createAuthorizationData(id = 1)
     private val testViewItem1 = authorizationData1.toAuthorizationItemViewModel(connection1)!!
@@ -117,12 +135,14 @@ class AuthorizationDetailsInteractorV2Test {
     fun setUp() {
         AppTools.lastUnlockType = ActivityUnlockType.BIOMETRICS
         doReturn("GEO:52.506931;13.144558").`when`(mockLocationManager).locationDescription
-        doReturn(connection1).`when`(mockConnectionsRepository).getById("1")
-        doReturn(connection2).`when`(mockConnectionsRepository).getById("2_noKey")
+        doReturn(connection1).`when`(mockConnectionsRepository).getById(connection1.id)
+        doReturn(connection2).`when`(mockConnectionsRepository).getById(connection2.id)
+        doReturn(connection3Inactive).`when`(mockConnectionsRepository).getById(connection3Inactive.id)
         doReturn(mockPollingServiceV1).`when`(mockApiManagerV2)
             .createSingleAuthorizationPollingService()
-        doReturn(RichConnection(connection1, mockPrivateKey))
-            .`when`(mockKeyStoreManager).enrichConnection(connection1)
+        doReturn(richConnection1).`when`(mockKeyStoreManager).enrichConnection(connection1, addProviderKey = false)
+        doReturn(richConnection2).`when`(mockKeyStoreManager).enrichConnection(connection2, addProviderKey = true)
+        doReturn(richConnection3).`when`(mockKeyStoreManager).enrichConnection(connection3Inactive, addProviderKey = false)
         doReturn(null).`when`(mockKeyStoreManager).getKeyPair("guid2")
         doReturn(authorizationData1).`when`(mockCryptoToolsV2)
             .decryptAuthorizationData(
@@ -138,19 +158,6 @@ class AuthorizationDetailsInteractorV2Test {
             locationManager = mockLocationManager
         )
         interactor.contract = mockCallback
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun bindLifecycleObserverTest() {
-        //given
-        val lifecycle = LifecycleRegistry(mock(LifecycleOwner::class.java))
-
-        //when
-        interactor.bindLifecycleObserver(lifecycle)
-
-        //then
-        verify(mockPollingServiceV1).contract = interactor
     }
 
     @Test

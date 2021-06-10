@@ -38,6 +38,7 @@ import com.saltedge.authenticator.features.connections.select.SelectConnectionsF
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.toRichConnection
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.api.model.response.SubmitActionResponseData
@@ -56,7 +57,7 @@ class SubmitActionViewModel(
 
     private var viewMode: ViewMode = ViewMode.START
     private var actionAppLinkData: ActionAppLinkData? = null
-    private var connectionAndKey: RichConnection? = null
+    private var richConnection: RichConnection? = null
     val onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onOpenLinkEvent = MutableLiveData<ViewModelEvent<Uri>>()
     val showConnectionsSelectorFragmentEvent = MutableLiveData<ViewModelEvent<Bundle>>()
@@ -96,10 +97,8 @@ class SubmitActionViewModel(
                 showActionError(appContext.getString(R.string.errors_actions_no_connections_link_app))
             }
             connections.size == 1 -> {
-                this.connectionAndKey = connections.firstOrNull()?.let {
-                    keyStoreManager.enrichConnection(it)
-                }
-                if (connectionAndKey == null) viewMode = ViewMode.ACTION_ERROR
+                this.richConnection = connections.firstOrNull()?.toRichConnection(keyStoreManager)
+                if (richConnection == null) viewMode = ViewMode.ACTION_ERROR
             }
             else -> {
                 val result = connections.convertConnectionsToViewModels(
@@ -113,10 +112,8 @@ class SubmitActionViewModel(
     }
 
     fun showConnectionSelector(connectionGuid: GUID) {
-        this.connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
-            keyStoreManager.enrichConnection(it)
-        }
-        viewMode = if (connectionAndKey == null) ViewMode.ACTION_ERROR else ViewMode.START
+        this.richConnection = connectionsRepository.getByGuid(connectionGuid)?.toRichConnection(keyStoreManager)
+        viewMode = if (richConnection == null) ViewMode.ACTION_ERROR else ViewMode.START
         onViewCreated()
     }
 
@@ -124,7 +121,7 @@ class SubmitActionViewModel(
         if (viewMode == ViewMode.START) {
             apiManager.sendAction(
                 actionUUID = actionAppLinkData?.actionUUID ?: "",
-                connectionAndKey = connectionAndKey ?: return,
+                connectionAndKey = richConnection ?: return,
                 resultCallback = this
             )
             viewMode = ViewMode.PROCESSING

@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.authorizations.details
 
-import androidx.lifecycle.Lifecycle
 import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ID
@@ -49,12 +48,6 @@ class AuthorizationDetailsInteractorV1(
     keyStoreManager = keyStoreManager
 ), FetchAuthorizationContract, ConfirmAuthorizationListener {
     private var pollingService = apiManager.createSingleAuthorizationPollingService()
-
-    override fun bindLifecycleObserver(lifecycle: Lifecycle) {
-        lifecycle.removeObserver(pollingService)
-        lifecycle.addObserver(pollingService)
-        pollingService.contract = this
-    }
 
     override fun startPolling(authorizationID: ID) {
         pollingService.contract = this

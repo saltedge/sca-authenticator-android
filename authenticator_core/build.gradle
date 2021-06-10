@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
 }
+apply from: './jacoco.gradle'
 
 android {
     compileSdkVersion 30

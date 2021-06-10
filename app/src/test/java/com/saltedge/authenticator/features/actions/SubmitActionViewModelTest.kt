@@ -37,8 +37,10 @@ import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.api.model.response.SubmitActionResponseData
+import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import org.hamcrest.CoreMatchers.equalTo
-import org.junit.Assert.*
+import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -58,8 +60,23 @@ class SubmitActionViewModelTest : ViewModelTest() {
     private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
     private val mockLocationManager = mock(DeviceLocationManagerAbs::class.java)
 
-    @Before
+    private val connectionV1 = Connection().apply {
+        guid = "guid1"
+        accessToken = "token"
+        code = "demobank1"
+        name = "Demobank1"
+        connectUrl = "https://www.fentury.com/"
+        apiVersion = API_V1_VERSION
+    }
+    private val richConnectionV1 = RichConnection(connectionV1, mockPrivateKey)
+
+        @Before
     fun setUp() {
+        Mockito.`when`(mockConnectionsRepository.getByConnectUrl(connectionV1.connectUrl)).thenReturn(listOf(connectionV1))
+        Mockito.`when`(mockConnectionsRepository.getByConnectUrl("invalid_url")).thenReturn(emptyList())
+        Mockito.`when`(mockConnectionsRepository.getByGuid(connectionV1.guid)).thenReturn(connectionV1)
+        Mockito.`when`(mockKeyStoreManager.enrichConnection(connectionV1, addProviderKey = false)).thenReturn(richConnectionV1)
+
         viewModel = SubmitActionViewModel(
             appContext = TestAppTools.applicationContext,
             connectionsRepository = mockConnectionsRepository,
@@ -193,17 +210,10 @@ class SubmitActionViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onViewClickTestCase1() {
         //given
-        val connection = Connection().apply {
-            guid = "guid1"
-            accessToken = ""
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        Mockito.`when`(mockConnectionsRepository.getByConnectUrl("https://www.fentury.com/")).thenReturn(listOf(connection))
         viewModel.setInitialData(
             actionAppLinkData = ActionAppLinkData(
                 actionUUID = "123456",
-                connectUrl = "https://www.fentury.com/",
+                connectUrl = connectionV1.connectUrl,
                 returnTo = "https://www.saltedge.com/"
             )
         )
@@ -212,7 +222,7 @@ class SubmitActionViewModelTest : ViewModelTest() {
         viewModel.onViewClick(R.id.actionView)
 
         //then
-        assertNotNull(viewModel.onCloseEvent.value)
+        Assert.assertNotNull(viewModel.onCloseEvent.value)
         assertThat(
             viewModel.onOpenLinkEvent.value,
             equalTo(ViewModelEvent(Uri.parse("https://www.saltedge.com/")))
@@ -231,7 +241,7 @@ class SubmitActionViewModelTest : ViewModelTest() {
         viewModel.setInitialData(
             actionAppLinkData = ActionAppLinkData(
                 actionUUID = "123456",
-                connectUrl = "https://www.fentury.com/",
+                connectUrl = connectionV1.connectUrl,
                 returnTo = ""
             )
         )
@@ -240,7 +250,7 @@ class SubmitActionViewModelTest : ViewModelTest() {
         viewModel.onViewClick(R.id.actionView)
 
         //then
-        assertNotNull(viewModel.onCloseEvent.value)
+        Assert.assertNotNull(viewModel.onCloseEvent.value)
     }
 
     @Test
@@ -250,7 +260,7 @@ class SubmitActionViewModelTest : ViewModelTest() {
         viewModel.setInitialData(
             actionAppLinkData = ActionAppLinkData(
                 actionUUID = "123456",
-                connectUrl = "https://www.fentury.com/",
+                connectUrl = connectionV1.connectUrl,
                 returnTo = ""
             )
         )
@@ -259,7 +269,7 @@ class SubmitActionViewModelTest : ViewModelTest() {
         viewModel.onViewClick(R.id.altActionView)
 
         //then
-        assertNull(viewModel.onCloseEvent.value)
+        Assert.assertNull(viewModel.onCloseEvent.value)
     }
 
     /**
@@ -272,7 +282,7 @@ class SubmitActionViewModelTest : ViewModelTest() {
         viewModel.setInitialData(
             actionAppLinkData = ActionAppLinkData(
                 actionUUID = "123456",
-                connectUrl = "https://www.fentury.com/",
+                connectUrl = "invalid_url",
                 returnTo = "https://www.saltedge.com/"
             )
         )
@@ -299,16 +309,6 @@ class SubmitActionViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onViewCreatedTestCase2() {
         //given
-        val connection = Connection().apply {
-            guid = "guid1"
-            accessToken = "accessToken"
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        Mockito.`when`(mockConnectionsRepository.getByConnectUrl("https://www.fentury.com/")).thenReturn(listOf(connection))
-        Mockito.`when`(mockKeyStoreManager.enrichConnection(connection)).thenReturn(
-            RichConnection(connection, mockPrivateKey)
-        )
         Mockito.doReturn(KeyPair(null, mockPrivateKey)).`when`(mockKeyStoreManager).getKeyPair(
             Mockito.anyString()
         )
@@ -362,18 +362,10 @@ class SubmitActionViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onViewCreatedTestCase4() {
         //given
-        val connection = Connection().apply {
-            guid = "guid1"
-            accessToken = ""
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        Mockito.`when`(mockConnectionsRepository.getByConnectUrl("https://www.fentury.com/")).thenReturn(listOf(connection))
-        Mockito.`when`(mockKeyStoreManager.enrichConnection(connection)).thenReturn(RichConnection(connection, mockPrivateKey))
         viewModel.setInitialData(
             actionAppLinkData = ActionAppLinkData(
                 actionUUID = "123456",
-                connectUrl = "https://www.fentury.com/",
+                connectUrl = connectionV1.connectUrl,
                 returnTo = "https://www.saltedge.com/"
             )
         )
@@ -384,7 +376,7 @@ class SubmitActionViewModelTest : ViewModelTest() {
         //then
         Mockito.verify(mockApiManager).sendAction(
             actionUUID = "123456",
-            connectionAndKey = RichConnection(connection = connection, private = mockPrivateKey),
+            connectionAndKey = richConnectionV1,
             resultCallback = viewModel
         )
     }
@@ -393,19 +385,10 @@ class SubmitActionViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onActivityResultTestCase1() {
         //given
-        val connection = Connection().apply {
-            guid = "guid1"
-            accessToken = ""
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        Mockito.`when`(mockConnectionsRepository.getByConnectUrl("https://www.fentury.com/")).thenReturn(listOf(connection))
-        Mockito.`when`(mockConnectionsRepository.getByGuid("guid1")).thenReturn(connection)
-        Mockito.`when`(mockKeyStoreManager.enrichConnection(connection)).thenReturn(RichConnection(connection, mockPrivateKey))
         viewModel.setInitialData(
             actionAppLinkData = ActionAppLinkData(
                 actionUUID = "123456",
-                connectUrl = "https://www.fentury.com/",
+                connectUrl = connectionV1.connectUrl,
                 returnTo = "https://www.saltedge.com/"
             )
         )
@@ -421,19 +404,10 @@ class SubmitActionViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onActivityResultTestCase2() {
         //given
-        val connection = Connection().apply {
-            guid = "guid1"
-            accessToken = ""
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        Mockito.`when`(mockConnectionsRepository.getByConnectUrl("https://www.fentury.com/")).thenReturn(listOf(connection))
-        Mockito.`when`(mockConnectionsRepository.getByGuid("guid1")).thenReturn(connection)
-        Mockito.`when`(mockKeyStoreManager.enrichConnection(connection)).thenReturn(RichConnection(connection, mockPrivateKey))
         viewModel.setInitialData(
             actionAppLinkData = ActionAppLinkData(
                 actionUUID = "123456",
-                connectUrl = "https://www.fentury.com/",
+                connectUrl = connectionV1.connectUrl,
                 returnTo = "https://www.saltedge.com/"
             )
         )
@@ -445,7 +419,7 @@ class SubmitActionViewModelTest : ViewModelTest() {
         assertThat(viewModel.actionProcessingVisibility.value, equalTo(View.VISIBLE))
         Mockito.verify(mockApiManager).sendAction(
             actionUUID = "123456",
-            connectionAndKey = RichConnection(connection = connection, private = mockPrivateKey),
+            connectionAndKey = RichConnection(connection = connectionV1, private = mockPrivateKey),
             resultCallback = viewModel
         )
     }

@@ -110,7 +110,7 @@ class CryptoToolsV1Test {
         val initialTextValue = "test key"
         val testKey: SecretKey = SecretKeySpec(CommonTestTools.aesKey, 0, CommonTestTools.aesKey.size, "AES")
 
-        val encryptedMessage = CryptoToolsV1.aesEncrypt(initialTextValue, testKey)!!
+        val encryptedMessage = CryptoToolsV1.aesEncrypt(initialTextValue, testKey)
 
         val decryptedMessage = CryptoToolsV1.aesDecrypt(encryptedMessage, testKey)!!
 

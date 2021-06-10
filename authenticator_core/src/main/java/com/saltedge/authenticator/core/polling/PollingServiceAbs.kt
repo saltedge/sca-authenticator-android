@@ -20,19 +20,16 @@
  */
 package com.saltedge.authenticator.core.polling
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
 import java.util.*
 
 private const val POLLING_TIMEOUT = 3000L
 
-abstract class PollingServiceAbs<T> : LifecycleObserver {
+abstract class PollingServiceAbs<T> {
 
     private var timer: Timer? = null
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     open fun start() {
+        timer?.let { stop() } //stop before start to ensure that timer is single
         try {
             timer = Timer()
             timer?.schedule(object : TimerTask() {
@@ -45,7 +42,6 @@ abstract class PollingServiceAbs<T> : LifecycleObserver {
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     open fun stop() {
         try {
             timer?.cancel()
@@ -54,11 +50,6 @@ abstract class PollingServiceAbs<T> : LifecycleObserver {
             e.printStackTrace()
         }
         timer = null
-    }
-
-
-    fun register(lifecycle: Lifecycle) {
-        lifecycle.addObserver(this)
     }
 
     fun isRunning(): Boolean = timer != null

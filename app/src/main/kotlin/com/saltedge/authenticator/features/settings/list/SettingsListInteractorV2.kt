@@ -24,6 +24,7 @@ import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.model.isActive
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.toRichConnection
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 
 class SettingsListInteractorV2(
@@ -34,8 +35,9 @@ class SettingsListInteractorV2(
 
     fun sendRevokeRequestForConnections() {
         val connectionsAndKeys: List<RichConnection> =
-            connectionsRepository.getAllActiveConnections().filter { it.isActive() }
-                .mapNotNull { keyStoreManager.enrichConnection(it) }
+            connectionsRepository.getAllActiveConnections()
+                .filter { it.isActive() }
+                .mapNotNull { it.toRichConnection(keyStoreManager) }
         apiManager.revokeConnections(connections = connectionsAndKeys, callback = null)
     }
 

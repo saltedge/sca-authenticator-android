@@ -21,13 +21,13 @@
 apply plugin: 'jacoco'
 
 jacoco {
-    toolVersion = "0.8.4"
+    toolVersion = "0.8.7"
     reportsDir = file("$buildDir/reports")
 }
 
-tasks.withType(Test) {
-    jacoco.includeNoLocationClasses = true
-}
+//tasks.withType(Test) {
+//    jacoco.includeNoLocationClasses = true
+//}
 
 task jacocoTestReport(type:JacocoReport, dependsOn: ['testDebugUnitTest']) {
     println ":${project.name}: Generating Jacoco reports"

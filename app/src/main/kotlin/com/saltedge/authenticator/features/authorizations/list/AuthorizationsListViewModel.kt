@@ -91,8 +91,8 @@ class AuthorizationsListViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onResume() {
-        interactorV1.updateConnections()
-        interactorV2.updateConnections()
+        interactorV1.onResume()
+        interactorV2.onResume()
         if (listItemsValues.isNotEmpty()) postListItemsUpdate(listItemsValues)
         postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
     }
@@ -100,14 +100,14 @@ class AuthorizationsListViewModel(
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onStop() {
         connectivityReceiver.removeNetworkStateChangeListener(this)
+        interactorV1.onStop()
+        interactorV2.onStop()
     }
 
     fun bindLifecycleObserver(lifecycle: Lifecycle) {
         lifecycle.let {
             it.removeObserver(this)
             it.addObserver(this)
-            interactorV1.bindLifecycleObserver(lifecycle)
-            interactorV2.bindLifecycleObserver(lifecycle)
         }
     }
 

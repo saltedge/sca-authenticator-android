@@ -26,7 +26,7 @@ import com.saltedge.authenticator.features.authorizations.common.AuthorizationSt
 import kotlinx.coroutines.CoroutineScope
 
 interface AuthorizationDetailsInteractorCallback {
-    fun onAuthorizationReceived(data: AuthorizationItemViewModel?, newModelsApiVersion: String)
+    fun onAuthorizationReceived(data: AuthorizationItemViewModel?, newModelApiVersion: String)
     fun onConfirmDenySuccess(newStatus: AuthorizationStatus? = null)
     fun onConnectionNotFoundError()
     fun onAuthorizationNotFoundError()
