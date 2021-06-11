@@ -207,6 +207,17 @@ class ConnectionsListFragment : BaseFragment(),
         viewModel.updateListItemEvent.observe(this, Observer<ConnectionItem> { itemIndex ->
             adapter.updateListItem(itemIndex)
         })
+        viewModel.onShowNoInternetConnectionDialogEvent.observe(this, Observer<ViewModelEvent<GUID>> { event ->
+            event.getContentIfNotHandled()?.let { guid ->
+            activity?.showInfoDialog(
+                titleResId = R.string.warning_no_internet_connection,
+                messageResId = R.string.warning_no_internet_connection_description,
+                positiveButtonResId = R.string.actions_retry,
+                listener = { _, dialogActionId ->
+                    viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_retry, guid)
+                })
+            }
+        })
     }
 
     private fun setupViews() {

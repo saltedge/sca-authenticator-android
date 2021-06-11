@@ -21,11 +21,13 @@
 package com.saltedge.authenticator.features.connections.list
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
 import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.core.api.KEY_NAME
 import com.saltedge.authenticator.core.model.ConnectionStatus
@@ -50,6 +52,8 @@ import org.hamcrest.Matchers.equalTo
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.junit.Assert
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -73,6 +77,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     private val mockApiManagerV1 = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockApiManagerV2 = mock(ScaServiceClientAbs::class.java)
     private val mockLocationManager = mock(DeviceLocationManagerAbs::class.java)
+    private val mockConnectivityReceiver = mock(ConnectivityReceiverAbs::class.java)
 
     private val connection1 = Connection().apply {
         id = "1"
@@ -151,7 +156,8 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         viewModel = ConnectionsListViewModel(
             appContext = context,
             interactor = interactor,
-            locationManager = mockLocationManager
+            locationManager = mockLocationManager,
+            connectivityReceiver = mockConnectivityReceiver
         )
     }
 
@@ -318,7 +324,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
         val activeItemIndex = 0
 
-        Assert.assertNull(viewModel.onListItemClickEvent.value)
+        assertNull(viewModel.onListItemClickEvent.value)
 
         //when
         viewModel.onListItemClick(activeItemIndex)
@@ -371,7 +377,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
         val inactiveItemIndex = 2
 
-        Assert.assertNull(viewModel.onListItemClickEvent.value)
+        assertNull(viewModel.onListItemClickEvent.value)
 
         //when
         viewModel.onListItemClick(inactiveItemIndex)
@@ -619,5 +625,103 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                 )
             )
         )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionIdClickTestCase1() {
+        viewModel.onDialogActionIdClick(
+            dialogActionId = DialogInterface.BUTTON_NEGATIVE,
+            actionResId = R.string.actions_proceed
+        )
+
+        assertNull(viewModel.onAskPermissionsEvent.value)
+
+        viewModel.onDialogActionIdClick(
+            dialogActionId = DialogInterface.BUTTON_POSITIVE,
+            actionResId = R.string.actions_proceed
+        )
+
+        assertNotNull(viewModel.onAskPermissionsEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionIdClickTestCase2() {
+        viewModel.onDialogActionIdClick(
+            dialogActionId = DialogInterface.BUTTON_NEGATIVE,
+            actionResId = R.string.actions_go_to_settings
+        )
+
+        assertNull(viewModel.onGoToSettingsEvent.value)
+
+        viewModel.onDialogActionIdClick(
+            dialogActionId = DialogInterface.BUTTON_POSITIVE,
+            actionResId = R.string.actions_go_to_settings
+        )
+
+        assertNotNull(viewModel.onGoToSettingsEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionIdClickTestCase3() {
+        //given
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+        val isConnected = true
+        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
+
+
+        //when
+        viewModel.onDialogActionIdClick(
+            dialogActionId = DialogInterface.BUTTON_NEGATIVE,
+            actionResId = R.string.actions_retry,
+            guid = "guid1"
+        )
+
+        //then
+        assertNull(viewModel.onDeleteClickEvent.value)
+
+        //when
+        viewModel.onDialogActionIdClick(
+            dialogActionId = DialogInterface.BUTTON_POSITIVE,
+            actionResId = R.string.actions_retry,
+            guid = "guid1"
+        )
+
+        //then
+        assertNotNull(viewModel.onDeleteClickEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionIdClickTestCase4() {
+        //given
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+        val isConnected = false
+        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
+
+
+        //when
+        viewModel.onDialogActionIdClick(
+            dialogActionId = DialogInterface.BUTTON_NEGATIVE,
+            actionResId = R.string.actions_retry,
+            guid = "guid1"
+        )
+
+        //then
+        assertNull(viewModel.onDeleteClickEvent.value)
+
+        //when
+        viewModel.onDialogActionIdClick(
+            dialogActionId = DialogInterface.BUTTON_POSITIVE,
+            actionResId = R.string.actions_retry,
+            guid = "guid1"
+        )
+
+        //then
+        assertNull(viewModel.onDeleteClickEvent.value)
     }
 }
