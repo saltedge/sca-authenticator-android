@@ -59,6 +59,7 @@ class ConnectionsListViewModel(
     NetworkStateChangeListener {
 
     private var consents: Map<GUID, List<ConsentData>> = emptyMap()
+    private var hasInternetConnection: Boolean = true
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onListItemClickEvent = MutableLiveData<ViewModelEvent<MenuData>>()
     val onSupportClickEvent = MutableLiveData<ViewModelEvent<String?>>()
@@ -76,7 +77,6 @@ class ConnectionsListViewModel(
     val listItemsValues: List<ConnectionItem>
         get() = listItems.value ?: emptyList()
     val updateListItemEvent = MutableLiveData<ConnectionItem>()
-    private var noInternetConnection: Boolean = false
 
     init {
         interactor.contract = this
@@ -101,7 +101,7 @@ class ConnectionsListViewModel(
     }
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
-        noInternetConnection = !isConnected
+        hasInternetConnection = isConnected
     }
 
     override fun onMenuItemClick(menuId: Int, itemId: Int) {
@@ -121,7 +121,7 @@ class ConnectionsListViewModel(
             }
             PopupMenuItem.LOCATION -> onAccessToLocationClickEvent.postUnitEvent()
             PopupMenuItem.DELETE -> {
-                if (!noInternetConnection) {
+                if (hasInternetConnection) {
                     if (item.isActive) {
                         onDeleteClickEvent.postValue(ViewModelEvent(item.guid))
                     } else {
@@ -240,14 +240,12 @@ class ConnectionsListViewModel(
         }
     }
 
-    fun onDialogActionIdClick(dialogActionId: Int, actionResId: ResId, guid: GUID = "") {
+    fun onDialogActionClick(dialogActionId: Int, actionResId: ResId, guid: GUID = "") {
         if (dialogActionId == DialogInterface.BUTTON_POSITIVE) {
             when (actionResId) {
                 R.string.actions_proceed -> onAskPermissionsEvent.postUnitEvent()
                 R.string.actions_go_to_settings -> onGoToSettingsEvent.postUnitEvent()
-                R.string.actions_retry -> {
-                    if (!noInternetConnection) onDeleteClickEvent.postValue(ViewModelEvent(guid))
-                }
+                R.string.actions_retry -> if (hasInternetConnection) onItemDeleted(guid = guid)
             }
         }
     }

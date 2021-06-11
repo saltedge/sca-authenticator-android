@@ -24,6 +24,9 @@ import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import androidx.test.core.app.ApplicationProvider
 import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
@@ -629,43 +632,59 @@ class ConnectionsListViewModelTest : ViewModelTest() {
 
     @Test
     @Throws(Exception::class)
-    fun onDialogActionIdClickTestCase1() {
-        viewModel.onDialogActionIdClick(
+    fun onDialogActionClickCase1() {
+        //when
+        viewModel.onDialogActionClick(
             dialogActionId = DialogInterface.BUTTON_NEGATIVE,
             actionResId = R.string.actions_proceed
         )
 
+        //then
         assertNull(viewModel.onAskPermissionsEvent.value)
+    }
 
-        viewModel.onDialogActionIdClick(
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionClickCase2() {
+        //when
+        viewModel.onDialogActionClick(
             dialogActionId = DialogInterface.BUTTON_POSITIVE,
             actionResId = R.string.actions_proceed
         )
 
+        //then
         assertNotNull(viewModel.onAskPermissionsEvent.value)
     }
 
     @Test
     @Throws(Exception::class)
-    fun onDialogActionIdClickTestCase2() {
-        viewModel.onDialogActionIdClick(
+    fun onDialogActionClickCase3() {
+        //when
+        viewModel.onDialogActionClick(
             dialogActionId = DialogInterface.BUTTON_NEGATIVE,
             actionResId = R.string.actions_go_to_settings
         )
 
+        //then
         assertNull(viewModel.onGoToSettingsEvent.value)
+    }
 
-        viewModel.onDialogActionIdClick(
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionClickCase4() {
+        //when
+        viewModel.onDialogActionClick(
             dialogActionId = DialogInterface.BUTTON_POSITIVE,
             actionResId = R.string.actions_go_to_settings
         )
 
+        //then
         assertNotNull(viewModel.onGoToSettingsEvent.value)
     }
 
     @Test
     @Throws(Exception::class)
-    fun onDialogActionIdClickTestCase3() {
+    fun onDialogActionClickCase5() {
         //given
         viewModel.onStart()
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
@@ -674,7 +693,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
 
 
         //when
-        viewModel.onDialogActionIdClick(
+        viewModel.onDialogActionClick(
             dialogActionId = DialogInterface.BUTTON_NEGATIVE,
             actionResId = R.string.actions_retry,
             guid = "guid1"
@@ -682,21 +701,33 @@ class ConnectionsListViewModelTest : ViewModelTest() {
 
         //then
         assertNull(viewModel.onDeleteClickEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionClickCase6() {
+        //given
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+        val isConnected = true
+        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
 
         //when
-        viewModel.onDialogActionIdClick(
+        viewModel.onDialogActionClick(
             dialogActionId = DialogInterface.BUTTON_POSITIVE,
             actionResId = R.string.actions_retry,
             guid = "guid1"
         )
 
         //then
-        assertNotNull(viewModel.onDeleteClickEvent.value)
+        Mockito.verify(mockApiManagerV1).revokeConnections(listOf(richConnection1), null)
+        Mockito.verify(mockConnectionsRepository).deleteConnection("guid1")
+        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid1")
     }
 
     @Test
     @Throws(Exception::class)
-    fun onDialogActionIdClickTestCase4() {
+    fun onDialogActionClickCase7() {
         //given
         viewModel.onStart()
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
@@ -705,7 +736,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
 
 
         //when
-        viewModel.onDialogActionIdClick(
+        viewModel.onDialogActionClick(
             dialogActionId = DialogInterface.BUTTON_NEGATIVE,
             actionResId = R.string.actions_retry,
             guid = "guid1"
@@ -713,9 +744,19 @@ class ConnectionsListViewModelTest : ViewModelTest() {
 
         //then
         assertNull(viewModel.onDeleteClickEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionClickCase8() {
+        //given
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+        val isConnected = false
+        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
 
         //when
-        viewModel.onDialogActionIdClick(
+        viewModel.onDialogActionClick(
             dialogActionId = DialogInterface.BUTTON_POSITIVE,
             actionResId = R.string.actions_retry,
             guid = "guid1"
@@ -723,5 +764,35 @@ class ConnectionsListViewModelTest : ViewModelTest() {
 
         //then
         assertNull(viewModel.onDeleteClickEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onStartTestCase() {
+        //given
+        val lifecycle = LifecycleRegistry(mock(LifecycleOwner::class.java))
+        lifecycle.addObserver(viewModel)
+
+        //when
+        lifecycle.currentState = Lifecycle.State.STARTED
+
+        //then
+        Mockito.verify(mockConnectivityReceiver).addNetworkStateChangeListener(viewModel)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onStopTestCase() {
+        //given
+        val lifecycle = LifecycleRegistry(mock(LifecycleOwner::class.java))
+        lifecycle.addObserver(viewModel)
+
+        //when
+        lifecycle.currentState = Lifecycle.State.RESUMED
+        lifecycle.currentState =
+            Lifecycle.State.CREATED //move to stop state (possible only after RESUMED state)
+
+        //then
+        Mockito.verify(mockConnectivityReceiver).removeNetworkStateChangeListener(viewModel)
     }
 }

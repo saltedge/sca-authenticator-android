@@ -178,7 +178,7 @@ class ConnectionsListFragment : BaseFragment(),
                                 messageResId = R.string.grant_access_location_description,
                                 positiveButtonResId = R.string.actions_go_to_settings,
                                 listener = { _, dialogActionId ->
-                                    viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_go_to_settings)
+                                    viewModel.onDialogActionClick(dialogActionId, R.string.actions_go_to_settings)
                                 })
                     } else {
                         activity?.showInfoDialog(
@@ -186,7 +186,7 @@ class ConnectionsListFragment : BaseFragment(),
                             messageResId = R.string.grant_access_location_description,
                             positiveButtonResId = R.string.actions_proceed,
                             listener = { _, dialogActionId ->
-                                viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_proceed)
+                                viewModel.onDialogActionClick(dialogActionId, R.string.actions_proceed)
                             })
                     }
                 }
@@ -214,7 +214,7 @@ class ConnectionsListFragment : BaseFragment(),
                 messageResId = R.string.warning_no_internet_connection_description,
                 positiveButtonResId = R.string.actions_retry,
                 listener = { _, dialogActionId ->
-                    viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_retry, guid)
+                    viewModel.onDialogActionClick(dialogActionId, R.string.actions_retry, guid)
                 })
             }
         })
