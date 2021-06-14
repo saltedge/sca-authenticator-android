@@ -64,15 +64,11 @@ class ConnectionsListInteractor(
     }
 
     override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?) {
-        if (apiError?.isConnectivityError() == true) return
-        deleteConnectionsAndKeys(currentConnectionGuid)
-        contract?.updateViewsContent()
+        deleteConnectionData(apiError = apiError)
     }
 
     override fun onConnectionsRevokeResult(apiError: ApiErrorData?) {
-        if (apiError?.isConnectivityError() == true) return
-        deleteConnectionsAndKeys(currentConnectionGuid)
-        contract?.updateViewsContent()
+        deleteConnectionData(apiError = apiError)
     }
 
     fun updateConnections() {
@@ -140,6 +136,12 @@ class ConnectionsListInteractor(
     }
 
     private fun processDecryptedConsentsResult(result: List<ConsentData>) {
-        contract?.processDecryptedConsentsResult(result)
+        contract?.onConsentsDataChanged(result)
+    }
+
+    private fun deleteConnectionData(apiError: ApiErrorData?) {
+        if (apiError?.isConnectivityError() == true) return
+        deleteConnectionsAndKeys(currentConnectionGuid)
+        contract?.onConnectionsDataChanged()
     }
 }

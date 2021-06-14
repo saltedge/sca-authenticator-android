@@ -86,7 +86,7 @@ class ConnectionsListViewModel(
     fun onStart() {
         connectivityReceiver.addNetworkStateChangeListener(this)
         interactor.updateConnections()
-        updateViewsContent()
+        onConnectionsDataChanged()
         refreshConsents()
     }
 
@@ -126,7 +126,7 @@ class ConnectionsListViewModel(
                         onDeleteClickEvent.postValue(ViewModelEvent(item.guid))
                     } else {
                         interactor.revokeConnection(item.guid)
-                        updateViewsContent()
+                        onConnectionsDataChanged()
                     }
                 } else {
                     onShowNoInternetConnectionDialogEvent.postValue(ViewModelEvent(item.guid))
@@ -135,7 +135,7 @@ class ConnectionsListViewModel(
         }
     }
 
-    override fun processDecryptedConsentsResult(result: List<ConsentData>) {
+    override fun onConsentsDataChanged(result: List<ConsentData>) {
         this.consents = result.groupBy {
             listItemsValues.firstOrNull { viewModel ->
                 viewModel.connectionId == it.connectionId
@@ -159,7 +159,7 @@ class ConnectionsListViewModel(
     fun deleteItem(guid: GUID) {
         val listItem = listItemsValues.find { it.guid == guid } ?: return
         interactor.revokeConnection(listItem.guid)
-        updateViewsContent()
+        onConnectionsDataChanged()
     }
 
     fun onViewClick(viewId: Int) {
@@ -215,7 +215,7 @@ class ConnectionsListViewModel(
             && grantResults.any { it == PackageManager.PERMISSION_GRANTED }
         ) {
             locationManager.startLocationUpdates(appContext)
-            updateViewsContent()
+            onConnectionsDataChanged()
         }
     }
 
@@ -223,7 +223,7 @@ class ConnectionsListViewModel(
         interactor.getConsents()
     }
 
-    override fun updateViewsContent() {
+    override fun onConnectionsDataChanged() {
         val items = interactor.getAllConnections().convertConnectionsToViewModels(appContext, locationManager)
         listItems.postValue(updateItemsWithConsentData(items, consents))
         emptyViewVisibility.postValue(if (items.isEmpty()) View.VISIBLE else View.GONE)

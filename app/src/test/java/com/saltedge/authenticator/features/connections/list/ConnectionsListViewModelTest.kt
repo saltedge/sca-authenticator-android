@@ -238,7 +238,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         viewModel.listItems.postValue(emptyList())
 
         //when
-        viewModel.processDecryptedConsentsResult(result = consentData)
+        viewModel.onConsentsDataChanged(result = consentData)
 
         //then
         assertThat(viewModel.listItems.value, equalTo(emptyList()))
@@ -252,7 +252,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
 
         //when
-        viewModel.processDecryptedConsentsResult(result = consentData)
+        viewModel.onConsentsDataChanged(result = consentData)
 
         //then
         assertThat(
@@ -323,7 +323,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     fun onListItemClickTestCase1() {
         //given list of items, list of consents and index of active item
         viewModel.onStart()
-        viewModel.processDecryptedConsentsResult(result = consentData)
+        viewModel.onConsentsDataChanged(result = consentData)
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
         val activeItemIndex = 0
 
@@ -573,7 +573,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         viewModel.deleteItem(guid = "guid1")
 
         //then
-        Mockito.verify(mockApiManagerV1).revokeConnections(listOf(richConnection1), null)
+        Mockito.verify(mockApiManagerV1).revokeConnections(listOf(richConnection1), resultCallback = interactor)
         Mockito.verify(mockConnectionsRepository).deleteConnection("guid1")
         Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid1")
     }
@@ -590,7 +590,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         viewModel.deleteItem(guid = "guid2")
 
         //then
-        Mockito.verify(mockApiManagerV2).revokeConnections(listOf(richConnection2), null)
+        Mockito.verify(mockApiManagerV2).revokeConnections(listOf(richConnection2), callback = interactor)
         Mockito.verify(mockConnectionsRepository).deleteConnection("guid2")
         Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid2")
     }
@@ -720,7 +720,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         )
 
         //then
-        Mockito.verify(mockApiManagerV1).revokeConnections(listOf(richConnection1), null)
+        Mockito.verify(mockApiManagerV1).revokeConnections(listOf(richConnection1), resultCallback = interactor)
         Mockito.verify(mockConnectionsRepository).deleteConnection("guid1")
         Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid1")
     }
