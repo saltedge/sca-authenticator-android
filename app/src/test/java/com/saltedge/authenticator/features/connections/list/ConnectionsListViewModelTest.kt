@@ -570,7 +570,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid1")
 
         //when
-        viewModel.onItemDeleted(guid = "guid1")
+        viewModel.deleteItem(guid = "guid1")
 
         //then
         Mockito.verify(mockApiManagerV1).revokeConnections(listOf(richConnection1), null)
@@ -587,7 +587,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid2")
 
         //when
-        viewModel.onItemDeleted(guid = "guid2")
+        viewModel.deleteItem(guid = "guid2")
 
         //then
         Mockito.verify(mockApiManagerV2).revokeConnections(listOf(richConnection2), null)
@@ -604,7 +604,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid3")
 
         //when
-        viewModel.onItemDeleted(guid = "guid3")
+        viewModel.deleteItem(guid = "guid3")
 
         //then
         Mockito.verifyNoInteractions(mockApiManagerV1, mockApiManagerV2)

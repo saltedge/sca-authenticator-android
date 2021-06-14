@@ -239,7 +239,7 @@ class ConnectionsListFragment : BaseFragment(),
             viewModel.onItemNameChanged(result)
         })
         sharedViewModel.connectionDeleted.observe(viewLifecycleOwner, Observer<GUID> { result ->
-            viewModel.onItemDeleted(result)
+            viewModel.deleteItem(result)
         })
     }
 

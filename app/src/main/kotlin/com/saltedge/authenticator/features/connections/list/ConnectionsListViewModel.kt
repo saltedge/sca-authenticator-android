@@ -156,7 +156,7 @@ class ConnectionsListViewModel(
         }
     }
 
-    fun onItemDeleted(guid: GUID) {
+    fun deleteItem(guid: GUID) {
         val listItem = listItemsValues.find { it.guid == guid } ?: return
         interactor.revokeConnection(listItem.guid)
         updateViewsContent()
@@ -223,7 +223,7 @@ class ConnectionsListViewModel(
         interactor.getConsents()
     }
 
-    private fun updateViewsContent() {
+    override fun updateViewsContent() {
         val items = interactor.getAllConnections().convertConnectionsToViewModels(appContext, locationManager)
         listItems.postValue(updateItemsWithConsentData(items, consents))
         emptyViewVisibility.postValue(if (items.isEmpty()) View.VISIBLE else View.GONE)
@@ -245,7 +245,7 @@ class ConnectionsListViewModel(
             when (actionResId) {
                 R.string.actions_proceed -> onAskPermissionsEvent.postUnitEvent()
                 R.string.actions_go_to_settings -> onGoToSettingsEvent.postUnitEvent()
-                R.string.actions_retry -> if (hasInternetConnection) onItemDeleted(guid = guid)
+                R.string.actions_retry -> if (hasInternetConnection) deleteItem(guid = guid)
             }
         }
     }
