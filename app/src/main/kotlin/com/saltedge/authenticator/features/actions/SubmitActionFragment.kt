@@ -64,7 +64,7 @@ class SubmitActionFragment : BaseFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         activityComponents?.updateAppbar(
             titleResId = R.string.action_new_action_title,
             backActionImageResId = R.drawable.ic_appbar_action_close
@@ -82,10 +82,10 @@ class SubmitActionFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        completeView?.setClickListener(View.OnClickListener { v -> viewModel.onViewClick(v.id) })
+        completeView?.setClickListener { v -> viewModel.onViewClick(v.id) }
         viewModel.onViewCreated()
         sharedViewModel.onSelectConnection.observe(viewLifecycleOwner, Observer<GUID> { result ->
-            viewModel.showConnectionSelector(result)
+            viewModel.onConnectionSelected(guid = result)
         })
     }
 
@@ -119,10 +119,7 @@ class SubmitActionFragment : BaseFragment() {
         })
         viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
                 it?.getContentIfNotHandled()?.let { bundle ->
-                    navigateTo(
-                        actionRes = R.id.select_connections,
-                        bundle = bundle
-                    )
+                    navigateTo(actionRes = R.id.select_connections, bundle = bundle)
                 }
             })
         viewModel.setInitialData(

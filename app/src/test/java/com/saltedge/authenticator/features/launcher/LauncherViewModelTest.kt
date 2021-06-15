@@ -92,7 +92,6 @@ class LauncherViewModelTest : ViewModelTest() {
 
         viewModel.onLifeCycleResume()
 
-        Mockito.verify(mockRealmManager).initRealm(TestAppTools.applicationContext)
         assertTrue(mockRealmManager.errorOccurred)
         assertNotNull(viewModel.onDbInitializationFail.value)
         assertNull(viewModel.onInitializationSuccess.value)
@@ -128,7 +127,6 @@ class LauncherViewModelTest : ViewModelTest() {
     fun onLifeCycleResumeTestCase3() {
         viewModel.onLifeCycleResume()
 
-        Mockito.verify(mockRealmManager).initRealm(TestAppTools.applicationContext)
         assertFalse(mockRealmManager.errorOccurred)
         assertNull(viewModel.onDbInitializationFail.value)
         assertNotNull(viewModel.onInitializationSuccess.value)

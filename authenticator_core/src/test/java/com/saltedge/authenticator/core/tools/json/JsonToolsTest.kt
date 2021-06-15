@@ -31,9 +31,12 @@ class JsonToolsTest {
     fun createDefaultGsonTest() {
         val gson = createDefaultGson()
         val data = ActionAppLinkData(
-            actionUUID = "Qwerty1+==",
+            apiVersion = "1",
+            providerID = null,
+            actionIdentifier = "Qwerty1+==",
             connectUrl = "",
-            returnTo = ""        )
+            returnTo = ""
+        )
         assertTrue(gson.toJson(data).contains("Qwerty1+=="))
     }
 }

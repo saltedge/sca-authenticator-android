@@ -37,6 +37,7 @@ import com.saltedge.authenticator.cloud.registerNotificationChannels
 import com.saltedge.authenticator.core.api.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.core.api.KEY_CONNECTION_ID
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.realm.initRealmDatabase
 import com.saltedge.authenticator.tools.*
 import javax.inject.Inject
 
@@ -48,6 +49,7 @@ class LauncherActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.initRealmDatabase()
         this.authenticatorApp?.appComponent?.inject(this)
         setupViewModel()
         this.updateScreenshotLocking()

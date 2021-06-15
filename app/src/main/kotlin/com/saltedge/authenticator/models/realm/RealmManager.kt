@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.models.realm
 
 import android.content.Context
+import androidx.fragment.app.FragmentActivity
 import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.core.tools.createRandomGuid
 import com.saltedge.authenticator.models.repository.PreferenceRepository
@@ -86,4 +87,8 @@ object RealmManager : RealmManagerAbs {
             initErrorOccurred = true
         }
     }
+}
+
+fun FragmentActivity.initRealmDatabase() {
+    if (!RealmManager.initialized) RealmManager.initRealm(context = this)
 }

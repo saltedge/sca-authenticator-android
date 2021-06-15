@@ -40,7 +40,7 @@ fun collectRichConnections(
     apiVersion: String? = null
 ): Map<ID, RichConnection> {//TODO TEST
     val connections = apiVersion
-        ?.let { repository.getAllActiveConnections(it)  }
+        ?.let { repository.getAllActiveConnectionsByApi(it)  }
         ?: repository.getAllActiveConnections()
     return connections.mapNotNull { it.toRichConnectionPair(keyStoreManager) }.toMap()
 }

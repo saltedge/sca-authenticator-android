@@ -27,19 +27,17 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_CLEAR_APP_DATA
 import com.saltedge.authenticator.app.KEY_CLOSE_APP
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.core.api.KEY_DATA
 import com.saltedge.authenticator.core.api.KEY_ID
 import com.saltedge.authenticator.core.api.KEY_TITLE
-import com.saltedge.authenticator.core.tools.extractActionAppLinkData
-import com.saltedge.authenticator.core.tools.extractConnectAppLinkData
+import com.saltedge.authenticator.core.model.extractActionAppLinkData
+import com.saltedge.authenticator.core.model.extractConnectAppLinkData
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.applyPreferenceLocale
@@ -47,7 +45,6 @@ import com.saltedge.authenticator.tools.postUnitEvent
 
 class MainActivityViewModel(
     private val appContext: Context,
-    private val realmManager: RealmManagerAbs,
     private val interactor: MainActivityInteractor
 ) : ViewModel(),
     LifecycleObserver,
@@ -70,10 +67,6 @@ class MainActivityViewModel(
     val appBarActionMoreVisibility = MutableLiveData<Int>(View.GONE)
 
     private var initialQrScanWasStarted = false
-
-    init {
-        if (!realmManager.initialized) realmManager.initRealm(context = appContext)
-    }
 
     fun bindLifecycleObserver(lifecycle: Lifecycle) {
         lifecycle.let {

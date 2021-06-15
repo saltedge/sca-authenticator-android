@@ -48,11 +48,7 @@ class QrScannerViewModelTest : ViewModelTest() {
 
     @Before
     fun setUp() {
-        viewModel = QrScannerViewModel(
-            appContext = TestAppTools.applicationContext,
-            realmManager = mockRealmManager,
-            connectionsRepository = mockConnectionsRepository
-        )
+        viewModel = QrScannerViewModel(connectionsRepository = mockConnectionsRepository)
     }
 
     /**

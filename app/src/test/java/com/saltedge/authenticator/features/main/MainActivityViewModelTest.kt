@@ -58,7 +58,6 @@ import org.robolectric.RobolectricTestRunner
 class MainActivityViewModelTest : ViewModelTest() {
 
     private lateinit var interactor: MainActivityInteractor
-    private val mockRealmManager = mock(RealmManagerAbs::class.java)
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
     private val mockPreferenceRepository = mock(PreferenceRepositoryAbs::class.java)
     private val context: Context = ApplicationProvider.getApplicationContext()
@@ -76,36 +75,8 @@ class MainActivityViewModelTest : ViewModelTest() {
         )
         return MainActivityViewModel(
             appContext = context,
-            realmManager = mockRealmManager,
             interactor = interactor
         )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun initTestCase1() {
-        //given
-        given(mockRealmManager.initialized).willReturn(true)
-
-        //when
-        val viewModel = createViewModel()
-
-        //then
-        Mockito.never()
-
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun initTestCase2() {
-        //given
-        given(mockRealmManager.initialized).willReturn(false)
-
-        //when
-        createViewModel()
-
-        //then
-        verify(mockRealmManager).initRealm(context)
     }
 
     @Test
@@ -236,7 +207,9 @@ class MainActivityViewModelTest : ViewModelTest() {
             bundle?.getSerializable(KEY_DATA) as ActionAppLinkData,
             equalTo(
                 ActionAppLinkData(
-                    actionUUID = "123456",
+                    apiVersion = "1",
+                    providerID = null,
+                    actionIdentifier = "123456",
                     connectUrl = "https://someurl.com",
                     returnTo = "https://return.com"
                 )
@@ -387,7 +360,9 @@ class MainActivityViewModelTest : ViewModelTest() {
             bundle?.getSerializable(KEY_DATA) as ActionAppLinkData,
             equalTo(
                 ActionAppLinkData(
-                    actionUUID = "123456",
+                    apiVersion = "1",
+                    providerID = null,
+                    actionIdentifier = "123456",
                     connectUrl = "https://someurl.com",
                     returnTo = "https://return.com"
                 )
