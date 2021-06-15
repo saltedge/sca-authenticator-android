@@ -50,7 +50,6 @@ class ConnectionsListInteractor(
     com.saltedge.authenticator.sdk.v2.api.contract.ConnectionsRevokeListener {
 
     var contract: ConnectionsListInteractorCallback? = null
-    private var currentConnectionGuid: String = ""
     private val decryptJob: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = decryptJob + Dispatchers.IO
@@ -64,11 +63,18 @@ class ConnectionsListInteractor(
     }
 
     override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?) {
-        deleteConnectionData(apiError = apiError)
+        if (apiError?.isConnectivityError() == true) return
+        deleteConnectionsAndKeysByTokens(revokedTokens = revokedTokens)
+        contract?.onConnectionsDataChanged()
     }
 
-    override fun onConnectionsRevokeResult(apiError: ApiErrorData?) {
-        deleteConnectionData(apiError = apiError)
+    override fun onConnectionsV2RevokeResult(
+        revokedConnections: List<GUID>,
+        apiError: ApiErrorData?
+    ) {
+        if (apiError?.isConnectivityError() == true) return
+        deleteConnectionsAndKeysByGuid(revokedGuids = revokedConnections)
+        contract?.onConnectionsDataChanged()
     }
 
     fun updateConnections() {
@@ -96,14 +102,13 @@ class ConnectionsListInteractor(
     }
 
     fun revokeConnection(guid: String) {
-        currentConnectionGuid = guid
         val connection = connectionsRepository.getByGuid(guid) ?: return
         sendRevokeRequestForConnection(connection)
     }
 
     private fun sendRevokeRequestForConnection(connection: Connection) {
         if (!connection.isActive()) {
-            deleteConnectionsAndKeys(currentConnectionGuid)
+            deleteConnectionsAndKeysByGuid(listOf(connection.guid))
             return
         }
         val richConnection = connection.toRichConnection(keyStoreManager) ?: return
@@ -114,9 +119,22 @@ class ConnectionsListInteractor(
         }
     }
 
-    private fun deleteConnectionsAndKeys(guid: String) {
-        keyStoreManager.deleteKeyPairIfExist(guid)
-        connectionsRepository.deleteConnection(guid)
+    private fun deleteConnectionsAndKeysByTokens(revokedTokens: List<Token>) {
+        richConnections.values.filter {
+            revokedTokens.contains(it.connection.accessToken)
+        }.map {
+            it.connection.guid
+        }.forEach{ guid ->
+            keyStoreManager.deleteKeyPairIfExist(guid)
+            connectionsRepository.deleteConnection(guid)
+        }
+    }
+
+    private fun deleteConnectionsAndKeysByGuid(revokedGuids: List<GUID>) {
+        revokedGuids.forEach { guid ->
+            keyStoreManager.deleteKeyPairIfExist(guid)
+            connectionsRepository.deleteConnection(guid)
+        }
     }
 
     private fun processOfEncryptedConsentsResult(encryptedList: List<EncryptedData>) {
@@ -137,11 +155,5 @@ class ConnectionsListInteractor(
 
     private fun processDecryptedConsentsResult(result: List<ConsentData>) {
         contract?.onConsentsDataChanged(result)
-    }
-
-    private fun deleteConnectionData(apiError: ApiErrorData?) {
-        if (apiError?.isConnectivityError() == true) return
-        deleteConnectionsAndKeys(currentConnectionGuid)
-        contract?.onConnectionsDataChanged()
     }
 }

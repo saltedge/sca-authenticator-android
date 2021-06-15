@@ -81,7 +81,7 @@ class ConnectionsRevokeConnectorTest {
         )
 
         verify {
-            mockCallback.onConnectionsRevokeResult(apiError = null)
+            mockCallback.onConnectionsV2RevokeResult(apiError = null)
         }
         confirmVerified(mockCallback)
     }
@@ -97,7 +97,7 @@ class ConnectionsRevokeConnectorTest {
         connector.onResponse(mockCall, get404Response())
 
         verify {
-            mockCallback.onConnectionsRevokeResult(
+            mockCallback.onConnectionsV2RevokeResult(
                 apiError = ApiErrorData(
                     errorMessage = "Resource not found",
                     errorClassName = "NotFound",
@@ -115,7 +115,7 @@ class ConnectionsRevokeConnectorTest {
         connector.onResponse(mockCall, Response.success(null))
 
         verify {
-            mockCallback.onConnectionsRevokeResult(
+            mockCallback.onConnectionsV2RevokeResult(
                 apiError = ApiErrorData(
                     errorMessage = "Request Error (200)",
                     errorClassName = ERROR_CLASS_API_RESPONSE,
@@ -136,7 +136,7 @@ class ConnectionsRevokeConnectorTest {
         )
 
         verify {
-            mockCallback.onConnectionsRevokeResult(
+            mockCallback.onConnectionsV2RevokeResult(
                 apiError = ApiErrorData(
                     errorMessage = "Request Error (404)",
                     errorClassName = ERROR_CLASS_API_RESPONSE,
@@ -154,7 +154,7 @@ class ConnectionsRevokeConnectorTest {
         connector.onFailure(mockCall, ConnectException())
 
         verify {
-            mockCallback.onConnectionsRevokeResult(
+            mockCallback.onConnectionsV2RevokeResult(
                 apiError = ApiErrorData(
                     errorClassName = ERROR_CLASS_HOST_UNREACHABLE,
                     accessToken = "accessToken"
@@ -182,6 +182,6 @@ class ConnectionsRevokeConnectorTest {
         every { mockCall.enqueue(any()) } returns Unit
         every { mockCall.request() } returns Request.Builder().url(requestUrl)
             .addHeader(HEADER_KEY_ACCESS_TOKEN, "accessToken").build()
-        every { mockCallback.onConnectionsRevokeResult(any()) } returns Unit
+        every { mockCallback.onConnectionsV2RevokeResult(any()) } returns Unit
     }
 }

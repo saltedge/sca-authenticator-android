@@ -44,6 +44,7 @@ internal class ConnectionsRevokeConnector(
 ) : RequestQueueAbs<RevokeConnectionResponse>() {
 
     private var errorResult: ApiErrorData? = null
+    private var result = mutableListOf<String>()
 
     /**
      * Prepare request url, request models (AuthenticatedRequestData)
@@ -55,19 +56,22 @@ internal class ConnectionsRevokeConnector(
         if (super.queueIsEmpty()) {
             super.setQueueSize(forConnections.size)
             if (super.queueIsEmpty()) onQueueFinished()
-            else forConnections.forEach {
-                val request = RevokeConnectionRequest()
-                val headers = createAccessTokenHeader(it.connection.accessToken)
-                    .addSignatureHeader(
-                        it.private,
-                        request.data,
-                        request.requestExpirationTime
-                    )
-                apiInterface.revokeConnection(
-                    requestUrl = it.connection.connectUrl.revokeConnectionsPath(it.connection.id),
-                    headersMap = headers,
-                    requestBody = request
-                ).enqueue(this)
+            else {
+                result = mutableListOf<String>()
+                forConnections.forEach {
+                    val request = RevokeConnectionRequest()
+                    val headers = createAccessTokenHeader(it.connection.accessToken)
+                        .addSignatureHeader(
+                            it.private,
+                            request.data,
+                            request.requestExpirationTime
+                        )
+                    apiInterface.revokeConnection(
+                        requestUrl = it.connection.connectUrl.revokeConnectionsPath(it.connection.id),
+                        headersMap = headers,
+                        requestBody = request
+                    ).enqueue(this)
+                }
             }
         }
     }
@@ -76,7 +80,7 @@ internal class ConnectionsRevokeConnector(
      * Pass result to resultCallback.onConnectionsRevokeResult(...)
      */
     public override fun onQueueFinished() {
-        resultCallback?.onConnectionsRevokeResult(errorResult)
+        resultCallback?.onConnectionsV2RevokeResult(revokedConnections = result, apiError = errorResult)
     }
 
     /**
@@ -86,6 +90,7 @@ internal class ConnectionsRevokeConnector(
      * @param response - RevokeAccessTokenResponseData model
      */
     override fun onSuccessResponse(call: Call<RevokeConnectionResponse>, response: RevokeConnectionResponse) {
+        result.add(response.data.revokedConnectionId)
         super.onResponseReceived()
     }
 
