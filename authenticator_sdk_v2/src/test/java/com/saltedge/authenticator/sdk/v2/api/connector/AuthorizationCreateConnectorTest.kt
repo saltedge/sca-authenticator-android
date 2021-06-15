@@ -22,13 +22,12 @@ package com.saltedge.authenticator.sdk.v2.api.connector
 
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.authenticator.core.api.HEADER_KEY_ACCESS_TOKEN
-import com.saltedge.authenticator.core.api.model.EncryptedBundle
-import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationConfirmListener
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationResponse
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationResponseData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationCreateListener
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.CreateAuthorizationResponse
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.CreateAuthorizationResponseData
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import com.saltedge.authenticator.sdk.v2.defaultTestConnection
 import com.saltedge.authenticator.sdk.v2.get404Response
@@ -48,12 +47,12 @@ import java.security.PrivateKey
 import java.security.PublicKey
 
 @RunWith(RobolectricTestRunner::class)
-class AuthorizationConfirmConnectorTest {
+class AuthorizationCreateConnectorTest {
 
     @Test
     @Throws(Exception::class)
     fun valuesTest() {
-        val connector = AuthorizationConfirmConnector(mockApi, requestAuthorizationId, null)
+        val connector = AuthorizationCreateConnector(mockApi, null)
 
         Assert.assertNull(connector.callback)
 
@@ -64,34 +63,29 @@ class AuthorizationConfirmConnectorTest {
 
     @Test
     @Throws(Exception::class)
-    fun postConfirmTest_allSuccess() {
-        val connector = AuthorizationConfirmConnector(mockApi, requestAuthorizationId, mockCallback)
-        connector.confirmAuthorization(
-            connection = RichConnection(requestConnection, privateKey, publicKey),
-            encryptedPayload = EncryptedBundle(
-                encryptedAesKey = "o3TDCc3rKYTx...RVH+aOFpS9NIg==\n",
-                encryptedAesIv = "BtV7EB3Erv8xEQ.../jeBRyFa75A6po5XlwWiEiuzQ==\n",
-                encryptedData = "YlnrNOHvUIPem/O58rMzdsvkXidLvgGpdMalD9c1mlg=\n"
-            )
+    fun postCreateTest_allSuccess() {
+        val connector = AuthorizationCreateConnector(mockApi, mockCallback)
+        connector.createAuthorizationForAction(
+            richConnection = testRichConnection,
+            actionID = testActionId
         )
 
         verify { mockCall.enqueue(connector) }
 
         connector.onResponse(
             mockCall,
-            Response.success(UpdateAuthorizationResponse(UpdateAuthorizationResponseData(
-                status = "processing",
-                authorizationID = requestAuthorizationId
-            )))
+            Response.success(CreateAuthorizationResponse(
+                CreateAuthorizationResponseData(
+                    connectionID = testConnection.id,
+                    authorizationID = testAuthorizationId
+                )
+            ))
         )
 
         verify {
-            mockCallback.onAuthorizationConfirmSuccess(
-                UpdateAuthorizationResponseData(
-                    status = "processing",
-                    authorizationID = requestAuthorizationId
-                ),
-                connectionID = requestConnection.id
+            mockCallback.onAuthorizationCreateSuccess(
+                authorizationID = testAuthorizationId,
+                connectionID = testConnection.id
             )
         }
         confirmVerified(mockCallback)
@@ -99,15 +93,11 @@ class AuthorizationConfirmConnectorTest {
 
     @Test
     @Throws(Exception::class)
-    fun postConfirmTest_withError() {
-        val connector = AuthorizationConfirmConnector(mockApi, requestAuthorizationId, mockCallback)
-        connector.confirmAuthorization(
-            connection = RichConnection(requestConnection, privateKey, publicKey),
-            encryptedPayload = EncryptedBundle(
-                encryptedAesKey = "o3TDCc3rKYTx...RVH+aOFpS9NIg==\n",
-                encryptedAesIv = "BtV7EB3Erv8xEQ.../jeBRyFa75A6po5XlwWiEiuzQ==\n",
-                encryptedData = "YlnrNOHvUIPem/O58rMzdsvkXidLvgGpdMalD9c1mlg=\n"
-            )
+    fun postCreateTest_withError() {
+        val connector = AuthorizationCreateConnector(mockApi, mockCallback)
+        connector.createAuthorizationForAction(
+            richConnection = testRichConnection,
+            actionID = testActionId
         )
 
         verify { mockCall.enqueue(connector) }
@@ -115,33 +105,34 @@ class AuthorizationConfirmConnectorTest {
         connector.onResponse(mockCall, get404Response())
 
         verify {
-            mockCallback.onAuthorizationConfirmFailure(
+            mockCallback.onAuthorizationCreateFailure(
                 ApiErrorData(
                     errorMessage = "Resource not found",
                     errorClassName = "NotFound",
                     accessToken = "accessToken"
-                ),
-                authorizationID = requestAuthorizationId,
-                connectionID = requestConnection.id
+                )
             )
         }
         confirmVerified(mockCallback)
     }
 
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
-    private val mockCallback = mockkClass(AuthorizationConfirmListener::class)
-    private val mockCall = mockkClass(Call::class) as Call<UpdateAuthorizationResponse>
-    private val requestConnection: ConnectionAbs = defaultTestConnection
-    private val requestAuthorizationId = "444"
-    private var privateKey: PrivateKey = CommonTestTools.testPrivateKey
-    private var publicKey: PublicKey = CommonTestTools.testPublicKey
-    private val requestUrl = "https://localhost/api/authenticator/v2/authorizations/$requestAuthorizationId/confirm"
+    private val mockCallback = mockkClass(AuthorizationCreateListener::class)
+    private val mockCall = mockkClass(Call::class) as Call<CreateAuthorizationResponse>
+
+    private var testPrivateKey: PrivateKey = CommonTestTools.testPrivateKey
+    private var testPublicKey: PublicKey = CommonTestTools.testPublicKey
+    private val testConnection: ConnectionAbs = defaultTestConnection
+    private val testRichConnection = RichConnection(testConnection, testPrivateKey, testPublicKey)
+    private val testAuthorizationId = "333"
+    private val testActionId = "444"
+    private val requestUrl = "https://localhost/api/authenticator/v2/authorizations"
 
     @Before
     @Throws(Exception::class)
     fun setUp() {
         every {
-            mockApi.confirmAuthorization(
+            mockApi.createAuthorizationForAction(
                 requestUrl = requestUrl,
                 headersMap = any(),
                 requestBody = any()
@@ -151,8 +142,8 @@ class AuthorizationConfirmConnectorTest {
         every { mockCall.request() } returns Request.Builder().url(requestUrl)
             .addHeader(HEADER_KEY_ACCESS_TOKEN, "accessToken").build()
         every {
-            mockCallback.onAuthorizationConfirmFailure(error = any(), authorizationID = requestAuthorizationId, connectionID = requestConnection.id)
+            mockCallback.onAuthorizationCreateFailure(error = any())
         } returns Unit
-        every { mockCallback.onAuthorizationConfirmSuccess(result = any(), connectionID = requestConnection.id) } returns Unit
+        every { mockCallback.onAuthorizationCreateSuccess(authorizationID = testAuthorizationId, connectionID = testConnection.id) } returns Unit
     }
 }

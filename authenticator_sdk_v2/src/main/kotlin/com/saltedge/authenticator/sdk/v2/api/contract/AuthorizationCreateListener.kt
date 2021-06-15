@@ -27,6 +27,6 @@ import com.saltedge.authenticator.core.model.ID
  * Create SCA Authorization for an Action request result
  */
 interface AuthorizationCreateListener {
-    fun onAuthorizationConfirmSuccess(connectionID: ID, authorizationID: ID)
-    fun onAuthorizationConfirmFailure(error: ApiErrorData)
+    fun onAuthorizationCreateSuccess(connectionID: ID, authorizationID: ID)
+    fun onAuthorizationCreateFailure(error: ApiErrorData)
 }

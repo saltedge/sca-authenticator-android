@@ -25,10 +25,7 @@ import com.saltedge.authenticator.core.api.model.EncryptedBundle
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.contract.*
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponse
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationsListResponse
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationResponse
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.*
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponse
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionResponse
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
@@ -183,6 +180,28 @@ class ScaServiceClientTest {
                 userAuthorizationType = "biometrics",
                 geolocation = "GEO:52.506931;13.144558"
             ),
+            callback = mockCallback
+        )
+
+        verify { mockCall.enqueue(any()) }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun createAuthorizationTest() {
+        val mockCallback = mockkClass(AuthorizationCreateListener::class)
+        val mockCall = mockkClass(Call::class) as Call<CreateAuthorizationResponse>
+        every {
+            mockApi.createAuthorizationForAction(
+                requestUrl = any(),
+                headersMap = any(),
+                requestBody = any()
+            )
+        } returns mockCall
+        every { mockCall.enqueue(any()) } returns Unit
+        ScaServiceClient().requestCreateAuthorizationForAction(
+            richConnection = RichConnection(requestConnection, privateKey, publicKey),
+            actionID = "444",
             callback = mockCallback
         )
 

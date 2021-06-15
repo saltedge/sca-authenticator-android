@@ -234,13 +234,8 @@ class ScaServiceClient : ScaServiceClientAbs {
         actionID: ID,
         callback: AuthorizationCreateListener
     ) {
-        AuthorizationCreateConnector(
-            apiInterface = RestClient.apiInterface,
-            callback = callback
-        ).createAuthorizationForAction(
-            richConnection = richConnection,
-            actionID = actionID
-        )
+        AuthorizationCreateConnector(apiInterface = RestClient.apiInterface, callback = callback)
+            .createAuthorizationForAction(richConnection = richConnection, actionID = actionID)
     }
 }
 

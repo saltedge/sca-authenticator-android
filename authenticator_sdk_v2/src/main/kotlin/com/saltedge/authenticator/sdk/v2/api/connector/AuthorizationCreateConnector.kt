@@ -64,13 +64,13 @@ internal class AuthorizationCreateConnector(
         call: Call<CreateAuthorizationResponse>,
         response: CreateAuthorizationResponse
     ) {
-        callback?.onAuthorizationConfirmSuccess(
+        callback?.onAuthorizationCreateSuccess(
             connectionID = response.data.connectionID,
             authorizationID = response.data.authorizationID
         )
     }
 
     override fun onFailureResponse(call: Call<CreateAuthorizationResponse>, error: ApiErrorData) {
-        callback?.onAuthorizationConfirmFailure(error)
+        callback?.onAuthorizationCreateFailure(error)
     }
 }
