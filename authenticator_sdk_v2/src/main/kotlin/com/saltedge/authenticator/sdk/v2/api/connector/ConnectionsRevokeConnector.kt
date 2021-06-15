@@ -22,6 +22,7 @@ package com.saltedge.authenticator.sdk.v2.api.connector
 
 import com.saltedge.authenticator.core.api.RequestQueueAbs
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.GUID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionsRevokeListener
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionRequest
@@ -44,7 +45,7 @@ internal class ConnectionsRevokeConnector(
 ) : RequestQueueAbs<RevokeConnectionResponse>() {
 
     private var errorResult: ApiErrorData? = null
-    private var result = mutableListOf<String>()
+    private var result = mutableListOf<GUID>()
 
     /**
      * Prepare request url, request models (AuthenticatedRequestData)
@@ -57,7 +58,7 @@ internal class ConnectionsRevokeConnector(
             super.setQueueSize(forConnections.size)
             if (super.queueIsEmpty()) onQueueFinished()
             else {
-                result = mutableListOf<String>()
+                this.result = ArrayList()
                 forConnections.forEach {
                     val request = RevokeConnectionRequest()
                     val headers = createAccessTokenHeader(it.connection.accessToken)

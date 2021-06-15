@@ -574,8 +574,6 @@ class ConnectionsListViewModelTest : ViewModelTest() {
 
         //then
         Mockito.verify(mockApiManagerV1).revokeConnections(listOf(richConnection1), resultCallback = interactor)
-        Mockito.verify(mockConnectionsRepository).deleteConnection("guid1")
-        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid1")
     }
 
     @Test
@@ -591,8 +589,6 @@ class ConnectionsListViewModelTest : ViewModelTest() {
 
         //then
         Mockito.verify(mockApiManagerV2).revokeConnections(listOf(richConnection2), callback = interactor)
-        Mockito.verify(mockConnectionsRepository).deleteConnection("guid2")
-        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid2")
     }
 
     @Test
@@ -608,8 +604,6 @@ class ConnectionsListViewModelTest : ViewModelTest() {
 
         //then
         Mockito.verifyNoInteractions(mockApiManagerV1, mockApiManagerV2)
-        Mockito.verify(mockConnectionsRepository).deleteConnection("guid3")
-        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid3")
     }
 
     @Test
@@ -721,8 +715,6 @@ class ConnectionsListViewModelTest : ViewModelTest() {
 
         //then
         Mockito.verify(mockApiManagerV1).revokeConnections(listOf(richConnection1), resultCallback = interactor)
-        Mockito.verify(mockConnectionsRepository).deleteConnection("guid1")
-        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid1")
     }
 
     @Test

@@ -131,7 +131,11 @@ class ConnectionsListInteractor(
     }
 
     private fun deleteConnectionsAndKeysByGuid(revokedGuids: List<GUID>) {
-        revokedGuids.forEach { guid ->
+        richConnections.values.filter {
+            revokedGuids.contains(it.connection.id)
+        }.map {
+            it.connection.guid
+        }.forEach { guid ->
             keyStoreManager.deleteKeyPairIfExist(guid)
             connectionsRepository.deleteConnection(guid)
         }
