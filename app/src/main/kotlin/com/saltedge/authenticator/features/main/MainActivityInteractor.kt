@@ -47,7 +47,7 @@ class MainActivityInteractor(
             .mapNotNull { it.toRichConnection(keyStoreManager) }
         apiManagerV1.revokeConnections(connectionsAndKeys = richConnections
             .filter { it.connection.apiVersion == API_V1_VERSION }, resultCallback = null)
-        apiManagerV2.revokeConnections(connections = richConnections
+        apiManagerV2.requestRevokeConnections(connections = richConnections
             .filter { it.connection.apiVersion == API_V2_VERSION }, callback = null)
     }
 

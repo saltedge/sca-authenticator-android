@@ -48,7 +48,7 @@ class ConnectProviderInteractorV2(
 ), FetchConfigurationListener, ConnectionCreateListener {
 
     override fun requestProviderConfiguration(url: String) {
-        apiManager.getProviderConfigurationData(url, callback = this)
+        apiManager.fetchProviderConfigurationData(url, callback = this)
     }
 
     override fun onFetchProviderConfigurationSuccess(result: ConfigurationDataV2) {
@@ -60,7 +60,7 @@ class ConnectProviderInteractorV2(
     }
 
     override fun requestCreateConnection(connection: Connection, cloudMessagingToken: String, connectQuery: String?) {
-        apiManager.createConnectionRequest(
+        apiManager.requestCreateConnection(
             appContext = appContext,
             connection = connection,
             pushToken = cloudMessagingToken,

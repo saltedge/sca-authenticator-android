@@ -90,7 +90,7 @@ class SettingsListInteractorV2Test {
 
         interactor.sendRevokeRequestForConnections()
 
-        Mockito.verify(mockApiManagerV2).revokeConnections(
+        Mockito.verify(mockApiManagerV2).requestRevokeConnections(
             connections = listOf(
                 mockConnectionAndKeyV2
             ), callback = null

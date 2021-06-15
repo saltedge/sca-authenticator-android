@@ -98,7 +98,7 @@ class ConnectionsListInteractor(
         if (connection.apiVersion == API_V1_VERSION) {
             apiManagerV1.revokeConnections(connectionsAndKeys = listOf(richConnection), resultCallback = null)
         } else if (connection.apiVersion == API_V2_VERSION) {
-            apiManagerV2.revokeConnections(connections = listOf(richConnection), callback = null)
+            apiManagerV2.requestRevokeConnections(connections = listOf(richConnection), callback = null)
         }
     }
 

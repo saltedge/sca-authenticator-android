@@ -71,6 +71,10 @@ fun String.authorizationsDenyPath(id: String): String {
     return createRequestUrl(this, "$API_AUTHORIZATIONS/$id/deny")
 }
 
+fun String.authorizationsCreatePath(): String {
+    return createRequestUrl(this, API_AUTHORIZATIONS)
+}
+
 private fun createRequestUrl(baseUrl: String, routePath: String): String {
     val baseUri = Uri.parse(baseUrl)
     val baseUriPath = baseUri.encodedPath?.trimStart('/') ?: ""

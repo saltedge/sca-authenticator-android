@@ -20,11 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.retrofit
 
-import com.saltedge.authenticator.sdk.v2.api.API_AUTHORIZATIONS
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponse
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationsListResponse
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationRequest
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponse
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.*
 import com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationResponse
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionRequest
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponse
@@ -71,12 +67,19 @@ interface ApiInterface {
         @Url requestUrl: String,
         @HeaderMap headersMap: Map<String, String>,
         @Body requestBody: UpdateAuthorizationRequest
-    ): Call<ConfirmDenyResponse>
+    ): Call<UpdateAuthorizationResponse>
 
     @PUT
     fun denyAuthorization(
         @Url requestUrl: String,
         @HeaderMap headersMap: Map<String, String>,
         @Body requestBody: UpdateAuthorizationRequest
-    ): Call<ConfirmDenyResponse>
+    ): Call<UpdateAuthorizationResponse>
+
+    @POST
+    fun createAuthorizationForAction(
+        @Url requestUrl: String,
+        @HeaderMap headersMap: Map<String, String>,
+        @Body requestBody: CreateAuthorizationRequest
+    ): Call<CreateAuthorizationResponse>
 }

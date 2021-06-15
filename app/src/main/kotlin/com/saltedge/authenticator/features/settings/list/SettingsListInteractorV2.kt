@@ -38,7 +38,7 @@ class SettingsListInteractorV2(
             connectionsRepository.getAllActiveConnections()
                 .filter { it.isActive() }
                 .mapNotNull { it.toRichConnection(keyStoreManager) }
-        apiManager.revokeConnections(connections = connectionsAndKeys, callback = null)
+        apiManager.requestRevokeConnections(connections = connectionsAndKeys, callback = null)
     }
 
     fun deleteAllConnectionsAndKeys() {

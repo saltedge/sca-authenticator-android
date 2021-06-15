@@ -24,8 +24,8 @@ import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.authenticator.core.api.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.core.api.model.EncryptedBundle
 import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationConfirmListener
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponse
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponseData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationResponse
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationResponseData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.RichConnection
@@ -79,7 +79,7 @@ class AuthorizationConfirmConnectorTest {
 
         connector.onResponse(
             mockCall,
-            Response.success(ConfirmDenyResponse(ConfirmDenyResponseData(
+            Response.success(UpdateAuthorizationResponse(UpdateAuthorizationResponseData(
                 status = "processing",
                 authorizationID = requestAuthorizationId
             )))
@@ -87,7 +87,7 @@ class AuthorizationConfirmConnectorTest {
 
         verify {
             mockCallback.onAuthorizationConfirmSuccess(
-                ConfirmDenyResponseData(
+                UpdateAuthorizationResponseData(
                     status = "processing",
                     authorizationID = requestAuthorizationId
                 ),
@@ -130,7 +130,7 @@ class AuthorizationConfirmConnectorTest {
 
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
     private val mockCallback = mockkClass(AuthorizationConfirmListener::class)
-    private val mockCall = mockkClass(Call::class) as Call<ConfirmDenyResponse>
+    private val mockCall = mockkClass(Call::class) as Call<UpdateAuthorizationResponse>
     private val requestConnection: ConnectionAbs = defaultTestConnection
     private val requestAuthorizationId = "444"
     private var privateKey: PrivateKey = CommonTestTools.testPrivateKey

@@ -117,7 +117,7 @@ class AuthorizationsListInteractorV2(
         processEncryptedAuthorizationsResult(encryptedList = result)
     }
 
-    override fun onAuthorizationConfirmSuccess(result: ConfirmDenyResponseData, connectionID: ID) {
+    override fun onAuthorizationConfirmSuccess(result: UpdateAuthorizationResponseData, connectionID: ID) {
         contract?.onConfirmDenySuccess(
             connectionID = connectionID,
             authorizationID = result.authorizationID,
@@ -133,7 +133,7 @@ class AuthorizationsListInteractorV2(
         )
     }
 
-    override fun onAuthorizationDenySuccess(result: ConfirmDenyResponseData, connectionID: ID) {
+    override fun onAuthorizationDenySuccess(result: UpdateAuthorizationResponseData, connectionID: ID) {
         contract?.onConfirmDenySuccess(
             connectionID = connectionID,
             authorizationID = result.authorizationID,

@@ -581,7 +581,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         viewModel.onItemDeleted(guid = "guid2")
 
         //then
-        Mockito.verify(mockApiManagerV2).revokeConnections(listOf(richConnection2), null)
+        Mockito.verify(mockApiManagerV2).requestRevokeConnections(listOf(richConnection2), null)
         Mockito.verify(mockConnectionsRepository).deleteConnection("guid2")
         Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid2")
     }

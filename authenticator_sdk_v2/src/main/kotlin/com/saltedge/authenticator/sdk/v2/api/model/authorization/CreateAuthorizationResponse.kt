@@ -21,13 +21,14 @@
 package com.saltedge.authenticator.sdk.v2.api.model.authorization
 
 import com.google.gson.annotations.SerializedName
+import com.saltedge.authenticator.core.api.KEY_AUTHORIZATION_ID
+import com.saltedge.authenticator.core.api.KEY_CONNECTION_ID
 import com.saltedge.authenticator.core.api.KEY_DATA
-import com.saltedge.authenticator.core.api.KEY_ID
-import com.saltedge.authenticator.core.api.KEY_STATUS
+import com.saltedge.authenticator.core.model.ID
 
-data class ConfirmDenyResponse(@SerializedName(KEY_DATA) var data: ConfirmDenyResponseData)
+data class CreateAuthorizationResponse(@SerializedName(KEY_DATA) var data: CreateAuthorizationResponseData)
 
-data class ConfirmDenyResponseData(
-    @SerializedName(KEY_ID) var authorizationID: String,
-    @SerializedName(KEY_STATUS) var status: String
+data class CreateAuthorizationResponseData(
+    @SerializedName(KEY_CONNECTION_ID) var connectionID: ID,
+    @SerializedName(KEY_AUTHORIZATION_ID) var authorizationID: ID
 )

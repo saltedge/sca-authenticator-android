@@ -95,6 +95,8 @@ const val KEY_VERSION = "version"
 const val KEY_SUPPORT_EMAIL = "support_email"
 const val KEY_CONSENT_MANAGEMENT = "consent_management"
 
+const val KEY_ACTION_ID = "action_id"
+
 // Error classes
 const val ERROR_CLASS_AUTHENTICATION_RESPONSE = "AuthenticationError"
 const val ERROR_CLASS_API_RESPONSE = "ApiResponseError"

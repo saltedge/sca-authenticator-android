@@ -27,7 +27,7 @@ import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.contract.*
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponse
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationsListResponse
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponse
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationResponse
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationData
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponse
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionResponse
@@ -55,7 +55,7 @@ class ScaServiceClientTest {
         val mockCall = mockkClass(Call::class) as Call<CreateConnectionResponse>
         every { mockApi.createConnection(requestUrl = any(), body = any()) } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
-        ScaServiceClient().createConnectionRequest(
+        ScaServiceClient().requestCreateConnection(
             baseUrl = "",
             rsaPublicKeyEncryptedBundle = EncryptedBundle(
                 encryptedAesKey = "key",
@@ -84,8 +84,8 @@ class ScaServiceClientTest {
             )
         } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
-        ScaServiceClient().revokeConnections(
-            connections = listOf(RichConnection(requestConnection, privateKey, publicKey)),
+        ScaServiceClient().requestRevokeConnections(
+            richConnections = listOf(RichConnection(requestConnection, privateKey, publicKey)),
             callback = mockCallback
         )
 
@@ -111,8 +111,8 @@ class ScaServiceClientTest {
         val mockCall = mockkClass(Call::class) as Call<AuthorizationsListResponse>
         every { mockApi.activeAuthorizations(requestUrl = any(), headersMap = any()) } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
-        ScaServiceClient().getAuthorizations(
-            connections = listOf(RichConnection(requestConnection, privateKey, publicKey)),
+        ScaServiceClient().fetchAuthorizations(
+            richConnections = listOf(RichConnection(requestConnection, privateKey, publicKey)),
             callback = mockCallback
         )
 
@@ -126,8 +126,8 @@ class ScaServiceClientTest {
         val mockCall = mockkClass(Call::class) as Call<AuthorizationResponse>
         every { mockApi.showAuthorization(requestUrl = any(), headersMap = any()) } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
-        ScaServiceClient().getAuthorization(
-            connection = RichConnection(requestConnection, privateKey, publicKey),
+        ScaServiceClient().fetchAuthorization(
+            richConnection = RichConnection(requestConnection, privateKey, publicKey),
             authorizationID = "444",
             callback = mockCallback
         )
@@ -139,7 +139,7 @@ class ScaServiceClientTest {
     @Throws(Exception::class)
     fun confirmAuthorizationTest() {
         val mockCallback = mockkClass(AuthorizationConfirmListener::class)
-        val mockCall = mockkClass(Call::class) as Call<ConfirmDenyResponse>
+        val mockCall = mockkClass(Call::class) as Call<UpdateAuthorizationResponse>
         every {
             mockApi.confirmAuthorization(
                 requestUrl = any(),
@@ -149,7 +149,7 @@ class ScaServiceClientTest {
         } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
         ScaServiceClient().confirmAuthorization(
-            connection = RichConnection(requestConnection, privateKey, publicKey),
+            richConnection = RichConnection(requestConnection, privateKey, publicKey),
             authorizationID = "444",
             authorizationData = UpdateAuthorizationData(
                 authorizationCode = "Code123",
@@ -166,7 +166,7 @@ class ScaServiceClientTest {
     @Throws(Exception::class)
     fun denyAuthorizationTest() {
         val mockCallback = mockkClass(AuthorizationDenyListener::class)
-        val mockCall = mockkClass(Call::class) as Call<ConfirmDenyResponse>
+        val mockCall = mockkClass(Call::class) as Call<UpdateAuthorizationResponse>
         every {
             mockApi.denyAuthorization(
                 requestUrl = any(),
@@ -176,7 +176,7 @@ class ScaServiceClientTest {
         } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
         ScaServiceClient().denyAuthorization(
-            connection = RichConnection(requestConnection, privateKey, publicKey),
+            richConnection = RichConnection(requestConnection, privateKey, publicKey),
             authorizationID = "444",
             authorizationData = UpdateAuthorizationData(
                 authorizationCode = "Code123",
