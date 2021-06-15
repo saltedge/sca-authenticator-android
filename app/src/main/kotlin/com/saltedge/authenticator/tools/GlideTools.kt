@@ -13,7 +13,7 @@ private val imageLoaderOptions = RequestOptions()
     .diskCacheStrategy(DiskCacheStrategy.ALL)
 
 /**
- * Loads image from remote resource to image view and transform to rounded bitmap
+ * Loads image from remote resource to image view
  *
  * @receiver image view
  * @param imageUrl - remote image url
@@ -27,10 +27,6 @@ fun ImageView.loadRoundedImage(imageUrl: String?, placeholderId: ResId, cornerRa
             .placeholder(placeholderId)
             .error(placeholderId)
             .fitCenter()
-            .transform(RoundedBitmapTransformation(
-                backgroundColor = ContextCompat.getColor(context, R.color.grey_light_extra_and_dark_100),
-                cornerRadius = cornerRadius
-            ))
             .into(this)
     } catch (e: Exception) {
         Timber.e(e)
