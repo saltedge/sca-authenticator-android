@@ -73,7 +73,7 @@ class ConnectionsListInteractor(
         apiError: ApiErrorData?
     ) {
         if (apiError?.isConnectivityError() == true) return
-        deleteConnectionsAndKeysByIDs(revokedGuids = revokedConnections)
+        deleteConnectionsAndKeysByIDs(revokedIDs = revokedConnections)
         contract?.onConnectionsDataChanged()
     }
 
@@ -129,9 +129,9 @@ class ConnectionsListInteractor(
         }
     }
 
-    private fun deleteConnectionsAndKeysByIDs(revokedGuids: List<ID>) {
+    private fun deleteConnectionsAndKeysByIDs(revokedIDs: List<ID>) {
         richConnections.values.filter {
-            revokedGuids.contains(it.connection.id)
+            revokedIDs.contains(it.connection.id)
         }.map {
             it.connection.guid
         }.forEach { guid ->
