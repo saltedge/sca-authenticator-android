@@ -69,11 +69,11 @@ class ConnectionsListInteractor(
     }
 
     override fun onConnectionsV2RevokeResult(
-        revokedConnections: List<GUID>,
+        revokedConnections: List<ID>,
         apiError: ApiErrorData?
     ) {
         if (apiError?.isConnectivityError() == true) return
-        deleteConnectionsAndKeysByGuid(revokedGuids = revokedConnections)
+        deleteConnectionsAndKeysByIDs(revokedGuids = revokedConnections)
         contract?.onConnectionsDataChanged()
     }
 
@@ -108,7 +108,7 @@ class ConnectionsListInteractor(
 
     private fun sendRevokeRequestForConnection(connection: Connection) {
         if (!connection.isActive()) {
-            deleteConnectionsAndKeysByGuid(listOf(connection.guid))
+            deleteConnection(guid = connection.guid)
             return
         }
         val richConnection = connection.toRichConnection(keyStoreManager) ?: return
@@ -125,19 +125,17 @@ class ConnectionsListInteractor(
         }.map {
             it.connection.guid
         }.forEach{ guid ->
-            keyStoreManager.deleteKeyPairIfExist(guid)
-            connectionsRepository.deleteConnection(guid)
+            deleteConnection(guid = guid)
         }
     }
 
-    private fun deleteConnectionsAndKeysByGuid(revokedGuids: List<GUID>) {
+    private fun deleteConnectionsAndKeysByIDs(revokedGuids: List<ID>) {
         richConnections.values.filter {
             revokedGuids.contains(it.connection.id)
         }.map {
             it.connection.guid
         }.forEach { guid ->
-            keyStoreManager.deleteKeyPairIfExist(guid)
-            connectionsRepository.deleteConnection(guid)
+            deleteConnection(guid = guid)
         }
     }
 
@@ -159,5 +157,10 @@ class ConnectionsListInteractor(
 
     private fun processDecryptedConsentsResult(result: List<ConsentData>) {
         contract?.onConsentsDataChanged(result)
+    }
+
+    private fun deleteConnection(guid: GUID) {
+        keyStoreManager.deleteKeyPairIfExist(guid)
+        connectionsRepository.deleteConnection(guid)
     }
 }
