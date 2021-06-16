@@ -22,7 +22,7 @@ package com.saltedge.authenticator.sdk.v2.api.connector
 
 import com.saltedge.authenticator.core.api.RequestQueueAbs
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
-import com.saltedge.authenticator.core.model.GUID
+import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionsRevokeListener
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionRequest
@@ -45,7 +45,7 @@ internal class ConnectionsRevokeConnector(
 ) : RequestQueueAbs<RevokeConnectionResponse>() {
 
     private var errorResult: ApiErrorData? = null
-    private var result = mutableListOf<GUID>()
+    private var result = mutableListOf<ID>()
 
     /**
      * Prepare request url, request models (AuthenticatedRequestData)
