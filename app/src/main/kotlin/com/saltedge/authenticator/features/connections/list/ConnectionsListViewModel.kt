@@ -27,7 +27,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
+import com.saltedge.authenticator.app.NetworkStateChangeListener
 import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.core.api.KEY_NAME
 import com.saltedge.authenticator.core.model.GUID
@@ -42,18 +44,22 @@ import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.sdk.api.model.ConsentData
+import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.postUnitEvent
 
 class ConnectionsListViewModel(
     private val appContext: Context,
     private val interactor: ConnectionsListInteractor,
-    private val locationManager: DeviceLocationManagerAbs
+    private val locationManager: DeviceLocationManagerAbs,
+    private val connectivityReceiver: ConnectivityReceiverAbs
 ) : ViewModel(),
     ConnectionsListInteractorCallback,
     LifecycleObserver,
-    PopupMenuBuilder.ItemClickListener {
+    PopupMenuBuilder.ItemClickListener,
+    NetworkStateChangeListener {
 
     private var consents: Map<GUID, List<ConsentData>> = emptyMap()
+    private var hasInternetConnection: Boolean = true
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onListItemClickEvent = MutableLiveData<ViewModelEvent<MenuData>>()
     val onSupportClickEvent = MutableLiveData<ViewModelEvent<String?>>()
@@ -64,6 +70,7 @@ class ConnectionsListViewModel(
     val onViewConsentsClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onAskPermissionsEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onGoToSettingsEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onShowNoInternetConnectionDialogEvent = MutableLiveData<ViewModelEvent<GUID>>()
     val listVisibility = MutableLiveData<Int>()
     val emptyViewVisibility = MutableLiveData<Int>()
     val listItems = MutableLiveData<List<ConnectionItem>>()
@@ -77,14 +84,24 @@ class ConnectionsListViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStart() {
+        connectivityReceiver.addNetworkStateChangeListener(this)
         interactor.updateConnections()
-        updateViewsContent()
+        onConnectionsDataChanged()
         refreshConsents()
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onStop() {
+        connectivityReceiver.removeNetworkStateChangeListener(this)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
         interactor.onDestroy()
+    }
+
+    override fun onNetworkConnectionChanged(isConnected: Boolean) {
+        hasInternetConnection = isConnected
     }
 
     override fun onMenuItemClick(menuId: Int, itemId: Int) {
@@ -104,17 +121,21 @@ class ConnectionsListViewModel(
             }
             PopupMenuItem.LOCATION -> onAccessToLocationClickEvent.postUnitEvent()
             PopupMenuItem.DELETE -> {
-                if (item.isActive) {
-                    onDeleteClickEvent.postValue(ViewModelEvent(item.guid))
+                if (hasInternetConnection) {
+                    if (item.isActive) {
+                        onDeleteClickEvent.postValue(ViewModelEvent(item.guid))
+                    } else {
+                        interactor.revokeConnection(item.guid)
+                        onConnectionsDataChanged()
+                    }
                 } else {
-                    interactor.revokeConnection(item.guid)
-                    updateViewsContent()
+                    onShowNoInternetConnectionDialogEvent.postValue(ViewModelEvent(item.guid))
                 }
             }
         }
     }
 
-    override fun processDecryptedConsentsResult(result: List<ConsentData>) {
+    override fun onConsentsDataChanged(result: List<ConsentData>) {
         this.consents = result.groupBy {
             listItemsValues.firstOrNull { viewModel ->
                 viewModel.connectionId == it.connectionId
@@ -135,10 +156,10 @@ class ConnectionsListViewModel(
         }
     }
 
-    fun onItemDeleted(guid: GUID) {
+    fun deleteItem(guid: GUID) {
         val listItem = listItemsValues.find { it.guid == guid } ?: return
         interactor.revokeConnection(listItem.guid)
-        updateViewsContent()
+        onConnectionsDataChanged()
     }
 
     fun onViewClick(viewId: Int) {
@@ -194,7 +215,7 @@ class ConnectionsListViewModel(
             && grantResults.any { it == PackageManager.PERMISSION_GRANTED }
         ) {
             locationManager.startLocationUpdates(appContext)
-            updateViewsContent()
+            onConnectionsDataChanged()
         }
     }
 
@@ -202,7 +223,7 @@ class ConnectionsListViewModel(
         interactor.getConsents()
     }
 
-    private fun updateViewsContent() {
+    override fun onConnectionsDataChanged() {
         val items = interactor.getAllConnections().convertConnectionsToViewModels(appContext, locationManager)
         listItems.postValue(updateItemsWithConsentData(items, consents))
         emptyViewVisibility.postValue(if (items.isEmpty()) View.VISIBLE else View.GONE)
@@ -219,12 +240,12 @@ class ConnectionsListViewModel(
         }
     }
 
-    fun onDialogActionIdClick(dialogActionId: Int, actionsGoToSettings: Int) {
+    fun onDialogActionClick(dialogActionId: Int, actionResId: ResId, guid: GUID = "") {
         if (dialogActionId == DialogInterface.BUTTON_POSITIVE) {
-            if (actionsGoToSettings == R.string.actions_proceed) {
-                onAskPermissionsEvent.postUnitEvent()
-            } else if (actionsGoToSettings == R.string.actions_go_to_settings) {
-                onGoToSettingsEvent.postUnitEvent()
+            when (actionResId) {
+                R.string.actions_proceed -> onAskPermissionsEvent.postUnitEvent()
+                R.string.actions_go_to_settings -> onGoToSettingsEvent.postUnitEvent()
+                R.string.actions_retry -> if (hasInternetConnection) deleteItem(guid = guid)
             }
         }
     }

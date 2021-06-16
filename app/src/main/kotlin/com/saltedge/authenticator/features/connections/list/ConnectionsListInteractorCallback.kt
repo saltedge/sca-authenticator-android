@@ -23,5 +23,6 @@ package com.saltedge.authenticator.features.connections.list
 import com.saltedge.authenticator.sdk.api.model.ConsentData
 
 interface ConnectionsListInteractorCallback {
-    fun processDecryptedConsentsResult(result: List<ConsentData>)
+    fun onConsentsDataChanged(result: List<ConsentData>)
+    fun onConnectionsDataChanged()
 }
