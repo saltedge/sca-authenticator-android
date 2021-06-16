@@ -19,7 +19,7 @@ private val imageLoaderOptions = RequestOptions()
  * @param imageUrl - remote image url
  * @param placeholderId - image to be set as default
  */
-fun ImageView.loadRoundedImage(imageUrl: String?, placeholderId: ResId, cornerRadius: Float = -1f) {
+fun ImageView.loadImage(imageUrl: String?, placeholderId: ResId, cornerRadius: Float = -1f) {
     try {
         Glide.with(context)
             .load(imageUrl)
