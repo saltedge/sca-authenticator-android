@@ -33,7 +33,7 @@ import com.saltedge.authenticator.features.connections.common.ConnectionItem
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tools.appendColoredText
 import com.saltedge.authenticator.tools.inflateListItemView
-import com.saltedge.authenticator.tools.loadRoundedImage
+import com.saltedge.authenticator.tools.loadImage
 import com.saltedge.authenticator.tools.mediumTypefaceSpan
 
 class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClickListener?) :
@@ -53,7 +53,7 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
     }
 
     fun bind(item: ConnectionItem) {
-        logoImageView.loadRoundedImage(
+        logoImageView.loadImage(
             imageUrl = item.logoUrl,
             placeholderId = R.drawable.shape_bg_app_logo,
             cornerRadius = itemView.resources.getDimension(R.dimen.connections_list_logo_radius)

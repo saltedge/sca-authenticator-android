@@ -40,7 +40,7 @@ import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.app.authenticatorApp
-import com.saltedge.authenticator.tools.loadRoundedImage
+import com.saltedge.authenticator.tools.loadImage
 import com.saltedge.authenticator.tools.navigateTo
 import com.saltedge.authenticator.tools.stopRefresh
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -144,7 +144,7 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
             if (logoUrl == null) {
                 imageView.setImageDrawable(null)
             } else {
-                imageView.loadRoundedImage(
+                imageView.loadImage(
                     imageUrl = logoUrl,
                     placeholderId = R.drawable.shape_bg_app_logo,
                     cornerRadius = imageView.resources.getDimension(R.dimen.consents_list_logo_radius)
