@@ -31,6 +31,7 @@
     <string name="actions_get_started">Get Started</string>
     <string name="actions_next">Next</string>
     <string name="actions_proceed">Proceed</string>
+    <string name="actions_retry">Retry</string>
     <string name="actions_reconnect">Reconnect</string>
     <string name="actions_refresh">Refresh</string>
     <string name="actions_rename">Rename</string>
@@ -191,6 +192,7 @@
     <string name="ui_dialog_rename_title">Rename connection</string>
 
     <string name="warning_no_internet_connection">No internet connection</string>
+    <string name="warning_no_internet_connection_description">Please check your internet connection and try again</string>
     <string name="warning_application_was_locked">Application will be locked due to inactivity</string>
 
     <string name="forgot_passcode">Forgot?</string>

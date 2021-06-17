@@ -31,10 +31,7 @@ data class ActionAppLinkData(
     var providerID: ID?,
     var connectUrl: String?,
     var returnTo: String?
-) : Serializable {
-    val isV2Api: Boolean
-        get() = apiVersion == "2"
-}
+) : Serializable
 
 /**
  * Extract Instant Action data from App Link

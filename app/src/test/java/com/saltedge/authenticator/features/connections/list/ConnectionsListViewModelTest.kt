@@ -21,11 +21,16 @@
 package com.saltedge.authenticator.features.connections.list
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import androidx.test.core.app.ApplicationProvider
 import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.core.api.KEY_NAME
 import com.saltedge.authenticator.core.model.ConnectionStatus
@@ -50,6 +55,8 @@ import org.hamcrest.Matchers.equalTo
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.junit.Assert
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -73,6 +80,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     private val mockApiManagerV1 = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockApiManagerV2 = mock(ScaServiceClientAbs::class.java)
     private val mockLocationManager = mock(DeviceLocationManagerAbs::class.java)
+    private val mockConnectivityReceiver = mock(ConnectivityReceiverAbs::class.java)
 
     private val connection1 = Connection().apply {
         id = "1"
@@ -151,7 +159,8 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         viewModel = ConnectionsListViewModel(
             appContext = context,
             interactor = interactor,
-            locationManager = mockLocationManager
+            locationManager = mockLocationManager,
+            connectivityReceiver = mockConnectivityReceiver
         )
     }
 
@@ -229,7 +238,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         viewModel.listItems.postValue(emptyList())
 
         //when
-        viewModel.processDecryptedConsentsResult(result = consentData)
+        viewModel.onConsentsDataChanged(result = consentData)
 
         //then
         assertThat(viewModel.listItems.value, equalTo(emptyList()))
@@ -243,7 +252,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
 
         //when
-        viewModel.processDecryptedConsentsResult(result = consentData)
+        viewModel.onConsentsDataChanged(result = consentData)
 
         //then
         assertThat(
@@ -314,11 +323,11 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     fun onListItemClickTestCase1() {
         //given list of items, list of consents and index of active item
         viewModel.onStart()
-        viewModel.processDecryptedConsentsResult(result = consentData)
+        viewModel.onConsentsDataChanged(result = consentData)
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
         val activeItemIndex = 0
 
-        Assert.assertNull(viewModel.onListItemClickEvent.value)
+        assertNull(viewModel.onListItemClickEvent.value)
 
         //when
         viewModel.onListItemClick(activeItemIndex)
@@ -371,7 +380,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
         val inactiveItemIndex = 2
 
-        Assert.assertNull(viewModel.onListItemClickEvent.value)
+        assertNull(viewModel.onListItemClickEvent.value)
 
         //when
         viewModel.onListItemClick(inactiveItemIndex)
@@ -561,12 +570,10 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid1")
 
         //when
-        viewModel.onItemDeleted(guid = "guid1")
+        viewModel.deleteItem(guid = "guid1")
 
         //then
-        Mockito.verify(mockApiManagerV1).revokeConnections(listOf(richConnection1), null)
-        Mockito.verify(mockConnectionsRepository).deleteConnection("guid1")
-        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid1")
+        Mockito.verify(mockApiManagerV1).revokeConnections(listOf(richConnection1), resultCallback = interactor)
     }
 
     @Test
@@ -575,15 +582,13 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         //when
         viewModel.onStart()
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
-        Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid2")
+        Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection(connectionGuid = "guid2")
 
         //when
-        viewModel.onItemDeleted(guid = "guid2")
+        viewModel.deleteItem(guid = "guid2")
 
         //then
-        Mockito.verify(mockApiManagerV2).requestRevokeConnections(listOf(richConnection2), null)
-        Mockito.verify(mockConnectionsRepository).deleteConnection("guid2")
-        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid2")
+        Mockito.verify(mockApiManagerV2).revokeConnections(listOf(richConnection2), interactor)
     }
 
     @Test
@@ -595,12 +600,10 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid3")
 
         //when
-        viewModel.onItemDeleted(guid = "guid3")
+        viewModel.deleteItem(guid = "guid3")
 
         //then
         Mockito.verifyNoInteractions(mockApiManagerV1, mockApiManagerV2)
-        Mockito.verify(mockConnectionsRepository).deleteConnection("guid3")
-        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist("guid3")
     }
 
     @Test
@@ -619,5 +622,169 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                 )
             )
         )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionClickCase1() {
+        //when
+        viewModel.onDialogActionClick(
+            dialogActionId = DialogInterface.BUTTON_NEGATIVE,
+            actionResId = R.string.actions_proceed
+        )
+
+        //then
+        assertNull(viewModel.onAskPermissionsEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionClickCase2() {
+        //when
+        viewModel.onDialogActionClick(
+            dialogActionId = DialogInterface.BUTTON_POSITIVE,
+            actionResId = R.string.actions_proceed
+        )
+
+        //then
+        assertNotNull(viewModel.onAskPermissionsEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionClickCase3() {
+        //when
+        viewModel.onDialogActionClick(
+            dialogActionId = DialogInterface.BUTTON_NEGATIVE,
+            actionResId = R.string.actions_go_to_settings
+        )
+
+        //then
+        assertNull(viewModel.onGoToSettingsEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionClickCase4() {
+        //when
+        viewModel.onDialogActionClick(
+            dialogActionId = DialogInterface.BUTTON_POSITIVE,
+            actionResId = R.string.actions_go_to_settings
+        )
+
+        //then
+        assertNotNull(viewModel.onGoToSettingsEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionClickCase5() {
+        //given
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+        val isConnected = true
+        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
+
+
+        //when
+        viewModel.onDialogActionClick(
+            dialogActionId = DialogInterface.BUTTON_NEGATIVE,
+            actionResId = R.string.actions_retry,
+            guid = "guid1"
+        )
+
+        //then
+        assertNull(viewModel.onDeleteClickEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionClickCase6() {
+        //given
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+        val isConnected = true
+        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
+
+        //when
+        viewModel.onDialogActionClick(
+            dialogActionId = DialogInterface.BUTTON_POSITIVE,
+            actionResId = R.string.actions_retry,
+            guid = "guid1"
+        )
+
+        //then
+        Mockito.verify(mockApiManagerV1).revokeConnections(listOf(richConnection1), resultCallback = interactor)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionClickCase7() {
+        //given
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+        val isConnected = false
+        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
+
+
+        //when
+        viewModel.onDialogActionClick(
+            dialogActionId = DialogInterface.BUTTON_NEGATIVE,
+            actionResId = R.string.actions_retry,
+            guid = "guid1"
+        )
+
+        //then
+        assertNull(viewModel.onDeleteClickEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionClickCase8() {
+        //given
+        viewModel.onStart()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+        val isConnected = false
+        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
+
+        //when
+        viewModel.onDialogActionClick(
+            dialogActionId = DialogInterface.BUTTON_POSITIVE,
+            actionResId = R.string.actions_retry,
+            guid = "guid1"
+        )
+
+        //then
+        assertNull(viewModel.onDeleteClickEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onStartTestCase() {
+        //given
+        val lifecycle = LifecycleRegistry(mock(LifecycleOwner::class.java))
+        lifecycle.addObserver(viewModel)
+
+        //when
+        lifecycle.currentState = Lifecycle.State.STARTED
+
+        //then
+        Mockito.verify(mockConnectivityReceiver).addNetworkStateChangeListener(viewModel)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onStopTestCase() {
+        //given
+        val lifecycle = LifecycleRegistry(mock(LifecycleOwner::class.java))
+        lifecycle.addObserver(viewModel)
+
+        //when
+        lifecycle.currentState = Lifecycle.State.RESUMED
+        lifecycle.currentState =
+            Lifecycle.State.CREATED //move to stop state (possible only after RESUMED state)
+
+        //then
+        Mockito.verify(mockConnectivityReceiver).removeNetworkStateChangeListener(viewModel)
     }
 }

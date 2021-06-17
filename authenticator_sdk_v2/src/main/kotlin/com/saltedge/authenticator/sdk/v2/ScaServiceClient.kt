@@ -127,9 +127,9 @@ class ScaServiceClient : ScaServiceClientAbs {
      * Request to revoke SCA Service connection.
      * Result is returned through callback.
      */
-    override fun requestRevokeConnections(
+    override fun revokeConnections(
         richConnections: List<RichConnection>,
-        callback: ConnectionsRevokeListener?
+        callback: ConnectionsV2RevokeListener?
     ) {
         ConnectionsRevokeConnector(RestClient.apiInterface, callback)
             .revokeAccess(forConnections = richConnections)
@@ -256,19 +256,19 @@ interface ScaServiceClientAbs {
         pushToken: String?,
         callback: ConnectionCreateListener
     )
-    fun requestRevokeConnections(connections: List<RichConnection>, callback: ConnectionsRevokeListener?)
-    fun fetchAuthorizations(connections: List<RichConnection>, callback: FetchAuthorizationsListener)
+    fun revokeConnections(richConnections: List<RichConnection>, callback: ConnectionsV2RevokeListener?)
+    fun fetchAuthorizations(richConnections: List<RichConnection>, callback: FetchAuthorizationsListener)
     fun createAuthorizationsPollingService(): PollingServiceAbs<PollingAuthorizationsContract>
-    fun fetchAuthorization(connection: RichConnection, authorizationID: ID, callback: FetchAuthorizationListener)
+    fun fetchAuthorization(richConnection: RichConnection, authorizationID: ID, callback: FetchAuthorizationListener)
     fun createSingleAuthorizationPollingService(): SingleAuthorizationPollingService
     fun confirmAuthorization(
-        connection: RichConnection,
+        richConnection: RichConnection,
         authorizationID: ID,
         authorizationData: UpdateAuthorizationData,
         callback: AuthorizationConfirmListener
     )
     fun denyAuthorization(
-        connection: RichConnection,
+        richConnection: RichConnection,
         authorizationID: ID,
         authorizationData: UpdateAuthorizationData,
         callback: AuthorizationDenyListener

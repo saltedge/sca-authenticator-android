@@ -71,7 +71,7 @@ class ScaServiceClientTest {
     @Test
     @Throws(Exception::class)
     fun revokeConnectionsTest() {
-        val mockCallback = mockkClass(ConnectionsRevokeListener::class)
+        val mockCallback = mockkClass(ConnectionsV2RevokeListener::class)
         val mockCall = mockkClass(Call::class) as Call<RevokeConnectionResponse>
         every {
             mockApi.revokeConnection(
@@ -81,7 +81,7 @@ class ScaServiceClientTest {
             )
         } returns mockCall
         every { mockCall.enqueue(any()) } returns Unit
-        ScaServiceClient().requestRevokeConnections(
+        ScaServiceClient().revokeConnections(
             richConnections = listOf(RichConnection(requestConnection, privateKey, publicKey)),
             callback = mockCallback
         )

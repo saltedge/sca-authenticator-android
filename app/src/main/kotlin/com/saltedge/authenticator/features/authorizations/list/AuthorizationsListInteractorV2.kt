@@ -91,14 +91,14 @@ class AuthorizationsListInteractorV2(
         )
         if (confirm) {
             apiManager.confirmAuthorization(
-                connection = richConnections[connectionID] ?: return false,
+                richConnection = richConnections[connectionID] ?: return false,
                 authorizationID = authorizationID,
                 authorizationData = authorizationData,
                 callback = this
             )
         } else {
             apiManager.denyAuthorization(
-                connection = richConnections[connectionID] ?: return false,
+                richConnection = richConnections[connectionID] ?: return false,
                 authorizationID = authorizationID,
                 authorizationData = authorizationData,
                 callback = this

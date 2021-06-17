@@ -77,7 +77,8 @@ class SettingsListInteractorV2Test {
         interactor.deleteAllConnectionsAndKeys()
 
         Mockito.verify(mockKeyStoreManager).deleteKeyPairsIfExist(
-            mockConnectionsRepository.getAllConnections().map { it.guid })
+            mockConnectionsRepository.getAllConnections().map { it.guid }
+        )
         Mockito.verify(mockConnectionsRepository).deleteAllConnections()
     }
 
@@ -90,10 +91,9 @@ class SettingsListInteractorV2Test {
 
         interactor.sendRevokeRequestForConnections()
 
-        Mockito.verify(mockApiManagerV2).requestRevokeConnections(
-            connections = listOf(
-                mockConnectionAndKeyV2
-            ), callback = null
+        Mockito.verify(mockApiManagerV2).revokeConnections(
+            richConnections = listOf(mockConnectionAndKeyV2),
+            callback = null
         )
     }
 }

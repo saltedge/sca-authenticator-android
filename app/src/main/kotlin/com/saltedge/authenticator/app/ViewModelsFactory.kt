@@ -159,7 +159,8 @@ class ViewModelsFactory @Inject constructor(
                         apiManagerV2 = apiManagerV2,
                         cryptoTools = cryptoToolsV1
                     ),
-                    locationManager = DeviceLocationManager
+                    locationManager = DeviceLocationManager,
+                    connectivityReceiver = connectivityReceiver
                 ) as T
             }
             modelClass.isAssignableFrom(ConsentsListViewModel::class.java) -> {

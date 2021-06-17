@@ -178,7 +178,7 @@ class ConnectionsListFragment : BaseFragment(),
                                 messageResId = R.string.grant_access_location_description,
                                 positiveButtonResId = R.string.actions_go_to_settings,
                                 listener = { _, dialogActionId ->
-                                    viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_go_to_settings)
+                                    viewModel.onDialogActionClick(dialogActionId, R.string.actions_go_to_settings)
                                 })
                     } else {
                         activity?.showInfoDialog(
@@ -186,7 +186,7 @@ class ConnectionsListFragment : BaseFragment(),
                             messageResId = R.string.grant_access_location_description,
                             positiveButtonResId = R.string.actions_proceed,
                             listener = { _, dialogActionId ->
-                                viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_proceed)
+                                viewModel.onDialogActionClick(dialogActionId, R.string.actions_proceed)
                             })
                     }
                 }
@@ -206,6 +206,17 @@ class ConnectionsListFragment : BaseFragment(),
         })
         viewModel.updateListItemEvent.observe(this, Observer<ConnectionItem> { itemIndex ->
             adapter.updateListItem(itemIndex)
+        })
+        viewModel.onShowNoInternetConnectionDialogEvent.observe(this, Observer<ViewModelEvent<GUID>> { event ->
+            event.getContentIfNotHandled()?.let { guid ->
+            activity?.showInfoDialog(
+                titleResId = R.string.warning_no_internet_connection,
+                messageResId = R.string.warning_no_internet_connection_description,
+                positiveButtonResId = R.string.actions_retry,
+                listener = { _, dialogActionId ->
+                    viewModel.onDialogActionClick(dialogActionId, R.string.actions_retry, guid)
+                })
+            }
         })
     }
 
@@ -228,7 +239,7 @@ class ConnectionsListFragment : BaseFragment(),
             viewModel.onItemNameChanged(result)
         })
         sharedViewModel.connectionDeleted.observe(viewLifecycleOwner, Observer<GUID> { result ->
-            viewModel.onItemDeleted(result)
+            viewModel.deleteItem(result)
         })
     }
 

@@ -41,8 +41,8 @@ import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationResponseData
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationResponseData
 import com.saltedge.authenticator.sdk.v2.polling.SingleAuthorizationPollingService
 import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2Abs
 import com.saltedge.authenticator.widget.security.ActivityUnlockType
@@ -309,7 +309,7 @@ class AuthorizationDetailsInteractorV2Test {
 
         //then
         verify(mockApiManagerV2).confirmAuthorization(
-            connection = RichConnection(connection1, mockPrivateKey),
+            richConnection = RichConnection(connection1, mockPrivateKey),
             authorizationID = "1",
             authorizationData = UpdateAuthorizationData(
                 authorizationCode = "111",
@@ -337,7 +337,7 @@ class AuthorizationDetailsInteractorV2Test {
 
         //then
         verify(mockApiManagerV2).denyAuthorization(
-            connection = RichConnection(connection1, mockPrivateKey),
+            richConnection = RichConnection(connection1, mockPrivateKey),
             authorizationID = "1",
             authorizationData = UpdateAuthorizationData(
                 authorizationCode = "111",

@@ -102,14 +102,14 @@ class SubmitActionViewModel(
     private fun sendActionRequest(currentRichConnection: RichConnection, actionID: ID) {
         if (currentRichConnection.connection.apiVersion == API_V2_VERSION) {
             apiManagerV2.requestCreateAuthorizationForAction(
-                currentRichConnection,
-                actionID,
+                richConnection = currentRichConnection,
+                actionID = actionID,
                 callback = this
             )
         } else {
             apiManagerV1.sendAction(
-                actionUUID = actionID,
                 connectionAndKey = currentRichConnection,
+                actionUUID = actionID,
                 resultCallback = this
             )
         }
@@ -203,7 +203,7 @@ class SubmitActionViewModel(
     }
 
     private fun collectConnections(actionAppLinkData: ActionAppLinkData): List<Connection> {
-        val connections = if (actionAppLinkData.isV2Api) {
+        val connections = if (actionAppLinkData.apiVersion == API_V2_VERSION) {
             actionAppLinkData.providerID?.let {
                 connectionsRepository.getAllActiveByProvider(providerID = it)
             }

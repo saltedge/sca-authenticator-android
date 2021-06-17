@@ -34,11 +34,10 @@ class SettingsListInteractorV2(
 ) {
 
     fun sendRevokeRequestForConnections() {
-        val connectionsAndKeys: List<RichConnection> =
-            connectionsRepository.getAllActiveConnections()
-                .filter { it.isActive() }
-                .mapNotNull { it.toRichConnection(keyStoreManager) }
-        apiManager.requestRevokeConnections(connections = connectionsAndKeys, callback = null)
+        val richConnections: List<RichConnection> = connectionsRepository.getAllActiveConnections()
+            .filter { it.isActive() }
+            .mapNotNull { it.toRichConnection(keyStoreManager) }
+        apiManager.revokeConnections(richConnections = richConnections, callback = null)
     }
 
     fun deleteAllConnectionsAndKeys() {
