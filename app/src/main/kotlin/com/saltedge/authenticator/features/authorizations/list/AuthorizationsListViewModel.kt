@@ -76,8 +76,6 @@ class AuthorizationsListViewModel(
     val onRequestPermissionEvent = MutableLiveData<Triple<String, String, Boolean>>()
     val onAskPermissionsEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onGoToSettingsEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onRequestLocationProviderEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onEnableGpsEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
     init {
         interactorV1.contract = this
@@ -152,7 +150,6 @@ class AuthorizationsListViewModel(
             when (actionResId) {
                 R.string.actions_proceed -> onAskPermissionsEvent.postUnitEvent()
                 R.string.actions_go_to_settings -> onGoToSettingsEvent.postUnitEvent()
-                R.string.actions_enable -> onEnableGpsEvent.postUnitEvent()
             }
         }
     }
@@ -162,19 +159,6 @@ class AuthorizationsListViewModel(
             && grantResults.any { it == PackageManager.PERMISSION_GRANTED }
         ) {
             locationManager.startLocationUpdates(appContext)
-            if (locationManager.isLocationProviderActive(appContext)) {
-               findListItem(
-                    connectionID = onRequestPermissionEvent.value?.first ?: "",
-                    authorizationID = onRequestPermissionEvent.value?.second ?: ""
-                )?.let {
-                        updateAuthorization(
-                            listItem = it,
-                            confirm = onRequestPermissionEvent.value?.third ?: false
-                        )
-                }
-            } else {
-                onRequestLocationProviderEvent.postUnitEvent()
-            }
         }
     }
 
@@ -203,8 +187,6 @@ class AuthorizationsListViewModel(
             } else {
                 if (locationManager.isLocationProviderActive(appContext)) {
                     updateAuthorization(listItem = it, confirm = confirm)
-                } else {
-                    onRequestLocationProviderEvent.postUnitEvent()
                 }
             }
         }

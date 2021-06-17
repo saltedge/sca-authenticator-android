@@ -46,7 +46,7 @@
     <string name="actions_confirm">Confirm</string>
     <string name="actions_clear">Clear</string>
     <string name="actions_view_consents">View consents</string>
-    <string name="actions_view_location">Access to Locations</string>
+    <string name="actions_view_location">Access to location</string>
     <string name="actions_go_to_settings">GO TO SETTINGS</string>
 
     <string name="passcode_enter_passcode_title">Enter passcode</string>
