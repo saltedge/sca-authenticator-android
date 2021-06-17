@@ -35,7 +35,7 @@ import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationConfirmListener
 import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationDenyListener
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponseData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationResponseData
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationData
 import com.saltedge.authenticator.sdk.v2.polling.PollingAuthorizationContract
 import com.saltedge.authenticator.sdk.v2.polling.SingleAuthorizationPollingService
@@ -91,14 +91,14 @@ class AuthorizationDetailsInteractorV2(
         )
         if (confirm) {
             apiManager.confirmAuthorization(
-                connection = richConnection ?: return false,
+                richConnection = richConnection ?: return false,
                 authorizationID = authorizationID,
                 authorizationData = authorizationData,
                 callback = this
             )
         } else {
             apiManager.denyAuthorization(
-                connection = richConnection ?: return false,
+                richConnection = richConnection ?: return false,
                 authorizationID = authorizationID,
                 authorizationData = authorizationData,
                 callback = this
@@ -107,7 +107,7 @@ class AuthorizationDetailsInteractorV2(
         return true
     }
 
-    override fun onAuthorizationConfirmSuccess(result: ConfirmDenyResponseData, connectionID: ID) {
+    override fun onAuthorizationConfirmSuccess(result: UpdateAuthorizationResponseData, connectionID: ID) {
         contract?.onConfirmDenySuccess(result.status.toAuthorizationStatus())
     }
 
@@ -119,7 +119,7 @@ class AuthorizationDetailsInteractorV2(
         processApiError(error)
     }
 
-    override fun onAuthorizationDenySuccess(result: ConfirmDenyResponseData, connectionID: ID) {
+    override fun onAuthorizationDenySuccess(result: UpdateAuthorizationResponseData, connectionID: ID) {
         contract?.onConfirmDenySuccess(result.status.toAuthorizationStatus())
     }
 

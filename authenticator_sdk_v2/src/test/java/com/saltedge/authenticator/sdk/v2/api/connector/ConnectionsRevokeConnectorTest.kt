@@ -27,7 +27,7 @@ import com.saltedge.authenticator.core.api.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.RichConnection
-import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionsRevokeListener
+import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionsV2RevokeListener
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionResponse
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionResponseData
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
@@ -81,7 +81,7 @@ class ConnectionsRevokeConnectorTest {
         )
 
         verify {
-            mockCallback.onConnectionsV2RevokeResult(apiError = null)
+            mockCallback.onConnectionsV2RevokeResult(revokedConnections = listOf("333"), apiError = null)
         }
         confirmVerified(mockCallback)
     }
@@ -98,6 +98,7 @@ class ConnectionsRevokeConnectorTest {
 
         verify {
             mockCallback.onConnectionsV2RevokeResult(
+                revokedConnections = emptyList(),
                 apiError = ApiErrorData(
                     errorMessage = "Resource not found",
                     errorClassName = "NotFound",
@@ -116,6 +117,7 @@ class ConnectionsRevokeConnectorTest {
 
         verify {
             mockCallback.onConnectionsV2RevokeResult(
+                revokedConnections = emptyList(),
                 apiError = ApiErrorData(
                     errorMessage = "Request Error (200)",
                     errorClassName = ERROR_CLASS_API_RESPONSE,
@@ -137,6 +139,7 @@ class ConnectionsRevokeConnectorTest {
 
         verify {
             mockCallback.onConnectionsV2RevokeResult(
+                revokedConnections = emptyList(),
                 apiError = ApiErrorData(
                     errorMessage = "Request Error (404)",
                     errorClassName = ERROR_CLASS_API_RESPONSE,
@@ -155,6 +158,7 @@ class ConnectionsRevokeConnectorTest {
 
         verify {
             mockCallback.onConnectionsV2RevokeResult(
+                revokedConnections = emptyList(),
                 apiError = ApiErrorData(
                     errorClassName = ERROR_CLASS_HOST_UNREACHABLE,
                     accessToken = "accessToken"
@@ -165,7 +169,7 @@ class ConnectionsRevokeConnectorTest {
     }
 
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
-    private val mockCallback: ConnectionsRevokeListener = mockkClass(ConnectionsRevokeListener::class)
+    private val mockCallback: ConnectionsV2RevokeListener = mockkClass(ConnectionsV2RevokeListener::class)
     private val mockCall = mockkClass(Call::class) as Call<RevokeConnectionResponse>
     private val requestConnection: ConnectionAbs = defaultTestConnection
     private val privateKey: PrivateKey = CommonTestTools.testPrivateKey
@@ -182,6 +186,6 @@ class ConnectionsRevokeConnectorTest {
         every { mockCall.enqueue(any()) } returns Unit
         every { mockCall.request() } returns Request.Builder().url(requestUrl)
             .addHeader(HEADER_KEY_ACCESS_TOKEN, "accessToken").build()
-        every { mockCallback.onConnectionsV2RevokeResult(any()) } returns Unit
+        every { mockCallback.onConnectionsV2RevokeResult(any(), any()) } returns Unit
     }
 }

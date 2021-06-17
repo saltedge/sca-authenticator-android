@@ -37,6 +37,7 @@ import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
 import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
+import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionsV2RevokeListener
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -46,8 +47,11 @@ class ConnectionsListInteractor(
     private val apiManagerV2: ScaServiceClientAbs,
     private val keyStoreManager: KeyManagerAbs,
     private val cryptoTools: CryptoToolsV1Abs
-) : FetchEncryptedDataListener, CoroutineScope, ConnectionsRevokeListener,
-    com.saltedge.authenticator.sdk.v2.api.contract.ConnectionsRevokeListener {
+) : FetchEncryptedDataListener,
+    CoroutineScope,
+    ConnectionsRevokeListener,
+    ConnectionsV2RevokeListener
+{
 
     var contract: ConnectionsListInteractorCallback? = null
     private val decryptJob: Job = Job()
@@ -115,28 +119,18 @@ class ConnectionsListInteractor(
         if (connection.apiVersion == API_V1_VERSION) {
             apiManagerV1.revokeConnections(connectionsAndKeys = listOf(richConnection), resultCallback = this)
         } else if (connection.apiVersion == API_V2_VERSION) {
-            apiManagerV2.revokeConnections(connections = listOf(richConnection), callback = this)
+            apiManagerV2.revokeConnections(richConnections = listOf(richConnection), callback = this)
         }
     }
 
     private fun deleteConnectionsAndKeysByTokens(revokedTokens: List<Token>) {
-        richConnections.values.filter {
-            revokedTokens.contains(it.connection.accessToken)
-        }.map {
-            it.connection.guid
-        }.forEach{ guid ->
-            deleteConnection(guid = guid)
-        }
+        richConnections.values.filter { revokedTokens.contains(it.connection.accessToken) }
+            .forEach { deleteConnection(guid = it.connection.guid) }
     }
 
     private fun deleteConnectionsAndKeysByIDs(revokedIDs: List<ID>) {
-        richConnections.values.filter {
-            revokedIDs.contains(it.connection.id)
-        }.map {
-            it.connection.guid
-        }.forEach { guid ->
-            deleteConnection(guid = guid)
-        }
+        richConnections.values.filter { revokedIDs.contains(it.connection.id) }
+            .forEach { deleteConnection(guid = it.connection.guid) }
     }
 
     private fun processOfEncryptedConsentsResult(encryptedList: List<EncryptedData>) {

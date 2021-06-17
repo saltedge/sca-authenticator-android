@@ -45,10 +45,14 @@ class MainActivityInteractor(
         val richConnections: List<RichConnection> = connectionsRepository.getAllActiveConnections()
             .filter { it.isActive() }
             .mapNotNull { it.toRichConnection(keyStoreManager) }
-        apiManagerV1.revokeConnections(connectionsAndKeys = richConnections
-            .filter { it.connection.apiVersion == API_V1_VERSION }, resultCallback = null)
-        apiManagerV2.revokeConnections(connections = richConnections
-            .filter { it.connection.apiVersion == API_V2_VERSION }, callback = null)
+        apiManagerV1.revokeConnections(
+            connectionsAndKeys = richConnections.filter { it.connection.apiVersion == API_V1_VERSION },
+            resultCallback = null
+        )
+        apiManagerV2.revokeConnections(
+            richConnections = richConnections.filter { it.connection.apiVersion == API_V2_VERSION },
+            callback = null
+        )
     }
 
     fun wipeApplication() {

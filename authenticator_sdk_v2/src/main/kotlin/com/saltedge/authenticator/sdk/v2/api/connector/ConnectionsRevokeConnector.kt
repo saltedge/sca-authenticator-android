@@ -24,7 +24,7 @@ import com.saltedge.authenticator.core.api.RequestQueueAbs
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
-import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionsRevokeListener
+import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionsV2RevokeListener
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionRequest
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionResponse
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
@@ -41,7 +41,7 @@ import retrofit2.Call
  */
 internal class ConnectionsRevokeConnector(
     private val apiInterface: ApiInterface,
-    var resultCallback: ConnectionsRevokeListener? = null
+    var resultCallback: ConnectionsV2RevokeListener? = null
 ) : RequestQueueAbs<RevokeConnectionResponse>() {
 
     private var errorResult: ApiErrorData? = null

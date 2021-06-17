@@ -101,7 +101,6 @@ class ViewModelsFactory @Inject constructor(
             modelClass.isAssignableFrom(MainActivityViewModel::class.java) -> {
                 return MainActivityViewModel(
                     appContext = appContext,
-                    realmManager = realmManager,
                     interactor = MainActivityInteractor(
                         keyStoreManager = keyStoreManager,
                         connectionsRepository = connectionsRepository,
@@ -120,11 +119,7 @@ class ViewModelsFactory @Inject constructor(
                 ) as T
             }
             modelClass.isAssignableFrom(QrScannerViewModel::class.java) -> {
-                return QrScannerViewModel(
-                    appContext = appContext,
-                    realmManager = realmManager,
-                    connectionsRepository = connectionsRepository
-                ) as T
+                return QrScannerViewModel(connectionsRepository = connectionsRepository) as T
             }
             modelClass.isAssignableFrom(AuthorizationsListViewModel::class.java) -> {
                 return AuthorizationsListViewModel(
@@ -183,7 +178,8 @@ class ViewModelsFactory @Inject constructor(
                     appContext = appContext,
                     connectionsRepository = connectionsRepository,
                     keyStoreManager = keyStoreManager,
-                    apiManager = apiManagerV1,
+                    apiManagerV1 = apiManagerV1,
+                    apiManagerV2 = apiManagerV2,
                     locationManager = DeviceLocationManager
                 ) as T
             }

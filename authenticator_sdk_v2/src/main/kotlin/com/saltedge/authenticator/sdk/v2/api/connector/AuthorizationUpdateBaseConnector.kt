@@ -24,7 +24,7 @@ import com.saltedge.authenticator.core.api.ApiResponseInterceptor
 import com.saltedge.authenticator.core.api.model.EncryptedBundle
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponse
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationResponse
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationRequest
 import com.saltedge.authenticator.sdk.v2.api.retrofit.addSignatureHeader
 import com.saltedge.authenticator.sdk.v2.api.retrofit.authorizationsConfirmPath
@@ -34,7 +34,7 @@ import com.saltedge.authenticator.sdk.v2.api.retrofit.createAccessTokenHeader
 internal abstract class AuthorizationUpdateBaseConnector(
     val authorizationId: ID,
     val isConfirmRequest: Boolean
-) : ApiResponseInterceptor<ConfirmDenyResponse>() {
+) : ApiResponseInterceptor<UpdateAuthorizationResponse>() {
 
     protected fun url(richConnection: RichConnection): String {
         val baseUrl = richConnection.connection.connectUrl

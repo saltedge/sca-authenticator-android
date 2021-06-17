@@ -22,6 +22,8 @@ package com.saltedge.authenticator.core.tools
 
 import com.saltedge.authenticator.core.model.ActionAppLinkData
 import com.saltedge.authenticator.core.model.ConnectAppLinkData
+import com.saltedge.authenticator.core.model.extractActionAppLinkData
+import com.saltedge.authenticator.core.model.extractConnectAppLinkData
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert
 import org.junit.Assert.assertNull
@@ -31,17 +33,17 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class DeepLinkToolsTest {
+class AppLinkToolsTest {
 
     @Test
     @Throws(Exception::class)
     fun isValidDeeplinkTest() {
-        Assert.assertFalse("".isValidDeeplink())
-        Assert.assertFalse("test".isValidDeeplink())
-        Assert.assertFalse("https://google.com".isValidDeeplink())
-        Assert.assertFalse("authenticator://saltedge.com/connect?configuration=https://localhost/configuration".isValidDeeplink())
-        Assert.assertTrue("authenticator://saltedge.com/connect?configuration=https://example.com/configuration".isValidDeeplink())
-        Assert.assertTrue("authenticator://saltedge.com/connect?configuration=https://example.com/configuration&connect_query=1234567890".isValidDeeplink())
+        Assert.assertFalse("".isValidAppLink())
+        Assert.assertFalse("test".isValidAppLink())
+        Assert.assertFalse("https://google.com".isValidAppLink())
+        Assert.assertFalse("authenticator://saltedge.com/connect?configuration=https://localhost/configuration".isValidAppLink())
+        Assert.assertTrue("authenticator://saltedge.com/connect?configuration=https://example.com/configuration".isValidAppLink())
+        Assert.assertTrue("authenticator://saltedge.com/connect?configuration=https://example.com/configuration&connect_query=1234567890".isValidAppLink())
     }
 
     @Test
@@ -68,13 +70,15 @@ class DeepLinkToolsTest {
     @Throws(Exception::class)
     fun extractActionExtractDeepLinkDataTest() {
         assertNull("".extractActionAppLinkData())
-        assertNull("authenticator://saltedge.com/action?action_uuid=123456".extractActionAppLinkData())
+        assertNull("authenticator://saltedge.com/action?action=123456".extractActionAppLinkData())
         assertThat(
             ("authenticator://saltedge.com/action?action_uuid=123456" +
                 "&connect_url=https://www.saltedge.com/").extractActionAppLinkData(),
             equalTo(
                 ActionAppLinkData(
-                    actionUUID = "123456",
+                    apiVersion = "1",
+                    providerID = null,
+                    actionIdentifier = "123456",
                     connectUrl = "https://www.saltedge.com/",
                     returnTo = null
                 )
@@ -85,9 +89,24 @@ class DeepLinkToolsTest {
                 "&connect_url=http://www.fentury.com/").extractActionAppLinkData(),
             equalTo(
                 ActionAppLinkData(
-                    actionUUID = "123456",
+                    apiVersion = "1",
+                    providerID = null,
+                    actionIdentifier = "123456",
                     connectUrl = "http://www.fentury.com/",
                     returnTo = "https://www.saltedge.com/"
+                )
+            )
+        )
+
+        assertThat(
+            ("authenticator://saltedge.com/action?api_version=2&action_id=1&provider_id=1&return_to=http://return.com").extractActionAppLinkData(),
+            equalTo(
+                ActionAppLinkData(
+                    apiVersion = "2",
+                    providerID = "1",
+                    actionIdentifier = "1",
+                    connectUrl = null,
+                    returnTo = "http://return.com"
                 )
             )
         )

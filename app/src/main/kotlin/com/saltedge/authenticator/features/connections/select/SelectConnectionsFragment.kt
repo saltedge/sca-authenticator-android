@@ -84,12 +84,12 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
                 connectionsListView?.addItemDecoration(this)
             }
         }
-        proceedView.isEnabled = false
-        proceedView.setVisible(true)
+        proceedView?.isEnabled = false
+        proceedView?.setVisible(true)
     }
 
     override fun onBackPress(): Boolean {
-        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, Intent())
+        sharedViewModel.onSelectConnection("")
         return false
     }
 

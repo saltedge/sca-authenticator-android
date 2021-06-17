@@ -51,7 +51,7 @@ class ScaServiceClient : ScaServiceClientAbs {
      * Request to get SCA Service configuration.
      * Result is returned through callback.
      */
-    override fun getProviderConfigurationData(
+    override fun fetchProviderConfigurationData(
         configurationUrl: String,
         callback: FetchConfigurationListener
     ) {
@@ -63,7 +63,7 @@ class ScaServiceClient : ScaServiceClientAbs {
      * Request to create new SCA Service connection.
      * Result is returned through callback.
      */
-    override fun createConnectionRequest(
+    override fun requestCreateConnection(
         baseUrl: String,
         rsaPublicKeyEncryptedBundle: EncryptedBundle,
         providerId: String,
@@ -84,7 +84,7 @@ class ScaServiceClient : ScaServiceClientAbs {
      * Request to create new SCA Service connection.
      * Result is returned through callback.
      */
-    override fun createConnectionRequest(
+    override fun requestCreateConnection(
         appContext: Context,
         connection: ConnectionAbs,
         connectQueryParam: String?,
@@ -113,7 +113,7 @@ class ScaServiceClient : ScaServiceClientAbs {
             return
         }
         connection.guid = rsaAlias
-        createConnectionRequest(
+        requestCreateConnection(
             baseUrl = connection.connectUrl,
             rsaPublicKeyEncryptedBundle = rsaPublicKeyEncryptedBundle,
             providerId = connection.code,
@@ -127,18 +127,24 @@ class ScaServiceClient : ScaServiceClientAbs {
      * Request to revoke SCA Service connection.
      * Result is returned through callback.
      */
-    override fun revokeConnections(connections: List<RichConnection>, callback: ConnectionsRevokeListener?) {
+    override fun revokeConnections(
+        richConnections: List<RichConnection>,
+        callback: ConnectionsV2RevokeListener?
+    ) {
         ConnectionsRevokeConnector(RestClient.apiInterface, callback)
-            .revokeAccess(forConnections = connections)
+            .revokeAccess(forConnections = richConnections)
     }
 
     /**
      * Request to get all active SCA Service Authorizations list.
      * Result is returned through callback.
      */
-    override fun getAuthorizations(connections: List<RichConnection>, callback: FetchAuthorizationsListener) {
+    override fun fetchAuthorizations(
+        richConnections: List<RichConnection>,
+        callback: FetchAuthorizationsListener
+    ) {
         AuthorizationsIndexConnector(RestClient.apiInterface, callback)
-            .fetchActiveAuthorizations(connections = connections)
+            .fetchActiveAuthorizations(connections = richConnections)
     }
 
     /**
@@ -152,13 +158,13 @@ class ScaServiceClient : ScaServiceClientAbs {
      * Request to get active SCA Service Authorization.
      * Result is returned through callback.
      */
-    override fun getAuthorization(
-        connection: RichConnection,
+    override fun fetchAuthorization(
+        richConnection: RichConnection,
         authorizationID: ID,
         callback: FetchAuthorizationListener
     ) {
         AuthorizationShowConnector(RestClient.apiInterface, callback)
-            .showAuthorization(connection.connection, authorizationID)
+            .showAuthorization(richConnection.connection, authorizationID)
     }
 
     /**
@@ -172,19 +178,19 @@ class ScaServiceClient : ScaServiceClientAbs {
      * Result is returned through callback.
      */
     override fun confirmAuthorization(
-        connection: RichConnection,
+        richConnection: RichConnection,
         authorizationID: ID,
         authorizationData: UpdateAuthorizationData,
         callback: AuthorizationConfirmListener
     ) {
         val encryptedPayload = CryptoToolsV2.createEncryptedBundle(
             payload = authorizationData.toJsonString(),
-            rsaPublicKey = connection.providerPublic
+            rsaPublicKey = richConnection.providerPublic
         ).guard {
             callback.error(
                 message = "User data encryption failed",
                 authorizationID = authorizationID,
-                connectionID = connection.connection.id
+                connectionID = richConnection.connection.id
             )
             return
         }
@@ -192,7 +198,7 @@ class ScaServiceClient : ScaServiceClientAbs {
             apiInterface = RestClient.apiInterface,
             authorizationId = authorizationID,
             callback = callback
-        ).confirmAuthorization(connection = connection, encryptedPayload = encryptedPayload)
+        ).confirmAuthorization(connection = richConnection, encryptedPayload = encryptedPayload)
     }
 
     /**
@@ -200,19 +206,19 @@ class ScaServiceClient : ScaServiceClientAbs {
      * Result is returned through callback.
      */
     override fun denyAuthorization(
-        connection: RichConnection,
+        richConnection: RichConnection,
         authorizationID: ID,
         authorizationData: UpdateAuthorizationData,
         callback: AuthorizationDenyListener
     ) {
         val encryptedPayload = CryptoToolsV2.createEncryptedBundle(
             payload = authorizationData.toJsonString(),
-            rsaPublicKey = connection.providerPublic
+            rsaPublicKey = richConnection.providerPublic
         ).guard {
             callback.error(
                 message = "User data encryption failed",
                 authorizationID = authorizationID,
-                connectionID = connection.connection.id
+                connectionID = richConnection.connection.id
             )
             return
         }
@@ -220,13 +226,22 @@ class ScaServiceClient : ScaServiceClientAbs {
             apiInterface = RestClient.apiInterface,
             authorizationId = authorizationID,
             callback = callback
-        ).denyAuthorization(richConnection = connection, encryptedPayload = encryptedPayload)
+        ).denyAuthorization(richConnection = richConnection, encryptedPayload = encryptedPayload)
+    }
+
+    override fun requestCreateAuthorizationForAction(
+        richConnection: RichConnection,
+        actionID: ID,
+        callback: AuthorizationCreateListener
+    ) {
+        AuthorizationCreateConnector(apiInterface = RestClient.apiInterface, callback = callback)
+            .createAuthorizationForAction(richConnection = richConnection, actionID = actionID)
     }
 }
 
 interface ScaServiceClientAbs {
-    fun getProviderConfigurationData(configurationUrl: String, callback: FetchConfigurationListener)
-    fun createConnectionRequest(
+    fun fetchProviderConfigurationData(configurationUrl: String, callback: FetchConfigurationListener)
+    fun requestCreateConnection(
         baseUrl: String,
         rsaPublicKeyEncryptedBundle: EncryptedBundle,
         providerId: String,
@@ -234,28 +249,33 @@ interface ScaServiceClientAbs {
         connectQueryParam: String?,
         callback: ConnectionCreateListener
     )
-    fun createConnectionRequest(
+    fun requestCreateConnection(
         appContext: Context,
         connection: ConnectionAbs,
         connectQueryParam: String?,
         pushToken: String?,
         callback: ConnectionCreateListener
     )
-    fun revokeConnections(connections: List<RichConnection>, callback: ConnectionsRevokeListener?)
-    fun getAuthorizations(connections: List<RichConnection>, callback: FetchAuthorizationsListener)
+    fun revokeConnections(richConnections: List<RichConnection>, callback: ConnectionsV2RevokeListener?)
+    fun fetchAuthorizations(richConnections: List<RichConnection>, callback: FetchAuthorizationsListener)
     fun createAuthorizationsPollingService(): PollingServiceAbs<PollingAuthorizationsContract>
-    fun getAuthorization(connection: RichConnection, authorizationID: ID, callback: FetchAuthorizationListener)
+    fun fetchAuthorization(richConnection: RichConnection, authorizationID: ID, callback: FetchAuthorizationListener)
     fun createSingleAuthorizationPollingService(): SingleAuthorizationPollingService
     fun confirmAuthorization(
-        connection: RichConnection,
+        richConnection: RichConnection,
         authorizationID: ID,
         authorizationData: UpdateAuthorizationData,
         callback: AuthorizationConfirmListener
     )
     fun denyAuthorization(
-        connection: RichConnection,
+        richConnection: RichConnection,
         authorizationID: ID,
         authorizationData: UpdateAuthorizationData,
         callback: AuthorizationDenyListener
+    )
+    fun requestCreateAuthorizationForAction(
+        richConnection: RichConnection,
+        actionID: ID,
+        callback: AuthorizationCreateListener
     )
 }

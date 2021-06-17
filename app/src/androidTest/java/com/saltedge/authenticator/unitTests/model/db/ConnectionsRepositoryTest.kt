@@ -46,27 +46,27 @@ class ConnectionsRepositoryTest : DatabaseTestCase() {
     @Test
     @Throws(Exception::class)
     fun getCountTest() {
-        assertThat(ConnectionsRepository.getConnectionsCount(), equalTo(0L))
+        assertThat(ConnectionsRepository.getConnectionsCountForProvider(), equalTo(0L))
 
         Connection().setGuid("guid1").save()
 
-        assertThat(ConnectionsRepository.getConnectionsCount(), equalTo(1L))
+        assertThat(ConnectionsRepository.getConnectionsCountForProvider(), equalTo(1L))
 
         Connection().setGuid("guid2").save()
 
-        assertThat(ConnectionsRepository.getConnectionsCount(), equalTo(2L))
+        assertThat(ConnectionsRepository.getConnectionsCountForProvider(), equalTo(2L))
     }
 
     @Test
     @Throws(Exception::class)
     fun getCountByCodeTest() {
-        assertThat(ConnectionsRepository.getConnectionsCount(""), equalTo(0L))
+        assertThat(ConnectionsRepository.getConnectionsCountForProvider(""), equalTo(0L))
         Connection().setGuid("guid1").setCode("demobank1").save()
         Connection().setGuid("guid2").setCode("demobank2").save()
 
-        assertThat(ConnectionsRepository.getConnectionsCount(), equalTo(2L))
+        assertThat(ConnectionsRepository.getConnectionsCountForProvider(), equalTo(2L))
         assertThat(
-            ConnectionsRepository.getConnectionsCount("demobank1"),
+            ConnectionsRepository.getConnectionsCountForProvider("demobank1"),
             equalTo(1L)
         )
     }
@@ -136,7 +136,7 @@ class ConnectionsRepositoryTest : DatabaseTestCase() {
         Connection().setGuid("guid1").setAccessToken("").setStatus(ConnectionStatus.INACTIVE).save()
         Connection().setGuid("guid2").setAccessToken("token4").setStatus(ConnectionStatus.ACTIVE).save()
 
-        assertThat(ConnectionsRepository.getConnectionsCount(), equalTo(2L))
+        assertThat(ConnectionsRepository.getConnectionsCountForProvider(), equalTo(2L))
 
         ConnectionsRepository.deleteAllConnections()
 
@@ -156,15 +156,15 @@ class ConnectionsRepositoryTest : DatabaseTestCase() {
         Connection().setGuid("guid3").setAccessToken("token3").setStatus(ConnectionStatus.INACTIVE).save()
         Connection().setGuid("guid4").setAccessToken("token4").setStatus(ConnectionStatus.ACTIVE).save()
 
-        assertThat(ConnectionsRepository.getConnectionsCount(), equalTo(4L))
+        assertThat(ConnectionsRepository.getConnectionsCountForProvider(), equalTo(4L))
 
         Assert.assertFalse(ConnectionsRepository.deleteConnection("guid0"))
 
-        assertThat(ConnectionsRepository.getConnectionsCount(), equalTo(4L))
+        assertThat(ConnectionsRepository.getConnectionsCountForProvider(), equalTo(4L))
 
         Assert.assertTrue(ConnectionsRepository.deleteConnection("guid4"))
 
-        assertThat(ConnectionsRepository.getConnectionsCount(), equalTo(3L))
+        assertThat(ConnectionsRepository.getConnectionsCountForProvider(), equalTo(3L))
     }
 
     @Test
@@ -206,15 +206,15 @@ class ConnectionsRepositoryTest : DatabaseTestCase() {
     @Test
     @Throws(Exception::class)
     fun getByIdTest() {
-        assertNull(ConnectionsRepository.getById(connectionId = "id1"))
+        assertNull(ConnectionsRepository.getById(connectionID = "id1"))
 
         Connection().setGuid("guid1").setId("id1").save()
         Connection().setGuid("guid2").setId("id2").save()
         Connection().setGuid("guid3").setId("id3").save()
 
-        assertNull(ConnectionsRepository.getById(connectionId = "id111"))
+        assertNull(ConnectionsRepository.getById(connectionID = "id111"))
         assertThat(
-            ConnectionsRepository.getById(connectionId = "id1")!!.guid,
+            ConnectionsRepository.getById(connectionID = "id1")!!.guid,
             equalTo("guid1")
         )
     }
@@ -242,7 +242,7 @@ class ConnectionsRepositoryTest : DatabaseTestCase() {
     fun providerSaveTest() {
         Assert.assertTrue(ConnectionsRepository.isEmpty())
         Assert.assertNotNull(Connection().save())
-        assertThat(ConnectionsRepository.getConnectionsCount(), equalTo(1L))
+        assertThat(ConnectionsRepository.getConnectionsCountForProvider(), equalTo(1L))
     }
 
     /**
@@ -304,9 +304,9 @@ class ConnectionsRepositoryTest : DatabaseTestCase() {
         val connection3 = Connection().setGuid("guid3").setCode("demo3").setName("Demo3").setStatus(ConnectionStatus.ACTIVE)
             .apply { connectUrl = "https://www.fentury.com/" }.save()
 
-        assertThat(ConnectionsRepository.getByConnectUrl("https://www.saltedge.com/").map { it.guid },
+        assertThat(ConnectionsRepository.getActiveByConnectUrl("https://www.saltedge.com/").map { it.guid },
             equalTo(listOf(connection1?.guid, connection2?.guid)))
-        assertThat(ConnectionsRepository.getByConnectUrl("https://www.fentury.com/").map { it.guid },
+        assertThat(ConnectionsRepository.getActiveByConnectUrl("https://www.fentury.com/").map { it.guid },
             equalTo(listOf(connection3?.guid)))
     }
 }

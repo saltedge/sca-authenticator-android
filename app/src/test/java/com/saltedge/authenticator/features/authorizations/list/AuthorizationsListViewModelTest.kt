@@ -128,8 +128,8 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
         doReturn("GEO:52.506931;13.144558").`when`(mockLocationManager).locationDescription
         doReturn(mockPollingServiceV1).`when`(mockApiManagerV1).createAuthorizationsPollingService()
         doReturn(mockPollingServiceV2).`when`(mockApiManagerV2).createAuthorizationsPollingService()
-        given(mockConnectionsRepository.getAllActiveConnections(API_V1_VERSION)).willReturn(listOf(mockConnectionV1))
-        given(mockConnectionsRepository.getAllActiveConnections(API_V2_VERSION)).willReturn(listOf(mockConnectionV2))
+        given(mockConnectionsRepository.getAllActiveConnectionsByApi(API_V1_VERSION)).willReturn(listOf(mockConnectionV1))
+        given(mockConnectionsRepository.getAllActiveConnectionsByApi(API_V2_VERSION)).willReturn(listOf(mockConnectionV2))
         doReturn(true).`when`(mockLocationManager).isLocationProviderActive(TestAppTools.applicationContext)
         given(mockKeyStoreManager.enrichConnection(mockConnectionV1, addProviderKey = false)).willReturn(richConnectionV1)
         given(mockKeyStoreManager.enrichConnection(mockConnectionV2, addProviderKey = true)).willReturn(richConnectionV2)
@@ -325,7 +325,7 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
 
         //then
         verify(mockConnectionsRepository).invalidateConnectionsByTokens(listOf("token"))
-        verify(mockConnectionsRepository).getAllActiveConnections(API_V1_VERSION)
+        verify(mockConnectionsRepository).getAllActiveConnectionsByApi(API_V1_VERSION)
     }
 
     @Test

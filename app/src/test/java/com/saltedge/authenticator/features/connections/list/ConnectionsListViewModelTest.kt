@@ -582,13 +582,13 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         //when
         viewModel.onStart()
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
-        Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection("guid2")
+        Mockito.doReturn(true).`when`(mockConnectionsRepository).deleteConnection(connectionGuid = "guid2")
 
         //when
         viewModel.deleteItem(guid = "guid2")
 
         //then
-        Mockito.verify(mockApiManagerV2).revokeConnections(listOf(richConnection2), callback = interactor)
+        Mockito.verify(mockApiManagerV2).revokeConnections(listOf(richConnection2), interactor)
     }
 
     @Test

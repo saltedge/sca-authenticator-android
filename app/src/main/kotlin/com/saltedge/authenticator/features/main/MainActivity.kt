@@ -30,12 +30,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.databinding.MainActivityBinding
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
+import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.interfaces.*
 import com.saltedge.authenticator.models.location.DeviceLocationManager
-import com.saltedge.authenticator.app.authenticatorApp
-import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
+import com.saltedge.authenticator.models.realm.initRealmDatabase
 import com.saltedge.authenticator.tools.currentFragmentOnTop
 import com.saltedge.authenticator.tools.showQrScannerActivity
 import com.saltedge.authenticator.tools.updateScreenshotLocking
@@ -52,6 +53,7 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.initRealmDatabase()
         this.updateScreenshotLocking()
         authenticatorApp?.appComponent?.inject(this)//inject ViewModelsFactory
         setupViewModel()

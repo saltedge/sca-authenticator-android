@@ -132,7 +132,7 @@ class MainActivityInteractorTest {
             ), resultCallback = null
         )
         Mockito.verify(mockApiManagerV2).revokeConnections(
-            connections = emptyList(),
+            richConnections = emptyList(),
             callback = null
         )
     }
@@ -150,7 +150,7 @@ class MainActivityInteractorTest {
             connectionsAndKeys = emptyList(), resultCallback = null
         )
         Mockito.verify(mockApiManagerV2).revokeConnections(
-            connections = listOf(mockConnectionAndKeyV2),
+            richConnections = listOf(mockConnectionAndKeyV2),
             callback = null
         )
     }

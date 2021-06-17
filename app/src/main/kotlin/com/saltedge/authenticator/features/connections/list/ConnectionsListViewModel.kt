@@ -158,7 +158,7 @@ class ConnectionsListViewModel(
 
     fun deleteItem(guid: GUID) {
         val listItem = listItemsValues.find { it.guid == guid } ?: return
-        interactor.revokeConnection(listItem.guid)
+        interactor.revokeConnection(guid = listItem.guid)
         onConnectionsDataChanged()
     }
 

@@ -25,7 +25,7 @@ import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationDenyListener
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.ConfirmDenyResponse
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationResponse
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import retrofit2.Call
 
@@ -47,11 +47,11 @@ internal class AuthorizationDenyConnector(
         ).enqueue(this)
     }
 
-    override fun onSuccessResponse(call: Call<ConfirmDenyResponse>, response: ConfirmDenyResponse) {
+    override fun onSuccessResponse(call: Call<UpdateAuthorizationResponse>, response: UpdateAuthorizationResponse) {
         callback?.onAuthorizationDenySuccess(result = response.data, connectionID = connectionID)
     }
 
-    override fun onFailureResponse(call: Call<ConfirmDenyResponse>, error: ApiErrorData) {
+    override fun onFailureResponse(call: Call<UpdateAuthorizationResponse>, error: ApiErrorData) {
         callback?.onAuthorizationDenyFailure(
             error = error,
             connectionID = connectionID,
