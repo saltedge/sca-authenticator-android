@@ -235,7 +235,7 @@ fun List<AuthorizationItemViewModel>.merge(
     val filteredNewModels = newViewModels.filter {
         filteredOldModels.noIdentifier(authorizationID = it.authorizationID, connectionID = it.connectionID)
     }
-    return (filteredNewModels + filteredOldModels).sortedBy { it.startTime }
+    return (filteredNewModels + filteredOldModels).sortedWith(compareBy({ it.startTime }, { it.authorizationID }))
 }
 
 private fun List<AuthorizationItemViewModel>.noIdentifier(authorizationID: ID, connectionID: ID): Boolean {
