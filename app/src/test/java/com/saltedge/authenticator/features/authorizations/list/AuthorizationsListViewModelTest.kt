@@ -20,6 +20,8 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
+import android.content.DialogInterface
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Lifecycle
@@ -33,6 +35,7 @@ import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.KEY_OPTION_ID
+import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.core.api.ERROR_CLASS_CONNECTION_NOT_FOUND
 import com.saltedge.authenticator.core.api.KEY_ID
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
@@ -67,6 +70,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.CoreMatchers.*
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -130,7 +134,6 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
         doReturn(mockPollingServiceV2).`when`(mockApiManagerV2).createAuthorizationsPollingService()
         given(mockConnectionsRepository.getAllActiveConnectionsByApi(API_V1_VERSION)).willReturn(listOf(mockConnectionV1))
         given(mockConnectionsRepository.getAllActiveConnectionsByApi(API_V2_VERSION)).willReturn(listOf(mockConnectionV2))
-        doReturn(true).`when`(mockLocationManager).isLocationProviderActive(TestAppTools.applicationContext)
         given(mockKeyStoreManager.enrichConnection(mockConnectionV1, addProviderKey = false)).willReturn(richConnectionV1)
         given(mockKeyStoreManager.enrichConnection(mockConnectionV2, addProviderKey = true)).willReturn(richConnectionV2)
         encryptedAuthorizations.forEachIndexed { index, encryptedData ->
@@ -469,6 +472,7 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
     @Throws(Exception::class)
     fun onListItemClickTestCase4() {
         //given itemViewId = R.id.positiveActionView
+        doReturn(true).`when`(mockLocationManager).isLocationProviderActive(TestAppTools.applicationContext)
         viewModel.listItems.postValue(items)
 
         //when
@@ -498,7 +502,28 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
     @Test
     @Throws(Exception::class)
     fun onListItemClickTestCase5() {
+        //given itemViewId = R.id.positiveActionView
+        doReturn(false).`when`(mockLocationManager).isLocationProviderActive(TestAppTools.applicationContext)
+        viewModel.listItems.postValue(items)
+
+        //when
+        viewModel.onListItemClick(
+            itemIndex = 0,
+            itemCode = "",
+            itemViewId = R.id.positiveActionView
+        )
+
+        //then
+        assertThat(viewModel.listItems.value!![0].apiVersion, equalTo(API_V1_VERSION))
+        verify(mockApiManagerV1).createAuthorizationsPollingService()
+        verifyNoMoreInteractions(mockApiManagerV1)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onListItemClickTestCase6() {
         //given itemViewId = R.id.negativeActionView
+        doReturn(true).`when`(mockLocationManager).isLocationProviderActive(TestAppTools.applicationContext)
         viewModel.listItems.postValue(items)
 
         //when
@@ -522,6 +547,85 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
             authorizationType = "biometrics",
             resultCallback = v1Interactor
         )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onListItemClickTestCase7() {
+        //given itemViewId = R.id.negativeActionView
+        doReturn(false).`when`(mockLocationManager).isLocationProviderActive(TestAppTools.applicationContext)
+        viewModel.listItems.postValue(items)
+
+        //when
+        viewModel.onListItemClick(
+            itemIndex = 0,
+            itemCode = "",
+            itemViewId = R.id.negativeActionView
+        )
+
+        //then
+        assertThat(viewModel.listItems.value!![0].apiVersion, equalTo(API_V1_VERSION))
+        verify(mockApiManagerV1).createAuthorizationsPollingService()
+        verifyNoMoreInteractions(mockApiManagerV1)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onListItemClickTestCase8() {
+        //given
+        doReturn(false).`when`(mockLocationManager).isLocationProviderActive(TestAppTools.applicationContext)
+        viewModel.listItems.postValue(items)
+        mockConnectionV1.apply {
+            geolocationRequired = true
+        }
+
+        assertNull(viewModel.onRequestPermissionEvent.value)
+
+        //when
+        viewModel.onListItemClick(
+            itemIndex = 0,
+            itemCode = "",
+            itemViewId = R.id.positiveActionView
+        )
+
+        //then
+        assertNotNull(viewModel.onRequestPermissionEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onRequestPermissionsResultTestCase1() {
+        //given
+        val requestCode = LOCATION_PERMISSION_REQUEST_CODE
+        val grantResults = intArrayOf(PackageManager.PERMISSION_GRANTED)
+
+        viewModel.onRequestPermissionsResult(requestCode = requestCode, grantResults = grantResults)
+
+        verify(mockLocationManager).startLocationUpdates(TestAppTools.applicationContext)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onRequestPermissionsResultTestCase2() {
+        //given
+        val requestCode = -1
+        val grantResults = intArrayOf(PackageManager.PERMISSION_GRANTED)
+
+        viewModel.onRequestPermissionsResult(requestCode = requestCode, grantResults = grantResults)
+
+        verifyNoInteractions(mockLocationManager)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onRequestPermissionsResultTestCase3() {
+        //given
+        val requestCode = LOCATION_PERMISSION_REQUEST_CODE
+        val grantResults = intArrayOf(-1)
+
+        viewModel.onRequestPermissionsResult(requestCode = requestCode, grantResults = grantResults)
+
+        verifyNoInteractions(mockLocationManager)
     }
 
     @Test
@@ -863,6 +967,30 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
         //then
         assertNull(viewModel.onShowConnectionsListEvent.value)
         assertThat(viewModel.onShowSettingsListEvent.value, equalTo(ViewModelEvent(Unit)))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionIdClickCase1() {
+        viewModel.onDialogActionIdClick(dialogActionId = DialogInterface.BUTTON_NEGATIVE, actionResId = R.string.actions_proceed)
+
+        assertNull(viewModel.onAskPermissionsEvent.value)
+
+        viewModel.onDialogActionIdClick(dialogActionId = DialogInterface.BUTTON_POSITIVE, actionResId= R.string.actions_proceed)
+
+        assertNotNull(viewModel.onAskPermissionsEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionIdClickCase2() {
+        viewModel.onDialogActionIdClick(dialogActionId = DialogInterface.BUTTON_NEGATIVE, actionResId = R.string.actions_go_to_settings)
+
+        assertNull(viewModel.onGoToSettingsEvent.value)
+
+        viewModel.onDialogActionIdClick(dialogActionId = DialogInterface.BUTTON_POSITIVE, actionResId= R.string.actions_go_to_settings)
+
+        assertNotNull(viewModel.onGoToSettingsEvent.value)
     }
 
     private fun createAuthorization(id: Int): AuthorizationData {
