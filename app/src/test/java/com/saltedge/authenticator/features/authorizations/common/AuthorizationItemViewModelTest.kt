@@ -69,15 +69,22 @@ class AuthorizationItemViewModelTest {
         val oldList = emptyList<AuthorizationItemViewModel>()
         val newList = listOf(
             createModelByIndex(1),
+            createModelByIndex(3),
+            createModelByIndex(1).copy(authorizationID = "4"),
             createModelByIndex(2),
-            createModelByIndex(3)
         )
 
         //when
         val result = oldList.merge(newViewModels = newList, newModelsApiVersion = API_V1_VERSION)
 
         //then
-        assertThat(result, equalTo(newList))
+        val expectedList = listOf(
+            createModelByIndex(1),
+            createModelByIndex(1).copy(authorizationID = "4"),
+            createModelByIndex(2),
+            createModelByIndex(3)
+        )
+        assertThat(result, equalTo(expectedList))
     }
 
     @Test
