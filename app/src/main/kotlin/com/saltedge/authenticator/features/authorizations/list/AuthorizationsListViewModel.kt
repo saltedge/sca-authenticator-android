@@ -34,6 +34,7 @@ import com.saltedge.authenticator.app.NetworkStateChangeListener
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.features.authorizations.common.*
+import com.saltedge.authenticator.features.connections.list.shouldRequestPermission
 import com.saltedge.authenticator.features.menu.BottomMenuDialog
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.ListItemClickListener
@@ -75,7 +76,7 @@ class AuthorizationsListViewModel(
     val onShowSettingsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onRequestPermissionEvent = MutableLiveData<Triple<String, String, Boolean>>()
     val onAskPermissionsEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onGoToSettingsEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onGoToSystemSettingsEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
     init {
         interactorV1.contract = this
@@ -145,11 +146,11 @@ class AuthorizationsListViewModel(
         }
     }
 
-    fun onDialogActionIdClick(dialogActionId: Int, actionResId: ResId) {
+    fun onPermissionRationaleDialogActionClick(dialogActionId: Int, actionResId: ResId) {
         if (dialogActionId == DialogInterface.BUTTON_POSITIVE) {
             when (actionResId) {
                 R.string.actions_proceed -> onAskPermissionsEvent.postUnitEvent()
-                R.string.actions_go_to_settings -> onGoToSettingsEvent.postUnitEvent()
+                R.string.actions_go_to_settings -> onGoToSystemSettingsEvent.postUnitEvent()
             }
         }
     }
@@ -176,18 +177,17 @@ class AuthorizationsListViewModel(
                 R.id.negativeActionView -> false
                 else -> return
             }
-            val locationPermissionsGranted = locationManager.locationPermissionsGranted(context = appContext)
-            val shouldRequestPermission = if (it.isV2Api) {
-                interactorV2.shouldRequestPermission(it.connectionID, locationPermissionsGranted)
-            } else {
-                interactorV1.shouldRequestPermission(it.connectionID, locationPermissionsGranted)
-            }
+
+            val shouldRequestPermission = shouldRequestPermission(
+                geolocationRequired = it.geolocationRequired,
+                locationPermissionsAreGranted = locationManager.locationPermissionsGranted(context = appContext)
+            )
             if (shouldRequestPermission) {
                 onRequestPermissionEvent.postValue(Triple(it.connectionID, it.authorizationID, confirm))
+            } else if (it.geolocationRequired && !locationManager.isLocationProviderActive(appContext)) {
+                //TODO handle case when no active location providers and geolocation is required.
             } else {
-                if (locationManager.isLocationProviderActive(appContext)) {
-                    updateAuthorization(listItem = it, confirm = confirm)
-                }
+                updateAuthorization(listItem = it, confirm = confirm)
             }
         }
     }

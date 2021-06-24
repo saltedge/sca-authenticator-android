@@ -27,5 +27,5 @@ import com.saltedge.authenticator.core.model.ID
  * Revoke SCA Connection request result
  */
 interface ConnectionsV2RevokeListener {
-    fun onConnectionsV2RevokeResult(revokedConnections: List<ID>, apiErrors: List<ApiErrorData>)
+    fun onConnectionsV2RevokeResult(revokedIDs: List<ID>, apiErrors: List<ApiErrorData>)
 }

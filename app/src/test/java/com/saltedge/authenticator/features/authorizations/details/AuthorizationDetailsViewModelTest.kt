@@ -64,7 +64,8 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
         connectionName = "DemoBank",
         connectionLogoUrl = "",
         status = AuthorizationStatus.PENDING,
-        apiVersion = "2"
+        apiVersion = "2",
+        geolocationRequired = false
     )
 
     @Before
@@ -115,7 +116,8 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
                 connectionName = "",
                 connectionLogoUrl = "",
                 status = AuthorizationStatus.LOADING,
-                apiVersion = "1"
+                apiVersion = "1",
+                geolocationRequired = false
             ))
         )
         assertThat(testViewModel.titleRes, equalTo(R.string.authorization_feature_title))
@@ -158,7 +160,8 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
                 connectionName = "",
                 connectionLogoUrl = "",
                 status = AuthorizationStatus.LOADING,
-                apiVersion = "2"
+                apiVersion = "2",
+                geolocationRequired = false
             ))
         )
         assertThat(testViewModel.titleRes, equalTo(R.string.authorization_feature_title))
@@ -194,7 +197,8 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
             connectionName = "",
             connectionLogoUrl = "",
             status = AuthorizationStatus.UNAVAILABLE,
-            apiVersion = "1"
+            apiVersion = "1",
+            geolocationRequired = false
         )))
     }
 
@@ -228,7 +232,8 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
             connectionName = "",
             connectionLogoUrl = "",
             status = AuthorizationStatus.UNAVAILABLE,
-            apiVersion = "2"
+            apiVersion = "2",
+            geolocationRequired = false
         )))
     }
 
@@ -262,7 +267,8 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
             connectionName = "",
             connectionLogoUrl = "",
             status = AuthorizationStatus.UNAVAILABLE,
-            apiVersion = "2"
+            apiVersion = "2",
+            geolocationRequired = false
         )))
     }
 

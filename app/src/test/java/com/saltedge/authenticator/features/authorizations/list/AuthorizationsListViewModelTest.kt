@@ -106,6 +106,7 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
         createdAt = 200L
         updatedAt = 200L
         apiVersion = API_V1_VERSION
+        geolocationRequired = true//TODO
     }
     private val mockConnectionV2 = Connection().apply {
         guid = "guid2"
@@ -118,6 +119,7 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
         createdAt = 200L
         updatedAt = 200L
         apiVersion = API_V2_VERSION
+        geolocationRequired = true//TODO
     }
     private val richConnectionV1 = RichConnection(mockConnectionV1, CommonTestTools.testPrivateKey)
     private val richConnectionV2 = RichConnection(mockConnectionV2, CommonTestTools.testPrivateKey)
@@ -472,7 +474,8 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
     @Throws(Exception::class)
     fun onListItemClickTestCase4() {
         //given itemViewId = R.id.positiveActionView
-        doReturn(true).`when`(mockLocationManager).isLocationProviderActive(TestAppTools.applicationContext)
+        given(mockLocationManager.locationPermissionsGranted(TestAppTools.applicationContext)).willReturn(true)
+        given(mockLocationManager.isLocationProviderActive(TestAppTools.applicationContext)).willReturn(true)
         viewModel.listItems.postValue(items)
 
         //when
@@ -523,7 +526,8 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
     @Throws(Exception::class)
     fun onListItemClickTestCase6() {
         //given itemViewId = R.id.negativeActionView
-        doReturn(true).`when`(mockLocationManager).isLocationProviderActive(TestAppTools.applicationContext)
+        given(mockLocationManager.locationPermissionsGranted(TestAppTools.applicationContext)).willReturn(true)
+        given(mockLocationManager.isLocationProviderActive(TestAppTools.applicationContext)).willReturn(true)
         viewModel.listItems.postValue(items)
 
         //when
@@ -972,11 +976,11 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
     @Test
     @Throws(Exception::class)
     fun onDialogActionIdClickCase1() {
-        viewModel.onDialogActionIdClick(dialogActionId = DialogInterface.BUTTON_NEGATIVE, actionResId = R.string.actions_proceed)
+        viewModel.onPermissionRationaleDialogActionClick(dialogActionId = DialogInterface.BUTTON_NEGATIVE, actionResId = R.string.actions_proceed)
 
         assertNull(viewModel.onAskPermissionsEvent.value)
 
-        viewModel.onDialogActionIdClick(dialogActionId = DialogInterface.BUTTON_POSITIVE, actionResId= R.string.actions_proceed)
+        viewModel.onPermissionRationaleDialogActionClick(dialogActionId = DialogInterface.BUTTON_POSITIVE, actionResId= R.string.actions_proceed)
 
         assertNotNull(viewModel.onAskPermissionsEvent.value)
     }
@@ -984,13 +988,13 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
     @Test
     @Throws(Exception::class)
     fun onDialogActionIdClickCase2() {
-        viewModel.onDialogActionIdClick(dialogActionId = DialogInterface.BUTTON_NEGATIVE, actionResId = R.string.actions_go_to_settings)
+        viewModel.onPermissionRationaleDialogActionClick(dialogActionId = DialogInterface.BUTTON_NEGATIVE, actionResId = R.string.actions_go_to_settings)
 
-        assertNull(viewModel.onGoToSettingsEvent.value)
+        assertNull(viewModel.onGoToSystemSettingsEvent.value)
 
-        viewModel.onDialogActionIdClick(dialogActionId = DialogInterface.BUTTON_POSITIVE, actionResId= R.string.actions_go_to_settings)
+        viewModel.onPermissionRationaleDialogActionClick(dialogActionId = DialogInterface.BUTTON_POSITIVE, actionResId= R.string.actions_go_to_settings)
 
-        assertNotNull(viewModel.onGoToSettingsEvent.value)
+        assertNotNull(viewModel.onGoToSystemSettingsEvent.value)
     }
 
     private fun createAuthorization(id: Int): AuthorizationData {

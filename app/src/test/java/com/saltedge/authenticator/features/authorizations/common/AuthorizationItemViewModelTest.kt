@@ -58,7 +58,8 @@ class AuthorizationItemViewModelTest {
             connectionLogoUrl = "url",
             validSeconds = 300,
             startTime = DateTime(),
-            apiVersion = "1"
+            apiVersion = "1",
+            geolocationRequired = false
         )
     }
 
@@ -312,7 +313,8 @@ class AuthorizationItemViewModelTest {
             connectionLogoUrl = "$index",
             validSeconds = 100,
             startTime = DateTime(index.toLong()),
-            apiVersion = "1"
+            apiVersion = "1",
+            geolocationRequired = false
         )
     }
 
@@ -493,7 +495,8 @@ class AuthorizationItemViewModelTest {
                     validSeconds = 300,
                     startTime = DateTime(0L),
                     apiVersion = "1",
-                    status = AuthorizationStatus.PENDING
+                    status = AuthorizationStatus.PENDING,
+                    geolocationRequired = connection.geolocationRequired ?: false
                 )
             )
         )
@@ -533,7 +536,8 @@ class AuthorizationItemViewModelTest {
                     validSeconds = 300,
                     startTime = DateTime(0L),
                     apiVersion = "2",
-                    status = AuthorizationStatus.CONFIRM_PROCESSING
+                    status = AuthorizationStatus.CONFIRM_PROCESSING,
+                    geolocationRequired = connection.geolocationRequired ?: false
                 )
             )
         )

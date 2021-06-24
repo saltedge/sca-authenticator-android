@@ -48,7 +48,8 @@ data class AuthorizationItemViewModel(
     val connectionName: String,
     val connectionLogoUrl: String?,
     val apiVersion: String,
-    var status: AuthorizationStatus = AuthorizationStatus.PENDING
+    var status: AuthorizationStatus = AuthorizationStatus.PENDING,
+    val geolocationRequired: Boolean
 ) : Serializable {
     private val secondsOfLifeOfFinalModel = 4
     var destroyAt: DateTime? = null
@@ -170,7 +171,8 @@ fun AuthorizationData.toAuthorizationItemViewModel(connection: ConnectionAbs): A
             authorizationID = this.id,
             authorizationCode = this.authorizationCode ?: "",
             apiVersion = API_V1_VERSION,
-            status = AuthorizationStatus.PENDING
+            status = AuthorizationStatus.PENDING,
+            geolocationRequired = connection.geolocationRequired ?: false
         )
     } catch (e: Exception) {
         Timber.e(
@@ -204,7 +206,8 @@ fun AuthorizationV2Data.toAuthorizationItemViewModel(connection: ConnectionAbs):
             authorizationID = this.authorizationID ?: "",
             authorizationCode = this.authorizationCode ?: "",
             apiVersion = API_V2_VERSION,
-            status = this.status?.toAuthorizationStatus() ?: AuthorizationStatus.PENDING
+            status = this.status?.toAuthorizationStatus() ?: AuthorizationStatus.PENDING,
+            geolocationRequired = connection.geolocationRequired ?: false
         )
     } catch (e: Exception) {
         Timber.e(

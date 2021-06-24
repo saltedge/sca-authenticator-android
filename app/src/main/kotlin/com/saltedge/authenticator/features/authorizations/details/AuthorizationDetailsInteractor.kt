@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.authorizations.details
 
-import androidx.lifecycle.Lifecycle
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.api.model.error.isAuthorizationNotFound
 import com.saltedge.authenticator.core.api.model.error.isConnectionNotFound
@@ -35,6 +34,7 @@ abstract class AuthorizationDetailsInteractor(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyManagerAbs,
 ) : AuthorizationDetailsInteractorAbs {
+
     override var contract: AuthorizationDetailsInteractorCallback? = null
     var richConnection: RichConnection? = null
         private set

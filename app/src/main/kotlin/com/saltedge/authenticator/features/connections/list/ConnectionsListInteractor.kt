@@ -25,9 +25,9 @@ import com.saltedge.authenticator.core.api.model.error.isConnectivityError
 import com.saltedge.authenticator.core.model.*
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.Connection
-import com.saltedge.authenticator.models.collectRichConnections
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.toRichConnection
+import com.saltedge.authenticator.models.toRichConnectionPair
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
@@ -47,17 +47,49 @@ class ConnectionsListInteractor(
     private val apiManagerV2: ScaServiceClientAbs,
     private val keyStoreManager: KeyManagerAbs,
     private val cryptoTools: CryptoToolsV1Abs
-) : FetchEncryptedDataListener,
+) : ConnectionsListInteractorAbs,
+    FetchEncryptedDataListener,
     CoroutineScope,
     ConnectionsRevokeListener,
     ConnectionsV2RevokeListener
 {
-
-    var contract: ConnectionsListInteractorCallback? = null
+    override var contract: ConnectionsListInteractorCallback? = null
     private val decryptJob: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = decryptJob + Dispatchers.IO
     private var richConnections: Map<ID, RichConnection> = emptyMap()
+
+    override fun updateConnections() {
+        val connections = connectionsRepository.getAllConnections()
+        richConnections = connections.mapNotNull { it.toRichConnectionPair(keyStoreManager) }.toMap()
+        contract?.onConnectionsDataChanged(connections.sortedBy { it.createdAt })
+    }
+
+    override fun onDestroy() {
+        decryptJob.cancel()
+    }
+
+    override fun updateNameAndSave(guid: GUID, newConnectionName: String): Boolean {
+        val connection = connectionsRepository.getByGuid(guid) ?: return false
+        connectionsRepository.updateNameAndSave(connection, newConnectionName)
+        return true
+    }
+
+    override fun updateConsents() {
+        val v1RichConnections = richConnections.values.filter { it.connection.apiVersion == API_V1_VERSION }
+        if (v1RichConnections.isEmpty()) return
+        apiManagerV1.getConsents(connectionsAndKeys = v1RichConnections.toList(), resultCallback = this)
+    }
+
+    override fun revokeConnection(guid: String) {
+        val connection = connectionsRepository.getByGuid(guid) ?: return
+        if (connection.isActive()) {
+            sendRevokeRequestForConnection(connection)
+        } else {
+            deleteConnection(guid = connection.guid)
+            updateConnections()
+        }
+    }
 
     override fun onFetchEncryptedDataResult(
         result: List<EncryptedData>,
@@ -73,55 +105,17 @@ class ConnectionsListInteractor(
         val errorTokens = apiErrors.mapNotNull { if (it.isConnectivityError()) null else it.accessToken }
         val allTokensToRevoke = revokedTokens + errorTokens
         deleteConnectionsAndKeysByTokens(revokedTokens = allTokensToRevoke)
-        if (allTokensToRevoke.isNotEmpty()) contract?.onConnectionsDataChanged()
+        if (allTokensToRevoke.isNotEmpty()) updateConnections()
     }
 
-    override fun onConnectionsV2RevokeResult(
-        revokedIDs: List<ID>,
-        apiErrors: List<ApiErrorData>
-    ) {
+    override fun onConnectionsV2RevokeResult(revokedIDs: List<ID>, apiErrors: List<ApiErrorData>) {
         deleteConnectionsAndKeysByIDs(revokedIDs = revokedIDs)
         val tokensToRevoke = apiErrors.mapNotNull { if (it.isConnectivityError()) null else it.accessToken }
         deleteConnectionsAndKeysByTokens(revokedTokens = tokensToRevoke)
-        if (revokedIDs.isNotEmpty() || tokensToRevoke.isNotEmpty()) {
-            contract?.onConnectionsDataChanged()
-        }
-    }
-
-    fun updateConnections() {
-        richConnections = collectRichConnections(connectionsRepository, keyStoreManager)
-    }
-
-    fun onDestroy() {
-        decryptJob.cancel()
-    }
-
-    fun getAllConnections(): List<Connection> {
-        return connectionsRepository.getAllConnections().sortedBy { it.createdAt }
-    }
-
-    fun updateNameAndSave(guid: GUID, newConnectionName: String): Boolean {
-        val connection = connectionsRepository.getByGuid(guid) ?: return false
-        connectionsRepository.updateNameAndSave(connection, newConnectionName)
-        return true
-    }
-
-    fun getConsents() {
-        val v1RichConnections = richConnections.values.filter { it.connection.apiVersion == API_V1_VERSION }
-        if (v1RichConnections.isEmpty()) return
-        apiManagerV1.getConsents(connectionsAndKeys = v1RichConnections.toList(), resultCallback = this)
-    }
-
-    fun revokeConnection(guid: String) {
-        val connection = connectionsRepository.getByGuid(guid) ?: return
-        sendRevokeRequestForConnection(connection)
+        if (revokedIDs.isNotEmpty() || tokensToRevoke.isNotEmpty()) updateConnections()
     }
 
     private fun sendRevokeRequestForConnection(connection: Connection) {
-        if (!connection.isActive()) {
-            deleteConnection(guid = connection.guid)
-            return
-        }
         val richConnection = connection.toRichConnection(keyStoreManager) ?: return
         if (connection.apiVersion == API_V1_VERSION) {
             apiManagerV1.revokeConnections(connectionsAndKeys = listOf(richConnection), resultCallback = this)
@@ -164,4 +158,18 @@ class ConnectionsListInteractor(
         keyStoreManager.deleteKeyPairIfExist(guid)
         connectionsRepository.deleteConnection(guid)
     }
+}
+
+interface ConnectionsListInteractorAbs {
+    var contract: ConnectionsListInteractorCallback?
+    fun updateConnections()
+    fun onDestroy()
+    fun updateNameAndSave(guid: GUID, newConnectionName: String): Boolean
+    fun updateConsents()
+    fun revokeConnection(guid: String)
+}
+
+interface ConnectionsListInteractorCallback {
+    fun onConsentsDataChanged(consents: List<ConsentData>)
+    fun onConnectionsDataChanged(connections: List<Connection>)
 }

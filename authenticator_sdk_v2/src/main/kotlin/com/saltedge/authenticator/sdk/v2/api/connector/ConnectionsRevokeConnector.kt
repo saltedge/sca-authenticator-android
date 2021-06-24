@@ -82,10 +82,7 @@ internal class ConnectionsRevokeConnector(
      * Pass result to resultCallback.onConnectionsRevokeResult(...)
      */
     public override fun onQueueFinished() {
-        resultCallback?.onConnectionsV2RevokeResult(
-            revokedConnections = revokedIDs,
-            apiErrors = revokeErrors
-        )
+        resultCallback?.onConnectionsV2RevokeResult(revokedIDs = revokedIDs, apiErrors = revokeErrors)
     }
 
     /**
