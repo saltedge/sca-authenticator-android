@@ -66,19 +66,26 @@ class ConnectionsListInteractor(
         processOfEncryptedConsentsResult(encryptedList = result)
     }
 
-    override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?) {
-        if (apiError?.isConnectivityError() == true) return
-        deleteConnectionsAndKeysByTokens(revokedTokens = revokedTokens)
-        contract?.onConnectionsDataChanged()
+    override fun onConnectionsRevokeResult(
+        revokedTokens: List<Token>,
+        apiErrors: List<ApiErrorData>
+    ) {
+        val errorTokens = apiErrors.mapNotNull { if (it.isConnectivityError()) null else it.accessToken }
+        val allTokensToRevoke = revokedTokens + errorTokens
+        deleteConnectionsAndKeysByTokens(revokedTokens = allTokensToRevoke)
+        if (allTokensToRevoke.isNotEmpty()) contract?.onConnectionsDataChanged()
     }
 
     override fun onConnectionsV2RevokeResult(
-        revokedConnections: List<ID>,
-        apiError: ApiErrorData?
+        revokedIDs: List<ID>,
+        apiErrors: List<ApiErrorData>
     ) {
-        if (apiError?.isConnectivityError() == true) return
-        deleteConnectionsAndKeysByIDs(revokedIDs = revokedConnections)
-        contract?.onConnectionsDataChanged()
+        deleteConnectionsAndKeysByIDs(revokedIDs = revokedIDs)
+        val tokensToRevoke = apiErrors.mapNotNull { if (it.isConnectivityError()) null else it.accessToken }
+        deleteConnectionsAndKeysByTokens(revokedTokens = tokensToRevoke)
+        if (revokedIDs.isNotEmpty() || tokensToRevoke.isNotEmpty()) {
+            contract?.onConnectionsDataChanged()
+        }
     }
 
     fun updateConnections() {
