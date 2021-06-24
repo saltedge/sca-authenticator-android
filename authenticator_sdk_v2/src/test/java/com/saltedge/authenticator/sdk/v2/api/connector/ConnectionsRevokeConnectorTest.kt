@@ -81,7 +81,7 @@ class ConnectionsRevokeConnectorTest {
         )
 
         verify {
-            mockCallback.onConnectionsV2RevokeResult(revokedConnections = listOf("333"), apiError = null)
+            mockCallback.onConnectionsV2RevokeResult(revokedIDs = listOf("333"), apiErrors = emptyList())
         }
         confirmVerified(mockCallback)
     }
@@ -98,12 +98,12 @@ class ConnectionsRevokeConnectorTest {
 
         verify {
             mockCallback.onConnectionsV2RevokeResult(
-                revokedConnections = emptyList(),
-                apiError = ApiErrorData(
+                revokedIDs = emptyList(),
+                apiErrors = listOf(ApiErrorData(
                     errorMessage = "Resource not found",
                     errorClassName = "NotFound",
                     accessToken = "accessToken"
-                )
+                ))
             )
         }
         confirmVerified(mockCallback)
@@ -117,12 +117,12 @@ class ConnectionsRevokeConnectorTest {
 
         verify {
             mockCallback.onConnectionsV2RevokeResult(
-                revokedConnections = emptyList(),
-                apiError = ApiErrorData(
+                revokedIDs = emptyList(),
+                apiErrors = listOf(ApiErrorData(
                     errorMessage = "Request Error (200)",
                     errorClassName = ERROR_CLASS_API_RESPONSE,
                     accessToken = "accessToken"
-                )
+                ))
             )
         }
         confirmVerified(mockCallback)
@@ -139,12 +139,12 @@ class ConnectionsRevokeConnectorTest {
 
         verify {
             mockCallback.onConnectionsV2RevokeResult(
-                revokedConnections = emptyList(),
-                apiError = ApiErrorData(
+                revokedIDs = emptyList(),
+                apiErrors = listOf(ApiErrorData(
                     errorMessage = "Request Error (404)",
                     errorClassName = ERROR_CLASS_API_RESPONSE,
                     accessToken = "accessToken"
-                )
+                ))
             )
         }
         confirmVerified(mockCallback)
@@ -158,10 +158,12 @@ class ConnectionsRevokeConnectorTest {
 
         verify {
             mockCallback.onConnectionsV2RevokeResult(
-                revokedConnections = emptyList(),
-                apiError = ApiErrorData(
-                    errorClassName = ERROR_CLASS_HOST_UNREACHABLE,
-                    accessToken = "accessToken"
+                revokedIDs = emptyList(),
+                apiErrors = listOf(
+                    ApiErrorData(
+                        errorClassName = ERROR_CLASS_HOST_UNREACHABLE,
+                        accessToken = "accessToken"
+                    )
                 )
             )
         }
