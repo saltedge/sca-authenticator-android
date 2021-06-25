@@ -28,36 +28,56 @@ import com.saltedge.authenticator.core.api.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.RichConnection
-import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener
-
+import com.saltedge.authenticator.sdk.api.ApiInterface
 import com.saltedge.authenticator.sdk.api.model.response.RevokeAccessTokenResponse
 import com.saltedge.authenticator.sdk.api.model.response.RevokeAccessTokenResponseData
-import com.saltedge.authenticator.sdk.api.ApiInterface
+import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener
 import com.saltedge.authenticator.sdk.testTools.get404Response
-import io.mockk.confirmVerified
-import io.mockk.every
-import io.mockk.mockkClass
-import io.mockk.verify
 import okhttp3.Request
-import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
+import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.BDDMockito.given
+import org.mockito.Mockito
+import org.mockito.kotlin.argumentCaptor
 import org.robolectric.RobolectricTestRunner
 import retrofit2.Call
 import retrofit2.Response
-import java.net.ConnectException
+import java.net.UnknownHostException
 import java.security.PrivateKey
 
 @RunWith(RobolectricTestRunner::class)
 class ConnectionsRevokeConnectorTest {
 
+    private val mockApi: ApiInterface = Mockito.mock(ApiInterface::class.java)
+    private val mockCallback: ConnectionsRevokeListener = Mockito.mock(ConnectionsRevokeListener::class.java)
+    private val mockCall: Call<RevokeAccessTokenResponse> = Mockito.mock(Call::class.java) as Call<RevokeAccessTokenResponse>
+    private val requestConnection: ConnectionAbs = getDefaultTestConnection()
+    private val requestUrl = "https://localhost/api/authenticator/v1/connections"
+    private val request = Request.Builder().url(requestUrl).addHeader(HEADER_KEY_ACCESS_TOKEN, "accessToken").build()
+    private var privateKey: PrivateKey = CommonTestTools.testPrivateKey
+    private lateinit var connector: ConnectionsRevokeConnector
+
+    @Before
+    @Throws(Exception::class)
+    fun setUp() {
+        given(mockApi.revokeConnection(
+            requestUrl = Mockito.anyString(),
+            headersMap = Mockito.anyMap()
+        )).willReturn(mockCall)
+        given(mockCall.request()).willReturn(request)
+
+        connector = ConnectionsRevokeConnector(mockApi, mockCallback)
+    }
+
     @Test
     @Throws(Exception::class)
     fun valuesTest() {
-        val connector = ConnectionsRevokeConnector(mockApi, null)
+        connector.resultCallback = null
 
         Assert.assertNull(connector.resultCallback)
 
@@ -69,11 +89,7 @@ class ConnectionsRevokeConnectorTest {
     @Test
     @Throws(Exception::class)
     fun revokeTokensForTest_allSuccess() {
-        val connector = ConnectionsRevokeConnector(mockApi, mockCallback)
         connector.revokeTokensFor(listOf(RichConnection(requestConnection, privateKey)))
-
-        verify { mockCall.enqueue(connector) }
-
         connector.onResponse(
             mockCall,
             Response.success(
@@ -83,116 +99,89 @@ class ConnectionsRevokeConnectorTest {
             )
         )
 
-        verify {
-            mockCallback.onConnectionsRevokeResult(revokedTokens = listOf("accessToken"), apiError = null)
-        }
-        confirmVerified(mockCallback)
+        val requestUrlCaptor = argumentCaptor<String>()
+        Mockito.verify(mockApi).revokeConnection(
+            requestUrl = requestUrlCaptor.capture(),
+            headersMap = Mockito.anyMap()
+        )
+        assertThat(requestUrlCaptor.firstValue, equalTo(requestUrl))
+        Mockito.verify(mockCallback).onConnectionsRevokeResult(
+            revokedTokens = listOf("accessToken"),
+            apiErrors = emptyList()
+        )
+        Mockito.verifyNoMoreInteractions(mockCallback)
     }
 
     @Test
     @Throws(Exception::class)
     fun revokeTokensForTest_withError404() {
-        val connector = ConnectionsRevokeConnector(mockApi, mockCallback)
         connector.revokeTokensFor(listOf(RichConnection(requestConnection, privateKey)))
-
-        verify { mockCall.enqueue(connector) }
-
         connector.onResponse(mockCall, get404Response())
 
-        verify {
-            mockCallback.onConnectionsRevokeResult(
-                revokedTokens = emptyList(),
-                apiError = ApiErrorData(
-                    errorMessage = "Resource not found",
-                    errorClassName = "NotFound",
-                    accessToken = "accessToken"
-                )
-            )
-        }
-        confirmVerified(mockCallback)
+        Mockito.verify(mockCallback).onConnectionsRevokeResult(
+            revokedTokens = emptyList(),
+            apiErrors = listOf(ApiErrorData(
+                errorMessage = "Resource not found",
+                errorClassName = "NotFound",
+                accessToken = "accessToken"
+            ))
+        )
+        Mockito.verifyNoMoreInteractions(mockCallback)
     }
 
     @Test
     @Throws(Exception::class)
     fun revokeTokensForTest_successWithoutResponseBody() {
-        val connector = ConnectionsRevokeConnector(mockApi, mockCallback)
         connector.onResponse(mockCall, Response.success(null))
 
-        verify {
-            mockCallback.onConnectionsRevokeResult(
-                revokedTokens = emptyList(),
-                apiError = ApiErrorData(
-                    errorMessage = "Request Error (200)",
-                    errorClassName = ERROR_CLASS_API_RESPONSE,
-                    accessToken = "accessToken"
-                )
-            )
-        }
-        confirmVerified(mockCallback)
+        Mockito.verify(mockCallback).onConnectionsRevokeResult(
+            revokedTokens = emptyList(),
+            apiErrors = listOf(ApiErrorData(
+                errorMessage = "Request Error (200)",
+                errorClassName = ERROR_CLASS_API_RESPONSE,
+                accessToken = "accessToken"
+            ))
+        )
+        Mockito.verifyNoMoreInteractions(mockCallback)
     }
 
     @Test
     @Throws(Exception::class)
     fun revokeTokensForTest_withUnknownError() {
-        val connector = ConnectionsRevokeConnector(mockApi, mockCallback)
         connector.onResponse(
             mockCall,
             Response.error(404, "{\"message\":\"Unknown error\"}".toResponseBody(null))
         )
 
-        verify {
-            mockCallback.onConnectionsRevokeResult(
-                revokedTokens = emptyList(),
-                apiError = ApiErrorData(
-                    errorMessage = "Request Error (404)",
-                    errorClassName = ERROR_CLASS_API_RESPONSE,
-                    accessToken = "accessToken"
-                )
-            )
-        }
-        confirmVerified(mockCallback)
+        Mockito.verify(mockCallback).onConnectionsRevokeResult(
+            revokedTokens = emptyList(),
+            apiErrors = listOf(ApiErrorData(
+                errorMessage = "Request Error (404)",
+                errorClassName = ERROR_CLASS_API_RESPONSE,
+                accessToken = "accessToken"
+            ))
+        )
+        Mockito.verifyNoMoreInteractions(mockCallback)
     }
 
     @Test
     @Throws(Exception::class)
     fun revokeTokensForTest_withException() {
-        val connector = ConnectionsRevokeConnector(mockApi, mockCallback)
-        connector.onFailure(mockCall, ConnectException())
+        //given
+        val exception = UnknownHostException()
 
-        verify {
-            mockCallback.onConnectionsRevokeResult(
-                revokedTokens = emptyList(),
-                apiError = ApiErrorData(
-                    errorClassName = ERROR_CLASS_HOST_UNREACHABLE,
-                    accessToken = "accessToken"
-                )
-            )
-        }
-        confirmVerified(mockCallback)
-    }
 
-    private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
-    private val mockCallback: ConnectionsRevokeListener = mockkClass(ConnectionsRevokeListener::class)
-    private val mockCall: Call<RevokeAccessTokenResponse> =
-        mockkClass(Call::class) as Call<RevokeAccessTokenResponse>
-    private val requestConnection: ConnectionAbs = getDefaultTestConnection()
-    private val requestUrl = "https://localhost/api/authenticator/v1/connections"
-    private var privateKey: PrivateKey = CommonTestTools.testPrivateKey
+        //when
+        connector.onFailure(mockCall, exception)
 
-    @Before
-    @Throws(Exception::class)
-    fun setUp() {
-        every {
-            mockApi.revokeConnection(
-                requestUrl = requestUrl,
-                headersMap = any()
-            )
-        } returns mockCall
-        every { mockCall.enqueue(any()) } returns Unit
-        every { mockCall.request() } returns Request.Builder().url(requestUrl).addHeader(
-            HEADER_KEY_ACCESS_TOKEN,
-            "accessToken"
-        ).build()
-        every { mockCallback.onConnectionsRevokeResult(any(), any()) } returns Unit
+        //then
+        Mockito.verify(mockCallback).onConnectionsRevokeResult(
+            revokedTokens = emptyList(),
+            apiErrors = listOf(ApiErrorData(
+                errorClassName = ERROR_CLASS_HOST_UNREACHABLE,
+                accessToken = "accessToken"
+            ))
+        )
+        Mockito.verifyNoMoreInteractions(mockCallback)
     }
 }
