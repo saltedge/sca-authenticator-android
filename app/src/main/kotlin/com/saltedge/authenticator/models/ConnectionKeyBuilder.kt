@@ -80,7 +80,7 @@ fun ConnectionAbs.toRichConnection(keyStoreManager: KeyManagerAbs): RichConnecti
  * @param keyStoreManager data source of keys
  * @return Pair<ID, ConnectionAndKey>
  */
-private fun ConnectionAbs.toRichConnectionPair(
+fun ConnectionAbs.toRichConnectionPair(
     keyStoreManager: KeyManagerAbs
 ): Pair<ID, RichConnection>? {
     return this.toRichConnection(keyStoreManager)?.let { model -> Pair(this.id, model) }

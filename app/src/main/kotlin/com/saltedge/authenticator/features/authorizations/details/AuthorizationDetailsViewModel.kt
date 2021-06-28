@@ -216,7 +216,8 @@ class AuthorizationDetailsViewModel(
             connectionName = "",
             connectionLogoUrl = "",
             status = status,
-            apiVersion = apiVersion ?: API_V1_VERSION
+            apiVersion = apiVersion ?: API_V1_VERSION,
+            geolocationRequired = false
         )
     }
 }

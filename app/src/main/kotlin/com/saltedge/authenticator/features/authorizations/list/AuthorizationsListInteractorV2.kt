@@ -58,14 +58,6 @@ class AuthorizationsListInteractorV2(
     private var pollingService = apiManager.createAuthorizationsPollingService()
     private var richConnections: Map<ID, RichConnection> = collectRichConnections()
 
-    fun shouldRequestPermission(connectionId: ID, locationPermissionsIsGranted: Boolean): Boolean {
-        val richConnection: RichConnection? = richConnections[connectionId]
-        return shouldRequestPermission(
-            geolocationRequired = richConnection?.connection?.geolocationRequired,
-            locationPermissionsAreGranted = locationPermissionsIsGranted
-        )
-    }
-
     fun onResume() {
         richConnections = collectRichConnections()
         pollingService.contract = this

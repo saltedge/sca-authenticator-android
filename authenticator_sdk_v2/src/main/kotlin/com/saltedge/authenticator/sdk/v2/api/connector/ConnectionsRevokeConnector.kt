@@ -44,8 +44,8 @@ internal class ConnectionsRevokeConnector(
     var resultCallback: ConnectionsV2RevokeListener? = null
 ) : RequestQueueAbs<RevokeConnectionResponse>() {
 
-    private var errorResult: ApiErrorData? = null
-    private var result = mutableListOf<ID>()
+    private var revokedIDs = mutableListOf<ID>()
+    private var revokeErrors = mutableListOf<ApiErrorData>()
 
     /**
      * Prepare request url, request models (AuthenticatedRequestData)
@@ -58,7 +58,8 @@ internal class ConnectionsRevokeConnector(
             super.setQueueSize(forConnections.size)
             if (super.queueIsEmpty()) onQueueFinished()
             else {
-                this.result = ArrayList()
+                this.revokeErrors = mutableListOf()
+                this.revokedIDs = mutableListOf()
                 forConnections.forEach {
                     val request = RevokeConnectionRequest()
                     val headers = createAccessTokenHeader(it.connection.accessToken)
@@ -81,7 +82,7 @@ internal class ConnectionsRevokeConnector(
      * Pass result to resultCallback.onConnectionsRevokeResult(...)
      */
     public override fun onQueueFinished() {
-        resultCallback?.onConnectionsV2RevokeResult(revokedConnections = result, apiError = errorResult)
+        resultCallback?.onConnectionsV2RevokeResult(revokedIDs = revokedIDs, apiErrors = revokeErrors)
     }
 
     /**
@@ -91,7 +92,7 @@ internal class ConnectionsRevokeConnector(
      * @param response - RevokeAccessTokenResponseData model
      */
     override fun onSuccessResponse(call: Call<RevokeConnectionResponse>, response: RevokeConnectionResponse) {
-        result.add(response.data.revokedConnectionId)
+        revokedIDs.add(response.data.revokedConnectionId)
         super.onResponseReceived()
     }
 
@@ -102,7 +103,7 @@ internal class ConnectionsRevokeConnector(
      * @param error - ApiError
      */
     override fun onFailureResponse(call: Call<RevokeConnectionResponse>, error: ApiErrorData) {
-        errorResult = error
+        revokeErrors.add(error)
         super.onResponseReceived()
     }
 }

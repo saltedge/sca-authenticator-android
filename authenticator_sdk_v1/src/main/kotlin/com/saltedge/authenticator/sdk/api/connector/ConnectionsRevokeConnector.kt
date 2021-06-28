@@ -43,8 +43,8 @@ internal class ConnectionsRevokeConnector(
     var resultCallback: ConnectionsRevokeListener? = null
 ) : RequestQueueAbs<RevokeAccessTokenResponse>() {
 
-    private var result = mutableListOf<Token>()
-    private var errorResult: ApiErrorData? = null
+    private var revokedTokens = mutableListOf<Token>()
+    private var revokeErrors = mutableListOf<ApiErrorData>()
 
     /**
      * Prepare request url, request models (AuthenticatedRequestData)
@@ -63,7 +63,8 @@ internal class ConnectionsRevokeConnector(
                     signPrivateKey = key
                 )
             }
-            this.result = ArrayList()
+            this.revokedTokens = mutableListOf()
+            this.revokeErrors = mutableListOf()
             super.setQueueSize(requestData.size)
 
             if (super.queueIsEmpty()) onQueueFinished()
@@ -75,7 +76,10 @@ internal class ConnectionsRevokeConnector(
      * Pass result to resultCallback.onConnectionsRevokeResult(...)
      */
     public override fun onQueueFinished() {
-        resultCallback?.onConnectionsRevokeResult(result, errorResult)
+        resultCallback?.onConnectionsRevokeResult(
+            revokedTokens = revokedTokens,
+            apiErrors = revokeErrors
+        )
     }
 
     /**
@@ -89,7 +93,7 @@ internal class ConnectionsRevokeConnector(
         response: RevokeAccessTokenResponse
     ) {
         response.data?.accessToken?.let {
-            if ((response.data?.success == true)) result.add(it)
+            if ((response.data?.success == true)) revokedTokens.add(it)
         }
         super.onResponseReceived()
     }
@@ -101,7 +105,7 @@ internal class ConnectionsRevokeConnector(
      * @param error - ApiError
      */
     override fun onFailureResponse(call: Call<RevokeAccessTokenResponse>, error: ApiErrorData) {
-        errorResult = error
+        revokeErrors.add(error)
         super.onResponseReceived()
     }
 

@@ -179,7 +179,7 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
                             messageResId = R.string.grant_access_location_description,
                             positiveButtonResId = R.string.actions_go_to_settings,
                             listener = { _, dialogActionId ->
-                                viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_go_to_settings)
+                                viewModel.onPermissionRationaleDialogActionClick(dialogActionId, R.string.actions_go_to_settings)
                             })
                     } else {
                         activity?.showInfoDialog(
@@ -187,13 +187,13 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
                             messageResId = R.string.grant_access_location_description,
                             positiveButtonResId = R.string.actions_proceed,
                             listener = { _, dialogActionId ->
-                                viewModel.onDialogActionIdClick(dialogActionId, R.string.actions_proceed)
+                                viewModel.onPermissionRationaleDialogActionClick(dialogActionId, R.string.actions_proceed)
                             })
                     }
                 }
             }
         })
-        viewModel.onGoToSettingsEvent.observe(this, { event ->
+        viewModel.onGoToSystemSettingsEvent.observe(this, { event ->
             event.getContentIfNotHandled()?.let {
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 intent.data = Uri.fromParts("package", requireActivity().packageName, null)
