@@ -77,6 +77,8 @@ class AuthorizationsListViewModel(
     val onRequestPermissionEvent = MutableLiveData<Triple<String, String, Boolean>>()
     val onAskPermissionsEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onGoToSystemSettingsEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onRequestGPSProviderEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onEnableGpsEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
     init {
         interactorV1.contract = this
@@ -151,6 +153,7 @@ class AuthorizationsListViewModel(
             when (actionResId) {
                 R.string.actions_proceed -> onAskPermissionsEvent.postUnitEvent()
                 R.string.actions_go_to_settings -> onGoToSystemSettingsEvent.postUnitEvent()
+                R.string.actions_enable -> onEnableGpsEvent.postUnitEvent()
             }
         }
     }
@@ -185,7 +188,7 @@ class AuthorizationsListViewModel(
             if (shouldRequestPermission) {
                 onRequestPermissionEvent.postValue(Triple(it.connectionID, it.authorizationID, confirm))
             } else if (it.geolocationRequired && !locationManager.isLocationProviderActive(appContext)) {
-                //TODO handle case when no active location providers and geolocation is required.
+                onRequestGPSProviderEvent.postUnitEvent()
             } else {
                 updateAuthorization(listItem = it, confirm = confirm)
             }
