@@ -129,7 +129,6 @@ class ViewModelsFactory @Inject constructor(
                         keyStoreManager = keyStoreManager,
                         cryptoTools = cryptoToolsV1,
                         apiManager = apiManagerV1,
-                        locationManager = DeviceLocationManager,
                         defaultDispatcher = Dispatchers.Default
                     ),
                     interactorV2 = AuthorizationsListInteractorV2(
@@ -144,7 +143,22 @@ class ViewModelsFactory @Inject constructor(
                 ) as T
             }
             modelClass.isAssignableFrom(AuthorizationDetailsViewModel::class.java) -> {
-                return createAuthorizationDetailsViewModel() as T
+                return AuthorizationDetailsViewModel(
+                    appContext = appContext,
+                    interactorV1 = AuthorizationDetailsInteractorV1(
+                        connectionsRepository = connectionsRepository,
+                        keyStoreManager = keyStoreManager,
+                        cryptoTools = cryptoToolsV1,
+                        apiManager = apiManagerV1
+                    ),
+                    interactorV2 = AuthorizationDetailsInteractorV2(
+                        connectionsRepository = connectionsRepository,
+                        keyStoreManager = keyStoreManager,
+                        cryptoTools = cryptoToolsV2,
+                        apiManager = apiManagerV2
+                    ),
+                    locationManager = DeviceLocationManager
+                ) as T
             }
             modelClass.isAssignableFrom(ConnectProviderViewModel::class.java) -> {
                 return createConnectProviderViewModel() as T
@@ -255,27 +269,6 @@ class ViewModelsFactory @Inject constructor(
             appContext = appContext,
             interactor = interactor,
             locationManager = DeviceLocationManager
-        )
-    }
-
-    private fun createAuthorizationDetailsViewModel(): AuthorizationDetailsViewModel {
-        val interactorV1 = AuthorizationDetailsInteractorV1(
-            connectionsRepository = connectionsRepository,
-            keyStoreManager = keyStoreManager,
-            cryptoTools = cryptoToolsV1,
-            apiManager = apiManagerV1,
-            locationManager = DeviceLocationManager
-        )
-        val interactorV2 = AuthorizationDetailsInteractorV2(
-            connectionsRepository = connectionsRepository,
-            keyStoreManager = keyStoreManager,
-            cryptoTools = cryptoToolsV2,
-            apiManager = apiManagerV2,
-            locationManager = DeviceLocationManager
-        )
-        return AuthorizationDetailsViewModel(
-            interactorV1 = interactorV1,
-            interactorV2 = interactorV2,
         )
     }
 }

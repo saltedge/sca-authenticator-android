@@ -254,7 +254,8 @@ class AuthorizationsListViewModel(
                 connectionID = listItem.connectionID,
                 authorizationID = listItem.authorizationID,
                 authorizationCode = listItem.authorizationCode,
-                confirm = confirm
+                confirm = confirm,
+                locationDescription = locationManager.locationDescription
             )
         }
         if (result) {

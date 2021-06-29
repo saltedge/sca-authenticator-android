@@ -28,7 +28,6 @@ import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationStatus
-import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
@@ -45,13 +44,14 @@ class AuthorizationDetailsInteractorV2(
     connectionsRepository: ConnectionsRepositoryAbs,
     keyStoreManager: KeyManagerAbs,
     private val cryptoTools: CryptoToolsV2Abs,
-    private val apiManager: ScaServiceClientAbs,
-    private val locationManager: DeviceLocationManagerAbs
+    private val apiManager: ScaServiceClientAbs
 ) : AuthorizationDetailsInteractor(
     connectionsRepository = connectionsRepository,
     keyStoreManager = keyStoreManager
 ), PollingAuthorizationContract, AuthorizationConfirmListener, AuthorizationDenyListener {
-    private var pollingService: SingleAuthorizationPollingService = apiManager.createSingleAuthorizationPollingService()
+
+    private var pollingService: SingleAuthorizationPollingService =
+        apiManager.createSingleAuthorizationPollingService()
 
     override fun startPolling(authorizationID: ID) {
         pollingService.contract = this
@@ -83,10 +83,15 @@ class AuthorizationDetailsInteractorV2(
         error?.let { processApiError(it) } ?: contract?.onAuthorizationNotFoundError()
     }
 
-    override fun updateAuthorization(authorizationID: ID, authorizationCode: String, confirm: Boolean): Boolean {
+    override fun updateAuthorization(
+        authorizationID: ID,
+        authorizationCode: String,
+        confirm: Boolean,
+        locationDescription: String?
+    ): Boolean {
         val authorizationData = UpdateAuthorizationData(
             authorizationCode = authorizationCode,
-            geolocation = locationManager.locationDescription ?: "",
+            geolocation = locationDescription ?: "",
             userAuthorizationType = AppTools.lastUnlockType.description
         )
         if (confirm) {
@@ -107,7 +112,10 @@ class AuthorizationDetailsInteractorV2(
         return true
     }
 
-    override fun onAuthorizationConfirmSuccess(result: UpdateAuthorizationResponseData, connectionID: ID) {
+    override fun onAuthorizationConfirmSuccess(
+        result: UpdateAuthorizationResponseData,
+        connectionID: ID
+    ) {
         contract?.onConfirmDenySuccess(result.status.toAuthorizationStatus())
     }
 
@@ -119,7 +127,10 @@ class AuthorizationDetailsInteractorV2(
         processApiError(error)
     }
 
-    override fun onAuthorizationDenySuccess(result: UpdateAuthorizationResponseData, connectionID: ID) {
+    override fun onAuthorizationDenySuccess(
+        result: UpdateAuthorizationResponseData,
+        connectionID: ID
+    ) {
         contract?.onConfirmDenySuccess(result.status.toAuthorizationStatus())
     }
 

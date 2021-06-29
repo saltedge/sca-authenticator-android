@@ -28,9 +28,7 @@ import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
-import com.saltedge.authenticator.features.connections.list.shouldRequestPermission
 import com.saltedge.authenticator.models.collectRichConnections
-import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
@@ -51,7 +49,6 @@ class AuthorizationsListInteractorV1(
     private val keyStoreManager: KeyManagerAbs,
     private val cryptoTools: CryptoToolsV1Abs,
     private val apiManager: AuthenticatorApiManagerAbs,
-    private val locationManager: DeviceLocationManagerAbs,
     private val defaultDispatcher: CoroutineDispatcher
 ) : FetchAuthorizationsContract, ConfirmAuthorizationListener {
 
@@ -72,14 +69,20 @@ class AuthorizationsListInteractorV1(
         pollingService.stop()
     }
 
-    fun updateAuthorization(connectionID: ID, authorizationID: ID, authorizationCode: String, confirm: Boolean): Boolean {
+    fun updateAuthorization(
+        connectionID: ID,
+        authorizationID: ID,
+        authorizationCode: String,
+        confirm: Boolean,
+        locationDescription: String?
+    ): Boolean {
         val richConnection = richConnections[connectionID] ?: return false
         if (confirm) {
             apiManager.confirmAuthorization(
                 connectionAndKey = richConnection,
                 authorizationId = authorizationID,
                 authorizationCode = authorizationCode,
-                geolocation = locationManager.locationDescription,
+                geolocation = locationDescription,
                 authorizationType = AppTools.lastUnlockType.description,
                 resultCallback = this
             )
@@ -88,7 +91,7 @@ class AuthorizationsListInteractorV1(
                 connectionAndKey = richConnection,
                 authorizationId = authorizationID,
                 authorizationCode = authorizationCode,
-                geolocation = locationManager.locationDescription,
+                geolocation = locationDescription,
                 authorizationType = AppTools.lastUnlockType.description,
                 resultCallback = this
             )
@@ -96,9 +99,13 @@ class AuthorizationsListInteractorV1(
         return true
     }
 
-    override fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection> = richConnections.values.toList()//TODO REMOVE
+    override fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection> =
+        richConnections.values.toList() //TODO REMOVE
 
-    override fun onFetchEncryptedDataResult(result: List<EncryptedData>, errors: List<ApiErrorData>) {
+    override fun onFetchEncryptedDataResult(
+        result: List<EncryptedData>,
+        errors: List<ApiErrorData>
+    ) {
         processAuthorizationsErrors(errors = errors)
         processEncryptedAuthorizationsResult(encryptedList = result)
     }
@@ -107,7 +114,7 @@ class AuthorizationsListInteractorV1(
         contract?.onConfirmDenySuccess(
             connectionID = connectionID,
             authorizationID = result.authorizationID ?: return
-        )//TODO ERROR
+        ) //TODO ERROR
     }
 
     override fun onConfirmDenyFailure(error: ApiErrorData, connectionID: ID, authorizationID: ID) {
