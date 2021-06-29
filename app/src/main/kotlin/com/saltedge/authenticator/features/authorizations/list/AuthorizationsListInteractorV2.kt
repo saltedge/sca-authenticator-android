@@ -27,10 +27,7 @@ import com.saltedge.authenticator.core.api.model.error.isConnectionNotFound
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
-import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
-import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
-import com.saltedge.authenticator.features.authorizations.common.toAuthorizationStatus
-import com.saltedge.authenticator.features.connections.list.shouldRequestPermission
+import com.saltedge.authenticator.features.authorizations.common.*
 import com.saltedge.authenticator.models.collectRichConnections
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
@@ -52,26 +49,29 @@ class AuthorizationsListInteractorV2(
     private val cryptoTools: CryptoToolsV2Abs,
     private val apiManager: ScaServiceClientAbs,
     private val defaultDispatcher: CoroutineDispatcher
-) : AuthorizationConfirmListener, AuthorizationDenyListener, PollingAuthorizationsContract {
-
-    var contract: AuthorizationsListInteractorCallback? = null
-    val noConnections: Boolean
+) : AuthorizationsListInteractorAbs,
+    AuthorizationConfirmListener,
+    AuthorizationDenyListener,
+    PollingAuthorizationsContract
+{
+    override var contract: AuthorizationsListInteractorCallback? = null
+    override val noConnections: Boolean
         get() = richConnections.isEmpty()
     private var pollingService = apiManager.createAuthorizationsPollingService()
     private var richConnections: Map<ID, RichConnection> = collectRichConnections()
 
-    fun onResume() {
+    override fun onResume() {
         richConnections = collectRichConnections()
         pollingService.contract = this
         pollingService.start()
     }
 
-    fun onStop() {
+    override fun onStop() {
         pollingService.contract = null
         pollingService.stop()
     }
 
-    fun updateAuthorization(
+    override fun updateAuthorization(
         connectionID: ID,
         authorizationID: ID,
         authorizationCode: String,
@@ -135,7 +135,6 @@ class AuthorizationsListInteractorV2(
         )
     }
 
-
     override fun onAuthorizationDenySuccess(
         result: UpdateAuthorizationResponseData,
         connectionID: ID
@@ -169,29 +168,33 @@ class AuthorizationsListInteractorV2(
 
     private fun processEncryptedAuthorizationsResult(encryptedList: List<AuthorizationResponseData>) {
         contract?.coroutineScope?.launch(defaultDispatcher) {
-            val notEncryptedData: List<AuthorizationV2Data> = encryptedList.filter {
-                it.iv == "" && it.key == "" && it.data == "" //TODO: add conditions with it.finishedAt and it.status
-            }.map {
-                AuthorizationV2Data(
-                    connectionID = it.connectionId,
-                    authorizationID = it.id,
-                    status = it.status,
-                    description = DescriptionData(text = null),
-                    expiresAt = DateTime(0),
-                    title = ""
-                )
-            }
-            val data: List<AuthorizationV2Data> =
-                decryptAuthorizations(encryptedList = encryptedList)
+            val splitList = encryptedList.partition { it.status.isFinalStatus }
+            val finishedData = prepareFinishedAuthorizationData(splitList.first)
+            val activeData: List<AuthorizationV2Data> = decryptAuthorizations(splitList.second)
+            val items = createViewModels((activeData.filter { it.isNotExpired() } + finishedData))
+
             withContext(Dispatchers.Main) {
-                val newAuthorizationsData: List<AuthorizationV2Data> =
-                    (data + notEncryptedData)
-                        .filter { it.isNotExpired() }
-                        .sortedWith(compareBy { it.createdAt })
-                contract?.onAuthorizationsReceived(
-                    data = createViewModels(newAuthorizationsData),
-                    newModelsApiVersion = API_V2_VERSION
-                )
+                contract?.onAuthorizationsReceived(data = items, newModelsApiVersion = API_V2_VERSION)
+            }
+        }
+    }
+
+    private fun prepareFinishedAuthorizationData(dataList: List<AuthorizationResponseData>): List<AuthorizationV2Data> {
+        return dataList.mapNotNull { data ->
+            data.finishedAt?.let { finishedAt ->
+                if (finishedAt.plusSeconds(LIFE_TIME_OF_FINAL_MODEL).isBeforeNow) {
+                    null
+                } else {
+                    AuthorizationV2Data(
+                        connectionID = data.connectionId,
+                        authorizationID = data.id,
+                        status = data.status,
+                        description = DescriptionData(text = null),
+                        expiresAt = DateTime(0),
+                        title = "",
+                        finishedAt = finishedAt
+                    )
+                }
             }
         }
     }

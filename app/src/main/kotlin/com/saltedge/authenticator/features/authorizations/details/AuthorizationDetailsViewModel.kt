@@ -124,7 +124,7 @@ class AuthorizationDetailsViewModel(
     }
 
     override fun onAuthorizationReceived(data: AuthorizationItemViewModel?, newModelApiVersion: String) {
-        if (currentStatus.isProcessingMode()) return//skip polling result if confirm/deny is in progress
+        if (currentStatus.isProcessing()) return//skip polling result if confirm/deny is in progress
         if (!authorizationHasFinalMode && authorizationModel.value != data) {
             if (data == null) updateToFinalViewMode(AuthorizationStatus.ERROR)
             else authorizationModel.postValue(data)
@@ -182,7 +182,7 @@ class AuthorizationDetailsViewModel(
 
     private fun startPolling() {
         val authorizationID = authorizationModel.value?.authorizationID ?: return
-        if (currentStatus != AuthorizationStatus.UNAVAILABLE && !currentStatus.isFinalStatus()) {
+        if (currentStatus != AuthorizationStatus.UNAVAILABLE && !currentStatus.isFinal()) {
             interactor.startPolling(authorizationID = authorizationID)
         }
     }

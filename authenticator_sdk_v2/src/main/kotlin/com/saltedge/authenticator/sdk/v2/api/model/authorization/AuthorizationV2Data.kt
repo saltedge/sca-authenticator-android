@@ -40,6 +40,7 @@ data class AuthorizationV2Data(
     var connectionID: ID? = null,
     var authorizationID: ID? = null,
     var status: String? = null,
+    var finishedAt: DateTime? = null
 ) : Serializable
 
 fun AuthorizationV2Data.isNotExpired(): Boolean = expiresAt.isAfterNow
