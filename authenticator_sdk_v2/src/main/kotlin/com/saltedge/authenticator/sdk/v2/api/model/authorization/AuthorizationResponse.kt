@@ -22,6 +22,7 @@ package com.saltedge.authenticator.sdk.v2.api.model.authorization
 
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.core.api.*
+import org.joda.time.DateTime
 import java.io.Serializable
 
 data class AuthorizationsListResponse(@SerializedName(KEY_DATA) var data: List<AuthorizationResponseData>)
@@ -37,9 +38,10 @@ data class AuthorizationResponseData(
     @SerializedName(KEY_STATUS) var status: String,
     @SerializedName(KEY_IV) var iv: String,
     @SerializedName(KEY_KEY) var key: String,
-    @SerializedName(KEY_DATA) var data: String
+    @SerializedName(KEY_DATA) var data: String,
+    @SerializedName(KEY_FINISHED_AT) var finishedAt: DateTime? = null
 ) : Serializable
 
 fun AuthorizationResponseData.isValid(): Boolean {
-    return key.isNotEmpty() && iv.isNotEmpty() && data.isNotEmpty() && connectionId.isNotEmpty()
+    return connectionId.isNotEmpty()
 }

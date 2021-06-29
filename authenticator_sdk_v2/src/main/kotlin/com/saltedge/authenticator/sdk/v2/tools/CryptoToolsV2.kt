@@ -62,7 +62,7 @@ object CryptoToolsV2 : BaseCryptoTools(), CryptoToolsV2Abs {
             val key = rsaDecrypt(encryptedKey, privateKey) ?: return null
             val iv = rsaDecrypt(encryptedIV, privateKey) ?: return null
             val jsonString = aesDecrypt(encryptedMessage, key = key, iv = iv)
-            val result = createDefaultGson().fromJson(jsonString, AuthorizationV2Data::class.java)
+            val result: AuthorizationV2Data = createDefaultGson().fromJson(jsonString, AuthorizationV2Data::class.java)
             result.connectionID = encryptedData.connectionId
             result.authorizationID = encryptedData.id
             result.status = encryptedData.status
