@@ -147,7 +147,6 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
             keyStoreManager = mockKeyStoreManager,
             cryptoTools = mockCryptoToolsV1,
             apiManager = mockApiManagerV1,
-            locationManager = mockLocationManager,
             defaultDispatcher = testDispatcher
         )
         v2Interactor = AuthorizationsListInteractorV2(
@@ -995,6 +994,18 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
         viewModel.onPermissionRationaleDialogActionClick(dialogActionId = DialogInterface.BUTTON_POSITIVE, actionResId= R.string.actions_go_to_settings)
 
         assertNotNull(viewModel.onGoToSystemSettingsEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionIdClickCase3() {
+        viewModel.onPermissionRationaleDialogActionClick(dialogActionId = DialogInterface.BUTTON_NEGATIVE, actionResId = R.string.actions_enable)
+
+        assertNull(viewModel.onEnableGpsEvent.value)
+
+        viewModel.onPermissionRationaleDialogActionClick(dialogActionId = DialogInterface.BUTTON_POSITIVE, actionResId= R.string.actions_enable)
+
+        assertNotNull(viewModel.onEnableGpsEvent.value)
     }
 
     private fun createAuthorization(id: Int): AuthorizationData {

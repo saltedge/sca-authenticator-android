@@ -152,8 +152,7 @@ class AuthorizationDetailsInteractorV2Test {
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
             cryptoTools = mockCryptoToolsV2,
-            apiManager = mockApiManagerV2,
-            locationManager = mockLocationManager
+            apiManager = mockApiManagerV2
         )
         interactor.contract = mockCallback
     }
@@ -304,7 +303,8 @@ class AuthorizationDetailsInteractorV2Test {
         val result = interactor.updateAuthorization(
             authorizationID = "1",
             authorizationCode = "111",
-            confirm = confirm
+            confirm = confirm,
+            locationDescription = mockLocationManager.locationDescription
         )
 
         //then
@@ -332,7 +332,8 @@ class AuthorizationDetailsInteractorV2Test {
         val result = interactor.updateAuthorization(
             authorizationID = "1",
             authorizationCode = "111",
-            confirm = confirm
+            confirm = confirm,
+            locationDescription = mockLocationManager.locationDescription
         )
 
         //then
@@ -361,7 +362,8 @@ class AuthorizationDetailsInteractorV2Test {
         val result = interactor.updateAuthorization(
             authorizationID = "1",
             authorizationCode = "111",
-            confirm = confirm
+            confirm = confirm,
+            locationDescription = mockLocationManager.locationDescription
         )
 
         //then

@@ -126,9 +126,7 @@ class AuthorizationDetailsViewModel(
                         confirm
                     )
                 )
-            } else if (it.geolocationRequired && !locationManager.isLocationProviderActive(
-                    appContext
-                )) {
+            } else if (it.geolocationRequired && !locationManager.isLocationProviderActive(appContext)) {
                 onRequestGPSProviderEvent.postUnitEvent()
             } else {
                 updateAuthorization(item = it, confirm = confirm)
