@@ -39,11 +39,11 @@ import java.io.Serializable
 data class AuthorizationItemViewModel(
     val authorizationID: ID,
     val authorizationCode: String,
-    val title: String,
-    val description: DescriptionData,
-    val validSeconds: Int,
-    val endTime: DateTime,
-    val startTime: DateTime,
+    var title: String,
+    var description: DescriptionData,
+    var validSeconds: Int,
+    var endTime: DateTime,
+    var startTime: DateTime,
     val connectionID: ID,
     val connectionName: String,
     val connectionLogoUrl: String?,
@@ -229,20 +229,76 @@ fun List<AuthorizationItemViewModel>.merge(
     newViewModels: List<AuthorizationItemViewModel>,
     newModelsApiVersion: String
 ): List<AuthorizationItemViewModel> {
-    val filteredOldModels = this.filter {
-        it.hasFinalStatus || it.apiVersion != newModelsApiVersion
-    }
+
+    /**
+     * Extracted items by api version from receiver
+     */
+    val oldViewModels = this.partition { newModelsApiVersion == API_V1_VERSION }
+    val result = if (newModelsApiVersion == API_V1_VERSION) mergeV1(oldViewModels.first, newViewModels)
+    else mergeV2(oldViewModels.second, newViewModels)
+
+    /**
+     * Concatenated result from mergeV2 with another api version of collection mergeV1 and sort it
+     */
+    val oldResult = if (newModelsApiVersion == API_V1_VERSION) oldViewModels.first else oldViewModels.second
+    return (result + oldResult).sortedWith(compareBy({ it.startTime }, { it.authorizationID }))
+}
+
+private fun mergeV1(
+    oldViewModels: List<AuthorizationItemViewModel>,
+    newViewModels: List<AuthorizationItemViewModel>,
+): List<AuthorizationItemViewModel> {
+
+    val filteredOldModels = oldViewModels.filter { it.hasFinalStatus }
     val filteredNewModels = newViewModels.filter {
-        filteredOldModels.noIdentifier(authorizationID = it.authorizationID, connectionID = it.connectionID)
+        filteredOldModels.noIdentifier(
+            authorizationID = it.authorizationID,
+            connectionID = it.connectionID
+        )
     }
-    return (filteredNewModels + filteredOldModels).sortedWith(compareBy({ it.startTime }, { it.authorizationID }))
+    return filteredNewModels + filteredOldModels
 }
 
-private fun List<AuthorizationItemViewModel>.noIdentifier(authorizationID: ID, connectionID: ID): Boolean {
-    return !this.any { it.hasIdentifier(authorizationID = authorizationID, connectionID = connectionID) }
+/**
+ * Updated newViewModels items if exist similar item with final status
+ *
+ * @return list of new view models
+ */
+private fun mergeV2(
+    oldViewModels: List<AuthorizationItemViewModel>,
+    newViewModels: List<AuthorizationItemViewModel>
+): List<AuthorizationItemViewModel> {
+
+    newViewModels.forEach { item ->
+        if (item.status.isFinalStatus()) {
+            oldViewModels.find { it.authorizationID == item.authorizationID }?.let { it ->
+                item.title = it.title
+                item.description = it.description
+                item.startTime = it.startTime
+                item.endTime = it.endTime
+                item.validSeconds = it.validSeconds
+            }
+        }
+    }
+    return newViewModels
 }
 
-private fun AuthorizationItemViewModel.hasIdentifier(authorizationID: ID, connectionID: ID): Boolean {
+private fun List<AuthorizationItemViewModel>.noIdentifier(
+    authorizationID: ID,
+    connectionID: ID
+): Boolean {
+    return !this.any {
+        it.hasIdentifier(
+            authorizationID = authorizationID,
+            connectionID = connectionID
+        )
+    }
+}
+
+private fun AuthorizationItemViewModel.hasIdentifier(
+    authorizationID: ID,
+    connectionID: ID
+): Boolean {
     return this.authorizationID == authorizationID && this.connectionID == connectionID
 }
 

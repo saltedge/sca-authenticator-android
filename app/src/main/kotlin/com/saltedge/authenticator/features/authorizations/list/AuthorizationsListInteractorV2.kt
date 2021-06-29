@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.authorizations.list
 
 import com.saltedge.authenticator.app.AppTools
+import com.saltedge.authenticator.core.api.model.DescriptionData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.api.model.error.isConnectionNotFound
 import com.saltedge.authenticator.core.model.ID
@@ -43,6 +44,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.joda.time.DateTime
 
 class AuthorizationsListInteractorV2(
     private val connectionsRepository: ConnectionsRepositoryAbs,
@@ -107,7 +109,8 @@ class AuthorizationsListInteractorV2(
         return true
     }
 
-    override fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection> = richConnections.values.toList()
+    override fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection> =
+        richConnections.values.toList()
 
     override fun onFetchAuthorizationsResult(
         result: List<AuthorizationResponseData>,
@@ -117,7 +120,10 @@ class AuthorizationsListInteractorV2(
         processEncryptedAuthorizationsResult(encryptedList = result)
     }
 
-    override fun onAuthorizationConfirmSuccess(result: UpdateAuthorizationResponseData, connectionID: ID) {
+    override fun onAuthorizationConfirmSuccess(
+        result: UpdateAuthorizationResponseData,
+        connectionID: ID
+    ) {
         contract?.onConfirmDenySuccess(
             connectionID = connectionID,
             authorizationID = result.authorizationID,
@@ -125,7 +131,11 @@ class AuthorizationsListInteractorV2(
         )
     }
 
-    override fun onAuthorizationConfirmFailure(error: ApiErrorData, connectionID: ID, authorizationID: ID) {
+    override fun onAuthorizationConfirmFailure(
+        error: ApiErrorData,
+        connectionID: ID,
+        authorizationID: ID
+    ) {
         contract?.onConfirmDenyFailure(
             error = error,
             connectionID = connectionID,
@@ -133,7 +143,11 @@ class AuthorizationsListInteractorV2(
         )
     }
 
-    override fun onAuthorizationDenySuccess(result: UpdateAuthorizationResponseData, connectionID: ID) {
+
+    override fun onAuthorizationDenySuccess(
+        result: UpdateAuthorizationResponseData,
+        connectionID: ID
+    ) {
         contract?.onConfirmDenySuccess(
             connectionID = connectionID,
             authorizationID = result.authorizationID,
@@ -141,7 +155,11 @@ class AuthorizationsListInteractorV2(
         )
     }
 
-    override fun onAuthorizationDenyFailure(error: ApiErrorData, connectionID: ID, authorizationID: ID) {
+    override fun onAuthorizationDenyFailure(
+        error: ApiErrorData,
+        connectionID: ID,
+        authorizationID: ID
+    ) {
         contract?.onConfirmDenyFailure(
             error = error,
             connectionID = connectionID,
@@ -159,11 +177,25 @@ class AuthorizationsListInteractorV2(
 
     private fun processEncryptedAuthorizationsResult(encryptedList: List<AuthorizationResponseData>) {
         contract?.coroutineScope?.launch(defaultDispatcher) {
-            val data: List<AuthorizationV2Data> = decryptAuthorizations(encryptedList = encryptedList)
+            val notEncryptedData: List<AuthorizationV2Data> = encryptedList.filter {
+                it.iv == "" && it.key == "" && it.data == "" //TODO: add conditions with it.finishedAt and it.status
+            }.map {
+                AuthorizationV2Data(
+                    connectionID = it.connectionId,
+                    authorizationID = it.id,
+                    status = it.status,
+                    description = DescriptionData(text = null),
+                    expiresAt = DateTime(0),
+                    title = ""
+                )
+            }
+            val data: List<AuthorizationV2Data> =
+                decryptAuthorizations(encryptedList = encryptedList)
             withContext(Dispatchers.Main) {
-                val newAuthorizationsData = data
-                    .filter { it.isNotExpired() }
-                    .sortedWith(compareBy { it.createdAt })
+                val newAuthorizationsData: List<AuthorizationV2Data> =
+                    (data + notEncryptedData)
+                        .filter { it.isNotExpired() }
+                        .sortedWith(compareBy { it.createdAt })
                 contract?.onAuthorizationsReceived(
                     data = createViewModels(newAuthorizationsData),
                     newModelsApiVersion = API_V2_VERSION
