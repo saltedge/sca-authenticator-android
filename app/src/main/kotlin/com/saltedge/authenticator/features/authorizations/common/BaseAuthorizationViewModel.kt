@@ -32,7 +32,7 @@ import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.postUnitEvent
 
-abstract class GeolocationCommonHelper(private val locationManager: DeviceLocationManagerAbs) : ViewModel() {
+abstract class BaseAuthorizationViewModel(private val locationManager: DeviceLocationManagerAbs) : ViewModel() {
 
     val onAskPermissionsEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onEnableGpsEvent = MutableLiveData<ViewModelEvent<Unit>>()

@@ -27,7 +27,7 @@ import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationStatus
-import com.saltedge.authenticator.features.authorizations.common.GeolocationCommonHelper
+import com.saltedge.authenticator.features.authorizations.common.BaseAuthorizationViewModel
 import com.saltedge.authenticator.features.authorizations.common.computeConfirmedStatus
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
@@ -43,7 +43,7 @@ class AuthorizationDetailsViewModel(
     private val interactorV1: AuthorizationDetailsInteractorAbs,
     private val interactorV2: AuthorizationDetailsInteractorAbs,
     private val locationManager: DeviceLocationManagerAbs
-) : GeolocationCommonHelper(locationManager),
+) : BaseAuthorizationViewModel(locationManager),
     LifecycleObserver,
     AuthorizationDetailsInteractorCallback {
 

@@ -46,7 +46,7 @@ class AuthorizationsListViewModel(
     private val interactorV2: AuthorizationsListInteractorAbs,
     private val locationManager: DeviceLocationManagerAbs,
     private val connectivityReceiver: ConnectivityReceiverAbs
-) : GeolocationCommonHelper(locationManager),
+) : BaseAuthorizationViewModel(locationManager),
     LifecycleObserver,
     ListItemClickListener,
     TimerUpdateListener,
