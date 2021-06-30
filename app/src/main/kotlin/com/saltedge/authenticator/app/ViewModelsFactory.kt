@@ -143,7 +143,6 @@ class ViewModelsFactory @Inject constructor(
             }
             modelClass.isAssignableFrom(AuthorizationDetailsViewModel::class.java) -> {
                 return AuthorizationDetailsViewModel(
-                    appContext = appContext,
                     interactorV1 = AuthorizationDetailsInteractorV1(
                         connectionsRepository = connectionsRepository,
                         keyStoreManager = keyStoreManager,
