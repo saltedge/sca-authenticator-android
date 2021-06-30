@@ -20,11 +20,13 @@
  */
 package com.saltedge.authenticator.features.authorizations.details
 
+import android.content.DialogInterface
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.core.api.ERROR_CLASS_SSL_HANDSHAKE
 import com.saltedge.authenticator.core.api.model.DescriptionData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
@@ -32,16 +34,21 @@ import com.saltedge.authenticator.core.api.model.error.createRequestError
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationStatus
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import junit.framework.Assert.assertTrue
+import junit.framework.TestCase
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.joda.time.DateTime
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.BDDMockito
 import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
 
@@ -67,12 +74,16 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
         apiVersion = "2",
         geolocationRequired = false
     )
+    private val mockLocationManager = mock(DeviceLocationManagerAbs::class.java)
 
     @Before
     fun setUp() {
+        doReturn("GEO:52.506931;13.144558").`when`(mockLocationManager).locationDescription
         viewModel = AuthorizationDetailsViewModel(
+            appContext = TestAppTools.applicationContext,
             interactorV1 = mockInteractorV1,
-            interactorV2 = mockInteractorV2
+            interactorV2 = mockInteractorV2,
+            locationManager = mockLocationManager
         )
         initViewModel(API_V2_VERSION)
     }
@@ -86,8 +97,10 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
         doReturn(connectionApiVersion).`when`(mockInteractorV1).connectionApiVersion
         doReturn(connectionApiVersion).`when`(mockInteractorV2).connectionApiVersion
         val testViewModel = AuthorizationDetailsViewModel(
+            appContext = TestAppTools.applicationContext,
             interactorV1 = mockInteractorV1,
-            interactorV2 = mockInteractorV2
+            interactorV2 = mockInteractorV2,
+            locationManager = mockLocationManager
         )
 
         //when
@@ -132,8 +145,10 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
         doReturn(connectionApiVersion).`when`(mockInteractorV1).connectionApiVersion
         doReturn(connectionApiVersion).`when`(mockInteractorV2).connectionApiVersion
         val testViewModel = AuthorizationDetailsViewModel(
+            appContext = TestAppTools.applicationContext,
             interactorV1 = mockInteractorV1,
-            interactorV2 = mockInteractorV2
+            interactorV2 = mockInteractorV2,
+            locationManager = mockLocationManager
         )
 
         //when
@@ -177,8 +192,10 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
         doReturn(connectionApiVersion).`when`(mockInteractorV2).connectionApiVersion
         doReturn(true).`when`(mockInteractorV1).noConnection
         val testViewModel = AuthorizationDetailsViewModel(
+            appContext = TestAppTools.applicationContext,
             interactorV1 = mockInteractorV1,
-            interactorV2 = mockInteractorV2
+            interactorV2 = mockInteractorV2,
+            locationManager = mockLocationManager
         )
 
         //when
@@ -212,8 +229,10 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
         doReturn(connectionApiVersion).`when`(mockInteractorV2).connectionApiVersion
         doReturn(false).`when`(mockInteractorV1).noConnection
         val testViewModel = AuthorizationDetailsViewModel(
+            appContext = TestAppTools.applicationContext,
             interactorV1 = mockInteractorV1,
-            interactorV2 = mockInteractorV2
+            interactorV2 = mockInteractorV2,
+            locationManager = mockLocationManager
         )
 
         //when
@@ -247,8 +266,10 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
         doReturn(connectionApiVersion).`when`(mockInteractorV2).connectionApiVersion
         doReturn(false).`when`(mockInteractorV1).noConnection
         val testViewModel = AuthorizationDetailsViewModel(
+            appContext = TestAppTools.applicationContext,
             interactorV1 = mockInteractorV1,
-            interactorV2 = mockInteractorV2
+            interactorV2 = mockInteractorV2,
+            locationManager = mockLocationManager
         )
 
         //when
@@ -318,7 +339,8 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
         verify(mockInteractorV2).updateAuthorization(
             authorizationID = "1",
             authorizationCode = "111",
-            confirm = true
+            confirm = true,
+            locationDescription = mockLocationManager.locationDescription
         )
         verifyNoMoreInteractions(mockInteractorV1)
     }
@@ -338,7 +360,8 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
         verify(mockInteractorV2).updateAuthorization(
             authorizationID = "1",
             authorizationCode = "111",
-            confirm = false
+            confirm = false,
+            locationDescription = mockLocationManager.locationDescription
         )
         verifyNoMoreInteractions(mockInteractorV1)
     }
@@ -356,6 +379,84 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
         //then
         verifyNoMoreInteractions(mockInteractorV1, mockInteractorV2)
         assertThat(viewModel.authorizationModel.value!!.status, equalTo(AuthorizationStatus.PENDING))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onViewClickTestCase4() {
+        //given positive action
+        doReturn(false).`when`(mockLocationManager).isLocationProviderActive()
+        viewModel.authorizationModel.value = viewModel1.copy(
+            geolocationRequired = true
+        )
+
+        TestCase.assertNull(viewModel.onRequestPermissionEvent.value)
+
+        //when
+        viewModel.onViewClick(itemViewId = R.id.positiveActionView)
+
+        //then
+        assertNotNull(viewModel.onRequestPermissionEvent.value)
+        verifyNoMoreInteractions(mockInteractorV1)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onViewClickTestCase5() {
+        //given positive action
+        BDDMockito.given(mockLocationManager.locationPermissionsGranted()).willReturn(true)
+        BDDMockito.given(mockLocationManager.isLocationProviderActive()).willReturn(false)
+        viewModel.authorizationModel.value = viewModel1.copy(
+            geolocationRequired = true
+        )
+
+        assertNull(viewModel.onRequestGPSProviderEvent.value)
+
+        //when
+        viewModel.onViewClick(itemViewId = R.id.positiveActionView)
+
+        //then
+        assertNotNull(viewModel.onRequestGPSProviderEvent.value)
+        verifyNoMoreInteractions(mockInteractorV1)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onViewClickTestCase6() {
+        //given negative action
+        doReturn(false).`when`(mockLocationManager).isLocationProviderActive()
+        viewModel.authorizationModel.value = viewModel1.copy(
+            geolocationRequired = true
+        )
+
+        TestCase.assertNull(viewModel.onRequestPermissionEvent.value)
+
+        //when
+        viewModel.onViewClick(itemViewId = R.id.negativeActionView)
+
+        //then
+        assertNotNull(viewModel.onRequestPermissionEvent.value)
+        verifyNoMoreInteractions(mockInteractorV1)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onViewClickTestCase7() {
+        //given negative action
+        BDDMockito.given(mockLocationManager.locationPermissionsGranted()).willReturn(true)
+        BDDMockito.given(mockLocationManager.isLocationProviderActive()).willReturn(false)
+        viewModel.authorizationModel.value = viewModel1.copy(
+            geolocationRequired = true
+        )
+
+        assertNull(viewModel.onRequestGPSProviderEvent.value)
+
+        //when
+        viewModel.onViewClick(itemViewId = R.id.negativeActionView)
+
+        //then
+        assertNotNull(viewModel.onRequestGPSProviderEvent.value)
+        verifyNoMoreInteractions(mockInteractorV1)
     }
 
     @Test
@@ -709,6 +810,42 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
 
         //then
         assertThat(viewModel.authorizationModel.value!!.status, equalTo(AuthorizationStatus.DENIED))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionIdClickCase1() {
+        viewModel.onPermissionRationaleDialogActionClick(dialogActionId = DialogInterface.BUTTON_NEGATIVE, actionResId = R.string.actions_proceed)
+
+        assertNull(viewModel.onAskPermissionsEvent.value)
+
+        viewModel.onPermissionRationaleDialogActionClick(dialogActionId = DialogInterface.BUTTON_POSITIVE, actionResId= R.string.actions_proceed)
+
+        assertNotNull(viewModel.onAskPermissionsEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionIdClickCase2() {
+        viewModel.onPermissionRationaleDialogActionClick(dialogActionId = DialogInterface.BUTTON_NEGATIVE, actionResId = R.string.actions_go_to_settings)
+
+        assertNull(viewModel.onGoToSystemSettingsEvent.value)
+
+        viewModel.onPermissionRationaleDialogActionClick(dialogActionId = DialogInterface.BUTTON_POSITIVE, actionResId= R.string.actions_go_to_settings)
+
+        assertNotNull(viewModel.onGoToSystemSettingsEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionIdClickCase3() {
+        viewModel.onPermissionRationaleDialogActionClick(dialogActionId = DialogInterface.BUTTON_NEGATIVE, actionResId = R.string.actions_enable)
+
+        assertNull(viewModel.onEnableGpsEvent.value)
+
+        viewModel.onPermissionRationaleDialogActionClick(dialogActionId = DialogInterface.BUTTON_POSITIVE, actionResId= R.string.actions_enable)
+
+        assertNotNull(viewModel.onEnableGpsEvent.value)
     }
 
     private fun initViewModel(connectionApiVersion: String) {

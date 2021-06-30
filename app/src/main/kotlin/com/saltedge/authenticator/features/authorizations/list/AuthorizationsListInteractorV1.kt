@@ -99,9 +99,13 @@ class AuthorizationsListInteractorV1(
         return true
     }
 
-    override fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection> = richConnections.values.toList()//TODO REMOVE
+    override fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection> =
+        richConnections.values.toList() //TODO REMOVE
 
-    override fun onFetchEncryptedDataResult(result: List<EncryptedData>, errors: List<ApiErrorData>) {
+    override fun onFetchEncryptedDataResult(
+        result: List<EncryptedData>,
+        errors: List<ApiErrorData>
+    ) {
         processAuthorizationsErrors(errors = errors)
         processEncryptedAuthorizationsResult(encryptedList = result)
     }
@@ -110,7 +114,7 @@ class AuthorizationsListInteractorV1(
         contract?.onConfirmDenySuccess(
             connectionID = connectionID,
             authorizationID = result.authorizationID ?: return
-        )//TODO ERROR
+        ) //TODO ERROR
     }
 
     override fun onConfirmDenyFailure(error: ApiErrorData, connectionID: ID, authorizationID: ID) {

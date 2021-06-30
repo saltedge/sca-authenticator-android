@@ -27,7 +27,6 @@ import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
-import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
@@ -41,8 +40,7 @@ class AuthorizationDetailsInteractorV1(
     connectionsRepository: ConnectionsRepositoryAbs,
     keyStoreManager: KeyManagerAbs,
     private val cryptoTools: CryptoToolsV1Abs,
-    private val apiManager: AuthenticatorApiManagerAbs,
-    private val locationManager: DeviceLocationManagerAbs
+    private val apiManager: AuthenticatorApiManagerAbs
 ) : AuthorizationDetailsInteractor(
     connectionsRepository = connectionsRepository,
     keyStoreManager = keyStoreManager
@@ -67,13 +65,18 @@ class AuthorizationDetailsInteractorV1(
             ?: contract?.onAuthorizationNotFoundError()
     }
 
-    override fun updateAuthorization(authorizationID: ID, authorizationCode: String, confirm: Boolean): Boolean {
+    override fun updateAuthorization(
+        authorizationID: ID,
+        authorizationCode: String,
+        confirm: Boolean,
+        locationDescription: String?
+    ): Boolean {
         if (confirm) {
             apiManager.confirmAuthorization(
                 connectionAndKey = richConnection ?: return false,
                 authorizationId = authorizationID,
                 authorizationCode = authorizationCode,
-                geolocation = locationManager.locationDescription,
+                geolocation = locationDescription,
                 authorizationType = AppTools.lastUnlockType.description,
                 resultCallback = this
             )
@@ -82,7 +85,7 @@ class AuthorizationDetailsInteractorV1(
                 connectionAndKey = richConnection ?: return false,
                 authorizationId = authorizationID,
                 authorizationCode = authorizationCode,
-                geolocation = locationManager.locationDescription,
+                geolocation = locationDescription,
                 authorizationType = AppTools.lastUnlockType.description,
                 resultCallback = this
             )

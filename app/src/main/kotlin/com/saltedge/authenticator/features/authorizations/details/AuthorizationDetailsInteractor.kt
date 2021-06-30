@@ -79,5 +79,10 @@ interface AuthorizationDetailsInteractorAbs {
     fun setInitialData(connectionID: ID)
     fun startPolling(authorizationID: ID)
     fun stopPolling()
-    fun updateAuthorization(authorizationID: ID, authorizationCode: String, confirm: Boolean): Boolean
+    fun updateAuthorization(
+        authorizationID: ID,
+        authorizationCode: String,
+        confirm: Boolean,
+        locationDescription: String?
+    ): Boolean
 }
