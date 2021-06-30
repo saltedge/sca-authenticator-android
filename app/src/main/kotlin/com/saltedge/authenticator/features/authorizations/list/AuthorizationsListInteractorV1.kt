@@ -50,26 +50,26 @@ class AuthorizationsListInteractorV1(
     private val cryptoTools: CryptoToolsV1Abs,
     private val apiManager: AuthenticatorApiManagerAbs,
     private val defaultDispatcher: CoroutineDispatcher
-) : FetchAuthorizationsContract, ConfirmAuthorizationListener {
+) : AuthorizationsListInteractorAbs, FetchAuthorizationsContract, ConfirmAuthorizationListener {
 
-    var contract: AuthorizationsListInteractorCallback? = null
-    val noConnections: Boolean
+    override var contract: AuthorizationsListInteractorCallback? = null
+    override val noConnections: Boolean
         get() = richConnections.isEmpty()
     private var pollingService = apiManager.createAuthorizationsPollingService()
     private var richConnections: Map<ID, RichConnection> = collectRichConnections()
 
-    fun onResume() {
+    override fun onResume() {
         richConnections = collectRichConnections()
         pollingService.contract = this
         pollingService.start()
     }
 
-    fun onStop() {
+    override fun onStop() {
         pollingService.contract = null
         pollingService.stop()
     }
 
-    fun updateAuthorization(
+    override fun updateAuthorization(
         connectionID: ID,
         authorizationID: ID,
         authorizationCode: String,
@@ -122,8 +122,7 @@ class AuthorizationsListInteractorV1(
     }
 
     private fun processAuthorizationsErrors(errors: List<ApiErrorData>) {
-        val invalidTokens =
-            errors.filter { it.isConnectionNotFound() }.mapNotNull { it.accessToken }
+        val invalidTokens = errors.filter { it.isConnectionNotFound() }.mapNotNull { it.accessToken }
         if (invalidTokens.isNotEmpty()) {
             connectionsRepository.invalidateConnectionsByTokens(accessTokens = invalidTokens)
             richConnections = collectRichConnections()
@@ -133,12 +132,10 @@ class AuthorizationsListInteractorV1(
     private fun processEncryptedAuthorizationsResult(encryptedList: List<EncryptedData>) {
         contract?.coroutineScope?.launch(defaultDispatcher) {
             val decryptedList = decryptAuthorizations(encryptedList = encryptedList)
+            val newAuthorizationsData = createViewModels(decryptedList.filter { it.isNotExpired() })
             withContext(Dispatchers.Main) {
-                val newAuthorizationsData = decryptedList
-                    .filter { it.isNotExpired() }
-                    .sortedWith(compareBy({ it.createdAt }, { it.id }))
                 contract?.onAuthorizationsReceived(
-                    data = createViewModels(newAuthorizationsData),
+                    data = newAuthorizationsData,
                     newModelsApiVersion = API_V1_VERSION
                 )
             }

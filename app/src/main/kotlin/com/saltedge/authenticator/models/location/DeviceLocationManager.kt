@@ -34,10 +34,10 @@ import com.google.android.gms.location.*
 interface DeviceLocationManagerAbs {
     val locationDescription: String?
     fun initManager(context: Context)
-    fun startLocationUpdates(context: Context)
-    fun locationPermissionsGranted(context: Context): Boolean
+    fun startLocationUpdates()
+    fun locationPermissionsGranted(): Boolean
     fun stopLocationUpdates()
-    fun isLocationProviderActive(context: Context): Boolean
+    fun isLocationProviderActive(): Boolean
 }
 
 object DeviceLocationManager : DeviceLocationManagerAbs {
@@ -53,6 +53,8 @@ object DeviceLocationManager : DeviceLocationManagerAbs {
             locationDescription = result.lastLocation.headerValue
         }
     }
+    private val context: Context
+        get() = fusedLocationClient.applicationContext
 
     override fun initManager(context: Context) {
         if (!this::fusedLocationClient.isInitialized) {
@@ -60,8 +62,8 @@ object DeviceLocationManager : DeviceLocationManagerAbs {
         }
     }
 
-    override fun startLocationUpdates(context: Context) {
-        if (locationPermissionsGranted(context)) {
+    override fun startLocationUpdates() {
+        if (locationPermissionsGranted()) {
             initManager(context)
 
             val request = LocationRequest.create()
@@ -79,11 +81,12 @@ object DeviceLocationManager : DeviceLocationManagerAbs {
         }
     }
 
-    override fun locationPermissionsGranted(context: Context): Boolean {
+    override fun locationPermissionsGranted(): Boolean {
+        val context = fusedLocationClient.applicationContext
         return permissions.any { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED }
     }
 
-    override fun isLocationProviderActive(context: Context): Boolean {
+    override fun isLocationProviderActive(): Boolean {
         val providerInfo = Settings.Secure.getString(context.contentResolver, Settings.Secure.LOCATION_PROVIDERS_ALLOWED)
         return providerInfo?.isNotEmpty() == true
     }

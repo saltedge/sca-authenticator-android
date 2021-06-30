@@ -168,7 +168,7 @@ class ConnectProviderViewModelTest : ViewModelTest() {
         viewModel.onRequestPermissionsResult(requestCode = requestCode, grantResults = grantResults)
 
         //then
-        verify(mockLocationManager).startLocationUpdates(TestAppTools.applicationContext)
+        verify(mockLocationManager).startLocationUpdates()
     }
 
     @Test
@@ -371,13 +371,13 @@ class ConnectProviderViewModelTest : ViewModelTest() {
         //given
         given(mockInteractor.connectionName).willReturn("ConnectionName")
         given(mockInteractor.geolocationRequired).willReturn(true)
-        given(mockLocationManager.locationPermissionsGranted(TestAppTools.applicationContext)).willReturn(true)
+        given(mockLocationManager.locationPermissionsGranted()).willReturn(true)
 
         //when
         viewModel.onConnectionSuccessAuthentication()
 
         //then
-        verify(mockLocationManager).startLocationUpdates(TestAppTools.applicationContext)
+        verify(mockLocationManager).startLocationUpdates()
 
         assertThat(viewModel.statusIconRes.value, equalTo(R.drawable.ic_status_success))
         assertThat(
@@ -401,7 +401,7 @@ class ConnectProviderViewModelTest : ViewModelTest() {
         //given
         given(mockInteractor.connectionName).willReturn("ConnectionName")
         given(mockInteractor.geolocationRequired).willReturn(null)
-        given(mockLocationManager.locationPermissionsGranted(TestAppTools.applicationContext)).willReturn(true)
+        given(mockLocationManager.locationPermissionsGranted()).willReturn(true)
 
         //when
         viewModel.onConnectionSuccessAuthentication()
@@ -416,13 +416,13 @@ class ConnectProviderViewModelTest : ViewModelTest() {
         //given
         given(mockInteractor.connectionName).willReturn("ConnectionName")
         given(mockInteractor.geolocationRequired).willReturn(true)
-        given(mockLocationManager.locationPermissionsGranted(TestAppTools.applicationContext)).willReturn(false)
+        given(mockLocationManager.locationPermissionsGranted()).willReturn(false)
 
         //when
         viewModel.onConnectionSuccessAuthentication()
 
         //then
-        verify(mockLocationManager).locationPermissionsGranted(TestAppTools.applicationContext)
+        verify(mockLocationManager).locationPermissionsGranted()
         verifyNoMoreInteractions(mockLocationManager)
         assertThat(viewModel.onAskPermissionsEvent.value, equalTo(ViewModelEvent(Unit)))
     }

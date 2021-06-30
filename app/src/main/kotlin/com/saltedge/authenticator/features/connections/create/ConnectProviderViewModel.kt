@@ -84,7 +84,7 @@ class ConnectProviderViewModel(
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE
             && grantResults.any { it == PackageManager.PERMISSION_GRANTED }
         ) {
-            locationManager.startLocationUpdates(appContext)
+            locationManager.startLocationUpdates()
         }
     }
 
@@ -154,11 +154,9 @@ class ConnectProviderViewModel(
 
     private fun checkGeolocationRequirements() {
         interactor.geolocationRequired?.let {
-            val permissionGranted: Boolean = locationManager.locationPermissionsGranted(appContext)
-            if (permissionGranted) locationManager.startLocationUpdates(appContext)
-            else {
-                onAskPermissionsEvent.postUnitEvent()
-            }
+            val permissionGranted: Boolean = locationManager.locationPermissionsGranted()
+            if (permissionGranted) locationManager.startLocationUpdates()
+            else onAskPermissionsEvent.postUnitEvent()
         }
     }
 

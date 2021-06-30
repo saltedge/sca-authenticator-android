@@ -67,7 +67,7 @@ class AuthorizationDetailsInteractorV2(
 
     override fun onFetchAuthorizationSuccess(result: AuthorizationResponseData) {
         val newStatus = result.status.toAuthorizationStatus()
-        if (newStatus?.isFinalStatus() == true) {
+        if (newStatus?.isFinal() == true) {
             stopPolling()
             contract?.onConfirmDenySuccess(newStatus)
         } else {

@@ -385,7 +385,7 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onViewClickTestCase4() {
         //given positive action
-        doReturn(false).`when`(mockLocationManager).isLocationProviderActive(TestAppTools.applicationContext)
+        doReturn(false).`when`(mockLocationManager).isLocationProviderActive()
         viewModel.authorizationModel.value = viewModel1.copy(
             geolocationRequired = true
         )
@@ -404,8 +404,8 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onViewClickTestCase5() {
         //given positive action
-        BDDMockito.given(mockLocationManager.locationPermissionsGranted(TestAppTools.applicationContext)).willReturn(true)
-        BDDMockito.given(mockLocationManager.isLocationProviderActive(TestAppTools.applicationContext)).willReturn(false)
+        BDDMockito.given(mockLocationManager.locationPermissionsGranted()).willReturn(true)
+        BDDMockito.given(mockLocationManager.isLocationProviderActive()).willReturn(false)
         viewModel.authorizationModel.value = viewModel1.copy(
             geolocationRequired = true
         )
@@ -424,7 +424,7 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onViewClickTestCase6() {
         //given negative action
-        doReturn(false).`when`(mockLocationManager).isLocationProviderActive(TestAppTools.applicationContext)
+        doReturn(false).`when`(mockLocationManager).isLocationProviderActive()
         viewModel.authorizationModel.value = viewModel1.copy(
             geolocationRequired = true
         )
@@ -443,8 +443,8 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onViewClickTestCase7() {
         //given negative action
-        BDDMockito.given(mockLocationManager.locationPermissionsGranted(TestAppTools.applicationContext)).willReturn(true)
-        BDDMockito.given(mockLocationManager.isLocationProviderActive(TestAppTools.applicationContext)).willReturn(false)
+        BDDMockito.given(mockLocationManager.locationPermissionsGranted()).willReturn(true)
+        BDDMockito.given(mockLocationManager.isLocationProviderActive()).willReturn(false)
         viewModel.authorizationModel.value = viewModel1.copy(
             geolocationRequired = true
         )

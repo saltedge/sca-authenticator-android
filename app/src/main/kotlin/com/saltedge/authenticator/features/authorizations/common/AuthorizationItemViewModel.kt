@@ -36,9 +36,11 @@ import org.joda.time.DateTime
 import timber.log.Timber
 import java.io.Serializable
 
+const val LIFE_TIME_OF_FINAL_MODEL = 4 // seconds
+
 data class AuthorizationItemViewModel(
     val authorizationID: ID,
-    val authorizationCode: String,
+    var authorizationCode: String,
     var title: String,
     var description: DescriptionData,
     var validSeconds: Int,
@@ -51,7 +53,6 @@ data class AuthorizationItemViewModel(
     var status: AuthorizationStatus = AuthorizationStatus.PENDING,
     val geolocationRequired: Boolean
 ) : Serializable {
-    private val secondsOfLifeOfFinalModel = 4
     var destroyAt: DateTime? = null
 
     /**
@@ -59,7 +60,11 @@ data class AuthorizationItemViewModel(
      */
     fun setNewStatus(newStatus: AuthorizationStatus) {
         this.status = newStatus
-        this.destroyAt = if (newStatus.isFinalStatus()) DateTime.now().plusSeconds(secondsOfLifeOfFinalModel) else null
+        updateDestroyAt(if (newStatus.isFinal()) DateTime.now() else null)
+    }
+
+    fun updateDestroyAt(finishedAt: DateTime?) {
+        this.destroyAt = finishedAt?.plusSeconds(LIFE_TIME_OF_FINAL_MODEL)
     }
 
     /**
@@ -84,7 +89,7 @@ data class AuthorizationItemViewModel(
      * @return Boolean, true viewMode is final mode
      */
     val hasFinalStatus: Boolean
-        get() = status.isFinalStatus()
+        get() = status.isFinal()
 
     /**
      * Check that `time views` should be hidden
@@ -148,6 +153,9 @@ data class AuthorizationItemViewModel(
 
     val isV2Api: Boolean
         get() = apiVersion == API_V2_VERSION
+
+    val hasTitle: Boolean
+        get() = title.isNotEmpty()
 }
 
 /**
@@ -208,7 +216,9 @@ fun AuthorizationV2Data.toAuthorizationItemViewModel(connection: ConnectionAbs):
             apiVersion = API_V2_VERSION,
             status = this.status?.toAuthorizationStatus() ?: AuthorizationStatus.PENDING,
             geolocationRequired = connection.geolocationRequired ?: false
-        )
+        ).apply {
+            updateDestroyAt(finishedAt)
+        }
     } catch (e: Exception) {
         Timber.e(
             e,
@@ -220,38 +230,10 @@ fun AuthorizationV2Data.toAuthorizationItemViewModel(connection: ConnectionAbs):
     }
 }
 
-/**
- * Merging of collections of AuthorizationItemViewModel
- *
- * @receiver oldViewModels previously stored list of AuthorizationViewModel's
- * @param newViewModels newly received list of AuthorizationViewModel's
- *
- * @return List, result of merging
- */
-fun List<AuthorizationItemViewModel>.merge(
-    newViewModels: List<AuthorizationItemViewModel>,
-    newModelsApiVersion: String
-): List<AuthorizationItemViewModel> {
-
-    /**
-     * Extracted items by api version from receiver
-     */
-    val oldViewModels = this.partition { newModelsApiVersion == API_V1_VERSION }
-    val result = if (newModelsApiVersion == API_V1_VERSION) mergeV1(oldViewModels.first, newViewModels)
-    else mergeV2(oldViewModels.second, newViewModels)
-
-    /**
-     * Concatenated result from mergeV2 with another api version of collection mergeV1 and sort it
-     */
-    val oldResult = if (newModelsApiVersion == API_V1_VERSION) oldViewModels.first else oldViewModels.second
-    return (result + oldResult).sortedWith(compareBy({ it.startTime }, { it.authorizationID }))
-}
-
-private fun mergeV1(
+fun mergeV1(
     oldViewModels: List<AuthorizationItemViewModel>,
     newViewModels: List<AuthorizationItemViewModel>,
 ): List<AuthorizationItemViewModel> {
-
     val filteredOldModels = oldViewModels.filter { it.hasFinalStatus }
     val filteredNewModels = newViewModels.filter {
         filteredOldModels.noIdentifier(
@@ -267,19 +249,19 @@ private fun mergeV1(
  *
  * @return list of new view models
  */
-private fun mergeV2(
+fun mergeV2(
     oldViewModels: List<AuthorizationItemViewModel>,
     newViewModels: List<AuthorizationItemViewModel>
 ): List<AuthorizationItemViewModel> {
-
-    newViewModels.forEach { item ->
-        if (item.status.isFinalStatus()) {
-            oldViewModels.find { it.authorizationID == item.authorizationID }?.let { it ->
-                item.title = it.title
-                item.description = it.description
-                item.startTime = it.startTime
-                item.endTime = it.endTime
-                item.validSeconds = it.validSeconds
+    newViewModels.forEach { newItem ->
+        if (newItem.status.isFinal()) {
+            oldViewModels.find { it.authorizationID == newItem.authorizationID }?.let { oldItem ->
+                newItem.title = oldItem.title
+                newItem.description = oldItem.description
+                newItem.startTime = oldItem.startTime
+                newItem.endTime = oldItem.endTime
+                newItem.validSeconds = oldItem.validSeconds
+                newItem.authorizationCode = oldItem.authorizationCode
             }
         }
     }
@@ -301,14 +283,11 @@ private fun List<AuthorizationItemViewModel>.noIdentifier(
 private fun AuthorizationItemViewModel.hasIdentifier(
     authorizationID: ID,
     connectionID: ID
-): Boolean {
-    return this.authorizationID == authorizationID && this.connectionID == connectionID
-}
+): Boolean = this.authorizationID == authorizationID && this.connectionID == connectionID
 
 private fun authorizationExpirationPeriod(startDate: DateTime?, endDate: DateTime): Int {
     return secondsBetweenDates(startDate ?: return 0, endDate)
 }
 
-private fun String.toDescriptionData(): DescriptionData {
-    return if (this.hasHTMLTags()) DescriptionData(html = this) else DescriptionData(text = this)
-}
+private fun String.toDescriptionData(): DescriptionData =
+    if (this.hasHTMLTags()) DescriptionData(html = this) else DescriptionData(text = this)

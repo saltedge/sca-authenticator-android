@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
-import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -41,14 +40,14 @@ import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
+import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.postUnitEvent
 import kotlinx.coroutines.CoroutineScope
 
 class AuthorizationsListViewModel(
-    private val appContext: Context,
-    private val interactorV1: AuthorizationsListInteractorV1,
-    private val interactorV2: AuthorizationsListInteractorV2,
+    private val interactorV1: AuthorizationsListInteractorAbs,
+    private val interactorV2: AuthorizationsListInteractorAbs,
     private val locationManager: DeviceLocationManagerAbs,
     private val connectivityReceiver: ConnectivityReceiverAbs
 ) : ViewModel(),
@@ -162,7 +161,7 @@ class AuthorizationsListViewModel(
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE
             && grantResults.any { it == PackageManager.PERMISSION_GRANTED }
         ) {
-            locationManager.startLocationUpdates(appContext)
+            locationManager.startLocationUpdates()
         }
     }
 
@@ -183,11 +182,11 @@ class AuthorizationsListViewModel(
 
             val shouldRequestPermission = shouldRequestPermission(
                 geolocationRequired = it.geolocationRequired,
-                locationPermissionsAreGranted = locationManager.locationPermissionsGranted(context = appContext)
+                locationPermissionsAreGranted = locationManager.locationPermissionsGranted()
             )
             if (shouldRequestPermission) {
                 onRequestPermissionEvent.postValue(Triple(it.connectionID, it.authorizationID, confirm))
-            } else if (it.geolocationRequired && !locationManager.isLocationProviderActive(appContext)) {
+            } else if (it.geolocationRequired && !locationManager.isLocationProviderActive()) {
                 onRequestGPSProviderEvent.postUnitEvent()
             } else {
                 updateAuthorization(listItem = it, confirm = confirm)
@@ -204,11 +203,16 @@ class AuthorizationsListViewModel(
         data: List<AuthorizationItemViewModel>,
         newModelsApiVersion: String
     ) {
-        val joinedViewModels = this.listItemsValues.merge(
-            newViewModels = data,
-            newModelsApiVersion = newModelsApiVersion
-        )
-        if (this.listItemsValues != joinedViewModels) postListItemsUpdate(newItems = joinedViewModels)
+        val oldViewModels = this.listItemsValues.partition { it.apiVersion == newModelsApiVersion }
+        val mergedList = if (API_V2_VERSION == newModelsApiVersion) {
+            mergeV2(oldViewModels = oldViewModels.first, newViewModels = data)
+        } else {
+            mergeV1(oldViewModels = oldViewModels.first, newViewModels = data)
+        }
+        val finalList = (oldViewModels.second + mergedList)
+            .filter { it.isNotExpired && it.hasTitle }
+            .sortedWith(compareBy({ it.startTime }, { it.authorizationID }))
+        if (this.listItemsValues != finalList) postListItemsUpdate(newItems = finalList)
     }
 
     override fun onConfirmDenySuccess(

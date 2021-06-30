@@ -115,7 +115,7 @@ class AuthorizationDetailsViewModel(
         authorizationModel.value?.let {
             val shouldRequestPermission = shouldRequestPermission(
                 geolocationRequired = it.geolocationRequired,
-                locationPermissionsAreGranted = locationManager.locationPermissionsGranted(context = appContext)
+                locationPermissionsAreGranted = locationManager.locationPermissionsGranted()
             )
             if (shouldRequestPermission) {
                 onRequestPermissionEvent.postValue(
@@ -125,7 +125,7 @@ class AuthorizationDetailsViewModel(
                         confirm
                     )
                 )
-            } else if (it.geolocationRequired && !locationManager.isLocationProviderActive(appContext)) {
+            } else if (it.geolocationRequired && !locationManager.isLocationProviderActive()) {
                 onRequestGPSProviderEvent.postUnitEvent()
             } else {
                 updateAuthorization(item = it, confirm = confirm)
@@ -147,7 +147,7 @@ class AuthorizationDetailsViewModel(
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE
             && grantResults.any { it == PackageManager.PERMISSION_GRANTED }
         ) {
-            locationManager.startLocationUpdates(appContext)
+            locationManager.startLocationUpdates()
         }
     }
 
@@ -169,11 +169,8 @@ class AuthorizationDetailsViewModel(
         return true
     }
 
-    override fun onAuthorizationReceived(
-        data: AuthorizationItemViewModel?,
-        newModelApiVersion: String
-    ) {
-        if (currentStatus.isProcessingMode()) return //skip polling result if confirm/deny is in progress
+    override fun onAuthorizationReceived(data: AuthorizationItemViewModel?, newModelApiVersion: String) {
+        if (currentStatus.isProcessing()) return//skip polling result if confirm/deny is in progress
         if (!authorizationHasFinalMode && authorizationModel.value != data) {
             if (data == null) updateToFinalViewMode(AuthorizationStatus.ERROR)
             else authorizationModel.postValue(data)
@@ -232,7 +229,7 @@ class AuthorizationDetailsViewModel(
 
     private fun startPolling() {
         val authorizationID = authorizationModel.value?.authorizationID ?: return
-        if (currentStatus != AuthorizationStatus.UNAVAILABLE && !currentStatus.isFinalStatus()) {
+        if (currentStatus != AuthorizationStatus.UNAVAILABLE && !currentStatus.isFinal()) {
             interactor.startPolling(authorizationID = authorizationID)
         }
     }
