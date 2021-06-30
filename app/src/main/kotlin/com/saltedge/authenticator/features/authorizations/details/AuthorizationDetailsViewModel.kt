@@ -81,8 +81,7 @@ class AuthorizationDetailsViewModel(
 
         initInteractor(connectionID = identifier?.connectionID ?: "")
 
-        val status =
-            if (interactor.noConnection || identifier == null || !identifier.hasAuthorizationID) {
+        val status = if (interactor.noConnection || identifier == null || !identifier.hasAuthorizationID) {
                 AuthorizationStatus.UNAVAILABLE
             } else {
                 AuthorizationStatus.LOADING
