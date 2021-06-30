@@ -408,7 +408,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         viewModel.onRequestPermissionsResult(requestCode, grantResults)
 
         //then
-        Mockito.verify(mockLocationManager).startLocationUpdates(context)
+        Mockito.verify(mockLocationManager).startLocationUpdates()
         Mockito.verify(mockInteractor).updateConnections()
     }
 

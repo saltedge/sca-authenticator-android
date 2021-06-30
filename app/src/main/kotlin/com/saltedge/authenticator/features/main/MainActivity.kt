@@ -74,7 +74,7 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
 
     override fun onResume() {
         super.onResume()
-        DeviceLocationManager.startLocationUpdates(context = this)
+        DeviceLocationManager.startLocationUpdates()
     }
 
     override fun onPause() {

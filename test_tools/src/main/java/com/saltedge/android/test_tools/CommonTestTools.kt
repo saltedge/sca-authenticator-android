@@ -26,6 +26,8 @@ import com.saltedge.authenticator.core.tools.encodeToPemBase64String
 import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
 import java.io.ByteArrayOutputStream
 import java.security.PrivateKey
 import java.security.PublicKey
@@ -50,6 +52,19 @@ fun AuthorizationData.encryptWithTestKey(): EncryptedData {
         connectionId = this.connectionId,
         jsonString = this.toJsonString(),
         publicKey = CommonTestTools.testPublicKey
+    )
+}
+
+fun AuthorizationV2Data.encryptWithTestKey(): AuthorizationResponseData {
+    val jsonString = this.toJsonString()
+    val publicKey = CommonTestTools.testPublicKey
+    return AuthorizationResponseData(
+        id = this.authorizationID!!,
+        connectionId = this.connectionID!!,
+        status = this.status!!,
+        key = rsaEncrypt(CommonTestTools.aesKey, publicKey)!!,
+        iv = rsaEncrypt(CommonTestTools.aesIV, publicKey)!!,
+        data = encryptAesCBCString(jsonString, CommonTestTools.aesKey, CommonTestTools.aesIV)!!
     )
 }
 

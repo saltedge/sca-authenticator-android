@@ -35,7 +35,7 @@ enum class AuthorizationStatus {//pending confirm_processing deny_processing con
     TIME_OUT,
     UNAVAILABLE;
 
-    fun isFinalStatus(): Boolean {
+    fun isFinal(): Boolean {
         return this == CONFIRMED
             || this == DENIED
             || this == ERROR
@@ -43,7 +43,7 @@ enum class AuthorizationStatus {//pending confirm_processing deny_processing con
             || this == UNAVAILABLE
     }
 
-    fun isProcessingMode(): Boolean {
+    fun isProcessing(): Boolean {
         return this == CONFIRM_PROCESSING || this == DENY_PROCESSING
     }
 
@@ -104,4 +104,12 @@ fun AuthorizationStatus.computeConfirmedStatus(): AuthorizationStatus {
         else -> AuthorizationStatus.ERROR
     }
 }
+
+/**
+ * Check that STRING status is equal to final AuthorizationStatus
+ *
+ * @return true if is final status
+ */
+val String.isFinalStatus: Boolean
+    get() = this.toAuthorizationStatus()?.isFinal() ?: false
 

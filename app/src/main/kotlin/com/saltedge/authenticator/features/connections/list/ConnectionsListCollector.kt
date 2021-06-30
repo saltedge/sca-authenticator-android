@@ -33,7 +33,7 @@ import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.toDateFormatString
 
 fun Connection.convertConnectionToViewModel(context: Context, deviceLocationManager: DeviceLocationManagerAbs): ConnectionItem {
-    val locationPermissionsIsGranted: Boolean = deviceLocationManager.locationPermissionsGranted(context)
+    val locationPermissionsIsGranted: Boolean = deviceLocationManager.locationPermissionsGranted()
     val shouldGrantAccess = shouldRequestPermission(geolocationRequired = this.geolocationRequired, locationPermissionsAreGranted = locationPermissionsIsGranted)
     return ConnectionItem(
         guid = this.guid,

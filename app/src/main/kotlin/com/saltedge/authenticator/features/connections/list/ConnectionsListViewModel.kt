@@ -173,7 +173,7 @@ class ConnectionsListViewModel(
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE
             && grantResults.any { it == PackageManager.PERMISSION_GRANTED }
         ) {
-            locationManager.startLocationUpdates(appContext)
+            locationManager.startLocationUpdates()
             interactor.updateConnections()
         }
     }

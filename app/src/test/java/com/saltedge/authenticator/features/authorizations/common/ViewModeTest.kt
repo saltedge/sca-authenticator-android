@@ -47,29 +47,29 @@ class ViewModeTest {
     @Test
     @Throws(Exception::class)
     fun isFinalModeTest() {
-        Assert.assertFalse(AuthorizationStatus.LOADING.isFinalStatus())
-        Assert.assertFalse(AuthorizationStatus.PENDING.isFinalStatus())
-        Assert.assertFalse(AuthorizationStatus.CONFIRM_PROCESSING.isFinalStatus())
-        Assert.assertFalse(AuthorizationStatus.DENY_PROCESSING.isFinalStatus())
-        Assert.assertTrue(AuthorizationStatus.CONFIRMED.isFinalStatus())
-        Assert.assertTrue(AuthorizationStatus.DENIED.isFinalStatus())
-        Assert.assertTrue(AuthorizationStatus.ERROR.isFinalStatus())
-        Assert.assertTrue(AuthorizationStatus.TIME_OUT.isFinalStatus())
-        Assert.assertTrue(AuthorizationStatus.UNAVAILABLE.isFinalStatus())
+        Assert.assertFalse(AuthorizationStatus.LOADING.isFinal())
+        Assert.assertFalse(AuthorizationStatus.PENDING.isFinal())
+        Assert.assertFalse(AuthorizationStatus.CONFIRM_PROCESSING.isFinal())
+        Assert.assertFalse(AuthorizationStatus.DENY_PROCESSING.isFinal())
+        Assert.assertTrue(AuthorizationStatus.CONFIRMED.isFinal())
+        Assert.assertTrue(AuthorizationStatus.DENIED.isFinal())
+        Assert.assertTrue(AuthorizationStatus.ERROR.isFinal())
+        Assert.assertTrue(AuthorizationStatus.TIME_OUT.isFinal())
+        Assert.assertTrue(AuthorizationStatus.UNAVAILABLE.isFinal())
     }
 
     @Test
     @Throws(Exception::class)
     fun isProcessingModeTest() {
-        Assert.assertFalse(AuthorizationStatus.LOADING.isProcessingMode())
-        Assert.assertFalse(AuthorizationStatus.PENDING.isProcessingMode())
-        Assert.assertTrue(AuthorizationStatus.CONFIRM_PROCESSING.isProcessingMode())
-        Assert.assertTrue(AuthorizationStatus.DENY_PROCESSING.isProcessingMode())
-        Assert.assertFalse(AuthorizationStatus.CONFIRMED.isProcessingMode())
-        Assert.assertFalse(AuthorizationStatus.DENIED.isProcessingMode())
-        Assert.assertFalse(AuthorizationStatus.ERROR.isProcessingMode())
-        Assert.assertFalse(AuthorizationStatus.TIME_OUT.isProcessingMode())
-        Assert.assertFalse(AuthorizationStatus.UNAVAILABLE.isProcessingMode())
+        Assert.assertFalse(AuthorizationStatus.LOADING.isProcessing())
+        Assert.assertFalse(AuthorizationStatus.PENDING.isProcessing())
+        Assert.assertTrue(AuthorizationStatus.CONFIRM_PROCESSING.isProcessing())
+        Assert.assertTrue(AuthorizationStatus.DENY_PROCESSING.isProcessing())
+        Assert.assertFalse(AuthorizationStatus.CONFIRMED.isProcessing())
+        Assert.assertFalse(AuthorizationStatus.DENIED.isProcessing())
+        Assert.assertFalse(AuthorizationStatus.ERROR.isProcessing())
+        Assert.assertFalse(AuthorizationStatus.TIME_OUT.isProcessing())
+        Assert.assertFalse(AuthorizationStatus.UNAVAILABLE.isProcessing())
     }
 
     @Test
