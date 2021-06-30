@@ -20,19 +20,15 @@
  */
 package com.saltedge.authenticator.features.authorizations.details
 
-import android.content.Context
-import android.content.DialogInterface
-import android.content.pm.PackageManager
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.core.api.model.DescriptionData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationStatus
+import com.saltedge.authenticator.features.authorizations.common.BaseAuthorizationViewModel
 import com.saltedge.authenticator.features.authorizations.common.computeConfirmedStatus
-import com.saltedge.authenticator.features.connections.list.shouldRequestPermission
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
@@ -44,27 +40,24 @@ import kotlinx.coroutines.CoroutineScope
 import org.joda.time.DateTime
 
 class AuthorizationDetailsViewModel(
-    private val appContext: Context,
     private val interactorV1: AuthorizationDetailsInteractorAbs,
     private val interactorV2: AuthorizationDetailsInteractorAbs,
     private val locationManager: DeviceLocationManagerAbs
-) : ViewModel(),
+) : BaseAuthorizationViewModel(locationManager),
     LifecycleObserver,
     AuthorizationDetailsInteractorCallback {
-    private lateinit var interactor: AuthorizationDetailsInteractorAbs
+
     val onErrorEvent = MutableLiveData<ViewModelEvent<ApiErrorData>>()
     val onCloseAppEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onCloseViewEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onTimeUpdateEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val authorizationModel = MutableLiveData<AuthorizationItemViewModel>()
-    val onRequestPermissionEvent = MutableLiveData<Triple<String, String, Boolean>>()
-    val onRequestGPSProviderEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onEnableGpsEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onGoToSystemSettingsEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onAskPermissionsEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    private var closeAppOnBackPress: Boolean = true
     var titleRes: ResId = R.string.authorization_feature_title
         private set
+    override val coroutineScope: CoroutineScope
+        get() = viewModelScope
+    private lateinit var interactor: AuthorizationDetailsInteractorAbs
+    private var closeAppOnBackPress: Boolean = true
     private val currentStatus: AuthorizationStatus
         get() = authorizationModel.value?.status ?: AuthorizationStatus.LOADING
     private val authorizationHasFinalMode: Boolean
@@ -107,48 +100,7 @@ class AuthorizationDetailsViewModel(
     }
 
     fun onViewClick(itemViewId: Int) {
-        val confirm = when (itemViewId) {
-            R.id.positiveActionView -> true
-            R.id.negativeActionView -> false
-            else -> return
-        }
-        authorizationModel.value?.let {
-            val shouldRequestPermission = shouldRequestPermission(
-                geolocationRequired = it.geolocationRequired,
-                locationPermissionsAreGranted = locationManager.locationPermissionsGranted()
-            )
-            if (shouldRequestPermission) {
-                onRequestPermissionEvent.postValue(
-                    Triple(
-                        it.connectionID,
-                        it.authorizationID,
-                        confirm
-                    )
-                )
-            } else if (it.geolocationRequired && !locationManager.isLocationProviderActive()) {
-                onRequestGPSProviderEvent.postUnitEvent()
-            } else {
-                updateAuthorization(item = it, confirm = confirm)
-            }
-        }
-    }
-
-    fun onPermissionRationaleDialogActionClick(dialogActionId: Int, actionResId: ResId) {
-        if (dialogActionId == DialogInterface.BUTTON_POSITIVE) {
-            when (actionResId) {
-                R.string.actions_proceed -> onAskPermissionsEvent.postUnitEvent()
-                R.string.actions_go_to_settings -> onGoToSystemSettingsEvent.postUnitEvent()
-                R.string.actions_enable -> onEnableGpsEvent.postUnitEvent()
-            }
-        }
-    }
-
-    fun onRequestPermissionsResult(requestCode: Int, grantResults: IntArray) {
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE
-            && grantResults.any { it == PackageManager.PERMISSION_GRANTED }
-        ) {
-            locationManager.startLocationUpdates()
-        }
+        onViewItemClick(itemViewId, authorizationModel.value)
     }
 
     fun onTimerTick() {
@@ -202,10 +154,7 @@ class AuthorizationDetailsViewModel(
         updateAuthorizationStatus(newStatus = newStatus ?: currentStatus.computeConfirmedStatus())
     }
 
-    override val coroutineScope: CoroutineScope
-        get() = viewModelScope
-
-    private fun updateAuthorization(item: AuthorizationItemViewModel, confirm: Boolean) {
+    override fun updateAuthorization(item: AuthorizationItemViewModel, confirm: Boolean) {
         updateAuthorizationStatus(if (confirm) AuthorizationStatus.CONFIRM_PROCESSING else AuthorizationStatus.DENY_PROCESSING)
         interactor.updateAuthorization(
             authorizationID = item.authorizationID,
