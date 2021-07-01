@@ -22,6 +22,8 @@ package com.saltedge.authenticator.core.web
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
+import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -30,16 +32,19 @@ import android.webkit.WebView
 
 class SEWebView : WebView {
 
-    constructor(context: Context) : super(context.applicationContext) {
+    constructor(context: Context) : super(getFixedContext(context)) {
         setupView()
     }
 
-    constructor(context: Context, attrs: AttributeSet) : super(context.applicationContext, attrs) {
+    constructor(context: Context, attrs: AttributeSet?) : super(getFixedContext(context), attrs) {
         setupView()
     }
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) :
-        super(context.applicationContext, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        getFixedContext(
+            context
+        ), attrs, defStyleAttr
+    ) {
         setupView()
     }
 
@@ -59,9 +64,17 @@ class SEWebView : WebView {
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupView() {
         this.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+        setThemeMode(context, this.settings)
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
         settings.allowFileAccess = true
-        settings.userAgentString = ""//TODO ClientConfig.userAgentInfo
+        settings.userAgentString = "" //TODO ClientConfig.userAgentInfo
     }
+}
+
+fun getFixedContext(context: Context): Context {
+    return if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP
+        || Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP_MR1) {
+        context.createConfigurationContext(Configuration())
+    } else context
 }
