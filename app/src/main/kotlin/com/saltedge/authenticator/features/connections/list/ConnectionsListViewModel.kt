@@ -217,14 +217,12 @@ class ConnectionsListViewModel(
             }
             PopupMenuItem.LOCATION -> onAccessToLocationClickEvent.postUnitEvent()
             PopupMenuItem.DELETE -> {
-                if (hasInternetConnection) {
-                    if (item.isActive) {
-                        onDeleteClickEvent.postValue(ViewModelEvent(item.guid))
-                    } else {
-                        interactor.revokeConnection(item.guid)
-                    }
-                } else {
-                    onShowNoInternetConnectionDialogEvent.postValue(ViewModelEvent(item.guid))
+                when {
+                    !hasInternetConnection -> onShowNoInternetConnectionDialogEvent.postValue(
+                        ViewModelEvent(item.guid)
+                    )
+                    item.isActive -> onDeleteClickEvent.postValue(ViewModelEvent(item.guid))
+                    else -> interactor.revokeConnection(item.guid)
                 }
             }
         }
