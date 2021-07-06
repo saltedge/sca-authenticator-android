@@ -49,7 +49,7 @@ class ConnectivityReceiver() : BroadcastReceiver(), ConnectivityReceiverAbs {
         }
     }
 
-    private fun isConnectedOrConnecting(context: Context): Boolean {
+    override fun isConnectedOrConnecting(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
         val networkInfo = connectivityManager?.activeNetworkInfo
         return networkInfo != null && networkInfo.isConnectedOrConnecting
@@ -59,6 +59,7 @@ class ConnectivityReceiver() : BroadcastReceiver(), ConnectivityReceiverAbs {
 interface ConnectivityReceiverAbs {
     fun addNetworkStateChangeListener(listener: NetworkStateChangeListener)
     fun removeNetworkStateChangeListener(listener: NetworkStateChangeListener)
+    fun isConnectedOrConnecting(context: Context): Boolean
 }
 
 interface NetworkStateChangeListener {

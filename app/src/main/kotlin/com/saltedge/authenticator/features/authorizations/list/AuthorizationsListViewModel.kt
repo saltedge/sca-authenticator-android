@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
@@ -42,6 +43,7 @@ import com.saltedge.authenticator.tools.postUnitEvent
 import kotlinx.coroutines.CoroutineScope
 
 class AuthorizationsListViewModel(
+    private val appContext: Context,
     private val interactorV1: AuthorizationsListInteractorAbs,
     private val interactorV2: AuthorizationsListInteractorAbs,
     private val locationManager: DeviceLocationManagerAbs,
@@ -69,7 +71,7 @@ class AuthorizationsListViewModel(
     val onShowSettingsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     override val coroutineScope: CoroutineScope
         get() = viewModelScope
-    private var noInternetConnection: Boolean = false
+    private var hasInternetConnection: Boolean = false
 
     init {
         interactorV1.contract = this
@@ -79,6 +81,7 @@ class AuthorizationsListViewModel(
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStart() {
         connectivityReceiver.addNetworkStateChangeListener(this)
+        hasInternetConnection = connectivityReceiver.isConnectedOrConnecting(appContext)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
@@ -153,7 +156,7 @@ class AuthorizationsListViewModel(
     }
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
-        noInternetConnection = !isConnected
+        hasInternetConnection = isConnected
         postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
     }
 
@@ -247,28 +250,28 @@ class AuthorizationsListViewModel(
         listVisibility.postValue(if (emptyViewIsVisible) View.GONE else View.VISIBLE)
         emptyViewImage.postValue(
             when {
-                noInternetConnection -> R.drawable.ic_internet_connection
+                !hasInternetConnection -> R.drawable.ic_internet_connection
                 connectionsListIsEmpty -> R.drawable.ic_connections_empty
                 else -> R.drawable.ic_authorizations_empty
             }
         )
         emptyViewActionText.postValue(
             when {
-                noInternetConnection -> null
+                !hasInternetConnection -> null
                 connectionsListIsEmpty -> R.string.actions_connect
                 else -> R.string.actions_scan_qr
             }
         )
         emptyViewTitleText.postValue(
             when {
-                noInternetConnection -> R.string.authorizations_no_internet_title
+                !hasInternetConnection -> R.string.authorizations_no_internet_title
                 connectionsListIsEmpty -> R.string.connections_list_empty_title
                 else -> R.string.authorizations_empty_title
             }
         )
         emptyViewDescriptionText.postValue(
             when {
-                noInternetConnection -> R.string.authorizations_no_internet_description
+                !hasInternetConnection -> R.string.authorizations_no_internet_description
                 connectionsListIsEmpty -> R.string.connections_list_empty_description
                 else -> R.string.authorizations_empty_description
             }
