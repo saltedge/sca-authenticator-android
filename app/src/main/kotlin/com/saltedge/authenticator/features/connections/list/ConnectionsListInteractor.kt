@@ -103,16 +103,17 @@ class ConnectionsListInteractor(
         apiErrors: List<ApiErrorData>
     ) {
         val errorTokens = apiErrors.mapNotNull { if (it.isConnectivityError()) null else it.accessToken }
-        val allTokensToRevoke = revokedTokens + errorTokens
-        deleteConnectionsAndKeysByTokens(revokedTokens = allTokensToRevoke)
-        if (allTokensToRevoke.isNotEmpty()) updateConnections()
+        val allGuidsToRevoke = (revokedTokens + errorTokens).mapConnectionsTokensToGuids()
+        deleteConnectionsAndKeysByGuid(allGuidsToRevoke)
+        if (allGuidsToRevoke.isNotEmpty()) updateConnections()
     }
 
     override fun onConnectionsV2RevokeResult(revokedIDs: List<ID>, apiErrors: List<ApiErrorData>) {
-        deleteConnectionsAndKeysByIDs(revokedIDs = revokedIDs)
-        val tokensToRevoke = apiErrors.mapNotNull { if (it.isConnectivityError()) null else it.accessToken }
-        deleteConnectionsAndKeysByTokens(revokedTokens = tokensToRevoke)
-        if (revokedIDs.isNotEmpty() || tokensToRevoke.isNotEmpty()) updateConnections()
+        val errorsTokensToRevoke = apiErrors.mapNotNull { if (it.isConnectivityError()) null else it.accessToken }
+        val errorGuids = errorsTokensToRevoke.mapConnectionsTokensToGuids()
+        val successGuids = revokedIDs.mapConnectionsIDsToGuids()
+        deleteConnectionsAndKeysByGuid(successGuids + errorGuids)
+        if (errorGuids.isNotEmpty() || successGuids.isNotEmpty()) updateConnections()
     }
 
     private fun sendRevokeRequestForConnection(connection: Connection) {
@@ -124,14 +125,18 @@ class ConnectionsListInteractor(
         }
     }
 
-    private fun deleteConnectionsAndKeysByTokens(revokedTokens: List<Token>) {
-        richConnections.values.filter { revokedTokens.contains(it.connection.accessToken) }
-            .forEach { deleteConnection(guid = it.connection.guid) }
+    private fun List<Token>.mapConnectionsTokensToGuids(): List<GUID> {
+        return richConnections.values.filter { this.contains(it.connection.accessToken) }
+            .map { it.connection.guid }
     }
 
-    private fun deleteConnectionsAndKeysByIDs(revokedIDs: List<ID>) {
-        richConnections.values.filter { revokedIDs.contains(it.connection.id) }
-            .forEach { deleteConnection(guid = it.connection.guid) }
+    private fun List<ID>.mapConnectionsIDsToGuids(): List<GUID> {
+        return richConnections.values.filter { this.contains(it.connection.id) }
+            .map { it.connection.guid }
+    }
+
+    private fun deleteConnectionsAndKeysByGuid(revokedGuids: List<GUID>) {
+        revokedGuids.forEach { deleteConnection(guid = it) }
     }
 
     private fun processOfEncryptedConsentsResult(encryptedList: List<EncryptedData>) {
