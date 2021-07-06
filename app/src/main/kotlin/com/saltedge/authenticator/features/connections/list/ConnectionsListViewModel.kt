@@ -60,7 +60,7 @@ class ConnectionsListViewModel(
     NetworkStateChangeListener
 {
     private var consents: Map<GUID, List<ConsentData>> = emptyMap()
-    private var hasInternetConnection: Boolean = true
+    private var hasInternetConnection: Boolean = false
     private val listItemsValues: List<ConnectionItem>
         get() = listItems.value ?: emptyList()
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
@@ -86,6 +86,7 @@ class ConnectionsListViewModel(
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStart() {
         connectivityReceiver.addNetworkStateChangeListener(this)
+        hasInternetConnection = connectivityReceiver.isConnectedOrConnecting(appContext)
         interactor.updateConnections()
         refreshConsents()
     }
@@ -129,44 +130,61 @@ class ConnectionsListViewModel(
         val item = listItemsValues.getOrNull(itemIndex) ?: return
         val menuItems = mutableListOf<MenuItemData>()
         if (!item.isActive) {
-            menuItems.add(MenuItemData(
-                id = PopupMenuItem.RECONNECT.ordinal,
-                iconRes = R.drawable.ic_menu_reconnect_24dp,
-                textRes = R.string.actions_reconnect
-            ))
-        }
-        menuItems.addAll(listOf(
-            MenuItemData(
-                id = PopupMenuItem.RENAME.ordinal,
-                iconRes = R.drawable.ic_menu_edit_24dp,
-                textRes = R.string.actions_rename
-            ),
-            MenuItemData(
-                id = PopupMenuItem.SUPPORT.ordinal,
-                iconRes = R.drawable.ic_contact_support_24dp,
-                textRes = R.string.actions_contact_support
+            menuItems.add(
+                MenuItemData(
+                    id = PopupMenuItem.RECONNECT.ordinal,
+                    iconRes = R.drawable.ic_menu_reconnect_24dp,
+                    textRes = R.string.actions_reconnect
+                )
             )
-        ))
+        }
+        menuItems.addAll(
+            listOf(
+                MenuItemData(
+                    id = PopupMenuItem.RENAME.ordinal,
+                    iconRes = R.drawable.ic_menu_edit_24dp,
+                    textRes = R.string.actions_rename
+                ),
+                MenuItemData(
+                    id = PopupMenuItem.SUPPORT.ordinal,
+                    iconRes = R.drawable.ic_contact_support_24dp,
+                    textRes = R.string.actions_contact_support
+                )
+            )
+        )
         if (consents[item.guid]?.isNotEmpty() == true) {
-            menuItems.add(MenuItemData(
-                id = PopupMenuItem.CONSENTS.ordinal,
-                iconRes = R.drawable.ic_view_consents_24dp,
-                textRes = R.string.actions_view_consents
-            ))
+            menuItems.add(
+                MenuItemData(
+                    id = PopupMenuItem.CONSENTS.ordinal,
+                    iconRes = R.drawable.ic_view_consents_24dp,
+                    textRes = R.string.actions_view_consents
+                )
+            )
         }
         if (item.locationPermissionRequired) {
-            menuItems.add(MenuItemData(
-                id = PopupMenuItem.LOCATION.ordinal,
-                iconRes = R.drawable.ic_view_location_24dp,
-                textRes = R.string.actions_view_location
-            ))
+            menuItems.add(
+                MenuItemData(
+                    id = PopupMenuItem.LOCATION.ordinal,
+                    iconRes = R.drawable.ic_view_location_24dp,
+                    textRes = R.string.actions_view_location
+                )
+            )
         }
-        menuItems.add(MenuItemData(
-            id = PopupMenuItem.DELETE.ordinal,
-            iconRes = if (item.isActive) R.drawable.ic_menu_delete_24dp else R.drawable.ic_menu_remove_24dp,
-            textRes = if (item.isActive) R.string.actions_delete else R.string.actions_remove
-        ))
-        onListItemClickEvent.postValue(ViewModelEvent(MenuData(menuId = itemIndex, items = menuItems)))
+        menuItems.add(
+            MenuItemData(
+                id = PopupMenuItem.DELETE.ordinal,
+                iconRes = if (item.isActive) R.drawable.ic_menu_delete_24dp else R.drawable.ic_menu_remove_24dp,
+                textRes = if (item.isActive) R.string.actions_delete else R.string.actions_remove
+            )
+        )
+        onListItemClickEvent.postValue(
+            ViewModelEvent(
+                MenuData(
+                    menuId = itemIndex,
+                    items = menuItems
+                )
+            )
+        )
     }
 
     fun onRequestPermissionsResult(requestCode: Int, grantResults: IntArray) {
@@ -199,12 +217,14 @@ class ConnectionsListViewModel(
             }
             PopupMenuItem.LOCATION -> onAccessToLocationClickEvent.postUnitEvent()
             PopupMenuItem.DELETE -> {
-                when {
-                    !hasInternetConnection -> {
-                        onShowNoInternetConnectionDialogEvent.postValue(ViewModelEvent(item.guid))
+                if (hasInternetConnection) {
+                    if (item.isActive) {
+                        onDeleteClickEvent.postValue(ViewModelEvent(item.guid))
+                    } else {
+                        interactor.revokeConnection(item.guid)
                     }
-                    item.isActive -> onDeleteClickEvent.postValue(ViewModelEvent(item.guid))
-                    else -> interactor.revokeConnection(item.guid)
+                } else {
+                    onShowNoInternetConnectionDialogEvent.postValue(ViewModelEvent(item.guid))
                 }
             }
         }
