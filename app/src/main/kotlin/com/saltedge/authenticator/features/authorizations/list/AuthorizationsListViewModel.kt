@@ -71,7 +71,6 @@ class AuthorizationsListViewModel(
     val onShowSettingsListEvent = MutableLiveData<ViewModelEvent<Unit>>()
     override val coroutineScope: CoroutineScope
         get() = viewModelScope
-    private var hasNotInternetConnection: Boolean = true
 
     init {
         interactorV1.contract = this
@@ -81,7 +80,6 @@ class AuthorizationsListViewModel(
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStart() {
         connectivityReceiver.addNetworkStateChangeListener(this)
-        hasNotInternetConnection = connectivityReceiver.isConnectedOrConnecting(appContext)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
@@ -156,7 +154,6 @@ class AuthorizationsListViewModel(
     }
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
-        hasNotInternetConnection = !isConnected
         postMainComponentsState(itemsListIsEmpty = listItemsValues.isEmpty())
     }
 
@@ -250,28 +247,28 @@ class AuthorizationsListViewModel(
         listVisibility.postValue(if (emptyViewIsVisible) View.GONE else View.VISIBLE)
         emptyViewImage.postValue(
             when {
-                hasNotInternetConnection -> R.drawable.ic_internet_connection
+                !connectivityReceiver.isConnectedOrConnecting(appContext) -> R.drawable.ic_internet_connection
                 connectionsListIsEmpty -> R.drawable.ic_connections_empty
                 else -> R.drawable.ic_authorizations_empty
             }
         )
         emptyViewActionText.postValue(
             when {
-                hasNotInternetConnection -> null
+                !connectivityReceiver.isConnectedOrConnecting(appContext) -> null
                 connectionsListIsEmpty -> R.string.actions_connect
                 else -> R.string.actions_scan_qr
             }
         )
         emptyViewTitleText.postValue(
             when {
-                hasNotInternetConnection -> R.string.authorizations_no_internet_title
+                !connectivityReceiver.isConnectedOrConnecting(appContext) -> R.string.authorizations_no_internet_title
                 connectionsListIsEmpty -> R.string.connections_list_empty_title
                 else -> R.string.authorizations_empty_title
             }
         )
         emptyViewDescriptionText.postValue(
             when {
-                hasNotInternetConnection -> R.string.authorizations_no_internet_description
+                !connectivityReceiver.isConnectedOrConnecting(appContext) -> R.string.authorizations_no_internet_description
                 connectionsListIsEmpty -> R.string.connections_list_empty_description
                 else -> R.string.authorizations_empty_description
             }
