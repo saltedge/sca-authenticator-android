@@ -56,11 +56,9 @@ class ConnectionsListViewModel(
 ) : ViewModel(),
     ConnectionsListInteractorCallback,
     LifecycleObserver,
-    PopupMenuBuilder.ItemClickListener,
-    NetworkStateChangeListener
+    PopupMenuBuilder.ItemClickListener
 {
     private var consents: Map<GUID, List<ConsentData>> = emptyMap()
-    private var hasInternetConnection: Boolean = false
     private val listItemsValues: List<ConnectionItem>
         get() = listItems.value ?: emptyList()
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
@@ -85,15 +83,8 @@ class ConnectionsListViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStart() {
-        connectivityReceiver.addNetworkStateChangeListener(this)
-        hasInternetConnection = connectivityReceiver.isConnectedOrConnecting(appContext)
         interactor.updateConnections()
         refreshConsents()
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun onStop() {
-        connectivityReceiver.removeNetworkStateChangeListener(this)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -196,10 +187,6 @@ class ConnectionsListViewModel(
         }
     }
 
-    override fun onNetworkConnectionChanged(isConnected: Boolean) {
-        hasInternetConnection = isConnected
-    }
-
     override fun onMenuItemClick(menuId: Int, itemId: Int) {
         val item = listItemsValues.getOrNull(menuId) ?: return
         when (PopupMenuItem.values()[itemId]) {
@@ -218,7 +205,7 @@ class ConnectionsListViewModel(
             PopupMenuItem.LOCATION -> onAccessToLocationClickEvent.postUnitEvent()
             PopupMenuItem.DELETE -> {
                 when {
-                    !hasInternetConnection -> {
+                    !connectivityReceiver.isConnectedOrConnecting(appContext) -> {
                         onShowNoInternetConnectionDialogEvent.postValue(ViewModelEvent(item.guid))
                     }
                     item.isActive -> onDeleteClickEvent.postValue(ViewModelEvent(item.guid))
@@ -249,7 +236,7 @@ class ConnectionsListViewModel(
             when (actionResId) {
                 R.string.actions_proceed -> onAskPermissionsEvent.postUnitEvent()
                 R.string.actions_go_to_settings -> onGoToSettingsEvent.postUnitEvent()
-                R.string.actions_retry -> if (hasInternetConnection) deleteItem(guid = guid)
+                R.string.actions_retry -> if (connectivityReceiver.isConnectedOrConnecting(appContext)) deleteItem(guid = guid)
             }
         }
     }
