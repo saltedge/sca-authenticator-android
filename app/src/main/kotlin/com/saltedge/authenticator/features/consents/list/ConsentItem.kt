@@ -22,7 +22,7 @@ package com.saltedge.authenticator.features.consents.list
 
 import android.text.Spanned
 
-class ConsentItemViewModel(
+class ConsentItem(
     val id: String,
     var tppName: String,
     var consentTypeDescription: String,
@@ -32,7 +32,7 @@ class ConsentItemViewModel(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as ConsentItemViewModel
+        other as ConsentItem
 
         if (id != other.id) return false
         if (tppName != other.tppName) return false

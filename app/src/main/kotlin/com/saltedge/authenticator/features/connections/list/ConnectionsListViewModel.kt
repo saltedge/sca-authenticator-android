@@ -168,7 +168,7 @@ class ConnectionsListViewModel(
         }
     }
 
-    override fun onConnectionsDataChanged(
+    override fun onDatasetChanged(
         connections: List<ConnectionAbs>,
         consents: List<ConsentData>
     ) {

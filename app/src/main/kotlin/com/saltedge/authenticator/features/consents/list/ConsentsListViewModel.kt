@@ -20,9 +20,7 @@
  */
 package com.saltedge.authenticator.features.consents.list
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -32,133 +30,85 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.CONSENT_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.core.api.KEY_DATA
-import com.saltedge.authenticator.core.api.KEY_ID
 import com.saltedge.authenticator.core.api.model.ConsentData
-import com.saltedge.authenticator.core.api.model.EncryptedData
-import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ConsentType
 import com.saltedge.authenticator.core.model.GUID
-import com.saltedge.authenticator.core.model.RichConnection
-import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
+import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.features.consents.common.countDescription
 import com.saltedge.authenticator.features.consents.common.countOfDays
-import com.saltedge.authenticator.features.consents.common.decryptConsents
 import com.saltedge.authenticator.features.consents.details.ConsentDetailsViewModel
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.models.toRichConnection
-import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
-import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
 import com.saltedge.authenticator.tools.appendColoredText
 import com.saltedge.authenticator.tools.daysTillExpire
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.CoroutineScope
 import org.joda.time.DateTime
 import java.lang.ref.WeakReference
 
 class ConsentsListViewModel(
     private val weakContext: WeakReference<Context>,
-    private val connectionsRepository: ConnectionsRepositoryAbs,
-    private val keyStoreManager: KeyManagerAbs,
-    private val apiManager: AuthenticatorApiManagerAbs,
-    private val cryptoTools: CryptoToolsV1Abs,
-    private val defaultDispatcher: CoroutineDispatcher
+    private val interactor: ConsentsListInteractorAbs,
 ) : ViewModel(),
     LifecycleObserver,
-    FetchEncryptedDataListener
+    ConsentsListInteractorCallback
 {
-    val listItems = MutableLiveData<List<ConsentItemViewModel>>()
+    val listItems = MutableLiveData<List<ConsentItem>>()
     val onListItemClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onConsentRemovedEvent = MutableLiveData<ViewModelEvent<String>>()
     val logoUrlData = MutableLiveData<String>()
     val connectionTitleData = MutableLiveData<String>()
     val consentsCount = MutableLiveData<String>()
-    private var consents: List<ConsentData> = emptyList()
-    private var optRichConnection: RichConnection? = null
+
+    override val coroutineScope: CoroutineScope
+        get() = viewModelScope
+
     private val context: Context?
         get() = weakContext.get()
 
+    init {
+        interactor.contract = this
+    }
+
     fun setInitialData(bundle: Bundle?) {
-        bundle?.guid?.let { connectionGuid ->
-            optRichConnection = connectionsRepository.getByGuid(connectionGuid)?.let {
-                logoUrlData.postValue(it.logoUrl)
-                connectionTitleData.postValue(it.name)
-                it.toRichConnection(keyStoreManager)
-            }
+        interactor.updateConnection(bundle?.guid)?.let {
+            logoUrlData.postValue(it.logoUrl)
+            connectionTitleData.postValue(it.name)
         }
-        onReceivedNewConsents(bundle?.consents ?: emptyList())
+        interactor.consents = bundle?.consents ?: emptyList()
     }
 
     fun refreshConsents() {
-        optRichConnection?.let {
-            apiManager.getConsents(connectionsAndKeys = listOf(it), resultCallback = this)
-        }
-    }
-
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val consentId = data?.getStringExtra(KEY_ID)
-        val revokedConsent: ConsentData? = consents.firstOrNull { it.id == consentId }
-        if (requestCode == CONSENT_REQUEST_CODE && resultCode == Activity.RESULT_OK && revokedConsent != null) {
-            val newConsents: MutableList<ConsentData> = consents.toMutableList()
-            newConsents.remove(revokedConsent)
-            if (newConsents != consents) {
-                context?.let {
-                    val template = it.getString(R.string.consent_revoked_for)
-                    val message = String.format(template, revokedConsent.tppName)
-                    onConsentRemovedEvent.postValue(ViewModelEvent(message))
-                }
-                onReceivedNewConsents(newConsents)
-            }
-        }
-    }
-
-    fun revokeConsent(consentId: String?) {
-        val revokedConsent: ConsentData? = consents.firstOrNull { it.id == consentId }
-        if (revokedConsent != null) {
-            val newConsents: MutableList<ConsentData> = consents.toMutableList()
-            newConsents.remove(revokedConsent)
-            if (newConsents != consents) {
-                context?.let {
-                    val template = it.getString(R.string.consent_revoked_for)
-                    val message = String.format(template, revokedConsent.tppName)
-                    onConsentRemovedEvent.postValue(ViewModelEvent(message))
-                }
-                onReceivedNewConsents(newConsents)
-            }
-        }
+        interactor.updateConsents()
     }
 
     fun onListItemClick(itemIndex: Int) {
-        val connectionGuid = optRichConnection?.connection?.guid ?: return
+        val consentId = listItems.value?.getOrNull(itemIndex)?.id ?: return
+        val consent: ConsentData = interactor.getConsent(consentId) ?: return
         onListItemClickEvent.postValue(ViewModelEvent(
-            ConsentDetailsViewModel.newBundle(connectionGuid, consents[itemIndex])
+            ConsentDetailsViewModel.newBundle(consent.connectionGuid, consent)
         ))
     }
 
-    override fun onFetchEncryptedDataResult(result: List<EncryptedData>, errors: List<ApiErrorData>) {
-        val richConnection = optRichConnection ?: return
-        viewModelScope.launch(defaultDispatcher) {
-            val decryptedConsents = result.decryptConsents(cryptoTools = cryptoTools, richConnections = listOf(richConnection))
-            withContext(Dispatchers.Main) { onReceivedNewConsents(result = decryptedConsents) }
+    fun onRevokeConsent(consentId: ID?) {
+        val removedConsent = interactor.removeConsent(consentId ?: return) ?: return
+        context?.let {
+            val template = it.getString(R.string.consent_revoked_for)
+            val message = String.format(template, removedConsent.tppName)
+            onConsentRemovedEvent.postValue(ViewModelEvent(message))
         }
     }
 
-    private fun onReceivedNewConsents(result: List<ConsentData>) {
-        this.consents = result
-        listItems.postValue(result.toViewModels())
+    override fun onDatasetChanged(consents: List<ConsentData>) {
+        val items = consents.toViewModels()
+        listItems.postValue(items)
         context?.let { consentsCount.postValue(consents.countDescription(it)) }
     }
 
-    private fun List<ConsentData>.toViewModels(): List<ConsentItemViewModel> {
+    private fun List<ConsentData>.toViewModels(): List<ConsentItem> {
         return this.map {
-            ConsentItemViewModel(
+            ConsentItem(
                 id = it.id,
                 tppName = it.tppName,
                 consentTypeDescription = it.consentType?.toConsentTypeDescription() ?: "",

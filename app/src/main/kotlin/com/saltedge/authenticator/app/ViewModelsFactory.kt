@@ -39,6 +39,7 @@ import com.saltedge.authenticator.features.connections.list.ConnectionsListInter
 import com.saltedge.authenticator.features.connections.list.ConnectionsListViewModel
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsViewModel
 import com.saltedge.authenticator.features.consents.details.ConsentDetailsViewModel
+import com.saltedge.authenticator.features.consents.list.ConsentsListInteractor
 import com.saltedge.authenticator.features.consents.list.ConsentsListViewModel
 import com.saltedge.authenticator.features.launcher.LauncherViewModel
 import com.saltedge.authenticator.features.main.MainActivityInteractor
@@ -169,8 +170,8 @@ class ViewModelsFactory @Inject constructor(
                     interactor = ConnectionsListInteractor(
                         connectionsRepository = connectionsRepository,
                         keyStoreManager = keyStoreManager,
-                        apiManagerV1 = apiManagerV1,
-                        apiManagerV2 = apiManagerV2,
+                        v1ApiManager = apiManagerV1,
+                        v2ApiManager = apiManagerV2,
                         cryptoTools = cryptoToolsV1,
                         defaultDispatcher = Dispatchers.Default
                     ),
@@ -180,12 +181,15 @@ class ViewModelsFactory @Inject constructor(
             }
             modelClass.isAssignableFrom(ConsentsListViewModel::class.java) -> {
                 return ConsentsListViewModel(
-                    appContext = appContext,
-                    connectionsRepository = connectionsRepository,
-                    keyStoreManager = keyStoreManager,
-                    apiManager = apiManagerV1,
-                    cryptoTools = cryptoToolsV1,
-                    defaultDispatcher = Dispatchers.Default
+                    weakContext = WeakReference(appContext),
+                    interactor = ConsentsListInteractor(
+                        connectionsRepository = connectionsRepository,
+                        keyStoreManager = keyStoreManager,
+                        v1ApiManager = apiManagerV1,
+                        v2ApiManager = apiManagerV2,
+                        cryptoTools = cryptoToolsV1,
+                        defaultDispatcher = Dispatchers.Default
+                    )
                 ) as T
             }
             modelClass.isAssignableFrom(SubmitActionViewModel::class.java) -> {

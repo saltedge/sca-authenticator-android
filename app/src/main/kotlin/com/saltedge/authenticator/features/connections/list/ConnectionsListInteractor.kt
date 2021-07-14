@@ -28,26 +28,24 @@ import com.saltedge.authenticator.core.model.*
 import com.saltedge.authenticator.core.tools.secure.BaseCryptoToolsAbs
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.consents.common.decryptConsents
+import com.saltedge.authenticator.features.consents.common.requestUpdateConsents
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.toRichConnection
-import com.saltedge.authenticator.models.toRichConnectionPair
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener
 import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
-import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionsV2RevokeListener
 import com.saltedge.authenticator.sdk.v2.api.contract.FetchConsentsListener
 import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
 
 class ConnectionsListInteractor(
     private val connectionsRepository: ConnectionsRepositoryAbs,
-    private val apiManagerV1: AuthenticatorApiManagerAbs,
-    private val apiManagerV2: ScaServiceClientAbs,
+    private val v1ApiManager: AuthenticatorApiManagerAbs,
+    private val v2ApiManager: ScaServiceClientAbs,
     private val keyStoreManager: KeyManagerAbs,
     private val cryptoTools: BaseCryptoToolsAbs,
     private val defaultDispatcher: CoroutineDispatcher
@@ -61,7 +59,7 @@ class ConnectionsListInteractor(
     private var richConnections: List<RichConnection> = emptyList()
     private var consentsV1: List<ConsentData> = emptyList()
     private var consentsV2: List<ConsentData> = emptyList()
-    private val allConsents: List<ConsentData>
+    val allConsents: List<ConsentData>
         get() = consentsV1 + consentsV2
 
     override fun updateConnections() {
@@ -77,18 +75,7 @@ class ConnectionsListInteractor(
     }
 
     override fun updateConsents() {
-        val splitRichConnections = richConnections
-            .filter { it.connection.isActive() }
-            .partition { it.connection.apiVersion == API_V2_VERSION }
-
-        val v2RichConnections = splitRichConnections.first
-        if (v2RichConnections.isNotEmpty()) {
-            apiManagerV2.fetchConsents(richConnections = v2RichConnections, callback = this)
-        }
-        val otherRichConnections = splitRichConnections.second
-        if (otherRichConnections.isNotEmpty()) {
-            apiManagerV1.getConsents(connectionsAndKeys = otherRichConnections, resultCallback = this)
-        }
+        requestUpdateConsents(richConnections, v1ApiManager, v2ApiManager, this, this)
     }
 
     override fun revokeConnection(connectionGuid: GUID) {
@@ -125,18 +112,15 @@ class ConnectionsListInteractor(
     }
 
     override fun getConsents(connectionGuid: GUID): List<ConsentData> {
-        val connectionID: ID = richConnections
-            .firstOrNull { it.connection.guid == connectionGuid }
-            ?.connection?.id ?: return emptyList()
-        return allConsents.filter { it.connectionId == connectionID }
+        return allConsents.filter { it.connectionGuid == connectionGuid }
     }
 
     private fun sendRevokeRequestForConnection(connection: Connection) {
         val richConnection = connection.toRichConnection(keyStoreManager) ?: return
         if (connection.apiVersion == API_V1_VERSION) {
-            apiManagerV1.revokeConnections(connectionsAndKeys = listOf(richConnection), resultCallback = this)
+            v1ApiManager.revokeConnections(connectionsAndKeys = listOf(richConnection), resultCallback = this)
         } else if (connection.apiVersion == API_V2_VERSION) {
-            apiManagerV2.revokeConnections(richConnections = listOf(richConnection), callback = this)
+            v2ApiManager.revokeConnections(richConnections = listOf(richConnection), callback = this)
         }
     }
 
@@ -156,15 +140,6 @@ class ConnectionsListInteractor(
         revokedGuids.forEach { deleteConnection(guid = it) }
     }
 
-    private fun processDecryptedConsentsResult(result: List<ConsentData>, apiVersion: String) {
-        when (apiVersion) {
-            API_V2_VERSION -> consentsV2 = result
-            API_V1_VERSION -> consentsV1 = result
-            else -> Unit
-        }
-        notifyDatasetChanges()
-    }
-
     private fun deleteConnection(guid: GUID) {
         keyStoreManager.deleteKeyPairIfExist(guid)
         connectionsRepository.deleteConnection(guid)
@@ -180,8 +155,17 @@ class ConnectionsListInteractor(
         }
     }
 
+    private fun processDecryptedConsentsResult(result: List<ConsentData>, apiVersion: String) {
+        when (apiVersion) {
+            API_V2_VERSION -> consentsV2 = result
+            API_V1_VERSION -> consentsV1 = result
+            else -> Unit
+        }
+        notifyDatasetChanges()
+    }
+
     private fun notifyDatasetChanges() {
-        contract?.onConnectionsDataChanged(
+        contract?.onDatasetChanged(
             connections = richConnections.map { it.connection }.sortedBy { it.createdAt },
             consents = allConsents
         )
@@ -199,5 +183,5 @@ interface ConnectionsListInteractorAbs {
 
 interface ConnectionsListInteractorCallback {
     val coroutineScope: CoroutineScope
-    fun onConnectionsDataChanged(connections: List<ConnectionAbs>, consents: List<ConsentData>)
+    fun onDatasetChanged(connections: List<ConnectionAbs>, consents: List<ConsentData>)
 }

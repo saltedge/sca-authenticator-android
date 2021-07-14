@@ -23,6 +23,7 @@ package com.saltedge.authenticator.core.api.model
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.core.api.*
 import com.saltedge.authenticator.core.model.ConsentType
+import com.saltedge.authenticator.core.model.GUID
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.toConsentType
 import org.joda.time.DateTime
@@ -40,7 +41,9 @@ data class ConsentData(
     @SerializedName(KEY_CREATED_AT) var createdAt: DateTime,
     @SerializedName(KEY_EXPIRES_AT) var expiresAt: DateTime,
     @SerializedName(KEY_USER_ID) var userId: ID? = null,
-    @SerializedName(KEY_CONNECTION_ID) var connectionId: ID? = null,
+    //Extra data
+    var connectionId: ID? = null,
+    var connectionGuid: GUID = "",
 ) : Serializable {
     val consentType: ConsentType?
         get() = consentTypeString.toConsentType()
