@@ -27,6 +27,7 @@ import com.saltedge.authenticator.core.api.model.error.isConnectivityError
 import com.saltedge.authenticator.core.model.*
 import com.saltedge.authenticator.core.tools.secure.BaseCryptoToolsAbs
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
+import com.saltedge.authenticator.features.consents.common.decryptConsents
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.toRichConnection
@@ -170,19 +171,11 @@ class ConnectionsListInteractor(
     }
 
     private fun processOfEncryptedConsentsResult(encryptedList: List<EncryptedData>, apiVersion: String) {
+        val richConnectionsByVersion = richConnections.filter { it.connection.apiVersion == apiVersion }
         contract?.coroutineScope?.launch(defaultDispatcher) {
-            val data = decryptConsents(encryptedList = encryptedList, apiVersion = apiVersion)
+            val data = encryptedList.decryptConsents(cryptoTools = cryptoTools, richConnections = richConnectionsByVersion)
             withContext(Dispatchers.Main) {
                 processDecryptedConsentsResult(result = data, apiVersion = apiVersion)
-            }
-        }
-    }
-
-    private fun decryptConsents(encryptedList: List<EncryptedData>, apiVersion: String): List<ConsentData> {
-        val richConnectionsByVersion = richConnections.filter { it.connection.apiVersion == apiVersion }
-        return encryptedList.mapNotNull { data ->
-            richConnectionsByVersion.firstOrNull { it.connection.id == data.connectionId }?.private?.let { key ->
-                cryptoTools.decryptConsentData(encryptedData = data, rsaPrivateKey = key)
             }
         }
     }

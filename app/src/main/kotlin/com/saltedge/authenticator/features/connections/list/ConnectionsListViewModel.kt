@@ -37,10 +37,11 @@ import com.saltedge.authenticator.core.model.GUID
 import com.saltedge.authenticator.features.connections.common.ConnectionItem
 import com.saltedge.authenticator.features.connections.common.convertConnectionsToViewItems
 import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
+import com.saltedge.authenticator.features.connections.list.menu.ConnectionsListMenuItemType
 import com.saltedge.authenticator.features.connections.list.menu.MenuData
 import com.saltedge.authenticator.features.connections.list.menu.PopupMenuBuilder
+import com.saltedge.authenticator.features.connections.list.menu.buildConnectionsListMenu
 import com.saltedge.authenticator.features.consents.list.ConsentsListViewModel
-import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.tools.ResId
@@ -116,62 +117,8 @@ class ConnectionsListViewModel(
 
     fun onListItemClick(itemIndex: Int) {
         val item = listItemsValues.getOrNull(itemIndex) ?: return
-        val menuItems = mutableListOf<MenuItemData>()
-        if (!item.isActive) {
-            menuItems.add(
-                MenuItemData(
-                    id = PopupMenuItem.RECONNECT.ordinal,
-                    iconRes = R.drawable.ic_menu_reconnect_24dp,
-                    textRes = R.string.actions_reconnect
-                )
-            )
-        }
-        menuItems.addAll(
-            listOf(
-                MenuItemData(
-                    id = PopupMenuItem.RENAME.ordinal,
-                    iconRes = R.drawable.ic_menu_edit_24dp,
-                    textRes = R.string.actions_rename
-                ),
-                MenuItemData(
-                    id = PopupMenuItem.SUPPORT.ordinal,
-                    iconRes = R.drawable.ic_contact_support_24dp,
-                    textRes = R.string.actions_contact_support
-                )
-            )
-        )
-        if (item.consentsCount > 0) {
-            menuItems.add(
-                MenuItemData(
-                    id = PopupMenuItem.CONSENTS.ordinal,
-                    iconRes = R.drawable.ic_view_consents_24dp,
-                    textRes = R.string.actions_view_consents
-                )
-            )
-        }
-        if (item.shouldRequestLocationPermission) {
-            menuItems.add(
-                MenuItemData(
-                    id = PopupMenuItem.LOCATION.ordinal,
-                    iconRes = R.drawable.ic_view_location_24dp,
-                    textRes = R.string.actions_view_location
-                )
-            )
-        }
-        menuItems.add(
-            MenuItemData(
-                id = PopupMenuItem.DELETE.ordinal,
-                iconRes = if (item.isActive) R.drawable.ic_menu_delete_24dp else R.drawable.ic_menu_remove_24dp,
-                textRes = if (item.isActive) R.string.actions_delete else R.string.actions_remove
-            )
-        )
         onListItemClickEvent.postValue(
-            ViewModelEvent(
-                MenuData(
-                    menuId = itemIndex,
-                    items = menuItems
-                )
-            )
+            ViewModelEvent(MenuData(menuId = itemIndex, items = buildConnectionsListMenu(item)))
         )
     }
 
@@ -186,15 +133,19 @@ class ConnectionsListViewModel(
 
     override fun onMenuItemClick(menuId: Int, itemId: Int) {
         val item = listItemsValues.getOrNull(menuId) ?: return
-        when (PopupMenuItem.values()[itemId]) {
-            PopupMenuItem.RECONNECT -> onReconnectClickEvent.postValue(ViewModelEvent(item.guid))
-            PopupMenuItem.RENAME -> {
+        when (ConnectionsListMenuItemType.values()[itemId]) {
+            ConnectionsListMenuItemType.RECONNECT -> {
+                onReconnectClickEvent.postValue(ViewModelEvent(item.guid))
+            }
+            ConnectionsListMenuItemType.RENAME -> {
                 onRenameClickEvent.postValue(
                     ViewModelEvent(EditConnectionNameDialog.dataBundle(item.guid, item.name))
                 )
             }
-            PopupMenuItem.SUPPORT -> onSupportClickEvent.postValue(ViewModelEvent(item.email))
-            PopupMenuItem.CONSENTS -> {
+            ConnectionsListMenuItemType.SUPPORT -> {
+                onSupportClickEvent.postValue(ViewModelEvent(item.email))
+            }
+            ConnectionsListMenuItemType.CONSENTS -> {
                 onViewConsentsClickEvent.postValue(
                     ViewModelEvent(ConsentsListViewModel.newBundle(
                         connectionGuid = item.guid,
@@ -202,8 +153,10 @@ class ConnectionsListViewModel(
                     ))
                 )
             }
-            PopupMenuItem.LOCATION -> onAccessToLocationClickEvent.postUnitEvent()
-            PopupMenuItem.DELETE -> {
+            ConnectionsListMenuItemType.LOCATION -> {
+                onAccessToLocationClickEvent.postUnitEvent()
+            }
+            ConnectionsListMenuItemType.DELETE -> {
                 when {
                     !connectivityReceiver.hasNetworkConnection -> {
                         onShowNoInternetConnectionDialogEvent.postValue(ViewModelEvent(item.guid))
@@ -243,9 +196,5 @@ class ConnectionsListViewModel(
         return this.onEach { item ->
             item.consentsCount = consents.filter { it.connectionId == item.connectionId  }.count()
         }
-    }
-
-    enum class PopupMenuItem {
-        RECONNECT, RENAME, SUPPORT, CONSENTS, DELETE, LOCATION
     }
 }

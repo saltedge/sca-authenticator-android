@@ -188,8 +188,8 @@ class ConsentsListViewModelTest : CoroutineViewModelTest() {
         viewModel.setInitialData(bundle)
 
         //then
-        assertThat(viewModel.logoUrl.value, equalTo("https://www.fentury.com/"))
-        assertThat(viewModel.connectionTitle.value, equalTo("Demobank2"))
+        assertThat(viewModel.logoUrlData.value, equalTo("https://www.fentury.com/"))
+        assertThat(viewModel.connectionTitleData.value, equalTo("Demobank2"))
         assertThat(viewModel.consentsCount.value, equalTo("3 consents"))
     }
 
@@ -200,8 +200,8 @@ class ConsentsListViewModelTest : CoroutineViewModelTest() {
         viewModel.setInitialData(Bundle())
 
         //then
-        Assert.assertNull(viewModel.logoUrl.value)
-        Assert.assertNull(viewModel.connectionTitle.value)
+        Assert.assertNull(viewModel.logoUrlData.value)
+        Assert.assertNull(viewModel.connectionTitleData.value)
         assertThat(viewModel.consentsCount.value, equalTo(""))
     }
 

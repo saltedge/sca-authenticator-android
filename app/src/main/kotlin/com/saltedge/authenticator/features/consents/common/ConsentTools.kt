@@ -23,6 +23,10 @@ package com.saltedge.authenticator.features.consents.common
 import android.content.Context
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.core.api.model.ConsentData
+import com.saltedge.authenticator.core.api.model.EncryptedData
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.tools.secure.BaseCryptoTools
+import com.saltedge.authenticator.core.tools.secure.BaseCryptoToolsAbs
 
 /**
  * Get size of collection and create string like `%count consents`
@@ -83,4 +87,15 @@ fun countOfDays(countOfDays: Int, appContext: Context): String {
         countOfDays,
         countOfDays
     )
+}
+
+fun List<EncryptedData>.decryptConsents(
+    cryptoTools: BaseCryptoToolsAbs,
+    richConnections: List<RichConnection>
+): List<ConsentData> {
+    return this.mapNotNull { data ->
+        richConnections.firstOrNull { it.connection.id == data.connectionId }?.private?.let { key ->
+            cryptoTools.decryptConsentData(encryptedData = data, rsaPrivateKey = key)
+        }
+    }
 }
