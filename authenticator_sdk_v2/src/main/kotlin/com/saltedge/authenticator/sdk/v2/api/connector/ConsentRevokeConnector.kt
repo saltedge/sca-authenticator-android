@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2020 Salt Edge Inc.
+ * Copyright (c) 2021 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,55 +18,67 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.api.connector
+package com.saltedge.authenticator.sdk.v2.api.connector
 
 import com.saltedge.authenticator.core.api.ApiResponseInterceptor
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.api.model.error.createInvalidResponseError
 import com.saltedge.authenticator.core.contract.ConsentRevokeListener
+import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
-import com.saltedge.authenticator.sdk.api.ApiInterface
-import com.saltedge.authenticator.sdk.api.model.response.ConsentRevokeResponse
-import com.saltedge.authenticator.sdk.constants.API_CONSENTS
-import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_DELETE
+import com.saltedge.authenticator.sdk.v2.api.model.EmptyRequest
+import com.saltedge.authenticator.sdk.v2.api.model.consent.ConsentRevokeResponse
+import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
+import com.saltedge.authenticator.sdk.v2.api.retrofit.addSignatureHeader
+import com.saltedge.authenticator.sdk.v2.api.retrofit.createAccessTokenHeader
+import com.saltedge.authenticator.sdk.v2.api.retrofit.toConnectionsRevokeUrl
 import retrofit2.Call
 
 /**
  * Connector makes request to API to revoke Consent
  *
  * @param apiInterface - instance of ApiInterface
- * @param resultCallback - instance of ConsentRevokeListener for returning query result
+ * @param callback - instance of ConsentRevokeListener for returning query result
  */
 internal class ConsentRevokeConnector(
-    val apiInterface: ApiInterface,
-    var resultCallback: ConsentRevokeListener?
+    private val apiInterface: ApiInterface,
+    var callback: ConsentRevokeListener? = null
 ) : ApiResponseInterceptor<ConsentRevokeResponse>() {
 
-    fun revokeConsent(consentId: String, connectionAndKey: RichConnection) {
-        val requestData = createSignedRequestData<Nothing>(
-            requestMethod = REQUEST_METHOD_DELETE,
-            baseUrl = connectionAndKey.connection.connectUrl,
-            apiRoutePath = "$API_CONSENTS/${consentId}",
-            accessToken = connectionAndKey.connection.accessToken,
-            signPrivateKey = connectionAndKey.private
-        )
-
+    /**
+     * Prepare request url, request models
+     * and sends requests queue to server (ApiInterface)
+     *
+     * @param richConnection - RichConnection (alias to Pairs of Connection and related PrivateKey)
+     */
+    fun revokeConsent(consentID: ID, richConnection: RichConnection) {
+        val request = EmptyRequest()
+        val headers = createAccessTokenHeader(richConnection.connection.accessToken)
+            .addSignatureHeader(
+                richConnection.private,
+                request.data,
+                request.requestExpirationTime
+            )
         apiInterface.revokeConsent(
-            requestData.requestUrl,
-            requestData.headersMap
+            requestUrl = richConnection.connection.connectUrl.toConnectionsRevokeUrl(consentID),
+            headersMap = headers,
+            request
         ).enqueue(this)
     }
 
-    override fun onSuccessResponse(call: Call<ConsentRevokeResponse>, response: ConsentRevokeResponse) {
+    override fun onSuccessResponse(
+        call: Call<ConsentRevokeResponse>,
+        response: ConsentRevokeResponse
+    ) {
         val consentId = response.data?.consentId
         if (consentId == null) {
             onFailureResponse(call, createInvalidResponseError())
         } else {
-            resultCallback?.onConsentRevokeSuccess(consentId)
+            callback?.onConsentRevokeSuccess(consentId)
         }
     }
 
     override fun onFailureResponse(call: Call<ConsentRevokeResponse>, error: ApiErrorData) {
-        resultCallback?.onConsentRevokeFailure(error)
+        callback?.onConsentRevokeFailure(error = error)
     }
 }

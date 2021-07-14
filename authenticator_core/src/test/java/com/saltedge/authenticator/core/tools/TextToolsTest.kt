@@ -31,7 +31,7 @@ class TextToolsTest {
     @Test
     @Throws(Exception::class)
     fun isNotNullOrEmptyTest() {
-        Assert.assertFalse("".isNotNullOrEmpty())
-        Assert.assertTrue("authenticator".isNotNullOrEmpty())
+        Assert.assertFalse("".isPresent())
+        Assert.assertTrue("authenticator".isPresent())
     }
 }

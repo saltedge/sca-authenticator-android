@@ -25,11 +25,11 @@ import com.saltedge.authenticator.core.api.ERROR_CLASS_API_RESPONSE
 import com.saltedge.authenticator.core.api.ERROR_CLASS_HOST_UNREACHABLE
 import com.saltedge.authenticator.core.api.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.contract.ConsentRevokeListener
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.RichConnection
-import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionsV2RevokeListener
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionResponse
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionResponseData
+import com.saltedge.authenticator.sdk.v2.api.model.consent.ConsentRevokeResponse
+import com.saltedge.authenticator.sdk.v2.api.model.consent.ConsentRevokeResponseData
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import com.saltedge.authenticator.sdk.v2.defaultTestConnection
 import com.saltedge.authenticator.sdk.v2.get404Response
@@ -53,31 +53,32 @@ import java.security.PrivateKey
 import java.security.PublicKey
 
 @RunWith(RobolectricTestRunner::class)
-class ConnectionsRevokeConnectorTest {
+class ConsentRevokeConnectorTest {
 
     private val mockApi = mock<ApiInterface>()
-    private val mockCallback = mock<ConnectionsV2RevokeListener>()
-    private val mockCall = Mockito.mock(Call::class.java) as Call<RevokeConnectionResponse>
+    private val mockCallback = mock<ConsentRevokeListener>()
+    private val mockCall = Mockito.mock(Call::class.java) as Call<ConsentRevokeResponse>
     private val requestConnection: ConnectionAbs = defaultTestConnection
     private val privateKey: PrivateKey = CommonTestTools.testPrivateKey
     private val publicKey: PublicKey = CommonTestTools.testPublicKey
-    private val richConnection = RichConnection(requestConnection, privateKey, publicKey)
-    private val requestUrl = "https://localhost/api/authenticator/v2/connections/${requestConnection.id}/revoke"
+    private val testRichConnection = RichConnection(requestConnection, privateKey, publicKey)
+    private val testConsentID = "1"
+    private val requestUrl = "https://localhost/api/authenticator/v2/consents/$testConsentID/revoke"
     private val request = Request.Builder().url(requestUrl).addHeader(HEADER_KEY_ACCESS_TOKEN, "accessToken").build()
-    private lateinit var connector: ConnectionsRevokeConnector
+    private lateinit var connector: ConsentRevokeConnector
 
     @Before
     @Throws(Exception::class)
     fun setUp() {
         BDDMockito.given(
-            mockApi.revokeConnection(
+            mockApi.revokeConsent(
                 requestUrl = anyString(),
                 headersMap = anyMap(),
                 requestBody = any()
             )
         ).willReturn(mockCall)
         BDDMockito.given(mockCall.request()).willReturn(request)
-        connector = ConnectionsRevokeConnector(mockApi, mockCallback)
+        connector = ConsentRevokeConnector(mockApi, mockCallback)
     }
 
     @Test
@@ -95,34 +96,28 @@ class ConnectionsRevokeConnectorTest {
     @Test
     @Throws(Exception::class)
     fun revokeTokensForTest_allSuccess() {
-        connector.revokeAccess(forConnections = listOf(richConnection))
+        connector.revokeConsent(consentID = testConsentID, richConnection = testRichConnection)
         connector.onResponse(
             mockCall,
-            Response.success(RevokeConnectionResponse(RevokeConnectionResponseData(
-                revokedConnectionId = "333"
-            )))
+            Response.success(ConsentRevokeResponse(ConsentRevokeResponseData(consentId = testConsentID)))
         )
 
-        Mockito.verify(mockCallback).onConnectionsV2RevokeResult(
-            revokedIDs = listOf("333"),
-            apiErrors = emptyList()
-        )
+        Mockito.verify(mockCallback).onConsentRevokeSuccess(consentID = testConsentID)
         Mockito.verifyNoMoreInteractions(mockCallback)
     }
 
     @Test
     @Throws(Exception::class)
     fun revokeTokensForTest_withError404() {
-        connector.revokeAccess(listOf(richConnection))
+        connector.revokeConsent(consentID = testConsentID, richConnection = testRichConnection)
         connector.onResponse(mockCall, get404Response())
 
-        Mockito.verify(mockCallback).onConnectionsV2RevokeResult(
-            revokedIDs = emptyList(),
-            apiErrors = listOf(ApiErrorData(
+        Mockito.verify(mockCallback).onConsentRevokeFailure(
+            error = ApiErrorData(
                 errorMessage = "Resource not found",
                 errorClassName = "NotFound",
                 accessToken = "accessToken"
-            ))
+            )
         )
         Mockito.verifyNoMoreInteractions(mockCallback)
     }
@@ -132,13 +127,12 @@ class ConnectionsRevokeConnectorTest {
     fun revokeTokensForTest_successWithoutResponseBody() {
         connector.onResponse(mockCall, Response.success(null))
 
-        Mockito.verify(mockCallback).onConnectionsV2RevokeResult(
-            revokedIDs = emptyList(),
-            apiErrors = listOf(ApiErrorData(
+        Mockito.verify(mockCallback).onConsentRevokeFailure(
+            error = ApiErrorData(
                 errorMessage = "Request Error (200)",
                 errorClassName = ERROR_CLASS_API_RESPONSE,
                 accessToken = "accessToken"
-            ))
+            )
         )
         Mockito.verifyNoMoreInteractions(mockCallback)
     }
@@ -151,13 +145,12 @@ class ConnectionsRevokeConnectorTest {
             Response.error(404, ResponseBody.create(null, "{\"message\":\"Unknown error\"}"))
         )
 
-        Mockito.verify(mockCallback).onConnectionsV2RevokeResult(
-            revokedIDs = emptyList(),
-            apiErrors = listOf(ApiErrorData(
+        Mockito.verify(mockCallback).onConsentRevokeFailure(
+            error = ApiErrorData(
                 errorMessage = "Request Error (404)",
                 errorClassName = ERROR_CLASS_API_RESPONSE,
                 accessToken = "accessToken"
-            ))
+            )
         )
         Mockito.verifyNoMoreInteractions(mockCallback)
     }
@@ -167,12 +160,11 @@ class ConnectionsRevokeConnectorTest {
     fun revokeTokensForTest_withException() {
         connector.onFailure(mockCall, ConnectException())
 
-        Mockito.verify(mockCallback).onConnectionsV2RevokeResult(
-            revokedIDs = emptyList(),
-            apiErrors = listOf(ApiErrorData(
+        Mockito.verify(mockCallback).onConsentRevokeFailure(
+            error = ApiErrorData(
                 errorClassName = ERROR_CLASS_HOST_UNREACHABLE,
                 accessToken = "accessToken"
-            ))
+            )
         )
         Mockito.verifyNoMoreInteractions(mockCallback)
     }

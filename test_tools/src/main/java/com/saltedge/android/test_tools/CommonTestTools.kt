@@ -21,10 +21,10 @@
 package com.saltedge.android.test_tools
 
 import com.google.gson.Gson
+import com.saltedge.authenticator.core.api.model.ConsentData
+import com.saltedge.authenticator.core.api.model.EncryptedData
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.tools.encodeToPemBase64String
-import com.saltedge.authenticator.sdk.api.model.ConsentData
-import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
@@ -119,7 +119,7 @@ private fun encryptWithTestKey(
 ): EncryptedData {
     return EncryptedData(
         id = id,
-        connectionId = connectionId,
+        connectionId = connectionId ?: "",
         algorithm = "AES-256-CBC",
         key = rsaEncrypt(CommonTestTools.aesKey, publicKey)!!,
         iv = rsaEncrypt(CommonTestTools.aesIV, publicKey)!!,

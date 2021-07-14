@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.api
 
+import com.saltedge.authenticator.core.api.model.EncryptedListResponse
 import com.saltedge.authenticator.sdk.api.model.request.ConfirmDenyRequest
 import com.saltedge.authenticator.sdk.api.model.request.CreateConnectionRequest
 import com.saltedge.authenticator.sdk.api.model.response.*

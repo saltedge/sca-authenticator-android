@@ -41,7 +41,7 @@ class ConsentItemHolder(parent: ViewGroup, private val listener: ListItemClickLi
         }
     }
 
-    fun bind(item: ConsentItemViewModel) {
+    fun bind(item: ConsentItem) {
         titleView.text = item.tppName
         consentType.text = item.consentTypeDescription
         expiresAt.text = item.expiresAtDescription

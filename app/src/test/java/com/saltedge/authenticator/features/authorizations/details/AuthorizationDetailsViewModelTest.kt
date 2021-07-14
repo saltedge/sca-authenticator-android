@@ -80,7 +80,6 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
     fun setUp() {
         doReturn("GEO:52.506931;13.144558").`when`(mockLocationManager).locationDescription
         viewModel = AuthorizationDetailsViewModel(
-            appContext = TestAppTools.applicationContext,
             interactorV1 = mockInteractorV1,
             interactorV2 = mockInteractorV2,
             locationManager = mockLocationManager
@@ -97,7 +96,6 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
         doReturn(connectionApiVersion).`when`(mockInteractorV1).connectionApiVersion
         doReturn(connectionApiVersion).`when`(mockInteractorV2).connectionApiVersion
         val testViewModel = AuthorizationDetailsViewModel(
-            appContext = TestAppTools.applicationContext,
             interactorV1 = mockInteractorV1,
             interactorV2 = mockInteractorV2,
             locationManager = mockLocationManager
@@ -145,7 +143,6 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
         doReturn(connectionApiVersion).`when`(mockInteractorV1).connectionApiVersion
         doReturn(connectionApiVersion).`when`(mockInteractorV2).connectionApiVersion
         val testViewModel = AuthorizationDetailsViewModel(
-            appContext = TestAppTools.applicationContext,
             interactorV1 = mockInteractorV1,
             interactorV2 = mockInteractorV2,
             locationManager = mockLocationManager
@@ -192,7 +189,6 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
         doReturn(connectionApiVersion).`when`(mockInteractorV2).connectionApiVersion
         doReturn(true).`when`(mockInteractorV1).noConnection
         val testViewModel = AuthorizationDetailsViewModel(
-            appContext = TestAppTools.applicationContext,
             interactorV1 = mockInteractorV1,
             interactorV2 = mockInteractorV2,
             locationManager = mockLocationManager
@@ -229,7 +225,6 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
         doReturn(connectionApiVersion).`when`(mockInteractorV2).connectionApiVersion
         doReturn(false).`when`(mockInteractorV1).noConnection
         val testViewModel = AuthorizationDetailsViewModel(
-            appContext = TestAppTools.applicationContext,
             interactorV1 = mockInteractorV1,
             interactorV2 = mockInteractorV2,
             locationManager = mockLocationManager
@@ -266,7 +261,6 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
         doReturn(connectionApiVersion).`when`(mockInteractorV2).connectionApiVersion
         doReturn(false).`when`(mockInteractorV1).noConnection
         val testViewModel = AuthorizationDetailsViewModel(
-            appContext = TestAppTools.applicationContext,
             interactorV1 = mockInteractorV1,
             interactorV2 = mockInteractorV2,
             locationManager = mockLocationManager

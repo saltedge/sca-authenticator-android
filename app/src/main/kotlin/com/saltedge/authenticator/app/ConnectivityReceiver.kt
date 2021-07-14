@@ -28,8 +28,14 @@ import android.net.ConnectivityManager
 
 class ConnectivityReceiver() : BroadcastReceiver(), ConnectivityReceiverAbs {
 
+    private var _hasNetworkConnection: Boolean = true
+
+    override val hasNetworkConnection: Boolean
+        get() = _hasNetworkConnection
+
     constructor(context: Context) : this() {
         context.registerReceiver(this, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+        _hasNetworkConnection = isConnectedOrConnecting(context)
     }
 
     private var networkStateListeners: ArrayList<NetworkStateChangeListener> = ArrayList()
@@ -44,22 +50,21 @@ class ConnectivityReceiver() : BroadcastReceiver(), ConnectivityReceiverAbs {
 
     override fun onReceive(context: Context, intent: Intent?) {
         if (ConnectivityManager.CONNECTIVITY_ACTION == intent?.action) {
-            val isConnected = isConnectedOrConnecting(context)
-            networkStateListeners.forEach { it.onNetworkConnectionChanged(isConnected) }
+            _hasNetworkConnection = isConnectedOrConnecting(context)
+            networkStateListeners.forEach { it.onNetworkConnectionChanged(hasNetworkConnection) }
         }
     }
 
-    override fun isConnectedOrConnecting(context: Context): Boolean {
+    private fun isConnectedOrConnecting(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
-        val networkInfo = connectivityManager?.activeNetworkInfo
-        return networkInfo != null && networkInfo.isConnectedOrConnecting
+        return connectivityManager?.activeNetworkInfo?.isConnectedOrConnecting ?: false
     }
 }
 
 interface ConnectivityReceiverAbs {
+    val hasNetworkConnection: Boolean
     fun addNetworkStateChangeListener(listener: NetworkStateChangeListener)
     fun removeNetworkStateChangeListener(listener: NetworkStateChangeListener)
-    fun isConnectedOrConnecting(context: Context): Boolean
 }
 
 interface NetworkStateChangeListener {

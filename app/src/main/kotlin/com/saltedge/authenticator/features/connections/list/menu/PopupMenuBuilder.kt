@@ -38,7 +38,7 @@ import com.saltedge.authenticator.tools.convertDpToPx
  * Build view and show PopupWindow with items from MenuData
  */
 class PopupMenuBuilder(
-    val parentView: View,
+    private val parentView: View,
     var itemClickListener: ItemClickListener? = null
 ) {
 

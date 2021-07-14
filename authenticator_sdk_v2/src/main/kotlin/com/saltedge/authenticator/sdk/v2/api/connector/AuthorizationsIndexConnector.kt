@@ -21,27 +21,27 @@
 package com.saltedge.authenticator.sdk.v2.api.connector
 
 import com.saltedge.authenticator.core.api.RequestQueueAbs
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.contract.FetchAuthorizationsListener
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationsListResponse
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.isValid
-import com.saltedge.authenticator.core.api.model.error.ApiErrorData
-import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
-import com.saltedge.authenticator.sdk.v2.api.retrofit.authorizationsIndexPath
 import com.saltedge.authenticator.sdk.v2.api.retrofit.createAccessTokenHeader
+import com.saltedge.authenticator.sdk.v2.api.retrofit.toAuthorizationsIndexUrl
 import retrofit2.Call
 
 /**
  * Connector make request to API to get Authorizations list
  *
  * @param apiInterface - instance of ApiInterface
- * @param resultCallback - instance of FetchEncryptedDataResult for returning query result
+ * @param callback - instance of AuthorizationResponseData for returning query result
  * @see RequestQueueAbs
  */
 internal class AuthorizationsIndexConnector(
     val apiInterface: ApiInterface,
-    var resultCallback: FetchAuthorizationsListener?
+    var callback: FetchAuthorizationsListener?
 ) : RequestQueueAbs<AuthorizationsListResponse>() {
 
     private var result = mutableListOf<AuthorizationResponseData>()
@@ -56,7 +56,7 @@ internal class AuthorizationsIndexConnector(
             if (super.queueIsEmpty()) super.onResponseReceived()
             else connections.forEach {
                 apiInterface.activeAuthorizations(
-                    requestUrl = it.connection.connectUrl.authorizationsIndexPath(),
+                    requestUrl = it.connection.connectUrl.toAuthorizationsIndexUrl(),
                     headersMap = createAccessTokenHeader(it.connection.accessToken)
                 ).enqueue(this)
             }
@@ -64,7 +64,7 @@ internal class AuthorizationsIndexConnector(
     }
 
     override fun onQueueFinished() {
-        resultCallback?.onFetchAuthorizationsResult(result, errors)
+        callback?.onFetchAuthorizationsResult(result, errors)
     }
 
     override fun onSuccessResponse(

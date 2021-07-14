@@ -29,7 +29,7 @@ import retrofit2.Call
 
 internal class ConfigurationConnector(
     private val apiInterface: ApiInterface,
-    var resultCallback: FetchConfigurationListener?
+    var callback: FetchConfigurationListener?
 ) : ApiResponseInterceptor<ConfigurationResponse>() {
 
     fun fetchProviderConfiguration(url: String) {
@@ -37,10 +37,10 @@ internal class ConfigurationConnector(
     }
 
     override fun onSuccessResponse(call: Call<ConfigurationResponse>, response: ConfigurationResponse) {
-        resultCallback?.onFetchProviderConfigurationSuccess(result = response.data)
+        callback?.onFetchProviderConfigurationSuccess(result = response.data)
     }
 
     override fun onFailureResponse(call: Call<ConfigurationResponse>, error: ApiErrorData) {
-        resultCallback?.onFetchProviderConfigurationFailure(error = error)
+        callback?.onFetchProviderConfigurationFailure(error = error)
     }
 }

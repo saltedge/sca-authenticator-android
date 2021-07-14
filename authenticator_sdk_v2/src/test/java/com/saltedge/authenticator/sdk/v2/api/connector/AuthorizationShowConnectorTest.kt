@@ -52,11 +52,11 @@ class AuthorizationShowConnectorTest {
     fun valuesTest() {
         val connector = AuthorizationShowConnector(mockApi, null)
 
-        Assert.assertNull(connector.resultCallback)
+        Assert.assertNull(connector.callback)
 
-        connector.resultCallback = mockCallback
+        connector.callback = mockCallback
 
-        Assert.assertNotNull(connector.resultCallback)
+        Assert.assertNotNull(connector.callback)
     }
 
     @Test

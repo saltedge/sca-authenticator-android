@@ -41,7 +41,7 @@ open class SingleAuthorizationPollingService : PollingServiceAbs<PollingAuthoriz
         this.authorizationID = authorizationID
         connector = AuthorizationShowConnector(
             apiInterface = RestClient.apiInterface,
-            resultCallback = contract
+            callback = contract
         )
         super.start()
     }

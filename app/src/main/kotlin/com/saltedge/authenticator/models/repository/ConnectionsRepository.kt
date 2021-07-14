@@ -224,7 +224,8 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
      */
     override fun getByGuid(connectionGuid: GUID?): Connection? {
         return RealmManager.getDefaultInstance().use { realmDb ->
-            if (connectionGuid.isNullOrEmpty()) null else {
+            if (connectionGuid.isNullOrEmpty()) null
+            else {
                 realmDb.where(Connection::class.java).equalTo(
                     KEY_GUID,
                     connectionGuid

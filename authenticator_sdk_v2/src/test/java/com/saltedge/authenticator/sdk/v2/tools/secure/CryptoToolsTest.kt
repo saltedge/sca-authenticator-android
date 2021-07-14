@@ -26,8 +26,8 @@ import com.saltedge.android.test_tools.rsaEncrypt
 import com.saltedge.android.test_tools.toJsonString
 import com.saltedge.authenticator.core.api.model.DescriptionData
 import com.saltedge.authenticator.sdk.v2.TestTools
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
 import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2
 import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2.decryptAuthorizationData
 import net.danlew.android.joda.JodaTimeAndroid

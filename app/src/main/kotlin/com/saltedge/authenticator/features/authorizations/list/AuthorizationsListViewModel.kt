@@ -52,12 +52,13 @@ class AuthorizationsListViewModel(
     LifecycleObserver,
     ListItemClickListener,
     TimerUpdateListener,
-    NetworkStateChangeListener, AuthorizationsListInteractorCallback {
-
+    NetworkStateChangeListener,
+    AuthorizationsListInteractorCallback
+{
     val listVisibility = MutableLiveData<Int>(View.GONE)
     val emptyViewVisibility = MutableLiveData<Int>(View.GONE)
     val emptyViewImage = MutableLiveData<ResId>(R.drawable.ic_authorizations_empty)
-    val emptyViewActionText = MutableLiveData<ResId?>(R.string.actions_scan_qr)
+    val emptyViewActionText = MutableLiveData<ResId>(R.string.actions_scan_qr)
     val emptyViewTitleText = MutableLiveData<ResId>(R.string.authorizations_empty_title)
     val emptyViewDescriptionText = MutableLiveData<ResId>(R.string.authorizations_empty_description)
     val listItems = MutableLiveData<List<AuthorizationItemViewModel>>()
@@ -193,27 +194,27 @@ class AuthorizationsListViewModel(
         }
     }
 
-    override fun updateAuthorization(listItem: AuthorizationItemViewModel, confirm: Boolean) {
-        val result = if (listItem.isV2Api) {
+    override fun updateAuthorization(item: AuthorizationItemViewModel, confirm: Boolean) {
+        val result = if (item.isV2Api) {
             interactorV2.updateAuthorization(
-                connectionID = listItem.connectionID,
-                authorizationID = listItem.authorizationID,
-                authorizationCode = listItem.authorizationCode,
+                connectionID = item.connectionID,
+                authorizationID = item.authorizationID,
+                authorizationCode = item.authorizationCode,
                 confirm = confirm,
                 locationDescription = locationManager.locationDescription
             )
         } else {
             interactorV1.updateAuthorization(
-                connectionID = listItem.connectionID,
-                authorizationID = listItem.authorizationID,
-                authorizationCode = listItem.authorizationCode,
+                connectionID = item.connectionID,
+                authorizationID = item.authorizationID,
+                authorizationCode = item.authorizationCode,
                 confirm = confirm,
                 locationDescription = locationManager.locationDescription
             )
         }
         if (result) {
             updateItemStatus(
-                listItem = listItem,
+                listItem = item,
                 newStatus = if (confirm) AuthorizationStatus.CONFIRM_PROCESSING else AuthorizationStatus.DENY_PROCESSING
             )
         }
@@ -247,28 +248,28 @@ class AuthorizationsListViewModel(
         listVisibility.postValue(if (emptyViewIsVisible) View.GONE else View.VISIBLE)
         emptyViewImage.postValue(
             when {
-                !connectivityReceiver.isConnectedOrConnecting(appContext) -> R.drawable.ic_internet_connection
+                !connectivityReceiver.hasNetworkConnection -> R.drawable.ic_internet_connection
                 connectionsListIsEmpty -> R.drawable.ic_connections_empty
                 else -> R.drawable.ic_authorizations_empty
             }
         )
         emptyViewActionText.postValue(
             when {
-                !connectivityReceiver.isConnectedOrConnecting(appContext) -> null
+                !connectivityReceiver.hasNetworkConnection -> null
                 connectionsListIsEmpty -> R.string.actions_connect
                 else -> R.string.actions_scan_qr
             }
         )
         emptyViewTitleText.postValue(
             when {
-                !connectivityReceiver.isConnectedOrConnecting(appContext) -> R.string.authorizations_no_internet_title
+                !connectivityReceiver.hasNetworkConnection -> R.string.authorizations_no_internet_title
                 connectionsListIsEmpty -> R.string.connections_list_empty_title
                 else -> R.string.authorizations_empty_title
             }
         )
         emptyViewDescriptionText.postValue(
             when {
-                !connectivityReceiver.isConnectedOrConnecting(appContext) -> R.string.authorizations_no_internet_description
+                !connectivityReceiver.hasNetworkConnection -> R.string.authorizations_no_internet_description
                 connectionsListIsEmpty -> R.string.connections_list_empty_description
                 else -> R.string.authorizations_empty_description
             }

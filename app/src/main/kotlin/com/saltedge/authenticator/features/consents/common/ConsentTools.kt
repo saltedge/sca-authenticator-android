@@ -22,7 +22,27 @@ package com.saltedge.authenticator.features.consents.common
 
 import android.content.Context
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.sdk.api.model.ConsentData
+import com.saltedge.authenticator.core.api.model.ConsentData
+import com.saltedge.authenticator.core.api.model.EncryptedData
+import com.saltedge.authenticator.core.model.ConsentType
+import com.saltedge.authenticator.core.model.GUID
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.model.isActive
+import com.saltedge.authenticator.core.tools.secure.BaseCryptoToolsAbs
+import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
+import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
+import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
+import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
+import com.saltedge.authenticator.sdk.v2.api.contract.FetchConsentsListener
+
+fun ConsentType?.toConsentTypeDescription(context: Context?): String {
+    return context?.getString(when (this) {
+        ConsentType.AISP -> R.string.consent_title_aisp
+        ConsentType.PISP_FUTURE -> R.string.consent_title_pisp_future
+        ConsentType.PISP_RECURRING -> R.string.consent_title_pisp_recurring
+        else -> R.string.consent_unknown
+    }) ?: ""
+}
 
 /**
  * Get size of collection and create string like `%count consents`
@@ -31,7 +51,7 @@ import com.saltedge.authenticator.sdk.api.model.ConsentData
  * @param appContext
  * @return spanned string
  */
-fun List<ConsentData>.toCountString(appContext: Context): String {
+fun List<ConsentData>.countDescription(appContext: Context): String {
     return if (this.isEmpty()) ""
     else appContext.resources.getQuantityString(
         R.plurals.count_of_consents,
@@ -82,5 +102,48 @@ fun countOfDays(countOfDays: Int, appContext: Context): String {
         R.plurals.count_of_days,
         countOfDays,
         countOfDays
+    )
+}
+
+fun requestUpdateConsents(
+    richConnections: List<RichConnection>,
+    v1ApiManager: AuthenticatorApiManagerAbs,
+    v2ApiManager: ScaServiceClientAbs,
+    v1Callback: FetchEncryptedDataListener,
+    v2Callback: FetchConsentsListener
+) {
+    val splitRichConnections = richConnections
+        .filter { it.connection.isActive() }
+        .partition { it.connection.apiVersion == API_V2_VERSION }
+
+    val v2RichConnections = splitRichConnections.first
+    if (v2RichConnections.isNotEmpty()) {
+        v2ApiManager.fetchConsents(richConnections = v2RichConnections, callback = v2Callback)
+    }
+    val otherRichConnections = splitRichConnections.second
+    if (otherRichConnections.isNotEmpty()) {
+        v1ApiManager.getConsents(connectionsAndKeys = otherRichConnections, resultCallback = v1Callback)
+    }
+}
+
+fun List<EncryptedData>.decryptConsents(
+    cryptoTools: BaseCryptoToolsAbs,
+    richConnections: List<RichConnection>
+): List<ConsentData> {
+    return this.mapNotNull { data ->
+        richConnections.firstOrNull { it.connection.id == data.connectionId }?.let {
+            data.decryptConsent(cryptoTools = cryptoTools, richConnection = it)
+        }
+    }
+}
+
+private fun EncryptedData.decryptConsent(
+    cryptoTools: BaseCryptoToolsAbs,
+    richConnection: RichConnection
+): ConsentData? {
+    return cryptoTools.decryptConsentData(
+        encryptedData = this,
+        rsaPrivateKey = richConnection.private,
+        connectionGUID = richConnection.connection.guid
     )
 }

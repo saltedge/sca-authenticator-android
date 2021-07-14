@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2021 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,14 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.api.model.response
+package com.saltedge.authenticator.sdk.v2.api.model
 
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.core.api.KEY_DATA
-import com.saltedge.authenticator.sdk.api.model.EncryptedData
+import com.saltedge.authenticator.core.api.KEY_EXP
+import com.saltedge.authenticator.core.tools.createExpiresAtTime
 
-data class EncryptedListResponse(
-    @SerializedName(KEY_DATA) var data: List<EncryptedData>? = null
+data class EmptyRequest(
+    @SerializedName(KEY_DATA) val data: Any = Any(),
+    @SerializedName(KEY_EXP) val requestExpirationTime: Int = createExpiresAtTime()
 )

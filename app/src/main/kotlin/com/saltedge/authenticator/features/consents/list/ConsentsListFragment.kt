@@ -63,21 +63,12 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
         setupViewModel()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         activityComponents?.updateAppbar(
             titleResId = R.string.consents_feature_title,
             backActionImageResId = R.drawable.ic_appbar_action_back
         )
-        binding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.fragment_consents_list,
-            container,
-            false
-        )
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_consents_list, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
         return binding.root
@@ -96,25 +87,19 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(ConsentsListViewModel::class.java)
 
-        viewModel.listItems.observe(this, Observer<List<ConsentItemViewModel>> {
+        viewModel.listItems.observe(this, Observer<List<ConsentItem>> {
             headerDecorator.setHeaderForAllItems(it.count())
             headerDecorator.footerPositions = arrayOf(it.count() - 1)
             adapter.data = it
         })
         viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                navigateTo(
-                    actionRes = R.id.consent_details,
-                    bundle = bundle
-                )
+                navigateTo(actionRes = R.id.consent_details, bundle = bundle)
             }
         })
         viewModel.onConsentRemovedEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
             event.getContentIfNotHandled()?.let { message ->
-                activity?.showWarningSnack(
-                    message = message,
-                    snackBarDuration = Snackbar.LENGTH_SHORT
-                )
+                activity?.showWarningSnack(message = message, snackBarDuration = Snackbar.LENGTH_SHORT)
             }
         })
         viewModel.setInitialData(arguments)
@@ -133,7 +118,7 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
         }
         swipeRefreshLayout?.setColorSchemeResources(R.color.primary, R.color.red, R.color.green)
         sharedViewModel.onRevokeConsent.observe(viewLifecycleOwner, Observer<String> { result ->
-            viewModel.revokeConsent(result)
+            viewModel.onRevokeConsent(result)
         })
     }
 
