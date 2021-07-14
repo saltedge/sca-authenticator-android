@@ -26,27 +26,27 @@ import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.sdk.v2.api.contract.FetchAuthorizationListener
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponse
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
-import com.saltedge.authenticator.sdk.v2.api.retrofit.authorizationsShowPath
 import com.saltedge.authenticator.sdk.v2.api.retrofit.createAccessTokenHeader
+import com.saltedge.authenticator.sdk.v2.api.retrofit.toAuthorizationsShowUrl
 import retrofit2.Call
 
 internal class AuthorizationShowConnector(
     private val apiInterface: ApiInterface,
-    var resultCallback: FetchAuthorizationListener?
+    var callback: FetchAuthorizationListener?
 ) : ApiResponseInterceptor<AuthorizationResponse>() {
 
     fun showAuthorization(connection: ConnectionAbs, authorizationId: String) {
         apiInterface.showAuthorization(
-            requestUrl = connection.connectUrl.authorizationsShowPath(authorizationId),
+            requestUrl = connection.connectUrl.toAuthorizationsShowUrl(authorizationId),
             headersMap = createAccessTokenHeader(connection.accessToken)
         ).enqueue(this)
     }
 
     override fun onSuccessResponse(call: Call<AuthorizationResponse>, response: AuthorizationResponse) {
-        resultCallback?.onFetchAuthorizationSuccess(result = response.data)
+        callback?.onFetchAuthorizationSuccess(result = response.data)
     }
 
     override fun onFailureResponse(call: Call<AuthorizationResponse>, error: ApiErrorData) {
-        resultCallback?.onFetchAuthorizationFailed(error = error)
+        callback?.onFetchAuthorizationFailed(error = error)
     }
 }

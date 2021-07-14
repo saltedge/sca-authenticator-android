@@ -27,9 +27,8 @@ import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionRe
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionRequestData
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponse
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
-import com.saltedge.authenticator.core.config.ApiConfig
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
-import com.saltedge.authenticator.sdk.v2.api.retrofit.createConnectionsPath
+import com.saltedge.authenticator.sdk.v2.api.retrofit.toConnectionsCreateUrl
 import com.saltedge.authenticator.sdk.v2.config.ApiV2Config
 import retrofit2.Call
 
@@ -38,11 +37,11 @@ import retrofit2.Call
  * received response is redirecting to resultCallback.
  *
  * @param apiInterface - instance of ApiInterface
- * @param resultCallback - instance of ConnectionInitResult for returning query result
+ * @param callback - instance of ConnectionInitResult for returning query result
  */
 internal class ConnectionCreateConnector(
     private val apiInterface: ApiInterface,
-    var resultCallback: ConnectionCreateListener?
+    var callback: ConnectionCreateListener?
 ) : ApiResponseInterceptor<CreateConnectionResponse>() {
 
     /**
@@ -62,7 +61,7 @@ internal class ConnectionCreateConnector(
         encryptedRsaPublicKey: EncryptedBundle,
         connectQueryParam: String?
     ) {
-        val requestUrl = baseUrl.createConnectionsPath()
+        val requestUrl = baseUrl.toConnectionsCreateUrl()
         val requestData = CreateConnectionRequest(
             data = CreateConnectionRequestData(
                 providerId = providerId,
@@ -84,7 +83,7 @@ internal class ConnectionCreateConnector(
      * @param response - CreateConnectionResponse model
      */
     override fun onSuccessResponse(call: Call<CreateConnectionResponse>, response: CreateConnectionResponse) {
-        resultCallback?.onConnectionCreateSuccess(
+        callback?.onConnectionCreateSuccess(
             authenticationUrl = response.data.authenticationUrl,
             connectionId = response.data.connectionId
         )
@@ -97,6 +96,6 @@ internal class ConnectionCreateConnector(
      * @param error - ApiError
      */
     override fun onFailureResponse(call: Call<CreateConnectionResponse>, error: ApiErrorData) {
-        resultCallback?.onConnectionCreateFailure(error)
+        callback?.onConnectionCreateFailure(error)
     }
 }

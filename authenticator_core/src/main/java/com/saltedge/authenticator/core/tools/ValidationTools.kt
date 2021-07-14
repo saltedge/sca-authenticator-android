@@ -18,14 +18,20 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api.model.connection
+package com.saltedge.authenticator.core.tools
 
-import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.core.api.KEY_DATA
-import com.saltedge.authenticator.core.api.KEY_EXP
-import com.saltedge.authenticator.core.tools.createExpiresAtTime
+/**
+ * Ensure string is not null or empty
+ *
+ * @receiver String object
+ * @return boolean, true if string is not null or empty
+ */
+fun String?.isPresent(): Boolean = !this.isNullOrEmpty()
 
-data class RevokeConnectionRequest(
-    @SerializedName(KEY_DATA) val data: Any = Any(),
-    @SerializedName(KEY_EXP) val requestExpirationTime: Int = createExpiresAtTime()
-)
+/**
+ * Ensure string is not null or empty
+ *
+ * @receiver String object
+ * @return boolean, true if string is not null or empty
+ */
+fun String?.isNotEmptyIfDeclared(): Boolean = this?.isNotEmpty() ?: true

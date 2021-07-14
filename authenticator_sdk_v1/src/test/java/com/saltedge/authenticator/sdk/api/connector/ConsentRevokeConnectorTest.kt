@@ -26,7 +26,7 @@ import com.saltedge.authenticator.core.api.HEADER_KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.RichConnection
-import com.saltedge.authenticator.sdk.contract.ConsentRevokeListener
+import com.saltedge.authenticator.core.contract.ConsentRevokeListener
 
 import com.saltedge.authenticator.sdk.api.model.response.ConsentRevokeResponse
 import com.saltedge.authenticator.sdk.api.model.response.ConsentRevokeResponseData
@@ -95,7 +95,7 @@ class ConsentRevokeConnectorTest {
 
         //then
         verify {
-            mockCallback.onConsentRevokeSuccess(ConsentRevokeResponseData(true, "123"))
+            mockCallback.onConsentRevokeSuccess("123")
         }
         confirmVerified(mockCallback)
     }

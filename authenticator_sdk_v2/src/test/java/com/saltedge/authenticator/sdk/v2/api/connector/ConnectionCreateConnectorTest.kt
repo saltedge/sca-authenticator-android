@@ -51,11 +51,11 @@ class ConnectionCreateConnectorTest {
     fun valuesTest() {
         val connector = ConnectionCreateConnector(mockApi, null)
 
-        Assert.assertNull(connector.resultCallback)
+        Assert.assertNull(connector.callback)
 
-        connector.resultCallback = mockCallback
+        connector.callback = mockCallback
 
-        Assert.assertNotNull(connector.resultCallback)
+        Assert.assertNotNull(connector.callback)
     }
 
     @Test

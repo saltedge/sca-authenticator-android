@@ -21,7 +21,10 @@
 package com.saltedge.authenticator.core.tools.secure
 
 import android.util.Base64
+import com.saltedge.authenticator.core.api.model.ConsentData
+import com.saltedge.authenticator.core.api.model.EncryptedData
 import com.saltedge.authenticator.core.tools.decodeFromPemBase64String
+import com.saltedge.authenticator.core.tools.json.createDefaultGson
 import timber.log.Timber
 import java.nio.charset.StandardCharsets
 import java.security.Key
@@ -39,7 +42,7 @@ private const val AES_INTERNAL_TRANSFORMATION = "AES/GCM/NoPadding"
 private const val AES_EXTERNAL_TRANSFORMATION = "AES/CBC/PKCS5Padding"
 private const val RSA_ECB = "RSA/ECB/PKCS1Padding"
 
-abstract class BaseCryptoTools : BaseCryptoToolsAbs {
+open class BaseCryptoTools : BaseCryptoToolsAbs {
 
     override fun rsaEncrypt(inputText: String, publicKey: PublicKey): String? =
         rsaEncrypt(inputText.toByteArray(), publicKey)
@@ -119,15 +122,16 @@ abstract class BaseCryptoTools : BaseCryptoToolsAbs {
     }
 
     override fun aesGcmEncrypt(input: String, key: Key): String? {
-        try {
+        return try {
             val encryptCipher = Cipher.getInstance(AES_INTERNAL_TRANSFORMATION) ?: return null
             encryptCipher.init(Cipher.ENCRYPT_MODE, key, GCMParameterSpec(128, gcmEncryptionIv))
             val encryptedBytes = encryptCipher.doFinal(input.toByteArray())
-            return Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
+            Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
+            null
         }
-        return null
+
     }
 
     override fun aesGcmDecrypt(encryptedText: String, key: Key): String? {
@@ -138,7 +142,29 @@ abstract class BaseCryptoTools : BaseCryptoToolsAbs {
             val decodedBytes = encryptCipher.doFinal(encryptedBytes)
             String(decodedBytes)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
+            null
+        }
+    }
+
+    override fun decryptConsentData(
+        encryptedData: EncryptedData,
+        rsaPrivateKey: PrivateKey
+    ): ConsentData? {
+        val algorithm = encryptedData.algorithm
+        if (algorithm != null && algorithm != SUPPORTED_AES_ALGORITHM) return null
+        return try {
+            val encryptedKey = encryptedData.key
+            val encryptedIV = encryptedData.iv
+            val encryptedMessage = encryptedData.data
+            val key = rsaDecrypt(encryptedKey, rsaPrivateKey) ?: return null
+            val iv = rsaDecrypt(encryptedIV, rsaPrivateKey) ?: return null
+            val jsonString = aesDecrypt(encryptedMessage, key = key, iv = iv)
+            createDefaultGson().fromJson(jsonString, ConsentData::class.java).apply {
+                this.connectionId = encryptedData.connectionId
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
             null
         }
     }
@@ -167,4 +193,5 @@ interface BaseCryptoToolsAbs {
     fun aesDecrypt(encryptedText: String, key: ByteArray, iv: ByteArray): String?
     fun aesGcmEncrypt(input: String, key: Key): String?
     fun aesGcmDecrypt(encryptedText: String, key: Key): String?
+    fun decryptConsentData(encryptedData: EncryptedData, rsaPrivateKey: PrivateKey): ConsentData?
 }

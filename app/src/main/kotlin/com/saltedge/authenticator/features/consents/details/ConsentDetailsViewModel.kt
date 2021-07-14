@@ -32,21 +32,18 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.core.api.KEY_DATA
+import com.saltedge.authenticator.core.api.model.AccountData
+import com.saltedge.authenticator.core.api.model.ConsentData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
-import com.saltedge.authenticator.core.model.GUID
-import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.consents.common.countOfDaysLeft
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.toRichConnection
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.api.model.AccountData
-import com.saltedge.authenticator.sdk.api.model.ConsentData
-import com.saltedge.authenticator.sdk.api.model.ConsentType
 import com.saltedge.authenticator.sdk.api.model.response.ConsentRevokeResponseData
-import com.saltedge.authenticator.sdk.api.model.toConsentType
-import com.saltedge.authenticator.sdk.contract.ConsentRevokeListener
+import com.saltedge.authenticator.core.contract.ConsentRevokeListener
+import com.saltedge.authenticator.core.model.*
 import com.saltedge.authenticator.tools.daysTillExpire
 import com.saltedge.authenticator.tools.mediumTypefaceSpan
 import com.saltedge.authenticator.tools.toDateFormatString
@@ -79,8 +76,8 @@ class ConsentDetailsViewModel(
         revokeErrorEvent.postValue(ViewModelEvent(error.errorMessage))
     }
 
-    override fun onConsentRevokeSuccess(result: ConsentRevokeResponseData) {
-        result.consentId?.let { revokeSuccessEvent.postValue(ViewModelEvent(it)) }
+    override fun onConsentRevokeSuccess(consentID: ID) {
+        revokeSuccessEvent.postValue(ViewModelEvent(consentID))
     }
 
     fun setInitialData(arguments: Bundle?) {

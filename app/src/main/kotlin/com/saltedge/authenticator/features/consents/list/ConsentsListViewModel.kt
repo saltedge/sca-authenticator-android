@@ -36,20 +36,20 @@ import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.core.api.KEY_DATA
 import com.saltedge.authenticator.core.api.KEY_ID
+import com.saltedge.authenticator.core.api.model.ConsentData
+import com.saltedge.authenticator.core.api.model.EncryptedData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ConsentType
 import com.saltedge.authenticator.core.model.GUID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
+import com.saltedge.authenticator.features.consents.common.countDescription
 import com.saltedge.authenticator.features.consents.common.countOfDays
-import com.saltedge.authenticator.features.consents.common.toCountString
 import com.saltedge.authenticator.features.consents.details.ConsentDetailsViewModel
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.toRichConnection
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.api.model.ConsentData
-import com.saltedge.authenticator.sdk.api.model.ConsentType
-import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
 import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
 import com.saltedge.authenticator.tools.appendColoredText
@@ -144,15 +144,16 @@ class ConsentsListViewModel(
     }
 
     private fun decryptConsents(encryptedList: List<EncryptedData>): List<ConsentData> {
+        val key = richConnection?.private ?: return emptyList()
         return encryptedList.mapNotNull {
-            cryptoTools.decryptConsentData(encryptedData = it, rsaPrivateKey = richConnection?.private)
+            cryptoTools.decryptConsentData(encryptedData = it, rsaPrivateKey = key)
         }
     }
 
     private fun onReceivedNewConsents(result: List<ConsentData>) {
         consents = result
         listItems.postValue(result.toViewModels())
-        consentsCount.postValue(consents.toCountString(appContext))
+        consentsCount.postValue(consents.countDescription(appContext))
     }
 
     private fun List<ConsentData>.toViewModels(): List<ConsentItemViewModel> {

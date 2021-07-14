@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2020 Salt Edge Inc.
+ * Copyright (c) 2021 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +18,14 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.api.model
+package com.saltedge.authenticator.sdk.v2.api.contract
 
-import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.core.api.KEY_BALANCE
-import com.saltedge.authenticator.core.api.KEY_TRANSACTIONS
-import java.io.Serializable
+import com.saltedge.authenticator.core.api.model.EncryptedData
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 
 /**
- * Consent's shared data POJO model with annotation for GSON parsing
+ * Encrypted Data (Consents) request result and errors
  */
-data class ConsentSharedData(
-    @SerializedName(KEY_BALANCE) var balance: Boolean?,
-    @SerializedName(KEY_TRANSACTIONS) var transactions: Boolean?
-) : Serializable
+interface FetchConsentsListener {
+    fun onFetchConsentsV2Result(result: List<EncryptedData>, errors: List<ApiErrorData>)
+}

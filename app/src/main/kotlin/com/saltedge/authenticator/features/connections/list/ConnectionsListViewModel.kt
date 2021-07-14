@@ -29,27 +29,27 @@ import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
-import com.saltedge.authenticator.app.NetworkStateChangeListener
 import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.core.api.KEY_NAME
+import com.saltedge.authenticator.core.api.model.ConsentData
+import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.GUID
-import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.features.connections.common.ConnectionItem
+import com.saltedge.authenticator.features.connections.common.convertConnectionsToViewItems
 import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
 import com.saltedge.authenticator.features.connections.list.menu.MenuData
 import com.saltedge.authenticator.features.connections.list.menu.PopupMenuBuilder
-import com.saltedge.authenticator.features.consents.common.consentsCountPrefixForConnection
 import com.saltedge.authenticator.features.consents.list.ConsentsListViewModel
 import com.saltedge.authenticator.features.menu.MenuItemData
-import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
-import com.saltedge.authenticator.sdk.api.model.ConsentData
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.postUnitEvent
+import kotlinx.coroutines.CoroutineScope
+import java.lang.ref.WeakReference
 
 class ConnectionsListViewModel(
-    private val appContext: Context,
+    private val weakContext: WeakReference<Context>,
     private val interactor: ConnectionsListInteractorAbs,
     private val locationManager: DeviceLocationManagerAbs,
     private val connectivityReceiver: ConnectivityReceiverAbs
@@ -58,7 +58,6 @@ class ConnectionsListViewModel(
     LifecycleObserver,
     PopupMenuBuilder.ItemClickListener
 {
-    private var consents: Map<GUID, List<ConsentData>> = emptyMap()
     private val listItemsValues: List<ConnectionItem>
         get() = listItems.value ?: emptyList()
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
@@ -76,6 +75,8 @@ class ConnectionsListViewModel(
     val emptyViewVisibility = MutableLiveData<Int>()
     val listItems = MutableLiveData<List<ConnectionItem>>(emptyList())
     val updateListItemEvent = MutableLiveData<ConnectionItem>()
+    override val coroutineScope: CoroutineScope
+        get() = viewModelScope
 
     init {
         interactor.contract = this
@@ -84,12 +85,7 @@ class ConnectionsListViewModel(
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStart() {
         interactor.updateConnections()
-        refreshConsents()
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun onDestroy() {
-        interactor.onDestroy()
+        interactor.updateConsents()
     }
 
     fun refreshConsents() {
@@ -101,7 +97,8 @@ class ConnectionsListViewModel(
         val newConnectionName = data.getString(KEY_NAME) ?: return
         if (listItem.name != newConnectionName
             && newConnectionName.isNotEmpty()
-            && interactor.updateNameAndSave(listItem.guid, newConnectionName)) {
+            && interactor.updateNameAndSave(listItem.guid, newConnectionName)
+        ) {
             val itemIndex = listItemsValues.indexOf(listItem)
             listItems.value?.get(itemIndex)?.name = newConnectionName
             updateListItemEvent.postValue(listItem)
@@ -110,7 +107,7 @@ class ConnectionsListViewModel(
 
     fun deleteItem(guid: GUID) {
         val listItem = listItemsValues.find { it.guid == guid } ?: return
-        interactor.revokeConnection(guid = listItem.guid)
+        interactor.revokeConnection(connectionGuid = listItem.guid)
     }
 
     fun onViewClick(viewId: Int) {
@@ -143,7 +140,7 @@ class ConnectionsListViewModel(
                 )
             )
         )
-        if (consents[item.guid]?.isNotEmpty() == true) {
+        if (item.consentsCount > 0) {
             menuItems.add(
                 MenuItemData(
                     id = PopupMenuItem.CONSENTS.ordinal,
@@ -152,7 +149,7 @@ class ConnectionsListViewModel(
                 )
             )
         }
-        if (item.locationPermissionRequired) {
+        if (item.shouldRequestLocationPermission) {
             menuItems.add(
                 MenuItemData(
                     id = PopupMenuItem.LOCATION.ordinal,
@@ -199,13 +196,16 @@ class ConnectionsListViewModel(
             PopupMenuItem.SUPPORT -> onSupportClickEvent.postValue(ViewModelEvent(item.email))
             PopupMenuItem.CONSENTS -> {
                 onViewConsentsClickEvent.postValue(
-                    ViewModelEvent(ConsentsListViewModel.newBundle(item.guid, consents[item.guid]))
+                    ViewModelEvent(ConsentsListViewModel.newBundle(
+                        connectionGuid = item.guid,
+                        consents = interactor.getConsents(connectionGuid = item.guid)
+                    ))
                 )
             }
             PopupMenuItem.LOCATION -> onAccessToLocationClickEvent.postUnitEvent()
             PopupMenuItem.DELETE -> {
                 when {
-                    !connectivityReceiver.isConnectedOrConnecting(appContext) -> {
+                    !connectivityReceiver.hasNetworkConnection -> {
                         onShowNoInternetConnectionDialogEvent.postValue(ViewModelEvent(item.guid))
                     }
                     item.isActive -> onDeleteClickEvent.postValue(ViewModelEvent(item.guid))
@@ -215,20 +215,16 @@ class ConnectionsListViewModel(
         }
     }
 
-    override fun onConnectionsDataChanged(connections: List<Connection>) {
-        val items = connections.convertConnectionsToViewModels(appContext, locationManager)
-        listItems.postValue(updateItemsWithConsentData(items, consents))
-        emptyViewVisibility.postValue(if (items.isEmpty()) View.VISIBLE else View.GONE)
-        listVisibility.postValue(if (items.isEmpty()) View.GONE else View.VISIBLE)
-    }
-
-    override fun onConsentsDataChanged(consents: List<ConsentData>) {
-        this.consents = consents.groupBy {
-            listItemsValues.firstOrNull { viewModel ->
-                viewModel.connectionId == it.connectionId
-            }?.guid ?: ""
-        }
-        listItems.postValue(updateItemsWithConsentData(listItemsValues, this.consents))
+    override fun onConnectionsDataChanged(
+        connections: List<ConnectionAbs>,
+        consents: List<ConsentData>
+    ) {
+        val context = weakContext.get() ?: return
+        val items = connections.convertConnectionsToViewItems(context, locationManager)
+        val itemsWithConsentInfo = items.enrichItemsWithConsentInfo(consents)
+        listItems.postValue(itemsWithConsentInfo)
+        emptyViewVisibility.postValue(if (itemsWithConsentInfo.isEmpty()) View.VISIBLE else View.GONE)
+        listVisibility.postValue(if (itemsWithConsentInfo.isEmpty()) View.GONE else View.VISIBLE)
     }
 
     fun onDialogActionClick(dialogActionId: Int, actionResId: ResId, guid: GUID = "") {
@@ -236,18 +232,16 @@ class ConnectionsListViewModel(
             when (actionResId) {
                 R.string.actions_proceed -> onAskPermissionsEvent.postUnitEvent()
                 R.string.actions_go_to_settings -> onGoToSettingsEvent.postUnitEvent()
-                R.string.actions_retry -> if (connectivityReceiver.isConnectedOrConnecting(appContext)) deleteItem(guid = guid)
+                R.string.actions_retry -> if (connectivityReceiver.hasNetworkConnection) deleteItem(guid = guid)
             }
         }
     }
 
-    private fun updateItemsWithConsentData(
-        items: List<ConnectionItem>,
-        consents: Map<ID, List<ConsentData>>
+    private fun List<ConnectionItem>.enrichItemsWithConsentInfo(
+        consents: List<ConsentData>
     ): List<ConnectionItem> {
-        return items.onEach {
-            val count = consents[it.guid]?.count() ?: 0
-            it.consentsDescription = consentsCountPrefixForConnection(count, appContext)
+        return this.onEach { item ->
+            item.consentsCount = consents.filter { it.connectionId == item.connectionId  }.count()
         }
     }
 

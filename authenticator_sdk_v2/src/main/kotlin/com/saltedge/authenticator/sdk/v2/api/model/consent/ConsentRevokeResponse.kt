@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2021 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,18 +18,16 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.api.model
+package com.saltedge.authenticator.sdk.v2.api.model.consent
 
-/**
- * Checks validity of Encrypted model
- *
- * @receiver Encrypted data
- * @return boolean. true if key, iv, algorithm, data, connection_id fields are present
- */
-fun EncryptedData.isValid(): Boolean {
-    return !key.isNullOrEmpty() &&
-        !iv.isNullOrEmpty() &&
-        !algorithm.isNullOrEmpty() &&
-        !data.isNullOrEmpty() &&
-        !connectionId.isNullOrEmpty()
-}
+import com.google.gson.annotations.SerializedName
+import com.saltedge.authenticator.core.api.KEY_DATA
+import com.saltedge.authenticator.core.api.KEY_ID
+
+data class ConsentRevokeResponse(
+    @SerializedName(KEY_DATA) var data: ConsentRevokeResponseData? = null
+)
+
+data class ConsentRevokeResponseData(
+    @SerializedName(KEY_ID) var consentId: String? = null
+)

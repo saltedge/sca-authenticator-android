@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.api.model
+package com.saltedge.authenticator.core.api.model
 
 import org.junit.Assert
 import org.junit.Test
@@ -28,35 +28,69 @@ class EncryptedAuthorizationDataExtensionsTest {
     @Test
     @Throws(Exception::class)
     fun isValidTest() {
-        Assert.assertFalse(EncryptedData().isValid())
         Assert.assertFalse(
             EncryptedData(
-                key = "key"
-            ).isValid()
-        )
-        Assert.assertFalse(
-            EncryptedData(
-                key = "key",
-                iv = "iv"
-            ).isValid()
-        )
-        Assert.assertFalse(
-            EncryptedData(
+                id = "1",
                 key = "key",
                 iv = "iv",
-                algorithm = "alg"
+                algorithm = "",
+                data = "data",
+                connectionId = "333"
             ).isValid()
         )
         Assert.assertFalse(
             EncryptedData(
+                id = "1",
                 key = "key",
                 iv = "iv",
                 algorithm = "alg",
-                data = "data"
+                data = "data",
+                connectionId = ""
+            ).isValid()
+        )
+        Assert.assertFalse(
+            EncryptedData(
+                id = "1",
+                key = "key",
+                iv = "iv",
+                algorithm = "alg",
+                data = "",
+                connectionId = "333"
+            ).isValid()
+        )
+        Assert.assertFalse(
+            EncryptedData(
+                id = "1",
+                key = "key",
+                iv = "",
+                algorithm = "alg",
+                data = "data",
+                connectionId = "333"
+            ).isValid()
+        )
+        Assert.assertFalse(
+            EncryptedData(
+                id = "1",
+                key = "",
+                iv = "iv",
+                algorithm = "alg",
+                data = "data",
+                connectionId = "333"
             ).isValid()
         )
         Assert.assertTrue(
             EncryptedData(
+                id = "",
+                key = "key",
+                iv = "iv",
+                algorithm = "alg",
+                data = "data",
+                connectionId = "333"
+            ).isValid()
+        )
+        Assert.assertTrue(
+            EncryptedData(
+                id = "1",
                 key = "key",
                 iv = "iv",
                 algorithm = "alg",

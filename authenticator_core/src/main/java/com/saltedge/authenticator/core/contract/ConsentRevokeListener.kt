@@ -18,15 +18,15 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.contract
+package com.saltedge.authenticator.core.contract
 
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.api.model.response.ConsentRevokeResponseData
+import com.saltedge.authenticator.core.model.ID
 
 /**
  * Consent revoke request result
  */
 interface ConsentRevokeListener {
-    fun onConsentRevokeSuccess(result: ConsentRevokeResponseData)
+    fun onConsentRevokeSuccess(consentID: ID)
     fun onConsentRevokeFailure(error: ApiErrorData)
 }

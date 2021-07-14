@@ -20,12 +20,14 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.retrofit
 
+import com.saltedge.authenticator.core.api.model.EncryptedListResponse
+import com.saltedge.authenticator.sdk.v2.api.model.EmptyRequest
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.*
 import com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationResponse
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionRequest
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponse
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionRequest
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionResponse
+import com.saltedge.authenticator.sdk.v2.api.model.consent.ConsentRevokeResponse
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -47,7 +49,7 @@ interface ApiInterface {
     fun revokeConnection(
         @Url requestUrl: String,
         @HeaderMap headersMap: Map<String, String>,
-        @Body requestBody: RevokeConnectionRequest
+        @Body requestBody: EmptyRequest
     ): Call<RevokeConnectionResponse>
 
     @GET
@@ -82,4 +84,17 @@ interface ApiInterface {
         @HeaderMap headersMap: Map<String, String>,
         @Body requestBody: CreateAuthorizationRequest
     ): Call<CreateAuthorizationResponse>
+
+    @GET
+    fun activeConsents(
+        @Url requestUrl: String,
+        @HeaderMap headersMap: Map<String, String>
+    ): Call<EncryptedListResponse>
+
+    @PUT
+    fun revokeConsent(
+        @Url requestUrl: String,
+        @HeaderMap headersMap: Map<String, String>,
+        @Body requestBody: EmptyRequest
+    ): Call<ConsentRevokeResponse>
 }

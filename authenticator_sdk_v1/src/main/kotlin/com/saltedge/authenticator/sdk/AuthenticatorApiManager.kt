@@ -23,6 +23,7 @@ package com.saltedge.authenticator.sdk
 import android.content.Context
 import com.saltedge.authenticator.core.api.ERROR_CLASS_API_REQUEST
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.contract.ConsentRevokeListener
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.model.guard

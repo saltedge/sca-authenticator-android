@@ -23,13 +23,13 @@ package com.saltedge.authenticator.sdk.api.connector
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.getDefaultTestConnection
 import com.saltedge.authenticator.core.api.HEADER_KEY_ACCESS_TOKEN
+import com.saltedge.authenticator.core.api.model.EncryptedData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.api.ApiInterface
 import com.saltedge.authenticator.sdk.api.RestClient
-import com.saltedge.authenticator.sdk.api.model.EncryptedData
-import com.saltedge.authenticator.sdk.api.model.response.EncryptedListResponse
+import com.saltedge.authenticator.core.api.model.EncryptedListResponse
 import com.saltedge.authenticator.sdk.polling.FetchAuthorizationsContract
 import com.saltedge.authenticator.sdk.testTools.get404Response
 import io.mockk.*

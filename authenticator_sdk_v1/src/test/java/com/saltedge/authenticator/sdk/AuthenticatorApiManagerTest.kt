@@ -22,6 +22,8 @@ package com.saltedge.authenticator.sdk
 
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.TestConnection
+import com.saltedge.authenticator.core.api.model.EncryptedListResponse
+import com.saltedge.authenticator.core.contract.ConsentRevokeListener
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.api.ApiInterface

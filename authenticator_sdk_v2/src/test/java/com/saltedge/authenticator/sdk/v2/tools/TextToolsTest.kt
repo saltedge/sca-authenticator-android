@@ -20,7 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.v2.tools
 
-import com.saltedge.authenticator.core.tools.isNotNullOrEmpty
+import com.saltedge.authenticator.core.tools.isPresent
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,7 +32,7 @@ class TextToolsTest {
     @Test
     @Throws(Exception::class)
     fun isNotNullOrEmptyTest() {
-        Assert.assertFalse("".isNotNullOrEmpty())
-        Assert.assertTrue("authenticator".isNotNullOrEmpty())
+        Assert.assertFalse("".isPresent())
+        Assert.assertTrue("authenticator".isPresent())
     }
 }

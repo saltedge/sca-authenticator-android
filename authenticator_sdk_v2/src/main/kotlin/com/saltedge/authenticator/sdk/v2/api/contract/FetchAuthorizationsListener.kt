@@ -20,12 +20,15 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.contract
 
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
 
 /**
- * Encrypted Data (Authorizations, Consents) request result
+ * Encrypted Data (Authorizations) request result
  */
 interface FetchAuthorizationsListener {
-    fun onFetchAuthorizationsResult(result: List<AuthorizationResponseData>, errors: List<ApiErrorData>)
+    fun onFetchAuthorizationsResult(
+        result: List<AuthorizationResponseData>,
+        errors: List<ApiErrorData>
+    )
 }

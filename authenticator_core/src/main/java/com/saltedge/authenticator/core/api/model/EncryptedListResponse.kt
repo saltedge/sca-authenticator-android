@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2020 Salt Edge Inc.
+ * Copyright (c) 2019 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +18,10 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.api.model
+package com.saltedge.authenticator.core.api.model
 
 import com.google.gson.annotations.SerializedName
-import com.saltedge.authenticator.core.api.KEY_ACCOUNT_NUMBER
-import com.saltedge.authenticator.core.api.KEY_IBAN
-import com.saltedge.authenticator.core.api.KEY_NAME
-import com.saltedge.authenticator.core.api.KEY_SORT_CODE
-import java.io.Serializable
+import com.saltedge.authenticator.core.api.KEY_DATA
+import com.saltedge.authenticator.core.api.model.EncryptedData
 
-/**
- * Account POJO model with annotation for GSON parsing
- */
-data class AccountData(
-    @SerializedName(KEY_NAME) var name: String,
-    @SerializedName(KEY_ACCOUNT_NUMBER) var accountNumber: String? = null,
-    @SerializedName(KEY_SORT_CODE) var sortCode: String? = null,
-    @SerializedName(KEY_IBAN) var iban: String? = null
-) : Serializable
+data class EncryptedListResponse(@SerializedName(KEY_DATA) var data: List<EncryptedData>)

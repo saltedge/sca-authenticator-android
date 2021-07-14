@@ -25,6 +25,7 @@ import com.google.gson.Gson
 import com.saltedge.authenticator.core.tools.json.createDefaultGson
 import com.saltedge.authenticator.sdk.v2.api.API_AUTHORIZATIONS
 import com.saltedge.authenticator.sdk.v2.api.API_CONNECTIONS
+import com.saltedge.authenticator.sdk.v2.api.API_CONSENTS
 import com.saltedge.authenticator.sdk.v2.api.DEFAULT_HOST
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -47,32 +48,40 @@ internal object RestClient {
     }
 }
 
-fun String.createConnectionsPath(): String {
+fun String.toConnectionsCreateUrl(): String {
     return createRequestUrl(this, API_CONNECTIONS)
 }
 
-fun String.revokeConnectionsPath(id: String): String {
+fun String.toConnectionsRevokeUrl(id: String): String {
     return createRequestUrl(this, "$API_CONNECTIONS/$id/revoke")
 }
 
-fun String.authorizationsIndexPath(): String {
+fun String.toAuthorizationsIndexUrl(): String {
     return createRequestUrl(this, API_AUTHORIZATIONS)
 }
 
-fun String.authorizationsShowPath(id: String): String {
+fun String.toAuthorizationsShowUrl(id: String): String {
     return createRequestUrl(this, "$API_AUTHORIZATIONS/$id")
 }
 
-fun String.authorizationsConfirmPath(id: String): String {
+fun String.toAuthorizationsConfirmUrl(id: String): String {
     return createRequestUrl(this, "$API_AUTHORIZATIONS/$id/confirm")
 }
 
-fun String.authorizationsDenyPath(id: String): String {
+fun String.toAuthorizationsDenyUrl(id: String): String {
     return createRequestUrl(this, "$API_AUTHORIZATIONS/$id/deny")
 }
 
-fun String.authorizationsCreatePath(): String {
+fun String.toAuthorizationsCreateUrl(): String {
     return createRequestUrl(this, API_AUTHORIZATIONS)
+}
+
+fun String.toConsentsIndexUrl(): String {
+    return createRequestUrl(this, API_CONSENTS)
+}
+
+fun String.toConsentsRevokeUrl(id: String): String {
+    return createRequestUrl(this, "$API_CONSENTS/$id/revoke")
 }
 
 private fun createRequestUrl(baseUrl: String, routePath: String): String {

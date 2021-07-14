@@ -20,8 +20,8 @@
  */
 package com.saltedge.authenticator.core.tools
 
-import android.util.Log
 import com.saltedge.authenticator.core.BuildConfig
+import timber.log.Timber
 
 private const val MAX_LOG_SIZE = 1000
 
@@ -37,7 +37,7 @@ internal fun printDebugLog(tag: String, message: String) {
         while (start < message.length) {
             var end = start + MAX_LOG_SIZE
             if (end > message.length) end = message.length
-            Log.d(tag, message.substring(start, end).trim())
+            Timber.d(message.substring(start, end).trim())
             start += MAX_LOG_SIZE
         }
     }
@@ -64,11 +64,3 @@ internal fun String.splitToLines(lineLength: Int): String {
         result
     }
 }
-
-/**
- * Checks if string is not null or empty
- *
- * @receiver String object
- * @return boolean, true if string is not null or empty
- */
-fun String?.isNotNullOrEmpty(): Boolean = !this.isNullOrEmpty()

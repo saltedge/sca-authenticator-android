@@ -62,6 +62,7 @@ import com.saltedge.authenticator.sdk.v2.ScaServiceClient
 import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2Abs
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import kotlinx.coroutines.Dispatchers
+import java.lang.ref.WeakReference
 import javax.inject.Inject
 
 class ViewModelsFactory @Inject constructor(
@@ -164,13 +165,14 @@ class ViewModelsFactory @Inject constructor(
             }
             modelClass.isAssignableFrom(ConnectionsListViewModel::class.java) -> {
                 return ConnectionsListViewModel(
-                    appContext = appContext,
+                    weakContext = WeakReference(appContext),
                     interactor = ConnectionsListInteractor(
                         connectionsRepository = connectionsRepository,
                         keyStoreManager = keyStoreManager,
                         apiManagerV1 = apiManagerV1,
                         apiManagerV2 = apiManagerV2,
-                        cryptoTools = cryptoToolsV1
+                        cryptoTools = cryptoToolsV1,
+                        defaultDispatcher = Dispatchers.Default
                     ),
                     locationManager = DeviceLocationManager,
                     connectivityReceiver = connectivityReceiver

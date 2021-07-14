@@ -29,11 +29,10 @@ import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.api.model.ConsentData
-import com.saltedge.authenticator.sdk.api.model.ConsentSharedData
-import com.saltedge.authenticator.sdk.api.model.response.ConsentRevokeResponseData
 import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.core.api.KEY_DATA
+import com.saltedge.authenticator.core.api.model.ConsentData
+import com.saltedge.authenticator.core.api.model.ConsentSharedData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ConnectionStatus
 import com.saltedge.authenticator.core.model.RichConnection
@@ -62,7 +61,7 @@ class ConsentDetailsViewModelTest : ViewModelTest() {
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
     private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
-    private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
+    private val mockPrivateKey = mock(PrivateKey::class.java)
     private val defaultConnectionV1 = Connection().apply {
             guid = "connection1"
             code = "demobank"
@@ -114,25 +113,12 @@ class ConsentDetailsViewModelTest : ViewModelTest() {
 
     @Test
     @Throws(Exception::class)
-    fun onConsentRevokeSuccessTestCase1() {
-        //given invalid response params
-        val response = ConsentRevokeResponseData()
-
-        //when
-        viewModel.onConsentRevokeSuccess(response)
-
-        //then
-        Assert.assertNull(viewModel.revokeSuccessEvent.value)
-    }
-
-    @Test
-    @Throws(Exception::class)
     fun onConsentRevokeSuccessTestCase2() {
         //given valid response params
-        val response = ConsentRevokeResponseData(consentId = "1")
+        val consentId = "1"
 
         //when
-        viewModel.onConsentRevokeSuccess(response)
+        viewModel.onConsentRevokeSuccess(consentId)
 
         //then
         assertThat(viewModel.revokeSuccessEvent.value!!.peekContent(), equalTo("1"))

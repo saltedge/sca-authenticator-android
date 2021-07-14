@@ -34,7 +34,7 @@ import com.saltedge.authenticator.core.model.GUID
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
-import com.saltedge.authenticator.features.connections.list.convertConnectionsToViewModels
+import com.saltedge.authenticator.features.connections.common.convertConnectionsToViewItems
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment.Companion.dataBundle
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -172,7 +172,7 @@ class SubmitActionViewModel(
     }
 
     private fun showConnectionsSelector(connections: List<Connection>) {
-        val result = connections.convertConnectionsToViewModels(
+        val result = connections.convertConnectionsToViewItems(
             context = appContext,
             locationManager = locationManager
         )

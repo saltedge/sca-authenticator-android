@@ -31,7 +31,7 @@ import com.saltedge.authenticator.features.authorizations.common.toAuthorization
 import com.saltedge.authenticator.models.collectRichConnections
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.api.model.EncryptedData
+import com.saltedge.authenticator.core.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.api.model.authorization.isNotExpired
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
