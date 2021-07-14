@@ -25,6 +25,7 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.Spanned
+import android.text.SpannedString
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -34,29 +35,25 @@ import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.core.api.KEY_DATA
 import com.saltedge.authenticator.core.api.model.AccountData
 import com.saltedge.authenticator.core.api.model.ConsentData
-import com.saltedge.authenticator.core.api.model.error.ApiErrorData
-import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
+import com.saltedge.authenticator.core.model.GUID
+import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.features.consents.common.countOfDaysLeft
+import com.saltedge.authenticator.features.consents.common.toConsentTypeDescription
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.models.toRichConnection
-import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.api.model.response.ConsentRevokeResponseData
-import com.saltedge.authenticator.core.contract.ConsentRevokeListener
-import com.saltedge.authenticator.core.model.*
 import com.saltedge.authenticator.tools.daysTillExpire
 import com.saltedge.authenticator.tools.mediumTypefaceSpan
 import com.saltedge.authenticator.tools.toDateFormatString
 import org.joda.time.DateTime
+import java.lang.ref.WeakReference
 
 class ConsentDetailsViewModel(
-    private val appContext: Context,
-    private val connectionsRepository: ConnectionsRepositoryAbs,
-    private val keyStoreManager: KeyManagerAbs,
-    private val apiManager: AuthenticatorApiManagerAbs
-) : ViewModel(), ConsentRevokeListener {
+    private val weakContext: WeakReference<Context>,
+    private val interactor: ConsentDetailsInteractorAbs
+) : ViewModel(), ConsentDetailsInteractorCallback {
 
-    val fragmentTitle = MutableLiveData<String>(appContext.getString(R.string.consent_details_feature_title))
+    private val context: Context?
+        get() = weakContext.get()
+    val fragmentTitle = MutableLiveData<String>("")
     val daysLeft = MutableLiveData<String>("")
     val consentTitle = MutableLiveData<String>("")
     val consentDescription = MutableLiveData<Spanned>(SpannableStringBuilder(""))
@@ -66,30 +63,27 @@ class ConsentDetailsViewModel(
     val sharedDataVisibility = MutableLiveData<Int>(View.GONE)
     val sharedBalanceVisibility = MutableLiveData<Int>(View.GONE)
     val sharedTransactionsVisibility = MutableLiveData<Int>(View.GONE)
-    val revokeAlertEvent = MutableLiveData<ViewModelEvent<String>>()
+    val revokeQuestionEvent = MutableLiveData<ViewModelEvent<String>>()
     val revokeErrorEvent = MutableLiveData<ViewModelEvent<String>>()
     val revokeSuccessEvent = MutableLiveData<ViewModelEvent<String>>()
-    private var consentData: ConsentData? = null
-    private var connectionAndKey: RichConnection? = null
 
-    override fun onConsentRevokeFailure(error: ApiErrorData) {
-        revokeErrorEvent.postValue(ViewModelEvent(error.errorMessage))
-    }
-
-    override fun onConsentRevokeSuccess(consentID: ID) {
-        revokeSuccessEvent.postValue(ViewModelEvent(consentID))
+    init {
+        context?.getString(R.string.consent_details_feature_title)?.let {
+            fragmentTitle.postValue(it)
+        }
+        interactor.contract = this
     }
 
     fun setInitialData(arguments: Bundle?) {
-        val connection = connectionsRepository.getByGuid(connectionGuid = arguments?.guid) ?: return
-        connectionAndKey = connection.toRichConnection(keyStoreManager)
-        fragmentTitle.postValue(connection.name)
-        this.consentData = arguments?.consent
-        this.consentData?.let { consent ->
+        interactor.setInitialData(connectionGuid = arguments?.guid, consent = arguments?.consent)
+
+        val connectionName = interactor.connectionName ?: return
+        fragmentTitle.postValue(connectionName)
+        interactor.consentData?.let { consent ->
             fragmentTitle.postValue(consent.tppName)
-            daysLeft.postValue(countOfDaysLeft(consent.expiresAt.daysTillExpire(), appContext))
-            consentTitle.postValue(getConsentTitle(consent.consentTypeString))
-            consentDescription.postValue(getConsentDescription(consent.tppName, connection.name))
+            context?.let { daysLeft.postValue(countOfDaysLeft(consent.expiresAt.daysTillExpire(), it)) }
+            consentTitle.postValue(consent.consentType?.toConsentTypeDescription(context))
+            consentDescription.postValue(getConsentDescription(consent.tppName, connectionName))
             consentGranted.postValue(getGrantedDate(consent.createdAt))
             consentExpires.postValue(getExpiresDate(consent.expiresAt))
             accounts.postValue(consent.accounts)
@@ -103,32 +97,30 @@ class ConsentDetailsViewModel(
         }
     }
 
-    fun onRevokeClick() {
-        val template = appContext.getString(R.string.revoke_consent_message)
-        revokeAlertEvent.postValue(ViewModelEvent(String.format(template, consentData?.tppName ?: "")))
+    fun onRevokeActionClick() {
+        context?.let {
+            val template = it.getString(R.string.revoke_consent_message)
+            val tppName = interactor.consentData?.tppName ?: ""
+            revokeQuestionEvent.postValue(ViewModelEvent(String.format(template, tppName)))
+        }
     }
 
-    fun onRevokeConfirmed() {
-        apiManager.revokeConsent(
-            consentId = consentData?.id ?: return,
-            connectionAndKey = connectionAndKey ?: return,
-            resultCallback = this
-        )
+    fun onRevokeConfirmedByUser() {
+        interactor.revokeConsent()
     }
 
-    private fun getConsentTitle(consentTypeString: String): String {
-        return appContext.getString(
-            when (consentTypeString.toConsentType()) {
-                ConsentType.AISP -> R.string.consent_title_aisp
-                ConsentType.PISP_FUTURE -> R.string.consent_title_pisp_future
-                ConsentType.PISP_RECURRING -> R.string.consent_title_pisp_recurring
-                else -> R.string.consent_unknown
-            }
-        )
+    override fun onConsentRevokeFailure(error: String) {
+        revokeErrorEvent.postValue(ViewModelEvent(error))
+    }
+
+    override fun onConsentRevokeSuccess(consentID: ID) {
+        revokeSuccessEvent.postValue(ViewModelEvent(consentID))
     }
 
     private fun getConsentDescription(tppName: String, providerName: String): Spanned {
-        val consentDescription = String.format(appContext.getString(R.string.consent_granted_to), tppName, providerName)
+        val appContext = context ?: return SpannedString("")
+        val template = appContext.getString(R.string.consent_granted_to)
+        val consentDescription = String.format(template, tppName, providerName)
         val tppNameIndex = consentDescription.indexOf(tppName, 0)
         val providerNameIndex = consentDescription.indexOf(providerName, 0)
         val spannedDescription = SpannableStringBuilder(consentDescription)
@@ -152,11 +144,15 @@ class ConsentDetailsViewModel(
     }
 
     private fun getGrantedDate(grantedAt: DateTime): String {
-        return "${appContext.getString(R.string.granted)}: ${grantedAt.toDateFormatString(appContext)}"
+        return context?.let {
+            "${it.getString(R.string.granted)}: ${grantedAt.toDateFormatString(it)}"
+        } ?: ""
     }
 
     private fun getExpiresDate(expiresAt: DateTime): String {
-        return "${appContext.getString(R.string.expires)}: ${expiresAt.toDateFormatString(appContext)}"
+        return context?.let {
+            "${it.getString(R.string.expires)}: ${expiresAt.toDateFormatString(it)}"
+        } ?: ""
     }
 
     companion object {

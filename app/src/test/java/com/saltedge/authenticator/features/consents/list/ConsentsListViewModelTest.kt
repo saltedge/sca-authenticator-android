@@ -168,7 +168,7 @@ class ConsentsListViewModelTest : ViewModelTest() {
         //then
         assertThat(
             viewModel.onConsentRemovedEvent.value!!.peekContent(),
-            equalTo("Consent revoked for title")
+            equalTo("Consent revoked for tppName111")
         )
     }
 
@@ -186,19 +186,19 @@ class ConsentsListViewModelTest : ViewModelTest() {
             equalTo(listOf(
                 ConsentItem(
                     id = "111",
-                    tppName = "title",
+                    tppName = "tppName111",
                     consentTypeDescription = "Access to account information",
                     expiresAtDescription = spanned
                 ),
                 ConsentItem(
                     id = "112",
-                    tppName = "title",
+                    tppName = "tppName112",
                     consentTypeDescription = "Consent for future payment",
                     expiresAtDescription = spanned
                 ),
                 ConsentItem(
                     id = "113",
-                    tppName = "title",
+                    tppName = "tppName113",
                     consentTypeDescription = "Consent for recurring payment",
                     expiresAtDescription = spanned
                 )

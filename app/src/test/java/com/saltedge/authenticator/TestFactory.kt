@@ -89,12 +89,12 @@ object TestFactory {
     val richConnection2 = RichConnection(connection2, mockPrivateKey)
     val richConnection3 = RichConnection(connection3Inactive, mockPrivateKey)
 
-    private val v1AispConsentData = ConsentData(
+    val v1AispConsentData = ConsentData(
         id = "111",
         connectionId = connection1.id,
         connectionGuid = connection1.guid,
         userId = "1",
-        tppName = "title",
+        tppName = "tppName111",
         consentTypeString = "aisp",
         accounts = emptyList(),
         expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
@@ -106,7 +106,7 @@ object TestFactory {
         connectionId = connection1.id,
         connectionGuid = connection1.guid,
         userId = "1",
-        tppName = "title",
+        tppName = "tppName112",
         consentTypeString = "pisp_future",
         accounts = emptyList(),
         expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
@@ -118,7 +118,7 @@ object TestFactory {
         connectionId = connection1.id,
         connectionGuid = connection1.guid,
         userId = "1",
-        tppName = "title",
+        tppName = "tppName113",
         consentTypeString = "pisp_recurring",
         accounts = emptyList(),
         expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
@@ -129,7 +129,7 @@ object TestFactory {
         id = "222",
         connectionId = connection2.id,
         connectionGuid = connection2.guid,
-        tppName = "title",
+        tppName = "tppName222",
         consentTypeString = "aisp",
         accounts = emptyList(),
         expiresAt = DateTime(0).withZone(DateTimeZone.UTC),

@@ -24,6 +24,7 @@ import android.content.Context
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.core.api.model.ConsentData
 import com.saltedge.authenticator.core.api.model.EncryptedData
+import com.saltedge.authenticator.core.model.ConsentType
 import com.saltedge.authenticator.core.model.GUID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.model.isActive
@@ -33,6 +34,15 @@ import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import com.saltedge.authenticator.sdk.v2.api.contract.FetchConsentsListener
+
+fun ConsentType?.toConsentTypeDescription(context: Context?): String {
+    return context?.getString(when (this) {
+        ConsentType.AISP -> R.string.consent_title_aisp
+        ConsentType.PISP_FUTURE -> R.string.consent_title_pisp_future
+        ConsentType.PISP_RECURRING -> R.string.consent_title_pisp_recurring
+        else -> R.string.consent_unknown
+    }) ?: ""
+}
 
 /**
  * Get size of collection and create string like `%count consents`

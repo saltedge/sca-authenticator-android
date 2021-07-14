@@ -34,11 +34,11 @@ import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.core.api.KEY_DATA
 import com.saltedge.authenticator.core.api.model.ConsentData
-import com.saltedge.authenticator.core.model.ConsentType
 import com.saltedge.authenticator.core.model.GUID
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.features.consents.common.countDescription
 import com.saltedge.authenticator.features.consents.common.countOfDays
+import com.saltedge.authenticator.features.consents.common.toConsentTypeDescription
 import com.saltedge.authenticator.features.consents.details.ConsentDetailsViewModel
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.appendColoredText
@@ -111,18 +111,10 @@ class ConsentsListViewModel(
             ConsentItem(
                 id = it.id,
                 tppName = it.tppName,
-                consentTypeDescription = it.consentType?.toConsentTypeDescription() ?: "",
+                consentTypeDescription = it.consentType?.toConsentTypeDescription(context) ?: "",
                 expiresAtDescription = it.expiresAt.toExpiresAtDescription()
             )
         }
-    }
-
-    private fun ConsentType.toConsentTypeDescription(): String {
-        return context?.getString(when (this) {
-            ConsentType.AISP -> R.string.consent_title_aisp
-            ConsentType.PISP_FUTURE -> R.string.consent_title_pisp_future
-            ConsentType.PISP_RECURRING -> R.string.consent_title_pisp_recurring
-        }) ?: ""
     }
 
     private fun DateTime.toExpiresAtDescription(): Spanned {

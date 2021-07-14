@@ -38,6 +38,7 @@ import com.saltedge.authenticator.features.connections.create.ConnectProviderVie
 import com.saltedge.authenticator.features.connections.list.ConnectionsListInteractor
 import com.saltedge.authenticator.features.connections.list.ConnectionsListViewModel
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsViewModel
+import com.saltedge.authenticator.features.consents.details.ConsentDetailsInteractor
 import com.saltedge.authenticator.features.consents.details.ConsentDetailsViewModel
 import com.saltedge.authenticator.features.consents.list.ConsentsListInteractor
 import com.saltedge.authenticator.features.consents.list.ConsentsListViewModel
@@ -192,6 +193,17 @@ class ViewModelsFactory @Inject constructor(
                     )
                 ) as T
             }
+            modelClass.isAssignableFrom(ConsentDetailsViewModel::class.java) -> {
+                return ConsentDetailsViewModel(
+                    weakContext = WeakReference(appContext),
+                    interactor = ConsentDetailsInteractor(
+                        connectionsRepository = connectionsRepository,
+                        keyStoreManager = keyStoreManager,
+                        v1ApiManager = apiManagerV1,
+                        v2ApiManager = apiManagerV2,
+                    )
+                ) as T
+            }
             modelClass.isAssignableFrom(SubmitActionViewModel::class.java) -> {
                 return SubmitActionViewModel(
                     appContext = appContext,
@@ -238,14 +250,6 @@ class ViewModelsFactory @Inject constructor(
                 return LanguageSelectViewModel(
                     appContext = appContext,
                     preferenceRepository = preferenceRepository
-                ) as T
-            }
-            modelClass.isAssignableFrom(ConsentDetailsViewModel::class.java) -> {
-                return ConsentDetailsViewModel(
-                    appContext = appContext,
-                    connectionsRepository = connectionsRepository,
-                    keyStoreManager = keyStoreManager,
-                    apiManager = apiManagerV1
                 ) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")

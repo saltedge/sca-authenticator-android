@@ -74,7 +74,7 @@ class ConsentDetailsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         updateAppbar(title = viewModel.fragmentTitle.value)
         binding.executePendingBindings()
-        revokeView?.setOnClickListener { viewModel.onRevokeClick() }
+        revokeView?.setOnClickListener { viewModel.onRevokeActionClick() }
     }
 
     private fun setupViewModel() {
@@ -83,11 +83,11 @@ class ConsentDetailsFragment : BaseFragment() {
         viewModel.fragmentTitle.observe(this, Observer<String> { title ->
             updateAppbar(title = title)
         })
-        viewModel.revokeAlertEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
+        viewModel.revokeQuestionEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
             event.getContentIfNotHandled()?.let { message ->
                 activity?.showConfirmRevokeConsentDialog(
                     message,
-                    DialogInterface.OnClickListener { _, _ -> viewModel.onRevokeConfirmed() }
+                    DialogInterface.OnClickListener { _, _ -> viewModel.onRevokeConfirmedByUser() }
                 )
             }
         })
