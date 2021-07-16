@@ -274,6 +274,12 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                                 id = ConnectionsListMenuItemType.DELETE.ordinal,
                                 iconRes = R.drawable.ic_menu_delete_24dp,
                                 textRes = R.string.actions_delete
+                            ),
+                            MenuItemData(
+                                id = ConnectionsListMenuItemType.INFO.ordinal,
+                                iconRes = android.R.drawable.ic_dialog_info,
+                                text = "ID: 1",
+                                isActive = false
                             )
                         )
                     )
@@ -318,10 +324,16 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                     id = ConnectionsListMenuItemType.DELETE.ordinal,
                     iconRes = R.drawable.ic_menu_remove_24dp,
                     textRes = R.string.actions_remove
+                ),
+                MenuItemData(
+                    id = ConnectionsListMenuItemType.INFO.ordinal,
+                    iconRes = android.R.drawable.ic_dialog_info,
+                    text = "ID: 3",
+                    isActive = false
                 )
             )
         )
-        assertThat(menuData.items.size, equalTo(4))
+        assertThat(menuData.items.size, equalTo(5))
         assertThat(menuData, equalTo(expectedMenuData))
     }
 
@@ -367,7 +379,8 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                     ConnectionsListMenuItemType.SUPPORT,
                     ConnectionsListMenuItemType.CONSENTS,
                     ConnectionsListMenuItemType.DELETE,
-                    ConnectionsListMenuItemType.LOCATION
+                    ConnectionsListMenuItemType.LOCATION,
+                    ConnectionsListMenuItemType.INFO
                 )
             )
         )
