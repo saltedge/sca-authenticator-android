@@ -34,12 +34,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.databinding.ConsentsListBinding
 import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.tools.loadImage
 import com.saltedge.authenticator.tools.navigateTo
 import com.saltedge.authenticator.tools.stopRefresh

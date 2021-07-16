@@ -25,7 +25,7 @@ import com.saltedge.authenticator.features.connections.common.ConnectionItem
 import com.saltedge.authenticator.features.menu.MenuItemData
 
 enum class ConnectionsListMenuItemType {
-    RECONNECT, RENAME, SUPPORT, CONSENTS, DELETE, LOCATION
+    RECONNECT, RENAME, SUPPORT, CONSENTS, DELETE, LOCATION, INFO
 }
 
 fun buildConnectionsListMenu(item: ConnectionItem): List<MenuItemData> {
@@ -76,6 +76,14 @@ fun buildConnectionsListMenu(item: ConnectionItem): List<MenuItemData> {
             id = ConnectionsListMenuItemType.DELETE.ordinal,
             iconRes = if (item.isActive) R.drawable.ic_menu_delete_24dp else R.drawable.ic_menu_remove_24dp,
             textRes = if (item.isActive) R.string.actions_delete else R.string.actions_remove
+        )
+    )
+    menuItems.add(
+        MenuItemData(
+            id = ConnectionsListMenuItemType.INFO.ordinal,
+            iconRes = android.R.drawable.ic_dialog_info,
+            text = "ID: ${item.connectionId}",
+            isActive = false
         )
     )
     return menuItems

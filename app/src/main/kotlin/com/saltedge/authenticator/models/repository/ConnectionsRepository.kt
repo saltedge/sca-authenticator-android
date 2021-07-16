@@ -90,7 +90,7 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
      */
     override fun getAllConnections(): List<Connection> {
         return RealmManager.getDefaultInstance().use {
-            it.where(Connection::class.java).sort(DB_KEY_CREATED_AT).findAll()
+            it.copyFromRealm(it.where(Connection::class.java).sort(DB_KEY_CREATED_AT).findAll())
         }
     }
 

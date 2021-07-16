@@ -132,18 +132,12 @@ fun List<EncryptedData>.decryptConsents(
 ): List<ConsentData> {
     return this.mapNotNull { data ->
         richConnections.firstOrNull { it.connection.id == data.connectionId }?.let {
-            data.decryptConsent(cryptoTools = cryptoTools, richConnection = it)
+            cryptoTools.decryptConsentData(
+                encryptedData = data,
+                rsaPrivateKey = it.private,
+                connectionGUID = it.connection.guid
+            )
         }
     }
 }
 
-private fun EncryptedData.decryptConsent(
-    cryptoTools: BaseCryptoToolsAbs,
-    richConnection: RichConnection
-): ConsentData? {
-    return cryptoTools.decryptConsentData(
-        encryptedData = this,
-        rsaPrivateKey = richConnection.private,
-        connectionGUID = richConnection.connection.guid
-    )
-}

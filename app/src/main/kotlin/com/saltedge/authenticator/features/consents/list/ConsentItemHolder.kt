@@ -30,20 +30,21 @@ import com.saltedge.authenticator.tools.inflateListItemView
 class ConsentItemHolder(parent: ViewGroup, private val listener: ListItemClickListener?) :
     RecyclerView.ViewHolder(parent.inflateListItemView(R.layout.view_item_consent))
 {
-    private val titleView = itemView.findViewById<TextView>(R.id.titleView)
-    private val consentType = itemView.findViewById<TextView>(R.id.subTitleView)
-    private val expiresAt = itemView.findViewById<TextView>(R.id.dateView)
+    private val consentTitleLabel = itemView.findViewById<TextView>(R.id.consentTitleLabel)
+    private val consentDescriptionLabel = itemView.findViewById<TextView>(R.id.consentDescriptionLabel)
+    private val expiresLabel = itemView.findViewById<TextView>(R.id.expiresLabel)
 
     init {
         itemView.setOnClickListener {
-            if (adapterPosition > RecyclerView.NO_POSITION)
+            if (adapterPosition > RecyclerView.NO_POSITION) {
                 listener?.onListItemClick(itemIndex = adapterPosition)
+            }
         }
     }
 
     fun bind(item: ConsentItem) {
-        titleView.text = item.tppName
-        consentType.text = item.consentTypeDescription
-        expiresAt.text = item.expiresAtDescription
+        consentTitleLabel.text = item.tppName
+        consentDescriptionLabel.text = item.consentTypeDescription
+        expiresLabel.text = item.expiresAtDescription
     }
 }
