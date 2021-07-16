@@ -63,6 +63,11 @@ class ConsentsListInteractor(
         requestUpdateConsents(listOf(richConnection), v1ApiManager, v2ApiManager, this, this)
     }
 
+    override fun onNewConsentsReceived(result: List<ConsentData>) {
+        consents = result
+        contract?.onDatasetChanged(consents = result)
+    }
+
     override fun getConsent(consentId: ID): ConsentData? = consents.firstOrNull { it.id == consentId }
 
     override fun removeConsent(consentId: ID): ConsentData? {
@@ -88,11 +93,6 @@ class ConsentsListInteractor(
             withContext(Dispatchers.Main) { onNewConsentsReceived(data) }
         }
     }
-
-    private fun onNewConsentsReceived(result: List<ConsentData>) {
-        consents = result
-        contract?.onDatasetChanged(consents = result)
-    }
 }
 
 interface ConsentsListInteractorAbs {
@@ -100,6 +100,7 @@ interface ConsentsListInteractorAbs {
     var consents: List<ConsentData>
     fun updateConnection(connectionGuid: GUID?): ConnectionAbs?
     fun updateConsents()
+    fun onNewConsentsReceived(result: List<ConsentData>)
     fun getConsent(consentId: ID): ConsentData?
     fun removeConsent(consentId: ID): ConsentData?
 }

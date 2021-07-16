@@ -76,7 +76,7 @@ class ConsentsListViewModel(
             logoUrlData.postValue(it.logoUrl)
             connectionTitleData.postValue(it.name)
         }
-        interactor.consents = bundle?.consents ?: emptyList()
+        interactor.onNewConsentsReceived(bundle?.consents ?: emptyList())
     }
 
     fun refreshConsents() {

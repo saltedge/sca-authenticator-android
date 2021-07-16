@@ -85,7 +85,8 @@ class ConsentsListViewModelTest : ViewModelTest() {
         //then
         assertThat(viewModel.logoUrlData.value, equalTo("https://www.fentury.com/"))
         assertThat(viewModel.connectionTitleData.value, equalTo("Demobank1"))
-        verify(mockInteractor).consents = TestFactory.v1Consents
+        verify(mockInteractor).updateConnection(TestFactory.connection1.guid)
+        verify(mockInteractor).onNewConsentsReceived(TestFactory.v1Consents)
     }
 
     @Test
