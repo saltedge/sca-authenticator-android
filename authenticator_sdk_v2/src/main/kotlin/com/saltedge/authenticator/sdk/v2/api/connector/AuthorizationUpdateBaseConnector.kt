@@ -27,8 +27,8 @@ import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationResponse
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationRequest
 import com.saltedge.authenticator.sdk.v2.api.retrofit.addSignatureHeader
-import com.saltedge.authenticator.sdk.v2.api.retrofit.authorizationsConfirmPath
-import com.saltedge.authenticator.sdk.v2.api.retrofit.authorizationsDenyPath
+import com.saltedge.authenticator.sdk.v2.api.retrofit.toAuthorizationsConfirmUrl
+import com.saltedge.authenticator.sdk.v2.api.retrofit.toAuthorizationsDenyUrl
 import com.saltedge.authenticator.sdk.v2.api.retrofit.createAccessTokenHeader
 
 internal abstract class AuthorizationUpdateBaseConnector(
@@ -38,8 +38,8 @@ internal abstract class AuthorizationUpdateBaseConnector(
 
     protected fun url(richConnection: RichConnection): String {
         val baseUrl = richConnection.connection.connectUrl
-        return if (isConfirmRequest) baseUrl.authorizationsConfirmPath(authorizationId)
-        else baseUrl.authorizationsDenyPath(authorizationId)
+        return if (isConfirmRequest) baseUrl.toAuthorizationsConfirmUrl(authorizationId)
+        else baseUrl.toAuthorizationsDenyUrl(authorizationId)
     }
 
     protected fun headers(richConnection: RichConnection, request: UpdateAuthorizationRequest): Map<String, String> {

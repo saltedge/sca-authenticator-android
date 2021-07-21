@@ -25,23 +25,23 @@ import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionsV2RevokeListener
-import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionRequest
+import com.saltedge.authenticator.sdk.v2.api.model.EmptyRequest
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionResponse
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import com.saltedge.authenticator.sdk.v2.api.retrofit.addSignatureHeader
 import com.saltedge.authenticator.sdk.v2.api.retrofit.createAccessTokenHeader
-import com.saltedge.authenticator.sdk.v2.api.retrofit.revokeConnectionsPath
+import com.saltedge.authenticator.sdk.v2.api.retrofit.toConnectionsRevokeUrl
 import retrofit2.Call
 
 /**
  * Connector send revoke request.
  *
  * @param apiInterface - instance of ApiInterface
- * @param resultCallback - instance of ConnectionsRevokeResult for returning query result
+ * @param callback - instance of ConnectionsRevokeResult for returning query result
  */
 internal class ConnectionsRevokeConnector(
     private val apiInterface: ApiInterface,
-    var resultCallback: ConnectionsV2RevokeListener? = null
+    var callback: ConnectionsV2RevokeListener? = null
 ) : RequestQueueAbs<RevokeConnectionResponse>() {
 
     private var revokedIDs = mutableListOf<ID>()
@@ -61,7 +61,7 @@ internal class ConnectionsRevokeConnector(
                 this.revokeErrors = mutableListOf()
                 this.revokedIDs = mutableListOf()
                 forConnections.forEach {
-                    val request = RevokeConnectionRequest()
+                    val request = EmptyRequest()
                     val headers = createAccessTokenHeader(it.connection.accessToken)
                         .addSignatureHeader(
                             it.private,
@@ -69,7 +69,7 @@ internal class ConnectionsRevokeConnector(
                             request.requestExpirationTime
                         )
                     apiInterface.revokeConnection(
-                        requestUrl = it.connection.connectUrl.revokeConnectionsPath(it.connection.id),
+                        requestUrl = it.connection.connectUrl.toConnectionsRevokeUrl(it.connection.id),
                         headersMap = headers,
                         requestBody = request
                     ).enqueue(this)
@@ -82,7 +82,7 @@ internal class ConnectionsRevokeConnector(
      * Pass result to resultCallback.onConnectionsRevokeResult(...)
      */
     public override fun onQueueFinished() {
-        resultCallback?.onConnectionsV2RevokeResult(revokedIDs = revokedIDs, apiErrors = revokeErrors)
+        callback?.onConnectionsV2RevokeResult(revokedIDs = revokedIDs, apiErrors = revokeErrors)
     }
 
     /**

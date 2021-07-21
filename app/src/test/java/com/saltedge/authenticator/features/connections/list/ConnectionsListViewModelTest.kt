@@ -28,20 +28,22 @@ import android.view.View
 import androidx.test.core.app.ApplicationProvider
 import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.TestFactory
 import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.core.api.KEY_NAME
+import com.saltedge.authenticator.core.api.model.ConsentData
+import com.saltedge.authenticator.core.api.model.ConsentSharedData
 import com.saltedge.authenticator.core.model.ConnectionStatus
 import com.saltedge.authenticator.features.connections.common.ConnectionItem
+import com.saltedge.authenticator.features.connections.list.menu.ConnectionsListMenuItemType
 import com.saltedge.authenticator.features.connections.list.menu.MenuData
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
-import com.saltedge.authenticator.sdk.api.model.ConsentData
-import com.saltedge.authenticator.sdk.api.model.ConsentSharedData
 import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import org.hamcrest.MatcherAssert.assertThat
@@ -58,6 +60,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.robolectric.RobolectricTestRunner
+import java.lang.ref.WeakReference
 
 @RunWith(RobolectricTestRunner::class)
 class ConnectionsListViewModelTest : ViewModelTest() {
@@ -69,62 +72,10 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     private val mockLocationManager = mock(DeviceLocationManagerAbs::class.java)
     private val mockConnectivityReceiver = mock(ConnectivityReceiverAbs::class.java)
 
-    private val connection1 = Connection().apply {
-        id = "1"
-        guid = "guid1"
-        code = "demobank1"
-        name = "Demobank1"
-        status = "${ConnectionStatus.ACTIVE}"
-        accessToken = "token1"
-        supportEmail = "example@example.com"
-        createdAt = 100L
-        updatedAt = 100L
-        apiVersion = API_V1_VERSION
-        geolocationRequired = true
-    }
-    private val connection2 = Connection().apply {
-        id = "2"
-        guid = "guid2"
-        code = "demobank2"
-        name = "Demobank2"
-        status = "${ConnectionStatus.ACTIVE}"
-        supportEmail = "example@example.com"
-        accessToken = "token2"
-        createdAt = 200L
-        updatedAt = 200L
-        apiVersion = API_V2_VERSION
-    }
-    private val connection3Inactive = Connection().apply {
-        id = "3"
-        guid = "guid3"
-        code = "demobank3"
-        name = "Demobank3"
-        status = "${ConnectionStatus.INACTIVE}"
-        supportEmail = "example@example.com"
-        accessToken = "token3"
-        createdAt = 300L
-        updatedAt = 300L
-        apiVersion = API_V1_VERSION
-    }
-    private val allConnections = listOf(connection1, connection2, connection3Inactive)
-    private val consents: List<ConsentData> = listOf(
-        ConsentData(
-            id = "555",
-            connectionId = "1",
-            userId = "1",
-            tppName = "title",
-            consentTypeString = "aisp",
-            accounts = emptyList(),
-            expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
-            createdAt = DateTime(0).withZone(DateTimeZone.UTC),
-            sharedData = ConsentSharedData(balance = true, transactions = true)
-        )
-    )
-
     @Before
     fun setUp() {
         viewModel = ConnectionsListViewModel(
-            appContext = context,
+            weakContext = WeakReference(context),
             interactor = mockInteractor,
             locationManager = mockLocationManager,
             connectivityReceiver = mockConnectivityReceiver
@@ -139,30 +90,8 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         viewModel.onStart()
 
         //then
-        Mockito.verify(mockConnectivityReceiver).addNetworkStateChangeListener(viewModel)
         Mockito.verify(mockInteractor).updateConnections()
         Mockito.verify(mockInteractor).updateConsents()
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onStopTest() {
-        //when
-        viewModel.onStop()
-
-        //then
-        Mockito.verify(mockConnectivityReceiver).removeNetworkStateChangeListener(viewModel)
-        Mockito.verifyNoInteractions(mockInteractor)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onDestroyTest() {
-        //when
-        viewModel.onDestroy()
-
-        //then
-        Mockito.verify(mockInteractor).onDestroy()
     }
 
     @Test
@@ -179,10 +108,10 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onItemNameChangedTestCase1() {
         //given
-        viewModel.onConnectionsDataChanged(allConnections)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
         val newName = "new name"
-        val guid = connection2.guid
-        given(mockInteractor.updateNameAndSave(guid = guid, newConnectionName = newName)).willReturn(true)
+        val guid = TestFactory.connection2.guid
+        given(mockInteractor.updateNameAndSave(connectionGuid = guid, newConnectionName = newName)).willReturn(true)
 
         //when
         viewModel.onItemNameChanged(data = Bundle().apply { this.putString(KEY_NAME, newName); this.guid = guid })
@@ -195,7 +124,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onItemNameChangedTestCase2() {
         //given
-        viewModel.onConnectionsDataChanged(allConnections)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
         val newName = "new name"
         val guid = "guidX"
 
@@ -211,9 +140,9 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onItemNameChangedTestCase3() {
         //given
-        viewModel.onConnectionsDataChanged(allConnections)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
         val newName = ""
-        val guid = connection2.guid
+        val guid = TestFactory.connection2.guid
 
         //when
         viewModel.onItemNameChanged(data = Bundle().apply { this.putString(KEY_NAME, newName); this.guid = guid })
@@ -227,9 +156,9 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onItemNameChangedTestCase4() {
         //given
-        viewModel.onConnectionsDataChanged(allConnections)
-        val newName = connection2.name
-        val guid = connection2.guid
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        val newName = TestFactory.connection2.name
+        val guid = TestFactory.connection2.guid
 
         //when
         viewModel.onItemNameChanged(data = Bundle().apply { this.putString(KEY_NAME, newName); this.guid = guid })
@@ -243,10 +172,10 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onItemNameChangedTestCase5() {
         //given
-        viewModel.onConnectionsDataChanged(allConnections)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
         val newName = "new name"
-        val guid = connection2.guid
-        given(mockInteractor.updateNameAndSave(guid = guid, newConnectionName = newName)).willReturn(false)
+        val guid = TestFactory.connection2.guid
+        given(mockInteractor.updateNameAndSave(connectionGuid = guid, newConnectionName = newName)).willReturn(false)
 
         //when
         viewModel.onItemNameChanged(data = Bundle().apply { this.putString(KEY_NAME, newName); this.guid = guid })
@@ -259,20 +188,20 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun deleteItemTestCase1() {
         //when
-        viewModel.onConnectionsDataChanged(allConnections)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
 
         //when
-        viewModel.deleteItem(guid = connection1.guid)
+        viewModel.deleteItem(guid = TestFactory.connection1.guid)
 
         //then
-        Mockito.verify(mockInteractor).revokeConnection(connection1.guid)
+        Mockito.verify(mockInteractor).revokeConnection(TestFactory.connection1.guid)
     }
 
     @Test
     @Throws(Exception::class)
     fun deleteItemTestCase2() {
         //when
-        viewModel.onConnectionsDataChanged(allConnections)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
 
         //when
         viewModel.deleteItem(guid = "guidX")
@@ -305,8 +234,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onListItemClickTestCase1() {
         //given list of items, list of consents and index of active item
-        viewModel.onConnectionsDataChanged(allConnections)
-        viewModel.onConsentsDataChanged(consents)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
         val activeItemIndex = 0
 
         assertNull(viewModel.onListItemClickEvent.value)
@@ -323,29 +251,35 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                         menuId = activeItemIndex,
                         items = listOf(
                             MenuItemData(
-                                id = ConnectionsListViewModel.PopupMenuItem.RENAME.ordinal,
+                                id = ConnectionsListMenuItemType.RENAME.ordinal,
                                 iconRes = R.drawable.ic_menu_edit_24dp,
                                 textRes = R.string.actions_rename
                             ),
                             MenuItemData(
-                                id = ConnectionsListViewModel.PopupMenuItem.SUPPORT.ordinal,
+                                id = ConnectionsListMenuItemType.SUPPORT.ordinal,
                                 iconRes = R.drawable.ic_contact_support_24dp,
                                 textRes = R.string.actions_contact_support
                             ),
                             MenuItemData(
-                                id = ConnectionsListViewModel.PopupMenuItem.CONSENTS.ordinal,
+                                id = ConnectionsListMenuItemType.CONSENTS.ordinal,
                                 iconRes = R.drawable.ic_view_consents_24dp,
                                 textRes = R.string.actions_view_consents
                             ),
                             MenuItemData(
-                                id = ConnectionsListViewModel.PopupMenuItem.LOCATION.ordinal,
+                                id = ConnectionsListMenuItemType.LOCATION.ordinal,
                                 iconRes = R.drawable.ic_view_location_24dp,
                                 textRes = R.string.actions_view_location
                             ),
                             MenuItemData(
-                                id = ConnectionsListViewModel.PopupMenuItem.DELETE.ordinal,
+                                id = ConnectionsListMenuItemType.DELETE.ordinal,
                                 iconRes = R.drawable.ic_menu_delete_24dp,
                                 textRes = R.string.actions_delete
+                            ),
+                            MenuItemData(
+                                id = ConnectionsListMenuItemType.INFO.ordinal,
+                                iconRes = android.R.drawable.ic_dialog_info,
+                                text = "ID: 1",
+                                isActive = false
                             )
                         )
                     )
@@ -358,7 +292,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onListItemClickTestCase2() {
         //given list of items, empty list of consents and index of inactive item
-        viewModel.onConnectionsDataChanged(allConnections)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
         val inactiveItemIndex = 2
 
         assertNull(viewModel.onListItemClickEvent.value)
@@ -372,28 +306,34 @@ class ConnectionsListViewModelTest : ViewModelTest() {
             menuId = inactiveItemIndex,
             items = listOf(
                 MenuItemData(
-                    id = ConnectionsListViewModel.PopupMenuItem.RECONNECT.ordinal,
+                    id = ConnectionsListMenuItemType.RECONNECT.ordinal,
                     iconRes = R.drawable.ic_menu_reconnect_24dp,
                     textRes = R.string.actions_reconnect
                 ),
                 MenuItemData(
-                    id = ConnectionsListViewModel.PopupMenuItem.RENAME.ordinal,
+                    id = ConnectionsListMenuItemType.RENAME.ordinal,
                     iconRes = R.drawable.ic_menu_edit_24dp,
                     textRes = R.string.actions_rename
                 ),
                 MenuItemData(
-                    id = ConnectionsListViewModel.PopupMenuItem.SUPPORT.ordinal,
+                    id = ConnectionsListMenuItemType.SUPPORT.ordinal,
                     iconRes = R.drawable.ic_contact_support_24dp,
                     textRes = R.string.actions_contact_support
                 ),
                 MenuItemData(
-                    id = ConnectionsListViewModel.PopupMenuItem.DELETE.ordinal,
+                    id = ConnectionsListMenuItemType.DELETE.ordinal,
                     iconRes = R.drawable.ic_menu_remove_24dp,
                     textRes = R.string.actions_remove
+                ),
+                MenuItemData(
+                    id = ConnectionsListMenuItemType.INFO.ordinal,
+                    iconRes = android.R.drawable.ic_dialog_info,
+                    text = "ID: 3",
+                    isActive = false
                 )
             )
         )
-        assertThat(menuData.items.size, equalTo(4))
+        assertThat(menuData.items.size, equalTo(5))
         assertThat(menuData, equalTo(expectedMenuData))
     }
 
@@ -431,15 +371,16 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun popupMenuItemEnumTest() {
         assertThat(
-            ConnectionsListViewModel.PopupMenuItem.values(),
+            ConnectionsListMenuItemType.values(),
             equalTo(
                 arrayOf(
-                    ConnectionsListViewModel.PopupMenuItem.RECONNECT,
-                    ConnectionsListViewModel.PopupMenuItem.RENAME,
-                    ConnectionsListViewModel.PopupMenuItem.SUPPORT,
-                    ConnectionsListViewModel.PopupMenuItem.CONSENTS,
-                    ConnectionsListViewModel.PopupMenuItem.DELETE,
-                    ConnectionsListViewModel.PopupMenuItem.LOCATION
+                    ConnectionsListMenuItemType.RECONNECT,
+                    ConnectionsListMenuItemType.RENAME,
+                    ConnectionsListMenuItemType.SUPPORT,
+                    ConnectionsListMenuItemType.CONSENTS,
+                    ConnectionsListMenuItemType.DELETE,
+                    ConnectionsListMenuItemType.LOCATION,
+                    ConnectionsListMenuItemType.INFO
                 )
             )
         )
@@ -449,9 +390,9 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onMenuItemClickTestCase1() {
         //given
-        viewModel.onConnectionsDataChanged(allConnections)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
         val activeItemIndex = 1
-        val itemId = ConnectionsListViewModel.PopupMenuItem.RECONNECT.ordinal
+        val itemId = ConnectionsListMenuItemType.RECONNECT.ordinal
 
         //when
         viewModel.onMenuItemClick(menuId = activeItemIndex, itemId = itemId)
@@ -464,9 +405,9 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onMenuItemClickTestCase2() {
         //given
-        viewModel.onConnectionsDataChanged(allConnections)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
         val activeItemIndex = 1
-        val itemId = ConnectionsListViewModel.PopupMenuItem.RENAME.ordinal
+        val itemId = ConnectionsListMenuItemType.RENAME.ordinal
 
         //when
         viewModel.onMenuItemClick(menuId = activeItemIndex, itemId = itemId)
@@ -481,9 +422,9 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onMenuItemClickTestCase3() {
         //given
-        viewModel.onConnectionsDataChanged(allConnections)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
         val activeItemIndex = 1
-        val itemId = ConnectionsListViewModel.PopupMenuItem.SUPPORT.ordinal
+        val itemId = ConnectionsListMenuItemType.SUPPORT.ordinal
 
         //when
         viewModel.onMenuItemClick(menuId = activeItemIndex, itemId = itemId)
@@ -499,24 +440,9 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onMenuItemClickTestCase5() {
         //given
-        viewModel.onConnectionsDataChanged(allConnections)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
         val activeItemIndex = 1
-        val itemId = ConnectionsListViewModel.PopupMenuItem.DELETE.ordinal
-
-        //when
-        viewModel.onMenuItemClick(menuId = activeItemIndex, itemId = itemId)
-
-        //then
-        assertThat(viewModel.onDeleteClickEvent.value!!.peekContent(), equalTo("guid2"))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onMenuItemClickTestCase6() {
-        //given
-        viewModel.onConnectionsDataChanged(allConnections)
-        val activeItemIndex = 1
-        val itemId = ConnectionsListViewModel.PopupMenuItem.LOCATION.ordinal
+        val itemId = ConnectionsListMenuItemType.LOCATION.ordinal
 
         //when
         viewModel.onMenuItemClick(menuId = activeItemIndex, itemId = itemId)
@@ -527,12 +453,62 @@ class ConnectionsListViewModelTest : ViewModelTest() {
 
     @Test
     @Throws(Exception::class)
+    fun onMenuItemClickTestCase6_noConnection() {
+        //given
+        given(mockConnectivityReceiver.hasNetworkConnection).willReturn(false)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        val activeItemIndex = 1
+        val itemId = ConnectionsListMenuItemType.DELETE.ordinal
+
+        //when
+        viewModel.onMenuItemClick(menuId = activeItemIndex, itemId = itemId)
+
+        //then
+        assertThat(viewModel.onShowNoInternetConnectionDialogEvent.value!!.peekContent(), equalTo("guid2"))
+        Mockito.verifyNoMoreInteractions(mockInteractor)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onMenuItemClickTestCase6_active() {
+        //given
+        given(mockConnectivityReceiver.hasNetworkConnection).willReturn(true)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        val activeItemIndex = 1
+        val itemId = ConnectionsListMenuItemType.DELETE.ordinal
+
+        //when
+        viewModel.onMenuItemClick(menuId = activeItemIndex, itemId = itemId)
+
+        //then
+        assertThat(viewModel.onDeleteClickEvent.value!!.peekContent(), equalTo("guid2"))
+        Mockito.verifyNoMoreInteractions(mockInteractor)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onMenuItemClickTestCase6_inactive() {
+        //given
+        given(mockConnectivityReceiver.hasNetworkConnection).willReturn(true)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        val activeItemIndex = 2
+        val itemId = ConnectionsListMenuItemType.DELETE.ordinal
+
+        //when
+        viewModel.onMenuItemClick(menuId = activeItemIndex, itemId = itemId)
+
+        //then
+        Mockito.verify(mockInteractor).revokeConnection(TestFactory.connection3Inactive.guid)
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun onConnectionsDataChangedTestCase1() {
         //given
         Assert.assertTrue(viewModel.listItems.value!!.isEmpty())
 
         //when
-        viewModel.onConnectionsDataChanged(allConnections)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
 
         //then
         Assert.assertTrue(viewModel.listItems.value!!.isNotEmpty())
@@ -547,7 +523,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         Assert.assertTrue(viewModel.listItems.value!!.isEmpty())
 
         //when
-        viewModel.onConnectionsDataChanged(emptyList())
+        viewModel.onDatasetChanged(emptyList(), TestFactory.allConsents)
 
         //then
         Assert.assertTrue(viewModel.listItems.value!!.isEmpty())
@@ -562,7 +538,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         Assert.assertTrue(viewModel.listItems.value!!.isEmpty())
 
         //when
-        viewModel.onConsentsDataChanged(consents)
+        viewModel.onDatasetChanged(emptyList(), TestFactory.allConsents)
 
         //then
         Assert.assertTrue(viewModel.listItems.value!!.isEmpty())
@@ -572,10 +548,10 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onConsentsDataChangedTestCase2() {
         //given
-        viewModel.onConnectionsDataChanged(allConnections)
+        viewModel.onDatasetChanged(TestFactory.allConnections, emptyList())
 
         //when
-        viewModel.onConsentsDataChanged(consents)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
 
         //then
         assertThat(
@@ -588,13 +564,13 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                         name = "Demobank1",
                         statusDescription = "Grant access to location data",
                         statusDescriptionColorRes = R.color.yellow,
-                        logoUrl = "",
-                        consentsDescription = "1 consent\u30FB",
+                        logoUrl = "https://www.fentury.com/",
+                        consentsCount = 3,
                         isActive = true,
                         isChecked = false,
                         apiVersion = API_V1_VERSION,
                         email = "example@example.com",
-                        locationPermissionRequired = true
+                        shouldRequestLocationPermission = true
                     ),
                     ConnectionItem(
                         guid = "guid2",
@@ -602,13 +578,13 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                         name = "Demobank2",
                         statusDescription = "Linked on 1 January 1970",
                         statusDescriptionColorRes = R.color.dark_60_and_grey_100,
-                        logoUrl = "",
-                        consentsDescription = "",
+                        logoUrl = "https://www.fentury.com/",
+                        consentsCount = 1,
                         isActive = true,
                         isChecked = false,
                         apiVersion = API_V2_VERSION,
                         email = "example@example.com",
-                        locationPermissionRequired = false
+                        shouldRequestLocationPermission = false
                     ),
                     ConnectionItem(
                         guid = "guid3",
@@ -616,13 +592,13 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                         name = "Demobank3",
                         statusDescription = "Inactive. Please reconnect.",
                         statusDescriptionColorRes = R.color.red_and_red_light,
-                        logoUrl = "",
-                        consentsDescription = "",
+                        logoUrl = "https://www.fentury.com/",
+                        consentsCount = 0,
                         isActive = false,
                         isChecked = false,
                         apiVersion = API_V1_VERSION,
                         email = "example@example.com",
-                        locationPermissionRequired = false
+                        shouldRequestLocationPermission = false
                     )
                 )
             )
@@ -685,16 +661,15 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onDialogActionClickCase5() {
         //given
-        viewModel.onConnectionsDataChanged(allConnections)
-        val isConnected = true
-        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        given(mockConnectivityReceiver.hasNetworkConnection).willReturn(true)
 
 
         //when
         viewModel.onDialogActionClick(
             dialogActionId = DialogInterface.BUTTON_NEGATIVE,
             actionResId = R.string.actions_retry,
-            guid = connection1.guid
+            guid = TestFactory.connection1.guid
         )
 
         //then
@@ -706,35 +681,33 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onDialogActionClickCase6() {
         //given
-        viewModel.onConnectionsDataChanged(allConnections)
-        val isConnected = true
-        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        given(mockConnectivityReceiver.hasNetworkConnection).willReturn(true)
 
         //when
         viewModel.onDialogActionClick(
             dialogActionId = DialogInterface.BUTTON_POSITIVE,
             actionResId = R.string.actions_retry,
-            guid = connection1.guid
+            guid = TestFactory.connection1.guid
         )
 
         //then
-        Mockito.verify(mockInteractor).revokeConnection(connection1.guid)
+        Mockito.verify(mockInteractor).revokeConnection(TestFactory.connection1.guid)
     }
 
     @Test
     @Throws(Exception::class)
     fun onDialogActionClickCase7() {
         //given
-        viewModel.onConnectionsDataChanged(allConnections)
-        val isConnected = false
-        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        given(mockConnectivityReceiver.hasNetworkConnection).willReturn(false)
 
 
         //when
         viewModel.onDialogActionClick(
             dialogActionId = DialogInterface.BUTTON_NEGATIVE,
             actionResId = R.string.actions_retry,
-            guid = connection1.guid
+            guid = TestFactory.connection1.guid
         )
 
         //then
@@ -746,15 +719,14 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onDialogActionClickCase8() {
         //given
-        viewModel.onConnectionsDataChanged(allConnections)
-        val isConnected = false
-        viewModel.onNetworkConnectionChanged(isConnected = isConnected)
+        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        given(mockConnectivityReceiver.hasNetworkConnection).willReturn(false)
 
         //when
         viewModel.onDialogActionClick(
             dialogActionId = DialogInterface.BUTTON_POSITIVE,
             actionResId = R.string.actions_retry,
-            guid = connection1.guid
+            guid = TestFactory.connection1.guid
         )
 
         //then

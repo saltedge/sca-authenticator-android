@@ -81,6 +81,7 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
         super.setUp()
         AppTools.lastUnlockType = ActivityUnlockType.BIOMETRICS
         given(mockLocationManager.locationDescription).willReturn("GEO:52.506931;13.144558")
+        given(mockConnectivityReceiver.hasNetworkConnection).willReturn(true)
         viewModel = AuthorizationsListViewModel(
             appContext = TestAppTools.applicationContext,
             interactorV1 = mockInteractorV1,
@@ -127,7 +128,7 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
         viewModel.bindLifecycleObserver(lifecycle)
 
         //when
-        lifecycle.currentState = Lifecycle.State.RESUMED
+        viewModel.onResume()
 
         //then
         assertThat(viewModel.emptyViewVisibility.value, equalTo(View.VISIBLE))
@@ -155,7 +156,7 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
         viewModel.bindLifecycleObserver(lifecycle)
 
         //when
-        lifecycle.currentState = Lifecycle.State.RESUMED
+        viewModel.onResume()
 
         //then
         assertThat(viewModel.emptyViewVisibility.value, equalTo(View.GONE))
@@ -409,6 +410,7 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
     fun onNetworkConnectionChangedTestCase1() {
         //given
         val isConnected = false
+        given(mockConnectivityReceiver.hasNetworkConnection).willReturn(isConnected)
 
         //when
         viewModel.onNetworkConnectionChanged(isConnected = isConnected)
@@ -437,6 +439,7 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
     fun onNetworkConnectionChangedTestCase2() {
         //given
         val isConnected = true
+        given(mockConnectivityReceiver.hasNetworkConnection).willReturn(isConnected)
 
         //when
         viewModel.onNetworkConnectionChanged(isConnected = isConnected)

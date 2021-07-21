@@ -24,8 +24,9 @@ import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.encryptAesCBCString
 import com.saltedge.android.test_tools.encryptWithTestKey
 import com.saltedge.android.test_tools.rsaEncrypt
-import com.saltedge.authenticator.sdk.api.model.ConsentData
-import com.saltedge.authenticator.sdk.api.model.ConsentSharedData
+import com.saltedge.authenticator.core.api.model.ConsentData
+import com.saltedge.authenticator.core.api.model.ConsentSharedData
+import com.saltedge.authenticator.core.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.testTools.TestTools
 import net.danlew.android.joda.JodaTimeAndroid
@@ -133,7 +134,7 @@ class CryptoToolsV1Test {
     @Test
     @Throws(Exception::class)
     fun decryptAuthorizationDataTest() {
-        val encryptedData = authData.encryptWithTestKey()
+        val encryptedData: EncryptedData = authData.encryptWithTestKey()
 
         assertThat(
             CryptoToolsV1.decryptAuthorizationData(
@@ -146,24 +147,6 @@ class CryptoToolsV1Test {
             CryptoToolsV1.decryptAuthorizationData(
                 encryptedData = encryptedData,
                 rsaPrivateKey = null
-            )
-        )
-        Assert.assertNull(
-            CryptoToolsV1.decryptAuthorizationData(
-                encryptedData = encryptedData.copy(key = null),
-                rsaPrivateKey = CommonTestTools.testPrivateKey
-            )
-        )
-        Assert.assertNull(
-            CryptoToolsV1.decryptAuthorizationData(
-                encryptedData = encryptedData.copy(iv = null),
-                rsaPrivateKey = CommonTestTools.testPrivateKey
-            )
-        )
-        Assert.assertNull(
-            CryptoToolsV1.decryptAuthorizationData(
-                encryptedData = encryptedData.copy(data = null),
-                rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
         Assert.assertNull(
@@ -189,7 +172,7 @@ class CryptoToolsV1Test {
     @Test
     @Throws(Exception::class)
     fun decryptConsentDataTest() {
-        val encryptedData = consentData.encryptWithTestKey()
+        val encryptedData: EncryptedData = consentData.encryptWithTestKey()
 
         assertThat(
             CryptoToolsV1.decryptConsentData(
@@ -197,30 +180,6 @@ class CryptoToolsV1Test {
                 rsaPrivateKey = CommonTestTools.testPrivateKey
             ),
             equalTo(consentData)
-        )
-        Assert.assertNull(
-            CryptoToolsV1. decryptConsentData(
-                encryptedData = encryptedData,
-                rsaPrivateKey = null
-            )
-        )
-        Assert.assertNull(
-            CryptoToolsV1.decryptAuthorizationData(
-                encryptedData = encryptedData.copy(key = null),
-                rsaPrivateKey = CommonTestTools.testPrivateKey
-            )
-        )
-        Assert.assertNull(
-            CryptoToolsV1.decryptConsentData(
-                encryptedData = encryptedData.copy(iv = null),
-                rsaPrivateKey = CommonTestTools.testPrivateKey
-            )
-        )
-        Assert.assertNull(
-            CryptoToolsV1.decryptAuthorizationData(
-                encryptedData = encryptedData.copy(data = null),
-                rsaPrivateKey = CommonTestTools.testPrivateKey
-            )
         )
         Assert.assertNull(
             CryptoToolsV1.decryptConsentData(
@@ -253,6 +212,7 @@ class CryptoToolsV1Test {
     private val consentData = ConsentData(
         id = "555",
         userId = "1",
+        connectionId = "2",
         tppName = "title",
         consentTypeString = "aisp",
         accounts = emptyList(),

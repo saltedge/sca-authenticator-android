@@ -20,34 +20,18 @@
  */
 package com.saltedge.authenticator.features.consents.list
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import androidx.test.core.app.ApplicationProvider
-import com.saltedge.android.test_tools.CommonTestTools
-import com.saltedge.android.test_tools.CoroutineViewModelTest
-import com.saltedge.android.test_tools.encryptWithTestKey
+import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.CONSENT_REQUEST_CODE
+import com.saltedge.authenticator.TestFactory
 import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.core.api.KEY_DATA
-import com.saltedge.authenticator.core.api.KEY_ID
-import com.saltedge.authenticator.core.model.ConnectionStatus
-import com.saltedge.authenticator.core.model.RichConnection
-import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
+import com.saltedge.authenticator.core.api.model.ConsentData
 import com.saltedge.authenticator.features.consents.common.countOfDays
-import com.saltedge.authenticator.models.Connection
-import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.api.model.ConsentData
-import com.saltedge.authenticator.sdk.api.model.ConsentSharedData
-import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
-import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
 import com.saltedge.authenticator.tools.daysTillExpire
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.joda.time.DateTime
@@ -59,66 +43,17 @@ import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
+import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
+import java.lang.ref.WeakReference
 
 @RunWith(RobolectricTestRunner::class)
-@ExperimentalCoroutinesApi
-class ConsentsListViewModelTest : CoroutineViewModelTest() {
+class ConsentsListViewModelTest : ViewModelTest() {
 
     private lateinit var viewModel: ConsentsListViewModel
     private val context: Context = ApplicationProvider.getApplicationContext()
-    private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
-    private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
-    private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
-    private val mockCryptoTools = mock(CryptoToolsV1Abs::class.java)
-    private val connectionV1 = Connection().apply {
-        id = "2"
-        guid = "guid2"
-        code = "demobank2"
-        name = "Demobank2"
-        status = "${ConnectionStatus.ACTIVE}"
-        accessToken = "token2"
-        createdAt = 300L
-        updatedAt = 300L
-        logoUrl = "https://www.fentury.com/"
-        apiVersion = API_V1_VERSION
-    }
-    private val richConnection = RichConnection(connectionV1, CommonTestTools.testPrivateKey)
-    private val aispConsent = ConsentData(
-            id = "555",
-            connectionId = "2",
-            userId = "1",
-            tppName = "title",
-            consentTypeString = "aisp",
-            accounts = emptyList(),
-            expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
-            createdAt = DateTime(0).withZone(DateTimeZone.UTC),
-            sharedData = ConsentSharedData(balance = true, transactions = true)
-        )
-    private val pispFutureConsent = ConsentData(
-            id = "777",
-            userId = "1",
-            connectionId = "2",
-            tppName = "title",
-            consentTypeString = "pisp_future",
-            accounts = emptyList(),
-            expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
-            createdAt = DateTime(0).withZone(DateTimeZone.UTC),
-            sharedData = ConsentSharedData(balance = true, transactions = true)
-        )
-    private val pispRecurringConsent = ConsentData(
-        id = "999",
-        userId = "1",
-        connectionId = "2",
-        tppName = "title",
-        consentTypeString = "pisp_recurring",
-        accounts = emptyList(),
-        expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
-        createdAt = DateTime(0).withZone(DateTimeZone.UTC),
-        sharedData = ConsentSharedData(balance = true, transactions = true)
-    )
-    private val consents: List<ConsentData> = listOf(aispConsent, pispFutureConsent, pispRecurringConsent)
-    private val encryptedConsents = consents.map { it.encryptWithTestKey() }
+    private val mockInteractor = mock(ConsentsListInteractorAbs::class.java)
+
     private val daysLeftCount = DateTime(0).withZone(DateTimeZone.UTC).daysTillExpire()
     private val daysTillExpireDescription = countOfDays(daysLeftCount, context)
     private val spanned = SpannableStringBuilder(
@@ -126,53 +61,11 @@ class ConsentsListViewModelTest : CoroutineViewModelTest() {
     )
 
     @Before
-    override fun setUp() {
-        super.setUp()
-        given(mockConnectionsRepository.getByGuid("guid2")).willReturn(connectionV1)
-        given(mockKeyStoreManager.enrichConnection(connectionV1, addProviderKey = false)).willReturn(richConnection)
-        encryptedConsents.forEachIndexed { index, encryptedData ->
-            given(mockCryptoTools.decryptConsentData(encryptedData, richConnection.private))
-                .willReturn(consents[index])
-        }
-
+    fun setUp() {
         viewModel = ConsentsListViewModel(
-            appContext = context,
-            connectionsRepository = mockConnectionsRepository,
-            keyStoreManager = mockKeyStoreManager,
-            apiManager = mockApiManager,
-            cryptoTools = mockCryptoTools,
-            defaultDispatcher = testDispatcher
+            weakContext = WeakReference(context),
+            interactor = mockInteractor
         )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun refreshConsentsTestCase1() {
-        //given
-        val bundle = Bundle().apply { guid = "guid2" }
-        viewModel.setInitialData(bundle)
-
-        //when
-        viewModel.refreshConsents()
-
-        //then
-        Mockito.verify(mockApiManager).getConsents(
-            connectionsAndKeys = listOf(richConnection),
-            resultCallback = viewModel
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun refreshConsentsTestCase2() {
-        //given
-        viewModel.setInitialData(Bundle())
-
-        //when
-        viewModel.refreshConsents()
-
-        //then
-        Mockito.never()
     }
 
     @Test
@@ -180,37 +73,53 @@ class ConsentsListViewModelTest : CoroutineViewModelTest() {
     fun setInitialDataCase1() {
         //given
         val bundle = Bundle().apply {
-            guid = "guid2"
-            putSerializable(KEY_DATA, ArrayList<ConsentData>(consents))
+            guid = TestFactory.connection1.guid
+            putSerializable(KEY_DATA, ArrayList<ConsentData>(TestFactory.v1Consents))
         }
+        given(mockInteractor.updateConnection(TestFactory.connection1.guid))
+            .willReturn(TestFactory.connection1)
 
         //when
         viewModel.setInitialData(bundle)
 
         //then
-        assertThat(viewModel.logoUrl.value, equalTo("https://www.fentury.com/"))
-        assertThat(viewModel.connectionTitle.value, equalTo("Demobank2"))
-        assertThat(viewModel.consentsCount.value, equalTo("3 consents"))
+        assertThat(viewModel.logoUrlData.value, equalTo("https://www.fentury.com/"))
+        assertThat(viewModel.connectionTitleData.value, equalTo("Demobank1"))
+        verify(mockInteractor).updateConnection(TestFactory.connection1.guid)
+        verify(mockInteractor).onNewConsentsReceived(TestFactory.v1Consents)
     }
 
     @Test
     @Throws(Exception::class)
     fun setInitialDataCase2() {
+        //given
+        given(mockInteractor.updateConnection(null)).willReturn(null)
+
         //when
         viewModel.setInitialData(Bundle())
 
         //then
-        Assert.assertNull(viewModel.logoUrl.value)
-        Assert.assertNull(viewModel.connectionTitle.value)
-        assertThat(viewModel.consentsCount.value, equalTo(""))
+        Assert.assertNull(viewModel.logoUrlData.value)
+        Assert.assertNull(viewModel.connectionTitleData.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun refreshConsentsTest() {
+        //when
+        viewModel.refreshConsents()
+
+        //then
+        Mockito.verify(mockInteractor).updateConsents()
     }
 
     @Test
     @Throws(Exception::class)
     fun onListItemClickTestCase1() {
         //given
-        viewModel.setInitialData(Bundle().apply { guid = "guid2" })
-        viewModel.onFetchEncryptedDataResult(result = encryptedConsents, errors = emptyList())
+        viewModel.onDatasetChanged(TestFactory.v1Consents)
+        given(mockInteractor.getConsent(TestFactory.v1Consents.first().id))
+            .willReturn(TestFactory.v1Consents.first())
 
         //when
         viewModel.onListItemClick(0)
@@ -223,8 +132,6 @@ class ConsentsListViewModelTest : CoroutineViewModelTest() {
     @Throws(Exception::class)
     fun onListItemClickTestCase2() {
         //given empty lists
-        viewModel.setInitialData(Bundle())
-        viewModel.onFetchEncryptedDataResult(result = encryptedConsents, errors = emptyList())
 
         //when
         viewModel.onListItemClick(0)
@@ -235,161 +142,68 @@ class ConsentsListViewModelTest : CoroutineViewModelTest() {
 
     @Test
     @Throws(Exception::class)
-    fun onActivityResultCase1() {
-        val requestCode = CONSENT_REQUEST_CODE
-        val resultCode = Activity.RESULT_OK
-        val intent: Intent = Intent().putExtra(KEY_ID, "")
+    fun onListItemClickTestCase3() {
+        //given empty lists
+        viewModel.onDatasetChanged(TestFactory.v1Consents)
+        given(mockInteractor.getConsent(TestFactory.v1Consents.first().id))
+            .willReturn(null)
 
-        viewModel.onActivityResult(
-            requestCode = requestCode,
-            resultCode = resultCode,
-            data = intent
-        )
+        //when
+        viewModel.onListItemClick(0)
 
-        Assert.assertNull(viewModel.listItems.value)
-
-        viewModel.onActivityResult(
-            requestCode = requestCode,
-            resultCode = Activity.RESULT_CANCELED,
-            data = intent
-        )
-
-        Assert.assertNull(viewModel.listItems.value)
-
-        viewModel.onActivityResult(
-            requestCode = -1,
-            resultCode = resultCode,
-            data = intent
-        )
-
-        Assert.assertNull(viewModel.listItems.value)
-
-        viewModel.onActivityResult(
-            requestCode = requestCode,
-            resultCode = resultCode,
-            data = null
-        )
-
-        Assert.assertNull(viewModel.listItems.value)
+        //then
+        Assert.assertNull(viewModel.onListItemClickEvent.value)
     }
 
     @Test
     @Throws(Exception::class)
-    fun onActivityResultCase2() {
-        //given
-        val requestCode = CONSENT_REQUEST_CODE
-        val resultCode = Activity.RESULT_OK
-        val intent: Intent = Intent().putExtra(KEY_ID, "guid2")
-
-        val bundle = Bundle().apply {
-            guid = "guid2"
-        }
-        viewModel.setInitialData(bundle)
+    fun onRevokeConsentTest() {
+        //given empty encrypted list
+        viewModel.onDatasetChanged(TestFactory.v1Consents)
+        given(mockInteractor.removeConsent(TestFactory.v1Consents.first().id))
+            .willReturn(TestFactory.v1Consents.first())
 
         //when
-        viewModel.onActivityResult(
-            requestCode = requestCode,
-            resultCode = resultCode,
-            data = intent
-        )
+        viewModel.onRevokeConsent(TestFactory.v1Consents.first().id)
 
         //then
-        assertThat(viewModel.listItems.value, equalTo(emptyList()))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onActivityResultCase3() {
-        //given
-        val requestCode = CONSENT_REQUEST_CODE
-        val resultCode = Activity.RESULT_OK
-        val intent: Intent = Intent().putExtra(KEY_ID, "555")
-        viewModel.setInitialData(Bundle().apply { guid = "guid2" })
-        viewModel.onFetchEncryptedDataResult(result = encryptedConsents, errors = emptyList())
-
-        assertThat(viewModel.listItems.value?.size, equalTo(3))
-
-        //when
-        viewModel.onActivityResult(
-            requestCode = requestCode,
-            resultCode = resultCode,
-            data = intent
-        )
-
-        //then
-        assertThat(viewModel.listItems.value?.size, equalTo(2))
         assertThat(
-            viewModel.listItems.value,
-            equalTo(
-                listOf(
-                    ConsentItemViewModel(
-                        id = "777",
-                        tppName = "title",
-                        consentTypeDescription = "Consent for future payment",
-                        expiresAtDescription = spanned
-                    ),
-                    ConsentItemViewModel(
-                        id = "999",
-                        tppName = "title",
-                        consentTypeDescription = "Consent for recurring payment",
-                        expiresAtDescription = spanned
-                    )
-                )
-            )
+            viewModel.onConsentRemovedEvent.value!!.peekContent(),
+            equalTo("Consent revoked for tppName111")
         )
     }
 
     @Test
     @Throws(Exception::class)
-    fun onFetchEncryptedDataResultTestCase1() = runBlocking {
+    fun onDatasetChangedTest() {
         //given not empty encrypted list
-        val bundle = Bundle().apply { guid = "guid2" }
-        viewModel.setInitialData(bundle)
-
-        assertThat(encryptedConsents.size, equalTo(3))
-        assertThat(viewModel.listItems.value!!.size, equalTo(0))
 
         //when
-        viewModel.onFetchEncryptedDataResult(result = encryptedConsents, errors = emptyList())
+        viewModel.onDatasetChanged(TestFactory.v1Consents)
 
         //then
         assertThat(
             viewModel.listItems.value,
             equalTo(listOf(
-                ConsentItemViewModel(
-                    id = "555",
-                    tppName = "title",
+                ConsentItem(
+                    id = "111",
+                    tppName = "tppName111",
                     consentTypeDescription = "Access to account information",
                     expiresAtDescription = spanned
                 ),
-                ConsentItemViewModel(
-                    id = "777",
-                    tppName = "title",
+                ConsentItem(
+                    id = "112",
+                    tppName = "tppName112",
                     consentTypeDescription = "Consent for future payment",
                     expiresAtDescription = spanned
                 ),
-                ConsentItemViewModel(
-                    id = "999",
-                    tppName = "title",
+                ConsentItem(
+                    id = "113",
+                    tppName = "tppName113",
                     consentTypeDescription = "Consent for recurring payment",
                     expiresAtDescription = spanned
                 )
         )))
         assertThat(viewModel.consentsCount.value, equalTo("3 consents"))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onFetchEncryptedDataResultTestCase2() = runBlocking {
-        //given empty encrypted list
-        val bundle = Bundle().apply { guid = "guid2" }
-        viewModel.setInitialData(bundle)
-
-        //when
-        viewModel.onFetchEncryptedDataResult(result = emptyList(), errors = emptyList())
-
-        //then
-        assertThat(viewModel.listItems.value, equalTo(emptyList()))
-        assertThat(viewModel.consentsCount.value, equalTo(""))
     }
 }

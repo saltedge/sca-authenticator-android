@@ -31,6 +31,6 @@ class ConsentsListAdapter(val clickListener: ListItemClickListener?) : AbstractL
         ConsentItemHolder(parent, clickListener)
 
     override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
-        (holder as ConsentItemHolder).bind(item as ConsentItemViewModel)
+        (holder as ConsentItemHolder).bind(item as ConsentItem)
     }
 }

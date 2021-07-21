@@ -22,12 +22,15 @@ package com.saltedge.authenticator.sdk.v2
 
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.authenticator.core.api.model.EncryptedBundle
+import com.saltedge.authenticator.core.api.model.EncryptedListResponse
+import com.saltedge.authenticator.core.contract.ConsentRevokeListener
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.contract.*
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.*
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponse
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionResponse
+import com.saltedge.authenticator.sdk.v2.api.model.consent.ConsentRevokeResponse
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import com.saltedge.authenticator.sdk.v2.api.retrofit.RestClient
 import io.mockk.every
@@ -202,6 +205,43 @@ class ScaServiceClientTest {
         ScaServiceClient().requestCreateAuthorizationForAction(
             richConnection = RichConnection(requestConnection, privateKey, publicKey),
             actionID = "444",
+            callback = mockCallback
+        )
+
+        verify { mockCall.enqueue(any()) }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun getConsentsTest() {
+        val mockCallback = mockkClass(FetchConsentsListener::class)
+        val mockCall = mockkClass(Call::class) as Call<EncryptedListResponse>
+        every { mockApi.activeConsents(requestUrl = any(), headersMap = any()) } returns mockCall
+        every { mockCall.enqueue(any()) } returns Unit
+        ScaServiceClient().fetchConsents(
+            richConnections = listOf(RichConnection(requestConnection, privateKey, publicKey)),
+            callback = mockCallback
+        )
+
+        verify { mockCall.enqueue(any()) }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun revokeConsentTest() {
+        val mockCallback = mockkClass(ConsentRevokeListener::class)
+        val mockCall = mockkClass(Call::class) as Call<ConsentRevokeResponse>
+        every {
+            mockApi.revokeConsent(
+                requestUrl = any(),
+                headersMap = any(),
+                requestBody = any()
+            )
+        } returns mockCall
+        every { mockCall.enqueue(any()) } returns Unit
+        ScaServiceClient().revokeConsent(
+            consentID = "1",
+            richConnection = RichConnection(requestConnection, privateKey, publicKey),
             callback = mockCallback
         )
 

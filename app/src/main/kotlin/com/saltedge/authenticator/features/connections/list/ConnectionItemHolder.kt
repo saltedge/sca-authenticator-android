@@ -30,6 +30,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.connections.common.ConnectionItem
+import com.saltedge.authenticator.features.consents.common.consentsCountPrefixForConnection
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.tools.appendColoredText
 import com.saltedge.authenticator.tools.inflateListItemView
@@ -62,8 +63,9 @@ class ConnectionItemHolder(parent: ViewGroup, private val listener: ListItemClic
         else listItemView.setBackgroundColor(bgColor)
 
         titleView.text = item.name
+        val consentsDescription = consentsCountPrefixForConnection(item.consentsCount, subTitleView.context)
         subTitleView.text = SpannableStringBuilder()
-            .append(item.consentsDescription, subTitleView.context.mediumTypefaceSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            .append(consentsDescription, subTitleView.context.mediumTypefaceSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             .appendColoredText(item.statusDescription, item.statusDescriptionColorRes, subTitleView.context)
     }
 }

@@ -90,7 +90,7 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
      */
     override fun getAllConnections(): List<Connection> {
         return RealmManager.getDefaultInstance().use {
-            it.where(Connection::class.java).sort(DB_KEY_CREATED_AT).findAll()
+            it.copyFromRealm(it.where(Connection::class.java).sort(DB_KEY_CREATED_AT).findAll())
         }
     }
 
@@ -224,7 +224,8 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
      */
     override fun getByGuid(connectionGuid: GUID?): Connection? {
         return RealmManager.getDefaultInstance().use { realmDb ->
-            if (connectionGuid.isNullOrEmpty()) null else {
+            if (connectionGuid.isNullOrEmpty()) null
+            else {
                 realmDb.where(Connection::class.java).equalTo(
                     KEY_GUID,
                     connectionGuid

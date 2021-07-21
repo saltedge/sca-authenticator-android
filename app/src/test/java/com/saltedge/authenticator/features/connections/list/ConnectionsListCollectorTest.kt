@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.connections.list
 
+import com.saltedge.authenticator.features.connections.common.shouldRequestLocationPermission
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -33,25 +34,25 @@ class ConnectionsListCollectorTest {
     @Throws(Exception::class)
     fun shouldRequestPermissionTest() {
         assertTrue(
-            shouldRequestPermission(
+            shouldRequestLocationPermission(
                 geolocationRequired = true,
                 locationPermissionsAreGranted = false
             )
         )
         assertFalse(
-            shouldRequestPermission(
+            shouldRequestLocationPermission(
                 geolocationRequired = true,
                 locationPermissionsAreGranted = true
             )
         )
         assertFalse(
-            shouldRequestPermission(
+            shouldRequestLocationPermission(
                 geolocationRequired = false,
                 locationPermissionsAreGranted = false
             )
         )
         assertFalse(
-            shouldRequestPermission(
+            shouldRequestLocationPermission(
                 geolocationRequired = false,
                 locationPermissionsAreGranted = true
             )

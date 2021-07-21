@@ -47,11 +47,11 @@ class ConfigurationConnectorTest {
     fun valuesTest() {
         val connector = ConfigurationConnector(mockApi, null)
 
-        Assert.assertNull(connector.resultCallback)
+        Assert.assertNull(connector.callback)
 
-        connector.resultCallback = mockCallback
+        connector.callback = mockCallback
 
-        Assert.assertNotNull(connector.resultCallback)
+        Assert.assertNotNull(connector.callback)
     }
 
     @Test

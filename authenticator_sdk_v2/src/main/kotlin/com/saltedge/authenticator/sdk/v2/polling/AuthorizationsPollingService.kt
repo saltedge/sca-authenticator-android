@@ -39,7 +39,7 @@ class AuthorizationsPollingService : PollingServiceAbs<PollingAuthorizationsCont
         try {
             val connector = AuthorizationsIndexConnector(
                 apiInterface = RestClient.apiInterface,
-                resultCallback = contract
+                callback = contract
             )
             contract?.getCurrentConnectionsAndKeysForPolling()?.let { connector.fetchActiveAuthorizations(connections = it) }
         } catch (e: Exception) {

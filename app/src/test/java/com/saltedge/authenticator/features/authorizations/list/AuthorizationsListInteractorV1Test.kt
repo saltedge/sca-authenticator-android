@@ -90,8 +90,8 @@ class AuthorizationsListInteractorV1Test : CoroutineViewModelTest() {
     @Before
     override fun setUp() {
         super.setUp()
-        AppTools.lastUnlockType = ActivityUnlockType.BIOMETRICS
         given(mockContract.coroutineScope).willReturn(TestCoroutineScope(testDispatcher))
+        AppTools.lastUnlockType = ActivityUnlockType.BIOMETRICS
         given(mockApiManagerV1.createAuthorizationsPollingService()).willReturn(mockPollingServiceV1)
         given(mockConnectionsRepository.getAllActiveConnectionsByApi(API_V1_VERSION)).willReturn(listOf(mockConnectionV1))
         given(mockKeyStoreManager.enrichConnection(mockConnectionV1, addProviderKey = false)).willReturn(richConnectionV1)

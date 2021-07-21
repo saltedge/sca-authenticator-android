@@ -35,7 +35,7 @@ import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.api.model.EncryptedData
+import com.saltedge.authenticator.core.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
@@ -108,8 +108,8 @@ class AuthorizationDetailsInteractorV1Test {
     private val richConnection1 = RichConnection(connection1, mockPrivateKey)
     private val richConnection2 = RichConnection(connection2, mockPrivateKey)
     private val richConnection3 = RichConnection(connection3Inactive, mockPrivateKey)
-    private val encryptedData1 = EncryptedData(id = "1", connectionId = connection1.id)
-    private val encryptedData2 = EncryptedData(id = "2_noKey", connectionId = connection1.id)
+    private val encryptedData1 = EncryptedData(id = "1", connectionId = connection1.id, key = "", iv = "", data = "")
+    private val encryptedData2 = EncryptedData(id = "2_noKey", connectionId = connection1.id, key = "", iv = "", data = "")
     private val authorizationData1 = createAuthorizationData(id = 1)
     private val authorizationData2 = createAuthorizationData(id = 2)
     private val testViewItem1 = authorizationData1.toAuthorizationItemViewModel(connection1)!!

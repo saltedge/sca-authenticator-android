@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.authorizations.details
 
 import com.saltedge.authenticator.app.AppTools
+import com.saltedge.authenticator.core.api.model.EncryptedData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
@@ -29,7 +30,6 @@ import com.saltedge.authenticator.features.authorizations.common.AuthorizationIt
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
 import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener

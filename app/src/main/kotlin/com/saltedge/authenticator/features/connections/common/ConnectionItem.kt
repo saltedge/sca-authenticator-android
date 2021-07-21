@@ -29,13 +29,13 @@ data class ConnectionItem(
     var name: String,
     val logoUrl: String,
     val email: String?,
-    var consentsDescription: String = "",
     var statusDescription: String,
     var statusDescriptionColorRes: ResId,
     val isActive: Boolean,
     var isChecked: Boolean,
     val apiVersion: String,
-    val locationPermissionRequired: Boolean
+    val shouldRequestLocationPermission: Boolean,
+    var consentsCount: Int = 0
 ) {
     val isV2Api: Boolean
         get() = apiVersion == API_V2_VERSION

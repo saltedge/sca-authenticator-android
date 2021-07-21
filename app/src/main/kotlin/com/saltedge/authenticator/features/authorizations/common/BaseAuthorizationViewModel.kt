@@ -29,7 +29,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
-import com.saltedge.authenticator.features.connections.list.shouldRequestPermission
+import com.saltedge.authenticator.features.connections.common.shouldRequestLocationPermission
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.tools.ResId
@@ -75,7 +75,7 @@ abstract class BaseAuthorizationViewModel(
             else -> return
         }
         authorizationModel?.let {
-            val shouldRequestPermission = shouldRequestPermission(
+            val shouldRequestPermission = shouldRequestLocationPermission(
                 geolocationRequired = it.geolocationRequired,
                 locationPermissionsAreGranted = locationManager.locationPermissionsGranted()
             )

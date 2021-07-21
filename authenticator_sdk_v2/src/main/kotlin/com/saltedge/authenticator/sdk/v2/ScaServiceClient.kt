@@ -22,6 +22,7 @@ package com.saltedge.authenticator.sdk.v2
 
 import android.content.Context
 import com.saltedge.authenticator.core.api.model.EncryptedBundle
+import com.saltedge.authenticator.core.contract.ConsentRevokeListener
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
@@ -237,6 +238,31 @@ class ScaServiceClient : ScaServiceClientAbs {
         AuthorizationCreateConnector(apiInterface = RestClient.apiInterface, callback = callback)
             .createAuthorizationForAction(richConnection = richConnection, actionID = actionID)
     }
+
+    /**
+     * Request to get all active SCA Service Consents list.
+     * Result is returned through callback.
+     */
+    override fun fetchConsents(
+        richConnections: List<RichConnection>,
+        callback: FetchConsentsListener
+    ) {
+        ConsentsIndexConnector(RestClient.apiInterface, callback)
+            .fetchActiveConsents(connections = richConnections)
+    }
+
+    /**
+     * Request to revoke SCA Service Consent.
+     * Result is returned through callback.
+     */
+    override fun revokeConsent(
+        consentID: ID,
+        richConnection: RichConnection,
+        callback: ConsentRevokeListener?
+    ) {
+        ConsentRevokeConnector(RestClient.apiInterface, callback)
+            .revokeConsent(consentID = consentID, richConnection = richConnection)
+    }
 }
 
 interface ScaServiceClientAbs {
@@ -277,5 +303,14 @@ interface ScaServiceClientAbs {
         richConnection: RichConnection,
         actionID: ID,
         callback: AuthorizationCreateListener
+    )
+    fun fetchConsents(
+        richConnections: List<RichConnection>,
+        callback: FetchConsentsListener
+    )
+    fun revokeConsent(
+        consentID: ID,
+        richConnection: RichConnection,
+        callback: ConsentRevokeListener?
     )
 }

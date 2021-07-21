@@ -30,7 +30,7 @@ import com.saltedge.authenticator.sdk.v2.api.model.authorization.CreateAuthoriza
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.CreateAuthorizationResponse
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import com.saltedge.authenticator.sdk.v2.api.retrofit.addSignatureHeader
-import com.saltedge.authenticator.sdk.v2.api.retrofit.authorizationsCreatePath
+import com.saltedge.authenticator.sdk.v2.api.retrofit.toAuthorizationsCreateUrl
 import com.saltedge.authenticator.sdk.v2.api.retrofit.createAccessTokenHeader
 import retrofit2.Call
 
@@ -46,7 +46,7 @@ internal class AuthorizationCreateConnector(
             connectionID = richConnection.connection.id
         ))
         apiInterface.createAuthorizationForAction(
-            requestUrl = richConnection.connection.connectUrl.authorizationsCreatePath(),
+            requestUrl = richConnection.connection.connectUrl.toAuthorizationsCreateUrl(),
             headersMap = headers(richConnection, payload),
             requestBody = payload
         ).enqueue(this)

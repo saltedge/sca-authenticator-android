@@ -21,13 +21,13 @@
 package com.saltedge.authenticator.sdk.api.connector
 
 import com.saltedge.authenticator.core.api.RequestQueueAbs
+import com.saltedge.authenticator.core.api.model.EncryptedData
+import com.saltedge.authenticator.core.api.model.EncryptedListResponse
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.isValid
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.api.ApiInterface
-import com.saltedge.authenticator.sdk.api.model.EncryptedData
-import com.saltedge.authenticator.sdk.api.model.isValid
 import com.saltedge.authenticator.sdk.api.model.request.SignedRequest
-import com.saltedge.authenticator.sdk.api.model.response.EncryptedListResponse
 import com.saltedge.authenticator.sdk.constants.API_CONSENTS
 import com.saltedge.authenticator.sdk.constants.REQUEST_METHOD_GET
 import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
@@ -78,7 +78,7 @@ internal class ConsentsConnector(
         call: Call<EncryptedListResponse>,
         response: EncryptedListResponse
     ) {
-        response.data?.filter { it.isValid() }?.let { result.addAll(it) }
+        response.data.filter { it.isValid() }.let { result.addAll(it) }
         super.onResponseReceived()
     }
 

@@ -22,12 +22,12 @@ package com.saltedge.authenticator.sdk.v2.api.connector
 
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.authenticator.core.api.HEADER_KEY_ACCESS_TOKEN
-import com.saltedge.authenticator.sdk.v2.api.contract.FetchAuthorizationsListener
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationsListResponse
+import com.saltedge.authenticator.core.api.model.EncryptedData
+import com.saltedge.authenticator.core.api.model.EncryptedListResponse
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.sdk.v2.api.contract.FetchConsentsListener
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import com.saltedge.authenticator.sdk.v2.api.retrofit.RestClient
 import com.saltedge.authenticator.sdk.v2.defaultTestConnection
@@ -47,12 +47,12 @@ import java.security.PrivateKey
 import java.security.PublicKey
 
 @RunWith(RobolectricTestRunner::class)
-class AuthorizationsIndexConnectorTest {
+class ConsentsIndexConnectorTest {
 
     @Test
     @Throws(Exception::class)
     fun valuesTest() {
-        val connector = AuthorizationsIndexConnector(RestClient.apiInterface, null)
+        val connector = ConsentsIndexConnector(RestClient.apiInterface, null)
 
         Assert.assertNull(connector.callback)
 
@@ -63,19 +63,18 @@ class AuthorizationsIndexConnectorTest {
 
     @Test
     @Throws(Exception::class)
-    fun fetchAuthorizationsTest_allSuccess() {
-        val connector = AuthorizationsIndexConnector(mockApi, mockCallback)
-        connector.fetchActiveAuthorizations(listOf(RichConnection(requestConnection, privateKey, publicKey)))
+    fun fetchActiveConsentsTest_allSuccess() {
+        val connector = ConsentsIndexConnector(mockApi, mockCallback)
+        connector.fetchActiveConsents(listOf(RichConnection(requestConnection, privateKey, publicKey)))
 
         verify { mockCall.enqueue(connector) }
 
         connector.onResponse(
             mockCall,
-            Response.success(AuthorizationsListResponse(data = listOf(
-                AuthorizationResponseData(
+            Response.success(EncryptedListResponse(data = listOf(
+                EncryptedData(
                     id = "444",
                     connectionId = "333",
-                    status = "pending",
                     iv = "o3TDCc3rKYTx...RVH+aOFpS9NIg==\n",
                     key = "BtV7EB3Erv8xEQ.../jeBRyFa75A6po5XlwWiEiuzQ==\n",
                     data = "YlnrNOHvUIPem/O58rMzdsvkXidLvgGpdMalD9c1mlg=\n"
@@ -84,12 +83,11 @@ class AuthorizationsIndexConnectorTest {
         )
 
         verify {
-            mockCallback.onFetchAuthorizationsResult(
+            mockCallback.onFetchConsentsV2Result(
                 result = listOf(
-                    AuthorizationResponseData(
+                    EncryptedData(
                         id = "444",
                         connectionId = "333",
-                        status = "pending",
                         iv = "o3TDCc3rKYTx...RVH+aOFpS9NIg==\n",
                         key = "BtV7EB3Erv8xEQ.../jeBRyFa75A6po5XlwWiEiuzQ==\n",
                         data = "YlnrNOHvUIPem/O58rMzdsvkXidLvgGpdMalD9c1mlg=\n"
@@ -103,12 +101,12 @@ class AuthorizationsIndexConnectorTest {
 
     @Test
     @Throws(Exception::class)
-    fun fetchAuthorizationsTest_withError() {
-        val connector = AuthorizationsIndexConnector(mockApi, mockCallback)
-        connector.fetchActiveAuthorizations(listOf(RichConnection(requestConnection, privateKey, publicKey)))
+    fun fetchActiveConsentsTest_withError() {
+        val connector = ConsentsIndexConnector(mockApi, mockCallback)
+        connector.fetchActiveConsents(listOf(RichConnection(requestConnection, privateKey, publicKey)))
 
         verify(exactly = 1) {
-            mockApi.activeAuthorizations(
+            mockApi.activeConsents(
                 requestUrl = requestUrl,
                 headersMap = capturedHeaders.first()
             )
@@ -119,7 +117,7 @@ class AuthorizationsIndexConnectorTest {
         connector.onResponse(mockCall, get404Response())
 
         verify {
-            mockCallback.onFetchAuthorizationsResult(
+            mockCallback.onFetchConsentsV2Result(
                 result = emptyList(),
                 errors = listOf(
                     ApiErrorData(
@@ -133,11 +131,11 @@ class AuthorizationsIndexConnectorTest {
         confirmVerified(mockCallback)
     }
 
-    private val requestUrl = "https://localhost/api/authenticator/v2/authorizations"
+    private val requestUrl = "https://localhost/api/authenticator/v2/consents"
     private val requestConnection: ConnectionAbs = defaultTestConnection
     private val mockApi: ApiInterface = mockkClass(ApiInterface::class)
-    private val mockCallback = mockk<FetchAuthorizationsListener>(relaxed = true)
-    private val mockCall = mockkClass(Call::class) as Call<AuthorizationsListResponse>
+    private val mockCallback = mockk<FetchConsentsListener>(relaxed = true)
+    private val mockCall = mockkClass(Call::class) as Call<EncryptedListResponse>
     private var capturedHeaders: MutableList<Map<String, String>> = mutableListOf()
     private var privateKey: PrivateKey = CommonTestTools.testPrivateKey
     private var publicKey: PublicKey = CommonTestTools.testPublicKey
@@ -147,7 +145,7 @@ class AuthorizationsIndexConnectorTest {
     fun setUp() {
         capturedHeaders = mutableListOf()
         every {
-            mockApi.activeAuthorizations(
+            mockApi.activeConsents(
                 requestUrl = requestUrl,
                 headersMap = capture(capturedHeaders)
             )

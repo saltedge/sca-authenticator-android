@@ -24,7 +24,7 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.core.model.ConnectionStatus
-import com.saltedge.authenticator.features.connections.list.convertConnectionsToViewModels
+import com.saltedge.authenticator.features.connections.common.convertConnectionsToViewItems
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
@@ -73,7 +73,7 @@ class SelectConnectionsViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onListItemClickTest() {
         //given
-        val connection = connections.convertConnectionsToViewModels(context, mockLocationManager)
+        val connection = connections.convertConnectionsToViewItems(context, mockLocationManager)
         viewModel.listItems.postValue(connection)
 
         assertNull(viewModel.onListItemClickEvent.value)
@@ -89,7 +89,7 @@ class SelectConnectionsViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun proceedConnectionTest() {
         //given
-        val connection = connections.convertConnectionsToViewModels(context, mockLocationManager)
+        val connection = connections.convertConnectionsToViewItems(context, mockLocationManager)
         viewModel.listItems.postValue(connection)
 
         assertNull(viewModel.onProceedClickEvent.value)
@@ -105,7 +105,7 @@ class SelectConnectionsViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun changeStateItemTest() {
         //given
-        val connection = connections.convertConnectionsToViewModels(context, mockLocationManager)
+        val connection = connections.convertConnectionsToViewItems(context, mockLocationManager)
         viewModel.listItems.postValue(connection)
         viewModel.listItems.value = connection
 
@@ -123,7 +123,7 @@ class SelectConnectionsViewModelTest : ViewModelTest() {
     @Test
     @Throws(Exception::class)
     fun setInitialDataTest() {
-        val connection = connections.convertConnectionsToViewModels(context, mockLocationManager)
+        val connection = connections.convertConnectionsToViewItems(context, mockLocationManager)
 
         viewModel.setInitialData(connection)
 
