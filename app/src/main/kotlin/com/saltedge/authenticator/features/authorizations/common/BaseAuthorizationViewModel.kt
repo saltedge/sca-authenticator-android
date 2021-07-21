@@ -20,8 +20,11 @@
  */
 package com.saltedge.authenticator.features.authorizations.common
 
+import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.PackageManager
+import android.location.LocationManager
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
@@ -32,22 +35,27 @@ import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.postUnitEvent
 
-abstract class BaseAuthorizationViewModel(private val locationManager: DeviceLocationManagerAbs) : ViewModel() {
+abstract class BaseAuthorizationViewModel(
+    private val locationManager: DeviceLocationManagerAbs
+) : ViewModel() {
 
     val onAskPermissionsEvent = MutableLiveData<ViewModelEvent<Unit>>()
-    val onEnableGpsEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onGoToSystemSettingsEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onRequestPermissionEvent = MutableLiveData<Triple<String, String, Boolean>>()
     val onRequestGPSProviderEvent = MutableLiveData<ViewModelEvent<Unit>>()
 
     abstract fun updateAuthorization(item: AuthorizationItemViewModel, confirm: Boolean)
 
-    fun onPermissionRationaleDialogActionClick(dialogActionId: Int, actionResId: ResId) {
+    fun onPermissionRationaleDialogActionClick(
+        dialogActionId: Int,
+        actionResId: ResId,
+        activity: FragmentActivity? = null
+    ) {
         if (dialogActionId == DialogInterface.BUTTON_POSITIVE) {
             when (actionResId) {
                 R.string.actions_proceed -> onAskPermissionsEvent.postUnitEvent()
                 R.string.actions_go_to_settings -> onGoToSystemSettingsEvent.postUnitEvent()
-                R.string.actions_enable -> onEnableGpsEvent.postUnitEvent()
+                R.string.actions_enable -> activity?.let { enableGps(it) }
             }
         }
     }
@@ -87,4 +95,14 @@ abstract class BaseAuthorizationViewModel(private val locationManager: DeviceLoc
         }
     }
 
+    private fun enableGps(activity: FragmentActivity) {
+        val manager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER) && hasGPSDevice(manager)) {
+            locationManager.enableGps(activity)
+        }
+    }
+
+    private fun hasGPSDevice(manager: LocationManager): Boolean {
+        return manager.allProviders.contains(LocationManager.GPS_PROVIDER)
+    }
 }

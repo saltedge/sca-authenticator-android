@@ -29,6 +29,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import com.saltedge.android.test_tools.CoroutineViewModelTest
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.KEY_OPTION_ID
@@ -81,6 +82,7 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
         AppTools.lastUnlockType = ActivityUnlockType.BIOMETRICS
         given(mockLocationManager.locationDescription).willReturn("GEO:52.506931;13.144558")
         viewModel = AuthorizationsListViewModel(
+            appContext = TestAppTools.applicationContext,
             interactorV1 = mockInteractorV1,
             interactorV2 = mockInteractorV2,
             connectivityReceiver = mockConnectivityReceiver,
@@ -618,18 +620,6 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
         viewModel.onPermissionRationaleDialogActionClick(dialogActionId = DialogInterface.BUTTON_POSITIVE, actionResId= R.string.actions_go_to_settings)
 
         assertNotNull(viewModel.onGoToSystemSettingsEvent.value)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onDialogActionIdClickCase3() {
-        viewModel.onPermissionRationaleDialogActionClick(dialogActionId = DialogInterface.BUTTON_NEGATIVE, actionResId = R.string.actions_enable)
-
-        assertNull(viewModel.onEnableGpsEvent.value)
-
-        viewModel.onPermissionRationaleDialogActionClick(dialogActionId = DialogInterface.BUTTON_POSITIVE, actionResId= R.string.actions_enable)
-
-        assertNotNull(viewModel.onEnableGpsEvent.value)
     }
 
     @Test

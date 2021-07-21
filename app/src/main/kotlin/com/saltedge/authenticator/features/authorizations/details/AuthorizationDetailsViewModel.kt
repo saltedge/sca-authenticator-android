@@ -121,8 +121,11 @@ class AuthorizationDetailsViewModel(
         return true
     }
 
-    override fun onAuthorizationReceived(data: AuthorizationItemViewModel?, newModelApiVersion: String) {
-        if (currentStatus.isProcessing()) return//skip polling result if confirm/deny is in progress
+    override fun onAuthorizationReceived(
+        data: AuthorizationItemViewModel?,
+        newModelApiVersion: String
+    ) {
+        if (currentStatus.isProcessing()) return //skip polling result if confirm/deny is in progress
         if (!authorizationHasFinalMode && authorizationModel.value != data) {
             if (data == null) updateToFinalViewMode(AuthorizationStatus.ERROR)
             else authorizationModel.postValue(data)
