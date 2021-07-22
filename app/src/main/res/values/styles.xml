@@ -106,7 +106,7 @@
 
     <style name="circleImageView" parent="">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">8%</item>
+        <item name="cornerSize">25%</item>
     </style>
 
     <!--DIALOG BUTTONS-->
