@@ -24,13 +24,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
@@ -125,14 +125,13 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
     companion object {
         @BindingAdapter("connectionLogoUrl")
         @JvmStatic
-        fun setConnectionLogoUrl(imageView: ImageView, logoUrl: String?) {
+        fun setConnectionLogoUrl(imageView: ShapeableImageView, logoUrl: String?) {
             if (logoUrl == null) {
                 imageView.setImageDrawable(null)
             } else {
                 imageView.loadImage(
                     imageUrl = logoUrl,
                     placeholderId = R.drawable.shape_bg_app_logo,
-                    cornerRadius = imageView.resources.getDimension(R.dimen.consents_list_logo_radius)
                 )
             }
         }

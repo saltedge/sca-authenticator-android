@@ -53,8 +53,7 @@ class AuthorizationHeaderView : LinearLayout, TimerUpdateListener {
         } else {
             logoView?.loadImage(
                 imageUrl = logoUrl,
-                placeholderId = R.drawable.shape_radius6_grey_light_extra_and_dark_100,
-                cornerRadius = resources.getDimension(R.dimen.authorizations_list_logo_radius)
+                placeholderId = R.drawable.shape_radius6_grey_light_extra_and_dark_100
             )
         }
     }
