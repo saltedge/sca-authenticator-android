@@ -126,7 +126,11 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         if (alertDialog?.isShowing == true) alertDialog?.dismiss()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         viewModel.onRequestPermissionsResult(requestCode, grantResults)
     }
@@ -202,7 +206,10 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         })
         viewModel.onAskPermissionsEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let {
-                requestPermissions(DeviceLocationManager.permissions, LOCATION_PERMISSION_REQUEST_CODE)
+                requestPermissions(
+                    DeviceLocationManager.permissions,
+                    LOCATION_PERMISSION_REQUEST_CODE
+                )
             }
         })
         viewModel.emptyViewImage.observe(this, Observer<ResId> {
@@ -224,13 +231,12 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
                     messageResId = R.string.enable_gps_description,
                     positiveButtonResId = R.string.actions_enable,
                     listener = { _, dialogActionId ->
-                        viewModel.onPermissionRationaleDialogActionClick(dialogActionId, R.string.actions_enable)
+                        viewModel.onPermissionRationaleDialogActionClick(
+                            dialogActionId,
+                            R.string.actions_enable,
+                            activity
+                        )
                     })
-            }
-        })
-        viewModel.onEnableGpsEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let {
-                startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
             }
         })
     }

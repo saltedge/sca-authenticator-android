@@ -24,12 +24,20 @@ import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
+import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.common.api.PendingResult
+import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.*
+import timber.log.Timber
 
 interface DeviceLocationManagerAbs {
     val locationDescription: String?
@@ -38,6 +46,7 @@ interface DeviceLocationManagerAbs {
     fun locationPermissionsGranted(): Boolean
     fun stopLocationUpdates()
     fun isLocationProviderActive(): Boolean
+    fun enableGps(activity: FragmentActivity)
 }
 
 object DeviceLocationManager : DeviceLocationManagerAbs {
@@ -55,6 +64,9 @@ object DeviceLocationManager : DeviceLocationManagerAbs {
     }
     private val context: Context
         get() = fusedLocationClient.applicationContext
+
+    private var googleApiClient: GoogleApiClient? = null
+    private const val REQUEST_LOCATION = 199
 
     override fun initManager(context: Context) {
         if (!this::fusedLocationClient.isInitialized) {
@@ -87,8 +99,52 @@ object DeviceLocationManager : DeviceLocationManagerAbs {
     }
 
     override fun isLocationProviderActive(): Boolean {
-        val providerInfo = Settings.Secure.getString(context.contentResolver, Settings.Secure.LOCATION_PROVIDERS_ALLOWED)
+        val providerInfo = Settings.Secure.getString(
+            context.contentResolver,
+            Settings.Secure.LOCATION_PROVIDERS_ALLOWED
+        )
         return providerInfo?.isNotEmpty() == true
+    }
+
+    override fun enableGps(activity: FragmentActivity) {
+        if (googleApiClient == null) {
+            googleApiClient = GoogleApiClient.Builder(context)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(object : GoogleApiClient.ConnectionCallbacks {
+                    override fun onConnected(bundle: Bundle?) {}
+                    override fun onConnectionSuspended(i: Int) {
+                        googleApiClient?.connect()
+                    }
+                })
+                .addOnConnectionFailedListener { connectionResult ->
+                    Timber.e("${connectionResult.errorCode}")
+                }.build()
+            googleApiClient?.connect()
+        }
+        val locationRequest = LocationRequest.create()
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest.interval = 10000
+        locationRequest.fastestInterval = 5000
+        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
+        builder.setAlwaysShow(true)
+        val result: PendingResult<LocationSettingsResult> = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build())
+        result.setResultCallback { result ->
+            val status: Status = result.status
+            when (status.statusCode) {
+                LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> try {
+                    // Show the dialog by calling startResolutionForResult(),
+                    status.startResolutionForResult(
+                        activity,
+                        REQUEST_LOCATION
+                    )
+                } catch (e: IntentSender.SendIntentException) {
+                    Timber.e(e)
+                }
+                LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
+                    activity.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                }
+            }
+        }
     }
 
     override fun stopLocationUpdates() {

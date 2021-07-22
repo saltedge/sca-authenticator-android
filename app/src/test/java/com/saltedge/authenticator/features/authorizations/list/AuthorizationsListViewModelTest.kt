@@ -627,18 +627,6 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
 
     @Test
     @Throws(Exception::class)
-    fun onDialogActionIdClickCase3() {
-        viewModel.onPermissionRationaleDialogActionClick(dialogActionId = DialogInterface.BUTTON_NEGATIVE, actionResId = R.string.actions_enable)
-
-        assertNull(viewModel.onEnableGpsEvent.value)
-
-        viewModel.onPermissionRationaleDialogActionClick(dialogActionId = DialogInterface.BUTTON_POSITIVE, actionResId= R.string.actions_enable)
-
-        assertNotNull(viewModel.onEnableGpsEvent.value)
-    }
-
-    @Test
-    @Throws(Exception::class)
     fun onAuthorizationsReceivedTestCase1() {
         //given Authorizations errors
         assertThat(viewModel.listItemsValues, equalTo(emptyList()))

@@ -204,13 +204,12 @@ class AuthorizationDetailsFragment : BaseFragment(),
                     messageResId = R.string.enable_gps_description,
                     positiveButtonResId = R.string.actions_enable,
                     listener = { _, dialogActionId ->
-                        viewModel.onPermissionRationaleDialogActionClick(dialogActionId, R.string.actions_enable)
+                        viewModel.onPermissionRationaleDialogActionClick(
+                            dialogActionId,
+                            R.string.actions_enable,
+                            activity
+                        )
                     })
-            }
-        })
-        viewModel.onEnableGpsEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let {
-                startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
             }
         })
     }
