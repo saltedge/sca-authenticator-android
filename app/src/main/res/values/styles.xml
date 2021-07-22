@@ -100,7 +100,13 @@
         <item name="android:layout_marginStart">@dimen/dp_16</item>
         <item name="android:layout_marginEnd">@dimen/dp_16</item>
         <item name="android:scaleType">fitCenter</item>
-        <item name="android:background">@drawable/shape_bg_connection_list_logo</item>
+        <item name="android:background">@color/grey_light_extra_and_dark_100</item>
+        <item name="android:contentDescription">@string/connections_feature_title</item>
+    </style>
+
+    <style name="circleImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8%</item>
     </style>
 
     <!--DIALOG BUTTONS-->
