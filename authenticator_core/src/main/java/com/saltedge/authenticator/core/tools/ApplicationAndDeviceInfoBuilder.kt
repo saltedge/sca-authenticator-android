@@ -49,12 +49,12 @@ fun buildUserAgent(context: Context): String {
 
         val manufacturer = Build.MANUFACTURER
         val model = Build.MODEL
-        val version = Build.VERSION.SDK_INT
+        val version = Build.VERSION.RELEASE
 
         val installerName = getInstallerPackageName(context.packageName) ?: "StandaloneInstall"
 
-        val userAgentValue = "$appName / $versionName($versionCode); $installerName;" +
-            " ($manufacturer; $model; SDK $version"
+        val userAgentValue = "$appName; $versionName($versionCode); $installerName;" +
+            " $manufacturer; $model; Android $version"
 
         return userAgentValue.map { c ->
             if ((c <= '\u001f' && c != '\t') || c >= '\u007f') {
