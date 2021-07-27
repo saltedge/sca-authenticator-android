@@ -22,7 +22,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/itemView"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="@dimen/popupMenuItemHeight"
     android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
@@ -40,9 +40,10 @@
     <TextView
         android:id="@+id/labelView"
         style="@style/Text16Primary"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_12"
+        android:layout_marginEnd="@dimen/dp_12"
         android:singleLine="true"
         tools:text="Menu item" />
 </LinearLayout>

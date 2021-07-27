@@ -104,8 +104,7 @@ class PopupMenuBuilder(
         itemView.findViewById<TextView>(R.id.labelView).apply {
             item.textRes?.let { setText(it) }
             item.text?.let { text = it }
-            val colorId = if (item.isActive) R.color.dark_100_and_grey_40 else R.color.dark_60_and_grey_100
-            setTextColorResId(colorId)
+            setTextColorResId(R.color.dark_100_and_grey_40)
         }
 
         itemView.setOnClickListener(if (item.isActive) clickListener else null)
