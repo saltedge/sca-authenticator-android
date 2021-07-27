@@ -81,7 +81,7 @@ fun buildConnectionsListMenu(item: ConnectionItem): List<MenuItemData> {
     menuItems.add(
         MenuItemData(
             id = ConnectionsListMenuItemType.INFO.ordinal,
-            iconRes = android.R.drawable.ic_dialog_info,
+            iconRes = R.drawable.ic_menu_id,
             text = "ID: ${item.connectionId}",
             isActive = false
         )
