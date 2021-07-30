@@ -157,11 +157,13 @@ object TestFactory {
 
     fun mockConsents(mock: BaseCryptoToolsAbs) {
         encV1Consents.forEachIndexed { index, encryptedData ->
-            BDDMockito.given(mock.decryptConsentData(encryptedData, mockPrivateKey, connection1.guid))
+            BDDMockito.given(mock.decryptConsentData(encryptedData, mockPrivateKey, connection1.guid,
+            consentID = encryptedData.id, apiVersion = "1"))
                 .willReturn(v1Consents[index])
         }
         encV2Consents.forEachIndexed { index, encryptedData ->
-            BDDMockito.given(mock.decryptConsentData(encryptedData, mockPrivateKey, connection2.guid))
+            BDDMockito.given(mock.decryptConsentData(encryptedData, mockPrivateKey, connection2.guid,
+                consentID = encryptedData.id, apiVersion = "2"))
                 .willReturn(v2Consents[index])
         }
     }

@@ -277,7 +277,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                             ),
                             MenuItemData(
                                 id = ConnectionsListMenuItemType.INFO.ordinal,
-                                iconRes = android.R.drawable.ic_dialog_info,
+                                iconRes = R.drawable.ic_menu_id,
                                 text = "ID: 1",
                                 isActive = false
                             )
@@ -327,7 +327,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                 ),
                 MenuItemData(
                     id = ConnectionsListMenuItemType.INFO.ordinal,
-                    iconRes = android.R.drawable.ic_dialog_info,
+                    iconRes = R.drawable.ic_menu_id,
                     text = "ID: 3",
                     isActive = false
                 )
