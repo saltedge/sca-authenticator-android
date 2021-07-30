@@ -40,7 +40,6 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 const val SUPPORTED_AES_ALGORITHM = "AES-256-CBC"
-const val API_V2_VERSION = "2"
 private const val AES_INTERNAL_TRANSFORMATION = "AES/GCM/NoPadding"
 private const val AES_EXTERNAL_TRANSFORMATION = "AES/CBC/PKCS5Padding"
 private const val RSA_ECB = "RSA/ECB/PKCS1Padding"
@@ -154,8 +153,7 @@ open class BaseCryptoTools : BaseCryptoToolsAbs {
         encryptedData: EncryptedData,
         rsaPrivateKey: PrivateKey,
         connectionGUID: GUID,
-        consentID: ID,
-        apiVersion: String
+        consentID: ID?
     ): ConsentData? {
         val algorithm = encryptedData.algorithm
         if (algorithm != null && algorithm != SUPPORTED_AES_ALGORITHM) return null
@@ -169,7 +167,7 @@ open class BaseCryptoTools : BaseCryptoToolsAbs {
             createDefaultGson().fromJson(jsonString, ConsentData::class.java).apply {
                 this.connectionId = encryptedData.connectionId
                 this.connectionGuid = connectionGUID
-                if (apiVersion == API_V2_VERSION) this.id = consentID
+                if (consentID != null) this.id = consentID
             }
         } catch (e: Exception) {
             Timber.e(e)
@@ -205,7 +203,6 @@ interface BaseCryptoToolsAbs {
         encryptedData: EncryptedData,
         rsaPrivateKey: PrivateKey,
         connectionGUID: GUID,
-        consentID: ID,
-        apiVersion: String
+        consentID: ID?
     ): ConsentData?
 }

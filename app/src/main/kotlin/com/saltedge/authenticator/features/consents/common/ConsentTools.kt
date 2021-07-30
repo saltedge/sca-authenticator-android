@@ -137,8 +137,7 @@ fun List<EncryptedData>.decryptConsents(
                 encryptedData = data,
                 rsaPrivateKey = it.private,
                 connectionGUID = it.connection.guid,
-                consentID = data.id,
-                apiVersion = apiVersion
+                consentID = if (apiVersion == API_V2_VERSION) data.id else null
             )
         }
     }
