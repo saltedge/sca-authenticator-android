@@ -148,7 +148,7 @@ class ConnectionsListInteractor(
     private fun processOfEncryptedConsentsResult(encryptedList: List<EncryptedData>, apiVersion: String) {
         val richConnectionsByVersion = richConnections.filter { it.connection.apiVersion == apiVersion }
         contract?.coroutineScope?.launch(defaultDispatcher) {
-            val data = encryptedList.decryptConsents(cryptoTools = cryptoTools, richConnections = richConnectionsByVersion)
+            val data = encryptedList.decryptConsents(cryptoTools = cryptoTools, richConnections = richConnectionsByVersion, apiVersion = apiVersion)
             withContext(Dispatchers.Main) {
                 processDecryptedConsentsResult(result = data, apiVersion = apiVersion)
             }

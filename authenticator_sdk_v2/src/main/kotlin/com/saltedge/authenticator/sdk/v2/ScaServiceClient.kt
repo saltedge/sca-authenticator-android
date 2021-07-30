@@ -260,8 +260,7 @@ class ScaServiceClient : ScaServiceClientAbs {
         richConnection: RichConnection,
         callback: ConsentRevokeListener?
     ) {
-        ConsentRevokeConnector(RestClient.apiInterface, callback)
-            .revokeConsent(consentID = consentID, richConnection = richConnection)
+        ConsentRevokeConnector(RestClient.apiInterface, callback).revokeConsent(consentID = consentID, richConnection = richConnection)
     }
 }
 
