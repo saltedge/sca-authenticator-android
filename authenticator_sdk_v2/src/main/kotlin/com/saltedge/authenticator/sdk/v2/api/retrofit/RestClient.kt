@@ -22,6 +22,7 @@ package com.saltedge.authenticator.sdk.v2.api.retrofit
 
 import android.net.Uri
 import com.google.gson.Gson
+import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.tools.json.createDefaultGson
 import com.saltedge.authenticator.sdk.v2.api.API_AUTHORIZATIONS
 import com.saltedge.authenticator.sdk.v2.api.API_CONNECTIONS
@@ -80,7 +81,7 @@ fun String.toConsentsIndexUrl(): String {
     return createRequestUrl(this, API_CONSENTS)
 }
 
-fun String.toConsentsRevokeUrl(id: String): String {
+fun String.toConsentsRevokeUrl(id: ID): String {
     return createRequestUrl(this, "$API_CONSENTS/$id/revoke")
 }
 

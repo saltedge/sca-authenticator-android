@@ -34,8 +34,10 @@ import com.saltedge.authenticator.features.consents.common.requestUpdateConsents
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.toRichConnection
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
+import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
+import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import com.saltedge.authenticator.sdk.v2.api.contract.FetchConsentsListener
 import kotlinx.coroutines.*
 
@@ -68,7 +70,9 @@ class ConsentsListInteractor(
         contract?.onDatasetChanged(consents = result)
     }
 
-    override fun getConsent(consentId: ID): ConsentData? = consents.firstOrNull { it.id == consentId }
+    override fun getConsent(consentId: ID): ConsentData? {
+        return consents.firstOrNull { it.id == consentId }
+    }
 
     override fun removeConsent(consentId: ID): ConsentData? {
         val removedConsent: ConsentData = getConsent(consentId) ?: return null
@@ -79,17 +83,17 @@ class ConsentsListInteractor(
     }
 
     override fun onFetchEncryptedDataResult(result: List<EncryptedData>, errors: List<ApiErrorData>) {
-        processOfEncryptedConsentsResult(encryptedList = result)
+        processOfEncryptedConsentsResult(encryptedList = result, apiVersion = API_V1_VERSION)
     }
 
     override fun onFetchConsentsV2Result(result: List<EncryptedData>, errors: List<ApiErrorData>) {
-        processOfEncryptedConsentsResult(encryptedList = result)
+        processOfEncryptedConsentsResult(encryptedList = result, apiVersion = API_V2_VERSION)
     }
 
-    private fun processOfEncryptedConsentsResult(encryptedList: List<EncryptedData>) {
+    private fun processOfEncryptedConsentsResult(encryptedList: List<EncryptedData>, apiVersion: String) {
         val richConnection = optRichConnection ?: return
         contract?.coroutineScope?.launch(defaultDispatcher) {
-            val data = encryptedList.decryptConsents(cryptoTools = cryptoTools, richConnections = listOf(richConnection))
+            val data = encryptedList.decryptConsents(cryptoTools = cryptoTools, richConnections = listOf(richConnection), apiVersion = apiVersion)
             withContext(Dispatchers.Main) { onNewConsentsReceived(data) }
         }
     }

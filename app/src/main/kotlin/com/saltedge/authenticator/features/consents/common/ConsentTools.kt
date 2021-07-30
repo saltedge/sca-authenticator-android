@@ -128,14 +128,17 @@ fun requestUpdateConsents(
 
 fun List<EncryptedData>.decryptConsents(
     cryptoTools: BaseCryptoToolsAbs,
-    richConnections: List<RichConnection>
+    richConnections: List<RichConnection>,
+    apiVersion: String
 ): List<ConsentData> {
     return this.mapNotNull { data ->
         richConnections.firstOrNull { it.connection.id == data.connectionId }?.let {
             cryptoTools.decryptConsentData(
                 encryptedData = data,
                 rsaPrivateKey = it.private,
-                connectionGUID = it.connection.guid
+                connectionGUID = it.connection.guid,
+                consentID = data.id,
+                apiVersion = apiVersion
             )
         }
     }

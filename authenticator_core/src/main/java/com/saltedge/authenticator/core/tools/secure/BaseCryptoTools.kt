@@ -24,6 +24,7 @@ import android.util.Base64
 import com.saltedge.authenticator.core.api.model.ConsentData
 import com.saltedge.authenticator.core.api.model.EncryptedData
 import com.saltedge.authenticator.core.model.GUID
+import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.tools.decodeFromPemBase64String
 import com.saltedge.authenticator.core.tools.json.createDefaultGson
 import timber.log.Timber
@@ -151,7 +152,9 @@ open class BaseCryptoTools : BaseCryptoToolsAbs {
     override fun decryptConsentData(
         encryptedData: EncryptedData,
         rsaPrivateKey: PrivateKey,
-        connectionGUID: GUID
+        connectionGUID: GUID,
+        consentID: ID,
+        apiVersion: String
     ): ConsentData? {
         val algorithm = encryptedData.algorithm
         if (algorithm != null && algorithm != SUPPORTED_AES_ALGORITHM) return null
@@ -165,6 +168,7 @@ open class BaseCryptoTools : BaseCryptoToolsAbs {
             createDefaultGson().fromJson(jsonString, ConsentData::class.java).apply {
                 this.connectionId = encryptedData.connectionId
                 this.connectionGuid = connectionGUID
+                if (apiVersion == "2") this.id = consentID
             }
         } catch (e: Exception) {
             Timber.e(e)
@@ -199,6 +203,8 @@ interface BaseCryptoToolsAbs {
     fun decryptConsentData(
         encryptedData: EncryptedData,
         rsaPrivateKey: PrivateKey,
-        connectionGUID: GUID
+        connectionGUID: GUID,
+        consentID: ID,
+        apiVersion: String
     ): ConsentData?
 }

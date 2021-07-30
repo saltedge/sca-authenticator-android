@@ -28,10 +28,7 @@ import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.sdk.v2.api.model.EmptyRequest
 import com.saltedge.authenticator.sdk.v2.api.model.consent.ConsentRevokeResponse
-import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
-import com.saltedge.authenticator.sdk.v2.api.retrofit.addSignatureHeader
-import com.saltedge.authenticator.sdk.v2.api.retrofit.createAccessTokenHeader
-import com.saltedge.authenticator.sdk.v2.api.retrofit.toConnectionsRevokeUrl
+import com.saltedge.authenticator.sdk.v2.api.retrofit.*
 import retrofit2.Call
 
 /**
@@ -60,9 +57,9 @@ internal class ConsentRevokeConnector(
                 request.requestExpirationTime
             )
         apiInterface.revokeConsent(
-            requestUrl = richConnection.connection.connectUrl.toConnectionsRevokeUrl(consentID),
+            requestUrl = richConnection.connection.connectUrl.toConsentsRevokeUrl(consentID),
             headersMap = headers,
-            request
+            requestBody = request
         ).enqueue(this)
     }
 
