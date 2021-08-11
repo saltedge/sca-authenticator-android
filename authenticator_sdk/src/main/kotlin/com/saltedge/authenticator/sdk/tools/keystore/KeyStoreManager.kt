@@ -40,7 +40,7 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.security.auth.x500.X500Principal
 
-private const val STORE_TYPE = "AndroidKeyStore"
+private const val ANDROID_KEYSTORE = "AndroidKeyStore"
 private const val KEY_ALGORITHM_RSA = "RSA"
 private const val KEY_SIZE = 2048
 
@@ -107,21 +107,6 @@ object KeyStoreManager : KeyStoreManagerAbs {
     }
 
     /**
-     * Get RSA key pair by the given alias
-     *
-     * @param alias - the alias name
-     * @return KeyPair object
-     */
-    override fun getKeyPair(alias: String?): KeyPair? {
-        val keyAlias = alias ?: return null
-        val store = androidKeyStore ?: return null
-        return (store.getKey(keyAlias, null) as? PrivateKey)?.let { privateKey ->
-            val publicKey: PublicKey? = store.getCertificate(keyAlias).publicKey
-            KeyPair(publicKey, privateKey)
-        }
-    }
-
-    /**
      * Delete key pairs identified by list of guids
      *
      * @param guids - list of guids
@@ -149,7 +134,7 @@ object KeyStoreManager : KeyStoreManagerAbs {
         return try {
             val mKeyGenerator = KeyGenerator.getInstance(
                 KeyProperties.KEY_ALGORITHM_AES,
-                STORE_TYPE
+                ANDROID_KEYSTORE
             )
             val purposes = KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
             val spec = KeyGenParameterSpec.Builder(alias, purposes)
@@ -184,7 +169,7 @@ object KeyStoreManager : KeyStoreManagerAbs {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 builder.setInvalidatedByBiometricEnrollment(true)
             }
-            val mKeyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, STORE_TYPE)
+            val mKeyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
             mKeyGenerator.init(builder.build())
             mKeyGenerator.generateKey()
         } catch (e: Exception) {
@@ -200,7 +185,7 @@ object KeyStoreManager : KeyStoreManagerAbs {
      * @return KeyPair object
      */
     fun createNewRsaKeyPair(context: Context?, alias: String): KeyPair? {
-        val generator = KeyPairGenerator.getInstance(KEY_ALGORITHM_RSA, STORE_TYPE)
+        val generator = KeyPairGenerator.getInstance(KEY_ALGORITHM_RSA, ANDROID_KEYSTORE)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             initGeneratorWithKeyPairGeneratorSpec(
                 context = context ?: return null,
@@ -222,6 +207,29 @@ object KeyStoreManager : KeyStoreManagerAbs {
     override fun createConnectionAndKeyModel(connection: ConnectionAbs): ConnectionAndKey? {
         return getKeyPair(connection.guid)?.private?.let { key ->
             ConnectionAndKey(connection, key)
+        }
+    }
+
+    /**
+     * Get RSA key pair by the given alias
+     *
+     * @param alias - the alias name
+     * @return KeyPair object
+     */
+    override fun getKeyPair(alias: String?): KeyPair? {
+        return try {
+            val keyAlias = alias ?: return null
+            val store = androidKeyStore ?: return null
+            (store.getKey(keyAlias, null) as? PrivateKey)?.let { privateKey ->
+                val publicKey: PublicKey? = store.getCertificate(keyAlias).publicKey
+                KeyPair(publicKey, privateKey)
+            }
+        } catch (e: UnrecoverableKeyException) {
+            androidKeyStore?.deleteEntry(alias)
+            null
+        } catch (e: Exception) {
+            Timber.e(e)
+            null
         }
     }
 
@@ -281,7 +289,7 @@ object KeyStoreManager : KeyStoreManagerAbs {
      */
     private fun loadKeyStore() {
         try {
-            androidKeyStore = KeyStore.getInstance(STORE_TYPE)
+            androidKeyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
             androidKeyStore?.load(null)
         } catch (e: Exception) {
             Timber.e(e)
