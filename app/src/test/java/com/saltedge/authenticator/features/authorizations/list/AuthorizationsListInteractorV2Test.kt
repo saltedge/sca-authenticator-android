@@ -24,6 +24,7 @@ import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.CoroutineViewModelTest
 import com.saltedge.android.test_tools.encryptWithTestKey
 import com.saltedge.authenticator.app.AppTools
+import com.saltedge.authenticator.app.KEY_STATUS_CLOSED
 import com.saltedge.authenticator.core.api.*
 import com.saltedge.authenticator.core.api.model.DescriptionData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
@@ -84,9 +85,15 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
         geolocationRequired = true//TODO
     }
     private val richConnectionV2 = RichConnection(mockConnectionV2, CommonTestTools.testPrivateKey, CommonTestTools.testPublicKey)
-    private val authorizations: List<AuthorizationV2Data> = listOf(createAuthorization(id = 1), createAuthorization(id = 2))
+    private val authorizations: List<AuthorizationV2Data> = listOf(
+        createAuthorization(id = 1),
+        createAuthorization(id = 2),
+        createAuthorization(id = 3, status = KEY_STATUS_CLOSED)
+    )
     private val encryptedAuthorizations: List<AuthorizationResponseData> = authorizations.map { it.encryptWithTestKey() }
-    private val items: List<AuthorizationItemViewModel> = authorizations.map { it.toAuthorizationItemViewModel(mockConnectionV2)!! }
+    private val items: List<AuthorizationItemViewModel> = authorizations
+        .filterNot { KEY_STATUS_CLOSED == it.status }
+        .map { it.toAuthorizationItemViewModel(mockConnectionV2)!! }
 
     @Before
     override fun setUp() {
@@ -389,7 +396,7 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
         )
     }
 
-    private fun createAuthorization(id: Int): AuthorizationV2Data {
+    private fun createAuthorization(id: Int, status: String = "pending"): AuthorizationV2Data {
         val createdAt = DateTime.now(DateTimeZone.UTC)
         return AuthorizationV2Data(
             authorizationID = "$id",
@@ -399,7 +406,7 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
             title = "title$id",
             description = DescriptionData(text = "desc$id"),
             connectionID = mockConnectionV2.id,
-            status = "pending"
+            status = status
         )
     }
 }

@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.authorizations.common
 
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.KEY_STATUS_CLOSED
 import com.saltedge.authenticator.tools.ResId
 import java.util.*
 
@@ -91,7 +92,7 @@ enum class AuthorizationStatus {//pending confirm_processing deny_processing con
 
 fun String.toAuthorizationStatus(): AuthorizationStatus? {
     return try {
-        if ("closed" == this) AuthorizationStatus.ERROR
+        if (KEY_STATUS_CLOSED == this) AuthorizationStatus.ERROR
         else AuthorizationStatus.valueOf(this.uppercase(Locale.US))
     } catch (e: Exception) {
         null
