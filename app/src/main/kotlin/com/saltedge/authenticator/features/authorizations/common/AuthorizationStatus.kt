@@ -92,8 +92,7 @@ enum class AuthorizationStatus {//pending confirm_processing deny_processing con
 
 fun String.toAuthorizationStatus(): AuthorizationStatus? {
     return try {
-        if (KEY_STATUS_CLOSED == this) AuthorizationStatus.ERROR
-        else AuthorizationStatus.valueOf(this.uppercase(Locale.US))
+        AuthorizationStatus.valueOf(this.uppercase(Locale.US))
     } catch (e: Exception) {
         null
     }
@@ -113,4 +112,13 @@ fun AuthorizationStatus.computeConfirmedStatus(): AuthorizationStatus {
  */
 val String.isFinalStatus: Boolean
     get() = this.toAuthorizationStatus()?.isFinal() ?: false
+
+
+/**
+ * Check that STRING status is equal to closed authorization status
+ *
+ * @return true if is closed status
+ */
+val String.isClosed: Boolean
+    get() = this == KEY_STATUS_CLOSED
 
