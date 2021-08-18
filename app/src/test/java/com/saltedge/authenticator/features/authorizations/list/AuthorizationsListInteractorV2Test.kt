@@ -88,7 +88,8 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
     private val authorizations: List<AuthorizationV2Data> = listOf(
         createAuthorization(id = 1),
         createAuthorization(id = 2),
-        createAuthorization(id = 3, status = KEY_STATUS_CLOSED)
+        createAuthorization(id = 3, status = "closed")
+//        ,createAuthorization(id = 4, status = "confirmed", finishedAt = DateTime.now()) TODO: Add authorization with final status to authorizations list
     )
     private val encryptedAuthorizations: List<AuthorizationResponseData> = authorizations.map { it.encryptWithTestKey() }
     private val items: List<AuthorizationItemViewModel> = authorizations
@@ -396,7 +397,7 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
         )
     }
 
-    private fun createAuthorization(id: Int, status: String = "pending"): AuthorizationV2Data {
+    private fun createAuthorization(id: Int, status: String = "pending", finishedAt: DateTime? = null): AuthorizationV2Data {
         val createdAt = DateTime.now(DateTimeZone.UTC)
         return AuthorizationV2Data(
             authorizationID = "$id",
@@ -406,7 +407,8 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
             title = "title$id",
             description = DescriptionData(text = "desc$id"),
             connectionID = mockConnectionV2.id,
-            status = status
+            status = status,
+            finishedAt = finishedAt
         )
     }
 }

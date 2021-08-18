@@ -64,7 +64,8 @@ fun AuthorizationV2Data.encryptWithTestKey(): AuthorizationResponseData {
         status = this.status!!,
         key = rsaEncrypt(CommonTestTools.aesKey, publicKey)!!,
         iv = rsaEncrypt(CommonTestTools.aesIV, publicKey)!!,
-        data = encryptAesCBCString(jsonString, CommonTestTools.aesKey, CommonTestTools.aesIV)!!
+        data = encryptAesCBCString(jsonString, CommonTestTools.aesKey, CommonTestTools.aesIV)!!,
+        finishedAt = this.finishedAt
     )
 }
 
