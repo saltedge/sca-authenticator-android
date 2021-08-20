@@ -170,7 +170,7 @@ class AuthorizationsListInteractorV2(
     private fun processEncryptedAuthorizationsResult(encryptedList: List<AuthorizationResponseData>) {
         contract?.coroutineScope?.launch(defaultDispatcher) {
             val splitList: Pair<List<AuthorizationResponseData>, List<AuthorizationResponseData>> =
-                encryptedList.partition { it.status.isFinalStatus && !it.status.isClosed }
+                encryptedList.filterNot { it.status.isClosed }.partition { it.status.isFinalStatus }
             val finishedData: List<AuthorizationV2Data> = prepareFinishedAuthorizationData(splitList.first)
             val activeData: List<AuthorizationV2Data> = decryptAuthorizations(splitList.second)
             val items: List<AuthorizationItemViewModel> = createViewModels((activeData.filter { it.isNotExpired() } + finishedData))
