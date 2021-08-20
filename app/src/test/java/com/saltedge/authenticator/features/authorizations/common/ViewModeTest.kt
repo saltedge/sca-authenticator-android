@@ -23,7 +23,7 @@ package com.saltedge.authenticator.features.authorizations.common
 import com.saltedge.authenticator.R
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Assert
+import org.junit.Assert.*
 import org.junit.Test
 
 class ViewModeTest {
@@ -47,38 +47,38 @@ class ViewModeTest {
     @Test
     @Throws(Exception::class)
     fun isFinalModeTest() {
-        Assert.assertFalse(AuthorizationStatus.LOADING.isFinal())
-        Assert.assertFalse(AuthorizationStatus.PENDING.isFinal())
-        Assert.assertFalse(AuthorizationStatus.CONFIRM_PROCESSING.isFinal())
-        Assert.assertFalse(AuthorizationStatus.DENY_PROCESSING.isFinal())
-        Assert.assertTrue(AuthorizationStatus.CONFIRMED.isFinal())
-        Assert.assertTrue(AuthorizationStatus.DENIED.isFinal())
-        Assert.assertTrue(AuthorizationStatus.ERROR.isFinal())
-        Assert.assertTrue(AuthorizationStatus.TIME_OUT.isFinal())
-        Assert.assertTrue(AuthorizationStatus.UNAVAILABLE.isFinal())
+        assertFalse(AuthorizationStatus.LOADING.isFinal())
+        assertFalse(AuthorizationStatus.PENDING.isFinal())
+        assertFalse(AuthorizationStatus.CONFIRM_PROCESSING.isFinal())
+        assertFalse(AuthorizationStatus.DENY_PROCESSING.isFinal())
+        assertTrue(AuthorizationStatus.CONFIRMED.isFinal())
+        assertTrue(AuthorizationStatus.DENIED.isFinal())
+        assertTrue(AuthorizationStatus.ERROR.isFinal())
+        assertTrue(AuthorizationStatus.TIME_OUT.isFinal())
+        assertTrue(AuthorizationStatus.UNAVAILABLE.isFinal())
     }
 
     @Test
     @Throws(Exception::class)
     fun isProcessingModeTest() {
-        Assert.assertFalse(AuthorizationStatus.LOADING.isProcessing())
-        Assert.assertFalse(AuthorizationStatus.PENDING.isProcessing())
-        Assert.assertTrue(AuthorizationStatus.CONFIRM_PROCESSING.isProcessing())
-        Assert.assertTrue(AuthorizationStatus.DENY_PROCESSING.isProcessing())
-        Assert.assertFalse(AuthorizationStatus.CONFIRMED.isProcessing())
-        Assert.assertFalse(AuthorizationStatus.DENIED.isProcessing())
-        Assert.assertFalse(AuthorizationStatus.ERROR.isProcessing())
-        Assert.assertFalse(AuthorizationStatus.TIME_OUT.isProcessing())
-        Assert.assertFalse(AuthorizationStatus.UNAVAILABLE.isProcessing())
+        assertFalse(AuthorizationStatus.LOADING.isProcessing())
+        assertFalse(AuthorizationStatus.PENDING.isProcessing())
+        assertTrue(AuthorizationStatus.CONFIRM_PROCESSING.isProcessing())
+        assertTrue(AuthorizationStatus.DENY_PROCESSING.isProcessing())
+        assertFalse(AuthorizationStatus.CONFIRMED.isProcessing())
+        assertFalse(AuthorizationStatus.DENIED.isProcessing())
+        assertFalse(AuthorizationStatus.ERROR.isProcessing())
+        assertFalse(AuthorizationStatus.TIME_OUT.isProcessing())
+        assertFalse(AuthorizationStatus.UNAVAILABLE.isProcessing())
     }
 
     @Test
     @Throws(Exception::class)
     fun statusImageResIdTest() {
-        Assert.assertNull(AuthorizationStatus.LOADING.statusImageResId)
-        Assert.assertNull(AuthorizationStatus.PENDING.statusImageResId)
-        Assert.assertNull(AuthorizationStatus.CONFIRM_PROCESSING.statusImageResId)
-        Assert.assertNull(AuthorizationStatus.DENY_PROCESSING.statusImageResId)
+        assertNull(AuthorizationStatus.LOADING.statusImageResId)
+        assertNull(AuthorizationStatus.PENDING.statusImageResId)
+        assertNull(AuthorizationStatus.CONFIRM_PROCESSING.statusImageResId)
+        assertNull(AuthorizationStatus.DENY_PROCESSING.statusImageResId)
         assertThat(AuthorizationStatus.CONFIRMED.statusImageResId, equalTo(R.drawable.ic_status_success))
         assertThat(AuthorizationStatus.DENIED.statusImageResId, equalTo(R.drawable.ic_status_denied))
         assertThat(AuthorizationStatus.ERROR.statusImageResId, equalTo(R.drawable.ic_status_error))
@@ -117,14 +117,25 @@ class ViewModeTest {
     @Test
     @Throws(Exception::class)
     fun showProgressTest() {
-        Assert.assertTrue(AuthorizationStatus.LOADING.processingMode)
-        Assert.assertFalse(AuthorizationStatus.PENDING.processingMode)
-        Assert.assertTrue(AuthorizationStatus.CONFIRM_PROCESSING.processingMode)
-        Assert.assertTrue(AuthorizationStatus.DENY_PROCESSING.processingMode)
-        Assert.assertFalse(AuthorizationStatus.CONFIRMED.processingMode)
-        Assert.assertFalse(AuthorizationStatus.DENIED.processingMode)
-        Assert.assertFalse(AuthorizationStatus.ERROR.processingMode)
-        Assert.assertFalse(AuthorizationStatus.TIME_OUT.processingMode)
-        Assert.assertFalse(AuthorizationStatus.UNAVAILABLE.processingMode)
+        assertTrue(AuthorizationStatus.LOADING.processingMode)
+        assertFalse(AuthorizationStatus.PENDING.processingMode)
+        assertTrue(AuthorizationStatus.CONFIRM_PROCESSING.processingMode)
+        assertTrue(AuthorizationStatus.DENY_PROCESSING.processingMode)
+        assertFalse(AuthorizationStatus.CONFIRMED.processingMode)
+        assertFalse(AuthorizationStatus.DENIED.processingMode)
+        assertFalse(AuthorizationStatus.ERROR.processingMode)
+        assertFalse(AuthorizationStatus.TIME_OUT.processingMode)
+        assertFalse(AuthorizationStatus.UNAVAILABLE.processingMode)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun isClosedTest() {
+        assertTrue("closed".isClosed)
+        assertFalse("pending".isClosed)
+        assertFalse("confirmed".isClosed)
+        assertFalse("denied".isClosed)
+        assertFalse("deny_processing".isClosed)
+        assertFalse("confirm_processing".isClosed)
     }
 }

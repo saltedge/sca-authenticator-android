@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.authorizations.list
 
 import com.saltedge.authenticator.app.AppTools
+import com.saltedge.authenticator.app.KEY_STATUS_CLOSED
 import com.saltedge.authenticator.core.api.model.DescriptionData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.api.model.error.isConnectionNotFound
@@ -168,10 +169,11 @@ class AuthorizationsListInteractorV2(
 
     private fun processEncryptedAuthorizationsResult(encryptedList: List<AuthorizationResponseData>) {
         contract?.coroutineScope?.launch(defaultDispatcher) {
-            val splitList = encryptedList.partition { it.status.isFinalStatus }
-            val finishedData = prepareFinishedAuthorizationData(splitList.first)
+            val splitList: Pair<List<AuthorizationResponseData>, List<AuthorizationResponseData>> =
+                encryptedList.filterNot { it.status.isClosed }.partition { it.status.isFinalStatus }
+            val finishedData: List<AuthorizationV2Data> = prepareFinishedAuthorizationData(splitList.first)
             val activeData: List<AuthorizationV2Data> = decryptAuthorizations(splitList.second)
-            val items = createViewModels((activeData.filter { it.isNotExpired() } + finishedData))
+            val items: List<AuthorizationItemViewModel> = createViewModels((activeData.filter { it.isNotExpired() } + finishedData))
 
             withContext(Dispatchers.Main) {
                 contract?.onAuthorizationsReceived(data = items, newModelsApiVersion = API_V2_VERSION)

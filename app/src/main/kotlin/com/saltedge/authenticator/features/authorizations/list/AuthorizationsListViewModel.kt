@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
@@ -43,7 +42,6 @@ import com.saltedge.authenticator.tools.postUnitEvent
 import kotlinx.coroutines.CoroutineScope
 
 class AuthorizationsListViewModel(
-    private val appContext: Context,
     private val interactorV1: AuthorizationsListInteractorAbs,
     private val interactorV2: AuthorizationsListInteractorAbs,
     private val locationManager: DeviceLocationManagerAbs,

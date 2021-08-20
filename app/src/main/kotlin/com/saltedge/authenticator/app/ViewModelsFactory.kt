@@ -126,7 +126,6 @@ class ViewModelsFactory @Inject constructor(
             }
             modelClass.isAssignableFrom(AuthorizationsListViewModel::class.java) -> {
                 return AuthorizationsListViewModel(
-                    appContext = appContext,
                     interactorV1 = AuthorizationsListInteractorV1(
                         connectionsRepository = connectionsRepository,
                         keyStoreManager = keyStoreManager,

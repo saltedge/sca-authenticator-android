@@ -24,6 +24,7 @@ import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.CoroutineViewModelTest
 import com.saltedge.android.test_tools.encryptWithTestKey
 import com.saltedge.authenticator.app.AppTools
+import com.saltedge.authenticator.app.KEY_STATUS_CLOSED
 import com.saltedge.authenticator.core.api.*
 import com.saltedge.authenticator.core.api.model.DescriptionData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
@@ -84,9 +85,16 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
         geolocationRequired = true//TODO
     }
     private val richConnectionV2 = RichConnection(mockConnectionV2, CommonTestTools.testPrivateKey, CommonTestTools.testPublicKey)
-    private val authorizations: List<AuthorizationV2Data> = listOf(createAuthorization(id = 1), createAuthorization(id = 2))
+    private val authorizations: List<AuthorizationV2Data> = listOf(
+        createAuthorization(id = 1),
+        createAuthorization(id = 2),
+        createAuthorization(id = 3, status = "closed"),
+        createAuthorization(id = 4, status = "confirmed", finishedAt = DateTime.now())
+    )
     private val encryptedAuthorizations: List<AuthorizationResponseData> = authorizations.map { it.encryptWithTestKey() }
-    private val items: List<AuthorizationItemViewModel> = authorizations.map { it.toAuthorizationItemViewModel(mockConnectionV2)!! }
+    private val items: List<AuthorizationItemViewModel> = authorizations
+        .filterNot { KEY_STATUS_CLOSED == it.status }
+        .map { it.toAuthorizationItemViewModel(mockConnectionV2)!! }
 
     @Before
     override fun setUp() {
@@ -198,12 +206,97 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
     fun onFetchAuthorizationsResultTestCase4() {
         //given
         val fetchResult = encryptedAuthorizations
+        val createdAt = DateTime.now(DateTimeZone.UTC)
 
         //when
         interactor.onFetchAuthorizationsResult(result = fetchResult, errors = emptyList())
 
         //then
-        verify(mockContract).onAuthorizationsReceived(data = items, newModelsApiVersion = API_V2_VERSION)
+        verify(mockContract).onAuthorizationsReceived(
+            data = listOf(
+                AuthorizationItemViewModel(
+                    authorizationID = "1",
+                    authorizationCode = "111",
+                    title = "title1",
+                    description = DescriptionData(
+                        payment = null,
+                        text = "desc1",
+                        html = null,
+                        extra = null
+                    ),
+                    validSeconds = 180,
+                    endTime = createdAt.plusMinutes(3),
+                    startTime = createdAt,
+                    connectionID = "1",
+                    connectionName = "Demobank3",
+                    connectionLogoUrl = "url",
+                    apiVersion = "2",
+                    status = AuthorizationStatus.PENDING,
+                    geolocationRequired = true
+                ),
+                AuthorizationItemViewModel(
+                    authorizationID = "2",
+                    authorizationCode = "222",
+                    title = "title2",
+                    description = DescriptionData(
+                        payment = null,
+                        text = "desc2",
+                        html = null,
+                        extra = null
+                    ),
+                    validSeconds = 180,
+                    endTime = createdAt.plusMinutes(3),
+                    startTime = createdAt,
+                    connectionID = "1",
+                    connectionName = "Demobank3",
+                    connectionLogoUrl = "url",
+                    apiVersion = "2",
+                    status = AuthorizationStatus.PENDING,
+                    geolocationRequired = true
+                ),
+                AuthorizationItemViewModel(
+                    authorizationID = "3",
+                    authorizationCode = "333",
+                    title = "title3",
+                    description = DescriptionData(
+                        payment = null,
+                        text = "desc3",
+                        html = null,
+                        extra = null
+                    ),
+                    validSeconds = 180,
+                    endTime = createdAt.plusMinutes(3),
+                    startTime = createdAt,
+                    connectionID = "1",
+                    connectionName = "Demobank3",
+                    connectionLogoUrl = "url",
+                    apiVersion = "2",
+                    status = AuthorizationStatus.PENDING,
+                    geolocationRequired = true
+                ),
+                AuthorizationItemViewModel(
+                    authorizationID = "4",
+                    authorizationCode = "",
+                    title = "",
+                    description = DescriptionData(
+                        payment = null,
+                        text = null,
+                        html = null,
+                        extra = null
+                    ),
+                    validSeconds = 0,
+                    endTime = DateTime(0),
+                    startTime = DateTime(0),
+                    connectionID = "1",
+                    connectionName = "Demobank3",
+                    connectionLogoUrl = "url",
+                    apiVersion = "2",
+                    status = AuthorizationStatus.CONFIRMED,
+                    geolocationRequired = true
+                )
+            ),
+            newModelsApiVersion = API_V2_VERSION
+        )
     }
 
     @Test
@@ -224,6 +317,7 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
         val finalResponseModelWithExpiredFinishedAt = finalResponseModel
             .copy(id = "333", finishedAt = DateTime.now().minusSeconds(LIFE_TIME_OF_FINAL_MODEL + 100))
         val fetchResult = encryptedAuthorizations + listOf(finalResponseModel, finalResponseModelWithOutFinishedAt, finalResponseModelWithExpiredFinishedAt)
+        val createdAt = DateTime.now(DateTimeZone.UTC)
 
         //when
         interactor.onFetchAuthorizationsResult(result = fetchResult, errors = emptyList())
@@ -246,8 +340,110 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
         ).apply {
             updateDestroyAt(finalResponseModel.finishedAt)
         }
-        val expectedResult = items + finalItem
-        verify(mockContract).onAuthorizationsReceived(data = expectedResult, newModelsApiVersion = API_V2_VERSION)
+        verify(mockContract).onAuthorizationsReceived(
+            data = listOf(
+                AuthorizationItemViewModel(
+                    authorizationID = "1",
+                    authorizationCode = "111",
+                    title = "title1",
+                    description = DescriptionData(
+                        payment = null,
+                        text = "desc1",
+                        html = null,
+                        extra = null
+                    ),
+                    validSeconds = 180,
+                    endTime = createdAt.plusMinutes(3),
+                    startTime = createdAt,
+                    connectionID = "1",
+                    connectionName = "Demobank3",
+                    connectionLogoUrl = "url",
+                    apiVersion = "2",
+                    status = AuthorizationStatus.PENDING,
+                    geolocationRequired = true
+                ),
+                AuthorizationItemViewModel(
+                    authorizationID = "2",
+                    authorizationCode = "222",
+                    title = "title2",
+                    description = DescriptionData(
+                        payment = null,
+                        text = "desc2",
+                        html = null,
+                        extra = null
+                    ),
+                    validSeconds = 180,
+                    endTime = createdAt.plusMinutes(3),
+                    startTime = createdAt,
+                    connectionID = "1",
+                    connectionName = "Demobank3",
+                    connectionLogoUrl = "url",
+                    apiVersion = "2",
+                    status = AuthorizationStatus.PENDING,
+                    geolocationRequired = true
+                ),
+                AuthorizationItemViewModel(
+                    authorizationID = "3",
+                    authorizationCode = "333",
+                    title = "title3",
+                    description = DescriptionData(
+                        payment = null,
+                        text = "desc3",
+                        html = null,
+                        extra = null
+                    ),
+                    validSeconds = 180,
+                    endTime = createdAt.plusMinutes(3),
+                    startTime = createdAt,
+                    connectionID = "1",
+                    connectionName = "Demobank3",
+                    connectionLogoUrl = "url",
+                    apiVersion = "2",
+                    status = AuthorizationStatus.PENDING,
+                    geolocationRequired = true
+                ),
+                AuthorizationItemViewModel(
+                    authorizationID = "4",
+                    authorizationCode = "",
+                    title = "",
+                    description = DescriptionData(
+                        payment = null,
+                        text = null,
+                        html = null,
+                        extra = null
+                    ),
+                    validSeconds = 0,
+                    endTime = DateTime(0),
+                    startTime = DateTime(0),
+                    connectionID = "1",
+                    connectionName = "Demobank3",
+                    connectionLogoUrl = "url",
+                    apiVersion = "2",
+                    status = AuthorizationStatus.CONFIRMED,
+                    geolocationRequired = true
+                ),
+                AuthorizationItemViewModel(
+                    authorizationID = "111",
+                    authorizationCode = "",
+                    title = "",
+                    description = DescriptionData(
+                        payment = null,
+                        text = null,
+                        html = null,
+                        extra = null
+                    ),
+                    validSeconds = 0,
+                    endTime = DateTime(0),
+                    startTime = DateTime(0),
+                    connectionID = "1",
+                    connectionName = "Demobank3",
+                    connectionLogoUrl = "url",
+                    apiVersion = "2",
+                    status = AuthorizationStatus.CONFIRMED,
+                    geolocationRequired = true
+                )
+            ),
+            newModelsApiVersion = API_V2_VERSION)
     }
 
     @Test
@@ -389,7 +585,7 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
         )
     }
 
-    private fun createAuthorization(id: Int): AuthorizationV2Data {
+    private fun createAuthorization(id: Int, status: String = "pending", finishedAt: DateTime? = null): AuthorizationV2Data {
         val createdAt = DateTime.now(DateTimeZone.UTC)
         return AuthorizationV2Data(
             authorizationID = "$id",
@@ -399,7 +595,8 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
             title = "title$id",
             description = DescriptionData(text = "desc$id"),
             connectionID = mockConnectionV2.id,
-            status = "pending"
+            status = status,
+            finishedAt = finishedAt
         )
     }
 }
