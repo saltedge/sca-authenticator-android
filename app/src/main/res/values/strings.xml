@@ -86,7 +86,7 @@
     <string name="onboarding_carousel_one_title">Use QR codes</string>
     <string name="onboarding_carousel_three_description">Strong customer authentication brings additional security to your payments, diminishing possibility of fraudulent activity.</string>
     <string name="onboarding_carousel_three_title">Ultimate security</string>
-    <string name="onboarding_carousel_two_description">Made transaction? You will get push notification. Open application, verify the transaction details, and simply authorize your actions.</string>
+    <string name="onboarding_carousel_two_description">Made transaction? You will get push notification. Open application, verify the transaction details and simply confirm.</string>
     <string name="onboarding_carousel_two_title">Full control</string>
     <string name="onboarding_completed_description">Application has been successfully set. Proceed to connect your service provider.</string>
     <string name="onboarding_well_done_title">Well done!</string>
@@ -99,7 +99,7 @@
     <string name="connections_feature_title">Connections</string>
     <string name="choose_connection_feature_title">Choose connection</string>
     <string name="connections_list_empty_title">No connections</string>
-    <string name="connections_list_empty_description">Seems like you didn’t connect to your provider yet. Add new connection to securely authorize your actions.</string>
+    <string name="connections_list_empty_description">Seems like you didn’t connect to your provider yet. Add new connection to securely confirm your actions.</string>
     <string name="connections_list_delete_all_connections">Delete all connections and stop receiving confirmations until another Provider is connected.</string>
     <string name="connection_status_linked_on">Linked on</string>
     <string name="connection_status_inactive">Inactive. Please reconnect.</string>
@@ -107,7 +107,7 @@
     <string name="connect_status_in_progress">Processing…</string>
     <string name="connect_status_in_progress_description">This may take some time.</string>
     <string name="connect_status_provider_success">\%s was successfully connected</string>
-    <string name="connect_status_provider_success_description">You will receive an authorization request every time you make an action.</string>
+    <string name="connect_status_provider_success_description">You will receive an authentication request every time you make an action.</string>
 
     <string name="action_new_action_title">New action</string>
     <string name="action_feature_title">Successful action</string>
@@ -119,28 +119,27 @@
     <string name="errors_actions_no_connections_link_app">No connections. Please link your provider first.</string>
     <string name="errors_actions_not_success">Action failed. Please try again later or contact support.</string>
 
-    <string name="authorizations_feature_title">Authorizations</string>
-    <string name="authorization_feature_title">Authorization</string>
-    <string name="authorizations_empty_title">Nothing to authorize</string>
-    <string name="authorizations_empty_description">You don’t have any active authorization requests yet. Scan QR code for instant action or to connect new provider.</string>
+    <string name="authorization_feature_title">Action</string>
+    <string name="authorizations_empty_title">Take an action</string>
+    <string name="authorizations_empty_description">You don’t have any active authentication requests yet. Scan QR code for instant action or to connect new provider.</string>
     <string name="authorizations_no_internet_title">You are offline</string>
     <string name="authorizations_no_internet_description">Please check your network connection.</string>
     <string name="authorizations_loading">Loading…</string>
-    <string name="authorizations_loading_description">Please wait while authorization is loading</string>
-    <string name="authorizations_processing">Authorizing</string>
-    <string name="authorizations_processing_description">Please wait while authorization is processing</string>
-    <string name="authorizations_notification_title">Authorization request</string>
-    <string name="authorizations_notification_description">New authorization request available. Tap to proceed.</string>
+    <string name="authorizations_loading_description">Please wait while action is loading</string>
+    <string name="authorizations_processing">Processing</string>
+    <string name="authorizations_processing_description">Authentication request processing, please wait</string>
+    <string name="authorizations_notification_title">Authentication request</string>
+    <string name="authorizations_notification_description">New authentication request available. Tap to proceed.</string>
     <string name="authorizations_confirmed">Success</string>
-    <string name="authorizations_confirmed_description">Your action was successfully authorized</string>
+    <string name="authorizations_confirmed_description">Your action was successfully confirmed</string>
     <string name="authorizations_denied">Denied</string>
     <string name="authorizations_denied_description">Your action was denied</string>
     <string name="authorizations_error">Something went wrong</string>
     <string name="authorizations_error_description">Please try again</string>
     <string name="authorizations_time_out">Time out</string>
-    <string name="authorizations_time_out_description">Time to authorize your action is out.</string>
-    <string name="authorizations_unavailable">Authorization unavailable</string>
-    <string name="authorizations_unavailable_description">Authorization request was either processed, canceled or expired.</string>
+    <string name="authorizations_time_out_description">Time to confirm the action is out</string>
+    <string name="authorizations_unavailable">Action unavailable</string>
+    <string name="authorizations_unavailable_description">Authentication request was either processed, canceled or expired.</string>
 
     <string name="settings_feature_title">Settings</string>
     <string name="settings_report">Report an issue</string>
