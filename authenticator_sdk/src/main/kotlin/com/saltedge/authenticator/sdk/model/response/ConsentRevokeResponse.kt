@@ -20,15 +20,18 @@
  */
 package com.saltedge.authenticator.sdk.model.response
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.sdk.constants.KEY_CONSENT_ID
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.constants.KEY_SUCCESS
 
+@Keep
 data class ConsentRevokeResponse(
     @SerializedName(KEY_DATA) var data: ConsentRevokeResponseData? = null
 )
 
+@Keep
 data class ConsentRevokeResponseData(
     @SerializedName(KEY_SUCCESS) var success: Boolean? = null,
     @SerializedName(KEY_CONSENT_ID) var consentId: String? = null

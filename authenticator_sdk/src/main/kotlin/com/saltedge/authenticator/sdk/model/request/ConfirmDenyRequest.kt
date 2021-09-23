@@ -20,13 +20,16 @@
  */
 package com.saltedge.authenticator.sdk.model.request
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_CODE
 import com.saltedge.authenticator.sdk.constants.KEY_CONFIRM
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
 
+@Keep
 data class ConfirmDenyRequest(@SerializedName(KEY_DATA) val data: ConfirmDenyRequestData)
 
+@Keep
 data class ConfirmDenyRequestData(
     @SerializedName(KEY_CONFIRM) val confirm: Boolean,
     @SerializedName(KEY_AUTHORIZATION_CODE) val authorizationCode: String?

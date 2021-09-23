@@ -85,7 +85,7 @@ android {
                 // google services plugin is causing missing translation issue
             }
             testCoverageEnabled false
-            debuggable false
+            debuggable true
         }
         debug {
             lintOptions {

@@ -20,8 +20,10 @@
  */
 package com.saltedge.authenticator.sdk.model.response
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.model.EncryptedData
 
+@Keep
 data class AuthorizationShowResponse(@SerializedName(KEY_DATA) var data: EncryptedData? = null)

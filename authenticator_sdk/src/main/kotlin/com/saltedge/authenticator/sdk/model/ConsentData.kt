@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.model
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.sdk.constants.*
 import org.joda.time.DateTime
@@ -28,6 +29,7 @@ import java.io.Serializable
 /**
  * Consent POJO model with annotation for GSON parsing
  */
+@Keep
 data class ConsentData(
     @SerializedName(KEY_ID) var id: String,
     @SerializedName(KEY_USER_ID) var userId: String,
