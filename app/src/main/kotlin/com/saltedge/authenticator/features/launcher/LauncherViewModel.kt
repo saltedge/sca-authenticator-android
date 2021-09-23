@@ -89,15 +89,14 @@ class LauncherViewModel(
      * @return true if security report is empty or false
      */
     private fun checkAppSecurity(): Boolean {
-//        return if ("release" == BuildConfig.BUILD_TYPE) {
-//            val raspFailReport = RaspChecker.collectFailsReport(appContext)
-//
-//            if (raspFailReport.isNotEmpty()) {
-//                val errorMessage = "App Is Tempered:[$raspFailReport]"
-//                Exception(errorMessage).log()
-//            }
-//            raspFailReport.isEmpty()
-//        } else true
-        return true
+        return if ("release" == BuildConfig.BUILD_TYPE) {
+            val raspFailReport = RaspChecker.collectFailsReport(appContext)
+
+            if (raspFailReport.isNotEmpty()) {
+                val errorMessage = "App Is Tempered:[$raspFailReport]"
+                Exception(errorMessage).log()
+            }
+            raspFailReport.isEmpty()
+        } else true
     }
 }
