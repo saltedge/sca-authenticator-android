@@ -20,12 +20,15 @@
  */
 package com.saltedge.authenticator.sdk.model.request
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.constants.*
 
+@Keep
 data class CreateConnectionRequest(@SerializedName(KEY_DATA) val data: CreateConnectionRequestData)
 
+@Keep
 data class CreateConnectionRequestData(
     @SerializedName(KEY_PUBLIC_KEY) val publicKey: String,
     @SerializedName(KEY_RETURN_URL) val returnUrl: String = AuthenticatorApiManager.authenticationReturnUrl,

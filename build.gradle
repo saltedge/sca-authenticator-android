@@ -24,7 +24,7 @@
 buildscript {
     ext.kotlin_version = '1.4.10'
     ext.realm_version = '6.1.0'
-    ext.nav_version = '2.3.0'
+    ext.nav_version = '2.3.5'
     repositories {
         jcenter()
         google()
@@ -35,11 +35,11 @@ buildscript {
         classpath 'com.android.tools.build:gradle:4.0.1'
         classpath "org.jacoco:org.jacoco.core:0.8.4"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.3.4'
+        classpath 'com.google.gms:google-services:4.3.10'
         classpath "io.realm:realm-gradle-plugin:$realm_version"
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.3.0'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.7.1'
         classpath "org.jlleitschuh.gradle:ktlint-gradle:8.2.0"
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.0"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.5"
     }
 }
 

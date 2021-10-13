@@ -20,16 +20,19 @@
  */
 package com.saltedge.authenticator.sdk.model.response
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.sdk.constants.KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.sdk.constants.KEY_CONNECT_URL
 import com.saltedge.authenticator.sdk.constants.KEY_DATA
 import com.saltedge.authenticator.sdk.constants.KEY_ID
 
+@Keep
 data class CreateConnectionResponse(
     @SerializedName(KEY_DATA) var data: CreateConnectionResponseData? = null
 )
 
+@Keep
 data class CreateConnectionResponseData(
     @SerializedName(KEY_CONNECT_URL) var redirectUrl: String? = null,
     @SerializedName(KEY_ID) var connectionId: String? = null,
