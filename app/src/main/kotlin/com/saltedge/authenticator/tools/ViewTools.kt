@@ -22,8 +22,9 @@ package com.saltedge.authenticator.tools
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Insets
 import android.graphics.Point
-import android.util.DisplayMetrics
+import android.os.Build
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -113,11 +114,17 @@ fun TextView.setTextColorResId(colorResId: Int) {
  * @receiver Activity - Activity object
  * @return height size
  */
-fun Activity.getDisplayHeight(): Int {
-    val display = (this.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
-    val size = Point()
-    display?.getSize(size)
-    return size.y
+fun Activity.getScreenHeight(): Int {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        val windowMetrics = this.windowManager.currentWindowMetrics
+        val insets: Insets = windowMetrics.windowInsets
+            .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+        windowMetrics.bounds.height() - insets.bottom - insets.top
+    } else {
+        val size = Point()
+        this.windowManager.defaultDisplay.getSize(size)
+        size.y
+    }
 }
 
 /**
@@ -126,9 +133,15 @@ fun Activity.getDisplayHeight(): Int {
  * @receiver Activity - Activity object
  * @return width size
  */
-fun Activity.getDisplayWidth(): Int {
-    val display = (this.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
-    val size = Point()
-    display?.getSize(size)
-    return size.x
+fun Activity.getScreenWidth(): Int {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        val windowMetrics = this.windowManager.currentWindowMetrics
+        val insets: Insets = windowMetrics.windowInsets
+            .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+        windowMetrics.bounds.width() - insets.left - insets.right
+    } else {
+        val size = Point()
+        this.windowManager.defaultDisplay.getSize(size)
+        size.x
+    }
 }

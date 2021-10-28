@@ -22,7 +22,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.5.20'
+    ext.kotlin_version = '1.5.30'
     ext.realm_version = '7.0.8'
     ext.nav_version = '2.3.5'
     repositories {
@@ -32,12 +32,12 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.1'
+        classpath 'com.android.tools.build:gradle:4.2.2'
         classpath "org.jacoco:org.jacoco.core:0.8.6"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.3.8'
+        classpath 'com.google.gms:google-services:4.3.10'
         classpath "io.realm:realm-gradle-plugin:$realm_version"
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.7.0'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.7.1'
         classpath "org.jlleitschuh.gradle:ktlint-gradle:8.2.0"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
     }
