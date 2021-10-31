@@ -42,13 +42,12 @@ import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.features.main.SnackbarAnchorContainer
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.app.authenticatorApp
-import com.saltedge.authenticator.tools.getDisplayHeight
-import com.saltedge.authenticator.tools.getDisplayWidth
+import com.saltedge.authenticator.tools.getScreenHeight
+import com.saltedge.authenticator.tools.getScreenWidth
 import com.saltedge.authenticator.widget.security.LockableActivity
 import com.saltedge.authenticator.widget.security.UnlockAppInputView
 import kotlinx.android.synthetic.main.activity_qr_scanner.*
 import timber.log.Timber
-import java.io.IOException
 import javax.inject.Inject
 
 class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
@@ -125,8 +124,8 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
     }
 
     private fun setupCameraSource() {
-        val height = this.getDisplayHeight()
-        val width = this.getDisplayWidth()
+        val height = this.getScreenHeight()
+        val width = this.getScreenWidth()
         cameraSource = CameraSource.Builder(applicationContext, barcodeDetector)
             .setRequestedPreviewSize(height, width)
             .setFacing(CameraSource.CAMERA_FACING_BACK)
