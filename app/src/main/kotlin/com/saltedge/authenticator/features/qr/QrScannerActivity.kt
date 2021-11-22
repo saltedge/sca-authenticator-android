@@ -171,7 +171,9 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
                     permission.CAMERA
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                cameraSource?.start(surfaceView?.holder)
+                surfaceView.holder?.let {
+                    cameraSource?.start(it)
+                }
             } else {
                 ActivityCompat.requestPermissions(
                     this,
