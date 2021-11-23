@@ -40,6 +40,7 @@ import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.features.main.SnackbarAnchorContainer
+import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.authenticatorApp
 import com.saltedge.authenticator.tools.getDisplayHeight
@@ -171,9 +172,9 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
                     permission.CAMERA
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                surfaceView.holder?.let {
-                    cameraSource?.start(it)
-                }
+                val holder = surfaceView.holder
+                if (holder != null) cameraSource?.start(surfaceView.holder)
+                else this.showWarningSnack(textResId = R.string.authorizations_error)
             } else {
                 ActivityCompat.requestPermissions(
                     this,
