@@ -174,7 +174,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
             ) {
                 val holder = surfaceView?.holder
                 if (holder != null) cameraSource?.start(holder)
-                else this@QrScannerActivity.showWarningSnack(textResId = R.string.errors_something_went_wrong)
+                else this@QrScannerActivity.showWarningSnack(textResId = R.string.errors_failed_to_start_camera)
             } else {
                 ActivityCompat.requestPermissions(
                     this,
