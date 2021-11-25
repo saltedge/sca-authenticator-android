@@ -58,6 +58,7 @@
     <string name="errors_db_init">Database initialize error</string>
     <string name="errors_camera_init">Camera initialize error</string>
     <string name="errors_internal_error">Internal error</string>
+    <string name="errors_cant_show_biometric">Something went wrong. Can not show biometric input</string>
     <string name="errors_cant_save_passcode">Internal error. Can not save passcode</string>
     <string name="errors_account_reset">Your account was reset due to multiple failed attempts.</string>
     <string name="errors_contact_support">Something went wrong. Please contact our Support team.</string>

@@ -23,25 +23,8 @@ package com.saltedge.authenticator.tools
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.saltedge.authenticator.BuildConfig
-
-private const val MAX_LOG_SIZE = 1000
-
-/**
- * Show log/logs with given message
- *
- * @receiver Throwable
- * @param message - the message that appears in the log
- */
-fun Throwable.log(message: String = "") {
-    try {
-        if (BuildConfig.DEBUG) {
-            printToLogcat("${this.cause}", message)
-            printStackTrace()
-        } else FirebaseCrashlytics.getInstance().recordException(this)
-    } catch (e: Exception) {
-        FirebaseCrashlytics.getInstance().recordException(e)
-    }
-}
+import timber.log.Timber
+import timber.log.Timber.DebugTree
 
 /**
  * Create an error collector for the application not for DEBUG version
@@ -50,22 +33,29 @@ fun Throwable.log(message: String = "") {
  */
 fun createCrashlyticsKit() {
     FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG)
+    if (BuildConfig.DEBUG) {
+        Timber.plant(DebugTree())
+    } else {
+        Timber.plant(CrashlyticsReportingTree())
+    }
 }
 
 /**
- * Show log/logs with given message and tag
+ * Show log/logs with given message
  *
- * @param tag - the tag that appears in the log
  * @param message - the message that appears in the log
  */
-fun printToLogcat(tag: String, message: String) {
-    if (BuildConfig.DEBUG && message.isNotEmpty()) {
-        var start = 0
-        while (start < message.length) {
-            var end = start + MAX_LOG_SIZE
-            if (end > message.length) end = message.length
-            Log.d(tag, message.substring(start, end).trim())
-            start += MAX_LOG_SIZE
+class CrashlyticsReportingTree : Timber.Tree() {
+
+    override fun log(priority: Int, tag: String?, message: String, throwable: Throwable?) {
+        val crashlytics = FirebaseCrashlytics.getInstance()
+        crashlytics.log(message)
+        if (throwable != null) {
+            if (priority == Log.ERROR) {
+                crashlytics.recordException(throwable)
+            } else {
+                crashlytics.log("Exception: ${throwable.stackTraceToString()}")
+            }
         }
     }
 }

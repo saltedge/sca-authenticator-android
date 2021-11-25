@@ -41,14 +41,13 @@ import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.features.main.SnackbarAnchorContainer
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.tools.authenticatorApp
-import com.saltedge.authenticator.tools.getDisplayHeight
-import com.saltedge.authenticator.tools.getDisplayWidth
-import com.saltedge.authenticator.tools.log
+import com.saltedge.authenticator.app.authenticatorApp
+import com.saltedge.authenticator.tools.getScreenHeight
+import com.saltedge.authenticator.tools.getScreenWidth
 import com.saltedge.authenticator.widget.security.LockableActivity
 import com.saltedge.authenticator.widget.security.UnlockAppInputView
 import kotlinx.android.synthetic.main.activity_qr_scanner.*
-import java.io.IOException
+import timber.log.Timber
 import javax.inject.Inject
 
 class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
@@ -77,7 +76,12 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        viewModel.onRequestPermissionsResult(requestCode, grantResults)
+        runCatching {
+            viewModel.onRequestPermissionsResult(requestCode, grantResults)
+        }.onFailure {
+            viewModel.onCameraInitException()
+            Timber.e(it)
+        }
     }
 
     override fun onDestroy() {
@@ -120,8 +124,8 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
     }
 
     private fun setupCameraSource() {
-        val height = this.getDisplayHeight()
-        val width = this.getDisplayWidth()
+        val height = this.getScreenHeight()
+        val width = this.getScreenWidth()
         cameraSource = CameraSource.Builder(applicationContext, barcodeDetector)
             .setRequestedPreviewSize(height, width)
             .setFacing(CameraSource.CAMERA_FACING_BACK)
@@ -171,7 +175,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
                     permission.CAMERA
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                cameraSource?.start(surfaceView?.holder)
+                cameraSource?.start(surfaceView!!.holder)
             } else {
                 ActivityCompat.requestPermissions(
                     this,
@@ -179,9 +183,9 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
                     CAMERA_PERMISSION_REQUEST_CODE
                 )
             }
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             viewModel.onCameraInitException()
-            e.log()
+            Timber.e(e)
         }
     }
 }

@@ -36,6 +36,75 @@ import com.saltedge.authenticator.sdk.polling.SingleAuthorizationPollingService
 import com.saltedge.authenticator.sdk.tools.buildUserAgent
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
 
+interface AuthenticatorApiManagerAbs {
+    var authenticationReturnUrl: String
+    fun initializeSDK(context: Context)
+    fun getProviderConfigurationData(
+        providerConfigurationUrl: String,
+        resultCallback: FetchProviderConfigurationListener
+    )
+    fun createConnectionRequest(
+        baseUrl: String,
+        publicKey: String,
+        pushToken: String,
+        providerCode: String,
+        connectQueryParam: String?,
+        resultCallback: ConnectionCreateListener
+    )
+    fun createConnectionRequest(
+        appContext: Context,
+        connection: ConnectionAbs,
+        pushToken: String,
+        connectQueryParam: String?,
+        resultCallback: ConnectionCreateListener
+    )
+    fun revokeConnections(
+        connectionsAndKeys: List<ConnectionAndKey>,
+        resultCallback: ConnectionsRevokeListener?
+    )
+    fun getAuthorizations(
+        connectionsAndKeys: List<ConnectionAndKey>,
+        resultCallback: FetchEncryptedDataListener
+    )
+    fun createAuthorizationsPollingService(): PollingServiceAbs<FetchAuthorizationsContract>
+    fun getAuthorization(
+        connectionAndKey: ConnectionAndKey,
+        authorizationId: String,
+        resultCallback: FetchAuthorizationListener
+    )
+    fun createSingleAuthorizationPollingService(): SingleAuthorizationPollingService
+    fun confirmAuthorization(
+        connectionAndKey: ConnectionAndKey,
+        authorizationId: String,
+        authorizationCode: String?,
+        geolocation: String?,
+        authorizationType: String?,
+        resultCallback: ConfirmAuthorizationListener
+    )
+    fun denyAuthorization(
+        connectionAndKey: ConnectionAndKey,
+        authorizationId: String,
+        authorizationCode: String?,
+        geolocation: String?,
+        authorizationType: String?,
+        resultCallback: ConfirmAuthorizationListener
+    )
+    fun sendAction(
+        actionUUID: String,
+        connectionAndKey: ConnectionAndKey,
+        resultCallback: ActionSubmitListener
+    )
+    fun getConsents(
+        connectionsAndKeys: List<ConnectionAndKey>,
+        resultCallback: FetchEncryptedDataListener
+    )
+    fun revokeConsent(
+        consentId: String,
+        connectionAndKey: ConnectionAndKey,
+        resultCallback: ConsentRevokeListener
+    )
+}
+
 /**
  * Wrap network communication with Identity Service
  */
@@ -177,12 +246,16 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
         connectionAndKey: ConnectionAndKey,
         authorizationId: String,
         authorizationCode: String?,
+        geolocation: String?,
+        authorizationType: String?,
         resultCallback: ConfirmAuthorizationListener
     ) {
         ConfirmOrDenyConnector(RestClient.apiInterface, resultCallback)
             .updateAuthorization(
                 connectionAndKey = connectionAndKey,
                 authorizationId = authorizationId,
+                geolocationHeader = geolocation,
+                authorizationTypeHeader = authorizationType,
                 payloadData = ConfirmDenyRequestData(
                     authorizationCode = authorizationCode,
                     confirm = true
@@ -198,12 +271,16 @@ object AuthenticatorApiManager : AuthenticatorApiManagerAbs {
         connectionAndKey: ConnectionAndKey,
         authorizationId: String,
         authorizationCode: String?,
+        geolocation: String?,
+        authorizationType: String?,
         resultCallback: ConfirmAuthorizationListener
     ) {
         ConfirmOrDenyConnector(RestClient.apiInterface, resultCallback)
             .updateAuthorization(
                 connectionAndKey = connectionAndKey,
                 authorizationId = authorizationId,
+                geolocationHeader = geolocation,
+                authorizationTypeHeader = authorizationType,
                 payloadData = ConfirmDenyRequestData(
                     authorizationCode = authorizationCode,
                     confirm = false

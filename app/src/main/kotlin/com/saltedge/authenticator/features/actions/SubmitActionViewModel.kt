@@ -42,8 +42,8 @@ import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.error.getErrorMessage
 import com.saltedge.authenticator.sdk.model.response.SubmitActionResponseData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.tools.log
 import com.saltedge.authenticator.tools.postUnitEvent
+import timber.log.Timber
 
 class SubmitActionViewModel(
     private val appContext: Context,
@@ -137,7 +137,7 @@ class SubmitActionViewModel(
                     if (it.isNotEmpty()) onOpenLinkEvent.postValue(ViewModelEvent(Uri.parse(it)))
                 }
             } catch (e: Exception) {
-                e.log()
+                Timber.e(e)
             }
         }
     }

@@ -22,11 +22,18 @@ package com.saltedge.authenticator.tools
 
 import android.content.Context
 import android.os.Build
+import com.saltedge.authenticator.app.buildVersionLessThan23
 import com.saltedge.authenticator.models.repository.PreferenceRepository
 import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
 
 private const val PASSCODE_SECURE_KEY_ALIAS = "base_alias_for_pin"
+
+interface PasscodeToolsAbs {
+    fun replacePasscodeKey(context: Context)
+    fun savePasscode(passcode: String): Boolean
+    fun getPasscode(): String
+}
 
 object PasscodeTools : PasscodeToolsAbs {
 

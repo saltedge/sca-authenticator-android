@@ -33,7 +33,7 @@ import com.fivehundredpx.android.blur.BlurringView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.sdk.tools.hasHTMLTags
 import com.saltedge.authenticator.tools.applyAlphaToColor
-import com.saltedge.authenticator.tools.buildVersionLessThan23
+import com.saltedge.authenticator.app.buildVersionLessThan23
 import com.saltedge.authenticator.tools.setVisible
 import kotlinx.android.synthetic.main.view_authorization_content.view.*
 
@@ -78,11 +78,16 @@ class AuthorizationContentView : LinearLayout {
         setDescription(description)
     }
 
-    fun setTitle(title: String) {
+    fun setActionClickListener(actionViewClickListener: OnClickListener) {
+        negativeActionView?.setOnClickListener(actionViewClickListener)
+        positiveActionView?.setOnClickListener(actionViewClickListener)
+    }
+
+    private fun setTitle(title: String) {
         titleTextView?.text = title
     }
 
-    fun setDescription(description: String) {
+    private fun setDescription(description: String) {
         description.hasHTMLTags().let { showWebView ->
             descriptionTextView?.setVisible(show = !showWebView)
             descriptionWebView?.setVisible(show = showWebView)
@@ -94,11 +99,6 @@ class AuthorizationContentView : LinearLayout {
                 descriptionTextView?.text = description
             }
         }
-    }
-
-    fun setActionClickListener(actionViewClickListener: OnClickListener) {
-        negativeActionView?.setOnClickListener(actionViewClickListener)
-        positiveActionView?.setOnClickListener(actionViewClickListener)
     }
 
     private fun initBlurringView() {
