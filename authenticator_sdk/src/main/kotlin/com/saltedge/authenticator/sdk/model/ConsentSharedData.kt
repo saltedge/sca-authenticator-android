@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.model
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.sdk.constants.KEY_BALANCE
 import com.saltedge.authenticator.sdk.constants.KEY_TRANSACTIONS
@@ -28,6 +29,7 @@ import java.io.Serializable
 /**
  * Consent's shared data POJO model with annotation for GSON parsing
  */
+@Keep
 data class ConsentSharedData(
     @SerializedName(KEY_BALANCE) var balance: Boolean?,
     @SerializedName(KEY_TRANSACTIONS) var transactions: Boolean?

@@ -67,8 +67,8 @@ android {
         compileSdkVersion 31
         targetSdkVersion 31
 
-        versionCode 50
-        versionName '3.3.0'
+        versionCode 53
+        versionName '3.3.2'
 
         renderscriptTargetApi 21
         renderscriptSupportModeEnabled true

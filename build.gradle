@@ -24,7 +24,7 @@
 buildscript {
     ext.kotlin_version = '1.5.30'
     ext.realm_version = '7.0.8'
-    ext.nav_version = '2.3.4'
+    ext.nav_version = '2.3.5'
     repositories {
         jcenter()
         google()

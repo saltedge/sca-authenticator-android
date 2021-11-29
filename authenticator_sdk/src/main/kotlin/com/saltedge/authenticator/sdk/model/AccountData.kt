@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.model
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.sdk.constants.KEY_ACCOUNT_NUMBER
 import com.saltedge.authenticator.sdk.constants.KEY_IBAN
@@ -30,6 +31,7 @@ import java.io.Serializable
 /**
  * Account POJO model with annotation for GSON parsing
  */
+@Keep
 data class AccountData(
     @SerializedName(KEY_NAME) var name: String,
     @SerializedName(KEY_ACCOUNT_NUMBER) var accountNumber: String? = null,

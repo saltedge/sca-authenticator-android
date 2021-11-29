@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.model
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.sdk.constants.*
 import java.io.Serializable
@@ -33,6 +34,7 @@ import java.io.Serializable
  * - encryption key (KEY), encrypted with asymmetric RSA key attached to specific connection (connectionId)
  * - initialization vector (IV), encrypted with asymmetric RSA key attached to specific connection (connectionId)
  */
+@Keep
 data class EncryptedData(
     @SerializedName(KEY_ID) var id: String? = null,
     @SerializedName(KEY_CONNECTION_ID) var connectionId: String? = null,
