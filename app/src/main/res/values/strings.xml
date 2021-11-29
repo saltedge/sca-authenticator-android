@@ -79,6 +79,7 @@
     <string name="errors_unable_connect_provider">Something went wrong. Unable connect to service provider.</string>
     <string name="errors_max_passcode">You reached passcode\nmaximum length</string>
     <string name="errors_app_launch_title">App launch interrupted</string>
+    <string name="errors_failed_to_start_camera">Failed to start the camera. Please try again</string>
     <string name="errors_app_launch_message">Application cannot be launched due to security breach. You may contact our technical support for clarification.</string>
 
     <string name="onboarding_allow_notifications_description">Enable notifications, to receive useful alerts and always be up to speed with your transactions.</string>
