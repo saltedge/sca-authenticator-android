@@ -20,31 +20,31 @@
  */
 package com.saltedge.authenticator.features.settings.passcode
 
-import android.view.View
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 
 @RunWith(RobolectricTestRunner::class)
-class PasscodeEditPresenterTest {
+@ExperimentalCoroutinesApi
+class PasscodeEditViewModelTest {
 
+    private val testDispatcher = TestCoroutineDispatcher()
     private val mockPasscodeTools = Mockito.mock(PasscodeToolsAbs::class.java)
-    private var doneSignal: CountDownLatch? = null
-    private var viewModel: PasscodeEditViewModel
-
-    init {
-        Mockito.doReturn("1357").`when`(mockPasscodeTools).getPasscode()
-        viewModel = PasscodeEditViewModel(mockPasscodeTools)
-    }
+    private lateinit var viewModel: PasscodeEditViewModel
 
     @Test
     @Throws(Exception::class)
@@ -77,13 +77,8 @@ class PasscodeEditPresenterTest {
     @Throws(Exception::class)
     fun onNewPasscodeConfirmedTest() {
         Mockito.doReturn(true).`when`(mockPasscodeTools).savePasscode(passcode = "9753")
-        viewModel.loaderVisibility.observeForever {
-            if (viewModel.loaderVisibility.value == View.GONE) doneSignal!!.countDown()
-        }
 
-        doneSignal = CountDownLatch(1)
         viewModel.onNewPasscodeConfirmed(passcode = "9753")
-        doneSignal!!.await(3, TimeUnit.SECONDS)
 
         Mockito.verify(mockPasscodeTools).savePasscode(passcode = "9753")
     }
@@ -91,7 +86,9 @@ class PasscodeEditPresenterTest {
     @Test
     @Throws(Exception::class)
     fun passcodeSavedWithResultTestCase1() {
-        viewModel.passcodeSavedWithResult(result = true)
+        Mockito.doReturn(true).`when`(mockPasscodeTools).savePasscode(passcode = "2222")
+
+        viewModel.onNewPasscodeConfirmed(passcode = "2222")
 
         assertThat(viewModel.infoEvent.value, equalTo(ViewModelEvent(R.string.settings_passcode_success)))
         assertThat(viewModel.closeViewEvent.value, equalTo(ViewModelEvent(Unit)))
@@ -100,7 +97,7 @@ class PasscodeEditPresenterTest {
     @Test
     @Throws(Exception::class)
     fun passcodeSavedWithResultTestCase2() {
-        viewModel.passcodeSavedWithResult(result = false)
+        viewModel.onNewPasscodeConfirmed(passcode = "1111")
 
         assertThat(viewModel.warningEvent.value, equalTo(ViewModelEvent(R.string.errors_contact_support)))
     }
@@ -111,5 +108,22 @@ class PasscodeEditPresenterTest {
         viewModel.onPasscodeInputCanceledByUser()
 
         assertThat(viewModel.closeViewEvent.value, equalTo(ViewModelEvent(Unit)))
+    }
+
+    @Before
+    fun setUp() {
+        Dispatchers.setMain(testDispatcher)
+        Mockito.doReturn("1357").`when`(mockPasscodeTools).getPasscode()
+        viewModel = PasscodeEditViewModel(passcodeTools = mockPasscodeTools, defaultDispatcher = testDispatcher)
+    }
+
+    @After
+    fun tearDown() {
+        // Resets state of the [Dispatchers.Main] to the original main dispatcher.
+        // For example, in Android Main thread dispatcher will be set as [Dispatchers.Main].
+        Dispatchers.resetMain()
+
+        // Clean up the TestCoroutineDispatcher to make sure no other work is running.
+        testDispatcher.cleanupTestCoroutines()
     }
 }

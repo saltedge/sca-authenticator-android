@@ -67,7 +67,8 @@ class LicensesViewModelTest {
                 SettingsItemViewModel(titleId = R.string.library_jsr),
                 SettingsItemViewModel(titleId = R.string.library_ktlint),
                 SettingsItemViewModel(titleId = R.string.library_jlleitschuh),
-                SettingsItemViewModel(titleId = R.string.library_blur)
+                SettingsItemViewModel(titleId = R.string.library_blur),
+                SettingsItemViewModel(titleId = R.string.library_timber)
             ))
         )
     }
@@ -105,7 +106,8 @@ class LicensesViewModelTest {
                 Pair(TestAppTools.getString(R.string.library_jsr), "https://raw.githubusercontent.com/findbugsproject/findbugs/master/findbugs/licenses/LICENSE-jsr305.txt"),
                 Pair(TestAppTools.getString(R.string.library_ktlint), "https://raw.githubusercontent.com/pinterest/ktlint/master/LICENSE"),
                 Pair(TestAppTools.getString(R.string.library_jlleitschuh), "https://raw.githubusercontent.com/JLLeitschuh/ktlint-gradle/master/LICENSE.txt"),
-                Pair(TestAppTools.getString(R.string.library_blur), "https://raw.githubusercontent.com/500px/500px-android-blur/master/LICENSE.txt")
+                Pair(TestAppTools.getString(R.string.library_blur), "https://raw.githubusercontent.com/500px/500px-android-blur/master/LICENSE.txt"),
+                Pair(TestAppTools.getString(R.string.library_timber), "https://raw.githubusercontent.com/JakeWharton/timber/trunk/LICENSE.txt")
             ))
         )
     }

@@ -23,11 +23,13 @@ package com.saltedge.authenticator.features.authorizations.details
 import android.content.Context
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.ViewMode
 import com.saltedge.authenticator.features.authorizations.common.createConnectionAndKey
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
@@ -51,7 +53,8 @@ class AuthorizationDetailsViewModel(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val cryptoTools: CryptoToolsAbs,
     private val keyStoreManager: KeyStoreManagerAbs,
-    private val apiManager: AuthenticatorApiManagerAbs
+    private val apiManager: AuthenticatorApiManagerAbs,
+    private val locationManager: DeviceLocationManagerAbs
 ) : ViewModel(),
     LifecycleObserver,
     FetchAuthorizationContract,
@@ -188,7 +191,11 @@ class AuthorizationDetailsViewModel(
                 connection = connectionAndKey?.connection ?: return
             )
             if (!modelHasFinalMode && authorizationModel.value != newViewModel) {
-                authorizationModel.postValue(newViewModel)
+                if (newViewModel == null) {
+                    updateToFinalViewMode(ViewMode.ERROR)
+                } else {
+                    authorizationModel.postValue(newViewModel)
+                }
             }
         } ?: updateToFinalViewMode(ViewMode.UNAVAILABLE)
     }
@@ -222,6 +229,8 @@ class AuthorizationDetailsViewModel(
             connectionAndKey = connectionAndKey ?: return,
             authorizationId = authorizationModel.value?.authorizationID ?: return,
             authorizationCode = authorizationModel.value?.authorizationCode,
+            geolocation = locationManager.locationDescription,
+            authorizationType = AppTools.lastUnlockType.description,
             resultCallback = this
         )
     }
@@ -232,6 +241,8 @@ class AuthorizationDetailsViewModel(
             connectionAndKey = connectionAndKey ?: return,
             authorizationId = authorizationModel.value?.authorizationID ?: return,
             authorizationCode = authorizationModel.value?.authorizationCode,
+            geolocation = locationManager.locationDescription,
+            authorizationType = AppTools.lastUnlockType.description,
             resultCallback = this
         )
     }

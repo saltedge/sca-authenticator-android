@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.tools
+package com.saltedge.authenticator.app
 
 import android.content.Context
 import android.content.pm.PackageManager
@@ -26,11 +26,20 @@ import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import com.saltedge.authenticator.app.AuthenticatorApplication
-import com.saltedge.authenticator.app.KEY_GUID
 import com.saltedge.authenticator.sdk.model.GUID
+import com.saltedge.authenticator.widget.security.ActivityUnlockType
+import timber.log.Timber
+
+interface AppToolsAbs {
+    var lastUnlockType: ActivityUnlockType
+    fun isTestsSuite(appContext: Context): Boolean
+    fun getAppVersionName(appContext: Context): String
+    fun getSDKVersion(): Int
+}
 
 object AppTools : AppToolsAbs {
+
+    override var lastUnlockType: ActivityUnlockType = ActivityUnlockType.PASSCODE
 
     /**
      * Checks if the application is running in test environment
@@ -53,7 +62,7 @@ object AppTools : AppToolsAbs {
             return appContext.packageManager?.getPackageInfo(appContext.packageName, 0)?.versionName
                 ?: "unknown"
         } catch (e: PackageManager.NameNotFoundException) {
-            e.log()
+            Timber.e(e)
         } catch (ignored: Exception) {
         }
         return "unknown"

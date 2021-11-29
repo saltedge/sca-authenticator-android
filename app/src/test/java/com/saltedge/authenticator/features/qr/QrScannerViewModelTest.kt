@@ -28,6 +28,7 @@ import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*
@@ -40,6 +41,7 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class QrScannerViewModelTest {
 
+    private val mockRealmManager = Mockito.mock(RealmManagerAbs::class.java)
     private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
     private lateinit var viewModel: QrScannerViewModel
 
@@ -47,6 +49,7 @@ class QrScannerViewModelTest {
     fun setUp() {
         viewModel = QrScannerViewModel(
             appContext = TestAppTools.applicationContext,
+            realmManager = mockRealmManager,
             connectionsRepository = mockConnectionsRepository
         )
     }

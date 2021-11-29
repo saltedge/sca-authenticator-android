@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.connections.create
 
 import android.content.DialogInterface
+import android.content.pm.PackageManager
 import android.view.View
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.models.Connection
@@ -35,6 +36,9 @@ import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.response.CreateConnectionResponseData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.TestAppTools
+import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
+import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
+import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import net.danlew.android.joda.JodaTimeAndroid
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*
@@ -53,6 +57,7 @@ class ConnectProviderViewModelTest {
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
     private val mockKeyStoreManager = mock(KeyStoreManagerAbs::class.java)
     private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
+    private val mockLocationManager = mock(DeviceLocationManagerAbs::class.java)
 
     @Before
     fun setUp() {
@@ -64,6 +69,7 @@ class ConnectProviderViewModelTest {
             preferenceRepository = mockPreferenceRepository,
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
+            locationManager = mockLocationManager,
             apiManager = mockApiManager
         )
     }
@@ -408,6 +414,48 @@ class ConnectProviderViewModelTest {
         viewModel.onConnectionCreateSuccess(response = connectUrlData)
 
         assertTrue(viewModel.onBackPress(webViewCanGoBack = true))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onRequestPermissionsResultTestCase1() {
+        //given
+        val requestCode = LOCATION_PERMISSION_REQUEST_CODE
+        val grantResults = IntArray(2) { PackageManager.PERMISSION_GRANTED }
+
+        //when
+        viewModel.onRequestPermissionsResult(requestCode = requestCode, grantResults = grantResults)
+
+        //then
+        verify(mockLocationManager).startLocationUpdates(TestAppTools.applicationContext)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onRequestPermissionsResultTestCase2() {
+        //given
+        val requestCode = CAMERA_PERMISSION_REQUEST_CODE
+        val grantResults = IntArray(2) { PackageManager.PERMISSION_GRANTED }
+
+        //when
+        viewModel.onRequestPermissionsResult(requestCode = requestCode, grantResults = grantResults)
+
+        //then
+        verifyNoInteractions(mockLocationManager)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onRequestPermissionsResultTestCase3() {
+        //given
+        val requestCode = LOCATION_PERMISSION_REQUEST_CODE
+        val grantResults = IntArray(2) { PackageManager.PERMISSION_DENIED }
+
+        //when
+        viewModel.onRequestPermissionsResult(requestCode = requestCode, grantResults = grantResults)
+
+        //then
+        verifyNoInteractions(mockLocationManager)
     }
 
     /**

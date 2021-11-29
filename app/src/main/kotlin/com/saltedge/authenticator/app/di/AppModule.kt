@@ -40,8 +40,8 @@ import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.tools.PasscodeTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
-import com.saltedge.authenticator.tools.buildVersion23orGreater
-import com.saltedge.authenticator.tools.buildVersion28orGreater
+import com.saltedge.authenticator.app.buildVersion23orGreater
+import com.saltedge.authenticator.app.buildVersion28orGreater
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptManagerV28
 import com.saltedge.authenticator.widget.biometric.BiometricsInputDialog

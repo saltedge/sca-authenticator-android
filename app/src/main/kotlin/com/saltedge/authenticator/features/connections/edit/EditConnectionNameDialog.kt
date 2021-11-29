@@ -35,7 +35,7 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.sdk.constants.KEY_NAME
 import com.saltedge.authenticator.tools.getEnabledStateColorResId
-import com.saltedge.authenticator.tools.guid
+import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.tools.hideSystemKeyboard
 import com.saltedge.authenticator.tools.setTextColorResId
 

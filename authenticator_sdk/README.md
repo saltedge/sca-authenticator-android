@@ -49,6 +49,15 @@ In order to use Authenticator SDK it is necessary to install the following tools
     }
 ```  
 
+### Logger for recording errors
+
+We use [Timber](https://github.com/JakeWharton/timber) as a logger so that we can catch errors in the module. All information that Timber collects for logging, we record in Crashlytics in application.
+
+In order to use it, you need to:
+1. Install any Tree instances you want in the `onCreate` of your application class. 
+Check out the example in [LogTools.kt](https://github.com/saltedge/sca-authenticator-android/blob/master/app/src/main/kotlin/com/saltedge/authenticator/tools/LogTools.kt) to see it in action.
+2. Call Timber's static methods everywhere throughout your app.
+
 ---
 ## Data models  
   
@@ -59,29 +68,34 @@ Authenticator SDK provide next main data models:
  * [Encrypted Authorization model](#encrypted-authorization-model)
  * [Decrypted Authorization model](#decrypted-authorization-model)
 
-### Provider Data model
-`ProviderData` class it is an entity which contains Provider's info.  
+### Provider Configuration Data model
+`ProviderConfigurationData` class it is an entity which contains Provider's info.  
 
 Fields:  
- * `connect_url`   **[string]** - base URL of the Identity Service. Required to build Authenticator API requests.
- * `code`          **[string]** - unique code of the Service Provider
- * `name`          **[string]** - human readable name of the Service Provider
- * `logo_url`      **[string]** - URL of the Service Provider's logo asset
- * `support_email` **[string]** - email address Customer Support service of Service Provider
- * `version`       **[string]** - version number of Authenticator API.
+ * `connect_url`          **[string]** - base URL of the Identity Service. Required to build Authenticator API requests.
+ * `code`                 **[string]** - unique code of the Service Provider
+ * `name`                 **[string]** - human readable name of the Service Provider
+ * `logo_url`             **[string]** - URL of the Service Provider's logo asset
+ * `support_email`        **[string]** - email address Customer Support service of Service Provider
+ * `version`              **[string]** - version number of Authenticator API.
+ * `consent_management`   **[string, optional]** - Consent management is supported.
+ * `geolocation_required` **[string, optional]** - Geolocation info collection is required or not.
   
 ### Connection model
 Application should create a class which implements `ConnectionAbs` interface for storing data required to access API. Should be stored in the persistent storage (e.g. database).  
 
 Fields:  
- * `guid`        **[string]** - alias to RSA keypair in Keystore
- * `id`          **[string]** - unique id received from Authenticator API
- * `name`        **[string]** - provider's name from ProviderData
- * `code`        **[string]** - provider's code
- * `logoUrl`     **[string]** - provider's logo url. May be empty
- * `connectUrl`  **[string]** - base url of Authenticator API
- * `accessToken` **[string]** - access token for accessing Authenticator API resources
- * `status`      **[string]** - connection Status (ACTIVE or INACTIVE)
+ * `guid`                       **[string]** - alias to RSA keypair in Keystore
+ * `id`                         **[string]** - unique id received from Authenticator API
+ * `name`                       **[string]** - provider's name from ProviderData
+ * `code`                       **[string]** - provider's code
+ * `logoUrl`                    **[string]** - provider's logo url. May be empty
+ * `connectUrl`                 **[string]** - base url of Authenticator API
+ * `accessToken`                **[string]** - access token for accessing Authenticator API resources
+ * `status`                     **[string]** - connection Status (ACTIVE or INACTIVE)
+ * `supportEmail`               **[string?]** - email of support service of provider 
+ * `consentManagementSupported` **[boolean?]** - consent management is supported or not
+ * `geolocationRequired`        **[boolean?]** - geolocation info collection is required or not
  
  ### ConnectionAndKey model
 `ConnectionAndKey` it is often used wrapper for Connection and related PrivateKey.
@@ -138,7 +152,7 @@ Application on Java language:
   
 ### Link to SCA Service
 
-1. Fetch [Service Provider info](#provider-data-model) from configuration url (provides all required for linking information).  
+1. Fetch [Service Provider info](#provider-configuration-data-model) from configuration url (provides all required for linking information).  
 _This step can be skipped if application already knows service configuration._ 
 
 ```kotlin
@@ -427,4 +441,4 @@ Send request
   
   
 ___
-Copyright © 2019 - 2020 Salt Edge. https://www.saltedge.com  
+Copyright © 2019 Salt Edge. https://www.saltedge.com  

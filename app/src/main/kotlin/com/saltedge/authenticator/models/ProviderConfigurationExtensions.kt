@@ -28,10 +28,13 @@ import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 
 /**
- * Creates Connection object prefilled with data from Service Provider configuration
+ * Creates Connection object pre-filled with data from Service Provider configuration
  *
  * @receiver ProviderData from Service Provider configuration
- * @return Connection object
+ * @return new Connection object
+ *
+ * @see ProviderConfigurationData
+ * @see Connection
  */
 fun ProviderConfigurationData.toConnection(): Connection? {
     if (!this.isValid()) return null
@@ -45,5 +48,7 @@ fun ProviderConfigurationData.toConnection(): Connection? {
         it.createdAt = DateTime.now().withZone(DateTimeZone.UTC).millis
         it.updatedAt = it.createdAt
         it.supportEmail = this.supportEmail
+        it.consentManagementSupported = this.consentManagementSupported
+        it.geolocationRequired = this.geolocationRequired
     }
 }

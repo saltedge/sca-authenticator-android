@@ -33,6 +33,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.applyNightMode
+import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
@@ -40,7 +41,10 @@ import com.saltedge.authenticator.interfaces.AppbarMenuItemClickListener
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.tools.*
+import com.saltedge.authenticator.tools.navigateTo
+import com.saltedge.authenticator.tools.restartApp
+import com.saltedge.authenticator.tools.showResetDataAndSettingsDialog
+import com.saltedge.authenticator.tools.startMailApp
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
 import kotlinx.android.synthetic.main.fragment_base_list.*
@@ -55,7 +59,7 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        authenticatorApp?.appComponent?.inject(this)
+        this.authenticatorApp?.appComponent?.inject(this)
         setupViewModel()
     }
 

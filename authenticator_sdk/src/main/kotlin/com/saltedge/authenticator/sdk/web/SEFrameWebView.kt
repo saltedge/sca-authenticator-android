@@ -28,6 +28,7 @@ import android.view.View
 import android.webkit.WebView
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
+import timber.log.Timber
 
 /**
  * Web view designated for light content (Authorization content)
@@ -44,6 +45,14 @@ open class SEFrameWebView : WebView {
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(getFixedContext(context), attrs, defStyleAttr) {
         setupView()
+    }
+
+    override fun setOverScrollMode(mode: Int) {
+        runCatching {
+            super.setOverScrollMode(mode)
+        }.onFailure {
+            Timber.e(it)
+        }
     }
 
     private fun setupView() {

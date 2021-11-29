@@ -31,6 +31,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_GUID
+import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.features.consents.common.countOfDaysLeft
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -42,7 +43,9 @@ import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
 import com.saltedge.authenticator.sdk.model.error.ApiErrorData
 import com.saltedge.authenticator.sdk.model.response.ConsentRevokeResponseData
 import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.tools.*
+import com.saltedge.authenticator.tools.CustomTypefaceSpan
+import com.saltedge.authenticator.tools.daysTillExpire
+import com.saltedge.authenticator.tools.toDateFormatString
 import org.joda.time.DateTime
 
 class ConsentDetailsViewModel(
@@ -77,10 +80,10 @@ class ConsentDetailsViewModel(
     }
 
     fun setInitialData(arguments: Bundle?) {
-        val connection = connectionsRepository.getByGuid(arguments?.guid ?: return) ?: return
+        val connection = connectionsRepository.getByGuid(connectionGuid = arguments?.guid) ?: return
         connectionAndKey = keyStoreManager.createConnectionAndKeyModel(connection)
         fragmentTitle.postValue(connection.name)
-        this.consentData = arguments.consent
+        this.consentData = arguments?.consent
         this.consentData?.let { consent ->
             fragmentTitle.postValue(consent.tppName)
             daysLeft.postValue(countOfDaysLeft(consent.expiresAt.daysTillExpire(), appContext))

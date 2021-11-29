@@ -30,10 +30,10 @@ import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.tools.AppTools
+import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
-import com.saltedge.authenticator.tools.log
 import com.saltedge.authenticator.tools.postUnitEvent
+import timber.log.Timber
 
 class LauncherViewModel(
     val appContext: Context,
@@ -94,7 +94,7 @@ class LauncherViewModel(
 
             if (raspFailReport.isNotEmpty()) {
                 val errorMessage = "App Is Tempered:[$raspFailReport]"
-                Exception(errorMessage).log()
+                Timber.e(Exception(errorMessage))
             }
             raspFailReport.isEmpty()
         } else true

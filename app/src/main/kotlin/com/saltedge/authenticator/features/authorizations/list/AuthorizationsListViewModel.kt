@@ -25,6 +25,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.KEY_OPTION_ID
 import com.saltedge.authenticator.app.NetworkStateChangeListener
@@ -34,6 +35,7 @@ import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.contract.ConfirmAuthorizationListener
@@ -63,6 +65,7 @@ class AuthorizationsListViewModel(
     private val keyStoreManager: KeyStoreManagerAbs,
     private val cryptoTools: CryptoToolsAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
+    private val locationManager: DeviceLocationManagerAbs,
     private val connectivityReceiver: ConnectivityReceiverAbs,
     private val defaultDispatcher: CoroutineDispatcher
 ) : ViewModel(),
@@ -285,6 +288,8 @@ class AuthorizationsListViewModel(
             connectionAndKey = connectionAndKey,
             authorizationId = listItem.authorizationID,
             authorizationCode = listItem.authorizationCode,
+            geolocation = locationManager.locationDescription,
+            authorizationType = AppTools.lastUnlockType.description,
             resultCallback = this
         )
     }
@@ -301,6 +306,8 @@ class AuthorizationsListViewModel(
             connectionAndKey = connectionAndKey,
             authorizationId = listItem.authorizationID,
             authorizationCode = listItem.authorizationCode,
+            geolocation = locationManager.locationDescription,
+            authorizationType = AppTools.lastUnlockType.description,
             resultCallback = this
         )
     }

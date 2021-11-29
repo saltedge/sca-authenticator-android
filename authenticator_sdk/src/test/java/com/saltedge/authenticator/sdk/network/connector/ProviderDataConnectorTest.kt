@@ -73,7 +73,8 @@ class ProviderDataConnectorTest {
                         logoUrl = "url",
                         version = "1",
                         supportEmail = "example@example.com",
-                        consentManagementIsSupported = true
+                        consentManagementSupported = true,
+                        geolocationRequired = true
                     )
                 )
             )
@@ -88,7 +89,8 @@ class ProviderDataConnectorTest {
                     logoUrl = "url",
                     version = "1",
                     supportEmail = "example@example.com",
-                    consentManagementIsSupported = true
+                    consentManagementSupported = true,
+                    geolocationRequired = true
                 ),
                 error = null
             )
