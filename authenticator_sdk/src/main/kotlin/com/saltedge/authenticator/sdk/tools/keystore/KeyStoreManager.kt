@@ -224,9 +224,6 @@ object KeyStoreManager : KeyStoreManagerAbs {
                 val publicKey: PublicKey? = store.getCertificate(keyAlias).publicKey
                 KeyPair(publicKey, privateKey)
             }
-        } catch (e: UnrecoverableKeyException) {
-            androidKeyStore?.deleteEntry(alias)
-            null
         } catch (e: Exception) {
             Timber.e(e)
             null
