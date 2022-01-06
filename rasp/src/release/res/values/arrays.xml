@@ -19,6 +19,9 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<resources>
-    <string-array name="signatures"/>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string-array name="signatures" tools:ignore="InconsistentArrays">
+        <item>test</item>
+        <item>test</item>
+    </string-array>
 </resources>
