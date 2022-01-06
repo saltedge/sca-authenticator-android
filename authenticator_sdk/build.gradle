@@ -114,5 +114,3 @@ publishing {
         }
     }
 }
-
-uploadArchives.dependsOn sourcesJar
