@@ -25,6 +25,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'idea'
 apply plugin: 'realm-android'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
+apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply from: './jacoco.gradle'
 apply from: './common-methods.gradle'
@@ -193,5 +194,3 @@ repositories {
 }
 
 setupSigning("./signing.properties", "release")
-
-apply plugin: 'com.google.gms.google-services'
