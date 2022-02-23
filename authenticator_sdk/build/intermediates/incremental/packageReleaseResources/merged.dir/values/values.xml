@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">authenticator-sdk</string>
-    <string name="errors_no_connection">Unable to establish a connection.\nPlease try again later or contact service provider.</string>
-    <string name="errors_request_error">Request error</string>
-    <string name="errors_secure_connection">Unable to establish a secure connection.\nPlease contact service provider</string>
-    <string name="scan_qr_code">Scan QR Code</string>
-</resources>
