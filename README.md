@@ -85,5 +85,5 @@ Feel free to [contact us](https://www.saltedge.com/pages/contact_support)
 If you modify this Program, or any covered work, by linking or combining it with [THIRD PARTY LIBRARY](THIRD_PARTY_NOTICES.md) (or a modified version of that library), containing parts covered by the [TERMS OF LIBRARY's LICENSE](THIRD_PARTY_NOTICES.md), the licensors of this Program grant you additional permission to convey the resulting work. {Corresponding Source for a non-source form of such a combination shall include the source code for the parts of [LIBRARY](THIRD_PARTY_NOTICES.md) used as well as that of the covered work.}        
   
 ___
-Copyright © 2019 - 2020 Salt Edge. https://www.saltedge.com  
+Copyright © 2019 - 2022 Salt Edge. https://www.saltedge.com  
 
