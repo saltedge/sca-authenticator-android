@@ -150,21 +150,34 @@ object TestFactory {
     }
 
     fun mockRichConnections(mock: KeyManagerAbs) {
-        BDDMockito.given(mock.enrichConnection(connection1, addProviderKey = false)).willReturn(richConnection1)
-        BDDMockito.given(mock.enrichConnection(connection2, addProviderKey = true)).willReturn(richConnection2)
-        BDDMockito.given(mock.enrichConnection(connection3Inactive, addProviderKey = false)).willReturn(richConnection3)
+        BDDMockito.given(mock.enrichConnection(connection1, addProviderKey = false))
+            .willReturn(richConnection1)
+        BDDMockito.given(mock.enrichConnection(connection2, addProviderKey = true))
+            .willReturn(richConnection2)
+        BDDMockito.given(mock.enrichConnection(connection3Inactive, addProviderKey = false))
+            .willReturn(richConnection3)
     }
 
     fun mockConsents(mock: BaseCryptoToolsAbs) {
         encV1Consents.forEachIndexed { index, encryptedData ->
-            BDDMockito.given(mock.decryptConsentData(encryptedData, mockPrivateKey, connection1.guid,
-            consentID = encryptedData.id))
-                .willReturn(v1Consents[index])
+            BDDMockito.given(
+                mock.decryptConsentData(
+                    encryptedData = encryptedData,
+                    rsaPrivateKey = mockPrivateKey,
+                    connectionGUID = connection1.guid,
+                    consentID = null
+                )
+            ).willReturn(v1Consents[index])
         }
         encV2Consents.forEachIndexed { index, encryptedData ->
-            BDDMockito.given(mock.decryptConsentData(encryptedData, mockPrivateKey, connection2.guid,
-                consentID = encryptedData.id))
-                .willReturn(v2Consents[index])
+            BDDMockito.given(
+                mock.decryptConsentData(
+                    encryptedData = encryptedData,
+                    rsaPrivateKey = mockPrivateKey,
+                    connectionGUID = connection2.guid,
+                    consentID = encryptedData.id
+                )
+            ).willReturn(v2Consents[index])
         }
     }
 }

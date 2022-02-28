@@ -20,13 +20,11 @@
  */
 package com.saltedge.authenticator.sdk.tools
 
-import com.saltedge.android.test_tools.CommonTestTools
-import com.saltedge.android.test_tools.encryptAesCBCString
-import com.saltedge.android.test_tools.encryptWithTestKey
-import com.saltedge.android.test_tools.rsaEncrypt
+import com.saltedge.android.test_tools.*
 import com.saltedge.authenticator.core.api.model.ConsentData
 import com.saltedge.authenticator.core.api.model.ConsentSharedData
 import com.saltedge.authenticator.core.api.model.EncryptedData
+import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.testTools.TestTools
 import net.danlew.android.joda.JodaTimeAndroid
@@ -173,18 +171,24 @@ class CryptoToolsV1Test {
     @Throws(Exception::class)
     fun decryptConsentDataTest() {
         val encryptedData: EncryptedData = consentData.encryptWithTestKey()
+        val requestConnection: ConnectionAbs =
+            TestConnection(id = "333", guid = "test", connectUrl = "/", accessToken = "accessToken")
 
         assertThat(
             CryptoToolsV1.decryptConsentData(
                 encryptedData = encryptedData,
-                rsaPrivateKey = CommonTestTools.testPrivateKey
+                rsaPrivateKey = CommonTestTools.testPrivateKey,
+                connectionGUID = requestConnection.guid,
+                consentID = null
             ),
             equalTo(consentData)
         )
         Assert.assertNull(
             CryptoToolsV1.decryptConsentData(
                 encryptedData = encryptedData.copy(key = ""),
-                rsaPrivateKey = CommonTestTools.testPrivateKey
+                rsaPrivateKey = CommonTestTools.testPrivateKey,
+                connectionGUID = requestConnection.guid,
+                consentID = null
             )
         )
         Assert.assertNull(
@@ -196,7 +200,9 @@ class CryptoToolsV1Test {
         Assert.assertNull(
             CryptoToolsV1.decryptConsentData(
                 encryptedData = encryptedData.copy(data = ""),
-                rsaPrivateKey = CommonTestTools.testPrivateKey
+                rsaPrivateKey = CommonTestTools.testPrivateKey,
+                connectionGUID = requestConnection.guid,
+                consentID = null
             )
         )
     }
@@ -218,6 +224,7 @@ class CryptoToolsV1Test {
         accounts = emptyList(),
         sharedData = ConsentSharedData(balance = true, transactions = true),
         expiresAt = DateTime(0).withZone(DateTimeZone.UTC),
-        createdAt = DateTime(0).withZone(DateTimeZone.UTC)
+        createdAt = DateTime(0).withZone(DateTimeZone.UTC),
+        connectionGuid = "test"
     )
 }

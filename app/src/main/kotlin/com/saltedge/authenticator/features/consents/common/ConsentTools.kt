@@ -25,7 +25,6 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.core.api.model.ConsentData
 import com.saltedge.authenticator.core.api.model.EncryptedData
 import com.saltedge.authenticator.core.model.ConsentType
-import com.saltedge.authenticator.core.model.GUID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.model.isActive
 import com.saltedge.authenticator.core.tools.secure.BaseCryptoToolsAbs

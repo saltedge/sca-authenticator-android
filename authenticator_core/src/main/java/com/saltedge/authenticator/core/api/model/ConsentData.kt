@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.core.api.model
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.core.api.*
 import com.saltedge.authenticator.core.model.ConsentType
@@ -32,6 +33,7 @@ import java.io.Serializable
 /**
  * Consent POJO model with annotation for GSON parsing
  */
+@Keep
 data class ConsentData(
     @SerializedName(KEY_ID) var id: ID,
     @SerializedName(KEY_TPP_NAME) var tppName: String,

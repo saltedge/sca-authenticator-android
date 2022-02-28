@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.model.authorization
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.core.api.*
 import com.saltedge.authenticator.core.api.model.DescriptionData
@@ -31,6 +32,7 @@ import java.io.Serializable
  * Plain (not encrypted) authorization model
  * with annotation for GSON parsing
  */
+@Keep
 data class AuthorizationV2Data(
     @SerializedName(KEY_TITLE) var title: String,
     @SerializedName(KEY_DESCRIPTION) var description: DescriptionData,
