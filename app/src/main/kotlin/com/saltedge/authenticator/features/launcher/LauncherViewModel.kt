@@ -52,11 +52,11 @@ class LauncherViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onLifeCycleResume() {
-        val securityCheckNotPassed = !checkAppSecurity()
+//        val securityCheckNotPassed = !checkAppSecurity()
         when {
-            securityCheckNotPassed -> {
-                onSecurityCheckFail.postUnitEvent()
-            }
+//            securityCheckNotPassed -> {
+//                onSecurityCheckFail.postUnitEvent()
+//            }
             realmManager.errorOccurred -> {
                 onInitializationSuccess.value = null
                 onDbInitializationFail.postUnitEvent()
