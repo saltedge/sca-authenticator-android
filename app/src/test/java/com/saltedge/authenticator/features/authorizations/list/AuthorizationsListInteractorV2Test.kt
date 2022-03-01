@@ -206,7 +206,7 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
     fun onFetchAuthorizationsResultTestCase4() {
         //given
         val fetchResult = encryptedAuthorizations
-        val createdAt = DateTime.now(DateTimeZone.UTC)
+        val createdAt = DateTime.now(DateTimeZone.UTC)//TODO Freeze time
 
         //when
         interactor.onFetchAuthorizationsResult(result = fetchResult, errors = emptyList())
@@ -297,7 +297,7 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
         val finalResponseModelWithExpiredFinishedAt = finalResponseModel
             .copy(id = "333", finishedAt = DateTime.now().minusSeconds(LIFE_TIME_OF_FINAL_MODEL + 100))
         val fetchResult = encryptedAuthorizations + listOf(finalResponseModel, finalResponseModelWithOutFinishedAt, finalResponseModelWithExpiredFinishedAt)
-        val createdAt = DateTime.now(DateTimeZone.UTC)
+        val createdAt = DateTime.now(DateTimeZone.UTC)//TODO Freeze time
 
         //when
         interactor.onFetchAuthorizationsResult(result = fetchResult, errors = emptyList())
