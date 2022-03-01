@@ -255,26 +255,6 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
                     geolocationRequired = true
                 ),
                 AuthorizationItemViewModel(
-                    authorizationID = "3",
-                    authorizationCode = "333",
-                    title = "title3",
-                    description = DescriptionData(
-                        payment = null,
-                        text = "desc3",
-                        html = null,
-                        extra = null
-                    ),
-                    validSeconds = 180,
-                    endTime = createdAt.plusMinutes(3),
-                    startTime = createdAt,
-                    connectionID = "1",
-                    connectionName = "Demobank3",
-                    connectionLogoUrl = "url",
-                    apiVersion = "2",
-                    status = AuthorizationStatus.PENDING,
-                    geolocationRequired = true
-                ),
-                AuthorizationItemViewModel(
                     authorizationID = "4",
                     authorizationCode = "",
                     title = "",
@@ -323,23 +303,6 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
         interactor.onFetchAuthorizationsResult(result = fetchResult, errors = emptyList())
 
         //then
-        val finalItem = AuthorizationItemViewModel(
-            title = "",
-            description = DescriptionData(text = null),
-            connectionID = finalResponseModel.connectionId,
-            connectionName = mockConnectionV2.name,
-            connectionLogoUrl = mockConnectionV2.logoUrl,
-            validSeconds = 0,
-            endTime = DateTime(0),
-            startTime = DateTime(0L),
-            authorizationID = finalResponseModel.id,
-            authorizationCode = "",
-            apiVersion = API_V2_VERSION,
-            status = AuthorizationStatus.CONFIRMED,
-            geolocationRequired = mockConnectionV2.geolocationRequired!!
-        ).apply {
-            updateDestroyAt(finalResponseModel.finishedAt)
-        }
         verify(mockContract).onAuthorizationsReceived(
             data = listOf(
                 AuthorizationItemViewModel(
@@ -369,26 +332,6 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
                     description = DescriptionData(
                         payment = null,
                         text = "desc2",
-                        html = null,
-                        extra = null
-                    ),
-                    validSeconds = 180,
-                    endTime = createdAt.plusMinutes(3),
-                    startTime = createdAt,
-                    connectionID = "1",
-                    connectionName = "Demobank3",
-                    connectionLogoUrl = "url",
-                    apiVersion = "2",
-                    status = AuthorizationStatus.PENDING,
-                    geolocationRequired = true
-                ),
-                AuthorizationItemViewModel(
-                    authorizationID = "3",
-                    authorizationCode = "333",
-                    title = "title3",
-                    description = DescriptionData(
-                        payment = null,
-                        text = "desc3",
                         html = null,
                         extra = null
                     ),
