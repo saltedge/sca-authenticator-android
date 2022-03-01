@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.core.api.model.error
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.core.api.KEY_ERROR_CLASS
 import com.saltedge.authenticator.core.api.KEY_ERROR_MESSAGE
@@ -31,6 +32,7 @@ import java.io.Serializable
  * with annotation for GSON parsing
  * contains accessToken field which is used for further connection invalidation
  */
+@Keep
 data class ApiErrorData(
     @SerializedName(KEY_ERROR_CLASS) var errorClassName: String,
     @SerializedName(KEY_ERROR_MESSAGE) var errorMessage: String = "",
