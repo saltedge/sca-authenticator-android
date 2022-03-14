@@ -37,7 +37,6 @@ import com.saltedge.authenticator.core.model.ConnectAppLinkData
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
@@ -49,9 +48,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
-import org.mockito.Mockito
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
@@ -234,6 +231,32 @@ class MainActivityViewModelTest : ViewModelTest() {
         //then no interactions with observable values
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
+        assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onLifeCycleCreateTestCase7() {
+        val viewModel = createViewModel()
+        val savedInstanceState: Bundle? = null
+        val intent: Intent? = Intent().putExtra(
+            KEY_DEEP_LINK,
+            "authenticator://saltedge.com/connect?configuration=https://sca.saltedge.com/api/authenticator/v2/configurations/5"
+        )
+        given(mockConnectionsRepository.isEmpty()).willReturn(false)
+
+        //when
+        viewModel.onLifeCycleCreate(savedInstanceState, intent)
+
+        //then onShowConnectEvent is posted
+        assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
+
+        val bundle = viewModel.onShowConnectEvent.value?.peekContent()
+
+        assertThat(
+            bundle?.getString(KEY_API_VERSION),
+            equalTo("2")
+        )
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
     }
 
