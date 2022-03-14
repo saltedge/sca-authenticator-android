@@ -134,7 +134,7 @@ class ConnectProviderFragment : BaseFragment(),
 
     private fun setupViewModel() {
         val appLinkData = arguments?.getSerializable(KEY_DATA) as? ConnectAppLinkData
-        val apiVersion = appLinkData?.apiVersion ?: arguments?.getString(KEY_API_VERSION)
+        val apiVersion = arguments?.getString(KEY_API_VERSION)
         viewModelFactory.setScaApiVersion(apiVersion)
         viewModel = ViewModelProvider(this, viewModelFactory).get(ConnectProviderViewModel::class.java)
         lifecycle.addObserver(viewModel)

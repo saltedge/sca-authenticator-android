@@ -153,7 +153,7 @@ class ConnectionsListFragment : BaseFragment(),
         viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<MenuData>> { event ->
             event.getContentIfNotHandled()?.let { data -> popupWindow = showPopupMenu(data) }
         })
-        viewModel.onReconnectClickEvent.observe(this, Observer<ViewModelEvent<ConnectionData>> { event ->
+        viewModel.onReconnectClickEvent.observe(this, Observer<ViewModelEvent<ReconnectData>> { event ->
             event.getContentIfNotHandled()?.let { connectionData ->
                 findNavController().navigate(
                     ConnectionsListFragmentDirections.connectProvider(

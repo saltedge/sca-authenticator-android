@@ -22,4 +22,4 @@ package com.saltedge.authenticator.features.connections.list
 
 import com.saltedge.authenticator.core.model.GUID
 
-data class ConnectionData(val guid: GUID, val apiVersion: String)
+data class ReconnectData(val guid: GUID, val apiVersion: String)
