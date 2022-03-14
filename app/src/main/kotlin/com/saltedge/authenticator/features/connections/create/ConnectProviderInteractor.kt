@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.connections.create
 
+import android.util.Log
 import com.saltedge.authenticator.app.ERROR_INVALID_AUTHENTICATION_DATA
 import com.saltedge.authenticator.app.ERROR_INVALID_DEEPLINK
 import com.saltedge.authenticator.app.ERROR_INVALID_RESPONSE
@@ -30,7 +31,10 @@ import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.models.toRichConnection
 import com.saltedge.authenticator.sdk.v2.config.ApiV2Config
+import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2
+import timber.log.Timber
 
 abstract class ConnectProviderInteractor(
     private val keyStoreManager: KeyManagerAbs,
@@ -97,10 +101,16 @@ abstract class ConnectProviderInteractor(
     }
 
     override fun onReceiveReturnToUrl(url: String) {
+        Log.d("TEST_TEST", "onReceiveReturnToUrl: $url")
         parseRedirect(
             url = url,
             success = { connectionID, resultAccessToken ->
-                onConnectionSuccessAuthentication(connectionID, resultAccessToken)
+                val accessToken = processAccessToken(resultAccessToken)
+                if (accessToken == null || accessToken.isEmpty()) {
+                    contract?.onConnectionFailAuthentication("InvalidAccessToken", "Invalid Access Token.")
+                } else {
+                    onConnectionSuccessAuthentication(connectionID, accessToken)
+                }
             },
             error = {
                 errorClass, errorMessage -> contract?.onConnectionFailAuthentication(errorClass, errorMessage)
@@ -111,13 +121,30 @@ abstract class ConnectProviderInteractor(
     override fun onConnectionSuccessAuthentication(connectionId: ID?, accessToken: Token) {
         connectionId?.let { connection.id = it }
         connection.accessToken = accessToken
-        connection.status = "${ConnectionStatus.ACTIVE}"
+        if (connection.accessToken.isNotEmpty()) {
+            connection.status = "${ConnectionStatus.ACTIVE}"
+        }
         if (connectionsRepository.connectionExists(connection)) {
             connectionsRepository.saveModel(connection)
         } else {
             connectionsRepository.fixNameAndSave(connection)
         }
+
         contract?.onConnectionSuccessAuthentication()
+    }
+
+    private fun processAccessToken(accessToken: Token): String? {
+        return if (connection.isV2Api) {
+            try {
+                val richConnection = connection.toRichConnection(keyStoreManager)
+
+                CryptoToolsV2.decryptAccessToken(accessToken, richConnection?.private)!!
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Timber.e(e)
+                null
+            }
+        } else accessToken
     }
 
     override fun destroyConnectionIfNotAuthorized() {

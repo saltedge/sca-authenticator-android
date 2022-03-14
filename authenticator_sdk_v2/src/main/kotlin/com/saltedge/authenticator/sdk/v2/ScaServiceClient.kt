@@ -98,10 +98,12 @@ class ScaServiceClient : ScaServiceClientAbs {
             callback.error("RSA secure material of provider is invalid")
             return
         }
-        val rsaAlias = createRandomGuid()
+        if (connection.guid.isEmpty()) {
+            connection.guid = createRandomGuid()
+        }
         val appRsaPublicKey = KeyManager.createOrReplaceRsaKeyPair(
             context = appContext,
-            alias = rsaAlias
+            alias = connection.guid
         )?.public.guard {
             callback.error("RSA secure material is unavailable")
             return
@@ -113,7 +115,6 @@ class ScaServiceClient : ScaServiceClientAbs {
             callback.error("User data encryption failed")
             return
         }
-        connection.guid = rsaAlias
         requestCreateConnection(
             baseUrl = connection.connectUrl,
             rsaPublicKeyEncryptedBundle = rsaPublicKeyEncryptedBundle,

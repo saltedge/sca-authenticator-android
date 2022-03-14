@@ -91,8 +91,7 @@ fun getDefaultTestConnection(): ConnectionAbs =
 
 fun rsaEncrypt(input: ByteArray, publicKey: PublicKey): String? {
     try {
-        val encryptCipher =
-            Cipher.getInstance("RSA/ECB/PKCS1Padding")
+        val encryptCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
         encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey)
 
         val outputStream = ByteArrayOutputStream()

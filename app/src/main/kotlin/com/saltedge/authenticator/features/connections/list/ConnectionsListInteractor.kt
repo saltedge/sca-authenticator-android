@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.connections.list
 
+import android.util.Log
 import com.saltedge.authenticator.core.api.model.ConsentData
 import com.saltedge.authenticator.core.api.model.EncryptedData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData

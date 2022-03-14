@@ -30,6 +30,7 @@ import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationRe
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
 import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2
 import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2.decryptAuthorizationData
+import com.saltedge.authenticator.sdk.v2.tools.WrappedAccessToken
 import net.danlew.android.joda.JodaTimeAndroid
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.not
@@ -42,11 +43,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import java.security.PublicKey
+import java.util.*
 import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
 
 @RunWith(RobolectricTestRunner::class)
-class CryptoToolsTest {
+class CryptoToolsV2Test {
 
     @Before
     fun setUp() {
@@ -186,6 +188,31 @@ class CryptoToolsTest {
                 rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun decryptAccessTokenTest() {
+        val testToken = getRandomString(32)
+        assertThat(testToken.length, equalTo(36))
+        val json = WrappedAccessToken(testToken).toJsonString()
+        assertThat(json.length, equalTo(55))
+        assertThat(json, equalTo("{\"access_token\":\"$testToken\"}"))
+
+        val encrypted = rsaEncrypt(json.toByteArray(), CommonTestTools.testPublicKey)!!
+        val decryptedToken = CryptoToolsV2.decryptAccessToken(encrypted, CommonTestTools.testPrivateKey)
+
+        assertThat(decryptedToken, equalTo(testToken))
+    }
+
+    private fun getRandomString(size: Int): String {
+        val rand = Random() //instance of random class
+        val totalCharacters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        var randomString = ""
+        for (i in 0 until size) {
+            randomString += totalCharacters[rand.nextInt(totalCharacters.length - 1)]
+        }
+        return randomString
     }
 
     private val authData = AuthorizationV2Data(

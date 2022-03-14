@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.core.tools.secure
 
 import android.util.Base64
+import android.util.Log
 import com.saltedge.authenticator.core.api.model.ConsentData
 import com.saltedge.authenticator.core.api.model.EncryptedData
 import com.saltedge.authenticator.core.model.GUID
@@ -33,6 +34,7 @@ import java.security.Key
 import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.PublicKey
+import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
@@ -68,6 +70,7 @@ open class BaseCryptoTools : BaseCryptoToolsAbs {
             decryptCipher.init(Cipher.DECRYPT_MODE, privateKey)
             decryptCipher.doFinal(decodeFromPemBase64String(encryptedText))
         } catch (e: Exception) {
+            e.printStackTrace()
             Timber.e(e)
             null
         }
@@ -170,6 +173,18 @@ open class BaseCryptoTools : BaseCryptoToolsAbs {
                 if (consentID != null) this.id = consentID
             }
         } catch (e: Exception) {
+            Timber.e(e)
+            null
+        }
+    }
+
+    fun rsaDecrypt(encryptedBytes: ByteArray, privateKey: PrivateKey): ByteArray? {
+        return try {
+            val decryptCipher = rsaCipherInstance() ?: return null
+            decryptCipher.init(Cipher.DECRYPT_MODE, privateKey)
+            decryptCipher.doFinal(encryptedBytes)
+        } catch (e: Exception) {
+            e.printStackTrace()
             Timber.e(e)
             null
         }

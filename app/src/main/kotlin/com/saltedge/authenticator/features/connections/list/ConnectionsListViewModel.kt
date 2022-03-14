@@ -24,6 +24,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
@@ -165,13 +166,11 @@ class ConnectionsListViewModel(
                     else -> interactor.revokeConnection(item.guid)
                 }
             }
+            else -> {}
         }
     }
 
-    override fun onDatasetChanged(
-        connections: List<ConnectionAbs>,
-        consents: List<ConsentData>
-    ) {
+    override fun onDatasetChanged(connections: List<ConnectionAbs>, consents: List<ConsentData>) {
         val context = weakContext.get() ?: return
         val items = connections.convertConnectionsToViewItems(context, locationManager)
         val itemsWithConsentInfo = items.enrichItemsWithConsentInfo(consents)

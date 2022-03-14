@@ -59,6 +59,9 @@ open class Connection : RealmObject(), ConnectionAbs {
     @Keep @Required
     override var apiVersion: String = "1"
 
+    val isV2Api: Boolean
+        get() = apiVersion == "2"
+
     override fun toString(): String {
         return "Connection(guid='$guid', id='$id', createdAt=$createdAt, updatedAt=$updatedAt, name='$name', code='$code', connectUrl='$connectUrl', logoUrl='$logoUrl', accessToken='$accessToken', status='$status', supportEmail=$supportEmail, consentManagementSupported=$consentManagementSupported, geolocationRequired=$geolocationRequired, providerRsaPublicKeyPem='$providerRsaPublicKeyPem', apiVersion='$apiVersion')"
     }
