@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.sdk.api.model.configuration
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.core.api.*
 import java.io.Serializable
@@ -27,6 +28,7 @@ import java.io.Serializable
 /**
  * Model of provider configuration
  */
+@Keep
 data class ProviderConfigurationData(
     @SerializedName(KEY_CONNECT_URL) var connectUrl: String,
     @SerializedName(KEY_CODE) var code: String,

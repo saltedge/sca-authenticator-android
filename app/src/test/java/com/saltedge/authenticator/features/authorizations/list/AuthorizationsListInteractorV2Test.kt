@@ -206,7 +206,7 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
     fun onFetchAuthorizationsResultTestCase4() {
         //given
         val fetchResult = encryptedAuthorizations
-        val createdAt = DateTime.now(DateTimeZone.UTC)
+        val createdAt = DateTime.now(DateTimeZone.UTC)//TODO Freeze time
 
         //when
         interactor.onFetchAuthorizationsResult(result = fetchResult, errors = emptyList())
@@ -241,26 +241,6 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
                     description = DescriptionData(
                         payment = null,
                         text = "desc2",
-                        html = null,
-                        extra = null
-                    ),
-                    validSeconds = 180,
-                    endTime = createdAt.plusMinutes(3),
-                    startTime = createdAt,
-                    connectionID = "1",
-                    connectionName = "Demobank3",
-                    connectionLogoUrl = "url",
-                    apiVersion = "2",
-                    status = AuthorizationStatus.PENDING,
-                    geolocationRequired = true
-                ),
-                AuthorizationItemViewModel(
-                    authorizationID = "3",
-                    authorizationCode = "333",
-                    title = "title3",
-                    description = DescriptionData(
-                        payment = null,
-                        text = "desc3",
                         html = null,
                         extra = null
                     ),
@@ -317,29 +297,12 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
         val finalResponseModelWithExpiredFinishedAt = finalResponseModel
             .copy(id = "333", finishedAt = DateTime.now().minusSeconds(LIFE_TIME_OF_FINAL_MODEL + 100))
         val fetchResult = encryptedAuthorizations + listOf(finalResponseModel, finalResponseModelWithOutFinishedAt, finalResponseModelWithExpiredFinishedAt)
-        val createdAt = DateTime.now(DateTimeZone.UTC)
+        val createdAt = DateTime.now(DateTimeZone.UTC)//TODO Freeze time
 
         //when
         interactor.onFetchAuthorizationsResult(result = fetchResult, errors = emptyList())
 
         //then
-        val finalItem = AuthorizationItemViewModel(
-            title = "",
-            description = DescriptionData(text = null),
-            connectionID = finalResponseModel.connectionId,
-            connectionName = mockConnectionV2.name,
-            connectionLogoUrl = mockConnectionV2.logoUrl,
-            validSeconds = 0,
-            endTime = DateTime(0),
-            startTime = DateTime(0L),
-            authorizationID = finalResponseModel.id,
-            authorizationCode = "",
-            apiVersion = API_V2_VERSION,
-            status = AuthorizationStatus.CONFIRMED,
-            geolocationRequired = mockConnectionV2.geolocationRequired!!
-        ).apply {
-            updateDestroyAt(finalResponseModel.finishedAt)
-        }
         verify(mockContract).onAuthorizationsReceived(
             data = listOf(
                 AuthorizationItemViewModel(
@@ -369,26 +332,6 @@ class AuthorizationsListInteractorV2Test : CoroutineViewModelTest() {
                     description = DescriptionData(
                         payment = null,
                         text = "desc2",
-                        html = null,
-                        extra = null
-                    ),
-                    validSeconds = 180,
-                    endTime = createdAt.plusMinutes(3),
-                    startTime = createdAt,
-                    connectionID = "1",
-                    connectionName = "Demobank3",
-                    connectionLogoUrl = "url",
-                    apiVersion = "2",
-                    status = AuthorizationStatus.PENDING,
-                    geolocationRequired = true
-                ),
-                AuthorizationItemViewModel(
-                    authorizationID = "3",
-                    authorizationCode = "333",
-                    title = "title3",
-                    description = DescriptionData(
-                        payment = null,
-                        text = "desc3",
                         html = null,
                         extra = null
                     ),

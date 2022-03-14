@@ -46,8 +46,14 @@
 -dontwarn com.squareup.okhttp3.**
 -dontwarn org.conscrypt.**
 
-# Retain generic providerName information for use by reflection by converters and adapters.
+# Gson uses generic type information stored in a class file when working with fields. Proguard
+# removes such information by default, so configure it to keep all of it.
 -keepattributes Signature
+
+# Gson specific classes
+-keep class sun.misc.Unsafe { *; }
+#-keep class com.google.gson.stream.** { *; }
+
 -dontwarn javax.annotation.**
 -dontwarn javax.annotation.Nullable
 -dontwarn javax.annotation.ParametersAreNonnullByDefault

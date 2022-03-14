@@ -1,6 +1,6 @@
 [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html) 
-![SDK Version](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsaltedge%2Fsca-authenticator-android%2Fmaster%2Fauthenticator_sdk%2Fbadge_version.json) 
-![Android API](https://img.shields.io/endpoint?logo=android&url=https%3A%2F%2Fraw.githubusercontent.com%2Fsaltedge%2Fsca-authenticator-android%2Fmaster%2Fauthenticator_sdk%2Fbadge_android.json) 
+![SDK Version](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsaltedge%2Fsca-authenticator-android%2Fmaster%2Fauthenticator_sdk_v2%2Fbadge_version.json) 
+![Android API](https://img.shields.io/endpoint?logo=android&url=https%3A%2F%2Fraw.githubusercontent.com%2Fsaltedge%2Fsca-authenticator-android%2Fmaster%2Fauthenticator_sdk_v2%2Fbadge_android.json) 
   
 # Salt Edge Authenticator Android SDK (v2)  
 
