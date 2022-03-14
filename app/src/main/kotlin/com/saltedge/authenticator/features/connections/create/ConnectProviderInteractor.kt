@@ -20,7 +20,6 @@
  */
 package com.saltedge.authenticator.features.connections.create
 
-import android.util.Log
 import com.saltedge.authenticator.app.ERROR_INVALID_AUTHENTICATION_DATA
 import com.saltedge.authenticator.app.ERROR_INVALID_DEEPLINK
 import com.saltedge.authenticator.app.ERROR_INVALID_RESPONSE
@@ -101,7 +100,6 @@ abstract class ConnectProviderInteractor(
     }
 
     override fun onReceiveReturnToUrl(url: String) {
-        Log.d("TEST_TEST", "onReceiveReturnToUrl: $url")
         parseRedirect(
             url = url,
             success = { connectionID, resultAccessToken ->

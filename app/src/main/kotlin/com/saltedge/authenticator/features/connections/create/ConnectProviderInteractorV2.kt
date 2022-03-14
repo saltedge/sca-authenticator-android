@@ -21,7 +21,6 @@
 package com.saltedge.authenticator.features.connections.create
 
 import android.content.Context
-import android.util.Log
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ConnectionStatus
 import com.saltedge.authenticator.core.tools.createRandomGuid

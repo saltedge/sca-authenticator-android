@@ -21,7 +21,6 @@
 package com.saltedge.authenticator.core.tools.secure
 
 import android.util.Base64
-import android.util.Log
 import com.saltedge.authenticator.core.api.model.ConsentData
 import com.saltedge.authenticator.core.api.model.EncryptedData
 import com.saltedge.authenticator.core.model.GUID
