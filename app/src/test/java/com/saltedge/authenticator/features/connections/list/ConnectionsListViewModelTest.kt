@@ -392,7 +392,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         viewModel.onMenuItemClick(menuId = activeItemIndex, itemId = itemId)
 
         //then
-        assertThat(viewModel.onReconnectClickEvent.value, equalTo(ViewModelEvent("guid2")))
+        assertThat(viewModel.onReconnectClickEvent.value, equalTo(ViewModelEvent(ReconnectData(guid = "guid2", apiVersion = "2"))))
     }
 
     @Test

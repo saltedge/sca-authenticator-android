@@ -29,6 +29,7 @@ import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_CLOSE_APP
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
+import com.saltedge.authenticator.core.api.KEY_API_VERSION
 import com.saltedge.authenticator.core.api.KEY_DATA
 import com.saltedge.authenticator.core.api.KEY_ID
 import com.saltedge.authenticator.core.api.KEY_TITLE
@@ -122,6 +123,7 @@ class MainActivityViewModel(
                 if (connectionAppLinkData != null) {
                     onShowConnectEvent.postValue(ViewModelEvent(Bundle().apply {
                         putSerializable(KEY_DATA, connectionAppLinkData)
+                        putString(KEY_API_VERSION, connectionAppLinkData.apiVersion)
                     }))
                 } else if (actionAppLinkData != null) {
                     onShowSubmitActionEvent.postValue(ViewModelEvent(Bundle().apply {

@@ -136,7 +136,7 @@ class ConnectionsListViewModel(
         when (ConnectionsListMenuItemType.values()[itemId]) {
             ConnectionsListMenuItemType.RECONNECT -> {
                 onReconnectClickEvent.postValue(
-                    ViewModelEvent(ReconnectData(item.guid, item.apiVersion))
+                    ViewModelEvent(ReconnectData(guid = item.guid, apiVersion = item.apiVersion))
                 )
             }
             ConnectionsListMenuItemType.RENAME -> {
