@@ -64,7 +64,7 @@ class ConnectionsListViewModel(
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onListItemClickEvent = MutableLiveData<ViewModelEvent<MenuData>>()
     val onSupportClickEvent = MutableLiveData<ViewModelEvent<String?>>()
-    val onReconnectClickEvent = MutableLiveData<ViewModelEvent<String>>()
+    val onReconnectClickEvent = MutableLiveData<ViewModelEvent<ConnectionData>>()
     val onRenameClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onAccessToLocationClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onDeleteClickEvent = MutableLiveData<ViewModelEvent<String>>()
@@ -135,7 +135,9 @@ class ConnectionsListViewModel(
         val item = listItemsValues.getOrNull(menuId) ?: return
         when (ConnectionsListMenuItemType.values()[itemId]) {
             ConnectionsListMenuItemType.RECONNECT -> {
-                onReconnectClickEvent.postValue(ViewModelEvent(item.guid))
+                onReconnectClickEvent.postValue(
+                    ViewModelEvent(ConnectionData(item.guid, item.apiVersion))
+                )
             }
             ConnectionsListMenuItemType.RENAME -> {
                 onRenameClickEvent.postValue(
