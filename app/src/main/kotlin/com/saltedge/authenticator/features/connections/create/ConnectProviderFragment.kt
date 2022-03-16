@@ -36,6 +36,7 @@ import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.app.guid
+import com.saltedge.authenticator.core.api.KEY_API_VERSION
 import com.saltedge.authenticator.core.api.KEY_DATA
 import com.saltedge.authenticator.core.model.ConnectAppLinkData
 import com.saltedge.authenticator.core.web.ConnectWebClient
@@ -133,7 +134,8 @@ class ConnectProviderFragment : BaseFragment(),
 
     private fun setupViewModel() {
         val appLinkData = arguments?.getSerializable(KEY_DATA) as? ConnectAppLinkData
-        viewModelFactory.setScaApiVersion(appLinkData?.apiVersion)
+        val apiVersion = arguments?.getString(KEY_API_VERSION)
+        viewModelFactory.setScaApiVersion(apiVersion)
         viewModel = ViewModelProvider(this, viewModelFactory).get(ConnectProviderViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
