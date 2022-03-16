@@ -21,6 +21,8 @@
 package com.saltedge.authenticator.sdk.v2.tools
 
 import android.util.Base64
+import com.google.gson.annotations.SerializedName
+import com.saltedge.authenticator.core.api.KEY_ACCESS_TOKEN
 import com.saltedge.authenticator.core.api.model.EncryptedBundle
 import com.saltedge.authenticator.core.tools.json.createDefaultGson
 import com.saltedge.authenticator.core.tools.secure.BaseCryptoTools
@@ -72,9 +74,25 @@ object CryptoToolsV2 : BaseCryptoTools(), CryptoToolsV2Abs {
             null
         }
     }
+
+    fun decryptAccessToken(encryptedData: String, rsaPrivateKey: PrivateKey?): String? {
+        return try {
+            val privateKey = rsaPrivateKey ?: return null
+            val encryptedBytes = Base64.decode(encryptedData.replace("\n", ""), Base64.NO_WRAP or Base64.URL_SAFE)
+            val jsonString = String(rsaDecrypt(encryptedBytes, privateKey) ?: return null)
+            val result = createDefaultGson().fromJson(jsonString, WrappedAccessToken::class.java)
+            result.accessToken
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Timber.e(e)
+            null
+        }
+    }
 }
 
 interface CryptoToolsV2Abs : BaseCryptoToolsAbs {
     fun createEncryptedBundle(payload: String, rsaPublicKey: PublicKey?): EncryptedBundle?
     fun decryptAuthorizationData(encryptedData: AuthorizationResponseData, rsaPrivateKey: PrivateKey?): AuthorizationV2Data?
 }
+
+data class WrappedAccessToken(@SerializedName(KEY_ACCESS_TOKEN) var accessToken: String)

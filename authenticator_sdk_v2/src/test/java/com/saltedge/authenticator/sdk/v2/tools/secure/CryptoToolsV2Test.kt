@@ -20,16 +20,19 @@
  */
 package com.saltedge.authenticator.sdk.v2.tools.secure
 
+import android.util.Base64
 import com.saltedge.android.test_tools.CommonTestTools
 import com.saltedge.android.test_tools.encryptAesCBCString
 import com.saltedge.android.test_tools.rsaEncrypt
 import com.saltedge.android.test_tools.toJsonString
 import com.saltedge.authenticator.core.api.model.DescriptionData
+import com.saltedge.authenticator.core.tools.encodeToPemBase64String
 import com.saltedge.authenticator.sdk.v2.TestTools
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
 import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2
 import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2.decryptAuthorizationData
+import com.saltedge.authenticator.sdk.v2.tools.WrappedAccessToken
 import net.danlew.android.joda.JodaTimeAndroid
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.not
@@ -41,12 +44,16 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import java.io.ByteArrayOutputStream
 import java.security.PublicKey
+import java.util.*
+import javax.crypto.Cipher
+import javax.crypto.CipherOutputStream
 import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
 
 @RunWith(RobolectricTestRunner::class)
-class CryptoToolsTest {
+class CryptoToolsV2Test {
 
     @Before
     fun setUp() {
@@ -186,6 +193,46 @@ class CryptoToolsTest {
                 rsaPrivateKey = CommonTestTools.testPrivateKey
             )
         )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun decryptAccessTokenTest() {
+        val testToken = getRandomString(32)
+        assertThat(testToken.length, equalTo(32))
+        val json = WrappedAccessToken(testToken).toJsonString()
+        assertThat(json, equalTo("{\"access_token\":\"$testToken\"}"))
+
+        val encrypted = rsaEncryptToken(json.toByteArray(), CommonTestTools.testPublicKey)!!
+        val decryptedToken = CryptoToolsV2.decryptAccessToken(encrypted, CommonTestTools.testPrivateKey)
+
+        assertThat(decryptedToken, equalTo(testToken))
+    }
+
+    private fun rsaEncryptToken(input: ByteArray, publicKey: PublicKey): String? {
+        try {
+            val encryptCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+            encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey)
+
+            val outputStream = ByteArrayOutputStream()
+            val cipherOutputStream = CipherOutputStream(outputStream, encryptCipher)
+            cipherOutputStream.write(input)
+            cipherOutputStream.close()
+            return Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP or Base64.URL_SAFE)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    private fun getRandomString(size: Int): String {
+        val rand = Random() //instance of random class
+        val totalCharacters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        var randomString = ""
+        for (i in 0 until size) {
+            randomString += totalCharacters[rand.nextInt(totalCharacters.length - 1)]
+        }
+        return randomString
     }
 
     private val authData = AuthorizationV2Data(

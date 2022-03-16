@@ -68,8 +68,8 @@ android {
         compileSdkVersion 31
         targetSdkVersion 31
 
-        versionCode 53
-        versionName '3.3.2'
+        versionCode 54
+        versionName '3.4.0-beta'
 
         renderscriptTargetApi 21
         renderscriptSupportModeEnabled true
@@ -90,6 +90,7 @@ android {
             debuggable false
         }
         debug {
+            applicationIdSuffix '.debug'
             lintOptions {
                 disable 'MissingTranslation'
                 // google services plugin is causing missing translation issue

@@ -167,13 +167,11 @@ class ConnectionsListViewModel(
                     else -> interactor.revokeConnection(item.guid)
                 }
             }
+            else -> {}
         }
     }
 
-    override fun onDatasetChanged(
-        connections: List<ConnectionAbs>,
-        consents: List<ConsentData>
-    ) {
+    override fun onDatasetChanged(connections: List<ConnectionAbs>, consents: List<ConsentData>) {
         val context = weakContext.get() ?: return
         val items = connections.convertConnectionsToViewItems(context, locationManager)
         val itemsWithConsentInfo = items.enrichItemsWithConsentInfo(consents)
