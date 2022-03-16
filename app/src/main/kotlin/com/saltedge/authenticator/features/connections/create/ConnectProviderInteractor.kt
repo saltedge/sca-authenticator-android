@@ -131,11 +131,16 @@ abstract class ConnectProviderInteractor(
         contract?.onConnectionSuccessAuthentication()
     }
 
+    override fun destroyConnectionIfNotAuthorized() {
+        if (connection.guid.isNotEmpty() && connection.accessToken.isEmpty()) {
+            keyStoreManager.deleteKeyPairIfExist(connection.guid)
+        }
+    }
+
     private fun processAccessToken(accessToken: Token): String? {
         return if (connection.isV2Api) {
             try {
                 val richConnection = connection.toRichConnection(keyStoreManager)
-
                 CryptoToolsV2.decryptAccessToken(accessToken, richConnection?.private)!!
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -143,12 +148,6 @@ abstract class ConnectProviderInteractor(
                 null
             }
         } else accessToken
-    }
-
-    override fun destroyConnectionIfNotAuthorized() {
-        if (connection.guid.isNotEmpty() && connection.accessToken.isEmpty()) {
-            keyStoreManager.deleteKeyPairIfExist(connection.guid)
-        }
     }
 }
 
