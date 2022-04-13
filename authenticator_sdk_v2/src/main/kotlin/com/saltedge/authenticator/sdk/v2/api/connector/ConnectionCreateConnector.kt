@@ -87,17 +87,10 @@ internal class ConnectionCreateConnector(
         call: Call<CreateConnectionResponse>,
         response: CreateConnectionResponse
     ) {
-        val connectionId = response.data?.connectionId
-        val authenticationUrl = response.data?.authenticationUrl
-
-        if (connectionId == null || authenticationUrl == null) {
-            onFailureResponse(call, createInvalidResponseError())
-        } else {
-            callback?.onConnectionCreateSuccess(
-                authenticationUrl = authenticationUrl,
-                connectionId = connectionId
-            )
-        }
+        callback?.onConnectionCreateSuccess(
+            authenticationUrl = response.data.authenticationUrl,
+            connectionId = response.data.connectionId
+        )
     }
 
     /**
