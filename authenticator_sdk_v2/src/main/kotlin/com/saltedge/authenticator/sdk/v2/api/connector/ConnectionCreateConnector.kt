@@ -27,6 +27,7 @@ import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionRe
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionRequestData
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponse
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.api.model.error.createInvalidResponseError
 import com.saltedge.authenticator.sdk.v2.api.retrofit.ApiInterface
 import com.saltedge.authenticator.sdk.v2.api.retrofit.toConnectionsCreateUrl
 import com.saltedge.authenticator.sdk.v2.config.ApiV2Config
@@ -82,7 +83,10 @@ internal class ConnectionCreateConnector(
      * @param call - retrofit call
      * @param response - CreateConnectionResponse model
      */
-    override fun onSuccessResponse(call: Call<CreateConnectionResponse>, response: CreateConnectionResponse) {
+    override fun onSuccessResponse(
+        call: Call<CreateConnectionResponse>,
+        response: CreateConnectionResponse
+    ) {
         callback?.onConnectionCreateSuccess(
             authenticationUrl = response.data.authenticationUrl,
             connectionId = response.data.connectionId
