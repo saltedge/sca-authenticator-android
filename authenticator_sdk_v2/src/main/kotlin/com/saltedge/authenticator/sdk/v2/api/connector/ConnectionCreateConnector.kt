@@ -83,18 +83,14 @@ internal class ConnectionCreateConnector(
      * @param call - retrofit call
      * @param response - CreateConnectionResponse model
      */
-    override fun onSuccessResponse(call: Call<CreateConnectionResponse>, response: CreateConnectionResponse) {
-        val connectionId = response.data?.connectionId
-        val authenticationUrl = response.data?.authenticationUrl
-
-        if (connectionId == null || authenticationUrl == null) {
-            onFailureResponse(call, createInvalidResponseError())
-        } else {
-            callback?.onConnectionCreateSuccess(
-                authenticationUrl = authenticationUrl,
-                connectionId = connectionId
-            )
-        }
+    override fun onSuccessResponse(
+        call: Call<CreateConnectionResponse>,
+        response: CreateConnectionResponse
+    ) {
+        callback?.onConnectionCreateSuccess(
+            authenticationUrl = response.data.authenticationUrl,
+            connectionId = response.data.connectionId
+        )
     }
 
     /**

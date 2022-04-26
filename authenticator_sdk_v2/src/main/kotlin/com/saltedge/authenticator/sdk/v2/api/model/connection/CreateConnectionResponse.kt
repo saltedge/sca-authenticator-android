@@ -27,7 +27,7 @@ import com.saltedge.authenticator.core.api.KEY_CONNECTION_ID
 import com.saltedge.authenticator.core.api.KEY_DATA
 
 @Keep
-data class CreateConnectionResponse(@SerializedName(KEY_DATA) var data: CreateConnectionResponseData? = null)
+data class CreateConnectionResponse(@SerializedName(KEY_DATA) var data: CreateConnectionResponseData)
 
 @Keep
 data class CreateConnectionResponseData(
