@@ -78,7 +78,7 @@ object CryptoToolsV2 : BaseCryptoTools(), CryptoToolsV2Abs {
     fun decryptAccessToken(encryptedData: String, rsaPrivateKey: PrivateKey?): String? {
         return try {
             val privateKey = rsaPrivateKey ?: return null
-            val encryptedBytes = Base64.decode(encryptedData.replace("\n", ""), Base64.NO_WRAP or Base64.URL_SAFE)
+            val encryptedBytes = Base64.decode(encryptedData.replace("\n", ""), Base64.NO_WRAP)
             val jsonString = String(rsaDecrypt(encryptedBytes, privateKey) ?: return null)
             val result = createDefaultGson().fromJson(jsonString, WrappedAccessToken::class.java)
             result.accessToken
