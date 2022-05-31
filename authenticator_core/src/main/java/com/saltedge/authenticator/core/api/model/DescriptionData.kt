@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.core.api.model
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import org.joda.time.DateTime
 import java.io.Serializable
@@ -28,6 +29,7 @@ import java.io.Serializable
  * Authorization data bundle.
  *
  */
+@Keep
 data class DescriptionData(
     val payment: DescriptionPaymentData? = null,
     val text: String? = null,
@@ -44,6 +46,7 @@ data class DescriptionData(
         get() = payment != null
 }
 
+@Keep
 data class DescriptionPaymentData(
     @SerializedName("payee") var payee: String? = null,
     @SerializedName("amount") var amount: String? = null,
@@ -54,6 +57,7 @@ data class DescriptionPaymentData(
     @SerializedName("reference") var reference: String? = null
 )
 
+@Keep
 data class ExtraData(
     @SerializedName("action_date") var actionDate: DateTime? = null,
     @SerializedName("device") var device: String? = null,

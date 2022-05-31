@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.core.api.model
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.core.api.*
 import com.saltedge.authenticator.core.tools.isNotEmptyIfDeclared
@@ -37,6 +38,7 @@ import java.io.Serializable
  * @param encryptedAesIv AES initialization vector encrypted with RSA algorithm and encoded with Base64 algorithm
  * @param encryptedData AES secret key encrypted with RSA algorithm and encoded with Base64 algorithm
  */
+@Keep
 data class EncryptedBundle(
     @SerializedName(KEY_KEY) val encryptedAesKey: String,
     @SerializedName(KEY_IV) val encryptedAesIv: String,
@@ -52,6 +54,7 @@ data class EncryptedBundle(
  * encrypted data (any data) with symmetric algorithm,
  * algorithm code (now is supported only AES-CBC-256),
  */
+@Keep
 data class EncryptedData(
     @SerializedName(KEY_ID) var id: String,
     @SerializedName(KEY_CONNECTION_ID) var connectionId: String,

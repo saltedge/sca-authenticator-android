@@ -32,12 +32,14 @@ import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
 import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
+import io.realm.internal.Keep
 import org.joda.time.DateTime
 import timber.log.Timber
 import java.io.Serializable
 
 const val LIFE_TIME_OF_FINAL_MODEL = 4 // seconds
 
+@Keep
 data class AuthorizationItemViewModel(
     val authorizationID: ID,
     var authorizationCode: String,
