@@ -20,18 +20,22 @@
  */
 package com.saltedge.authenticator.sdk.v2.api.model.authorization
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.saltedge.authenticator.core.api.*
 import org.joda.time.DateTime
 import java.io.Serializable
 
+@Keep
 data class AuthorizationsListResponse(@SerializedName(KEY_DATA) var data: List<AuthorizationResponseData>)
 
+@Keep
 data class AuthorizationResponse(@SerializedName(KEY_DATA) var data: AuthorizationResponseData)
 
 /**
  * @status - pending confirm_processing deny_processing confirmed denied closed
  */
+@Keep
 data class AuthorizationResponseData(
     @SerializedName(KEY_ID) var id: String,
     @SerializedName(KEY_CONNECTION_ID) var connectionId: String,

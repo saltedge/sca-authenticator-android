@@ -21,10 +21,12 @@
 package com.saltedge.authenticator.core.model
 
 import android.net.Uri
+import androidx.annotation.Keep
 import com.saltedge.authenticator.core.api.*
 import com.saltedge.authenticator.core.model.ID
 import java.io.Serializable
 
+@Keep
 data class ActionAppLinkData(
     var apiVersion: String,
     var actionIdentifier: ID,

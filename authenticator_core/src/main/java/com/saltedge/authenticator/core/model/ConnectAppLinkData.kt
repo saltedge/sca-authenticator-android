@@ -21,9 +21,11 @@
 package com.saltedge.authenticator.core.model
 
 import android.net.Uri
+import androidx.annotation.Keep
 import timber.log.Timber
 import java.io.Serializable
 
+@Keep
 data class ConnectAppLinkData(
     var configurationUrl: String,
     var connectQuery: String? = null
