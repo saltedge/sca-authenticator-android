@@ -175,7 +175,7 @@
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/deleteActionView"
+        android:id="@+id/successActionView"
         style="@style/KeypadAction"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/line_vertical_2"
@@ -183,11 +183,28 @@
         app:layout_constraintTop_toBottomOf="@id/line_horizontal_3">
 
         <ImageView
-            android:layout_width="@dimen/dp_24"
-            android:layout_height="@dimen/dp_24"
+            android:layout_width="@dimen/dp_32"
+            android:layout_height="@dimen/dp_32"
             android:layout_gravity="center"
             android:contentDescription="@null"
             android:scaleType="fitCenter"
-            app:srcCompat="@drawable/ic_numpad_clear" />
+            app:srcCompat="@drawable/ic_success" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/disabledSuccessActionView"
+        style="@style/KeypadAction"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/line_vertical_2"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/line_horizontal_3">
+
+        <ImageView
+            android:layout_width="@dimen/dp_32"
+            android:layout_height="@dimen/dp_32"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_success_disabled" />
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

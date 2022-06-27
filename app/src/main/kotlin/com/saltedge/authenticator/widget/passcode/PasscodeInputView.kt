@@ -92,7 +92,16 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
         listener?.onForgotActionSelected()
     }
 
-    override fun onDeleteKeyClick() {
+    override fun onSuccessKeyClick() {
+        onPasscodeInputFinished(passcode = passcodeLabelView?.text?.toString() ?: "")
+    }
+
+    override fun showErrorMessage() {
+        val errorMessage: String = context.getString(R.string.errors_passcode_info)
+        showError(error = String.format(errorMessage, PASSCODE_MIN_SIZE, PASSCODE_MAX_SIZE))
+    }
+
+    private fun onDeleteKeyClick() {
         val text: String = passcodeLabelView?.text?.toString() ?: return
         if (text.isNotEmpty()) updatePasscodeOutput(text.take(text.length - 1))
     }
@@ -104,16 +113,17 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
 
         keypadView?.setupFingerAction(active = biometricsActionIsAvailable)
         keypadView?.clickListener = this
-        submitView?.setOnClickListener {
-            onPasscodeInputFinished(passcode = passcodeLabelView?.text?.toString() ?: "")
-        }
+        deleteActionView?.setOnClickListener { onDeleteKeyClick() }
     }
 
     private fun updatePasscodeOutput(text: String) {
         passcodeLabelView?.setText(text)
-        submitView?.setVisible(show = (PASSCODE_MIN_SIZE..PASSCODE_MAX_SIZE).contains(text.length))
+        deleteActionView?.setVisible(show = (1..PASSCODE_MAX_SIZE).contains(text.length))
         keypadView?.let {
-            if (text.isEmpty() && biometricsActionIsAvailable) it.showFingerView() else it.showDeleteView()
+            if (text.isEmpty() && biometricsActionIsAvailable) it.showFingerView() else {
+                if (text.length in 4..PASSCODE_MAX_SIZE) it.showSuccessView()
+                else it.showDisabledSuccessView()
+            }
         }
     }
 
