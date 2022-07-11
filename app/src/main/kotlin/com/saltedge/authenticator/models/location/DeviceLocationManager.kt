@@ -54,12 +54,13 @@ object DeviceLocationManager : DeviceLocationManagerAbs {
     val permissions = arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)
     override var locationDescription: String? = null
         private set
+
     @SuppressLint("StaticFieldLeak")
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val locationCallback: LocationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
             super.onLocationResult(result)
-            locationDescription = result.lastLocation.headerValue
+            locationDescription = result.lastLocation?.headerValue
         }
     }
     private val context: Context
@@ -83,8 +84,17 @@ object DeviceLocationManager : DeviceLocationManagerAbs {
             request.fastestInterval = 5000
             request.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
 
-            if (permissions.any { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED }) {
-                fusedLocationClient.requestLocationUpdates(request, locationCallback, Looper.getMainLooper())
+            if (permissions.any {
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        it
+                    ) == PackageManager.PERMISSION_GRANTED
+                }) {
+                fusedLocationClient.requestLocationUpdates(
+                    request,
+                    locationCallback,
+                    Looper.getMainLooper()
+                )
             } else {
                 fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                     locationDescription = location?.headerValue
@@ -95,7 +105,12 @@ object DeviceLocationManager : DeviceLocationManagerAbs {
 
     override fun locationPermissionsGranted(): Boolean {
         val context = fusedLocationClient.applicationContext
-        return permissions.any { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED }
+        return permissions.any {
+            ContextCompat.checkSelfPermission(
+                context,
+                it
+            ) == PackageManager.PERMISSION_GRANTED
+        }
     }
 
     override fun isLocationProviderActive(): Boolean {
@@ -127,21 +142,24 @@ object DeviceLocationManager : DeviceLocationManagerAbs {
         locationRequest.fastestInterval = 5000
         val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
         builder.setAlwaysShow(true)
-        val result: PendingResult<LocationSettingsResult> = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build())
-        result.setResultCallback { result ->
-            val status: Status = result.status
-            when (status.statusCode) {
-                LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> try {
-                    // Show the dialog by calling startResolutionForResult(),
-                    status.startResolutionForResult(
-                        activity,
-                        REQUEST_LOCATION
-                    )
-                } catch (e: IntentSender.SendIntentException) {
-                    Timber.e(e)
-                }
-                LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
-                    activity.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+        googleApiClient?.let {
+            val result: PendingResult<LocationSettingsResult> =
+                LocationServices.SettingsApi.checkLocationSettings(it, builder.build())
+            result.setResultCallback { result ->
+                val status: Status = result.status
+                when (status.statusCode) {
+                    LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> try {
+                        // Show the dialog by calling startResolutionForResult(),
+                        status.startResolutionForResult(
+                            activity,
+                            REQUEST_LOCATION
+                        )
+                    } catch (e: IntentSender.SendIntentException) {
+                        Timber.e(e)
+                    }
+                    LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
+                        activity.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                    }
                 }
             }
         }
