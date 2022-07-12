@@ -93,10 +93,12 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
     }
 
     override fun onSuccessKeyClick() {
-        onPasscodeInputFinished(passcode = passcodeLabelView?.text?.toString() ?: "")
+        if (passcodeLabelView?.text?.length in PASSCODE_MIN_SIZE..PASSCODE_MAX_SIZE) {
+            onPasscodeInputFinished(passcode = passcodeLabelView?.text?.toString() ?: "")
+        } else showErrorMessage()
     }
 
-    override fun showErrorMessage() {
+    private fun showErrorMessage() {
         val errorMessage: String = context.getString(R.string.errors_passcode_info)
         showError(error = String.format(errorMessage, PASSCODE_MIN_SIZE, PASSCODE_MAX_SIZE))
     }
@@ -120,10 +122,7 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
         passcodeLabelView?.setText(text)
         deleteActionView?.setVisible(show = (1..PASSCODE_MAX_SIZE).contains(text.length))
         keypadView?.let {
-            if (text.isEmpty() && biometricsActionIsAvailable) it.showFingerView() else {
-                if (text.length in 4..PASSCODE_MAX_SIZE) it.showSuccessView()
-                else it.showDisabledSuccessView()
-            }
+            if (text.isEmpty() && biometricsActionIsAvailable) it.showFingerView() else it.showSuccessView()
         }
     }
 
