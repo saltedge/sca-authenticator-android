@@ -81,4 +81,5 @@
     <color name="white_and_blue_black">@android:color/white</color>
     <color name="white_and_dark_100">@android:color/white</color>
     <color name="red_and_red_light">@color/red</color>
+    <color name="grey_80_and_grey_100">@color/grey_80</color>
 </resources>
