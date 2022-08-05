@@ -68,7 +68,7 @@ internal abstract class ApiResponseInterceptor<T> : Callback<T> {
         return try {
             response.errorBody()?.string()?.let {
                 val errorObject = Gson().fromJson<ApiErrorData>(it, ApiErrorData::class.java)
-                if (errorObject.errorMessage.isEmpty()) null else errorObject
+                if (errorObject.errorMessage.isNullOrEmpty()) null else errorObject
             } ?: createRequestError(response.code())
         } catch (e: Exception) {
             Timber.e(e)
