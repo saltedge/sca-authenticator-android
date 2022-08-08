@@ -75,7 +75,21 @@ class CloudMessagingService : FirebaseMessagingService() {
             activityIntent.putExtra(KEY_CONNECTION_ID, connectionId)
             activityIntent.putExtra(KEY_AUTHORIZATION_ID, authorizationId)
 
-            PendingIntent.getActivity(this, 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                PendingIntent.getActivity(
+                    this,
+                    0,
+                    activityIntent,
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+            } else {
+                PendingIntent.getActivity(
+                    this,
+                    0,
+                    activityIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
+            }
         } else {
             null
         }
