@@ -21,144 +21,94 @@
 package com.saltedge.authenticator.features.connections.list
 
 import android.content.Context
+import android.content.DialogInterface
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_GUID
-import com.saltedge.authenticator.features.authorizations.common.collectConnectionsAndKeys
-import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
+import com.saltedge.authenticator.app.ConnectivityReceiverAbs
+import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
+import com.saltedge.authenticator.app.guid
+import com.saltedge.authenticator.core.api.KEY_NAME
+import com.saltedge.authenticator.core.api.model.ConsentData
+import com.saltedge.authenticator.core.model.ConnectionAbs
+import com.saltedge.authenticator.core.model.GUID
+import com.saltedge.authenticator.features.connections.common.ConnectionItem
+import com.saltedge.authenticator.features.connections.common.convertConnectionsToViewItems
 import com.saltedge.authenticator.features.connections.edit.EditConnectionNameDialog
+import com.saltedge.authenticator.features.connections.list.menu.ConnectionsListMenuItemType
 import com.saltedge.authenticator.features.connections.list.menu.MenuData
 import com.saltedge.authenticator.features.connections.list.menu.PopupMenuBuilder
-import com.saltedge.authenticator.features.consents.common.consentsCountPrefixForConnection
+import com.saltedge.authenticator.features.connections.list.menu.buildConnectionsListMenu
 import com.saltedge.authenticator.features.consents.list.ConsentsListViewModel
-import com.saltedge.authenticator.features.menu.MenuItemData
-import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.constants.KEY_NAME
-import com.saltedge.authenticator.sdk.contract.ConnectionsRevokeListener
-import com.saltedge.authenticator.sdk.contract.FetchEncryptedDataListener
-import com.saltedge.authenticator.sdk.model.*
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.connection.isActive
-import com.saltedge.authenticator.sdk.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.app.guid
+import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
+import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.postUnitEvent
-import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.CoroutineScope
+import java.lang.ref.WeakReference
 
 class ConnectionsListViewModel(
-    private val appContext: Context,
-    private val connectionsRepository: ConnectionsRepositoryAbs,
-    private val keyStoreManager: KeyStoreManagerAbs,
-    private val apiManager: AuthenticatorApiManagerAbs,
-    private val cryptoTools: CryptoToolsAbs
+    private val weakContext: WeakReference<Context>,
+    private val interactor: ConnectionsListInteractorAbs,
+    private val locationManager: DeviceLocationManagerAbs,
+    private val connectivityReceiver: ConnectivityReceiverAbs
 ) : ViewModel(),
+    ConnectionsListInteractorCallback,
     LifecycleObserver,
-    ConnectionsRevokeListener,
-    FetchEncryptedDataListener,
-    CoroutineScope,
     PopupMenuBuilder.ItemClickListener
 {
-    private val decryptJob: Job = Job()
-    override val coroutineContext: CoroutineContext
-        get() = decryptJob + Dispatchers.IO
-    private var connectionsAndKeys: Map<ConnectionID, ConnectionAndKey> =
-        collectConnectionsAndKeys(
-            connectionsRepository,
-            keyStoreManager
-        )
-    private var consents: Map<GUID, List<ConsentData>> = emptyMap()
+    private val listItemsValues: List<ConnectionItem>
+        get() = listItems.value ?: emptyList()
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onListItemClickEvent = MutableLiveData<ViewModelEvent<MenuData>>()
     val onSupportClickEvent = MutableLiveData<ViewModelEvent<String?>>()
-    val onReconnectClickEvent = MutableLiveData<ViewModelEvent<String>>()
+    val onReconnectClickEvent = MutableLiveData<ViewModelEvent<ReconnectData>>()
     val onRenameClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
+    val onAccessToLocationClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onDeleteClickEvent = MutableLiveData<ViewModelEvent<String>>()
     val onViewConsentsClickEvent = MutableLiveData<ViewModelEvent<Bundle>>()
+    val onAskPermissionsEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onGoToSettingsEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onShowNoInternetConnectionDialogEvent = MutableLiveData<ViewModelEvent<GUID>>()
     val listVisibility = MutableLiveData<Int>()
     val emptyViewVisibility = MutableLiveData<Int>()
-    val listItems = MutableLiveData<List<ConnectionItemViewModel>>()
-    val listItemsValues: List<ConnectionItemViewModel>
-        get() = listItems.value ?: emptyList()
-    val updateListItemEvent = MutableLiveData<ConnectionItemViewModel>()
+    val listItems = MutableLiveData<List<ConnectionItem>>(emptyList())
+    val updateListItemEvent = MutableLiveData<ConnectionItem>()
+    override val coroutineScope: CoroutineScope
+        get() = viewModelScope
+
+    init {
+        interactor.contract = this
+    }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStart() {
-        updateViewsContent()
-        refreshConsents()
+        interactor.updateConnections()
+        interactor.updateConsents()
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun onDestroy() {
-        decryptJob.cancel()
+    fun refreshConsents() {
+        interactor.updateConsents()
     }
 
-    override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiError: ApiErrorData?) {}
-
-    override fun onFetchEncryptedDataResult(
-        result: List<EncryptedData>,
-        errors: List<ApiErrorData>
-    ) {
-        processOfEncryptedConsentsResult(encryptedList = result)
-    }
-
-    override fun onMenuItemClick(menuId: Int, itemId: Int) {
-        val item = listItemsValues.getOrNull(menuId) ?: return
-        when (PopupMenuItem.values()[itemId]) {
-            PopupMenuItem.RECONNECT -> onReconnectClickEvent.postValue(ViewModelEvent(item.guid))
-            PopupMenuItem.RENAME -> {
-                connectionsRepository.getByGuid(item.guid)?.let { connection ->
-                    onRenameClickEvent.postValue(ViewModelEvent(
-                        EditConnectionNameDialog.dataBundle(item.guid, connection.name)
-                    ))
-                }
-            }
-            PopupMenuItem.SUPPORT -> {
-                connectionsRepository.getByGuid(item.guid)?.supportEmail?.let {
-                    onSupportClickEvent.postValue(ViewModelEvent(it))
-                }
-            }
-            PopupMenuItem.CONSENTS -> {
-                onViewConsentsClickEvent.postValue(ViewModelEvent(
-                    ConsentsListViewModel.newBundle(item.guid, consents[item.guid])
-                ))
-            }
-            PopupMenuItem.DELETE -> {
-                if (item.isActive) onDeleteClickEvent.postValue(ViewModelEvent(item.guid))
-                else {
-                    deleteConnectionsAndKeys(item.guid)
-                    updateViewsContent()
-                }
-            }
-        }
-    }
-
-    fun onEditNameResult(data: Bundle) {
+    fun onItemNameChanged(data: Bundle) {
         val listItem = listItemsValues.find { it.guid == data.guid } ?: return
         val newConnectionName = data.getString(KEY_NAME) ?: return
-        val itemIndex = listItemsValues.indexOf(listItem)
-        if (listItem.name != newConnectionName && newConnectionName.isNotEmpty()) {
-            connectionsRepository.getByGuid(listItem.guid)?.let { connection ->
-                connectionsRepository.updateNameAndSave(connection, newConnectionName)
-                listItems.value?.get(itemIndex)?.name = newConnectionName
-                updateListItemEvent.postValue(listItem)
-            }
+        if (listItem.name != newConnectionName
+            && newConnectionName.isNotEmpty()
+            && interactor.updateNameAndSave(listItem.guid, newConnectionName)
+        ) {
+            val itemIndex = listItemsValues.indexOf(listItem)
+            listItems.value?.get(itemIndex)?.name = newConnectionName
+            updateListItemEvent.postValue(listItem)
         }
     }
 
-    fun onDeleteItemResult(guid: GUID) {
+    fun deleteItem(guid: GUID) {
         val listItem = listItemsValues.find { it.guid == guid } ?: return
-        connectionsRepository.getByGuid(listItem.guid)?.let { connection ->
-            sendRevokeRequestForConnections(listOf(connection))
-        }
-        deleteConnectionsAndKeys(listItem.guid)
-        updateViewsContent()
+        interactor.revokeConnection(connectionGuid = listItem.guid)
     }
 
     fun onViewClick(viewId: Int) {
@@ -166,131 +116,85 @@ class ConnectionsListViewModel(
     }
 
     fun onListItemClick(itemIndex: Int) {
-        listItemsValues.getOrNull(itemIndex)?.let { item ->
-            val menuItems = mutableListOf<MenuItemData>()
-            if (!item.isActive) {
-                menuItems.add(
-                    MenuItemData(
-                        id = PopupMenuItem.RECONNECT.ordinal,
-                        iconRes = R.drawable.ic_menu_reconnect_24dp,
-                        textRes = R.string.actions_reconnect
-                    )
-                )
-            }
-            menuItems.addAll(
-                listOf(
-                    MenuItemData(
-                        id = PopupMenuItem.RENAME.ordinal,
-                        iconRes = R.drawable.ic_menu_edit_24dp,
-                        textRes = R.string.actions_rename
-                    ),
-                    MenuItemData(
-                        id = PopupMenuItem.SUPPORT.ordinal,
-                        iconRes = R.drawable.ic_contact_support_24dp,
-                        textRes = R.string.actions_contact_support
-                    )
-                )
-            )
-            if ((consents[item.guid]?.count() ?: 0) > 0) {
-                menuItems.add(
-                    MenuItemData(
-                        id = PopupMenuItem.CONSENTS.ordinal,
-                        iconRes = R.drawable.ic_view_consents_24dp,
-                        textRes = R.string.actions_view_consents
-                    )
-                )
-            }
-            menuItems.add(
-                MenuItemData(
-                    id = PopupMenuItem.DELETE.ordinal,
-                    iconRes = if (item.isActive) R.drawable.ic_menu_delete_24dp else R.drawable.ic_menu_remove_24dp,
-                    textRes = if (item.isActive) R.string.actions_delete else R.string.actions_remove
-                )
-            )
-            onListItemClickEvent.postValue(ViewModelEvent(MenuData(menuId = itemIndex, items = menuItems)))
-        }
-    }
-
-    fun refreshConsents() {
-        collectConsentRequestData()?.let {
-            apiManager.getConsents(
-                connectionsAndKeys = it,
-                resultCallback = this
-            )
-        }
-    }
-
-    //TODO SET AS PRIVATE AFTER CREATING TEST FOR COROUTINE
-    fun processDecryptedConsentsResult(result: List<ConsentData>) {
-        this.consents = result.groupBy {
-            listItemsValues.firstOrNull { viewModel ->
-                viewModel.connectionId == it.connectionId
-            }?.guid ?: ""
-        }
-        val newListItems = updateItemsWithConsentData(listItemsValues, consents)
-        listItems.postValue(newListItems)
-    }
-
-    private fun collectConsentRequestData(): List<ConnectionAndKey>? {
-        return if (connectionsAndKeys.isEmpty()) null else connectionsAndKeys.values.toList()
-    }
-
-    private fun processOfEncryptedConsentsResult(encryptedList: List<EncryptedData>) {
-        launch {
-            val data = decryptConsents(encryptedList = encryptedList)
-            withContext(Dispatchers.Main) { processDecryptedConsentsResult(result = data) }
-        }
-    }
-
-    private fun decryptConsents(encryptedList: List<EncryptedData>): List<ConsentData> {
-        return encryptedList.mapNotNull {
-            cryptoTools.decryptConsentData(
-                encryptedData = it,
-                rsaPrivateKey = connectionsAndKeys[it.connectionId]?.key
-            )
-        }
-    }
-
-    private fun updateViewsContent() {
-        val newListItems = collectAllConnectionsViewModels(connectionsRepository, appContext)
-        listItems.postValue(updateItemsWithConsentData(newListItems, consents))
-        if (newListItems.isEmpty()) {
-            emptyViewVisibility.postValue(View.VISIBLE)
-            listVisibility.postValue(View.GONE)
-        } else {
-            listVisibility.postValue(View.VISIBLE)
-            emptyViewVisibility.postValue(View.GONE)
-        }
-    }
-
-    private fun updateItemsWithConsentData(
-        items: List<ConnectionItemViewModel>,
-        consents: Map<ConnectionID, List<ConsentData>>
-    ): List<ConnectionItemViewModel> {
-        return items.apply {
-            forEach {
-                val count = consents[it.guid]?.count() ?: 0
-                it.consentsDescription = consentsCountPrefixForConnection(count, appContext)
-            }
-        }
-    }
-
-    private fun sendRevokeRequestForConnections(connections: List<Connection>) {
-        val connectionsAndKeys: List<ConnectionAndKey> = connections.filter { it.isActive() }
-            .mapNotNull { keyStoreManager.createConnectionAndKeyModel(it) }
-
-        apiManager.revokeConnections(
-            connectionsAndKeys = connectionsAndKeys,
-            resultCallback = this
+        val item = listItemsValues.getOrNull(itemIndex) ?: return
+        onListItemClickEvent.postValue(
+            ViewModelEvent(MenuData(menuId = itemIndex, items = buildConnectionsListMenu(item)))
         )
     }
 
-    private fun deleteConnectionsAndKeys(connectionGuid: GUID) {
-        keyStoreManager.deleteKeyPair(connectionGuid)
-        connectionsRepository.deleteConnection(connectionGuid)
+    fun onRequestPermissionsResult(requestCode: Int, grantResults: IntArray) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE
+            && grantResults.any { it == PackageManager.PERMISSION_GRANTED }
+        ) {
+            locationManager.startLocationUpdates()
+            interactor.updateConnections()
+        }
     }
 
-    enum class PopupMenuItem {
-        RECONNECT, RENAME, SUPPORT, CONSENTS, DELETE
+    override fun onMenuItemClick(menuId: Int, itemId: Int) {
+        val item = listItemsValues.getOrNull(menuId) ?: return
+        when (ConnectionsListMenuItemType.values()[itemId]) {
+            ConnectionsListMenuItemType.RECONNECT -> {
+                onReconnectClickEvent.postValue(
+                    ViewModelEvent(ReconnectData(guid = item.guid, apiVersion = item.apiVersion))
+                )
+            }
+            ConnectionsListMenuItemType.RENAME -> {
+                onRenameClickEvent.postValue(
+                    ViewModelEvent(EditConnectionNameDialog.dataBundle(item.guid, item.name))
+                )
+            }
+            ConnectionsListMenuItemType.SUPPORT -> {
+                onSupportClickEvent.postValue(ViewModelEvent(item.email))
+            }
+            ConnectionsListMenuItemType.CONSENTS -> {
+                onViewConsentsClickEvent.postValue(
+                    ViewModelEvent(ConsentsListViewModel.newBundle(
+                        connectionGuid = item.guid,
+                        consents = interactor.getConsents(connectionGuid = item.guid)
+                    ))
+                )
+            }
+            ConnectionsListMenuItemType.LOCATION -> {
+                onAccessToLocationClickEvent.postUnitEvent()
+            }
+            ConnectionsListMenuItemType.DELETE -> {
+                when {
+                    !connectivityReceiver.hasNetworkConnection -> {
+                        onShowNoInternetConnectionDialogEvent.postValue(ViewModelEvent(item.guid))
+                    }
+                    item.isActive -> onDeleteClickEvent.postValue(ViewModelEvent(item.guid))
+                    else -> interactor.revokeConnection(item.guid)
+                }
+            }
+            else -> {}
+        }
+    }
+
+    override fun onDatasetChanged(connections: List<ConnectionAbs>, consents: List<ConsentData>) {
+        val context = weakContext.get() ?: return
+        val items = connections.convertConnectionsToViewItems(context, locationManager)
+        val itemsWithConsentInfo = items.enrichItemsWithConsentInfo(consents)
+        listItems.postValue(itemsWithConsentInfo)
+        emptyViewVisibility.postValue(if (itemsWithConsentInfo.isEmpty()) View.VISIBLE else View.GONE)
+        listVisibility.postValue(if (itemsWithConsentInfo.isEmpty()) View.GONE else View.VISIBLE)
+    }
+
+    fun onDialogActionClick(dialogActionId: Int, actionResId: ResId, guid: GUID = "") {
+        if (dialogActionId == DialogInterface.BUTTON_POSITIVE) {
+            when (actionResId) {
+                R.string.actions_proceed -> onAskPermissionsEvent.postUnitEvent()
+                R.string.actions_go_to_settings -> onGoToSettingsEvent.postUnitEvent()
+                R.string.actions_retry -> if (connectivityReceiver.hasNetworkConnection) deleteItem(guid = guid)
+            }
+        }
+    }
+
+    private fun List<ConnectionItem>.enrichItemsWithConsentInfo(
+        consents: List<ConsentData>
+    ): List<ConnectionItem> {
+        return this.onEach { item ->
+            item.consentsCount = consents.filter { it.connectionId == item.connectionId  }.count()
+        }
     }
 }

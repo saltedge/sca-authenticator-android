@@ -23,21 +23,15 @@ package com.saltedge.authenticator.features.connections.create
 import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.view.View
+import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.models.Connection
-import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.constants.ERROR_CLASS_API_RESPONSE
-import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
-import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
-import com.saltedge.authenticator.sdk.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.model.response.CreateConnectionResponseData
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
 import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
+import com.saltedge.authenticator.core.api.ERROR_CLASS_API_RESPONSE
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ConnectAppLinkData
+import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import net.danlew.android.joda.JodaTimeAndroid
 import org.hamcrest.CoreMatchers.equalTo
@@ -50,370 +44,117 @@ import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class ConnectProviderViewModelTest {
+class ConnectProviderViewModelTest : ViewModelTest() {
 
     private lateinit var viewModel: ConnectProviderViewModel
-    private val mockPreferenceRepository = mock(PreferenceRepositoryAbs::class.java)
-    private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
-    private val mockKeyStoreManager = mock(KeyStoreManagerAbs::class.java)
-    private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
+    private val mockInteractor = mock(ConnectProviderInteractorAbs::class.java)
     private val mockLocationManager = mock(DeviceLocationManagerAbs::class.java)
 
     @Before
     fun setUp() {
         JodaTimeAndroid.init(TestAppTools.applicationContext)
-        given(mockPreferenceRepository.cloudMessagingToken).willReturn("push_token")
-
         viewModel = ConnectProviderViewModel(
             appContext = TestAppTools.applicationContext,
-            preferenceRepository = mockPreferenceRepository,
-            connectionsRepository = mockConnectionsRepository,
-            keyStoreManager = mockKeyStoreManager,
+            interactor = mockInteractor,
             locationManager = mockLocationManager,
-            apiManager = mockApiManager
         )
     }
 
     @Test
     @Throws(Exception::class)
-    fun onViewClickTest() {
-        given(mockConnectionsRepository.getByGuid("guid1")).willReturn(null)
-        viewModel.setInitialData(
-            initialConnectData = ConnectAppLinkData("connectConfigurationLink", null),
-            connectionGuid = "guid1"
-        )
+    fun setInitialDataTestCase1() {
+        //given
+        val initialConnectData = ConnectAppLinkData(configurationUrl = "https://localhost/api/authenticator/v2/configuration")
+        val connectionGuid = null
+        given(mockInteractor.hasConnection).willReturn(false)
+        given(mockInteractor.hasConfigUrl).willReturn(true)
 
-        viewModel.onViewClick(-1)
+        //when
+        viewModel.setInitialData(initialConnectData = initialConnectData, connectionGuid = connectionGuid)
 
-        assertNull(viewModel.onCloseEvent.value)
 
-        viewModel.onViewClick(R.id.actionView)
-
-        assertNotNull(viewModel.onCloseEvent.value)
+        //then
+        verify(mockInteractor).contract = viewModel
+        verify(mockInteractor).setInitialData(initialConnectData, connectionGuid)
+        assertThat(viewModel.titleRes, equalTo(R.string.connections_new_connection))
     }
 
     @Test
     @Throws(Exception::class)
-    fun onDialogActionIdClickTest() {
-        viewModel.fetchProviderConfigurationDataResult(result = null, error = null)
+    fun setInitialDataTestCase2() {
+        //given
+        val initialConnectData = ConnectAppLinkData(configurationUrl = "https://localhost/api/authenticator/v2/configuration")
+        val connectionGuid = "guid1"
+        given(mockInteractor.hasConnection).willReturn(true)
+        given(mockInteractor.hasConfigUrl).willReturn(true)
 
-        assertThat(
-            viewModel.onShowErrorEvent.value,
-            equalTo(ViewModelEvent(TestAppTools.applicationContext.getString(R.string.errors_unable_connect_provider)))
-        )
+        //when
+        viewModel.setInitialData(initialConnectData = initialConnectData, connectionGuid = connectionGuid)
 
-        viewModel.onDialogActionIdClick(DialogInterface.BUTTON_POSITIVE)
 
-        assertNotNull(viewModel.onCloseEvent.value)
-    }
-
-    /**
-     * When access_token is not null or empty
-     */
-    @Test
-    @Throws(Exception::class)
-    fun authFinishedWithSuccessTest() {
-        val connection = Connection().apply {
-            guid = "guid1"
-            status = "${ConnectionStatus.ACTIVE}"
-            accessToken = "access_token"
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        given(mockConnectionsRepository.getByGuid("guid1")).willReturn(connection)
-        given(mockConnectionsRepository.connectionExists(connection)).willReturn(false)
-        given(mockConnectionsRepository.getConnectionsCount("demobank1")).willReturn(1L)
-
-        viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
-        clearInvocations(mockConnectionsRepository)
-
-        viewModel.authFinishedWithSuccess(connectionId = "1", accessToken = "access_token")
-
-        verify(mockConnectionsRepository).fixNameAndSave(connection)
-
-        assertThat(viewModel.statusIconRes.value, equalTo(R.drawable.ic_status_success))
-        assertThat(
-            viewModel.completeTitle.value.toString(),
-            equalTo(TestAppTools.getString(R.string.connect_status_provider_success).format(connection.name))
-        )
-        assertThat(
-            viewModel.completeDescription.value,
-            equalTo(TestAppTools.getString(R.string.connect_status_provider_success_description))
-        )
-        assertThat(viewModel.mainActionTextRes.value, equalTo(R.string.actions_done))
-
-        assertThat(viewModel.webViewVisibility.value, equalTo(View.GONE))
-        assertThat(viewModel.progressViewVisibility.value, equalTo(View.GONE))
-        assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
-    }
-
-    /**
-     * Test fetchProviderConfigurationDataResult() when no data and error
-     */
-    @Test
-    @Throws(Exception::class)
-    fun fetchProviderConfigurationDataResultTest_case1() {
-        viewModel.fetchProviderConfigurationDataResult(result = null, error = null)
-
-        assertThat(
-            viewModel.onShowErrorEvent.value,
-            equalTo(ViewModelEvent(TestAppTools.applicationContext.getString(R.string.errors_unable_connect_provider)))
-        )
-    }
-
-    /**
-     * Test fetchProviderConfigurationDataResult() when received error
-     */
-    @Test
-    @Throws(Exception::class)
-    fun fetchProviderConfigurationDataResultTest_case2() {
-        viewModel.fetchProviderConfigurationDataResult(
-            result = null,
-            error = ApiErrorData(
-                errorMessage = "test error",
-                errorClassName = ERROR_CLASS_API_RESPONSE
-            )
-        )
-
-        assertThat(
-            viewModel.onShowErrorEvent.value,
-            equalTo(ViewModelEvent("test error"))
-        )
-    }
-
-        /**
-         * Test fetchProviderConfigurationDataResult() when received provider data
-         */
-//        @Test
-//        @Throws(Exception::class)
-//        fun fetchProviderConfigurationDataResultTest_case3() { //TODO: Refactor this test, when I run it together with other tests, I get an error
-//            viewModel.fetchProviderConfigurationDataResult(
-//                result = ProviderConfigurationData(
-//                    connectUrl = "https://demo.saltedge.com",
-//                    code = "demobank",
-//                    name = "Demobank",
-//                    logoUrl = "logoUrl",
-//                    version = API_VERSION,
-//                    supportEmail = "example@saltedge.com"
-//                ),
-//                error = null
-//            )
-//            val captor: ArgumentCaptor<Connection?> =
-//                ArgumentCaptor.forClass(Connection::class.java)
-//
-//            captor.capture()?.let {
-//                verify(mockApiManager).createConnectionRequest(
-//                    appContext = TestAppTools.applicationContext,
-//                    connection = it,
-//                    pushToken = "push_token",
-//                    connectQueryParam = null,
-//                    resultCallback = viewModel
-//                )
-//            }
-//        }
-
-    /**
-     * Test onConnectionInitFailure() when you get an error
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onConnectionInitFailureTest() {
-        viewModel.onConnectionCreateFailure(
-            error = ApiErrorData(
-                errorMessage = "test error",
-                errorClassName = ERROR_CLASS_API_RESPONSE
-            )
-        )
-
-        assertThat(
-            viewModel.onShowErrorEvent.value,
-            equalTo(ViewModelEvent("test error"))
-        )
+        //then
+        verify(mockInteractor).contract = viewModel
+        verify(mockInteractor).setInitialData(initialConnectData, connectionGuid)
+        assertThat(viewModel.titleRes, equalTo(R.string.actions_reconnect))
     }
 
     @Test
     @Throws(Exception::class)
-    fun onConnectionInitSuccessTestCase1() {
-        val connectUrlData = CreateConnectionResponseData(
-            redirectUrl = "https://www.fentury.com",
-            connectionId = "connectionId"
-        )
-        viewModel.onConnectionCreateSuccess(response = connectUrlData)
+    fun onBackPressTestCase1() {
+        //given
+        assertNull(viewModel.goBackEvent.value)
 
-        assertThat(
-            viewModel.onUrlChangedEvent.value,
-            equalTo(ViewModelEvent("https://www.fentury.com"))
-        )
+        //when
+        val result = viewModel.onBackPress(webViewCanGoBack = false)
 
-        assertThat(viewModel.statusIconRes.value, equalTo(R.drawable.ic_status_error))
-        assertThat(
-            viewModel.completeTitle.value.toString(),
-            equalTo(TestAppTools.getString(R.string.errors_connection_failed))
-        )
-        assertThat(
-            viewModel.completeDescription.value,
-            equalTo(TestAppTools.getString(R.string.errors_connection_failed_description))
-        )
-        assertThat(viewModel.mainActionTextRes.value, equalTo(R.string.actions_try_again))
+        //then
+        assertFalse(result)
+        assertNotNull(viewModel.goBackEvent.value)
 
-        assertThat(viewModel.webViewVisibility.value, equalTo(View.VISIBLE))
-        assertThat(viewModel.progressViewVisibility.value, equalTo(View.GONE))
-        assertThat(viewModel.completeViewVisibility.value, equalTo(View.GONE))
     }
 
     @Test
     @Throws(Exception::class)
-    fun onConnectionInitSuccessTestCase2() {
-        val connectUrlData = CreateConnectionResponseData(
-            redirectUrl = "invalidUrl",
-            connectionId = "connectionId"
-        )
-        viewModel.onConnectionCreateSuccess(response = connectUrlData)
+    fun onBackPressTestCase2() {
+        //given
+        assertNull(viewModel.goBackEvent.value)
 
-        verifyNoMoreInteractions(
-            mockApiManager,
-            mockConnectionsRepository,
-            mockPreferenceRepository
-        )
-    }
+        //when
+        val result = viewModel.onBackPress(webViewCanGoBack = true)
 
-    /**
-     * Test onDestroyView() when guid is not empty and accessToken is empty
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onDestroyViewTestCase1() {
-        val connection = Connection().apply {
-            guid = "guid2"
-            accessToken = ""
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        given(mockConnectionsRepository.getByGuid("guid2")).willReturn(connection)
-
-        viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid2")
-
-        viewModel.onDestroy()
-
-        verify(mockKeyStoreManager).deleteKeyPair("guid2")
-    }
-
-    /**
-     * Test onDestroyView() when guid and accessToken is not empty
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onDestroyViewTestCase2() {
-        given(mockConnectionsRepository.getByGuid("")).willReturn(null)
-
-        viewModel.setInitialData(initialConnectData = null, connectionGuid = "")
-        clearInvocations(mockConnectionsRepository)
-
-        viewModel.onDestroy()
-
-        verifyNoMoreInteractions(
-            mockApiManager,
-            mockConnectionsRepository,
-            mockPreferenceRepository
-        )
-    }
-
-    /**
-     * Test onDestroyView() when guid and accessToken are empty
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onDestroyViewTestCase3() {
-        val connection = Connection().apply {
-            guid = "guid2"
-            accessToken = ""
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        given(mockConnectionsRepository.getByGuid("guid2")).willReturn(connection)
-
-        viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid2")
-        clearInvocations(mockConnectionsRepository)
-
-        viewModel.onDestroy()
-
-        verifyNoMoreInteractions(
-            mockApiManager,
-            mockConnectionsRepository,
-            mockPreferenceRepository
-        )
-    }
-
-    /**
-     * Test onDestroyView() when accessToken is not empty and guid is empty
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onDestroyViewTestCase4() {
-        val connection = Connection().apply {
-            guid = "guid2"
-            accessToken = "accessToken"
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        given(mockConnectionsRepository.getByGuid("guid2")).willReturn(connection)
-
-        viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid2")
-        clearInvocations(mockConnectionsRepository)
-
-        viewModel.onDestroy()
-
-        verifyNoMoreInteractions(
-            mockApiManager,
-            mockConnectionsRepository,
-            mockPreferenceRepository
-        )
+        //then
+        assertFalse(result)
+        assertNotNull(viewModel.goBackEvent.value)
     }
 
     @Test
     @Throws(Exception::class)
-    fun webAuthFinishErrorTest() {
-        viewModel.webAuthFinishError(errorClass = "WRONG_URL", errorMessage = "not relevant url")
+    fun onBackPressTestCase3() {
+        //given
+        assertNull(viewModel.goBackEvent.value)
+        viewModel.onReceiveAuthenticationUrl()
 
-        assertThat(viewModel.statusIconRes.value, equalTo(R.drawable.ic_status_error))
-        assertThat(
-            viewModel.completeTitle.value.toString(),
-            equalTo(TestAppTools.getString(R.string.errors_connection_failed))
-        )
-        assertThat(viewModel.completeDescription.value, equalTo("not relevant url"))
-        assertThat(viewModel.mainActionTextRes.value, equalTo(R.string.actions_try_again))
+        //when
+        val result = viewModel.onBackPress(webViewCanGoBack = false)
 
-        assertThat(viewModel.webViewVisibility.value, equalTo(View.GONE))
-        assertThat(viewModel.progressViewVisibility.value, equalTo(View.GONE))
-        assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
+        //then
+        assertFalse(result)
+        assertNotNull(viewModel.goBackEvent.value)
     }
 
     @Test
     @Throws(Exception::class)
-    fun shouldShowWebViewTest() {
-        assertThat(viewModel.webViewVisibility.value, equalTo(View.GONE))
+    fun onBackPressTestCase4() {
+        //given
+        assertNull(viewModel.goBackEvent.value)
+        viewModel.onReceiveAuthenticationUrl()
 
-        val connectUrlData = CreateConnectionResponseData(
-            redirectUrl = "https://www.fentury.com",
-            connectionId = "connectionId"
-        )
-        viewModel.onConnectionCreateSuccess(response = connectUrlData)
+        //when
+        val result = viewModel.onBackPress(webViewCanGoBack = true)
 
-        assertThat(viewModel.webViewVisibility.value, equalTo(View.VISIBLE))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onBackPressTest() {
-        assertFalse(viewModel.onBackPress(webViewCanGoBack = false))
-
-        val connectUrlData = CreateConnectionResponseData(
-            redirectUrl = "https://www.fentury.com",
-            connectionId = "connectionId"
-        )
-        viewModel.onConnectionCreateSuccess(response = connectUrlData)
-
-        assertTrue(viewModel.onBackPress(webViewCanGoBack = true))
+        //then
+        assertTrue(result)
+        assertNotNull(viewModel.goBackEvent.value)
     }
 
     @Test
@@ -427,7 +168,7 @@ class ConnectProviderViewModelTest {
         viewModel.onRequestPermissionsResult(requestCode = requestCode, grantResults = grantResults)
 
         //then
-        verify(mockLocationManager).startLocationUpdates(TestAppTools.applicationContext)
+        verify(mockLocationManager).startLocationUpdates()
     }
 
     @Test
@@ -458,79 +199,270 @@ class ConnectProviderViewModelTest {
         verifyNoInteractions(mockLocationManager)
     }
 
-    /**
-     * Test statusIconRes when isCompleteWithSuccess is false
-     */
+    @Test
+    @Throws(Exception::class)
+    fun onResumeTestCase1() {
+        //given
+        assertNull(viewModel.goBackEvent.value)
+        val authenticationUrl = "https://www.fentury.com"
+        given(mockInteractor.authenticationUrl).willReturn(authenticationUrl)
+        viewModel.onReceiveAuthenticationUrl()//ViewMode == WEB_ENROLL
+
+        //when
+        viewModel.onResume()
+
+        //then
+        assertThat(viewModel.onUrlChangedEvent.value, equalTo(ViewModelEvent(authenticationUrl)))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onResumeTestCase2() {
+        //given
+        val initialConnectData = ConnectAppLinkData(configurationUrl = "https://localhost/api/authenticator/v2/configuration")
+        val connectionGuid = null
+        given(mockInteractor.hasConnection).willReturn(false)
+        given(mockInteractor.hasConfigUrl).willReturn(true)
+        viewModel.setInitialData(initialConnectData = initialConnectData, connectionGuid = connectionGuid)//ViewMode == START_NEW_CONNECT
+
+        //when
+        viewModel.onResume()
+
+        //then
+        verify(mockInteractor).fetchScaConfiguration()
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onResumeTestCase3() {
+        //given
+        val initialConnectData = ConnectAppLinkData(configurationUrl = "https://localhost/api/authenticator/v2/configuration")
+        val connectionGuid = "guid1"
+        given(mockInteractor.hasConnection).willReturn(true)
+        given(mockInteractor.hasConfigUrl).willReturn(true)
+        viewModel.setInitialData(initialConnectData = initialConnectData, connectionGuid = connectionGuid)//ViewMode == START_RECONNECT
+
+        //when
+        viewModel.onResume()
+
+        //then
+        verify(mockInteractor).requestCreateConnection()
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onResumeTestCase4() {
+        //given
+        given(mockInteractor.connectionName).willReturn("connectionName")
+        viewModel.onConnectionSuccessAuthentication()//ViewMode == COMPLETE_SUCCESS
+        clearInvocations(mockInteractor)
+
+        //when
+        viewModel.onResume()
+
+        //then
+        verify(mockInteractor).connectionName
+        verifyNoMoreInteractions(mockInteractor)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDestroyTest() {
+        //when
+        viewModel.onDestroy()
+
+        //then
+        verify(mockInteractor).destroyConnectionIfNotAuthorized()
+        verify(mockInteractor).contract = null
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onViewClickTest() {
+        viewModel.onViewClick(-1)
+
+        assertNull(viewModel.onCloseEvent.value)
+
+        viewModel.onViewClick(R.id.actionView)
+
+        assertNotNull(viewModel.onCloseEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onDialogActionIdClickTest() {
+        viewModel.onDialogActionIdClick(DialogInterface.BUTTON_NEGATIVE)
+
+        assertNull(viewModel.onCloseEvent.value)
+
+        viewModel.onDialogActionIdClick(DialogInterface.BUTTON_POSITIVE)
+
+        assertNotNull(viewModel.onCloseEvent.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onReturnToRedirectTest() {
+        //when
+        viewModel.onReturnToRedirect(url = "url")
+
+        //then
+        verify(mockInteractor).onReceiveReturnToUrl(url = "url")
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onReceiveApiErrorTest() {
+        //given
+        assertNull(viewModel.onShowErrorEvent.value)
+        val error = ApiErrorData(errorMessage = "test_message", errorClassName = ERROR_CLASS_API_RESPONSE)
+
+        //when
+        viewModel.onReceiveApiError(error)
+
+        //then
+        assertThat(viewModel.onShowErrorEvent.value, equalTo(ViewModelEvent(error.errorMessage)))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onReceiveAuthenticationUrlTest() {
+        //given
+        val authenticationUrl = "https://www.fentury.com"
+        given(mockInteractor.authenticationUrl).willReturn(authenticationUrl)
+
+        //when
+        viewModel.onReceiveAuthenticationUrl()
+
+        //then
+        assertThat(viewModel.webViewVisibility.value, equalTo(View.VISIBLE))
+        assertThat(viewModel.progressViewVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.completeViewVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.backActionIconRes.value, equalTo(R.drawable.ic_appbar_action_close))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onConnectionFailAuthenticationTest() {
+        //given
+        val errorMessage = "not relevant url"
+
+        //when
+        viewModel.onConnectionFailAuthentication(errorClass = "WRONG_URL", errorMessage = errorMessage)
+
+        //then
+        assertThat(viewModel.statusIconRes.value, equalTo(R.drawable.ic_status_error))
+        assertThat(
+            viewModel.completeTitle.value.toString(),
+            equalTo(TestAppTools.getString(R.string.errors_connection_failed))
+        )
+        assertThat(viewModel.completeDescription.value, equalTo(errorMessage))
+        assertThat(viewModel.mainActionTextRes.value, equalTo(R.string.actions_try_again))
+
+        assertThat(viewModel.webViewVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.progressViewVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
+        assertNull(viewModel.backActionIconRes.value)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onConnectionSuccessAuthenticationTestCase1() {
+        //given
+        given(mockInteractor.connectionName).willReturn("ConnectionName")
+        given(mockInteractor.geolocationRequired).willReturn(true)
+        given(mockLocationManager.locationPermissionsGranted()).willReturn(true)
+
+        //when
+        viewModel.onConnectionSuccessAuthentication()
+
+        //then
+        verify(mockLocationManager).startLocationUpdates()
+
+        assertThat(viewModel.statusIconRes.value, equalTo(R.drawable.ic_status_success))
+        assertThat(
+            viewModel.completeTitle.value.toString(),
+            equalTo(TestAppTools.getString(R.string.connect_status_provider_success).format("ConnectionName"))
+        )
+        assertThat(
+            viewModel.completeDescription.value,
+            equalTo(TestAppTools.getString(R.string.connect_status_provider_success_description))
+        )
+        assertThat(viewModel.mainActionTextRes.value, equalTo(R.string.actions_done))
+
+        assertThat(viewModel.webViewVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.progressViewVisibility.value, equalTo(View.GONE))
+        assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onConnectionSuccessAuthenticationTestCase2() {
+        //given
+        given(mockInteractor.connectionName).willReturn("ConnectionName")
+        given(mockInteractor.geolocationRequired).willReturn(null)
+        given(mockLocationManager.locationPermissionsGranted()).willReturn(true)
+
+        //when
+        viewModel.onConnectionSuccessAuthentication()
+
+        //then
+        verifyNoMoreInteractions(mockLocationManager)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onConnectionSuccessAuthenticationTestCase3() {
+        //given
+        given(mockInteractor.connectionName).willReturn("ConnectionName")
+        given(mockInteractor.geolocationRequired).willReturn(true)
+        given(mockLocationManager.locationPermissionsGranted()).willReturn(false)
+
+        //when
+        viewModel.onConnectionSuccessAuthentication()
+
+        //then
+        verify(mockLocationManager).locationPermissionsGranted()
+        verifyNoMoreInteractions(mockLocationManager)
+        assertThat(viewModel.onAskPermissionsEvent.value, equalTo(ViewModelEvent(Unit)))
+    }
+
     @Test
     @Throws(Exception::class)
     fun statusIconResTestCase1() {
         assertThat(viewModel.statusIconRes.value, equalTo(R.drawable.ic_status_error))
     }
 
-    /**
-     * Test statusIconRes when isCompleteWithSuccess is true
-     */
     @Test
     @Throws(Exception::class)
     fun statusIconResTestCase2() {
-        val connection = Connection().apply {
-            guid = "guid1"
-            status = "${ConnectionStatus.ACTIVE}"
-            accessToken = "accessToken"
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        given(mockConnectionsRepository.getByGuid("guid1")).willReturn(connection)
-        given(mockConnectionsRepository.getConnectionsCount("demobank1")).willReturn(1L)
+        given(mockInteractor.connectionName).willReturn("connectionName")
 
-        viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
-
-        viewModel.authFinishedWithSuccess(connectionId = "1", accessToken = "access_token")
+        viewModel.onConnectionSuccessAuthentication()
 
         assertThat(viewModel.statusIconRes.value, equalTo(R.drawable.ic_status_success))
     }
 
-    /**
-     * Test mainActionTextResId when isCompleteWithSuccess is false
-     */
     @Test
     @Throws(Exception::class)
     fun mainActionTextResCase1() {
         assertThat(viewModel.mainActionTextRes.value, equalTo(R.string.actions_try_again))
     }
 
-    /**
-     * Test mainActionTextResId when isCompleteWithSuccess is true
-     */
     @Test
     @Throws(Exception::class)
     fun mainActionTextResCase2() {
-        val connection = Connection().apply {
-            guid = "guid1"
-            status = "${ConnectionStatus.ACTIVE}"
-            accessToken = "accessToken"
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        given(mockConnectionsRepository.getByGuid("guid1")).willReturn(connection)
-        given(mockConnectionsRepository.getConnectionsCount("demobank1")).willReturn(1L)
+        given(mockInteractor.connectionName).willReturn("connectionName")
 
-        viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
-        viewModel.authFinishedWithSuccess(connectionId = "1", accessToken = "access_token")
+        viewModel.onConnectionSuccessAuthentication()
 
         assertThat(viewModel.mainActionTextRes.value, equalTo(R.string.actions_done))
     }
 
-    /**
-     * Test completeTitle when isCompleteWithSuccess is false
-     */
     @Test
     @Throws(Exception::class)
     fun completeTitleCase1() {
-        assertThat(
-            viewModel.completeTitle.value.toString(),
-            equalTo("")
-        )
+        assertThat(viewModel.completeTitle.value.toString(), equalTo(""))
     }
 
     /**
@@ -539,77 +471,27 @@ class ConnectProviderViewModelTest {
     @Test
     @Throws(Exception::class)
     fun completeTitleCase2() {
-        val connection = Connection().apply {
-            guid = "guid1"
-            status = "${ConnectionStatus.ACTIVE}"
-            accessToken = "accessToken"
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        given(mockConnectionsRepository.getByGuid("guid1")).willReturn(connection)
-        given(mockConnectionsRepository.getConnectionsCount("demobank1")).willReturn(1L)
-
-        viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
-        viewModel.authFinishedWithSuccess(connectionId = "1", accessToken = "access_token")
+        given(mockInteractor.connectionName).willReturn("ConnectionName")
+        viewModel.onConnectionSuccessAuthentication()
 
         assertThat(
             viewModel.completeTitle.value.toString(),
-            equalTo(
-                TestAppTools.getString(R.string.connect_status_provider_success).format(
-                    connection.name
-                )
-            )
+            equalTo(TestAppTools.getString(R.string.connect_status_provider_success).format("ConnectionName"))
         )
     }
 
-    /**
-     * Test completeDescription when isCompleteWithSuccess is false
-     */
     @Test
     @Throws(Exception::class)
     fun completeDescriptionCase1() {
-        assertThat(
-            viewModel.completeDescription.value,
-            equalTo("")
-        )
-
-        val connection = Connection().apply {
-            guid = "guid1"
-            status = "${ConnectionStatus.ACTIVE}"
-            accessToken = "accessToken"
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        given(mockConnectionsRepository.getByGuid("guid1")).willReturn(connection)
-        given(mockConnectionsRepository.getConnectionsCount("demobank1")).willReturn(1L)
-
-        viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
-        viewModel.webAuthFinishError(errorClass = "ERROR", errorMessage = null)
-
-        assertThat(
-            viewModel.completeDescription.value,
-            equalTo(TestAppTools.getString(R.string.errors_connection_failed_description))
-        )
+        assertThat(viewModel.completeDescription.value, equalTo(""))
     }
 
-    /**
-     * Test completeDescription when isCompleteWithSuccess is true
-     */
     @Test
     @Throws(Exception::class)
     fun completeDescriptionCase2() {
-        val connection = Connection().apply {
-            guid = "guid1"
-            status = "${ConnectionStatus.ACTIVE}"
-            accessToken = "accessToken"
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        given(mockConnectionsRepository.getByGuid("guid1")).willReturn(connection)
-        given(mockConnectionsRepository.getConnectionsCount("demobank1")).willReturn(1L)
+        given(mockInteractor.connectionName).willReturn("connectionName")
 
-        viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
-        viewModel.authFinishedWithSuccess(connectionId = "1", accessToken = "access_token")
+        viewModel.onConnectionSuccessAuthentication()
 
         assertThat(
             viewModel.completeDescription.value,
@@ -617,197 +499,45 @@ class ConnectProviderViewModelTest {
         )
     }
 
-    /**
-     * test onViewCreated when ViewMode is WEB_ENROLL
-     */
     @Test
     @Throws(Exception::class)
-    fun onViewCreatedCase1() {
-        val connectUrlData = CreateConnectionResponseData(
-            redirectUrl = "https://www.fentury.com",
-            connectionId = "connectionId"
-        )
-        viewModel.onConnectionCreateSuccess(response = connectUrlData)
+    fun completeDescriptionCase3() {
+        given(mockInteractor.connectionName).willReturn("connectionName")
 
-        viewModel.onResume()
+        viewModel.onConnectionFailAuthentication(errorClass = "CLASS", errorMessage = null)
 
         assertThat(
-            viewModel.onUrlChangedEvent.value,
-            equalTo(ViewModelEvent("https://www.fentury.com"))
-        )
-    }
-
-    /**
-     * test onViewCreated when ViewMode is START_NEW_CONNECT(initial state)
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onViewCreatedCase2() {
-        clearInvocations(mockConnectionsRepository)
-
-        viewModel.setInitialData(
-            initialConnectData = ConnectAppLinkData(
-                configurationUrl = "url",
-                connectQuery = null
-            ),
-            connectionGuid = "guid1"
-        )
-        viewModel.onResume()
-
-        assertNull(viewModel.onUrlChangedEvent.value)
-    }
-
-    /**
-     * test onViewCreated when ViewMode is COMPLETE_SUCCESS
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onViewCreatedCase3() {
-        val connection = Connection().apply {
-            guid = "guid1"
-            status = "${ConnectionStatus.ACTIVE}"
-            accessToken = "accessToken"
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        given(mockConnectionsRepository.getByGuid("guid1")).willReturn(connection)
-        given(mockConnectionsRepository.getConnectionsCount("demobank1")).willReturn(1L)
-
-        viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
-        viewModel.authFinishedWithSuccess(connectionId = "1", accessToken = "access_token")
-        clearInvocations(mockConnectionsRepository)
-
-        viewModel.onResume()
-
-        verifyNoMoreInteractions(
-            mockApiManager,
-            mockConnectionsRepository,
-            mockPreferenceRepository
-        )
-    }
-
-    /**
-     * test onViewCreated when ViewMode is COMPLETE_ERROR
-     */
-    @Test
-    @Throws(Exception::class)
-    fun onAuthFinishedTestCase4() {
-        val connection = Connection().apply {
-            guid = "guid1"
-            status = "${ConnectionStatus.ACTIVE}"
-            accessToken = "accessToken"
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        given(mockConnectionsRepository.getByGuid("guid1")).willReturn(connection)
-        given(mockConnectionsRepository.getConnectionsCount("demobank1")).willReturn(1L)
-
-        viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
-        viewModel.webAuthFinishError(errorClass = "ERROR", errorMessage = "ERROR")
-
-        clearInvocations(mockConnectionsRepository)
-
-        viewModel.onResume()
-
-        verifyNoMoreInteractions(
-            mockApiManager,
-            mockConnectionsRepository,
-            mockPreferenceRepository
+            viewModel.completeDescription.value,
+            equalTo(TestAppTools.getString(R.string.errors_connection_failed_description))
         )
     }
 
     @Test
     @Throws(Exception::class)
     fun progressViewVisibilityTest() {
+        given(mockInteractor.connectionName).willReturn("connectionName")
+
         assertThat(viewModel.progressViewVisibility.value, equalTo(View.VISIBLE))
 
-        val connectUrlData = CreateConnectionResponseData(
-            redirectUrl = "https://www.fentury.com",
-            connectionId = "connectionId"
-        )
-        viewModel.onConnectionCreateSuccess(response = connectUrlData)
+        viewModel.onConnectionSuccessAuthentication()
 
         assertThat(viewModel.progressViewVisibility.value, equalTo(View.GONE))
     }
 
-    /**
-     * test shouldShowCompleteView when ViewMode is COMPLETE_SUCCESS
-     */
     @Test
     @Throws(Exception::class)
-    fun progressViewVisibilityTestCase1() {
-        assertThat(viewModel.progressViewVisibility.value, equalTo(View.VISIBLE))
+    fun completeViewVisibilityTest() {
+        given(mockInteractor.connectionName).willReturn("connectionName")
 
-        val connection = Connection().apply {
-            guid = "guid1"
-            status = "${ConnectionStatus.ACTIVE}"
-            accessToken = "accessToken"
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        given(mockConnectionsRepository.getByGuid("guid1")).willReturn(connection)
-        given(mockConnectionsRepository.getConnectionsCount("demobank1")).willReturn(1L)
-
-        viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
-        viewModel.authFinishedWithSuccess(connectionId = "1", accessToken = "access_token")
-        viewModel.onResume()
-
-        assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
-    }
-
-    /**
-     * test shouldShowCompleteView when ViewMode is COMPLETE_ERROR
-     */
-    @Test
-    @Throws(Exception::class)
-    fun progressViewVisibilityTestCase2() {
         assertThat(viewModel.completeViewVisibility.value, equalTo(View.GONE))
 
-        val connection = Connection().apply {
-            guid = "guid1"
-            status = "${ConnectionStatus.ACTIVE}"
-            accessToken = "accessToken"
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        given(mockConnectionsRepository.getByGuid("guid1")).willReturn(connection)
-        given(mockConnectionsRepository.getConnectionsCount("demobank1")).willReturn(1L)
-
-        viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
-        viewModel.webAuthFinishError(errorClass = "ERROR", errorMessage = "ERROR")
-        viewModel.onResume()
+        viewModel.onConnectionSuccessAuthentication()
 
         assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
-    }
 
-    @Test
-    @Throws(Exception::class)
-    fun titleResTestCase1() {
-        //given
-        val connection = Connection().apply {
-            guid = "guid1"
-            status = "${ConnectionStatus.ACTIVE}"
-            accessToken = "accessToken"
-            code = "demobank1"
-            name = "Demobank1"
-        }
-        given(mockConnectionsRepository.getByGuid("guid1")).willReturn(connection)
+        viewModel.onConnectionFailAuthentication(errorClass = "ERROR", errorMessage = "ERROR")
 
-        //when
-        viewModel.setInitialData(initialConnectData = null, connectionGuid = "guid1")
-
-        //then
-        assertThat(viewModel.titleRes, equalTo(R.string.actions_reconnect))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun titleResTestCase2() {
-        //when
-        viewModel.setInitialData(initialConnectData = null, connectionGuid = null)
-
-        //then
-        assertThat(viewModel.titleRes, equalTo(R.string.connections_new_connection))
+        assertThat(viewModel.completeViewVisibility.value, equalTo(View.VISIBLE))
     }
 
     @Test

@@ -21,7 +21,7 @@
 package com.saltedge.authenticator.models
 
 import androidx.annotation.Keep
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
+import com.saltedge.authenticator.core.model.ConnectionAbs
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.Required
@@ -54,4 +54,15 @@ open class Connection : RealmObject(), ConnectionAbs {
     override var consentManagementSupported: Boolean? = null
     @Keep
     override var geolocationRequired: Boolean? = null
+    @Keep @Required
+    override var providerRsaPublicKeyPem: String = ""
+    @Keep @Required
+    override var apiVersion: String = "1"
+
+    val isV2Api: Boolean
+        get() = apiVersion == "2"
+
+    override fun toString(): String {
+        return "Connection(guid='$guid', id='$id', createdAt=$createdAt, updatedAt=$updatedAt, name='$name', code='$code', connectUrl='$connectUrl', logoUrl='$logoUrl', accessToken='$accessToken', status='$status', supportEmail=$supportEmail, consentManagementSupported=$consentManagementSupported, geolocationRequired=$geolocationRequired, providerRsaPublicKeyPem='$providerRsaPublicKeyPem', apiVersion='$apiVersion')"
+    }
 }

@@ -92,6 +92,7 @@
     <dimen name="dp_170">170dp</dimen>
     <dimen name="dp_180">180dp</dimen>
     <dimen name="dp_200">200dp</dimen>
+    <dimen name="dp_205">205dp</dimen>
     <dimen name="dp_240">240dp</dimen>
     <dimen name="dp_246">246dp</dimen>
     <dimen name="dp_250">250dp</dimen>
@@ -137,8 +138,7 @@
     <dimen name="authorizations_list_logo_radius">@dimen/dp_6</dimen>
     <dimen name="connections_list_logo_radius">@dimen/dp_12</dimen>
     <dimen name="connections_list_item_h_margin">@dimen/dp_16</dimen>
-    <dimen name="consents_list_logo_radius">@dimen/dp_6</dimen>
     <dimen name="popupMenuItemHeight">@dimen/dp_48</dimen>
-    <dimen name="popupMenuItemWidth">@dimen/dp_200</dimen>
+    <dimen name="popupMenuItemWidth">@dimen/dp_205</dimen>
     <dimen name="popupMenuTopBottomPadding">@dimen/dp_12</dimen>
 </resources>

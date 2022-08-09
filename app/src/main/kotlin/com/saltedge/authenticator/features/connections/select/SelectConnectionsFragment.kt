@@ -32,14 +32,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItem
 import com.saltedge.authenticator.features.connections.list.ConnectionsListAdapter
 import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.sdk.model.GUID
 import com.saltedge.authenticator.app.authenticatorApp
+import com.saltedge.authenticator.core.model.GUID
 import com.saltedge.authenticator.tools.popBackStack
 import com.saltedge.authenticator.tools.setVisible
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -84,12 +84,12 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
                 connectionsListView?.addItemDecoration(this)
             }
         }
-        proceedView.isEnabled = false
-        proceedView.setVisible(true)
+        proceedView?.isEnabled = false
+        proceedView?.setVisible(true)
     }
 
     override fun onBackPress(): Boolean {
-        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, Intent())
+        sharedViewModel.onSelectConnection("")
         return false
     }
 
@@ -101,7 +101,7 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
         viewModel = ViewModelProvider(this, viewModelFactory).get(SelectConnectionsViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
-        viewModel.listItems.observe(this, Observer<List<ConnectionItemViewModel>> {
+        viewModel.listItems.observe(this, Observer<List<ConnectionItem>> {
             headerDecorator?.setHeaderForAllItems(it.count())
             headerDecorator?.footerPositions = arrayOf(it.count() - 1)
             it?.let { adapter.data = it }
@@ -122,7 +122,7 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
             popBackStack()
         })
 
-        (arguments?.getSerializable(KEY_CONNECTIONS) as? List<ConnectionItemViewModel>)?.let {
+        (arguments?.getSerializable(KEY_CONNECTIONS) as? List<ConnectionItem>)?.let {
             viewModel.setInitialData(it)
         }
     }
@@ -130,8 +130,8 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
     companion object {
         const val KEY_CONNECTIONS = "CONNECTIONS"
 
-        fun dataBundle(connections: List<ConnectionItemViewModel>): Bundle {
-            val arrayList = ArrayList<ConnectionItemViewModel>(connections)
+        fun dataBundle(connections: List<ConnectionItem>): Bundle {
+            val arrayList = ArrayList<ConnectionItem>(connections)
             return Bundle().apply { this.putSerializable(KEY_CONNECTIONS, arrayList) }
         }
     }

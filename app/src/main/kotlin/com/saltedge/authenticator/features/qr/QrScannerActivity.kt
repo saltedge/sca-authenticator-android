@@ -39,10 +39,11 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.features.main.SnackbarAnchorContainer
 import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.app.authenticatorApp
+import com.saltedge.authenticator.models.realm.initRealmDatabase
 import com.saltedge.authenticator.tools.getScreenHeight
 import com.saltedge.authenticator.tools.getScreenWidth
 import com.saltedge.authenticator.widget.security.LockableActivity
@@ -61,6 +62,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.initRealmDatabase()
         authenticatorApp?.appComponent?.inject(this)
         setContentView(R.layout.activity_qr_scanner)
         setupViewModel()
@@ -114,6 +116,10 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
                 .setPositiveButton(android.R.string.ok) { _, _ -> viewModel.onErrorConfirmed() }
                 .show()
         })
+    }
+
+    override fun onClearAppDataEvent() {
+        //empty
     }
 
     private fun setupViews() {

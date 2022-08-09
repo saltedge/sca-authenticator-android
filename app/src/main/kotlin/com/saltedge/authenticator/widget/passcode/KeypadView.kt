@@ -54,7 +54,7 @@ class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         vibrateOnKeyClick()
         when (view?.id ?: return) {
             R.id.fingerActionView -> clickListener?.onFingerKeyClick()
-            R.id.deleteActionView -> clickListener?.onDeleteKeyClick()
+            R.id.successActionView -> clickListener?.onSuccessKeyClick()
             R.id.forgotActionView -> clickListener?.onForgotKeyClick()
             else -> clickListener?.onDigitKeyClick((view as? TextView)?.text.toString())
         }
@@ -63,7 +63,7 @@ class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
     fun setupFingerAction(active: Boolean) {
         fingerActionView?.setVisible(active)
         forgotActionView?.setVisible(active)
-        deleteActionView?.setVisible(!active)
+        successActionView?.setVisible(!active)
     }
 
     @Suppress("DEPRECATION")
@@ -73,20 +73,20 @@ class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         } else vibrator?.vibrate(10)
     }
 
-    fun showDeleteView() {
+    fun showSuccessView() {
         fingerActionView?.setVisible(show = false)
-        deleteActionView?.setVisible(show = true)
+        successActionView?.setVisible(show = true)
     }
 
     fun showFingerView() {
         fingerActionView?.setVisible(show = true)
-        deleteActionView?.setVisible(show = false)
+        successActionView?.setVisible(show = false)
     }
 
     interface KeypadClickListener {
         fun onDigitKeyClick(value: String = "")
         fun onFingerKeyClick()
         fun onForgotKeyClick()
-        fun onDeleteKeyClick()
+        fun onSuccessKeyClick()
     }
 }

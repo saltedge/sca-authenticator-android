@@ -29,19 +29,18 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.menu.MenuItemData
 import com.saltedge.authenticator.tools.convertDpToPx
+import com.saltedge.authenticator.tools.setTextColorResId
 
 /**
  * Build view and show PopupWindow with items from MenuData
  */
 class PopupMenuBuilder(
-    val parentView: View,
+    private val parentView: View,
     var itemClickListener: ItemClickListener? = null
 ) {
-
     private val context: Context
         get() = parentView.context
     private val layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -99,12 +98,16 @@ class PopupMenuBuilder(
         val itemView = layoutInflater.inflate(R.layout.view_popup_menu_item, this, false)
         itemView.tag = item.id
 
-        itemView
-            .findViewById<ImageView>(R.id.iconView)
-            .setImageDrawable(ContextCompat.getDrawable(layoutInflater.context, item.iconRes))
+        val iconView = itemView.findViewById<ImageView>(R.id.iconView)
+        iconView.setImageResource(item.iconRes)
 
-        itemView.findViewById<TextView>(R.id.labelView).setText(item.textRes)
-        itemView.setOnClickListener(clickListener)
+        itemView.findViewById<TextView>(R.id.labelView).apply {
+            item.textRes?.let { setText(it) }
+            item.text?.let { text = it }
+            setTextColorResId(R.color.dark_100_and_grey_40)
+        }
+
+        itemView.setOnClickListener(if (item.isActive) clickListener else null)
         this.addView(itemView)
     }
 

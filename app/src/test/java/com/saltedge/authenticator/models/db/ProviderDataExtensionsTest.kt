@@ -20,9 +20,9 @@
  */
 package com.saltedge.authenticator.models.db
 
-import com.saltedge.authenticator.models.toConnection
-import com.saltedge.authenticator.sdk.model.configuration.ProviderConfigurationData
-import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
+import com.saltedge.authenticator.core.model.ConnectionStatus
+import com.saltedge.authenticator.features.connections.create.toConnection
+import com.saltedge.authenticator.sdk.api.model.configuration.ProviderConfigurationData
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.equalTo

@@ -28,7 +28,6 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.sdk.constants.TERMS_LINK
 import com.saltedge.authenticator.widget.fragment.WebViewFragment
 
 class LicensesViewModel(private val appContext: Context) : ViewModel(), ListItemClickListener {

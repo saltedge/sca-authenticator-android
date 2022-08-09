@@ -40,4 +40,5 @@
     <color name="white_and_blue_black">@color/blue_black</color>
     <color name="white_and_dark_100">@color/dark_100</color>
     <color name="red_and_red_light">@color/red_light</color>
+    <color name="grey_80_and_grey_100">@color/grey_100</color>
 </resources>

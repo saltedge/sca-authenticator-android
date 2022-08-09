@@ -24,18 +24,29 @@ import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Bundle
 import android.os.Looper
+import android.provider.Settings
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
+import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.common.api.PendingResult
+import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.*
+import timber.log.Timber
 
 interface DeviceLocationManagerAbs {
     val locationDescription: String?
     fun initManager(context: Context)
-    fun startLocationUpdates(context: Context)
-    fun locationPermissionsGranted(context: Context): Boolean
+    fun startLocationUpdates()
+    fun locationPermissionsGranted(): Boolean
     fun stopLocationUpdates()
+    fun isLocationProviderActive(): Boolean
+    fun enableGps(activity: FragmentActivity)
 }
 
 object DeviceLocationManager : DeviceLocationManagerAbs {
@@ -43,14 +54,20 @@ object DeviceLocationManager : DeviceLocationManagerAbs {
     val permissions = arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)
     override var locationDescription: String? = null
         private set
+
     @SuppressLint("StaticFieldLeak")
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val locationCallback: LocationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
             super.onLocationResult(result)
-            locationDescription = result.lastLocation.headerValue
+            locationDescription = result.lastLocation?.headerValue
         }
     }
+    private val context: Context
+        get() = fusedLocationClient.applicationContext
+
+    private var googleApiClient: GoogleApiClient? = null
+    private const val REQUEST_LOCATION = 199
 
     override fun initManager(context: Context) {
         if (!this::fusedLocationClient.isInitialized) {
@@ -58,8 +75,8 @@ object DeviceLocationManager : DeviceLocationManagerAbs {
         }
     }
 
-    override fun startLocationUpdates(context: Context) {
-        if (locationPermissionsGranted(context)) {
+    override fun startLocationUpdates() {
+        if (locationPermissionsGranted()) {
             initManager(context)
 
             val request = LocationRequest.create()
@@ -67,8 +84,17 @@ object DeviceLocationManager : DeviceLocationManagerAbs {
             request.fastestInterval = 5000
             request.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
 
-            if (permissions.any { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED }) {
-                fusedLocationClient.requestLocationUpdates(request, locationCallback, Looper.getMainLooper())
+            if (permissions.any {
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        it
+                    ) == PackageManager.PERMISSION_GRANTED
+                }) {
+                fusedLocationClient.requestLocationUpdates(
+                    request,
+                    locationCallback,
+                    Looper.getMainLooper()
+                )
             } else {
                 fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                     locationDescription = location?.headerValue
@@ -77,8 +103,66 @@ object DeviceLocationManager : DeviceLocationManagerAbs {
         }
     }
 
-    override fun locationPermissionsGranted(context: Context): Boolean {
-        return permissions.any { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED }
+    override fun locationPermissionsGranted(): Boolean {
+        val context = fusedLocationClient.applicationContext
+        return permissions.any {
+            ContextCompat.checkSelfPermission(
+                context,
+                it
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
+    override fun isLocationProviderActive(): Boolean {
+        val providerInfo = Settings.Secure.getString(
+            context.contentResolver,
+            Settings.Secure.LOCATION_PROVIDERS_ALLOWED
+        )
+        return providerInfo?.isNotEmpty() == true
+    }
+
+    override fun enableGps(activity: FragmentActivity) {
+        if (googleApiClient == null) {
+            googleApiClient = GoogleApiClient.Builder(context)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(object : GoogleApiClient.ConnectionCallbacks {
+                    override fun onConnected(bundle: Bundle?) {}
+                    override fun onConnectionSuspended(i: Int) {
+                        googleApiClient?.connect()
+                    }
+                })
+                .addOnConnectionFailedListener { connectionResult ->
+                    Timber.e("${connectionResult.errorCode}")
+                }.build()
+            googleApiClient?.connect()
+        }
+        val locationRequest = LocationRequest.create()
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest.interval = 10000
+        locationRequest.fastestInterval = 5000
+        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
+        builder.setAlwaysShow(true)
+        googleApiClient?.let {
+            val result: PendingResult<LocationSettingsResult> =
+                LocationServices.SettingsApi.checkLocationSettings(it, builder.build())
+            result.setResultCallback { result ->
+                val status: Status = result.status
+                when (status.statusCode) {
+                    LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> try {
+                        // Show the dialog by calling startResolutionForResult(),
+                        status.startResolutionForResult(
+                            activity,
+                            REQUEST_LOCATION
+                        )
+                    } catch (e: IntentSender.SendIntentException) {
+                        Timber.e(e)
+                    }
+                    LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
+                        activity.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                    }
+                }
+            }
+        }
     }
 
     override fun stopLocationUpdates() {

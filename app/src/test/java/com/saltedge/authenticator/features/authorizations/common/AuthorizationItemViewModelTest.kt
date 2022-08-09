@@ -21,9 +21,11 @@
 package com.saltedge.authenticator.features.authorizations.common
 
 import android.view.View
-import com.saltedge.authenticator.models.Connection
-import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
 import com.saltedge.authenticator.TestAppTools
+import com.saltedge.authenticator.core.api.model.DescriptionData
+import com.saltedge.authenticator.models.Connection
+import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
 import net.danlew.android.joda.JodaTimeAndroid
 import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.CoreMatchers.equalTo
@@ -47,186 +49,37 @@ class AuthorizationItemViewModelTest {
             authorizationID = "444",
             authorizationCode = "111",
             title = "title",
-            description = "description",
+            description = DescriptionData(text = "description"),
             endTime = DateTime(),
             connectionID = "333",
             connectionName = "Demobank",
             connectionLogoUrl = "url",
             validSeconds = 300,
-            startTime = DateTime()
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun joinFinalModelsTestCase1() {
-        val newList = listOf(
-            createModelByIndex(1),
-            createModelByIndex(2),
-            createModelByIndex(3)
-        )
-        val oldList = emptyList<AuthorizationItemViewModel>()
-
-        assertThat(joinViewModels(newList, oldList), equalTo(newList))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun joinFinalModelsTestCase2() {
-        val newList = emptyList<AuthorizationItemViewModel>()
-        val oldList = listOf(
-            createModelByIndex(1),
-            createModelByIndex(2),
-            createModelByIndex(3).copy(viewMode = ViewMode.UNAVAILABLE)
-        )
-
-        assertThat(joinViewModels(newList, oldList)[0].viewMode,
-            equalTo(ViewMode.UNAVAILABLE))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun joinFinalModelsTestCase3() {
-        val newList = listOf(
-            createModelByIndex(1),
-            createModelByIndex(2),
-            createModelByIndex(3)
-        )
-        val oldList = listOf(
-            createModelByIndex(1),
-            createModelByIndex(2),
-            createModelByIndex(3)
-        )
-
-        assertThat(joinViewModels(newList, oldList), equalTo(newList))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun joinFinalModelsTestCase4() {
-        val newList = listOf(
-            createModelByIndex(1),
-            createModelByIndex(2),
-            createModelByIndex(3)
-        )
-        val oldList = listOf(
-            createModelByIndex(1),
-            createModelByIndex(2),
-            createModelByIndex(3).copy(viewMode = ViewMode.DENY_SUCCESS)
-        )
-        val resultList = listOf(
-            createModelByIndex(1),
-            createModelByIndex(2),
-            createModelByIndex(3).copy(viewMode = ViewMode.DENY_SUCCESS)
-        )
-
-        assertThat(joinViewModels(newList, oldList), equalTo(resultList))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun joinFinalModelsTestCase5() {
-        val newList = listOf(
-            createModelByIndex(1).copy(connectionID = "x"),
-            createModelByIndex(2).copy(connectionID = "x"),
-            createModelByIndex(3).copy(connectionID = "x")
-        )
-        val oldList = listOf(
-            createModelByIndex(1).copy(connectionID = "x"),
-            createModelByIndex(2).copy(connectionID = "x"),
-            createModelByIndex(3).copy(connectionID = "x", viewMode = ViewMode.DENY_SUCCESS)
-        )
-        val resultList = listOf(
-            createModelByIndex(1).copy(connectionID = "x"),
-            createModelByIndex(2).copy(connectionID = "x"),
-            createModelByIndex(3).copy(connectionID = "x", viewMode = ViewMode.DENY_SUCCESS)
-        )
-
-        assertThat(joinViewModels(newList, oldList), equalTo(resultList))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun joinFinalModelsTestCase6() {
-        val newList = listOf(
-            createModelByIndex(1),
-            createModelByIndex(2)
-        )
-        val oldList = listOf(
-            createModelByIndex(1),
-            createModelByIndex(2),
-            createModelByIndex(3).copy(viewMode = ViewMode.UNAVAILABLE)
-        )
-        val resultList = listOf(
-            createModelByIndex(1),
-            createModelByIndex(2),
-            createModelByIndex(3).copy(viewMode = ViewMode.UNAVAILABLE)
-        )
-
-        assertThat(joinViewModels(newList, oldList), equalTo(resultList))
-        assertThat(joinViewModels(newList, oldList)[2].viewMode,
-            equalTo(ViewMode.UNAVAILABLE))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun joinFinalModelsTestCase7() {
-        val newList = listOf(
-            createModelByIndex(1),
-            createModelByIndex(2),
-            createModelByIndex(4)
-        )
-        val oldList = listOf(
-            createModelByIndex(1),
-            createModelByIndex(2),
-            createModelByIndex(3).copy(viewMode = ViewMode.UNAVAILABLE)
-        )
-        val resultList = listOf(
-            createModelByIndex(1),
-            createModelByIndex(2),
-            createModelByIndex(3).copy(viewMode = ViewMode.UNAVAILABLE),
-            createModelByIndex(4)
-        )
-
-        assertThat(joinViewModels(newList, oldList), equalTo(resultList))
-        assertThat(joinViewModels(newList, oldList)[2].viewMode,
-            equalTo(ViewMode.UNAVAILABLE))
-    }
-
-    private fun createModelByIndex(index: Int): AuthorizationItemViewModel {
-        return AuthorizationItemViewModel(
-            authorizationID = "$index",
-            authorizationCode = "$index",
-            title = "$index",
-            description = "$index",
-            endTime = DateTime(index.toLong()),
-            connectionID = "$index",
-            connectionName = "$index",
-            connectionLogoUrl = "$index",
-            validSeconds = 100,
-            startTime = DateTime(index.toLong())
+            startTime = DateTime(),
+            apiVersion = "1",
+            geolocationRequired = false
         )
     }
 
     @Test
     @Throws(Exception::class)
     fun canBeAuthorizedTest() {
-        val results = ViewMode.values().map {
-            model.viewMode = it
+        val results = AuthorizationStatus.values().map {
+            model.status = it
             it to model.canBeAuthorized
         }.toMap()
 
         assertThat(results, equalTo(
             mapOf(
-                ViewMode.LOADING to false,
-                ViewMode.DEFAULT to true,
-                ViewMode.CONFIRM_PROCESSING to false,
-                ViewMode.DENY_PROCESSING to false,
-                ViewMode.CONFIRM_SUCCESS to false,
-                ViewMode.DENY_SUCCESS to false,
-                ViewMode.ERROR to false,
-                ViewMode.TIME_OUT to false,
-                ViewMode.UNAVAILABLE to false
+                AuthorizationStatus.LOADING to false,
+                AuthorizationStatus.PENDING to true,
+                AuthorizationStatus.CONFIRM_PROCESSING to false,
+                AuthorizationStatus.DENY_PROCESSING to false,
+                AuthorizationStatus.CONFIRMED to false,
+                AuthorizationStatus.DENIED to false,
+                AuthorizationStatus.ERROR to false,
+                AuthorizationStatus.TIME_OUT to false,
+                AuthorizationStatus.UNAVAILABLE to false
             )
         ))
     }
@@ -234,22 +87,22 @@ class AuthorizationItemViewModelTest {
     @Test
     @Throws(Exception::class)
     fun hasFinalModeTest() {
-        val results = ViewMode.values().map {
-            model.viewMode = it
-            it to model.hasFinalMode
+        val results = AuthorizationStatus.values().map {
+            model.status = it
+            it to model.hasFinalStatus
         }.toMap()
 
         assertThat(results, equalTo(
             mapOf(
-                ViewMode.LOADING to false,
-                ViewMode.DEFAULT to false,
-                ViewMode.CONFIRM_PROCESSING to false,
-                ViewMode.DENY_PROCESSING to false,
-                ViewMode.CONFIRM_SUCCESS to true,
-                ViewMode.DENY_SUCCESS to true,
-                ViewMode.ERROR to true,
-                ViewMode.TIME_OUT to true,
-                ViewMode.UNAVAILABLE to true
+                AuthorizationStatus.LOADING to false,
+                AuthorizationStatus.PENDING to false,
+                AuthorizationStatus.CONFIRM_PROCESSING to false,
+                AuthorizationStatus.DENY_PROCESSING to false,
+                AuthorizationStatus.CONFIRMED to true,
+                AuthorizationStatus.DENIED to true,
+                AuthorizationStatus.ERROR to true,
+                AuthorizationStatus.TIME_OUT to true,
+                AuthorizationStatus.UNAVAILABLE to true
             )
         ))
     }
@@ -280,22 +133,22 @@ class AuthorizationItemViewModelTest {
     @Test
     @Throws(Exception::class)
     fun timeViewVisibilityTest() {
-        val results = ViewMode.values().map {
-            model.viewMode = it
+        val results = AuthorizationStatus.values().map {
+            model.status = it
             it to model.timeViewVisibility
         }.toMap()
 
         assertThat(results, equalTo(
             mapOf(
-                ViewMode.LOADING to View.INVISIBLE,
-                ViewMode.DEFAULT to View.VISIBLE,
-                ViewMode.CONFIRM_PROCESSING to View.VISIBLE,
-                ViewMode.DENY_PROCESSING to View.VISIBLE,
-                ViewMode.CONFIRM_SUCCESS to View.VISIBLE,
-                ViewMode.DENY_SUCCESS to View.VISIBLE,
-                ViewMode.ERROR to View.VISIBLE,
-                ViewMode.TIME_OUT to View.VISIBLE,
-                ViewMode.UNAVAILABLE to View.INVISIBLE
+                AuthorizationStatus.LOADING to View.INVISIBLE,
+                AuthorizationStatus.PENDING to View.VISIBLE,
+                AuthorizationStatus.CONFIRM_PROCESSING to View.VISIBLE,
+                AuthorizationStatus.DENY_PROCESSING to View.VISIBLE,
+                AuthorizationStatus.CONFIRMED to View.VISIBLE,
+                AuthorizationStatus.DENIED to View.VISIBLE,
+                AuthorizationStatus.ERROR to View.VISIBLE,
+                AuthorizationStatus.TIME_OUT to View.VISIBLE,
+                AuthorizationStatus.UNAVAILABLE to View.INVISIBLE
             )
         ))
     }
@@ -303,22 +156,22 @@ class AuthorizationItemViewModelTest {
     @Test
     @Throws(Exception::class)
     fun ignoreTimeUpdateTest() {
-        val results = ViewMode.values().map {
-            model.viewMode = it
+        val results = AuthorizationStatus.values().map {
+            model.status = it
             it to model.ignoreTimeUpdate
         }.toMap()
 
         assertThat(results, equalTo(
             mapOf(
-                ViewMode.LOADING to true,
-                ViewMode.DEFAULT to false,
-                ViewMode.CONFIRM_PROCESSING to true,
-                ViewMode.DENY_PROCESSING to true,
-                ViewMode.CONFIRM_SUCCESS to true,
-                ViewMode.DENY_SUCCESS to true,
-                ViewMode.ERROR to true,
-                ViewMode.TIME_OUT to true,
-                ViewMode.UNAVAILABLE to true
+                AuthorizationStatus.LOADING to true,
+                AuthorizationStatus.PENDING to false,
+                AuthorizationStatus.CONFIRM_PROCESSING to true,
+                AuthorizationStatus.DENY_PROCESSING to true,
+                AuthorizationStatus.CONFIRMED to true,
+                AuthorizationStatus.DENIED to true,
+                AuthorizationStatus.ERROR to true,
+                AuthorizationStatus.TIME_OUT to true,
+                AuthorizationStatus.UNAVAILABLE to true
             )
         ))
     }
@@ -377,13 +230,57 @@ class AuthorizationItemViewModelTest {
                     authorizationID = "444",
                     authorizationCode = "111",
                     title = "title",
-                    description = "description",
+                    description = DescriptionData(text = "description"),
                     endTime = DateTime(300000L),
                     connectionID = "333",
                     connectionName = "Demobank",
                     connectionLogoUrl = "url",
                     validSeconds = 300,
-                    startTime = DateTime(0L)
+                    startTime = DateTime(0L),
+                    apiVersion = "1",
+                    status = AuthorizationStatus.PENDING,
+                    geolocationRequired = connection.geolocationRequired ?: false
+                )
+            )
+        )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun authorizationDataV2ToAuthorizationViewModelTest() {
+        val data = AuthorizationV2Data(
+            authorizationID = "444",
+            authorizationCode = "111",
+            title = "title",
+            description = DescriptionData(text = "description"),
+            createdAt = DateTime(0L),
+            expiresAt = DateTime(300000L),
+            connectionID = "333",
+            status = "confirm_processing"
+        )
+        val connection = Connection().apply {
+            id = "333"
+            name = "Demobank"
+            logoUrl = "url"
+        }
+
+        assertThat(
+            data.toAuthorizationItemViewModel(connection = connection),
+            equalTo(
+                AuthorizationItemViewModel(
+                    authorizationID = "444",
+                    authorizationCode = "111",
+                    title = "title",
+                    description = DescriptionData(text = "description"),
+                    endTime = DateTime(300000L),
+                    connectionID = "333",
+                    connectionName = "Demobank",
+                    connectionLogoUrl = "url",
+                    validSeconds = 300,
+                    startTime = DateTime(0L),
+                    apiVersion = "2",
+                    status = AuthorizationStatus.CONFIRM_PROCESSING,
+                    geolocationRequired = connection.geolocationRequired ?: false
                 )
             )
         )

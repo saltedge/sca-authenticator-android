@@ -24,23 +24,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.databinding.ConsentsListBinding
 import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.app.authenticatorApp
-import com.saltedge.authenticator.tools.loadRoundedImage
+import com.saltedge.authenticator.tools.loadImage
 import com.saltedge.authenticator.tools.navigateTo
 import com.saltedge.authenticator.tools.stopRefresh
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -63,21 +63,12 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
         setupViewModel()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         activityComponents?.updateAppbar(
             titleResId = R.string.consents_feature_title,
             backActionImageResId = R.drawable.ic_appbar_action_back
         )
-        binding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.fragment_consents_list,
-            container,
-            false
-        )
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_consents_list, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
         return binding.root
@@ -96,25 +87,19 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(ConsentsListViewModel::class.java)
 
-        viewModel.listItems.observe(this, Observer<List<ConsentItemViewModel>> {
+        viewModel.listItems.observe(this, Observer<List<ConsentItem>> {
             headerDecorator.setHeaderForAllItems(it.count())
             headerDecorator.footerPositions = arrayOf(it.count() - 1)
             adapter.data = it
         })
         viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                navigateTo(
-                    actionRes = R.id.consent_details,
-                    bundle = bundle
-                )
+                navigateTo(actionRes = R.id.consent_details, bundle = bundle)
             }
         })
         viewModel.onConsentRemovedEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
             event.getContentIfNotHandled()?.let { message ->
-                activity?.showWarningSnack(
-                    message = message,
-                    snackBarDuration = Snackbar.LENGTH_SHORT
-                )
+                activity?.showWarningSnack(message = message, snackBarDuration = Snackbar.LENGTH_SHORT)
             }
         })
         viewModel.setInitialData(arguments)
@@ -133,21 +118,20 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
         }
         swipeRefreshLayout?.setColorSchemeResources(R.color.primary, R.color.red, R.color.green)
         sharedViewModel.onRevokeConsent.observe(viewLifecycleOwner, Observer<String> { result ->
-            viewModel.revokeConsent(result)
+            viewModel.onRevokeConsent(result)
         })
     }
 
     companion object {
         @BindingAdapter("connectionLogoUrl")
         @JvmStatic
-        fun setConnectionLogoUrl(imageView: ImageView, logoUrl: String?) {
+        fun setConnectionLogoUrl(imageView: ShapeableImageView, logoUrl: String?) {
             if (logoUrl == null) {
                 imageView.setImageDrawable(null)
             } else {
-                imageView.loadRoundedImage(
+                imageView.loadImage(
                     imageUrl = logoUrl,
                     placeholderId = R.drawable.shape_bg_app_logo,
-                    cornerRadius = imageView.resources.getDimension(R.dimen.consents_list_logo_radius)
                 )
             }
         }

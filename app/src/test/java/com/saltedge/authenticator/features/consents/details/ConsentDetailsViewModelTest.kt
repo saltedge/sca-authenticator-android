@@ -24,19 +24,17 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
+import com.saltedge.android.test_tools.ViewModelTest
+import com.saltedge.authenticator.TestAppTools
+import com.saltedge.authenticator.TestFactory
 import com.saltedge.authenticator.app.KEY_GUID
-import com.saltedge.authenticator.models.Connection
+import com.saltedge.authenticator.core.api.KEY_DATA
+import com.saltedge.authenticator.core.api.model.ConsentSharedData
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.constants.KEY_DATA
-import com.saltedge.authenticator.sdk.model.ConsentData
-import com.saltedge.authenticator.sdk.model.ConsentSharedData
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
-import com.saltedge.authenticator.sdk.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.model.response.ConsentRevokeResponseData
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.TestAppTools
+import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import com.saltedge.authenticator.tools.toDateFormatString
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -45,120 +43,67 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.robolectric.RobolectricTestRunner
-import java.security.PrivateKey
+import java.lang.ref.WeakReference
 
 @RunWith(RobolectricTestRunner::class)
-class ConsentDetailsViewModelTest {
+class ConsentDetailsViewModelTest : ViewModelTest() {
 
     private lateinit var viewModel: ConsentDetailsViewModel
+    private lateinit var interactor: ConsentDetailsInteractor
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
-    private val mockKeyStoreManager = mock(KeyStoreManagerAbs::class.java)
-    private val mockApiManager = mock(AuthenticatorApiManagerAbs::class.java)
-    private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
-    private val defaultConnection = Connection().apply {
-            guid = "connection1"
-            code = "demobank"
-            name = "Demobank"
-            status = "${ConnectionStatus.ACTIVE}"
-            accessToken = "token"
-            createdAt = 0L
-            updatedAt = 0L
-        }
-    private val mockConnectionAndKey = ConnectionAndKey(defaultConnection, mockPrivateKey)
-    private val defaultConsent = ConsentData(
-        id = "consent1",
-        userId = "user1",
-        createdAt = DateTime.now(),
-        expiresAt = DateTime.now().plusDays(1),
-        tppName = "tppName",
-        consentTypeString = "aisp",
-        accounts = emptyList(),
-        sharedData = ConsentSharedData(balance = true, transactions = true),
-        connectionId = "connection1"
-    )
+    private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
+    private val mockApiManagerV1 = mock(AuthenticatorApiManagerAbs::class.java)
+    private val mockApiManagerV2 = mock(ScaServiceClientAbs::class.java)
 
     @Before
     fun setUp() {
-        Mockito.doReturn(defaultConnection).`when`(mockConnectionsRepository).getByGuid("connection1")
-        given(mockKeyStoreManager.createConnectionAndKeyModel(defaultConnection)).willReturn(mockConnectionAndKey)
+        TestFactory.mockConnections(mockConnectionsRepository)
+        TestFactory.mockRichConnections(mockKeyStoreManager)
 
-        viewModel = ConsentDetailsViewModel(
-            appContext = context,
+        interactor = ConsentDetailsInteractor(
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
-            apiManager = mockApiManager
+            v1ApiManager = mockApiManagerV1,
+            v2ApiManager = mockApiManagerV2,
         )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onConsentRevokeFailureTest() {
-        //given
-        val apiError = ApiErrorData(errorClassName = "", errorMessage = "message")
-
-        //when
-        viewModel.onConsentRevokeFailure(apiError)
-
-        //then
-        assertThat(viewModel.revokeErrorEvent.value!!.peekContent(), equalTo(apiError.errorMessage))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onConsentRevokeSuccessTestCase1() {
-        //given invalid response params
-        val response = ConsentRevokeResponseData()
-
-        //when
-        viewModel.onConsentRevokeSuccess(response)
-
-        //then
-        Assert.assertNull(viewModel.revokeSuccessEvent.value)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onConsentRevokeSuccessTestCase2() {
-        //given valid response params
-        val response = ConsentRevokeResponseData(consentId = "1")
-
-        //when
-        viewModel.onConsentRevokeSuccess(response)
-
-        //then
-        assertThat(viewModel.revokeSuccessEvent.value!!.peekContent(), equalTo("1"))
+        viewModel = ConsentDetailsViewModel(
+            weakContext = WeakReference(context),
+            interactor = interactor
+        )
     }
 
     @Test
     @Throws(Exception::class)
     fun setInitialDataTestCase1() {
         //given arguments
+        val consent = TestFactory.v1AispConsentData.copy(
+            expiresAt = DateTime.now().plusDays(1)
+        )
         val arguments = Bundle().apply {
-            putString(KEY_GUID, "connection1")
-            putSerializable(KEY_DATA, defaultConsent)
+            putString(KEY_GUID, TestFactory.connection1.guid)
+            putSerializable(KEY_DATA, consent)
         }
 
         //when
         viewModel.setInitialData(arguments)
 
         //then
-        assertThat(viewModel.fragmentTitle.value, equalTo("tppName"))
+        assertThat(viewModel.fragmentTitle.value, equalTo("tppName111"))
         assertThat(viewModel.daysLeft.value, equalTo("1 day left"))
         assertThat(viewModel.consentTitle.value, equalTo("Access to account information"))
         assertThat(viewModel.consentDescription.value.toString(), equalTo(
-            "Consent granted to tppName application on the following accounts from Demobank"
+            "Consent granted to tppName111 application on the following accounts from Demobank1"
         ))
         assertThat(viewModel.consentGranted.value, equalTo(
-            "Granted: ${defaultConsent.createdAt.toDateFormatString(TestAppTools.applicationContext)}"
+            "Granted: ${consent.createdAt.toDateFormatString(TestAppTools.applicationContext)}"
         ))
         assertThat(viewModel.consentExpires.value, equalTo(
-            "Expires: ${defaultConsent.expiresAt.toDateFormatString(TestAppTools.applicationContext)}"
+            "Expires: ${consent.expiresAt.toDateFormatString(TestAppTools.applicationContext)}"
         ))
         assertThat(viewModel.accounts.value, equalTo(emptyList()))
         assertThat(viewModel.sharedDataVisibility.value, equalTo(View.VISIBLE))
@@ -170,12 +115,11 @@ class ConsentDetailsViewModelTest {
     @Throws(Exception::class)
     fun setInitialDataTestCase2() {
         //given arguments pisp_future
-        val consent = defaultConsent.copy(
-            consentTypeString = "pisp_future",
+        val consent = TestFactory.v1PispFutureConsentData.copy(
             sharedData = ConsentSharedData(balance = false, transactions = false)
         )
         val arguments = Bundle().apply {
-            putString(KEY_GUID, "connection1")
+            putString(KEY_GUID, TestFactory.connection1.guid)
             putSerializable(KEY_DATA, consent)
         }
 
@@ -193,12 +137,11 @@ class ConsentDetailsViewModelTest {
     @Throws(Exception::class)
     fun setInitialDataTestCase3() {
         //given arguments pisp_recurring
-        val consent = defaultConsent.copy(
-            consentTypeString = "pisp_recurring",
+        val consent = TestFactory.v1PispRecurringConsentData.copy(
             sharedData = null
         )
         val arguments = Bundle().apply {
-            putString(KEY_GUID, "connection1")
+            putString(KEY_GUID, TestFactory.connection1.guid)
             putSerializable(KEY_DATA, consent)
         }
 
@@ -217,7 +160,7 @@ class ConsentDetailsViewModelTest {
     fun setInitialDataTestCase4() {
         //given arguments with invalid guid
         val arguments = Bundle().apply {
-            putSerializable(KEY_DATA, defaultConsent)
+            putSerializable(KEY_DATA, TestFactory.v1AispConsentData)
         }
 
         //when
@@ -262,50 +205,104 @@ class ConsentDetailsViewModelTest {
     @Throws(Exception::class)
     fun onRevokeClickTest() {
         //given
-        viewModel.setInitialData(Bundle().apply {
-            putString(KEY_GUID, "connection1")
-            putSerializable(KEY_DATA, defaultConsent)
-        })
+        val arguments = Bundle().apply {
+            putString(KEY_GUID, TestFactory.connection1.guid)
+            putSerializable(KEY_DATA, TestFactory.v1AispConsentData)
+        }
+        viewModel.setInitialData(arguments)
 
         //when
-        viewModel.onRevokeClick()
+        viewModel.onRevokeActionClick()
 
         //then
-        assertThat(viewModel.revokeAlertEvent.value!!.peekContent(), equalTo(
-            "tppName service that is provided to you may be interrupted. Are you sure you want to revoke consent?"
-        ))
+        assertThat(
+            viewModel.revokeQuestionEvent.value!!.peekContent(),
+            equalTo(
+            "tppName111 service that is provided to you may be interrupted. Are you sure you want to revoke consent?"
+            )
+        )
     }
 
     @Test
     @Throws(Exception::class)
     fun onRevokeConfirmedTestCase1() {
         //given
-        viewModel.setInitialData(Bundle().apply {
-            putString(KEY_GUID, "connection1")
-            putSerializable(KEY_DATA, defaultConsent)
-        })
+        val arguments = Bundle().apply {
+            putString(KEY_GUID, TestFactory.connection1.guid)
+            putSerializable(KEY_DATA, TestFactory.v1AispConsentData)
+        }
+        viewModel.setInitialData(arguments)
 
         //when
-        viewModel.onRevokeConfirmed()
+        viewModel.onRevokeConfirmedByUser()
 
         //then
-        verify(mockApiManager).revokeConsent(
-            consentId = "consent1",
-            connectionAndKey = mockConnectionAndKey,
-            resultCallback = viewModel
+        verify(mockApiManagerV1).revokeConsent(
+            consentId = TestFactory.v1AispConsentData.id,
+            connectionAndKey = TestFactory.richConnection1,
+            resultCallback = interactor
         )
+        Mockito.verifyNoInteractions(mockApiManagerV2)
     }
 
     @Test
     @Throws(Exception::class)
     fun onRevokeConfirmedTestCase2() {
+        //given
+        val arguments = Bundle().apply {
+            putString(KEY_GUID, TestFactory.connection2.guid)
+            putSerializable(KEY_DATA, TestFactory.v2ConsentData)
+        }
+        viewModel.setInitialData(arguments)
+
+        //when
+        viewModel.onRevokeConfirmedByUser()
+
+        //then
+        verify(mockApiManagerV2).revokeConsent(
+            consentID = TestFactory.v2ConsentData.id,
+            richConnection = TestFactory.richConnection2,
+            callback = interactor
+        )
+        Mockito.verifyNoInteractions(mockApiManagerV1)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onRevokeConfirmedTestCase3() {
         //given invalid initial data
         viewModel.setInitialData(Bundle())
 
         //when
-        viewModel.onRevokeConfirmed()
+        viewModel.onRevokeConfirmedByUser()
 
         //then
-        Mockito.verifyNoInteractions(mockApiManager)
+        Mockito.verifyNoInteractions(mockApiManagerV1, mockApiManagerV2)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onConsentRevokeFailureTest() {
+        //given
+        val apiError = ApiErrorData(errorClassName = "", errorMessage = "message")
+
+        //when
+        interactor.onConsentRevokeFailure(apiError)
+
+        //then
+        assertThat(viewModel.revokeErrorEvent.value!!.peekContent(), equalTo(apiError.errorMessage))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onConsentRevokeSuccessTest() {
+        //given valid response params
+        val consentId = "1"
+
+        //when
+        interactor.onConsentRevokeSuccess(consentId)
+
+        //then
+        assertThat(viewModel.revokeSuccessEvent.value!!.peekContent(), equalTo("1"))
     }
 }

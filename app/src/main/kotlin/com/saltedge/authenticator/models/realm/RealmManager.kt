@@ -21,14 +21,15 @@
 package com.saltedge.authenticator.models.realm
 
 import android.content.Context
+import androidx.fragment.app.FragmentActivity
 import com.saltedge.authenticator.app.AppTools
+import com.saltedge.authenticator.core.tools.createRandomGuid
 import com.saltedge.authenticator.models.repository.PreferenceRepository
-import com.saltedge.authenticator.sdk.tools.createRandomGuid
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import timber.log.Timber
 
-const val DB_SCHEMA_VERSION = 3L
+const val DB_SCHEMA_VERSION = 4L
 
 interface RealmManagerAbs {
     val initialized: Boolean
@@ -86,4 +87,8 @@ object RealmManager : RealmManagerAbs {
             initErrorOccurred = true
         }
     }
+}
+
+fun FragmentActivity.initRealmDatabase() {
+    if (!RealmManager.initialized) RealmManager.initRealm(context = this)
 }

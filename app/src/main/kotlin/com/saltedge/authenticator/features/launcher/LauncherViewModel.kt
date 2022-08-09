@@ -53,8 +53,6 @@ class LauncherViewModel(
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onLifeCycleResume() {
         val securityCheckNotPassed = !checkAppSecurity()
-        if (!AppTools.isTestsSuite(appContext)) realmManager.initRealm(context = appContext)
-
         when {
             securityCheckNotPassed -> {
                 onSecurityCheckFail.postUnitEvent()

@@ -22,8 +22,8 @@ package com.saltedge.authenticator.features.main
 
 import android.content.Intent
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
-import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
-import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
+import com.saltedge.authenticator.core.api.KEY_AUTHORIZATION_ID
+import com.saltedge.authenticator.core.api.KEY_CONNECTION_ID
 
 val Intent?.connectionId: String
     get() = this?.getStringExtra(KEY_CONNECTION_ID) ?: ""

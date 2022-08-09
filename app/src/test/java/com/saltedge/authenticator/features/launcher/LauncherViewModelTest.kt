@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.launcher
 
+import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
@@ -35,7 +36,7 @@ import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class LauncherViewModelTest {
+class LauncherViewModelTest : ViewModelTest() {
 
     private lateinit var viewModel: LauncherViewModel
     private val mockPreferenceRepository = Mockito.mock(PreferenceRepositoryAbs::class.java)
@@ -91,7 +92,6 @@ class LauncherViewModelTest {
 
         viewModel.onLifeCycleResume()
 
-        Mockito.verify(mockRealmManager).initRealm(TestAppTools.applicationContext)
         assertTrue(mockRealmManager.errorOccurred)
         assertNotNull(viewModel.onDbInitializationFail.value)
         assertNull(viewModel.onInitializationSuccess.value)
@@ -127,7 +127,6 @@ class LauncherViewModelTest {
     fun onLifeCycleResumeTestCase3() {
         viewModel.onLifeCycleResume()
 
-        Mockito.verify(mockRealmManager).initRealm(TestAppTools.applicationContext)
         assertFalse(mockRealmManager.errorOccurred)
         assertNull(viewModel.onDbInitializationFail.value)
         assertNotNull(viewModel.onInitializationSuccess.value)

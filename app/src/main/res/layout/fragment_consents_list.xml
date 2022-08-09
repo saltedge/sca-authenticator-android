@@ -19,8 +19,7 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -42,19 +41,21 @@
             android:id="@+id/connectionInfoView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_12"
             android:layout_marginStart="@dimen/dp_16"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:layout_marginTop="@dimen/dp_12"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/connectionLogoView"
                 android:layout_width="@dimen/dp_36"
                 android:layout_height="@dimen/dp_36"
+                android:background="@color/grey_light_extra_and_dark_100"
+                android:contentDescription="@string/connections_feature_title"
                 android:scaleType="fitCenter"
-                android:background="@drawable/shape_bg_connection_list_logo"
-                app:connectionLogoUrl="@{viewModel.logoUrl}"
-                android:contentDescription="@string/connections_feature_title" />
+                app:connectionLogoUrl="@{viewModel.logoUrlData}"
+                app:shapeAppearanceOverlay="@style/circleImageView"
+                app:srcCompat="@drawable/shape_bg_connection_list_logo" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -68,9 +69,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="bottom"
-                    android:lines="1"
                     android:includeFontPadding="false"
-                    android:text="@{viewModel.connectionTitle}"
+                    android:lines="1"
+                    android:text="@{viewModel.connectionTitleData}"
                     tools:text="Demobank" />
 
                 <TextView
@@ -78,8 +79,8 @@
                     style="@style/Text14Secondary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:lines="1"
                     android:includeFontPadding="false"
+                    android:lines="1"
                     android:text="@{viewModel.consentsCount}"
                     tools:text="3 consents" />
             </LinearLayout>

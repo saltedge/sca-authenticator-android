@@ -24,10 +24,10 @@ import android.app.PendingIntent
 import android.content.Intent
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.saltedge.authenticator.core.api.KEY_AUTHORIZATION_ID
+import com.saltedge.authenticator.core.api.KEY_CONNECTION_ID
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.models.repository.PreferenceRepository
-import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
-import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
 
 class CloudMessagingService : FirebaseMessagingService() {
 

@@ -31,7 +31,7 @@ import androidx.annotation.StringRes
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.FragmentActivity
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.setTextColorResId
 import com.saltedge.authenticator.tools.showDialogFragment

@@ -28,17 +28,14 @@ import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.app.AppTools
-import com.saltedge.authenticator.models.Connection
+import com.saltedge.authenticator.core.tools.MILLIS_IN_MINUTE
+import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.core.tools.millisToRemainedMinutes
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.connection.isActive
-import com.saltedge.authenticator.sdk.tools.MILLIS_IN_MINUTE
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.sdk.tools.millisToRemainedMinutes
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
 import com.saltedge.authenticator.tools.postUnitEvent
 import timber.log.Timber
@@ -49,7 +46,7 @@ class LockableActivityViewModel(
     val connectionsRepository: ConnectionsRepositoryAbs,
     val preferenceRepository: PreferenceRepositoryAbs,
     val passcodeTools: PasscodeToolsAbs,
-    val keyStoreManager: KeyStoreManagerAbs,
+    val keyStoreManager: KeyManagerAbs,
     val apiManager: AuthenticatorApiManagerAbs
 ): ViewModel() {
     private var returnFromOwnActivity = false
@@ -68,6 +65,7 @@ class LockableActivityViewModel(
     val enablePasscodeInputEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val disablePasscodeInputEvent = MutableLiveData<ViewModelEvent<Int>>()
     val showAppClearWarningEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onWipeApplicationEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val successVibrateEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val showBiometricPromptEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val isBiometricInputReady: Boolean
@@ -114,7 +112,7 @@ class LockableActivityViewModel(
         when {
             shouldBlockInput(inputAttempt) -> disableUnlockInput()
             shouldWipeApplication(inputAttempt) -> {
-                wipeApplication()
+                onWipeApplicationEvent.postUnitEvent()
                 showAppClearWarningEvent.postUnitEvent()
             }
         }
@@ -128,11 +126,6 @@ class LockableActivityViewModel(
 
     fun onLockWarningIgnored() {
         lockScreen()
-    }
-
-    fun onUserConfirmedClearAppData() {
-        sendRevokeRequestForConnections(connectionsRepository.getAllActiveConnections())
-        wipeApplication()
     }
 
     fun onTouch(lockViewIsNotVisible: Boolean) {
@@ -199,18 +192,6 @@ class LockableActivityViewModel(
 
     //User exceeded passcode input attempts
     private fun shouldWipeApplication(inputAttempt: Int): Boolean = inputAttempt >= 11
-
-    private fun wipeApplication() {
-        preferenceRepository.clearUserPreferences()
-        keyStoreManager.deleteKeyPairs(connectionsRepository.getAllConnections().map { it.guid })
-        connectionsRepository.deleteAllConnections()
-    }
-
-    private fun sendRevokeRequestForConnections(connections: List<Connection>) {//TODO move connections interactor
-        val connectionsAndKeys: List<ConnectionAndKey> = connections.filter { it.isActive() }
-            .mapNotNull { keyStoreManager.createConnectionAndKeyModel(it) }
-        apiManager.revokeConnections(connectionsAndKeys = connectionsAndKeys, resultCallback = null)
-    }
 
     private fun calculateWrongAttemptWaitTime(attemptNumber: Int): Long = when {
         attemptNumber < 4 -> 0L

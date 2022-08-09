@@ -21,10 +21,11 @@
 package com.saltedge.authenticator.features.settings.licenses
 
 import androidx.lifecycle.Observer
+import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
-import com.saltedge.authenticator.sdk.constants.KEY_TITLE
 import com.saltedge.authenticator.TestAppTools
+import com.saltedge.authenticator.core.api.KEY_TITLE
 import com.saltedge.authenticator.widget.fragment.WebViewFragment
 import junit.framework.TestCase.assertNull
 import org.hamcrest.CoreMatchers.equalTo
@@ -35,7 +36,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class LicensesViewModelTest {
+class LicensesViewModelTest : ViewModelTest() {
     private val apache2LicenseLink = "https://www.apache.org/licenses/LICENSE-2.0.txt"
     private lateinit var viewModel: LicensesViewModel
 

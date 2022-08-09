@@ -137,6 +137,35 @@ fun FragmentActivity.showResetDataAndSettingsDialog(listener: DialogInterface.On
 }
 
 /**
+ * Show info dialog
+ *
+ * @receiver FragmentActivity
+ * @param titleResId - the title that appears in the dialog
+ * @param messageResId - the message that appears in the dialog
+ * @param positiveButtonResId - the positive button that appears in the dialog
+ * @param listener - on dialog action click listener
+ * @return AlertDialog object or null
+ */
+fun FragmentActivity.showInfoDialog(
+    @StringRes titleResId: Int,
+    @StringRes messageResId: Int,
+    @StringRes positiveButtonResId: Int,
+    listener: DialogInterface.OnClickListener
+): AlertDialog? {
+    return try {
+        AlertDialog.Builder(this, R.style.AlertDialogTheme)
+            .setTitle(titleResId)
+            .setMessage(messageResId)
+            .setPositiveButton(positiveButtonResId, listener)
+            .setNegativeButton(R.string.actions_cancel, listener)
+            .show()
+    } catch (e: java.lang.Exception) {
+        Timber.e(e)
+        null
+    }
+}
+
+/**
  * Show dialog for lock screen with warning message. Dialog will block user interaction.
  *
  * @receiver FragmentActivity

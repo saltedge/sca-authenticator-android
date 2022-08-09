@@ -21,8 +21,8 @@
 package com.saltedge.authenticator.app.di
 
 import android.os.Build
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.TestAppTools
+import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptManagerV28
 import com.saltedge.authenticator.widget.biometric.BiometricsInputDialog
 import org.junit.Assert.assertNotNull
@@ -42,8 +42,10 @@ class AppModuleTest {
         assertNotNull(module.provideAppContext())
         assertNotNull(module.provideBiometricTools())
         assertNotNull(module.providePasscodeTools())
-        assertNotNull(module.provideCryptoTools())
-        assertNotNull(module.provideAuthenticatorApiManager())
+        assertNotNull(module.provideCryptoToolsV1())
+        assertNotNull(module.provideCryptoToolsV2())
+        assertNotNull(module.provideAuthenticatorApiManagerV1())
+        assertNotNull(module.provideAuthenticatorApiManagerV2())
         assertNotNull(module.provideConnectionsRepository())
         assertNotNull(module.providePreferenceRepository())
         assertNotNull(module.provideKeyStoreManager())

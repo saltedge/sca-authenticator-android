@@ -22,7 +22,7 @@ package com.saltedge.authenticator.features.connections.list
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItem
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.widget.list.AbstractListAdapter
 
@@ -32,11 +32,11 @@ class ConnectionsListAdapter(val clickListener: ListItemClickListener?) : Abstra
         ConnectionItemHolder(parent, clickListener)
 
     override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
-        (holder as ConnectionItemHolder).bind(item as ConnectionItemViewModel)
+        (holder as ConnectionItemHolder).bind(item as ConnectionItem)
     }
 
-    fun updateListItem(viewModel: ConnectionItemViewModel) {
-        val itemIndex = data.indexOfFirst { (it as ConnectionItemViewModel).guid == viewModel.guid }
+    fun updateListItem(viewModel: ConnectionItem) {
+        val itemIndex = data.indexOfFirst { (it as ConnectionItem).guid == viewModel.guid }
         if (itemIndex > -1) updateItem(viewModel, itemIndex)
     }
 }

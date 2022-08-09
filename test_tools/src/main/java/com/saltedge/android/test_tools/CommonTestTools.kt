@@ -21,11 +21,13 @@
 package com.saltedge.android.test_tools
 
 import com.google.gson.Gson
-import com.saltedge.authenticator.sdk.model.ConsentData
-import com.saltedge.authenticator.sdk.model.EncryptedData
-import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
-import com.saltedge.authenticator.sdk.tools.encodeToPemBase64String
+import com.saltedge.authenticator.core.api.model.ConsentData
+import com.saltedge.authenticator.core.api.model.EncryptedData
+import com.saltedge.authenticator.core.model.ConnectionAbs
+import com.saltedge.authenticator.core.tools.encodeToPemBase64String
+import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
 import java.io.ByteArrayOutputStream
 import java.security.PrivateKey
 import java.security.PublicKey
@@ -53,6 +55,20 @@ fun AuthorizationData.encryptWithTestKey(): EncryptedData {
     )
 }
 
+fun AuthorizationV2Data.encryptWithTestKey(): AuthorizationResponseData {
+    val jsonString = this.toJsonString()
+    val publicKey = CommonTestTools.testPublicKey
+    return AuthorizationResponseData(
+        id = this.authorizationID!!,
+        connectionId = this.connectionID!!,
+        status = this.status!!,
+        key = rsaEncrypt(CommonTestTools.aesKey, publicKey)!!,
+        iv = rsaEncrypt(CommonTestTools.aesIV, publicKey)!!,
+        data = encryptAesCBCString(jsonString, CommonTestTools.aesKey, CommonTestTools.aesIV)!!,
+        finishedAt = this.finishedAt
+    )
+}
+
 fun ConsentData.encryptWithTestKey(): EncryptedData {
     return encryptWithTestKey(
         id = this.id,
@@ -75,8 +91,7 @@ fun getDefaultTestConnection(): ConnectionAbs =
 
 fun rsaEncrypt(input: ByteArray, publicKey: PublicKey): String? {
     try {
-        val encryptCipher =
-            Cipher.getInstance("RSA/ECB/PKCS1Padding")
+        val encryptCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
         encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey)
 
         val outputStream = ByteArrayOutputStream()
@@ -104,7 +119,7 @@ private fun encryptWithTestKey(
 ): EncryptedData {
     return EncryptedData(
         id = id,
-        connectionId = connectionId,
+        connectionId = connectionId ?: "",
         algorithm = "AES-256-CBC",
         key = rsaEncrypt(CommonTestTools.aesKey, publicKey)!!,
         iv = rsaEncrypt(CommonTestTools.aesIV, publicKey)!!,

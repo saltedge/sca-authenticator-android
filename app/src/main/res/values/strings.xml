@@ -31,12 +31,14 @@
     <string name="actions_get_started">Get Started</string>
     <string name="actions_next">Next</string>
     <string name="actions_proceed">Proceed</string>
+    <string name="actions_retry">Retry</string>
     <string name="actions_reconnect">Reconnect</string>
     <string name="actions_refresh">Refresh</string>
     <string name="actions_rename">Rename</string>
     <string name="actions_contact_support">Contact Support</string>
     <string name="actions_search">Search</string>
     <string name="actions_skip">Skip</string>
+    <string name="actions_enable">Enable</string>
     <string name="actions_try_again">Try Again</string>
     <string name="actions_unlock_authenticator">Unlock Salt Edge Authenticator</string>
     <string name="actions_view_more">View More</string>
@@ -44,6 +46,8 @@
     <string name="actions_confirm">Confirm</string>
     <string name="actions_clear">Clear</string>
     <string name="actions_view_consents">View consents</string>
+    <string name="actions_view_location">Access to location</string>
+    <string name="actions_go_to_settings">GO TO SETTINGS</string>
 
     <string name="passcode_enter_passcode_title">Enter passcode</string>
     <string name="passcode_enter_passcode_or_fingerprint_title">Enter passcode or use fingerprint</string>
@@ -69,7 +73,6 @@
     <string name="errors_wrong_passcode">Wrong passcode</string>
     <string name="errors_passcode_try_again">Please try again in \%s minutes.</string>
     <string name="errors_passcode_try_again_short">Please try again in \%s minute. </string>
-    <string name="errors_request_error">Request error</string>
     <string name="errors_warning">Warning</string>
     <string name="errors_error">Error</string>
     <string name="errors_connection_failed">Connection Failed</string>
@@ -81,6 +84,11 @@
     <string name="errors_app_launch_title">App launch interrupted</string>
     <string name="errors_failed_to_start_camera">Failed to start the camera. Please try again</string>
     <string name="errors_app_launch_message">Application cannot be launched due to security breach. You may contact our technical support for clarification.</string>
+    <string name="errors_invalid_response">Invalid response</string>
+    <string name="errors_invalid_authentication_data">Invalid Authentication data</string>
+    <string name="errors_no_connection">Unable to establish a connection.\nPlease try again later or contact service provider.</string>
+    <string name="errors_request_error">Request error</string>
+    <string name="errors_secure_connection">Unable to establish a secure connection.\nPlease contact service provider</string>
 
     <string name="onboarding_allow_notifications_description">Enable notifications, to receive useful alerts and always be up to speed with your transactions.</string>
     <string name="onboarding_allow_notifications_title">Allow Notifications</string>
@@ -105,6 +113,7 @@
     <string name="connections_list_delete_all_connections">Delete all connections and stop receiving confirmations until another Provider is connected.</string>
     <string name="connection_status_linked_on">Linked on</string>
     <string name="connection_status_inactive">Inactive. Please reconnect.</string>
+    <string name="connection_status_access_location">Grant access to location data</string>
     <string name="connect_status_encrypted_connection">Your connection is encrypted and\nsecurely transmitted using SSL</string>
     <string name="connect_status_in_progress">Processing…</string>
     <string name="connect_status_in_progress_description">This may take some time.</string>
@@ -183,6 +192,7 @@
     <string name="ui_dialog_rename_title">Rename connection</string>
 
     <string name="warning_no_internet_connection">No internet connection</string>
+    <string name="warning_no_internet_connection_description">Please check your internet connection and try again</string>
     <string name="warning_application_was_locked">Application will be locked due to inactivity</string>
 
     <string name="forgot_passcode">Forgot?</string>
@@ -216,4 +226,23 @@
     <string name="revoke_consent">Revoke consent</string>
     <string name="revoke_consent_message">\%s service that is provided to you may be interrupted. Are you sure you want to revoke consent?</string>
     <string name="consent_revoked_for">Consent revoked for \%s</string>
+
+    <string name="scan_qr_code">Scan QR Code</string>
+
+    <string name="description_payee">Payee</string>
+    <string name="description_amount">Amount</string>
+    <string name="description_account">Account</string>
+    <string name="description_payment_date">Date</string>
+    <string name="description_fees">Fees</string>
+    <string name="description_exchange_rate">Exchange rate</string>
+    <string name="description_reference">Reference</string>
+    <string name="description_extra_date">Date:</string>
+    <string name="description_extra_from">From:</string>
+    <string name="description_extra_location">Location:</string>
+    <string name="description_extra_ip">IP address:</string>
+
+    <string name="enable_gps_title">Enable GPS</string>
+    <string name="enable_gps_description">Please enable GPS. Your service provider is requesting your location for accurate risk analysis.</string>
+    <string name="grant_access_location_title">Grant access to location</string>
+    <string name="grant_access_location_description">Your service provider is requesting you to provide your location data every time you are authorizing an action for accurate risk analysis.</string>
 </resources>

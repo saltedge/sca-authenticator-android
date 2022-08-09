@@ -28,8 +28,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.core.model.GUID
 import com.saltedge.authenticator.features.main.SharedViewModel
-import com.saltedge.authenticator.sdk.model.GUID
 
 class DeleteConnectionDialog : DialogFragment(),
     DeleteConnectionContract.View,

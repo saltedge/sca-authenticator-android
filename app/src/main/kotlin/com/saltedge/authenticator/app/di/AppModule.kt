@@ -21,9 +21,11 @@
 package com.saltedge.authenticator.app.di
 
 import android.content.Context
-import com.saltedge.authenticator.app.ConnectivityReceiver
-import com.saltedge.authenticator.app.ConnectivityReceiverAbs
-import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.*
+import com.saltedge.authenticator.core.tools.biometric.BiometricTools
+import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.core.tools.secure.KeyManager
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.models.realm.RealmManager
 import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepository
@@ -32,16 +34,13 @@ import com.saltedge.authenticator.models.repository.PreferenceRepository
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricTools
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
-import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools
-import com.saltedge.authenticator.sdk.tools.crypt.CryptoToolsAbs
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
+import com.saltedge.authenticator.sdk.tools.CryptoToolsV1
+import com.saltedge.authenticator.sdk.tools.CryptoToolsV1Abs
+import com.saltedge.authenticator.sdk.v2.ScaServiceClient
+import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2
+import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2Abs
 import com.saltedge.authenticator.tools.PasscodeTools
 import com.saltedge.authenticator.tools.PasscodeToolsAbs
-import com.saltedge.authenticator.app.buildVersion23orGreater
-import com.saltedge.authenticator.app.buildVersion28orGreater
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptManagerV28
 import com.saltedge.authenticator.widget.biometric.BiometricsInputDialog
@@ -79,24 +78,28 @@ class AppModule(context: Context) {
         appContext: Context,
         passcodeTools: PasscodeToolsAbs,
         biometricTools: BiometricToolsAbs,
-        cryptoTools: CryptoToolsAbs,
+        cryptoToolsV1: CryptoToolsV1Abs,
+        cryptoToolsV2: CryptoToolsV2Abs,
         preferences: PreferenceRepositoryAbs,
         connectionsRepository: ConnectionsRepositoryAbs,
-        keyStoreManager: KeyStoreManagerAbs,
+        keyStoreManager: KeyManagerAbs,
         realmManager: RealmManagerAbs,
-        apiManager: AuthenticatorApiManagerAbs,
+        apiManagerV1: AuthenticatorApiManagerAbs,
+        apiManagerV2: ScaServiceClient,
         connectivityReceiver: ConnectivityReceiverAbs
     ): ViewModelsFactory {
         return ViewModelsFactory(
             appContext = appContext,
             passcodeTools = passcodeTools,
             biometricTools = biometricTools,
-            cryptoTools = cryptoTools,
+            cryptoToolsV1 = cryptoToolsV1,
+            cryptoToolsV2 = cryptoToolsV2,
             preferenceRepository = preferences,
             connectionsRepository = connectionsRepository,
             keyStoreManager = keyStoreManager,
             realmManager = realmManager,
-            apiManager = apiManager,
+            apiManagerV1 = apiManagerV1,
+            apiManagerV2 = apiManagerV2,
             connectivityReceiver = connectivityReceiver
         )
     }
@@ -111,11 +114,19 @@ class AppModule(context: Context) {
 
     @Provides
     @Singleton
-    fun provideCryptoTools(): CryptoToolsAbs = CryptoTools
+    fun provideCryptoToolsV1(): CryptoToolsV1Abs = CryptoToolsV1
 
     @Provides
     @Singleton
-    fun provideAuthenticatorApiManager(): AuthenticatorApiManagerAbs = AuthenticatorApiManager
+    fun provideCryptoToolsV2(): CryptoToolsV2Abs = CryptoToolsV2
+
+    @Provides
+    @Singleton
+    fun provideAuthenticatorApiManagerV1(): AuthenticatorApiManagerAbs = AuthenticatorApiManager
+
+    @Provides
+    @Singleton
+    fun provideAuthenticatorApiManagerV2(): ScaServiceClient = ScaServiceClient()
 
     @Provides
     @Singleton
@@ -127,7 +138,7 @@ class AppModule(context: Context) {
 
     @Provides
     @Singleton
-    fun provideKeyStoreManager(): KeyStoreManagerAbs = KeyStoreManager
+    fun provideKeyStoreManager(): KeyManagerAbs = KeyManager
 
     @Provides
     @Singleton

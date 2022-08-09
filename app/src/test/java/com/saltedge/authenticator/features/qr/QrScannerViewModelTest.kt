@@ -23,6 +23,7 @@ package com.saltedge.authenticator.features.qr
 import android.content.pm.PackageManager
 import android.util.SparseArray
 import com.google.android.gms.vision.barcode.Barcode
+import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
@@ -39,7 +40,7 @@ import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class QrScannerViewModelTest {
+class QrScannerViewModelTest : ViewModelTest() {
 
     private val mockRealmManager = Mockito.mock(RealmManagerAbs::class.java)
     private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
@@ -47,11 +48,7 @@ class QrScannerViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = QrScannerViewModel(
-            appContext = TestAppTools.applicationContext,
-            realmManager = mockRealmManager,
-            connectionsRepository = mockConnectionsRepository
-        )
+        viewModel = QrScannerViewModel(connectionsRepository = mockConnectionsRepository)
     }
 
     /**

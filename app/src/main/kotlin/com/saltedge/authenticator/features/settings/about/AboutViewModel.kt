@@ -28,8 +28,8 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.sdk.constants.TERMS_LINK
 import com.saltedge.authenticator.app.AppTools
+import com.saltedge.authenticator.core.api.TERMS_LINK
 import com.saltedge.authenticator.tools.postUnitEvent
 import com.saltedge.authenticator.widget.fragment.WebViewFragment
 
