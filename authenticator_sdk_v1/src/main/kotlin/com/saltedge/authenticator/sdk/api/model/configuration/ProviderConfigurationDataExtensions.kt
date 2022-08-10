@@ -38,7 +38,8 @@ fun ProviderConfigurationData.isValid(): Boolean {
             !connectUrl.contains("/localhost") &&
             version == API_V1_VERSION
     } catch (e: Exception) {
-        Timber.e(e)
+        if (this.code.isNullOrEmpty()) Timber.e(e)
+        else Timber.wtf(e, this.code, null)
         false
     }
 }
