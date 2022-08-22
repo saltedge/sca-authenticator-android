@@ -24,6 +24,8 @@ import android.content.Context
 import android.text.method.ScrollingMovementMethod
 import android.util.AttributeSet
 import android.view.View
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -99,6 +101,11 @@ class AuthorizationContentView : LinearLayout {
                 showContent(htmlContentIsVisible = true)
                 val html = description.html ?: ""
                 val encodedHtml = android.util.Base64.encodeToString(html.toByteArray(), android.util.Base64.NO_PADDING)
+                descriptionWebView.webViewClient = object : WebViewClient() {
+                    override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                        return true
+                    }
+                }
                 descriptionWebView?.loadData(encodedHtml, "text/html", "base64")
             }
             paymentContent -> {
