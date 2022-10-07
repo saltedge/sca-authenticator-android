@@ -28,10 +28,12 @@ import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
 import androidx.core.content.ContextCompat
+import androidx.core.location.LocationManagerCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.PendingResult
@@ -45,7 +47,7 @@ interface DeviceLocationManagerAbs {
     fun startLocationUpdates()
     fun locationPermissionsGranted(): Boolean
     fun stopLocationUpdates()
-    fun isLocationProviderActive(): Boolean
+    fun isLocationStateEnabled(): Boolean
     fun enableGps(activity: FragmentActivity)
 }
 
@@ -113,12 +115,9 @@ object DeviceLocationManager : DeviceLocationManagerAbs {
         }
     }
 
-    override fun isLocationProviderActive(): Boolean {
-        val providerInfo = Settings.Secure.getString(
-            context.contentResolver,
-            Settings.Secure.LOCATION_PROVIDERS_ALLOWED
-        )
-        return providerInfo?.isNotEmpty() == true
+    override fun isLocationStateEnabled(): Boolean {
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return LocationManagerCompat.isLocationEnabled(locationManager)
     }
 
     override fun enableGps(activity: FragmentActivity) {

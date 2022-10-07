@@ -26,7 +26,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.TestAppTools
 import com.saltedge.authenticator.core.api.ERROR_CLASS_SSL_HANDSHAKE
 import com.saltedge.authenticator.core.api.model.DescriptionData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
@@ -379,7 +378,7 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onViewClickTestCase4() {
         //given positive action
-        doReturn(false).`when`(mockLocationManager).isLocationProviderActive()
+        doReturn(false).`when`(mockLocationManager).isLocationStateEnabled()
         viewModel.authorizationModel.value = viewModel1.copy(
             geolocationRequired = true
         )
@@ -399,7 +398,7 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
     fun onViewClickTestCase5() {
         //given positive action
         BDDMockito.given(mockLocationManager.locationPermissionsGranted()).willReturn(true)
-        BDDMockito.given(mockLocationManager.isLocationProviderActive()).willReturn(false)
+        BDDMockito.given(mockLocationManager.isLocationStateEnabled()).willReturn(false)
         viewModel.authorizationModel.value = viewModel1.copy(
             geolocationRequired = true
         )
@@ -418,7 +417,7 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onViewClickTestCase6() {
         //given negative action
-        doReturn(false).`when`(mockLocationManager).isLocationProviderActive()
+        doReturn(false).`when`(mockLocationManager).isLocationStateEnabled()
         viewModel.authorizationModel.value = viewModel1.copy(
             geolocationRequired = true
         )
@@ -438,7 +437,7 @@ class AuthorizationDetailsViewModelTest : ViewModelTest() {
     fun onViewClickTestCase7() {
         //given negative action
         BDDMockito.given(mockLocationManager.locationPermissionsGranted()).willReturn(true)
-        BDDMockito.given(mockLocationManager.isLocationProviderActive()).willReturn(false)
+        BDDMockito.given(mockLocationManager.isLocationStateEnabled()).willReturn(false)
         viewModel.authorizationModel.value = viewModel1.copy(
             geolocationRequired = true
         )

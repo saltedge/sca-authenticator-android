@@ -236,7 +236,7 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
     fun onListItemClickTestCase4() {
         //given itemViewId = R.id.positiveActionView
         given(mockLocationManager.locationPermissionsGranted()).willReturn(true)
-        given(mockLocationManager.isLocationProviderActive()).willReturn(true)
+        given(mockLocationManager.isLocationStateEnabled()).willReturn(true)
         given(mockInteractorV1.updateAuthorization(
             connectionID = anyString(),
             authorizationID = anyString(),
@@ -273,7 +273,7 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
     @Throws(Exception::class)
     fun onListItemClickTestCase5() {
         //given itemViewId = R.id.positiveActionView
-        given(mockLocationManager.isLocationProviderActive()).willReturn(false)
+        given(mockLocationManager.isLocationStateEnabled()).willReturn(false)
         viewModel.listItems.postValue(items)
 
         //when
@@ -293,7 +293,7 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
     fun onListItemClickTestCase6() {
         //given itemViewId = R.id.negativeActionView
         given(mockLocationManager.locationPermissionsGranted()).willReturn(true)
-        given(mockLocationManager.isLocationProviderActive()).willReturn(true)
+        given(mockLocationManager.isLocationStateEnabled()).willReturn(true)
         given(mockInteractorV1.updateAuthorization(
             connectionID = anyString(),
             authorizationID = anyString(),
@@ -329,7 +329,7 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
     @Throws(Exception::class)
     fun onListItemClickTestCase7() {
         //given itemViewId = R.id.negativeActionView
-        given(mockLocationManager.isLocationProviderActive()).willReturn(false)
+        given(mockLocationManager.isLocationStateEnabled()).willReturn(false)
         viewModel.listItems.postValue(items)
 
         //when
@@ -348,7 +348,7 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
     @Throws(Exception::class)
     fun onListItemClickTestCase8() {
         //given
-        given(mockLocationManager.isLocationProviderActive()).willReturn(false)
+        given(mockLocationManager.isLocationStateEnabled()).willReturn(false)
         val listItems = mutableListOf<AuthorizationItemViewModel>()
         listItems.addAll(items)
         listItems[0] = items[0].copy(geolocationRequired = true)

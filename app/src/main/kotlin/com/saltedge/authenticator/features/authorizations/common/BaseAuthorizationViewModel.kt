@@ -87,7 +87,7 @@ abstract class BaseAuthorizationViewModel(
                         confirm
                     )
                 )
-            } else if (it.geolocationRequired && !locationManager.isLocationProviderActive()) {
+            } else if (it.geolocationRequired && !locationManager.isLocationStateEnabled()) {
                 onRequestGPSProviderEvent.postUnitEvent()
             } else {
                 updateAuthorization(item = it, confirm = confirm)
