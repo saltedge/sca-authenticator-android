@@ -65,8 +65,8 @@ android {
 
         buildToolsVersion '30.0.3'
         minSdkVersion 21
-        compileSdkVersion 31
-        targetSdkVersion 31
+        compileSdkVersion 33
+        targetSdkVersion 33
 
         versionCode 57
         versionName '3.4.0.1'
