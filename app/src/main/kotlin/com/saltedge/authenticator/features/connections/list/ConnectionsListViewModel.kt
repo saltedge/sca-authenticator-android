@@ -32,6 +32,7 @@ import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.core.api.KEY_NAME
 import com.saltedge.authenticator.core.api.model.ConsentData
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ConnectionAbs
 import com.saltedge.authenticator.core.model.GUID
 import com.saltedge.authenticator.features.connections.common.ConnectionItem
@@ -76,6 +77,7 @@ class ConnectionsListViewModel(
     val emptyViewVisibility = MutableLiveData<Int>()
     val listItems = MutableLiveData<List<ConnectionItem>>(emptyList())
     val updateListItemEvent = MutableLiveData<ConnectionItem>()
+    val onErrorEvent = MutableLiveData<ViewModelEvent<ApiErrorData>>()
     override val coroutineScope: CoroutineScope
         get() = viewModelScope
 
@@ -177,9 +179,9 @@ class ConnectionsListViewModel(
         consents: List<ConsentData>,
         providerLogoUrl: List<String>
     ) {
-        connections.map { connections ->
+        connections.map { it ->
             providerLogoUrl.map { url ->
-                connections.logoUrl = url
+                it.logoUrl = url
             }
         }
         val context = weakContext.get() ?: return
@@ -188,6 +190,10 @@ class ConnectionsListViewModel(
         listItems.postValue(itemsWithConsentInfo)
         emptyViewVisibility.postValue(if (itemsWithConsentInfo.isEmpty()) View.VISIBLE else View.GONE)
         listVisibility.postValue(if (itemsWithConsentInfo.isEmpty()) View.GONE else View.VISIBLE)
+    }
+
+    override fun onError(error: ApiErrorData) {
+        onErrorEvent.postValue(ViewModelEvent(error))
     }
 
     fun onDialogActionClick(dialogActionId: Int, actionResId: ResId, guid: GUID = "") {

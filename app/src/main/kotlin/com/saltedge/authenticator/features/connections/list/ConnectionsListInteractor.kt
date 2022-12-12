@@ -211,8 +211,8 @@ class ConnectionsListInteractor(
         }
     }
 
-    override fun onShowConnectionConfigurationFailed(error: ApiErrorData?) {
-        //TODO: contract?.onReceiveApiError(error)
+    override fun onShowConnectionConfigurationFailed(error: ApiErrorData) {
+        contract?.onError(error)
     }
 }
 
@@ -229,4 +229,5 @@ interface ConnectionsListInteractorAbs {
 interface ConnectionsListInteractorCallback {
     val coroutineScope: CoroutineScope
     fun onDatasetChanged(connections: List<ConnectionAbs>, consents: List<ConsentData>, providerLogoUrl: List<String>)
+    fun onError(error: ApiErrorData)
 }

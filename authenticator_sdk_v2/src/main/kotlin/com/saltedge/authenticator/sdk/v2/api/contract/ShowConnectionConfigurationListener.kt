@@ -25,5 +25,5 @@ import com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationDa
 
 interface ShowConnectionConfigurationListener {
     fun onShowConnectionConfigurationSuccess(result: ConfigurationDataV2)
-    fun onShowConnectionConfigurationFailed(error: ApiErrorData?)
+    fun onShowConnectionConfigurationFailed(error: ApiErrorData)
 }
