@@ -62,6 +62,7 @@ class ConnectionsListInteractor(
     private var richConnections: List<RichConnection> = emptyList()
     private var consentsV1: List<ConsentData> = emptyList()
     private var consentsV2: List<ConsentData> = emptyList()
+    private var providerLogoUrl: List<String> = emptyList()
     val allConsents: List<ConsentData>
         get() = consentsV1 + consentsV2
 
@@ -187,8 +188,6 @@ class ConnectionsListInteractor(
         notifyDatasetChanges()
     }
 
-    private var providerLogoUrl: List<String> = emptyList()
-
     private fun notifyDatasetChanges() {
         contract?.onDatasetChanged(
             connections = richConnections.map {
@@ -206,7 +205,13 @@ class ConnectionsListInteractor(
             if (result.providerLogoUrl == it.connection.logoUrl) return
             else {
                 this.providerLogoUrl = listOf(result.providerLogoUrl)
-                notifyDatasetChanges()
+                connectionsRepository.getAllConnections().map { connection ->
+                    this.providerLogoUrl.map {
+                        connection.logoUrl = it
+                        connectionsRepository.saveModel(connection)
+                        notifyDatasetChanges()
+                    }
+                }
             }
         }
     }

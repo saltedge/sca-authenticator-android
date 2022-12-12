@@ -179,11 +179,6 @@ class ConnectionsListViewModel(
         consents: List<ConsentData>,
         providerLogoUrl: List<String>
     ) {
-        connections.map { it ->
-            providerLogoUrl.map { url ->
-                it.logoUrl = url
-            }
-        }
         val context = weakContext.get() ?: return
         val items = connections.convertConnectionsToViewItems(context, locationManager)
         val itemsWithConsentInfo = items.enrichItemsWithConsentInfo(consents)
