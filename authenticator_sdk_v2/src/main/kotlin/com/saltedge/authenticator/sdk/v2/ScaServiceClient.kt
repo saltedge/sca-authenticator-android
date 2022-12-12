@@ -263,6 +263,18 @@ class ScaServiceClient : ScaServiceClientAbs {
     ) {
         ConsentRevokeConnector(RestClient.apiInterface, callback).revokeConsent(consentID = consentID, richConnection = richConnection)
     }
+
+    override fun showConnectionConfiguration(
+        richConnection: RichConnection,
+        providerId: ID,
+        callback: ShowConnectionConfigurationListener
+    ) {
+        ConfigurationShowConnector(RestClient.apiInterface, callback)
+            .showConnectionConfiguration(
+                connection = richConnection.connection,
+                providerId = providerId
+            )
+    }
 }
 
 interface ScaServiceClientAbs {
@@ -312,5 +324,11 @@ interface ScaServiceClientAbs {
         consentID: ID,
         richConnection: RichConnection,
         callback: ConsentRevokeListener?
+    )
+
+    fun showConnectionConfiguration(
+        richConnection: RichConnection,
+        providerId: ID,
+        callback: ShowConnectionConfigurationListener
     )
 }

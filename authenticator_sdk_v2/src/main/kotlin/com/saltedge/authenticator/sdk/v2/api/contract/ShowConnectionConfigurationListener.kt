@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2021 Salt Edge Inc.
+ * Copyright (c) 2022 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,12 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.sdk.v2.api
+package com.saltedge.authenticator.sdk.v2.api.contract
 
-// API endpoints
-const val DEFAULT_HOST = "https://sca.saltedge.com"
-const val API_V2_VERSION = "2"
-const val API_VERSION_NAMESPACE = "api/authenticator/v$API_V2_VERSION"
-const val API_CONNECTIONS = "$API_VERSION_NAMESPACE/connections"
-const val API_AUTHORIZATIONS = "$API_VERSION_NAMESPACE/authorizations"
-const val API_CONSENTS = "$API_VERSION_NAMESPACE/consents"
-const val API_CONFIGURATIONS = "$API_VERSION_NAMESPACE/configurations"
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationDataV2
+
+interface ShowConnectionConfigurationListener {
+    fun onShowConnectionConfigurationSuccess(result: ConfigurationDataV2)
+    fun onShowConnectionConfigurationFailed(error: ApiErrorData?)
+}

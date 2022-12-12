@@ -40,6 +40,8 @@ import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionsV2RevokeListener
 import com.saltedge.authenticator.sdk.v2.api.contract.FetchConsentsListener
+import com.saltedge.authenticator.sdk.v2.api.contract.ShowConnectionConfigurationListener
+import com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationDataV2
 import kotlinx.coroutines.*
 
 class ConnectionsListInteractor(
@@ -53,7 +55,8 @@ class ConnectionsListInteractor(
     ConnectionsRevokeListener,
     ConnectionsV2RevokeListener,
     FetchEncryptedDataListener,
-    FetchConsentsListener
+    FetchConsentsListener,
+    ShowConnectionConfigurationListener
 {
     override var contract: ConnectionsListInteractorCallback? = null
     private var richConnections: List<RichConnection> = emptyList()
@@ -115,6 +118,26 @@ class ConnectionsListInteractor(
         return allConsents.filter { it.connectionGuid == connectionGuid }
     }
 
+    override fun getConnectionConfiguration() {
+        val splitRichConnections = richConnections
+            .filter { it.connection.isActive() }
+            .partition { it.connection.apiVersion == API_V2_VERSION }
+
+        val v2RichConnections = splitRichConnections.first
+        if (v2RichConnections.isNotEmpty()) {
+            v2RichConnections.map {
+                val providerId = it.connection.code
+
+                v2ApiManager.showConnectionConfiguration(
+                    richConnection = it,
+                    providerId = providerId,
+                    callback = this
+                )
+            }
+        }
+    }
+
+
     private fun sendRevokeRequestForConnection(connection: Connection) {
         val richConnection = connection.toRichConnection(keyStoreManager) ?: return
         if (connection.apiVersion == API_V1_VERSION) {
@@ -164,11 +187,32 @@ class ConnectionsListInteractor(
         notifyDatasetChanges()
     }
 
+    private var providerLogoUrl: List<String> = emptyList()
+
     private fun notifyDatasetChanges() {
         contract?.onDatasetChanged(
-            connections = richConnections.map { it.connection }.sortedBy { it.createdAt },
-            consents = allConsents
+            connections = richConnections.map {
+                it.connection
+            }.sortedBy { it.createdAt },
+            consents = allConsents,
+            providerLogoUrl = providerLogoUrl
         )
+    }
+
+    override fun onShowConnectionConfigurationSuccess(
+        result: ConfigurationDataV2
+    ) {
+        richConnections.map {
+            if (result.providerLogoUrl == it.connection.logoUrl) return
+            else {
+                this.providerLogoUrl = listOf(result.providerLogoUrl)
+                notifyDatasetChanges()
+            }
+        }
+    }
+
+    override fun onShowConnectionConfigurationFailed(error: ApiErrorData?) {
+        //TODO: contract?.onReceiveApiError(error)
     }
 }
 
@@ -179,9 +223,10 @@ interface ConnectionsListInteractorAbs {
     fun updateConsents()
     fun revokeConnection(connectionGuid: GUID)
     fun getConsents(connectionGuid: GUID): List<ConsentData>
+    fun getConnectionConfiguration()
 }
 
 interface ConnectionsListInteractorCallback {
     val coroutineScope: CoroutineScope
-    fun onDatasetChanged(connections: List<ConnectionAbs>, consents: List<ConsentData>)
+    fun onDatasetChanged(connections: List<ConnectionAbs>, consents: List<ConsentData>, providerLogoUrl: List<String>)
 }

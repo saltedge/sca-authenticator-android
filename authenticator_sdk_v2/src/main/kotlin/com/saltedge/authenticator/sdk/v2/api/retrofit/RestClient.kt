@@ -24,10 +24,7 @@ import android.net.Uri
 import com.google.gson.Gson
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.tools.json.createDefaultGson
-import com.saltedge.authenticator.sdk.v2.api.API_AUTHORIZATIONS
-import com.saltedge.authenticator.sdk.v2.api.API_CONNECTIONS
-import com.saltedge.authenticator.sdk.v2.api.API_CONSENTS
-import com.saltedge.authenticator.sdk.v2.api.DEFAULT_HOST
+import com.saltedge.authenticator.sdk.v2.api.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -83,6 +80,10 @@ fun String.toConsentsIndexUrl(): String {
 
 fun String.toConsentsRevokeUrl(id: ID): String {
     return createRequestUrl(this, "$API_CONSENTS/$id/revoke")
+}
+
+fun String.toConnectionConfigurationShowUrl(id: String): String {
+    return createRequestUrl(this, "$API_CONFIGURATIONS/$id")
 }
 
 private fun createRequestUrl(baseUrl: String, routePath: String): String {

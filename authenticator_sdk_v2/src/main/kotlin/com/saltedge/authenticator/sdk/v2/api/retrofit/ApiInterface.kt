@@ -39,6 +39,9 @@ interface ApiInterface {
     @GET
     fun getProviderConfiguration(@Url requestUrl: String): Call<ConfigurationResponse>
 
+    @GET
+    fun showConnectionConfiguration(@Url requestUrl: String): Call<ConfigurationResponse>
+
     @POST
     fun createConnection(
         @Url requestUrl: String,

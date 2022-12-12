@@ -90,6 +90,7 @@ class ConnectionsListViewModel(
     }
 
     fun refreshConsents() {
+        interactor.getConnectionConfiguration()
         interactor.updateConsents()
     }
 
@@ -171,7 +172,16 @@ class ConnectionsListViewModel(
         }
     }
 
-    override fun onDatasetChanged(connections: List<ConnectionAbs>, consents: List<ConsentData>) {
+    override fun onDatasetChanged(
+        connections: List<ConnectionAbs>,
+        consents: List<ConsentData>,
+        providerLogoUrl: List<String>
+    ) {
+        connections.map { connections ->
+            providerLogoUrl.map { url ->
+                connections.logoUrl = url
+            }
+        }
         val context = weakContext.get() ?: return
         val items = connections.convertConnectionsToViewItems(context, locationManager)
         val itemsWithConsentInfo = items.enrichItemsWithConsentInfo(consents)
