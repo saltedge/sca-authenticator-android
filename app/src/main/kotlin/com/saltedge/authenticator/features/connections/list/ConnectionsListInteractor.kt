@@ -61,7 +61,6 @@ class ConnectionsListInteractor(
     private var richConnections: List<RichConnection> = emptyList()
     private var consentsV1: List<ConsentData> = emptyList()
     private var consentsV2: List<ConsentData> = emptyList()
-    private var providerLogoUrl: List<String> = emptyList()
     val allConsents: List<ConsentData>
         get() = consentsV1 + consentsV2
 
@@ -212,21 +211,14 @@ class ConnectionsListInteractor(
         )
     }
 
-    override fun onShowConnectionConfigurationSuccess(
-        result: ConfigurationDataV2
-    ) {
+    override fun onShowConnectionConfigurationSuccess(result: ConfigurationDataV2) {
         richConnections.forEach {
             if (result.providerLogoUrl != it.connection.logoUrl) {
-                this.providerLogoUrl = listOf(result.providerLogoUrl)
-                connectionsRepository.getAllConnections().forEach { connection ->
-                    this.providerLogoUrl.map {
-                        connection.logoUrl = it
-                        connectionsRepository.saveModel(connection)
-                    }
-                }
-                notifyDatasetChanges()
+                it.connection.logoUrl = result.providerLogoUrl
+                connectionsRepository.saveModel(it.connection as Connection)
             }
         }
+        notifyDatasetChanges()
     }
 
     override fun onShowConnectionConfigurationFailed(error: ApiErrorData) {
