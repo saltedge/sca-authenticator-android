@@ -56,8 +56,7 @@ class ConnectionsListInteractor(
     ConnectionsV2RevokeListener,
     FetchEncryptedDataListener,
     FetchConsentsListener,
-    ShowConnectionConfigurationListener
-{
+    ShowConnectionConfigurationListener {
     override var contract: ConnectionsListInteractorCallback? = null
     private var richConnections: List<RichConnection> = emptyList()
     private var consentsV1: List<ConsentData> = emptyList()
@@ -92,22 +91,30 @@ class ConnectionsListInteractor(
         }
     }
 
-    override fun onConnectionsRevokeResult(revokedTokens: List<Token>, apiErrors: List<ApiErrorData>) {
-        val errorTokens = apiErrors.mapNotNull { if (it.isConnectivityError()) null else it.accessToken }
+    override fun onConnectionsRevokeResult(
+        revokedTokens: List<Token>,
+        apiErrors: List<ApiErrorData>
+    ) {
+        val errorTokens =
+            apiErrors.mapNotNull { if (it.isConnectivityError()) null else it.accessToken }
         val allGuidsToRevoke = (revokedTokens + errorTokens).mapConnectionsTokensToGuids()
         deleteConnectionsAndKeysByGuid(allGuidsToRevoke)
         if (allGuidsToRevoke.isNotEmpty()) updateConnections()
     }
 
     override fun onConnectionsV2RevokeResult(revokedIDs: List<ID>, apiErrors: List<ApiErrorData>) {
-        val errorsTokensToRevoke = apiErrors.mapNotNull { if (it.isConnectivityError()) null else it.accessToken }
+        val errorsTokensToRevoke =
+            apiErrors.mapNotNull { if (it.isConnectivityError()) null else it.accessToken }
         val errorGuids = errorsTokensToRevoke.mapConnectionsTokensToGuids()
         val successGuids = revokedIDs.mapConnectionsIDsToGuids()
         deleteConnectionsAndKeysByGuid(successGuids + errorGuids)
         if (errorGuids.isNotEmpty() || successGuids.isNotEmpty()) updateConnections()
     }
 
-    override fun onFetchEncryptedDataResult(result: List<EncryptedData>, errors: List<ApiErrorData>) {
+    override fun onFetchEncryptedDataResult(
+        result: List<EncryptedData>,
+        errors: List<ApiErrorData>
+    ) {
         processOfEncryptedConsentsResult(encryptedList = result, apiVersion = API_V1_VERSION)
     }
 
@@ -119,22 +126,16 @@ class ConnectionsListInteractor(
         return allConsents.filter { it.connectionGuid == connectionGuid }
     }
 
-    override fun getConnectionConfiguration() {
-        val splitRichConnections = richConnections
-            .filter { it.connection.isActive() }
-            .partition { it.connection.apiVersion == API_V2_VERSION }
+    override fun updateConnectionConfiguration() {
+        val v2RichConnections = richConnections
+            .filter { it.connection.isActive() && it.connection.apiVersion == API_V2_VERSION }
 
-        val v2RichConnections = splitRichConnections.first
-        if (v2RichConnections.isNotEmpty()) {
-            v2RichConnections.map {
-                val providerId = it.connection.code
-
-                v2ApiManager.showConnectionConfiguration(
-                    richConnection = it,
-                    providerId = providerId,
-                    callback = this
-                )
-            }
+        v2RichConnections.forEach { richConnection ->
+            v2ApiManager.showConnectionConfiguration(
+                richConnection = richConnection,
+                providerId = richConnection.connection.code,
+                callback = this
+            )
         }
     }
 
@@ -142,9 +143,15 @@ class ConnectionsListInteractor(
     private fun sendRevokeRequestForConnection(connection: Connection) {
         val richConnection = connection.toRichConnection(keyStoreManager) ?: return
         if (connection.apiVersion == API_V1_VERSION) {
-            v1ApiManager.revokeConnections(connectionsAndKeys = listOf(richConnection), resultCallback = this)
+            v1ApiManager.revokeConnections(
+                connectionsAndKeys = listOf(richConnection),
+                resultCallback = this
+            )
         } else if (connection.apiVersion == API_V2_VERSION) {
-            v2ApiManager.revokeConnections(richConnections = listOf(richConnection), callback = this)
+            v2ApiManager.revokeConnections(
+                richConnections = listOf(richConnection),
+                callback = this
+            )
         }
     }
 
@@ -169,10 +176,18 @@ class ConnectionsListInteractor(
         connectionsRepository.deleteConnection(guid)
     }
 
-    private fun processOfEncryptedConsentsResult(encryptedList: List<EncryptedData>, apiVersion: String) {
-        val richConnectionsByVersion = richConnections.filter { it.connection.apiVersion == apiVersion }
+    private fun processOfEncryptedConsentsResult(
+        encryptedList: List<EncryptedData>,
+        apiVersion: String
+    ) {
+        val richConnectionsByVersion =
+            richConnections.filter { it.connection.apiVersion == apiVersion }
         contract?.coroutineScope?.launch(defaultDispatcher) {
-            val data = encryptedList.decryptConsents(cryptoTools = cryptoTools, richConnections = richConnectionsByVersion, apiVersion = apiVersion)
+            val data = encryptedList.decryptConsents(
+                cryptoTools = cryptoTools,
+                richConnections = richConnectionsByVersion,
+                apiVersion = apiVersion
+            )
             withContext(Dispatchers.Main) {
                 processDecryptedConsentsResult(result = data, apiVersion = apiVersion)
             }
@@ -193,25 +208,23 @@ class ConnectionsListInteractor(
             connections = richConnections.map {
                 it.connection
             }.sortedBy { it.createdAt },
-            consents = allConsents,
-            providerLogoUrl = providerLogoUrl
+            consents = allConsents
         )
     }
 
     override fun onShowConnectionConfigurationSuccess(
         result: ConfigurationDataV2
     ) {
-        richConnections.map {
-            if (result.providerLogoUrl == it.connection.logoUrl) return
-            else {
+        richConnections.forEach {
+            if (result.providerLogoUrl != it.connection.logoUrl) {
                 this.providerLogoUrl = listOf(result.providerLogoUrl)
-                connectionsRepository.getAllConnections().map { connection ->
+                connectionsRepository.getAllConnections().forEach { connection ->
                     this.providerLogoUrl.map {
                         connection.logoUrl = it
                         connectionsRepository.saveModel(connection)
-                        notifyDatasetChanges()
                     }
                 }
+                notifyDatasetChanges()
             }
         }
     }
@@ -228,11 +241,11 @@ interface ConnectionsListInteractorAbs {
     fun updateConsents()
     fun revokeConnection(connectionGuid: GUID)
     fun getConsents(connectionGuid: GUID): List<ConsentData>
-    fun getConnectionConfiguration()
+    fun updateConnectionConfiguration()
 }
 
 interface ConnectionsListInteractorCallback {
     val coroutineScope: CoroutineScope
-    fun onDatasetChanged(connections: List<ConnectionAbs>, consents: List<ConsentData>, providerLogoUrl: List<String>)
+    fun onDatasetChanged(connections: List<ConnectionAbs>, consents: List<ConsentData>)
     fun onError(error: ApiErrorData)
 }

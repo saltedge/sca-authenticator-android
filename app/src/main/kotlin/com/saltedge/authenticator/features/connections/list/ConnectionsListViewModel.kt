@@ -92,7 +92,7 @@ class ConnectionsListViewModel(
     }
 
     fun refreshConsents() {
-        interactor.getConnectionConfiguration()
+        interactor.updateConnectionConfiguration()
         interactor.updateConsents()
     }
 
@@ -176,8 +176,7 @@ class ConnectionsListViewModel(
 
     override fun onDatasetChanged(
         connections: List<ConnectionAbs>,
-        consents: List<ConsentData>,
-        providerLogoUrl: List<String>
+        consents: List<ConsentData>
     ) {
         val context = weakContext.get() ?: return
         val items = connections.convertConnectionsToViewItems(context, locationManager)

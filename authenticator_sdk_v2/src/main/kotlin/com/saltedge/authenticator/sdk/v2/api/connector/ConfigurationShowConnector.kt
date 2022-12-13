@@ -34,10 +34,7 @@ class ConfigurationShowConnector(
     var callback: ShowConnectionConfigurationListener?
 ) : ApiResponseInterceptor<ConfigurationResponse>() {
 
-    private var providerLogoUrl = ""
-
     fun showConnectionConfiguration(connection: ConnectionAbs, providerId: String) {
-        this.providerLogoUrl = connection.logoUrl
         apiInterface.showConnectionConfiguration(
             requestUrl = connection.connectUrl.toConnectionConfigurationShowUrl(providerId)
         ).enqueue(this)
