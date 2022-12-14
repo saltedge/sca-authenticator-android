@@ -29,6 +29,7 @@ import com.saltedge.authenticator.TestFactory.connection2
 import com.saltedge.authenticator.TestFactory.connection3Inactive
 import com.saltedge.authenticator.TestFactory.richConnection1
 import com.saltedge.authenticator.TestFactory.richConnection2
+import com.saltedge.authenticator.TestFactory.richConnection4
 import com.saltedge.authenticator.core.api.ERROR_CLASS_AUTHORIZATION_NOT_FOUND
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.tools.secure.BaseCryptoToolsAbs
@@ -154,7 +155,7 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
             resultCallback = interactor
         )
         Mockito.verify(mockApiManagerV2).fetchConsents(
-            richConnections = listOf(richConnection2),
+            richConnections = listOf(richConnection2, richConnection4),
             callback = interactor
         )
         verifyNoMoreInteractions(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)

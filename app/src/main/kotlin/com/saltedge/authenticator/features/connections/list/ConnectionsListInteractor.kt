@@ -94,16 +94,14 @@ class ConnectionsListInteractor(
         revokedTokens: List<Token>,
         apiErrors: List<ApiErrorData>
     ) {
-        val errorTokens =
-            apiErrors.mapNotNull { if (it.isConnectivityError()) null else it.accessToken }
+        val errorTokens = apiErrors.mapNotNull { if (it.isConnectivityError()) null else it.accessToken }
         val allGuidsToRevoke = (revokedTokens + errorTokens).mapConnectionsTokensToGuids()
         deleteConnectionsAndKeysByGuid(allGuidsToRevoke)
         if (allGuidsToRevoke.isNotEmpty()) updateConnections()
     }
 
     override fun onConnectionsV2RevokeResult(revokedIDs: List<ID>, apiErrors: List<ApiErrorData>) {
-        val errorsTokensToRevoke =
-            apiErrors.mapNotNull { if (it.isConnectivityError()) null else it.accessToken }
+        val errorsTokensToRevoke = apiErrors.mapNotNull { if (it.isConnectivityError()) null else it.accessToken }
         val errorGuids = errorsTokensToRevoke.mapConnectionsTokensToGuids()
         val successGuids = revokedIDs.mapConnectionsIDsToGuids()
         deleteConnectionsAndKeysByGuid(successGuids + errorGuids)
