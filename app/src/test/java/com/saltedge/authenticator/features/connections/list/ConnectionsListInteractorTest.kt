@@ -27,16 +27,20 @@ import com.saltedge.authenticator.TestFactory.allConnections
 import com.saltedge.authenticator.TestFactory.connection1
 import com.saltedge.authenticator.TestFactory.connection2
 import com.saltedge.authenticator.TestFactory.connection3Inactive
+import com.saltedge.authenticator.TestFactory.connection4
 import com.saltedge.authenticator.TestFactory.richConnection1
 import com.saltedge.authenticator.TestFactory.richConnection2
 import com.saltedge.authenticator.TestFactory.richConnection4
 import com.saltedge.authenticator.core.api.ERROR_CLASS_AUTHORIZATION_NOT_FOUND
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ConnectionStatus
 import com.saltedge.authenticator.core.tools.secure.BaseCryptoToolsAbs
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
+import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
+import com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationDataV2
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.hamcrest.CoreMatchers.equalTo
@@ -159,6 +163,109 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
             callback = interactor
         )
         verifyNoMoreInteractions(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun updateConnectionConfigurationCase1() {
+        //given
+        interactor.updateConnections()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+
+        //when
+        interactor.updateConnectionConfiguration()
+
+        //then
+        Mockito.verify(mockApiManagerV2).showConnectionConfiguration(
+            richConnection = richConnection2,
+            providerId = richConnection2.connection.code,
+            callback = interactor
+        )
+        Mockito.verify(mockApiManagerV2).showConnectionConfiguration(
+            richConnection = richConnection4,
+            providerId = richConnection4.connection.code,
+            callback = interactor
+        )
+        verifyNoMoreInteractions(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun updateConnectionConfigurationCase2() {
+        //given
+        interactor.updateConnections()
+        richConnection2.connection.apply {
+            accessToken = ""
+            status = "${ConnectionStatus.INACTIVE}"
+        }
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+
+        //when
+        interactor.updateConnectionConfiguration()
+
+        //then
+        Mockito.verify(mockApiManagerV2).showConnectionConfiguration(
+            richConnection = richConnection4,
+            providerId = richConnection4.connection.code,
+            callback = interactor
+        )
+        verifyNoMoreInteractions(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+
+        richConnection2.connection.apply {
+            accessToken = "token4"
+            status = "${ConnectionStatus.ACTIVE}"
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onShowConnectionConfigurationSuccessCase1() {
+        //given
+        interactor.updateConnections()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+
+        //when
+        interactor.onShowConnectionConfigurationSuccess(
+            result = ConfigurationDataV2(
+                scaServiceUrl = "connectUrl",
+                providerName = "name",
+                providerId = "demobank4",
+                providerLogoUrl = "updatedUrl",
+                apiVersion = "2",
+                providerSupportEmail = "example@example.com",
+                providerPublicKey = "-----BEGIN PUBLIC KEY-----",
+                geolocationRequired = true
+            )
+        )
+
+        //then
+        assertThat(richConnection4.connection.logoUrl, equalTo("updatedUrl"))
+        Mockito.verify(mockConnectionsRepository).saveModel(connection4)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onShowConnectionConfigurationSuccessCase2() {
+        //given
+        interactor.updateConnections()
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+
+        //when
+        interactor.onShowConnectionConfigurationSuccess(
+            result = ConfigurationDataV2(
+                scaServiceUrl = "connectUrl",
+                providerName = "name",
+                providerId = "demobank4",
+                providerLogoUrl = "https://www.saltedge.com/",
+                apiVersion = "2",
+                providerSupportEmail = "example@example.com",
+                providerPublicKey = "-----BEGIN PUBLIC KEY-----",
+                geolocationRequired = true
+            )
+        )
+
+        //then
+        Mockito.verifyNoInteractions(mockConnectionsRepository)
     }
 
     @Test
