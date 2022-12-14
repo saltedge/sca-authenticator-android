@@ -129,10 +129,12 @@ class ConnectionsListInteractor(
         val v2RichConnections = richConnections
             .filter { it.connection.isActive() && it.connection.apiVersion == API_V2_VERSION }
 
-        v2RichConnections.forEach { richConnection ->
+        v2RichConnections.groupBy {
+            it.connection.code
+        }.forEach {
             v2ApiManager.showConnectionConfiguration(
-                richConnection = richConnection,
-                providerId = richConnection.connection.code,
+                richConnection = it.value.first(),
+                providerId = it.key,
                 callback = this
             )
         }
@@ -212,11 +214,11 @@ class ConnectionsListInteractor(
     }
 
     override fun onShowConnectionConfigurationSuccess(result: ConfigurationDataV2) {
-        richConnections.forEach {
-            if (result.providerLogoUrl != it.connection.logoUrl) {
-                it.connection.logoUrl = result.providerLogoUrl
-                connectionsRepository.saveModel(it.connection as Connection)
-            }
+        richConnections.filter {
+            it.connection.code == result.providerId && result.providerLogoUrl != it.connection.logoUrl
+        }.forEach {
+            it.connection.logoUrl = result.providerLogoUrl
+            connectionsRepository.saveModel(it.connection as Connection)
         }
         notifyDatasetChanges()
     }
