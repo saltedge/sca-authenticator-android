@@ -59,10 +59,11 @@ class ConsentDetailsViewModelTest : ViewModelTest() {
     private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
     private val mockApiManagerV1 = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockApiManagerV2 = mock(ScaServiceClientAbs::class.java)
-    private val testFactory = TestFactory()
+    private lateinit var testFactory: TestFactory
 
     @Before
     fun setUp() {
+        testFactory = TestFactory()
         testFactory.mockConnections(mockConnectionsRepository)
         testFactory.mockRichConnections(mockKeyStoreManager)
 

@@ -53,11 +53,12 @@ class ConsentsListInteractorTest : CoroutineViewModelTest() {
     private val mockApiManagerV1 = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockApiManagerV2 = mock(ScaServiceClientAbs::class.java)
     private val mockCallback = mock(ConsentsListInteractorCallback::class.java)
-    private val testFactory = TestFactory()
+    private lateinit var testFactory: TestFactory
 
     @Before
     override fun setUp() {
         super.setUp()
+        testFactory = TestFactory()
         given(mockCallback.coroutineScope).willReturn(TestCoroutineScope(testDispatcher))
         testFactory.mockConnections(mockConnectionsRepository)
         testFactory.mockRichConnections(mockKeyStoreManager)

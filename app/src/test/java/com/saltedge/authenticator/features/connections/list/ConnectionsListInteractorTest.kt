@@ -36,6 +36,7 @@ import kotlinx.coroutines.test.TestCoroutineScope
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
@@ -56,12 +57,13 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
     private val mockApiManagerV1 = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockApiManagerV2 = mock(ScaServiceClientAbs::class.java)
     private val mockCallback = mock(ConnectionsListInteractorCallback::class.java)
-    private val testFactory = TestFactory()
+    private lateinit var testFactory: TestFactory
 
     @Before
     override fun setUp() {
         super.setUp()
         given(mockCallback.coroutineScope).willReturn(TestCoroutineScope(testDispatcher))
+        testFactory = TestFactory()
         testFactory.mockConnections(mockConnectionsRepository)
         testFactory.mockRichConnections(mockKeyStoreManager)
         testFactory.mockConsents(mockCryptoTools)

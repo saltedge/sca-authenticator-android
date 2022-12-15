@@ -59,10 +59,11 @@ class ConsentsListViewModelTest : ViewModelTest() {
     private val spanned = SpannableStringBuilder(
         "${context.getString(R.string.expires_in)} $daysTillExpireDescription"
     )
-    private val testFactory = TestFactory()
+    private lateinit var testFactory: TestFactory
 
     @Before
     fun setUp() {
+        testFactory = TestFactory()
         viewModel = ConsentsListViewModel(
             weakContext = WeakReference(context),
             interactor = mockInteractor

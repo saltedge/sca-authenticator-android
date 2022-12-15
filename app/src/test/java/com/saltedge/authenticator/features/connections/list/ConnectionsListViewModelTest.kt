@@ -65,10 +65,11 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     private val mockInteractor = mock(ConnectionsListInteractorAbs::class.java)
     private val mockLocationManager = mock(DeviceLocationManagerAbs::class.java)
     private val mockConnectivityReceiver = mock(ConnectivityReceiverAbs::class.java)
-    private val testFactory = TestFactory()
+    private lateinit var testFactory: TestFactory
 
     @Before
     fun setUp() {
+        testFactory = TestFactory()
         viewModel = ConnectionsListViewModel(
             weakContext = WeakReference(context),
             interactor = mockInteractor,
@@ -103,9 +104,9 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onItemNameChangedTestCase1() {
         //given
-        viewModel.onDatasetChanged(TestFactory().allConnections, TestFactory().allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
         val newName = "new name"
-        val guid = TestFactory().connection2.guid
+        val guid = testFactory.connection2.guid
         given(mockInteractor.updateNameAndSave(connectionGuid = guid, newConnectionName = newName)).willReturn(true)
 
         //when
