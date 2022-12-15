@@ -138,7 +138,6 @@ class ConnectionsListInteractor(
         }
     }
 
-
     private fun sendRevokeRequestForConnection(connection: Connection) {
         val richConnection = connection.toRichConnection(keyStoreManager) ?: return
         if (connection.apiVersion == API_V1_VERSION) {
