@@ -37,7 +37,7 @@ import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.mockito.BDDMockito
 
-object TestFactory {
+class TestFactory {
 
     val mockPrivateKey = CommonTestTools.testPrivateKey
 
@@ -81,13 +81,27 @@ object TestFactory {
         updatedAt = 300L
         apiVersion = API_V1_VERSION
     }
+    val connection4 = Connection().apply {
+        id = "4"
+        guid = "guid4"
+        code = "demobank4"
+        name = "Demobank4"
+        status = "${ConnectionStatus.ACTIVE}"
+        supportEmail = "example@example.com"
+        logoUrl = "https://www.saltedge.com/"
+        accessToken = "token4"
+        createdAt = 400L
+        updatedAt = 400L
+        apiVersion = API_V2_VERSION
+    }
 
-    val allConnections = listOf(connection1, connection2, connection3Inactive)
-    val allActiveConnections = listOf(connection1, connection2)
+    val allConnections = listOf(connection1, connection2, connection3Inactive, connection4)
+    val allActiveConnections = listOf(connection1, connection2, connection4)
 
     val richConnection1 = RichConnection(connection1, mockPrivateKey)
     val richConnection2 = RichConnection(connection2, mockPrivateKey)
     val richConnection3 = RichConnection(connection3Inactive, mockPrivateKey)
+    val richConnection4 = RichConnection(connection4, mockPrivateKey)
 
     val v1AispConsentData = ConsentData(
         id = "111",
@@ -146,6 +160,7 @@ object TestFactory {
         BDDMockito.given(mock.getByGuid(connection1.guid)).willReturn(connection1)
         BDDMockito.given(mock.getByGuid(connection2.guid)).willReturn(connection2)
         BDDMockito.given(mock.getByGuid(connection3Inactive.guid)).willReturn(connection3Inactive)
+        BDDMockito.given(mock.getByGuid(connection4.guid)).willReturn(connection4)
         BDDMockito.given(mock.getAllConnections()).willReturn(allConnections)
     }
 
@@ -156,6 +171,8 @@ object TestFactory {
             .willReturn(richConnection2)
         BDDMockito.given(mock.enrichConnection(connection3Inactive, addProviderKey = false))
             .willReturn(richConnection3)
+        BDDMockito.given(mock.enrichConnection(connection4, addProviderKey = true))
+            .willReturn(richConnection4)
     }
 
     fun mockConsents(mock: BaseCryptoToolsAbs) {

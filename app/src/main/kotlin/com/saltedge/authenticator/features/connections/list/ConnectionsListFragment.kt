@@ -37,10 +37,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.authenticatorApp
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.GUID
 import com.saltedge.authenticator.databinding.ConnectionsListBinding
 import com.saltedge.authenticator.features.connections.common.ConnectionItem
@@ -171,6 +173,14 @@ class ConnectionsListFragment : BaseFragment(),
         viewModel.onSupportClickEvent.observe(this, Observer<ViewModelEvent<String?>> { event ->
             event.getContentIfNotHandled()?.let { supportEmail ->
                 activity?.startMailApp(supportEmail)
+            }
+        })
+        viewModel.onErrorEvent.observe(this, Observer<ViewModelEvent<ApiErrorData>> { event ->
+            event.getContentIfNotHandled()?.let { error ->
+                view?.let { anchor ->
+                    val message = error.getErrorMessage(anchor.context)
+                    Snackbar.make(anchor, message, Snackbar.LENGTH_LONG).show()
+                }
             }
         })
         viewModel.onAccessToLocationClickEvent.observe(this, { event ->

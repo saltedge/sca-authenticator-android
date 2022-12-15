@@ -65,9 +65,11 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     private val mockInteractor = mock(ConnectionsListInteractorAbs::class.java)
     private val mockLocationManager = mock(DeviceLocationManagerAbs::class.java)
     private val mockConnectivityReceiver = mock(ConnectivityReceiverAbs::class.java)
+    private lateinit var testFactory: TestFactory
 
     @Before
     fun setUp() {
+        testFactory = TestFactory()
         viewModel = ConnectionsListViewModel(
             weakContext = WeakReference(context),
             interactor = mockInteractor,
@@ -102,9 +104,9 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onItemNameChangedTestCase1() {
         //given
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
         val newName = "new name"
-        val guid = TestFactory.connection2.guid
+        val guid = testFactory.connection2.guid
         given(mockInteractor.updateNameAndSave(connectionGuid = guid, newConnectionName = newName)).willReturn(true)
 
         //when
@@ -118,7 +120,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onItemNameChangedTestCase2() {
         //given
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
         val newName = "new name"
         val guid = "guidX"
 
@@ -134,9 +136,9 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onItemNameChangedTestCase3() {
         //given
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
         val newName = ""
-        val guid = TestFactory.connection2.guid
+        val guid = testFactory.connection2.guid
 
         //when
         viewModel.onItemNameChanged(data = Bundle().apply { this.putString(KEY_NAME, newName); this.guid = guid })
@@ -150,9 +152,9 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onItemNameChangedTestCase4() {
         //given
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
-        val newName = TestFactory.connection2.name
-        val guid = TestFactory.connection2.guid
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
+        val newName = testFactory.connection2.name
+        val guid = testFactory.connection2.guid
 
         //when
         viewModel.onItemNameChanged(data = Bundle().apply { this.putString(KEY_NAME, newName); this.guid = guid })
@@ -166,9 +168,9 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onItemNameChangedTestCase5() {
         //given
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
         val newName = "new name"
-        val guid = TestFactory.connection2.guid
+        val guid = testFactory.connection2.guid
         given(mockInteractor.updateNameAndSave(connectionGuid = guid, newConnectionName = newName)).willReturn(false)
 
         //when
@@ -182,20 +184,20 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun deleteItemTestCase1() {
         //when
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
 
         //when
-        viewModel.deleteItem(guid = TestFactory.connection1.guid)
+        viewModel.deleteItem(guid = testFactory.connection1.guid)
 
         //then
-        Mockito.verify(mockInteractor).revokeConnection(TestFactory.connection1.guid)
+        Mockito.verify(mockInteractor).revokeConnection(testFactory.connection1.guid)
     }
 
     @Test
     @Throws(Exception::class)
     fun deleteItemTestCase2() {
         //when
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
 
         //when
         viewModel.deleteItem(guid = "guidX")
@@ -228,7 +230,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onListItemClickTestCase1() {
         //given list of items, list of consents and index of active item
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
         val activeItemIndex = 0
 
         assertNull(viewModel.onListItemClickEvent.value)
@@ -286,7 +288,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onListItemClickTestCase2() {
         //given list of items, empty list of consents and index of inactive item
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
         val inactiveItemIndex = 2
 
         assertNull(viewModel.onListItemClickEvent.value)
@@ -384,7 +386,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onMenuItemClickTestCase1() {
         //given
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
         val activeItemIndex = 1
         val itemId = ConnectionsListMenuItemType.RECONNECT.ordinal
 
@@ -399,7 +401,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onMenuItemClickTestCase2() {
         //given
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
         val activeItemIndex = 1
         val itemId = ConnectionsListMenuItemType.RENAME.ordinal
 
@@ -416,7 +418,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onMenuItemClickTestCase3() {
         //given
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
         val activeItemIndex = 1
         val itemId = ConnectionsListMenuItemType.SUPPORT.ordinal
 
@@ -434,7 +436,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onMenuItemClickTestCase5() {
         //given
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
         val activeItemIndex = 1
         val itemId = ConnectionsListMenuItemType.LOCATION.ordinal
 
@@ -450,7 +452,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     fun onMenuItemClickTestCase6_noConnection() {
         //given
         given(mockConnectivityReceiver.hasNetworkConnection).willReturn(false)
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
         val activeItemIndex = 1
         val itemId = ConnectionsListMenuItemType.DELETE.ordinal
 
@@ -467,7 +469,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     fun onMenuItemClickTestCase6_active() {
         //given
         given(mockConnectivityReceiver.hasNetworkConnection).willReturn(true)
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
         val activeItemIndex = 1
         val itemId = ConnectionsListMenuItemType.DELETE.ordinal
 
@@ -484,7 +486,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     fun onMenuItemClickTestCase6_inactive() {
         //given
         given(mockConnectivityReceiver.hasNetworkConnection).willReturn(true)
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
         val activeItemIndex = 2
         val itemId = ConnectionsListMenuItemType.DELETE.ordinal
 
@@ -492,7 +494,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         viewModel.onMenuItemClick(menuId = activeItemIndex, itemId = itemId)
 
         //then
-        Mockito.verify(mockInteractor).revokeConnection(TestFactory.connection3Inactive.guid)
+        Mockito.verify(mockInteractor).revokeConnection(testFactory.connection3Inactive.guid)
     }
 
     @Test
@@ -502,7 +504,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         Assert.assertTrue(viewModel.listItems.value!!.isEmpty())
 
         //when
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
 
         //then
         Assert.assertTrue(viewModel.listItems.value!!.isNotEmpty())
@@ -517,7 +519,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         Assert.assertTrue(viewModel.listItems.value!!.isEmpty())
 
         //when
-        viewModel.onDatasetChanged(emptyList(), TestFactory.allConsents)
+        viewModel.onDatasetChanged(emptyList(), testFactory.allConsents)
 
         //then
         Assert.assertTrue(viewModel.listItems.value!!.isEmpty())
@@ -532,7 +534,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         Assert.assertTrue(viewModel.listItems.value!!.isEmpty())
 
         //when
-        viewModel.onDatasetChanged(emptyList(), TestFactory.allConsents)
+        viewModel.onDatasetChanged(emptyList(), testFactory.allConsents)
 
         //then
         Assert.assertTrue(viewModel.listItems.value!!.isEmpty())
@@ -542,10 +544,10 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onConsentsDataChangedTestCase2() {
         //given
-        viewModel.onDatasetChanged(TestFactory.allConnections, emptyList())
+        viewModel.onDatasetChanged(testFactory.allConnections, emptyList())
 
         //when
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
 
         //then
         assertThat(
@@ -591,6 +593,20 @@ class ConnectionsListViewModelTest : ViewModelTest() {
                         isActive = false,
                         isChecked = false,
                         apiVersion = API_V1_VERSION,
+                        email = "example@example.com",
+                        shouldRequestLocationPermission = false
+                    ),
+                    ConnectionItem(
+                        guid = "guid4",
+                        connectionId = "4",
+                        name = "Demobank4",
+                        statusDescription = "Linked on 1 January 1970",
+                        statusDescriptionColorRes = R.color.dark_60_and_grey_100,
+                        logoUrl = "https://www.saltedge.com/",
+                        consentsCount = 0,
+                        isActive = true,
+                        isChecked = false,
+                        apiVersion = API_V2_VERSION,
                         email = "example@example.com",
                         shouldRequestLocationPermission = false
                     )
@@ -655,7 +671,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onDialogActionClickCase5() {
         //given
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
         given(mockConnectivityReceiver.hasNetworkConnection).willReturn(true)
 
 
@@ -663,7 +679,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         viewModel.onDialogActionClick(
             dialogActionId = DialogInterface.BUTTON_NEGATIVE,
             actionResId = R.string.actions_retry,
-            guid = TestFactory.connection1.guid
+            guid = testFactory.connection1.guid
         )
 
         //then
@@ -675,25 +691,25 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onDialogActionClickCase6() {
         //given
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
         given(mockConnectivityReceiver.hasNetworkConnection).willReturn(true)
 
         //when
         viewModel.onDialogActionClick(
             dialogActionId = DialogInterface.BUTTON_POSITIVE,
             actionResId = R.string.actions_retry,
-            guid = TestFactory.connection1.guid
+            guid = testFactory.connection1.guid
         )
 
         //then
-        Mockito.verify(mockInteractor).revokeConnection(TestFactory.connection1.guid)
+        Mockito.verify(mockInteractor).revokeConnection(testFactory.connection1.guid)
     }
 
     @Test
     @Throws(Exception::class)
     fun onDialogActionClickCase7() {
         //given
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
         given(mockConnectivityReceiver.hasNetworkConnection).willReturn(false)
 
 
@@ -701,7 +717,7 @@ class ConnectionsListViewModelTest : ViewModelTest() {
         viewModel.onDialogActionClick(
             dialogActionId = DialogInterface.BUTTON_NEGATIVE,
             actionResId = R.string.actions_retry,
-            guid = TestFactory.connection1.guid
+            guid = testFactory.connection1.guid
         )
 
         //then
@@ -713,14 +729,14 @@ class ConnectionsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onDialogActionClickCase8() {
         //given
-        viewModel.onDatasetChanged(TestFactory.allConnections, TestFactory.allConsents)
+        viewModel.onDatasetChanged(testFactory.allConnections, testFactory.allConsents)
         given(mockConnectivityReceiver.hasNetworkConnection).willReturn(false)
 
         //when
         viewModel.onDialogActionClick(
             dialogActionId = DialogInterface.BUTTON_POSITIVE,
             actionResId = R.string.actions_retry,
-            guid = TestFactory.connection1.guid
+            guid = testFactory.connection1.guid
         )
 
         //then

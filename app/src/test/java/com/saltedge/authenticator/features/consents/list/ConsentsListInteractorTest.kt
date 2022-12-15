@@ -53,14 +53,16 @@ class ConsentsListInteractorTest : CoroutineViewModelTest() {
     private val mockApiManagerV1 = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockApiManagerV2 = mock(ScaServiceClientAbs::class.java)
     private val mockCallback = mock(ConsentsListInteractorCallback::class.java)
+    private lateinit var testFactory: TestFactory
 
     @Before
     override fun setUp() {
         super.setUp()
+        testFactory = TestFactory()
         given(mockCallback.coroutineScope).willReturn(TestCoroutineScope(testDispatcher))
-        TestFactory.mockConnections(mockConnectionsRepository)
-        TestFactory.mockRichConnections(mockKeyStoreManager)
-        TestFactory.mockConsents(mockCryptoTools)
+        testFactory.mockConnections(mockConnectionsRepository)
+        testFactory.mockRichConnections(mockKeyStoreManager)
+        testFactory.mockConsents(mockCryptoTools)
 
         interactor = ConsentsListInteractor(
             connectionsRepository = mockConnectionsRepository,
@@ -77,7 +79,7 @@ class ConsentsListInteractorTest : CoroutineViewModelTest() {
     @Throws(Exception::class)
     fun updateConsentsTestCase1() {
         //given
-        interactor.updateConnection(connectionGuid = TestFactory.connection1.guid)
+        interactor.updateConnection(connectionGuid = testFactory.connection1.guid)
         Mockito.clearInvocations(mockConnectionsRepository, mockKeyStoreManager)
 
         //when
@@ -85,14 +87,14 @@ class ConsentsListInteractorTest : CoroutineViewModelTest() {
 
         //then
         Mockito.verify(mockApiManagerV1)
-            .getConsents(connectionsAndKeys = listOf(TestFactory.richConnection1), resultCallback = interactor)
+            .getConsents(connectionsAndKeys = listOf(testFactory.richConnection1), resultCallback = interactor)
     }
 
     @Test
     @Throws(Exception::class)
     fun updateConsentsTestCase2() {
         //given
-        interactor.updateConnection(connectionGuid = TestFactory.connection2.guid)
+        interactor.updateConnection(connectionGuid = testFactory.connection2.guid)
         Mockito.clearInvocations(mockConnectionsRepository, mockKeyStoreManager)
 
         //when
@@ -100,7 +102,7 @@ class ConsentsListInteractorTest : CoroutineViewModelTest() {
 
         //then
         Mockito.verify(mockApiManagerV2)
-            .fetchConsents(richConnections = listOf(TestFactory.richConnection2), callback = interactor)
+            .fetchConsents(richConnections = listOf(testFactory.richConnection2), callback = interactor)
     }
 
     @Test
@@ -117,20 +119,20 @@ class ConsentsListInteractorTest : CoroutineViewModelTest() {
     @Throws(Exception::class)
     fun getConsentTestCase1() {
         //given
-        interactor.consents = TestFactory.v2Consents
+        interactor.consents = testFactory.v2Consents
 
         //when
-        val result = interactor.getConsent(consentId = TestFactory.v2ConsentData.id)
+        val result = interactor.getConsent(consentId = testFactory.v2ConsentData.id)
 
         //then
-        assertThat(result, equalTo(TestFactory.v2ConsentData))
+        assertThat(result, equalTo(testFactory.v2ConsentData))
     }
 
     @Test
     @Throws(Exception::class)
     fun getConsentTestCase2() {
         //when
-        val result = interactor.getConsent(consentId = TestFactory.v2ConsentData.id)
+        val result = interactor.getConsent(consentId = testFactory.v2ConsentData.id)
 
         //then
         Assert.assertNull(result)
@@ -140,19 +142,19 @@ class ConsentsListInteractorTest : CoroutineViewModelTest() {
     @Throws(Exception::class)
     fun removeConsentTestCase1() {
         //given
-        interactor.consents = TestFactory.v1Consents
+        interactor.consents = testFactory.v1Consents
         assertThat(interactor.consents.size, equalTo(3))
 
         //when
-        val result = interactor.removeConsent(consentId = TestFactory.v1Consents.first().id)
+        val result = interactor.removeConsent(consentId = testFactory.v1Consents.first().id)
 
         //then
-        assertThat(result, equalTo(TestFactory.v1Consents.first()))
+        assertThat(result, equalTo(testFactory.v1Consents.first()))
         assertThat(interactor.consents.size, equalTo(2))
         verify(mockCallback)
             .onDatasetChanged(listOf(
-                TestFactory.v1PispFutureConsentData,
-                TestFactory.v1PispRecurringConsentData
+                testFactory.v1PispFutureConsentData,
+                testFactory.v1PispRecurringConsentData
             ))
     }
 
@@ -160,7 +162,7 @@ class ConsentsListInteractorTest : CoroutineViewModelTest() {
     @Throws(Exception::class)
     fun removeConsentTestCase2() {
         //given
-        interactor.consents = TestFactory.v1Consents
+        interactor.consents = testFactory.v1Consents
         assertThat(interactor.consents.size, equalTo(3))
 
         //when
@@ -176,29 +178,29 @@ class ConsentsListInteractorTest : CoroutineViewModelTest() {
     @Throws(Exception::class)
     fun onFetchEncryptedDataResultTest() {
         //given
-        interactor.updateConnection(connectionGuid = TestFactory.connection1.guid)
+        interactor.updateConnection(connectionGuid = testFactory.connection1.guid)
         Mockito.clearInvocations(mockConnectionsRepository, mockKeyStoreManager)
 
         //when
-        interactor.onFetchEncryptedDataResult(TestFactory.encV1Consents, emptyList())
+        interactor.onFetchEncryptedDataResult(testFactory.encV1Consents, emptyList())
 
         //then
         assertThat(interactor.consents.size, equalTo(3))
-        verify(mockCallback).onDatasetChanged(TestFactory.v1Consents)
+        verify(mockCallback).onDatasetChanged(testFactory.v1Consents)
     }
 
     @Test
     @Throws(Exception::class)
     fun onFetchConsentsV2ResultTest() {
         //given
-        interactor.updateConnection(connectionGuid = TestFactory.connection2.guid)
+        interactor.updateConnection(connectionGuid = testFactory.connection2.guid)
         Mockito.clearInvocations(mockConnectionsRepository, mockKeyStoreManager)
 
         //when
-        interactor.onFetchConsentsV2Result(TestFactory.encV2Consents, emptyList())
+        interactor.onFetchConsentsV2Result(testFactory.encV2Consents, emptyList())
 
         //then
         assertThat(interactor.consents.size, equalTo(1))
-        verify(mockCallback).onDatasetChanged(TestFactory.v2Consents)
+        verify(mockCallback).onDatasetChanged(testFactory.v2Consents)
     }
 }

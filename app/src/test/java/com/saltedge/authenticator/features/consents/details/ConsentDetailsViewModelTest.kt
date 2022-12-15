@@ -59,11 +59,13 @@ class ConsentDetailsViewModelTest : ViewModelTest() {
     private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
     private val mockApiManagerV1 = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockApiManagerV2 = mock(ScaServiceClientAbs::class.java)
+    private lateinit var testFactory: TestFactory
 
     @Before
     fun setUp() {
-        TestFactory.mockConnections(mockConnectionsRepository)
-        TestFactory.mockRichConnections(mockKeyStoreManager)
+        testFactory = TestFactory()
+        testFactory.mockConnections(mockConnectionsRepository)
+        testFactory.mockRichConnections(mockKeyStoreManager)
 
         interactor = ConsentDetailsInteractor(
             connectionsRepository = mockConnectionsRepository,
@@ -81,11 +83,11 @@ class ConsentDetailsViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun setInitialDataTestCase1() {
         //given arguments
-        val consent = TestFactory.v1AispConsentData.copy(
+        val consent = testFactory.v1AispConsentData.copy(
             expiresAt = DateTime.now().plusDays(1)
         )
         val arguments = Bundle().apply {
-            putString(KEY_GUID, TestFactory.connection1.guid)
+            putString(KEY_GUID, testFactory.connection1.guid)
             putSerializable(KEY_DATA, consent)
         }
 
@@ -115,11 +117,11 @@ class ConsentDetailsViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun setInitialDataTestCase2() {
         //given arguments pisp_future
-        val consent = TestFactory.v1PispFutureConsentData.copy(
+        val consent = testFactory.v1PispFutureConsentData.copy(
             sharedData = ConsentSharedData(balance = false, transactions = false)
         )
         val arguments = Bundle().apply {
-            putString(KEY_GUID, TestFactory.connection1.guid)
+            putString(KEY_GUID, testFactory.connection1.guid)
             putSerializable(KEY_DATA, consent)
         }
 
@@ -137,11 +139,11 @@ class ConsentDetailsViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun setInitialDataTestCase3() {
         //given arguments pisp_recurring
-        val consent = TestFactory.v1PispRecurringConsentData.copy(
+        val consent = testFactory.v1PispRecurringConsentData.copy(
             sharedData = null
         )
         val arguments = Bundle().apply {
-            putString(KEY_GUID, TestFactory.connection1.guid)
+            putString(KEY_GUID, testFactory.connection1.guid)
             putSerializable(KEY_DATA, consent)
         }
 
@@ -160,7 +162,7 @@ class ConsentDetailsViewModelTest : ViewModelTest() {
     fun setInitialDataTestCase4() {
         //given arguments with invalid guid
         val arguments = Bundle().apply {
-            putSerializable(KEY_DATA, TestFactory.v1AispConsentData)
+            putSerializable(KEY_DATA, testFactory.v1AispConsentData)
         }
 
         //when
@@ -206,8 +208,8 @@ class ConsentDetailsViewModelTest : ViewModelTest() {
     fun onRevokeClickTest() {
         //given
         val arguments = Bundle().apply {
-            putString(KEY_GUID, TestFactory.connection1.guid)
-            putSerializable(KEY_DATA, TestFactory.v1AispConsentData)
+            putString(KEY_GUID, testFactory.connection1.guid)
+            putSerializable(KEY_DATA, testFactory.v1AispConsentData)
         }
         viewModel.setInitialData(arguments)
 
@@ -228,8 +230,8 @@ class ConsentDetailsViewModelTest : ViewModelTest() {
     fun onRevokeConfirmedTestCase1() {
         //given
         val arguments = Bundle().apply {
-            putString(KEY_GUID, TestFactory.connection1.guid)
-            putSerializable(KEY_DATA, TestFactory.v1AispConsentData)
+            putString(KEY_GUID, testFactory.connection1.guid)
+            putSerializable(KEY_DATA, testFactory.v1AispConsentData)
         }
         viewModel.setInitialData(arguments)
 
@@ -238,8 +240,8 @@ class ConsentDetailsViewModelTest : ViewModelTest() {
 
         //then
         verify(mockApiManagerV1).revokeConsent(
-            consentId = TestFactory.v1AispConsentData.id,
-            connectionAndKey = TestFactory.richConnection1,
+            consentId = testFactory.v1AispConsentData.id,
+            connectionAndKey = testFactory.richConnection1,
             resultCallback = interactor
         )
         Mockito.verifyNoInteractions(mockApiManagerV2)
@@ -250,8 +252,8 @@ class ConsentDetailsViewModelTest : ViewModelTest() {
     fun onRevokeConfirmedTestCase2() {
         //given
         val arguments = Bundle().apply {
-            putString(KEY_GUID, TestFactory.connection2.guid)
-            putSerializable(KEY_DATA, TestFactory.v2ConsentData)
+            putString(KEY_GUID, testFactory.connection2.guid)
+            putSerializable(KEY_DATA, testFactory.v2ConsentData)
         }
         viewModel.setInitialData(arguments)
 
@@ -260,8 +262,8 @@ class ConsentDetailsViewModelTest : ViewModelTest() {
 
         //then
         verify(mockApiManagerV2).revokeConsent(
-            consentID = TestFactory.v2ConsentData.id,
-            richConnection = TestFactory.richConnection2,
+            consentID = testFactory.v2ConsentData.id,
+            richConnection = testFactory.richConnection2,
             callback = interactor
         )
         Mockito.verifyNoInteractions(mockApiManagerV1)
