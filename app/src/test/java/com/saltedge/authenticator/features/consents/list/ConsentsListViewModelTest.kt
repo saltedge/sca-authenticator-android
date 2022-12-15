@@ -59,6 +59,7 @@ class ConsentsListViewModelTest : ViewModelTest() {
     private val spanned = SpannableStringBuilder(
         "${context.getString(R.string.expires_in)} $daysTillExpireDescription"
     )
+    private val testFactory = TestFactory()
 
     @Before
     fun setUp() {
@@ -73,11 +74,11 @@ class ConsentsListViewModelTest : ViewModelTest() {
     fun setInitialDataCase1() {
         //given
         val bundle = Bundle().apply {
-            guid = TestFactory.connection1.guid
-            putSerializable(KEY_DATA, ArrayList<ConsentData>(TestFactory.v1Consents))
+            guid = testFactory.connection1.guid
+            putSerializable(KEY_DATA, ArrayList<ConsentData>(testFactory.v1Consents))
         }
-        given(mockInteractor.updateConnection(TestFactory.connection1.guid))
-            .willReturn(TestFactory.connection1)
+        given(mockInteractor.updateConnection(testFactory.connection1.guid))
+            .willReturn(testFactory.connection1)
 
         //when
         viewModel.setInitialData(bundle)
@@ -85,8 +86,8 @@ class ConsentsListViewModelTest : ViewModelTest() {
         //then
         assertThat(viewModel.logoUrlData.value, equalTo("https://www.fentury.com/"))
         assertThat(viewModel.connectionTitleData.value, equalTo("Demobank1"))
-        verify(mockInteractor).updateConnection(TestFactory.connection1.guid)
-        verify(mockInteractor).onNewConsentsReceived(TestFactory.v1Consents)
+        verify(mockInteractor).updateConnection(testFactory.connection1.guid)
+        verify(mockInteractor).onNewConsentsReceived(testFactory.v1Consents)
     }
 
     @Test
@@ -117,9 +118,9 @@ class ConsentsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onListItemClickTestCase1() {
         //given
-        viewModel.onDatasetChanged(TestFactory.v1Consents)
-        given(mockInteractor.getConsent(TestFactory.v1Consents.first().id))
-            .willReturn(TestFactory.v1Consents.first())
+        viewModel.onDatasetChanged(testFactory.v1Consents)
+        given(mockInteractor.getConsent(testFactory.v1Consents.first().id))
+            .willReturn(testFactory.v1Consents.first())
 
         //when
         viewModel.onListItemClick(0)
@@ -144,8 +145,8 @@ class ConsentsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onListItemClickTestCase3() {
         //given empty lists
-        viewModel.onDatasetChanged(TestFactory.v1Consents)
-        given(mockInteractor.getConsent(TestFactory.v1Consents.first().id))
+        viewModel.onDatasetChanged(testFactory.v1Consents)
+        given(mockInteractor.getConsent(testFactory.v1Consents.first().id))
             .willReturn(null)
 
         //when
@@ -159,12 +160,12 @@ class ConsentsListViewModelTest : ViewModelTest() {
     @Throws(Exception::class)
     fun onRevokeConsentTest() {
         //given empty encrypted list
-        viewModel.onDatasetChanged(TestFactory.v1Consents)
-        given(mockInteractor.removeConsent(TestFactory.v1Consents.first().id))
-            .willReturn(TestFactory.v1Consents.first())
+        viewModel.onDatasetChanged(testFactory.v1Consents)
+        given(mockInteractor.removeConsent(testFactory.v1Consents.first().id))
+            .willReturn(testFactory.v1Consents.first())
 
         //when
-        viewModel.onRevokeConsent(TestFactory.v1Consents.first().id)
+        viewModel.onRevokeConsent(testFactory.v1Consents.first().id)
 
         //then
         assertThat(
@@ -179,7 +180,7 @@ class ConsentsListViewModelTest : ViewModelTest() {
         //given not empty encrypted list
 
         //when
-        viewModel.onDatasetChanged(TestFactory.v1Consents)
+        viewModel.onDatasetChanged(testFactory.v1Consents)
 
         //then
         assertThat(

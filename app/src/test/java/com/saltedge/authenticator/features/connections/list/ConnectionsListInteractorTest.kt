@@ -22,21 +22,11 @@ package com.saltedge.authenticator.features.connections.list
 
 import com.saltedge.android.test_tools.CoroutineViewModelTest
 import com.saltedge.authenticator.TestFactory
-import com.saltedge.authenticator.TestFactory.allActiveConnections
-import com.saltedge.authenticator.TestFactory.allConnections
-import com.saltedge.authenticator.TestFactory.connection1
-import com.saltedge.authenticator.TestFactory.connection2
-import com.saltedge.authenticator.TestFactory.connection3Inactive
-import com.saltedge.authenticator.TestFactory.connection4
-import com.saltedge.authenticator.TestFactory.richConnection1
-import com.saltedge.authenticator.TestFactory.richConnection2
-import com.saltedge.authenticator.TestFactory.richConnection4
 import com.saltedge.authenticator.core.api.ERROR_CLASS_AUTHORIZATION_NOT_FOUND
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ConnectionStatus
 import com.saltedge.authenticator.core.tools.secure.BaseCryptoToolsAbs
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
-import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
@@ -66,14 +56,15 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
     private val mockApiManagerV1 = mock(AuthenticatorApiManagerAbs::class.java)
     private val mockApiManagerV2 = mock(ScaServiceClientAbs::class.java)
     private val mockCallback = mock(ConnectionsListInteractorCallback::class.java)
+    private val testFactory = TestFactory()
 
     @Before
     override fun setUp() {
         super.setUp()
         given(mockCallback.coroutineScope).willReturn(TestCoroutineScope(testDispatcher))
-        TestFactory.mockConnections(mockConnectionsRepository)
-        TestFactory.mockRichConnections(mockKeyStoreManager)
-        TestFactory.mockConsents(mockCryptoTools)
+        testFactory.mockConnections(mockConnectionsRepository)
+        testFactory.mockRichConnections(mockKeyStoreManager)
+        testFactory.mockConsents(mockCryptoTools)
 
         interactor = ConnectionsListInteractor(
             connectionsRepository = mockConnectionsRepository,
@@ -104,13 +95,13 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
     fun updateNameAndSaveTestCase1() {
         //given
         val newName = "new name"
-        val guid = connection2.guid
+        val guid = testFactory.connection2.guid
 
         //when
         interactor.updateNameAndSave(connectionGuid = guid, newConnectionName = newName)
 
         //then
-        Mockito.verify(mockConnectionsRepository).updateNameAndSave(connection2, newName)
+        Mockito.verify(mockConnectionsRepository).updateNameAndSave(testFactory.connection2, newName)
     }
 
     @Test
@@ -155,11 +146,11 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
 
         //then
         Mockito.verify(mockApiManagerV1).getConsents(
-            connectionsAndKeys = listOf(richConnection1),
+            connectionsAndKeys = listOf(testFactory.richConnection1),
             resultCallback = interactor
         )
         Mockito.verify(mockApiManagerV2).fetchConsents(
-            richConnections = listOf(richConnection2, richConnection4),
+            richConnections = listOf(testFactory.richConnection2, testFactory.richConnection4),
             callback = interactor
         )
         verifyNoMoreInteractions(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
@@ -177,13 +168,13 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
 
         //then
         Mockito.verify(mockApiManagerV2).showConnectionConfiguration(
-            richConnection = richConnection2,
-            providerId = richConnection2.connection.code,
+            richConnection = testFactory.richConnection2,
+            providerId = "demobank2",
             callback = interactor
         )
         Mockito.verify(mockApiManagerV2).showConnectionConfiguration(
-            richConnection = richConnection4,
-            providerId = richConnection4.connection.code,
+            richConnection = testFactory.richConnection4,
+            providerId = "demobank4",
             callback = interactor
         )
         verifyNoMoreInteractions(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
@@ -194,7 +185,7 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
     fun updateConnectionConfigurationCase2() {
         //given
         interactor.updateConnections()
-        richConnection2.connection.apply {
+        testFactory.richConnection2.connection.apply {
             accessToken = ""
             status = "${ConnectionStatus.INACTIVE}"
         }
@@ -205,16 +196,33 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
 
         //then
         Mockito.verify(mockApiManagerV2).showConnectionConfiguration(
-            richConnection = richConnection4,
-            providerId = richConnection4.connection.code,
+            richConnection = testFactory.richConnection4,
+            providerId = testFactory.richConnection4.connection.code,
             callback = interactor
         )
         verifyNoMoreInteractions(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+    }
 
-        richConnection2.connection.apply {
-            accessToken = "token4"
-            status = "${ConnectionStatus.ACTIVE}"
+    @Test
+    @Throws(Exception::class)
+    fun updateConnectionConfigurationCase3() {
+        //given
+        interactor.updateConnections()
+        testFactory.richConnection2.connection.apply {
+            code = "demobank4"
         }
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+
+        //when
+        interactor.updateConnectionConfiguration()
+
+        //then
+        Mockito.verify(mockApiManagerV2).showConnectionConfiguration(
+            richConnection = testFactory.richConnection2,
+            providerId = "demobank4",
+            callback = interactor
+        )
+        verifyNoMoreInteractions(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
     }
 
     @Test
@@ -222,33 +230,9 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
     fun onShowConnectionConfigurationSuccessCase1() {
         //given
         interactor.updateConnections()
+
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
-
-        //when
-        interactor.onShowConnectionConfigurationSuccess(
-            result = ConfigurationDataV2(
-                scaServiceUrl = "connectUrl",
-                providerName = "name",
-                providerId = "demobank4",
-                providerLogoUrl = "updatedUrl",
-                apiVersion = "2",
-                providerSupportEmail = "example@example.com",
-                providerPublicKey = "-----BEGIN PUBLIC KEY-----",
-                geolocationRequired = true
-            )
-        )
-
-        //then
-        assertThat(richConnection4.connection.logoUrl, equalTo("updatedUrl"))
-        Mockito.verify(mockConnectionsRepository).saveModel(connection4)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onShowConnectionConfigurationSuccessCase2() {
-        //given
-        interactor.updateConnections()
-        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+        assertThat(testFactory.richConnection4.connection.logoUrl, equalTo("https://www.saltedge.com/"))
 
         //when
         interactor.onShowConnectionConfigurationSuccess(
@@ -265,7 +249,36 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
         )
 
         //then
+        assertThat(testFactory.richConnection4.connection.logoUrl, equalTo("https://www.saltedge.com/"))
         Mockito.verifyNoInteractions(mockConnectionsRepository)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onShowConnectionConfigurationSuccessCase2() {
+        //given
+        interactor.updateConnections()
+
+        Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
+        assertThat(testFactory.richConnection4.connection.logoUrl, equalTo("https://www.saltedge.com/"))
+
+        //when
+        interactor.onShowConnectionConfigurationSuccess(
+            result = ConfigurationDataV2(
+                scaServiceUrl = "connectUrl",
+                providerName = "name",
+                providerId = "demobank4",
+                providerLogoUrl = "updatedUrl",
+                apiVersion = "2",
+                providerSupportEmail = "example@example.com",
+                providerPublicKey = "-----BEGIN PUBLIC KEY-----",
+                geolocationRequired = true
+            )
+        )
+
+        //then
+        assertThat(testFactory.richConnection4.connection.logoUrl, equalTo("updatedUrl"))
+        Mockito.verify(mockConnectionsRepository).saveModel(testFactory.connection4)
     }
 
     @Test
@@ -274,14 +287,14 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
         //given
         interactor.updateConnections()
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
-        val guid = connection1.guid
+        val guid = testFactory.connection1.guid
 
         //when
         interactor.revokeConnection(guid)
 
         //then
         Mockito.verify(mockConnectionsRepository).getByGuid(guid)
-        Mockito.verify(mockApiManagerV1).revokeConnections(listOf(richConnection1), resultCallback = interactor)
+        Mockito.verify(mockApiManagerV1).revokeConnections(listOf(testFactory.richConnection1), resultCallback = interactor)
         Mockito.verifyNoMoreInteractions(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
     }
 
@@ -291,8 +304,8 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
         //given
         interactor.updateConnections()
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
-        given(mockConnectionsRepository.getAllConnections()).willReturn(allActiveConnections)
-        val guid = connection3Inactive.guid
+        given(mockConnectionsRepository.getAllConnections()).willReturn(testFactory.allActiveConnections)
+        val guid = testFactory.connection3Inactive.guid
 
         //when
         interactor.revokeConnection(guid)
@@ -302,7 +315,7 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
         Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist(guid)
         Mockito.verify(mockConnectionsRepository).deleteConnection(guid)
         Mockito.verify(mockConnectionsRepository).getAllConnections()
-        Mockito.verify(mockCallback).onDatasetChanged(allActiveConnections, emptyList())
+        Mockito.verify(mockCallback).onDatasetChanged(testFactory.allActiveConnections, emptyList())
         Mockito.verifyNoMoreInteractions(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
     }
 
@@ -329,19 +342,19 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
         interactor.updateConnections()
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2, mockCallback)
 
-        val revokedTokens = listOf(connection1.accessToken)
-        val apiErrors = listOf(ApiErrorData(errorClassName = ERROR_CLASS_AUTHORIZATION_NOT_FOUND, accessToken = connection3Inactive.accessToken))
+        val revokedTokens = listOf(testFactory.connection1.accessToken)
+        val apiErrors = listOf(ApiErrorData(errorClassName = ERROR_CLASS_AUTHORIZATION_NOT_FOUND, accessToken = testFactory.connection3Inactive.accessToken))
 
         //when
         interactor.onConnectionsRevokeResult(revokedTokens, apiErrors)
 
         //then
-        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist(connection1.guid)
-        Mockito.verify(mockConnectionsRepository).deleteConnection(connection1.guid)
-        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist(connection3Inactive.guid)
-        Mockito.verify(mockConnectionsRepository).deleteConnection(connection3Inactive.guid)
+        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist(testFactory.connection1.guid)
+        Mockito.verify(mockConnectionsRepository).deleteConnection(testFactory.connection1.guid)
+        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist(testFactory.connection3Inactive.guid)
+        Mockito.verify(mockConnectionsRepository).deleteConnection(testFactory.connection3Inactive.guid)
         Mockito.verify(mockConnectionsRepository).getAllConnections()
-        Mockito.verify(mockCallback).onDatasetChanged(allConnections, emptyList())
+        Mockito.verify(mockCallback).onDatasetChanged(testFactory.allConnections, emptyList())
         Mockito.verifyNoMoreInteractions(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
     }
 
@@ -352,19 +365,19 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
         interactor.updateConnections()
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2, mockCallback)
 
-        val revokedIDs = listOf(connection2.id)
-        val apiErrors = listOf(ApiErrorData(errorClassName = ERROR_CLASS_AUTHORIZATION_NOT_FOUND, accessToken = connection3Inactive.accessToken))
+        val revokedIDs = listOf(testFactory.connection2.id)
+        val apiErrors = listOf(ApiErrorData(errorClassName = ERROR_CLASS_AUTHORIZATION_NOT_FOUND, accessToken = testFactory.connection3Inactive.accessToken))
 
         //when
         interactor.onConnectionsV2RevokeResult(revokedIDs, apiErrors)
 
         //then
-        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist(connection2.guid)
-        Mockito.verify(mockConnectionsRepository).deleteConnection(connection2.guid)
-        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist(connection3Inactive.guid)
-        Mockito.verify(mockConnectionsRepository).deleteConnection(connection3Inactive.guid)
+        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist(testFactory.connection2.guid)
+        Mockito.verify(mockConnectionsRepository).deleteConnection(testFactory.connection2.guid)
+        Mockito.verify(mockKeyStoreManager).deleteKeyPairIfExist(testFactory.connection3Inactive.guid)
+        Mockito.verify(mockConnectionsRepository).deleteConnection(testFactory.connection3Inactive.guid)
         Mockito.verify(mockConnectionsRepository).getAllConnections()
-        Mockito.verify(mockCallback).onDatasetChanged(allConnections, emptyList())
+        Mockito.verify(mockCallback).onDatasetChanged(testFactory.allConnections, emptyList())
         Mockito.verifyNoMoreInteractions(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
     }
 
@@ -376,11 +389,11 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2, mockCallback)
 
         //when
-        interactor.onFetchEncryptedDataResult(TestFactory.encV1Consents, emptyList())
+        interactor.onFetchEncryptedDataResult(testFactory.encV1Consents, emptyList())
 
         //then
         Mockito.verify(mockCallback).coroutineScope
-        Mockito.verify(mockCallback).onDatasetChanged(allConnections, TestFactory.v1Consents)
+        Mockito.verify(mockCallback).onDatasetChanged(testFactory.allConnections, testFactory.v1Consents)
         Mockito.verifyNoMoreInteractions(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
     }
 
@@ -392,11 +405,11 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2, mockCallback)
 
         //when
-        interactor.onFetchConsentsV2Result(TestFactory.encV2Consents, emptyList())
+        interactor.onFetchConsentsV2Result(testFactory.encV2Consents, emptyList())
 
         //then
         Mockito.verify(mockCallback).coroutineScope
-        Mockito.verify(mockCallback).onDatasetChanged(allConnections, TestFactory.v2Consents)
+        Mockito.verify(mockCallback).onDatasetChanged(testFactory.allConnections, testFactory.v2Consents)
         Mockito.verifyNoMoreInteractions(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
     }
 
@@ -405,16 +418,16 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
     fun getConsentsTestCase1() {
         //given
         interactor.updateConnections()
-        interactor.onFetchEncryptedDataResult(TestFactory.encV1Consents, emptyList())
-        interactor.onFetchConsentsV2Result(TestFactory.encV2Consents, emptyList())
+        interactor.onFetchEncryptedDataResult(testFactory.encV1Consents, emptyList())
+        interactor.onFetchConsentsV2Result(testFactory.encV2Consents, emptyList())
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2, mockCallback)
         assertThat(interactor.allConsents.size, equalTo(4))
 
         //when
-        val result = interactor.getConsents(connectionGuid = connection1.guid)
+        val result = interactor.getConsents(connectionGuid = testFactory.connection1.guid)
 
         //then
-        assertThat(result, equalTo(TestFactory.v1Consents))
+        assertThat(result, equalTo(testFactory.v1Consents))
         Mockito.verifyNoMoreInteractions(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
     }
 
@@ -423,15 +436,15 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
     fun getConsentsTestCase2() {
         //given
         interactor.updateConnections()
-        interactor.onFetchEncryptedDataResult(TestFactory.encV1Consents, emptyList())
-        interactor.onFetchConsentsV2Result(TestFactory.encV2Consents, emptyList())
+        interactor.onFetchEncryptedDataResult(testFactory.encV1Consents, emptyList())
+        interactor.onFetchConsentsV2Result(testFactory.encV2Consents, emptyList())
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2, mockCallback)
 
         //when
-        val result = interactor.getConsents(connectionGuid = connection2.guid)
+        val result = interactor.getConsents(connectionGuid = testFactory.connection2.guid)
 
         //then
-        assertThat(result, equalTo(TestFactory.v2Consents))
+        assertThat(result, equalTo(testFactory.v2Consents))
         Mockito.verifyNoMoreInteractions(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2)
     }
 
@@ -440,12 +453,12 @@ class ConnectionsListInteractorTest : CoroutineViewModelTest() {
     fun getConsentsTestCase3() {
         //given
         interactor.updateConnections()
-        interactor.onFetchEncryptedDataResult(TestFactory.encV1Consents, emptyList())
-        interactor.onFetchEncryptedDataResult(TestFactory.encV2Consents, emptyList())
+        interactor.onFetchEncryptedDataResult(testFactory.encV1Consents, emptyList())
+        interactor.onFetchEncryptedDataResult(testFactory.encV2Consents, emptyList())
         Mockito.clearInvocations(mockConnectionsRepository, mockApiManagerV1, mockApiManagerV2, mockCallback)
 
         //when
-        val result = interactor.getConsents(connectionGuid = connection3Inactive.guid)
+        val result = interactor.getConsents(connectionGuid = testFactory.connection3Inactive.guid)
 
         //then
         assertThat(result, equalTo(emptyList()))

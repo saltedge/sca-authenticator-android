@@ -37,7 +37,7 @@ import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.mockito.BDDMockito
 
-object TestFactory {
+class TestFactory {
 
     val mockPrivateKey = CommonTestTools.testPrivateKey
 
