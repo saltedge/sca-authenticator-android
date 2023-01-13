@@ -61,6 +61,9 @@
     <string name="errors_fingerprint_init">Fingerprint material cannot be accessed. Please reinstall the application.</string>
     <string name="errors_db_init">Database initialize error</string>
     <string name="errors_camera_init">Camera initialize error</string>
+    <string name="errors_camera_permission_denied">Camera permission denied</string>
+    <string name="errors_notifications_setup">Notification setup error</string>
+    <string name="errors_notifications_permission_denied">Notifications permission denied</string>
     <string name="errors_internal_error">Internal error</string>
     <string name="errors_cant_show_biometric">Something went wrong. Can not show biometric input</string>
     <string name="errors_cant_save_passcode">Internal error. Can not save passcode</string>
