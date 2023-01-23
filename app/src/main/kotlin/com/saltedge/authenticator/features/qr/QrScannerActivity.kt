@@ -23,6 +23,7 @@ package com.saltedge.authenticator.features.qr
 import android.Manifest.permission
 import android.app.Activity
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.SparseArray
 import android.view.SurfaceHolder
@@ -36,10 +37,7 @@ import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
-import com.saltedge.authenticator.app.KEY_DEEP_LINK
-import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.app.authenticatorApp
+import com.saltedge.authenticator.app.*
 import com.saltedge.authenticator.features.main.SnackbarAnchorContainer
 import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -106,6 +104,10 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
         viewModel.permissionGrantEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let { startCameraSource() }
         })
+        viewModel.notificationsPermissionGrantEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let { setupNotificationsPermissions() }
+        })
+
         viewModel.setActivityResult.observe(this, Observer<String> { deepLink ->
             this.setResult(Activity.RESULT_OK, intent.putExtra(KEY_DEEP_LINK, deepLink))
         })
@@ -142,15 +144,19 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
 
     private fun setupSurface() {
         surfaceView?.holder?.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-            }
+            override fun surfaceChanged(
+                holder: SurfaceHolder,
+                format: Int,
+                width: Int,
+                height: Int
+            ) {}
 
             override fun surfaceDestroyed(holder: SurfaceHolder) {
                 cameraSource?.stop()
             }
 
             override fun surfaceCreated(holder: SurfaceHolder) {
-                startCameraSource()
+                setupNotificationsPermissions()
             }
         })
     }
@@ -173,6 +179,29 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
 
     private fun onReceivedCodes(codes: SparseArray<Barcode>) {
         viewModel.onReceivedCodes(codes)
+    }
+
+    private fun setupNotificationsPermissions() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (ActivityCompat.checkSelfPermission(
+                        applicationContext,
+                        permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    startCameraSource()
+                } else {
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(permission.POST_NOTIFICATIONS),
+                        NOTIFICATION_PERMISSION_REQUEST_CODE
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            viewModel.onSetupNotificationException()
+            Timber.e(e)
+        }
     }
 
     private fun startCameraSource() {

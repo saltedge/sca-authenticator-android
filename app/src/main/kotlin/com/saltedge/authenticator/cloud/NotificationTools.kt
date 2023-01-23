@@ -45,7 +45,9 @@ const val NOTIFICATION_ID = 201
 fun Context.registerNotificationChannels() {
     if (buildVersion26orGreater) {
         val notificationChannel: NotificationChannel = NotificationChannel(
-            CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH
+            CHANNEL_ID,
+            CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_HIGH
         ).apply {
 
             // Configure the notification channel.
