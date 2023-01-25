@@ -197,6 +197,8 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
                         NOTIFICATION_PERMISSION_REQUEST_CODE
                     )
                 }
+            } else {
+                startCameraSource()
             }
         } catch (e: Exception) {
             viewModel.onSetupNotificationException()
