@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.authorizations.details
 
+import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -28,6 +29,7 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -61,6 +63,24 @@ class AuthorizationDetailsFragment : BaseFragment(),
     private lateinit var viewModel: AuthorizationDetailsViewModel
     private var timeViewUpdateTimer: Timer = Timer()
     private var alertDialog: AlertDialog? = null
+    private val requestMultiplePermissions = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        permissions.forEach { actionMap ->
+            when (actionMap.key) {
+                Manifest.permission.ACCESS_FINE_LOCATION -> {
+                    if (actionMap.value) {
+                        viewModel.updateLocationStateOfConnection()
+                    }
+                }
+                Manifest.permission.ACCESS_COARSE_LOCATION -> {
+                    if (actionMap.value) {
+                        viewModel.updateLocationStateOfConnection()
+                    }
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,11 +124,6 @@ class AuthorizationDetailsFragment : BaseFragment(),
 
     override fun closeActiveDialogs() {
         if (alertDialog?.isShowing == true) alertDialog?.dismiss()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        viewModel.onRequestPermissionsResult(requestCode, grantResults)
     }
 
     private fun startTimer() {
@@ -194,7 +209,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
         })
         viewModel.onAskPermissionsEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let {
-                requestPermissions(DeviceLocationManager.permissions, LOCATION_PERMISSION_REQUEST_CODE)
+                requestMultiplePermissions.launch(DeviceLocationManager.permissions)
             }
         })
         viewModel.onRequestGPSProviderEvent.observe(this, Observer { event ->

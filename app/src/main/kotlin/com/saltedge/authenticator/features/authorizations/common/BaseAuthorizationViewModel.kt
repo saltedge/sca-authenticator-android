@@ -22,13 +22,11 @@ package com.saltedge.authenticator.features.authorizations.common
 
 import android.content.Context
 import android.content.DialogInterface
-import android.content.pm.PackageManager
 import android.location.LocationManager
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.features.connections.common.shouldRequestLocationPermission
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
@@ -60,12 +58,8 @@ abstract class BaseAuthorizationViewModel(
         }
     }
 
-    fun onRequestPermissionsResult(requestCode: Int, grantResults: IntArray) {
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE
-            && grantResults.any { it == PackageManager.PERMISSION_GRANTED }
-        ) {
-            locationManager.startLocationUpdates()
-        }
+    fun updateLocationStateOfConnection() {
+        locationManager.startLocationUpdates()
     }
 
     fun onViewItemClick(itemViewId: Int, authorizationModel: AuthorizationItemViewModel?) {

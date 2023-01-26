@@ -131,7 +131,9 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.37'
     implementation 'com.google.dagger:dagger:2.38.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.appcompat:appcompat:1.6.0'
+    implementation 'androidx.activity:activity-ktx:1.6.1'
+    implementation("androidx.fragment:fragment-ktx:1.3.6")
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
