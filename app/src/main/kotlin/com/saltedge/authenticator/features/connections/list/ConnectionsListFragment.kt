@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.connections.list
 
+import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -29,6 +30,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
@@ -39,7 +41,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
@@ -73,6 +74,24 @@ class ConnectionsListFragment : BaseFragment(),
     private var dialogFragment: DialogFragment? = null
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private var alertDialog: AlertDialog? = null
+    private val requestMultiplePermissions = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        permissions.forEach { actionMap ->
+            when (actionMap.key) {
+                Manifest.permission.ACCESS_FINE_LOCATION -> {
+                    if (actionMap.value) {
+                        viewModel.updateLocationStateOfConnection()
+                    }
+                }
+                Manifest.permission.ACCESS_COARSE_LOCATION -> {
+                    if (actionMap.value) {
+                        viewModel.updateLocationStateOfConnection()
+                    }
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,11 +142,6 @@ class ConnectionsListFragment : BaseFragment(),
         if (dialogFragment?.isVisible == true) dialogFragment?.dismiss()
         if (popupWindow?.isShowing == true) popupWindow?.dismiss()
         if (alertDialog?.isShowing == true) alertDialog?.dismiss()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        viewModel.onRequestPermissionsResult(requestCode, grantResults)
     }
 
     private fun setupViewModel() {
@@ -216,7 +230,7 @@ class ConnectionsListFragment : BaseFragment(),
         })
         viewModel.onAskPermissionsEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let {
-                requestPermissions(DeviceLocationManager.permissions, LOCATION_PERMISSION_REQUEST_CODE)
+                requestMultiplePermissions.launch(DeviceLocationManager.permissions)
             }
         })
         viewModel.updateListItemEvent.observe(this, Observer<ConnectionItem> { itemIndex ->

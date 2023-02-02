@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
+import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -28,6 +29,7 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
@@ -36,7 +38,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.cloud.clearNotifications
@@ -68,6 +69,24 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
     private var dialogFragment: DialogFragment? = null
     private var alertDialog: AlertDialog? = null
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val requestMultiplePermissions = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        permissions.forEach { actionMap ->
+            when (actionMap.key) {
+                Manifest.permission.ACCESS_FINE_LOCATION -> {
+                    if (actionMap.value) {
+                        viewModel.updateLocationStateOfConnection()
+                    }
+                }
+                Manifest.permission.ACCESS_COARSE_LOCATION -> {
+                    if (actionMap.value) {
+                        viewModel.updateLocationStateOfConnection()
+                    }
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,15 +143,6 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
     override fun closeActiveDialogs() {
         if (dialogFragment?.isVisible == true) dialogFragment?.dismiss()
         if (alertDialog?.isShowing == true) alertDialog?.dismiss()
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        viewModel.onRequestPermissionsResult(requestCode, grantResults)
     }
 
     private fun setupViewModel() {
@@ -206,10 +216,7 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         })
         viewModel.onAskPermissionsEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let {
-                requestPermissions(
-                    DeviceLocationManager.permissions,
-                    LOCATION_PERMISSION_REQUEST_CODE
-                )
+                requestMultiplePermissions.launch(DeviceLocationManager.permissions)
             }
         })
         viewModel.emptyViewImage.observe(this, Observer<ResId> {

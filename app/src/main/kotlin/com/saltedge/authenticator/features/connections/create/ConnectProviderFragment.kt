@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.connections.create
 
+import android.Manifest
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.SpannableString
@@ -27,12 +28,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.CookieManager
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.app.guid
@@ -68,6 +69,24 @@ class ConnectProviderFragment : BaseFragment(),
     )
     private lateinit var binding: ConnectProviderBinding
     private var alertDialog: AlertDialog? = null
+    private val requestMultiplePermissions = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        permissions.forEach { actionMap ->
+            when (actionMap.key) {
+                Manifest.permission.ACCESS_FINE_LOCATION -> {
+                    if (actionMap.value) {
+                        viewModel.updateLocationStateOfConnection()
+                    }
+                }
+                Manifest.permission.ACCESS_COARSE_LOCATION -> {
+                    if (actionMap.value) {
+                        viewModel.updateLocationStateOfConnection()
+                    }
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -127,11 +146,6 @@ class ConnectProviderFragment : BaseFragment(),
         if (alertDialog?.isShowing == true) alertDialog?.dismiss()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        viewModel.onRequestPermissionsResult(requestCode, grantResults)
-    }
-
     private fun setupViewModel() {
         val appLinkData = arguments?.getSerializable(KEY_DATA) as? ConnectAppLinkData
         val apiVersion = arguments?.getString(KEY_API_VERSION)
@@ -170,7 +184,7 @@ class ConnectProviderFragment : BaseFragment(),
         })
         viewModel.onAskPermissionsEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let {
-                requestPermissions(DeviceLocationManager.permissions, LOCATION_PERMISSION_REQUEST_CODE)
+                requestMultiplePermissions.launch(DeviceLocationManager.permissions)
             }
         })
         viewModel.setInitialData(initialConnectData = appLinkData, connectionGuid = arguments?.guid)

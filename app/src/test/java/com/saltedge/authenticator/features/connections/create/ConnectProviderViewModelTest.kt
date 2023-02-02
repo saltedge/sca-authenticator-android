@@ -21,13 +21,10 @@
 package com.saltedge.authenticator.features.connections.create
 
 import android.content.DialogInterface
-import android.content.pm.PackageManager
 import android.view.View
 import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.TestAppTools
-import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
-import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.core.api.ERROR_CLASS_API_RESPONSE
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ConnectAppLinkData
@@ -159,44 +156,12 @@ class ConnectProviderViewModelTest : ViewModelTest() {
 
     @Test
     @Throws(Exception::class)
-    fun onRequestPermissionsResultTestCase1() {
-        //given
-        val requestCode = LOCATION_PERMISSION_REQUEST_CODE
-        val grantResults = IntArray(2) { PackageManager.PERMISSION_GRANTED }
-
+    fun updateLocationStateOfConnectionTest() {
         //when
-        viewModel.onRequestPermissionsResult(requestCode = requestCode, grantResults = grantResults)
+        viewModel.updateLocationStateOfConnection()
 
         //then
         verify(mockLocationManager).startLocationUpdates()
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onRequestPermissionsResultTestCase2() {
-        //given
-        val requestCode = CAMERA_PERMISSION_REQUEST_CODE
-        val grantResults = IntArray(2) { PackageManager.PERMISSION_GRANTED }
-
-        //when
-        viewModel.onRequestPermissionsResult(requestCode = requestCode, grantResults = grantResults)
-
-        //then
-        verifyNoInteractions(mockLocationManager)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onRequestPermissionsResultTestCase3() {
-        //given
-        val requestCode = LOCATION_PERMISSION_REQUEST_CODE
-        val grantResults = IntArray(2) { PackageManager.PERMISSION_DENIED }
-
-        //when
-        viewModel.onRequestPermissionsResult(requestCode = requestCode, grantResults = grantResults)
-
-        //then
-        verifyNoInteractions(mockLocationManager)
     }
 
     @Test
