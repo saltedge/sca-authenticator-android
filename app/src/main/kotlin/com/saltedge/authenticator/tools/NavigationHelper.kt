@@ -33,9 +33,10 @@ import androidx.navigation.fragment.findNavController
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.app.defaultTransition
+import com.saltedge.authenticator.core.api.DEFAULT_SUPPORT_EMAIL_LINK
 import com.saltedge.authenticator.features.qr.QrScannerActivity
-import com.saltedge.authenticator.sdk.constants.DEFAULT_SUPPORT_EMAIL_LINK
 import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
+import timber.log.Timber
 
 /**
  * Get current fragment in container
@@ -49,7 +50,7 @@ fun FragmentActivity.currentFragmentOnTop(): Fragment? {
         return host.childFragmentManager.fragments.getOrNull(0)
     } catch (ignored: IllegalStateException) {
     } catch (e: Exception) {
-        e.log()
+        Timber.e(e)
     }
     return null
 }
@@ -65,7 +66,7 @@ fun FragmentActivity.showDialogFragment(dialog: DialogFragment) {
         dialog.show(supportFragmentManager, dialog.javaClass.simpleName)
     } catch (ignored: IllegalStateException) {
     } catch (e: Exception) {
-        e.log()
+        Timber.e(e)
     }
 }
 
@@ -82,7 +83,7 @@ fun FragmentActivity.startMailApp(supportEmail: String? = null) {
     } catch (ignored: IllegalStateException) {
     } catch (ignored: ActivityNotFoundException) {
     } catch (e: Exception) {
-        e.log()
+        Timber.e(e)
     }
 }
 
@@ -100,7 +101,7 @@ fun FragmentActivity.showQrScannerActivity() {
     } catch (ignored: IllegalStateException) {
     } catch (ignored: ActivityNotFoundException) {
     } catch (e: Exception) {
-        e.log()
+        Timber.e(e)
     }
 }
 
@@ -120,24 +121,41 @@ fun FragmentActivity.restartApp() {
 
 fun Fragment.navigateTo(actionRes: ResId, bundle: Bundle? = null, transition: NavOptions = defaultTransition) {
     try {
-        findNavController().navigate(actionRes, bundle, transition)
+        if (mayNavigate()) findNavController().navigate(actionRes, bundle, transition)
     } catch (e: Exception) {
-        e.log()
+        Timber.e(e)
     }
 }
 
 fun Fragment.navigateToDialog(actionRes: ResId, bundle: Bundle) {
     try {
-        findNavController().navigate(actionRes, bundle)
+        if (mayNavigate()) findNavController().navigate(actionRes, bundle)
     } catch (e: Exception) {
-        e.log()
+        Timber.e(e)
     }
 }
 
 fun Fragment.popBackStack() {
     try {
-        findNavController().popBackStack()
+        if (mayNavigate()) findNavController().popBackStack()
     } catch (e: Exception) {
-        e.log()
+        Timber.e(e)
     }
+}
+
+/**
+ * Returns true if the navigation controller is still pointing at 'this' fragment, or false if it already navigated away.
+ */
+fun Fragment.mayNavigate(): Boolean {
+    val navController = findNavController()
+    val destinationIdInNavController = navController.currentDestination?.id
+
+    // add tag_navigation_destination_id to your ids.xml so that it's unique:
+    val destinationIdOfThisFragment = view?.getTag(R.id.tag_navigation_destination_id) ?: destinationIdInNavController
+
+    // check that the navigation graph is still in 'this' fragment, if not then the app already navigated:
+    return if (destinationIdInNavController == destinationIdOfThisFragment) {
+        view?.setTag(R.id.tag_navigation_destination_id, destinationIdOfThisFragment)
+        true
+    } else false
 }

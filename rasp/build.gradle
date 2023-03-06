@@ -22,7 +22,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'idea'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 def libVersionCode = 1
 def libVersionName = "1.0.0"
@@ -68,10 +68,10 @@ version libVersionName
 
 sourceCompatibility = 1.8
 
-uploadArchives {
+publishing {
     repositories {
-        mavenDeployer {
-            repository(url: uri("${rootProject.projectDir}/maven-repo"))
+        maven {
+            url = uri("${rootProject.projectDir}/maven-repo")
         }
     }
 }

@@ -29,7 +29,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.sdk.model.AccountData
+import com.saltedge.authenticator.core.api.model.AccountData
 import com.saltedge.authenticator.tools.setFont
 
 class ConsentAccountsView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {

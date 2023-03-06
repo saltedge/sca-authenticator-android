@@ -20,10 +20,17 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
+import android.Manifest
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
@@ -32,7 +39,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.cloud.clearNotifications
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.databinding.AuthorizationsListBinding
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.list.pagers.AuthorizationsContentPagerAdapter
@@ -43,6 +52,7 @@ import com.saltedge.authenticator.interfaces.AppbarMenuItemClickListener
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.location.DeviceLocationManager
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_authorizations_list.*
@@ -57,11 +67,30 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
     private var headerAdapter: AuthorizationsHeaderPagerAdapter? = null
     private var contentAdapter: AuthorizationsContentPagerAdapter? = null
     private var dialogFragment: DialogFragment? = null
+    private var alertDialog: AlertDialog? = null
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val requestMultiplePermissions = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        permissions.forEach { actionMap ->
+            when (actionMap.key) {
+                Manifest.permission.ACCESS_FINE_LOCATION -> {
+                    if (actionMap.value) {
+                        viewModel.updateLocationStateOfConnection()
+                    }
+                }
+                Manifest.permission.ACCESS_COARSE_LOCATION -> {
+                    if (actionMap.value) {
+                        viewModel.updateLocationStateOfConnection()
+                    }
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        authenticatorApp?.appComponent?.inject(this)
+        this.authenticatorApp?.appComponent?.inject(this)
         setupViewModel()
     }
 
@@ -113,6 +142,7 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
 
     override fun closeActiveDialogs() {
         if (dialogFragment?.isVisible == true) dialogFragment?.dismiss()
+        if (alertDialog?.isShowing == true) alertDialog?.dismiss()
     }
 
     private fun setupViewModel() {
@@ -131,9 +161,12 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
                 }
             }
         })
-        viewModel.onConfirmErrorEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
-            event.getContentIfNotHandled()?.let { errorMessage ->
-                view?.let { Snackbar.make(it, errorMessage, Snackbar.LENGTH_LONG).show() }
+        viewModel.errorEvent.observe(this, Observer<ViewModelEvent<ApiErrorData>> { event ->
+            event.getContentIfNotHandled()?.let { error ->
+                view?.let {
+                    val errorMessage = error.getErrorMessage(it.context)
+                    Snackbar.make(it, errorMessage, Snackbar.LENGTH_LONG).show()
+                }
             }
         })
         viewModel.onQrScanClickEvent.observe(this, Observer { event ->
@@ -150,6 +183,42 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         viewModel.onShowSettingsListEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { navigateTo(actionRes = R.id.settings_list) }
         })
+        viewModel.onRequestPermissionEvent.observe(this, Observer { event ->
+            event?.let {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alertDialog = if (activity?.shouldShowRequestPermissionRationale(DeviceLocationManager.permissions[0]) == false
+                        || activity?.shouldShowRequestPermissionRationale(DeviceLocationManager.permissions[1]) == false) { //TODO: try to extract business logic in vm
+                        activity?.showInfoDialog(
+                            titleResId = R.string.grant_access_location_title,
+                            messageResId = R.string.grant_access_location_description,
+                            positiveButtonResId = R.string.actions_go_to_settings,
+                            listener = { _, dialogActionId ->
+                                viewModel.onPermissionRationaleDialogActionClick(dialogActionId, R.string.actions_go_to_settings)
+                            })
+                    } else {
+                        activity?.showInfoDialog(
+                            titleResId = R.string.grant_access_location_title,
+                            messageResId = R.string.grant_access_location_description,
+                            positiveButtonResId = R.string.actions_proceed,
+                            listener = { _, dialogActionId ->
+                                viewModel.onPermissionRationaleDialogActionClick(dialogActionId, R.string.actions_proceed)
+                            })
+                    }
+                }
+            }
+        })
+        viewModel.onGoToSystemSettingsEvent.observe(this, { event ->
+            event.getContentIfNotHandled()?.let {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                intent.data = Uri.fromParts("package", requireActivity().packageName, null)
+                startActivity(intent)
+            }
+        })
+        viewModel.onAskPermissionsEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let {
+                requestMultiplePermissions.launch(DeviceLocationManager.permissions)
+            }
+        })
         viewModel.emptyViewImage.observe(this, Observer<ResId> {
             emptyView.setImageResource(it)
         })
@@ -161,6 +230,21 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
         })
         viewModel.emptyViewDescriptionText.observe(this, Observer<ResId> {
             emptyView.setDescription(it)
+        })
+        viewModel.onRequestGPSProviderEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let {
+                activity?.showInfoDialog(
+                    titleResId = R.string.enable_gps_title,
+                    messageResId = R.string.enable_gps_description,
+                    positiveButtonResId = R.string.actions_enable,
+                    listener = { _, dialogActionId ->
+                        viewModel.onPermissionRationaleDialogActionClick(
+                            dialogActionId,
+                            R.string.actions_enable,
+                            activity
+                        )
+                    })
+            }
         })
     }
 
@@ -174,7 +258,7 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
             }
         }
         pagersScrollSynchronizer.initViews(headerViewPager, contentViewPager)
-        emptyView?.setActionOnClickListener(View.OnClickListener { viewModel.onEmptyViewActionClick() })
+        emptyView?.setActionOnClickListener { viewModel.onEmptyViewActionClick() }
     }
 
     private fun setupSharedObserver() {

@@ -28,33 +28,43 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.features.connections.list.convertConnectionsToViewModels
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.ActionAppLinkData
+import com.saltedge.authenticator.core.model.GUID
+import com.saltedge.authenticator.core.model.ID
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
+import com.saltedge.authenticator.features.connections.common.convertConnectionsToViewItems
 import com.saltedge.authenticator.features.connections.select.SelectConnectionsFragment.Companion.dataBundle
+import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.toRichConnection
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
+import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
+import com.saltedge.authenticator.sdk.api.model.response.SubmitActionResponseData
 import com.saltedge.authenticator.sdk.contract.ActionSubmitListener
-import com.saltedge.authenticator.sdk.model.GUID
-import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
-import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.error.ApiErrorData
-import com.saltedge.authenticator.sdk.model.error.getErrorMessage
-import com.saltedge.authenticator.sdk.model.response.SubmitActionResponseData
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.tools.log
+import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
+import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
+import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationCreateListener
+import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.getErrorMessage
 import com.saltedge.authenticator.tools.postUnitEvent
+import timber.log.Timber
 
 class SubmitActionViewModel(
     private val appContext: Context,
     private val connectionsRepository: ConnectionsRepositoryAbs,
-    private val keyStoreManager: KeyStoreManagerAbs,
-    private val apiManager: AuthenticatorApiManagerAbs
-) : ViewModel(), LifecycleObserver, ActionSubmitListener {
+    private val keyStoreManager: KeyManagerAbs,
+    private val apiManagerV1: AuthenticatorApiManagerAbs,
+    private val apiManagerV2: ScaServiceClientAbs,
+    private val locationManager: DeviceLocationManagerAbs
+) : ViewModel(), LifecycleObserver, ActionSubmitListener, AuthorizationCreateListener {
 
     private var viewMode: ViewMode = ViewMode.START
     private var actionAppLinkData: ActionAppLinkData? = null
-    private var connectionAndKey: ConnectionAndKey? = null
+    private var richConnection: RichConnection? = null
     val onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onOpenLinkEvent = MutableLiveData<ViewModelEvent<Uri>>()
     val showConnectionsSelectorFragmentEvent = MutableLiveData<ViewModelEvent<Bundle>>()
@@ -67,93 +77,90 @@ class SubmitActionViewModel(
     var completeViewVisibility = MutableLiveData<Int>(View.GONE)
     var actionProcessingVisibility = MutableLiveData<Int>(View.VISIBLE)
 
-    override fun onActionInitFailure(error: ApiErrorData) {
-        showActionError(error.getErrorMessage(appContext))
-    }
-
-    override fun onActionInitSuccess(response: SubmitActionResponseData) {
-        val authorizationID = response.authorizationId ?: ""
-        val connectionID = response.connectionId ?: ""
-        if (response.success == true && authorizationID.isNotEmpty() && connectionID.isNotEmpty()) {
-            setResultAuthorizationIdentifier.postValue(
-                AuthorizationIdentifier(
-                    authorizationID = authorizationID,
-                    connectionID = connectionID
-                )
-            )
-        } else {
-            showActionError(appContext.getString(R.string.errors_actions_not_success))
-        }
-    }
-
     fun setInitialData(actionAppLinkData: ActionAppLinkData) {
-        val connections = connectionsRepository.getByConnectUrl(actionAppLinkData.connectUrl)
+        val connections = collectConnections(actionAppLinkData)
         this.actionAppLinkData = actionAppLinkData
         when {
-            connections.isEmpty() -> {
-                showActionError(appContext.getString(R.string.errors_actions_no_connections_link_app))
-            }
+            connections.isEmpty() -> showActionError(R.string.errors_actions_no_connections_link_app)
             connections.size == 1 -> {
-                this.connectionAndKey = connections.firstOrNull()?.let {
-                    keyStoreManager.createConnectionAndKeyModel(it)
-                }
-                if (connectionAndKey == null) viewMode = ViewMode.ACTION_ERROR
+                this.richConnection = connections.firstOrNull()?.toRichConnection(keyStoreManager)
+                if (richConnection == null) viewMode = ViewMode.ACTION_ERROR
             }
-            else -> {
-                val result = connections.convertConnectionsToViewModels(
-                    context = appContext
-                )
-                viewMode = ViewMode.SELECT
-                showConnectionsSelectorFragmentEvent.postValue(ViewModelEvent(dataBundle(result)))
-            }
+            else -> showConnectionsSelector(connections)
         }
-    }
-
-    fun showConnectionSelector(connectionGuid: GUID) {
-        this.connectionAndKey = connectionsRepository.getByGuid(connectionGuid)?.let {
-            keyStoreManager.createConnectionAndKeyModel(it)
-        }
-        viewMode = if (connectionAndKey == null) ViewMode.ACTION_ERROR else ViewMode.START
-        onViewCreated()
     }
 
     fun onViewCreated() {
-        if (viewMode == ViewMode.START) {
-            apiManager.sendAction(
-                actionUUID = actionAppLinkData?.actionUUID ?: "",
-                connectionAndKey = connectionAndKey ?: return,
-                resultCallback = this
-            )
+        val currentRichConnection = richConnection
+        if (viewMode == ViewMode.START && currentRichConnection != null) {
+            sendActionRequest(currentRichConnection, actionAppLinkData?.actionIdentifier ?: "")
             viewMode = ViewMode.PROCESSING
         }
         updateViewsContent()
     }
 
+    private fun sendActionRequest(currentRichConnection: RichConnection, actionID: ID) {
+        if (currentRichConnection.connection.apiVersion == API_V2_VERSION) {
+            apiManagerV2.requestCreateAuthorizationForAction(
+                richConnection = currentRichConnection,
+                actionID = actionID,
+                callback = this
+            )
+        } else {
+            apiManagerV1.sendAction(
+                connectionAndKey = currentRichConnection,
+                actionUUID = actionID,
+                resultCallback = this
+            )
+        }
+    }
+
     fun onViewClick(viewId: Int) {
         if (viewId == R.id.actionView) {
             onCloseEvent.postUnitEvent()
-            try {
-                actionAppLinkData?.returnTo?.let {
-                    if (it.isNotEmpty()) onOpenLinkEvent.postValue(ViewModelEvent(Uri.parse(it)))
-                }
-            } catch (e: Exception) {
-                e.log()
-            }
+            openReturnToUrl()
         }
+    }
+
+    fun onConnectionSelected(guid: GUID) {
+        if (guid.isEmpty()) {
+            onCloseEvent.postUnitEvent()
+        } else {
+            this.richConnection = connectionsRepository.getByGuid(guid)?.toRichConnection(keyStoreManager)
+            viewMode = if (richConnection == null) ViewMode.ACTION_ERROR else ViewMode.START
+            onViewCreated()
+        }
+    }
+
+    override fun onActionInitSuccess(response: SubmitActionResponseData) {
+        openNewAuthorization(response.connectionId ?: "", response.authorizationId ?: "")
+    }
+
+    override fun onActionInitFailure(error: ApiErrorData) {
+        showActionError(error.getErrorMessage(appContext))
+    }
+
+    override fun onAuthorizationCreateSuccess(connectionID: ID, authorizationID: ID) {
+        openNewAuthorization(connectionID, authorizationID)
+    }
+
+    override fun onAuthorizationCreateFailure(error: ApiErrorData) {
+        showActionError(error.getErrorMessage(appContext))
     }
 
     private fun updateViewsContent() {
         mainActionTextResId.postValue(R.string.actions_done)
-
-        if (viewMode == ViewMode.ACTION_ERROR) {
+        val showError = viewMode == ViewMode.ACTION_ERROR
+        if (showError) {
             iconResId.postValue(R.drawable.ic_status_error)
             completeTitleResId.postValue(R.string.action_error_title)
-            completeViewVisibility.postValue(View.VISIBLE)
-            actionProcessingVisibility.postValue(View.GONE)
-        } else {
-            completeViewVisibility.postValue(View.GONE)
-            actionProcessingVisibility.postValue(View.VISIBLE)
         }
+        completeViewVisibility.postValue(if (showError) View.VISIBLE else View.GONE)
+        actionProcessingVisibility.postValue(if (showError) View.GONE else View.VISIBLE)
+    }
+
+    private fun showActionError(errorMessageRes: ResId) {
+        showActionError(appContext.getString(errorMessageRes))
     }
 
     private fun showActionError(errorMessage: String) {
@@ -162,6 +169,50 @@ class SubmitActionViewModel(
         completeDescription.postValue(
             if (errorMessage.isEmpty()) appContext.getString(R.string.action_error_description) else errorMessage
         )
+    }
+
+    private fun showConnectionsSelector(connections: List<Connection>) {
+        val result = connections.convertConnectionsToViewItems(
+            context = appContext,
+            locationManager = locationManager
+        )
+        viewMode = ViewMode.SELECT
+        showConnectionsSelectorFragmentEvent.postValue(ViewModelEvent(dataBundle(result)))
+    }
+
+    private fun openReturnToUrl() {
+        val returnTo = actionAppLinkData?.returnTo ?: return
+        if (returnTo.isNotEmpty()) {
+            try {
+                onOpenLinkEvent.postValue(ViewModelEvent(Uri.parse(returnTo)))
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
+        }
+    }
+
+    private fun openNewAuthorization(connectionID: String, authorizationID: String) {
+        if (authorizationID.isNotEmpty() && connectionID.isNotEmpty()) {
+            setResultAuthorizationIdentifier.postValue(
+                AuthorizationIdentifier(
+                    authorizationID = authorizationID,
+                    connectionID = connectionID
+                )
+            )
+        } else showActionError(R.string.errors_actions_not_success)
+    }
+
+    private fun collectConnections(actionAppLinkData: ActionAppLinkData): List<Connection> {
+        val connections = if (actionAppLinkData.apiVersion == API_V2_VERSION) {
+            actionAppLinkData.providerID?.let {
+                connectionsRepository.getAllActiveByProvider(providerID = it)
+            }
+        } else {
+            actionAppLinkData.connectUrl?.let {
+                connectionsRepository.getAllActiveByConnectUrl(connectionUrl = it)
+            }
+        }
+        return connections ?: emptyList()
     }
 }
 

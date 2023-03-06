@@ -28,7 +28,7 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.sdk.constants.KEY_TITLE
+import com.saltedge.authenticator.core.api.KEY_TITLE
 import kotlinx.android.synthetic.main.fragment_web_view.*
 
 class WebViewFragment : BaseFragment() {

@@ -21,38 +21,52 @@
 package com.saltedge.authenticator.features.authorizations.common
 
 import android.view.View
-import com.saltedge.authenticator.sdk.model.AuthorizationID
-import com.saltedge.authenticator.sdk.model.ConnectionID
-import com.saltedge.authenticator.sdk.model.authorization.AuthorizationData
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAbs
-import com.saltedge.authenticator.sdk.tools.remainedSeconds
-import com.saltedge.authenticator.sdk.tools.remainedTimeDescription
-import com.saltedge.authenticator.sdk.tools.secondsBetweenDates
+import com.saltedge.authenticator.core.api.model.DescriptionData
+import com.saltedge.authenticator.core.model.ConnectionAbs
+import com.saltedge.authenticator.core.model.ID
+import com.saltedge.authenticator.core.tools.hasHTMLTags
+import com.saltedge.authenticator.core.tools.remainedSeconds
+import com.saltedge.authenticator.core.tools.remainedTimeDescription
+import com.saltedge.authenticator.core.tools.secondsBetweenDates
+import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
+import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
+import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
+import io.realm.internal.Keep
 import org.joda.time.DateTime
+import timber.log.Timber
 import java.io.Serializable
 
+const val LIFE_TIME_OF_FINAL_MODEL = 4 // seconds
+
+@Keep
 data class AuthorizationItemViewModel(
-    val authorizationID: AuthorizationID,
-    val authorizationCode: String,
-    val title: String,
-    val description: String,
-    val validSeconds: Int,
-    val endTime: DateTime,
-    val startTime: DateTime,
-    val connectionID: ConnectionID,
+    val authorizationID: ID,
+    var authorizationCode: String,
+    var title: String,
+    var description: DescriptionData,
+    var validSeconds: Int,
+    var endTime: DateTime,
+    var startTime: DateTime,
+    val connectionID: ID,
     val connectionName: String,
     val connectionLogoUrl: String?,
-    var viewMode: ViewMode = ViewMode.DEFAULT
+    val apiVersion: String,
+    var status: AuthorizationStatus = AuthorizationStatus.PENDING,
+    val geolocationRequired: Boolean
 ) : Serializable {
-    private val secondsOfLifeOfFinalModel = 4
     var destroyAt: DateTime? = null
 
     /**
      * Set new viewMode and if is final mode set destroyAt
      */
-    fun setNewViewMode(newViewMode: ViewMode) {
-        this.viewMode = newViewMode
-        this.destroyAt = if (newViewMode.isFinalMode()) DateTime.now().plusSeconds(secondsOfLifeOfFinalModel) else null
+    fun setNewStatus(newStatus: AuthorizationStatus) {
+        this.status = newStatus
+        updateDestroyAt(if (newStatus.isFinal()) DateTime.now() else null)
+    }
+
+    fun updateDestroyAt(finishedAt: DateTime?) {
+        this.destroyAt = finishedAt?.plusSeconds(LIFE_TIME_OF_FINAL_MODEL)
     }
 
     /**
@@ -61,7 +75,7 @@ data class AuthorizationItemViewModel(
      * @return Boolean, true if model is expired and does not have final viewMode
      */
     val shouldBeSetTimeOutMode: Boolean
-        get() = this.isExpired && !this.hasFinalMode && this.viewMode != ViewMode.LOADING
+        get() = this.isExpired && !this.hasFinalStatus && this.status != AuthorizationStatus.LOADING
 
     /**
      * Check that model can be authorized
@@ -69,15 +83,15 @@ data class AuthorizationItemViewModel(
      * @return Boolean, true viewMode is default mode
      */
     val canBeAuthorized: Boolean
-        get() = viewMode === ViewMode.DEFAULT
+        get() = status === AuthorizationStatus.PENDING
 
     /**
      * Check that model has final viewMode
      *
      * @return Boolean, true viewMode is final mode
      */
-    val hasFinalMode: Boolean
-        get() = viewMode.isFinalMode()
+    val hasFinalStatus: Boolean
+        get() = status.isFinal()
 
     /**
      * Check that `time views` should be hidden
@@ -86,7 +100,7 @@ data class AuthorizationItemViewModel(
      */
     val timeViewVisibility: Int
         get() {
-            val invisible = viewMode == ViewMode.UNAVAILABLE || viewMode == ViewMode.LOADING
+            val invisible = status == AuthorizationStatus.UNAVAILABLE || status == AuthorizationStatus.LOADING
             return if (invisible) View.INVISIBLE else View.VISIBLE
         }
 
@@ -97,7 +111,7 @@ data class AuthorizationItemViewModel(
      * @return Boolean, true if view mode is not default
      */
     val ignoreTimeUpdate: Boolean
-        get() = viewMode !== ViewMode.DEFAULT
+        get() = status !== AuthorizationStatus.PENDING
 
     /**
      * Check that authorization model should be destroyed
@@ -138,62 +152,144 @@ data class AuthorizationItemViewModel(
      */
     val remainedTimeStringTillExpire: String
         get() = endTime.remainedSeconds().remainedTimeDescription()
+
+    val isV2Api: Boolean
+        get() = apiVersion == API_V2_VERSION
+
+    val hasTitle: Boolean
+        get() = title.isNotEmpty()
 }
 
 /**
- * Converts AuthorizationData in AuthorizationViewModel
+ * Converts AuthorizationData in AuthorizationViewModel (API v1)
  *
  * @receiver Authorization
  * @param connection - Connection
  * @return AuthorizationViewModel
  */
-fun AuthorizationData.toAuthorizationItemViewModel(connection: ConnectionAbs): AuthorizationItemViewModel {
-    return AuthorizationItemViewModel(
-        title = this.title,
-        description = this.description,
-        connectionID = connection.id,
-        connectionName = connection.name,
-        connectionLogoUrl = connection.logoUrl,
-        validSeconds = authorizationExpirationPeriod(this),
-        endTime = this.expiresAt,
-        startTime = this.createdAt ?: DateTime(0L),
-        authorizationID = this.id,
-        authorizationCode = this.authorizationCode ?: ""
-    )
+fun AuthorizationData.toAuthorizationItemViewModel(connection: ConnectionAbs): AuthorizationItemViewModel? {
+    return try {
+        AuthorizationItemViewModel(
+            title = this.title,
+            description = this.description.toDescriptionData(),
+            connectionID = connection.id,
+            connectionName = connection.name,
+            connectionLogoUrl = connection.logoUrl,
+            validSeconds = authorizationExpirationPeriod(this.createdAt, this.expiresAt),
+            endTime = this.expiresAt,
+            startTime = this.createdAt ?: DateTime(0L),
+            authorizationID = this.id,
+            authorizationCode = this.authorizationCode ?: "",
+            apiVersion = API_V1_VERSION,
+            status = AuthorizationStatus.PENDING,
+            geolocationRequired = connection.geolocationRequired ?: false
+        )
+    } catch (e: Exception) {
+        Timber.e(
+            e,
+            "Something went wrong %s %s",
+            "Provider name: ${connection.name}",
+            "id: ${connection.id}"
+        )
+        null
+    }
 }
 
 /**
- * Converts AuthorizationData in AuthorizationViewModel
+ * Converts AuthorizationData in AuthorizationViewModel (API v1)
  *
- * @param newViewModels newly received list of AuthorizationViewModel's
- * @param oldViewModels previously stored list of AuthorizationViewModel's
- * @return List, result of merging
+ * @receiver Authorization
+ * @param connection - Connection
+ * @return AuthorizationViewModel
  */
-fun joinViewModels(
-    newViewModels: List<AuthorizationItemViewModel>,
-    oldViewModels: List<AuthorizationItemViewModel>
-): List<AuthorizationItemViewModel> {
-    val finalModels = oldViewModels.filter { it.hasFinalMode }
-    val newModelsWithoutExitingFinalModels = newViewModels.filter {
-        !finalModels.containsIdentifier(it.authorizationID, it.connectionID)
+fun AuthorizationV2Data.toAuthorizationItemViewModel(connection: ConnectionAbs): AuthorizationItemViewModel? {
+    return try {
+        AuthorizationItemViewModel(
+            title = this.title,
+            description = this.description,
+            connectionID = connection.id,
+            connectionName = connection.name,
+            connectionLogoUrl = connection.logoUrl,
+            validSeconds = authorizationExpirationPeriod(this.createdAt, this.expiresAt),
+            endTime = this.expiresAt,
+            startTime = this.createdAt ?: DateTime(0L),
+            authorizationID = this.authorizationID ?: "",
+            authorizationCode = this.authorizationCode ?: "",
+            apiVersion = API_V2_VERSION,
+            status = this.status?.toAuthorizationStatus() ?: AuthorizationStatus.PENDING,
+            geolocationRequired = connection.geolocationRequired ?: false
+        ).apply {
+            updateDestroyAt(finishedAt)
+        }
+    } catch (e: Exception) {
+        Timber.e(
+            e,
+            "Something went wrong %s %s",
+            "Provider name: ${connection.name}",
+            "id: ${connection.id}"
+        )
+        null
     }
-    return (newModelsWithoutExitingFinalModels + finalModels).sortedBy { it.startTime }
 }
 
-private fun List<AuthorizationItemViewModel>.containsIdentifier(
-    authorizationID: AuthorizationID,
-    connectionID: ConnectionID): Boolean
-{
-    return this.any { it.hasIdentifier(authorizationID, connectionID) }
+fun mergeV1(
+    oldViewModels: List<AuthorizationItemViewModel>,
+    newViewModels: List<AuthorizationItemViewModel>,
+): List<AuthorizationItemViewModel> {
+    val filteredOldModels = oldViewModels.filter { it.hasFinalStatus }
+    val filteredNewModels = newViewModels.filter {
+        filteredOldModels.noIdentifier(
+            authorizationID = it.authorizationID,
+            connectionID = it.connectionID
+        )
+    }
+    return filteredNewModels + filteredOldModels
+}
+
+/**
+ * Updated newViewModels items if exist similar item with final status
+ *
+ * @return list of new view models
+ */
+fun mergeV2(
+    oldViewModels: List<AuthorizationItemViewModel>,
+    newViewModels: List<AuthorizationItemViewModel>
+): List<AuthorizationItemViewModel> {
+    newViewModels.forEach { newItem ->
+        if (newItem.status.isFinal()) {
+            oldViewModels.find { it.authorizationID == newItem.authorizationID }?.let { oldItem ->
+                newItem.title = oldItem.title
+                newItem.description = oldItem.description
+                newItem.startTime = oldItem.startTime
+                newItem.endTime = oldItem.endTime
+                newItem.validSeconds = oldItem.validSeconds
+                newItem.authorizationCode = oldItem.authorizationCode
+            }
+        }
+    }
+    return newViewModels
+}
+
+private fun List<AuthorizationItemViewModel>.noIdentifier(
+    authorizationID: ID,
+    connectionID: ID
+): Boolean {
+    return !this.any {
+        it.hasIdentifier(
+            authorizationID = authorizationID,
+            connectionID = connectionID
+        )
+    }
 }
 
 private fun AuthorizationItemViewModel.hasIdentifier(
-    authorizationID: AuthorizationID,
-    connectionID: ConnectionID
-): Boolean {
-    return this.authorizationID == authorizationID && this.connectionID == connectionID
+    authorizationID: ID,
+    connectionID: ID
+): Boolean = this.authorizationID == authorizationID && this.connectionID == connectionID
+
+private fun authorizationExpirationPeriod(startDate: DateTime?, endDate: DateTime): Int {
+    return secondsBetweenDates(startDate ?: return 0, endDate)
 }
 
-private fun authorizationExpirationPeriod(authorization: AuthorizationData): Int {
-    return secondsBetweenDates(authorization.createdAt ?: return 0, authorization.expiresAt)
-}
+private fun String.toDescriptionData(): DescriptionData =
+    if (this.hasHTMLTags()) DescriptionData(html = this) else DescriptionData(text = this)

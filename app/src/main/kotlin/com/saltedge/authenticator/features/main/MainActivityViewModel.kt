@@ -29,28 +29,24 @@ import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_CLOSE_APP
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
+import com.saltedge.authenticator.core.api.KEY_API_VERSION
+import com.saltedge.authenticator.core.api.KEY_DATA
+import com.saltedge.authenticator.core.api.KEY_ID
+import com.saltedge.authenticator.core.api.KEY_TITLE
+import com.saltedge.authenticator.core.model.extractActionAppLinkData
+import com.saltedge.authenticator.core.model.extractConnectAppLinkData
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.interfaces.ActivityComponentsContract
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.models.realm.RealmManagerAbs
-import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
-import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.sdk.constants.KEY_DATA
-import com.saltedge.authenticator.sdk.constants.KEY_ID
-import com.saltedge.authenticator.sdk.constants.KEY_TITLE
-import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.sdk.tools.extractActionAppLinkData
-import com.saltedge.authenticator.sdk.tools.extractConnectAppLinkData
+import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.applyPreferenceLocale
 import com.saltedge.authenticator.tools.postUnitEvent
 
 class MainActivityViewModel(
-    val appContext: Context,
-    val realmManager: RealmManagerAbs,
-    val preferenceRepository: PreferenceRepositoryAbs,
-    val connectionsRepository: ConnectionsRepositoryAbs
+    private val appContext: Context,
+    private val interactor: MainActivityInteractor
 ) : ViewModel(),
     LifecycleObserver,
     NewAuthorizationListener,
@@ -60,10 +56,10 @@ class MainActivityViewModel(
     val onBackActionClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onRestartActivityEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val onShowAuthorizationDetailsEvent = MutableLiveData<ViewModelEvent<Bundle>>()
-    val onShowActionAuthorizationEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onShowConnectEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onShowSubmitActionEvent = MutableLiveData<ViewModelEvent<Bundle>>()
     val onQrScanClickEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onShowOnboardingEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val appBarTitle = MutableLiveData<String>()
     val appBarBackActionImageResource = MutableLiveData<ResId>(R.drawable.ic_appbar_action_back)
     val appBarBackActionVisibility = MutableLiveData<Int>(View.GONE)
@@ -72,10 +68,6 @@ class MainActivityViewModel(
     val appBarActionMoreVisibility = MutableLiveData<Int>(View.GONE)
 
     private var initialQrScanWasStarted = false
-
-    init {
-        if (!realmManager.initialized) realmManager.initRealm(context = appContext)
-    }
 
     fun bindLifecycleObserver(lifecycle: Lifecycle) {
         lifecycle.let {
@@ -131,6 +123,7 @@ class MainActivityViewModel(
                 if (connectionAppLinkData != null) {
                     onShowConnectEvent.postValue(ViewModelEvent(Bundle().apply {
                         putSerializable(KEY_DATA, connectionAppLinkData)
+                        putString(KEY_API_VERSION, connectionAppLinkData.apiVersion)
                     }))
                 } else if (actionAppLinkData != null) {
                     onShowSubmitActionEvent.postValue(ViewModelEvent(Bundle().apply {
@@ -154,7 +147,7 @@ class MainActivityViewModel(
     }
 
     fun onUnlock() {
-        if (!initialQrScanWasStarted && connectionsRepository.isEmpty()) {
+        if (!initialQrScanWasStarted && interactor.noConnections) {
             onQrScanClickEvent.postUnitEvent()
             initialQrScanWasStarted = true
         }
@@ -164,7 +157,7 @@ class MainActivityViewModel(
      * Handle new authorization event (e.g. from ActionSubmit)
      */
     override fun onNewAuthorization(authorizationIdentifier: AuthorizationIdentifier) {
-        onShowActionAuthorizationEvent.postValue(ViewModelEvent(Bundle().apply {
+        onShowAuthorizationDetailsEvent.postValue(ViewModelEvent(Bundle().apply {
             putSerializable(KEY_ID, authorizationIdentifier)
             putBoolean(KEY_CLOSE_APP, true)
             putInt(KEY_TITLE, R.string.action_new_action_title)
@@ -191,5 +184,11 @@ class MainActivityViewModel(
     override fun onLanguageChanged() {
         appContext.applyPreferenceLocale()
         onRestartActivityEvent.postUnitEvent()
+    }
+
+    fun onClearAppDataEvent() {
+        interactor.sendRevokeRequestForConnections()
+        interactor.wipeApplication()
+        onShowOnboardingEvent.postUnitEvent()
     }
 }

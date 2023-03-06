@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2020 Salt Edge Inc.
@@ -19,12 +18,11 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/itemView"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="@dimen/popupMenuItemHeight"
     android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
@@ -42,8 +40,10 @@
     <TextView
         android:id="@+id/labelView"
         style="@style/Text16Primary"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_12"
-        tools:text="Menu item"/>
+        android:layout_marginEnd="@dimen/dp_12"
+        android:singleLine="true"
+        tools:text="Menu item" />
 </LinearLayout>

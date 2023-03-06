@@ -24,10 +24,10 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.sdk.tools.remainedSeconds
-import com.saltedge.authenticator.sdk.tools.remainedTimeDescription
-import com.saltedge.authenticator.sdk.tools.secondsBetweenDates
-import com.saltedge.authenticator.tools.loadRoundedImage
+import com.saltedge.authenticator.core.tools.remainedSeconds
+import com.saltedge.authenticator.core.tools.remainedTimeDescription
+import com.saltedge.authenticator.core.tools.secondsBetweenDates
+import com.saltedge.authenticator.tools.loadImage
 import kotlinx.android.synthetic.main.view_authorization_header.view.*
 import org.joda.time.DateTime
 
@@ -51,10 +51,9 @@ class AuthorizationHeaderView : LinearLayout, TimerUpdateListener {
         if (logoUrl?.isEmpty() == true) {
             logoView?.setImageResource(R.drawable.shape_bg_connection_list_logo)
         } else {
-            logoView?.loadRoundedImage(
+            logoView?.loadImage(
                 imageUrl = logoUrl,
-                placeholderId = R.drawable.shape_radius6_grey_light_extra_and_dark_100,
-                cornerRadius = resources.getDimension(R.dimen.authorizations_list_logo_radius)
+                placeholderId = R.drawable.shape_radius6_grey_light_extra_and_dark_100
             )
         }
     }

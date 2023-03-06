@@ -1,6 +1,9 @@
 [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
 [![Gitter](https://badges.gitter.im/Salt-Edge/authenticator.svg)](https://gitter.im/Salt-Edge/authenticator?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40saltedge)](http://twitter.com/saltedge)
+![SDK v1 Version](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsaltedge%2Fsca-authenticator-android%2Fmaster%2Fauthenticator_sdk_v1%2Fbadge_version.json)
+![SDK v2 Version](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsaltedge%2Fsca-authenticator-android%2Fmaster%2Fauthenticator_sdk_v2%2Fbadge_version.json)
+![Android API](https://img.shields.io/endpoint?logo=android&url=https%3A%2F%2Fraw.githubusercontent.com%2Fsaltedge%2Fsca-authenticator-android%2Fmaster%2Fauthenticator_sdk_v2%2Fbadge_android.json)
 
 <br />
 <p align="center">
@@ -85,5 +88,5 @@ Feel free to [contact us](https://www.saltedge.com/pages/contact_support)
 If you modify this Program, or any covered work, by linking or combining it with [THIRD PARTY LIBRARY](THIRD_PARTY_NOTICES.md) (or a modified version of that library), containing parts covered by the [TERMS OF LIBRARY's LICENSE](THIRD_PARTY_NOTICES.md), the licensors of this Program grant you additional permission to convey the resulting work. {Corresponding Source for a non-source form of such a combination shall include the source code for the parts of [LIBRARY](THIRD_PARTY_NOTICES.md) used as well as that of the covered work.}        
   
 ___
-Copyright © 2019 - 2020 Salt Edge. https://www.saltedge.com  
+Copyright © 2019 - 2022 Salt Edge. https://www.saltedge.com  
 

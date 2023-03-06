@@ -25,8 +25,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.KEY_ID
 import com.saltedge.authenticator.app.KEY_OPTION_ID
+import com.saltedge.authenticator.core.api.KEY_ID
 import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.widget.fragment.BaseRoundedBottomDialogFragment

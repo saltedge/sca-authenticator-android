@@ -21,12 +21,18 @@
 package com.saltedge.authenticator.tools
 
 import android.content.Context
-import android.os.Build
+import com.saltedge.authenticator.app.buildVersionLessThan23
+import com.saltedge.authenticator.core.tools.secure.KeyManager
 import com.saltedge.authenticator.models.repository.PreferenceRepository
-import com.saltedge.authenticator.sdk.tools.crypt.CryptoTools
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
+import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2
 
 private const val PASSCODE_SECURE_KEY_ALIAS = "base_alias_for_pin"
+
+interface PasscodeToolsAbs {
+    fun replacePasscodeKey(context: Context)
+    fun savePasscode(passcode: String): Boolean
+    fun getPasscode(): String
+}
 
 object PasscodeTools : PasscodeToolsAbs {
 
@@ -35,9 +41,9 @@ object PasscodeTools : PasscodeToolsAbs {
      */
     override fun replacePasscodeKey(context: Context) {
         if (buildVersionLessThan23) {
-            KeyStoreManager.createOrReplaceRsaKeyPair(context, PASSCODE_SECURE_KEY_ALIAS)
+            KeyManager.createOrReplaceRsaKeyPair(context, PASSCODE_SECURE_KEY_ALIAS)
         } else {
-            KeyStoreManager.createOrReplaceAesKey(PASSCODE_SECURE_KEY_ALIAS)
+            KeyManager.createOrReplaceAesKey(PASSCODE_SECURE_KEY_ALIAS)
         }
     }
 
@@ -50,12 +56,12 @@ object PasscodeTools : PasscodeToolsAbs {
      */
     override fun savePasscode(passcode: String): Boolean {
         val encryptedPasscode = if (buildVersionLessThan23) {
-            KeyStoreManager.getKeyPair(PASSCODE_SECURE_KEY_ALIAS)?.public?.let { key ->
-                CryptoTools.rsaEncrypt(input = passcode, publicKey = key)
+            KeyManager.getKeyPair(PASSCODE_SECURE_KEY_ALIAS)?.public?.let { key ->
+                CryptoToolsV2.rsaEncrypt(inputText = passcode, publicKey = key)
             }
         } else {
-            KeyStoreManager.getSecretKey(PASSCODE_SECURE_KEY_ALIAS)?.let { key ->
-                CryptoTools.aesEncrypt(input = passcode, key = key)
+            KeyManager.getSecretKey(PASSCODE_SECURE_KEY_ALIAS)?.let { key ->
+                CryptoToolsV2.aesGcmEncrypt(input = passcode, key = key)
             }
         }
         PreferenceRepository.encryptedPasscode = encryptedPasscode ?: return false
@@ -72,12 +78,12 @@ object PasscodeTools : PasscodeToolsAbs {
         val encryptedPasscode = PreferenceRepository.encryptedPasscode
         if (encryptedPasscode.isBlank()) return ""
         return if (buildVersionLessThan23) {
-            KeyStoreManager.getKeyPair(PASSCODE_SECURE_KEY_ALIAS)?.private?.let { key ->
-                String(CryptoTools.rsaDecrypt(encryptedPasscode, key) ?: byteArrayOf())
+            KeyManager.getKeyPair(PASSCODE_SECURE_KEY_ALIAS)?.private?.let { key ->
+                String(CryptoToolsV2.rsaDecrypt(encryptedPasscode, key) ?: byteArrayOf())
             }
         } else {
-            KeyStoreManager.getSecretKey(PASSCODE_SECURE_KEY_ALIAS)?.let { key ->
-                CryptoTools.aesDecrypt(encryptedPasscode, key)
+            KeyManager.getSecretKey(PASSCODE_SECURE_KEY_ALIAS)?.let { key ->
+                CryptoToolsV2.aesGcmDecrypt(encryptedPasscode, key)
             }
         } ?: return ""
     }

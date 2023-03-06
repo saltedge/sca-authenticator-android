@@ -27,7 +27,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.navOptions
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tools.buildVersion28orGreater
 import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
 
 fun Context.isDarkThemeSet(): Boolean {

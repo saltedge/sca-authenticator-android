@@ -32,10 +32,10 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.guid
+import com.saltedge.authenticator.core.api.KEY_NAME
 import com.saltedge.authenticator.features.main.SharedViewModel
-import com.saltedge.authenticator.sdk.constants.KEY_NAME
 import com.saltedge.authenticator.tools.getEnabledStateColorResId
-import com.saltedge.authenticator.tools.guid
 import com.saltedge.authenticator.tools.hideSystemKeyboard
 import com.saltedge.authenticator.tools.setTextColorResId
 
@@ -93,11 +93,10 @@ class EditConnectionNameDialog : DialogFragment(), DialogInterface.OnClickListen
 
     companion object {
         fun dataBundle(guid: String, name: String): Bundle {
-            return Bundle()
-                .apply {
-                    this.guid = guid
-                    this.putString(KEY_NAME, name)
-                }
+            return Bundle().apply {
+                this.guid = guid
+                this.putString(KEY_NAME, name)
+            }
         }
     }
 }

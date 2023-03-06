@@ -30,10 +30,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.databinding.MainActivityBinding
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
+import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.interfaces.*
-import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.models.location.DeviceLocationManager
+import com.saltedge.authenticator.models.realm.initRealmDatabase
 import com.saltedge.authenticator.tools.currentFragmentOnTop
 import com.saltedge.authenticator.tools.showQrScannerActivity
 import com.saltedge.authenticator.tools.updateScreenshotLocking
@@ -50,11 +53,13 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.initRealmDatabase()
         this.updateScreenshotLocking()
         authenticatorApp?.appComponent?.inject(this)//inject ViewModelsFactory
         setupViewModel()
         setupBinding()
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
+        DeviceLocationManager.initManager(context = this)
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -65,6 +70,16 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         viewModel.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        DeviceLocationManager.startLocationUpdates()
+    }
+
+    override fun onPause() {
+        DeviceLocationManager.stopLocationUpdates()
+        super.onPause()
     }
 
     /**
@@ -90,6 +105,11 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
 
     override fun getSnackbarAnchorView(): View? = activityRootLayout
 
+
+    override fun onClearAppDataEvent() {
+        viewModel.onClearAppDataEvent()
+    }
+
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainActivityViewModel::class.java)
         viewModel.bindLifecycleObserver(lifecycle = lifecycle)
@@ -110,23 +130,24 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
                 findNavController(R.id.navHostFragment).navigate(R.id.authorizationDetailsFragment, bundle)
             }
         })
-        viewModel.onShowActionAuthorizationEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { bundle ->
-                findNavController(R.id.navHostFragment).navigate(R.id.authorizationDetailsFragment, bundle)
-            }
-        })
         viewModel.onShowConnectEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { connectAppLinkData ->
-                findNavController(R.id.navHostFragment).navigate(R.id.connectProviderFragment, connectAppLinkData)
+            event.getContentIfNotHandled()?.let { bundle ->
+                findNavController(R.id.navHostFragment).navigate(R.id.connectProviderFragment, bundle)
             }
         })
         viewModel.onShowSubmitActionEvent.observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let { actionAppLinkData ->
-                findNavController(R.id.navHostFragment).navigate(R.id.submitActionFragment, actionAppLinkData)
+            event.getContentIfNotHandled()?.let { bundle ->
+                findNavController(R.id.navHostFragment).navigate(R.id.submitActionFragment, bundle)
             }
         })
         viewModel.onQrScanClickEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { this.showQrScannerActivity() }
+        })
+        viewModel.onShowOnboardingEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let {
+                finish()
+                startActivity(Intent(this, OnboardingSetupActivity::class.java))
+            }
         })
     }
 

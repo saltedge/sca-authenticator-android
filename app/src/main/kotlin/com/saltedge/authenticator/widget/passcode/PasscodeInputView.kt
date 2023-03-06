@@ -30,7 +30,7 @@ import android.widget.LinearLayout
 import androidx.annotation.StringRes
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.tools.ResId
-import com.saltedge.authenticator.tools.buildVersion26orGreater
+import com.saltedge.authenticator.app.buildVersion26orGreater
 import com.saltedge.authenticator.tools.setVisible
 import kotlinx.android.synthetic.main.view_passcode_input.view.*
 
@@ -92,7 +92,18 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
         listener?.onForgotActionSelected()
     }
 
-    override fun onDeleteKeyClick() {
+    override fun onSuccessKeyClick() {
+        if (passcodeLabelView?.text?.length in PASSCODE_MIN_SIZE..PASSCODE_MAX_SIZE) {
+            onPasscodeInputFinished(passcode = passcodeLabelView?.text?.toString() ?: "")
+        } else showErrorMessage()
+    }
+
+    private fun showErrorMessage() {
+        val errorMessage: String = context.getString(R.string.errors_passcode_info)
+        showError(error = String.format(errorMessage, PASSCODE_MIN_SIZE, PASSCODE_MAX_SIZE))
+    }
+
+    private fun onDeleteKeyClick() {
         val text: String = passcodeLabelView?.text?.toString() ?: return
         if (text.isNotEmpty()) updatePasscodeOutput(text.take(text.length - 1))
     }
@@ -104,16 +115,14 @@ class PasscodeInputView(context: Context, attrs: AttributeSet) : LinearLayout(co
 
         keypadView?.setupFingerAction(active = biometricsActionIsAvailable)
         keypadView?.clickListener = this
-        submitView?.setOnClickListener {
-            onPasscodeInputFinished(passcode = passcodeLabelView?.text?.toString() ?: "")
-        }
+        deleteActionView?.setOnClickListener { onDeleteKeyClick() }
     }
 
     private fun updatePasscodeOutput(text: String) {
         passcodeLabelView?.setText(text)
-        submitView?.setVisible(show = (PASSCODE_MIN_SIZE..PASSCODE_MAX_SIZE).contains(text.length))
+        deleteActionView?.setVisible(show = (1..PASSCODE_MAX_SIZE).contains(text.length))
         keypadView?.let {
-            if (text.isEmpty() && biometricsActionIsAvailable) it.showFingerView() else it.showDeleteView()
+            if (text.isEmpty() && biometricsActionIsAvailable) it.showFingerView() else it.showSuccessView()
         }
     }
 

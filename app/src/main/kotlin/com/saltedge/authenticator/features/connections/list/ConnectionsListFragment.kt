@@ -20,11 +20,18 @@
  */
 package com.saltedge.authenticator.features.connections.list
 
+import android.Manifest
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
@@ -32,17 +39,21 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.authenticatorApp
+import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.core.model.GUID
 import com.saltedge.authenticator.databinding.ConnectionsListBinding
-import com.saltedge.authenticator.features.connections.common.ConnectionItemViewModel
+import com.saltedge.authenticator.features.connections.common.ConnectionItem
 import com.saltedge.authenticator.features.connections.list.menu.MenuData
 import com.saltedge.authenticator.features.connections.list.menu.PopupMenuBuilder
 import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.sdk.model.GUID
+import com.saltedge.authenticator.models.location.DeviceLocationManager
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
@@ -62,10 +73,29 @@ class ConnectionsListFragment : BaseFragment(),
     private var popupWindow: PopupWindow? = null
     private var dialogFragment: DialogFragment? = null
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private var alertDialog: AlertDialog? = null
+    private val requestMultiplePermissions = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        permissions.forEach { actionMap ->
+            when (actionMap.key) {
+                Manifest.permission.ACCESS_FINE_LOCATION -> {
+                    if (actionMap.value) {
+                        viewModel.updateLocationStateOfConnection()
+                    }
+                }
+                Manifest.permission.ACCESS_COARSE_LOCATION -> {
+                    if (actionMap.value) {
+                        viewModel.updateLocationStateOfConnection()
+                    }
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        authenticatorApp?.appComponent?.inject(this)
+        this.authenticatorApp?.appComponent?.inject(this)
         setupViewModel()
     }
 
@@ -111,14 +141,14 @@ class ConnectionsListFragment : BaseFragment(),
     override fun closeActiveDialogs() {
         if (dialogFragment?.isVisible == true) dialogFragment?.dismiss()
         if (popupWindow?.isShowing == true) popupWindow?.dismiss()
+        if (alertDialog?.isShowing == true) alertDialog?.dismiss()
     }
 
     private fun setupViewModel() {
-        viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(ConnectionsListViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(ConnectionsListViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
-        viewModel.listItems.observe(this, Observer<List<ConnectionItemViewModel>> {
+        viewModel.listItems.observe(this, Observer<List<ConnectionItem>> {
             headerDecorator?.setHeaderForAllItems(it.count())
             headerDecorator?.footerPositions = arrayOf(it.count() - 1)
             adapter.data = it
@@ -139,17 +169,19 @@ class ConnectionsListFragment : BaseFragment(),
         viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<MenuData>> { event ->
             event.getContentIfNotHandled()?.let { data -> popupWindow = showPopupMenu(data) }
         })
-        viewModel.onReconnectClickEvent.observe(this, Observer<ViewModelEvent<String>> { event ->
-            event.getContentIfNotHandled()?.let { guid ->
-                findNavController().navigate(ConnectionsListFragmentDirections.connectProvider(guid))
+        viewModel.onReconnectClickEvent.observe(this, Observer<ViewModelEvent<ReconnectData>> { event ->
+            event.getContentIfNotHandled()?.let { connectionData ->
+                findNavController().navigate(
+                    ConnectionsListFragmentDirections.connectProvider(
+                        guid = connectionData.guid,
+                        apiVersion = connectionData.apiVersion
+                    )
+                )
             }
         })
         viewModel.onViewConsentsClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
             event.getContentIfNotHandled()?.let { bundle ->
-                navigateTo(
-                    actionRes = R.id.consents_list,
-                    bundle = bundle
-                )
+                navigateTo(actionRes = R.id.consents_list, bundle = bundle)
             }
         })
         viewModel.onSupportClickEvent.observe(this, Observer<ViewModelEvent<String?>> { event ->
@@ -157,8 +189,63 @@ class ConnectionsListFragment : BaseFragment(),
                 activity?.startMailApp(supportEmail)
             }
         })
-        viewModel.updateListItemEvent.observe(this, Observer<ConnectionItemViewModel> { itemIndex ->
+        viewModel.onErrorEvent.observe(this, Observer<ViewModelEvent<ApiErrorData>> { event ->
+            event.getContentIfNotHandled()?.let { error ->
+                view?.let { anchor ->
+                    val message = error.getErrorMessage(anchor.context)
+                    Snackbar.make(anchor, message, Snackbar.LENGTH_LONG).show()
+                }
+            }
+        })
+        viewModel.onAccessToLocationClickEvent.observe(this, { event ->
+            event.getContentIfNotHandled()?.let {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alertDialog = if (activity?.shouldShowRequestPermissionRationale(DeviceLocationManager.permissions[0]) == false
+                        || activity?.shouldShowRequestPermissionRationale(DeviceLocationManager.permissions[1]) == false) {
+                            activity?.showInfoDialog(
+                                titleResId = R.string.grant_access_location_title,
+                                messageResId = R.string.grant_access_location_description,
+                                positiveButtonResId = R.string.actions_go_to_settings,
+                                listener = { _, dialogActionId ->
+                                    viewModel.onDialogActionClick(dialogActionId, R.string.actions_go_to_settings)
+                                })
+                    } else {
+                        activity?.showInfoDialog(
+                            titleResId = R.string.grant_access_location_title,
+                            messageResId = R.string.grant_access_location_description,
+                            positiveButtonResId = R.string.actions_proceed,
+                            listener = { _, dialogActionId ->
+                                viewModel.onDialogActionClick(dialogActionId, R.string.actions_proceed)
+                            })
+                    }
+                }
+            }
+        })
+        viewModel.onGoToSettingsEvent.observe(this, { event ->
+            event.getContentIfNotHandled()?.let {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                intent.data = Uri.fromParts("package", requireActivity().packageName, null)
+                startActivity(intent)
+            }
+        })
+        viewModel.onAskPermissionsEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let {
+                requestMultiplePermissions.launch(DeviceLocationManager.permissions)
+            }
+        })
+        viewModel.updateListItemEvent.observe(this, Observer<ConnectionItem> { itemIndex ->
             adapter.updateListItem(itemIndex)
+        })
+        viewModel.onShowNoInternetConnectionDialogEvent.observe(this, Observer<ViewModelEvent<GUID>> { event ->
+            event.getContentIfNotHandled()?.let { guid ->
+            activity?.showInfoDialog(
+                titleResId = R.string.warning_no_internet_connection,
+                messageResId = R.string.warning_no_internet_connection_description,
+                positiveButtonResId = R.string.actions_retry,
+                listener = { _, dialogActionId ->
+                    viewModel.onDialogActionClick(dialogActionId, R.string.actions_retry, guid)
+                })
+            }
         })
     }
 
@@ -178,10 +265,10 @@ class ConnectionsListFragment : BaseFragment(),
         swipeRefreshLayout?.setColorSchemeResources(R.color.primary, R.color.red, R.color.green)
         binding.executePendingBindings()
         sharedViewModel.newConnectionNameEntered.observe(viewLifecycleOwner, Observer<Bundle> { result ->
-            viewModel.onEditNameResult(result)
+            viewModel.onItemNameChanged(result)
         })
         sharedViewModel.connectionDeleted.observe(viewLifecycleOwner, Observer<GUID> { result ->
-            viewModel.onDeleteItemResult(result)
+            viewModel.deleteItem(result)
         })
     }
 

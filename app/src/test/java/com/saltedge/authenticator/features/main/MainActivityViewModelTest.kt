@@ -26,72 +26,54 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
+import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_CLOSE_APP
 import com.saltedge.authenticator.app.KEY_DEEP_LINK
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
+import com.saltedge.authenticator.core.api.*
+import com.saltedge.authenticator.core.model.ActionAppLinkData
+import com.saltedge.authenticator.core.model.ConnectAppLinkData
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
-import com.saltedge.authenticator.sdk.constants.*
-import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
-import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
-import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
+import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
+import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
+import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
-import org.mockito.Mockito
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class MainActivityViewModelTest {
+class MainActivityViewModelTest : ViewModelTest() {
 
-    private val mockRealmManager = mock(RealmManagerAbs::class.java)
-    private val mockPreferenceRepository = mock(PreferenceRepositoryAbs::class.java)
+    private lateinit var interactor: MainActivityInteractor
     private val mockConnectionsRepository = mock(ConnectionsRepositoryAbs::class.java)
+    private val mockPreferenceRepository = mock(PreferenceRepositoryAbs::class.java)
     private val context: Context = ApplicationProvider.getApplicationContext()
+    private val mockApiManagerV1 = mock(AuthenticatorApiManagerAbs::class.java)
+    private val mockApiManagerV2 = mock(ScaServiceClientAbs::class.java)
+    private val mockKeyStoreManager = mock(KeyManagerAbs::class.java)
 
     private fun createViewModel(): MainActivityViewModel {
+        interactor = MainActivityInteractor(
+            apiManagerV1 = mockApiManagerV1,
+            apiManagerV2 = mockApiManagerV2,
+            connectionsRepository = mockConnectionsRepository,
+            keyStoreManager = mockKeyStoreManager,
+            preferenceRepository = mockPreferenceRepository
+        )
         return MainActivityViewModel(
             appContext = context,
-            realmManager = mockRealmManager,
-            preferenceRepository = mockPreferenceRepository,
-            connectionsRepository = mockConnectionsRepository
+            interactor = interactor
         )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun initTestCase1() {
-        //given
-        given(mockRealmManager.initialized).willReturn(true)
-
-        //when
-        val viewModel = createViewModel()
-
-        //then
-        Mockito.never()
-
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun initTestCase2() {
-        //given
-        given(mockRealmManager.initialized).willReturn(false)
-
-        //when
-        createViewModel()
-
-        //then
-        verify(mockRealmManager).initRealm(context)
     }
 
     @Test
@@ -187,12 +169,10 @@ class MainActivityViewModelTest {
 
         assertThat(
             bundle?.getSerializable(KEY_DATA) as ConnectAppLinkData,
-            equalTo(
-                ConnectAppLinkData(
-                    configurationUrl = "https://saltedge.com/configuration",
-                    connectQuery = "1234567890"
-                )
-            )
+            equalTo(ConnectAppLinkData(
+                configurationUrl = "https://saltedge.com/configuration",
+                connectQuery = "1234567890"
+            ))
         )
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
     }
@@ -224,7 +204,9 @@ class MainActivityViewModelTest {
             bundle?.getSerializable(KEY_DATA) as ActionAppLinkData,
             equalTo(
                 ActionAppLinkData(
-                    actionUUID = "123456",
+                    apiVersion = "1",
+                    providerID = null,
+                    actionIdentifier = "123456",
                     connectUrl = "https://someurl.com",
                     returnTo = "https://return.com"
                 )
@@ -249,6 +231,32 @@ class MainActivityViewModelTest {
         //then no interactions with observable values
         assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
         assertThat(viewModel.onShowConnectEvent.value, `is`(nullValue()))
+        assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onLifeCycleCreateTestCase7() {
+        val viewModel = createViewModel()
+        val savedInstanceState: Bundle? = null
+        val intent: Intent? = Intent().putExtra(
+            KEY_DEEP_LINK,
+            "authenticator://saltedge.com/connect?configuration=https://sca.saltedge.com/api/authenticator/v2/configurations/5"
+        )
+        given(mockConnectionsRepository.isEmpty()).willReturn(false)
+
+        //when
+        viewModel.onLifeCycleCreate(savedInstanceState, intent)
+
+        //then onShowConnectEvent is posted
+        assertThat(viewModel.onShowAuthorizationDetailsEvent.value, `is`(nullValue()))
+
+        val bundle = viewModel.onShowConnectEvent.value?.peekContent()
+
+        assertThat(
+            bundle?.getString(KEY_API_VERSION),
+            equalTo("2")
+        )
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
     }
 
@@ -338,12 +346,10 @@ class MainActivityViewModelTest {
 
         assertThat(
             bundle?.getSerializable(KEY_DATA) as ConnectAppLinkData,
-            equalTo(
-                ConnectAppLinkData(
-                    configurationUrl = "https://example.com/configuration",
-                    connectQuery = "1234567890"
-                )
-            )
+            equalTo(ConnectAppLinkData(
+                configurationUrl = "https://example.com/configuration",
+                connectQuery = "1234567890"
+            ))
         )
         assertThat(viewModel.onShowSubmitActionEvent.value, `is`(nullValue()))
     }
@@ -377,7 +383,9 @@ class MainActivityViewModelTest {
             bundle?.getSerializable(KEY_DATA) as ActionAppLinkData,
             equalTo(
                 ActionAppLinkData(
-                    actionUUID = "123456",
+                    apiVersion = "1",
+                    providerID = null,
+                    actionIdentifier = "123456",
                     connectUrl = "https://someurl.com",
                     returnTo = "https://return.com"
                 )
@@ -486,17 +494,16 @@ class MainActivityViewModelTest {
          * given authorizationIdentifier
          */
         val viewModel = createViewModel()
-        val authorizationIdentifier =
-            AuthorizationIdentifier(connectionID = "1", authorizationID = "2")
+        val authorizationIdentifier = AuthorizationIdentifier(connectionID = "1", authorizationID = "2")
 
         //when
         viewModel.onNewAuthorization(authorizationIdentifier)
 
         //then onShowAuthorizationDetailsEvent is posted
-        val bundle = viewModel.onShowActionAuthorizationEvent.value?.peekContent()
-        assertThat(bundle?.getBoolean(KEY_CLOSE_APP), equalTo(true))
-        assertThat(bundle?.getSerializable(KEY_ID), equalTo(authorizationIdentifier ?: ""))
-        assertThat(bundle?.getInt(KEY_TITLE), equalTo(R.string.action_new_action_title))
+        val bundle = viewModel.onShowAuthorizationDetailsEvent.value?.peekContent()!!
+        assertThat(bundle.getBoolean(KEY_CLOSE_APP), equalTo(true))
+        assertThat(bundle.getSerializable(KEY_ID), equalTo(authorizationIdentifier ?: ""))
+        assertThat(bundle.getInt(KEY_TITLE), equalTo(R.string.action_new_action_title))
     }
 
     @Test

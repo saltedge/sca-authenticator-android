@@ -1,0 +1,29 @@
+<!--
+    This file is part of the Salt Edge Authenticator distribution
+    (https://github.com/saltedge/sca-authenticator-android)
+    Copyright (c) 2021 Salt Edge Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 or later.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+    For the additional permissions granted for Salt Edge Authenticator
+    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="25dp"
+    android:height="25dp"
+    android:viewportWidth="25"
+    android:viewportHeight="25">
+  <path
+      android:pathData="M12.4765,1.7719C11.427,1.7422 10.3825,1.9257 9.406,2.3114C8.4295,2.6971 7.5414,3.2769 6.7955,4.0157C6.0496,4.7546 5.4613,5.6371 5.0664,6.6098C4.6714,7.5826 4.478,8.6254 4.4977,9.6751C4.4977,16.2933 11.8886,22.416 12.1994,22.668C12.2754,22.733 12.3722,22.7688 12.4723,22.7688C12.5724,22.7688 12.6692,22.733 12.7453,22.668C13.0728,22.374 20.4553,15.6382 20.4553,9.6751C20.4751,8.6254 20.2816,7.5826 19.8866,6.6098C19.4917,5.6371 18.9034,4.7546 18.1575,4.0157C17.4116,3.2769 16.5236,2.6971 15.5471,2.3114C14.5706,1.9257 13.526,1.7422 12.4765,1.7719V1.7719ZM12.4765,13.5302C11.729,13.5302 10.9983,13.3085 10.3768,12.8932C9.7552,12.4779 9.2708,11.8876 8.9848,11.197C8.6987,10.5064 8.6239,9.7465 8.7697,9.0134C8.9155,8.2802 9.2755,7.6068 9.8041,7.0782C10.3326,6.5497 11.006,6.1897 11.7392,6.0439C12.4723,5.8981 13.2322,5.9729 13.9228,6.259C14.6134,6.545 15.2037,7.0294 15.619,7.651C16.0343,8.2725 16.256,9.0032 16.256,9.7507C16.256,10.7531 15.8578,11.7144 15.149,12.4232C14.4402,13.132 13.4789,13.5302 12.4765,13.5302V13.5302Z"
+      android:fillColor="#0D93F8"/>
+</vector>

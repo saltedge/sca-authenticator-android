@@ -85,11 +85,6 @@ fun SpannableStringBuilder.appendColoredText(
     return this.append(text, colorSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 }
 
-fun SpannableStringBuilder.appendFacedText(
-    text: String,
-    fontRes: ResId,
-    context: Context
-): SpannableStringBuilder {
-    val span = CustomTypefaceSpan(typeface = ResourcesCompat.getFont(context, fontRes) ?: return this)
-    return this.append(text, span, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-}
+val Context.mediumTypefaceSpan: CustomTypefaceSpan?
+    get() = ResourcesCompat.getFont(this, R.font.roboto_medium)?.let { CustomTypefaceSpan(typeface = it) }
+

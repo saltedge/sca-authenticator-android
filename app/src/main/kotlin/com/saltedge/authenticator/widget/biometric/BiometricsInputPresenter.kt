@@ -33,12 +33,12 @@ import android.os.CancellationSignal
 import androidx.annotation.StringRes
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.KEY_ACTION
-import com.saltedge.authenticator.sdk.constants.KEY_DESCRIPTION
-import com.saltedge.authenticator.sdk.constants.KEY_TITLE
-import com.saltedge.authenticator.sdk.tools.biometric.BiometricToolsAbs
-import com.saltedge.authenticator.sdk.tools.biometric.getFingerprintManager
+import com.saltedge.authenticator.core.api.KEY_DESCRIPTION
+import com.saltedge.authenticator.core.api.KEY_TITLE
+import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
+import com.saltedge.authenticator.core.tools.biometric.getFingerprintManager
 import com.saltedge.authenticator.tools.ResId
-import com.saltedge.authenticator.tools.log
+import timber.log.Timber
 
 @TargetApi(Build.VERSION_CODES.M)
 class BiometricsInputPresenter(
@@ -122,7 +122,7 @@ class BiometricsInputPresenter(
                 )
             }
         } catch (e: Exception) {
-            e.log()
+            Timber.e(e)
         }
     }
 
@@ -159,7 +159,7 @@ class BiometricsInputPresenter(
         return try {
             biometricTools.createFingerprintCipher()?.let { FingerprintManager.CryptoObject(it) }
         } catch (e: Exception) {
-            e.log()
+            Timber.e(e)
             null
         }
     }

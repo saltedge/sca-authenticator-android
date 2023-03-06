@@ -25,8 +25,13 @@ import android.content.DialogInterface
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.test.core.app.ApplicationProvider
+import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.AppToolsAbs
 import com.saltedge.authenticator.app.getDefaultSystemNightMode
+import com.saltedge.authenticator.core.model.ConnectionStatus
+import com.saltedge.authenticator.core.model.RichConnection
+import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.Connection
@@ -34,10 +39,8 @@ import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.sdk.model.connection.ConnectionAndKey
-import com.saltedge.authenticator.sdk.model.connection.ConnectionStatus
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManagerAbs
-import com.saltedge.authenticator.tools.AppToolsAbs
+import com.saltedge.authenticator.sdk.constants.API_V1_VERSION
+import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import junit.framework.TestCase.assertNull
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -51,15 +54,14 @@ import org.robolectric.RobolectricTestRunner
 import java.security.PrivateKey
 
 @RunWith(RobolectricTestRunner::class)
-class SettingsListViewModelTest {
+class SettingsListViewModelTest : ViewModelTest() {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val mockAppTools = Mockito.mock(AppToolsAbs::class.java)
     private val mockPreferences = Mockito.mock(PreferenceRepositoryAbs::class.java)
-    private val mockKeyStoreManager = Mockito.mock(KeyStoreManagerAbs::class.java)
-    private val mockApiManager = Mockito.mock(AuthenticatorApiManagerAbs::class.java)
+    private val mockKeyStoreManager = Mockito.mock(KeyManagerAbs::class.java)
     private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
-    private val mockConnection1 = Connection().apply {
+    private val mockConnectionV1 = Connection().apply {
         guid = "guid1"
         id = "1"
         code = "demobank3"
@@ -69,22 +71,37 @@ class SettingsListViewModelTest {
         logoUrl = "url"
         createdAt = 200L
         updatedAt = 200L
+        apiVersion = API_V1_VERSION
     }
     private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
-    private val mockConnectionAndKey = ConnectionAndKey(mockConnection1, mockPrivateKey)
+    private val richConnectionV1 = RichConnection(mockConnectionV1, mockPrivateKey)
     private lateinit var viewModel: SettingsListViewModel
+    private lateinit var interactorV1: SettingsListInteractorV1
+    private lateinit var interactorV2: SettingsListInteractorV2
+    private val mockApiManagerV1 = Mockito.mock(AuthenticatorApiManagerAbs::class.java)
+    private val mockApiManagerV2 = Mockito.mock(ScaServiceClientAbs::class.java)
 
     @Before
     fun setUp() {
         Mockito.doReturn(true).`when`(mockPreferences).screenshotLockEnabled
-        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(mockConnection1))
-        given(mockKeyStoreManager.createConnectionAndKeyModel(mockConnection1)).willReturn(mockConnectionAndKey)
+        given(mockConnectionsRepository.getAllActiveConnections()).willReturn(listOf(mockConnectionV1))
+        given(mockKeyStoreManager.enrichConnection(mockConnectionV1, addProviderKey = false)).willReturn(richConnectionV1)
+
+        interactorV1 = SettingsListInteractorV1(
+            connectionsRepository = mockConnectionsRepository,
+            keyStoreManager = mockKeyStoreManager,
+            apiManager = mockApiManagerV1
+        )
+        interactorV2 = SettingsListInteractorV2(
+            connectionsRepository = mockConnectionsRepository,
+            keyStoreManager = mockKeyStoreManager,
+            apiManager = mockApiManagerV2
+        )
         viewModel = SettingsListViewModel(
             appContext = context,
             appTools = mockAppTools,
-            keyStoreManager = mockKeyStoreManager,
-            apiManager = mockApiManager,
-            connectionsRepository = mockConnectionsRepository,
+            interactorV1 = interactorV1,
+            interactorV2 = interactorV2,
             preferenceRepository = mockPreferences
         )
     }
@@ -97,9 +114,8 @@ class SettingsListViewModelTest {
         viewModel = SettingsListViewModel(
             appContext = context,
             appTools = mockAppTools,
-            keyStoreManager = mockKeyStoreManager,
-            apiManager = mockApiManager,
-            connectionsRepository = mockConnectionsRepository,
+            interactorV1 = interactorV1,
+            interactorV2 = interactorV2,
             preferenceRepository = mockPreferences
         )
 
@@ -161,9 +177,8 @@ class SettingsListViewModelTest {
         viewModel = SettingsListViewModel(
             appContext = context,
             appTools = mockAppTools,
-            keyStoreManager = mockKeyStoreManager,
-            apiManager = mockApiManager,
-            connectionsRepository = mockConnectionsRepository,
+            interactorV1 = interactorV1,
+            interactorV2 = interactorV2,
             preferenceRepository = mockPreferences
         )
 
@@ -220,8 +235,8 @@ class SettingsListViewModelTest {
 
         //then
         Mockito.verify(mockConnectionsRepository).deleteAllConnections()
-        Mockito.verify(mockApiManager).revokeConnections(
-            connectionsAndKeys = listOf(mockConnectionAndKey),
+        Mockito.verify(mockApiManagerV1).revokeConnections(
+            connectionsAndKeys = listOf(richConnectionV1),
             resultCallback = null
         )
     }

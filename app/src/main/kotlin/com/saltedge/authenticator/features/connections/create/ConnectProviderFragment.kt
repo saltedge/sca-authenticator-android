@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.connections.create
 
+import android.Manifest
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.SpannableString
@@ -27,24 +28,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.CookieManager
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.navArgs
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.authenticatorApp
+import com.saltedge.authenticator.app.guid
+import com.saltedge.authenticator.core.api.KEY_API_VERSION
+import com.saltedge.authenticator.core.api.KEY_DATA
+import com.saltedge.authenticator.core.model.ConnectAppLinkData
+import com.saltedge.authenticator.core.web.ConnectWebClient
+import com.saltedge.authenticator.core.web.ConnectWebClientContract
 import com.saltedge.authenticator.databinding.ConnectProviderBinding
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.sdk.constants.KEY_DATA
-import com.saltedge.authenticator.sdk.model.ConnectionID
-import com.saltedge.authenticator.sdk.model.Token
-import com.saltedge.authenticator.sdk.model.appLink.ConnectAppLinkData
-import com.saltedge.authenticator.sdk.web.ConnectWebClient
-import com.saltedge.authenticator.sdk.web.ConnectWebClientContract
-import com.saltedge.authenticator.tools.*
+import com.saltedge.authenticator.models.location.DeviceLocationManager
+import com.saltedge.authenticator.sdk.v2.config.ApiV2Config
+import com.saltedge.authenticator.tools.ResId
+import com.saltedge.authenticator.tools.popBackStack
+import com.saltedge.authenticator.tools.showErrorDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_connect.*
 import javax.inject.Inject
@@ -57,16 +63,34 @@ class ConnectProviderFragment : BaseFragment(),
 {
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: ConnectProviderViewModel
-    private val webViewClient = ConnectWebClient(contract = this)
+    private val webViewClient = ConnectWebClient(
+        authenticationReturnUrl = ApiV2Config.authenticationReturnUrl,
+        contract = this
+    )
     private lateinit var binding: ConnectProviderBinding
     private var alertDialog: AlertDialog? = null
-    private val safeArgs: ConnectProviderFragmentArgs by navArgs()
-    private val guid: String
-        get() = safeArgs.guid
+    private val requestMultiplePermissions = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        permissions.forEach { actionMap ->
+            when (actionMap.key) {
+                Manifest.permission.ACCESS_FINE_LOCATION -> {
+                    if (actionMap.value) {
+                        viewModel.updateLocationStateOfConnection()
+                    }
+                }
+                Manifest.permission.ACCESS_COARSE_LOCATION -> {
+                    if (actionMap.value) {
+                        viewModel.updateLocationStateOfConnection()
+                    }
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        authenticatorApp?.appComponent?.inject(this)
+        this.authenticatorApp?.appComponent?.inject(this)
         setupViewModel()
     }
 
@@ -88,7 +112,7 @@ class ConnectProviderFragment : BaseFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         connectWebView?.webViewClient = webViewClient
-        completeView?.setClickListener(View.OnClickListener { v -> viewModel.onViewClick(v.id) })
+        completeView?.setClickListener { v -> viewModel.onViewClick(v.id) }
     }
 
     override fun onDestroyView() {
@@ -104,16 +128,10 @@ class ConnectProviderFragment : BaseFragment(),
         return viewModel.onBackPress(webViewCanGoBack = connectWebView?.canGoBack())
     }
 
-    override fun webAuthFinishError(errorClass: String, errorMessage: String?) {
+    override fun onReturnToRedirect(url: String) {
         connectWebView?.clearCache(true)
         CookieManager.getInstance().removeSessionCookies(null)
-        viewModel.webAuthFinishError(errorClass, errorMessage)
-    }
-
-    override fun webAuthFinishSuccess(id: ConnectionID, accessToken: Token) {
-        connectWebView?.clearCache(true)
-        CookieManager.getInstance().removeSessionCookies(null)
-        viewModel.authFinishedWithSuccess(id, accessToken)
+        viewModel.onReturnToRedirect(url)
     }
 
     override fun onPageLoadStarted() {
@@ -129,6 +147,9 @@ class ConnectProviderFragment : BaseFragment(),
     }
 
     private fun setupViewModel() {
+        val appLinkData = arguments?.getSerializable(KEY_DATA) as? ConnectAppLinkData
+        val apiVersion = arguments?.getString(KEY_API_VERSION)
+        viewModelFactory.setScaApiVersion(apiVersion)
         viewModel = ViewModelProvider(this, viewModelFactory).get(ConnectProviderViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
@@ -159,14 +180,13 @@ class ConnectProviderFragment : BaseFragment(),
             completeView?.setMainActionText(it)
         })
         viewModel.backActionIconRes.observe(this, Observer<ResId?> {
-            activityComponents?.updateAppbar(
-                titleResId = viewModel.titleRes,
-                backActionImageResId = it
-            )
+            activityComponents?.updateAppbar(titleResId = viewModel.titleRes, backActionImageResId = it)
         })
-        viewModel.setInitialData(
-            initialConnectData = arguments?.getSerializable(KEY_DATA) as? ConnectAppLinkData,
-            connectionGuid = arguments?.guid //TODO: Replace on guid,  now we get an error when we try to qr scan
-        )
+        viewModel.onAskPermissionsEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let {
+                requestMultiplePermissions.launch(DeviceLocationManager.permissions)
+            }
+        })
+        viewModel.setInitialData(initialConnectData = appLinkData, connectionGuid = arguments?.guid)
     }
 }

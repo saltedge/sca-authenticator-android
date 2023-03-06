@@ -21,10 +21,11 @@
 package com.saltedge.authenticator.features.settings.licenses
 
 import androidx.lifecycle.Observer
+import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
-import com.saltedge.authenticator.sdk.constants.KEY_TITLE
 import com.saltedge.authenticator.TestAppTools
+import com.saltedge.authenticator.core.api.KEY_TITLE
 import com.saltedge.authenticator.widget.fragment.WebViewFragment
 import junit.framework.TestCase.assertNull
 import org.hamcrest.CoreMatchers.equalTo
@@ -35,7 +36,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class LicensesViewModelTest {
+class LicensesViewModelTest : ViewModelTest() {
     private val apache2LicenseLink = "https://www.apache.org/licenses/LICENSE-2.0.txt"
     private lateinit var viewModel: LicensesViewModel
 
@@ -67,7 +68,8 @@ class LicensesViewModelTest {
                 SettingsItemViewModel(titleId = R.string.library_jsr),
                 SettingsItemViewModel(titleId = R.string.library_ktlint),
                 SettingsItemViewModel(titleId = R.string.library_jlleitschuh),
-                SettingsItemViewModel(titleId = R.string.library_blur)
+                SettingsItemViewModel(titleId = R.string.library_blur),
+                SettingsItemViewModel(titleId = R.string.library_timber)
             ))
         )
     }
@@ -105,7 +107,8 @@ class LicensesViewModelTest {
                 Pair(TestAppTools.getString(R.string.library_jsr), "https://raw.githubusercontent.com/findbugsproject/findbugs/master/findbugs/licenses/LICENSE-jsr305.txt"),
                 Pair(TestAppTools.getString(R.string.library_ktlint), "https://raw.githubusercontent.com/pinterest/ktlint/master/LICENSE"),
                 Pair(TestAppTools.getString(R.string.library_jlleitschuh), "https://raw.githubusercontent.com/JLLeitschuh/ktlint-gradle/master/LICENSE.txt"),
-                Pair(TestAppTools.getString(R.string.library_blur), "https://raw.githubusercontent.com/500px/500px-android-blur/master/LICENSE.txt")
+                Pair(TestAppTools.getString(R.string.library_blur), "https://raw.githubusercontent.com/500px/500px-android-blur/master/LICENSE.txt"),
+                Pair(TestAppTools.getString(R.string.library_timber), "https://raw.githubusercontent.com/JakeWharton/timber/trunk/LICENSE.txt")
             ))
         )
     }

@@ -36,6 +36,16 @@ fun DateTime.toDateFormatString(appContext: Context): String =
     this.toString("d MMMM yyyy", appContext.getCurrentAppLocale()) ?: ""
 
 /**
+ * Converts the current date time to a string presentation
+ *
+ * @receiver millis
+ * @param appContext - application context
+ * @return the date as a string with time and time zone
+ */
+fun DateTime.toDateFormatStringWithUTC(appContext: Context): String =
+    this.toString("HH:mm, d MMMM yyyy z", appContext.getCurrentAppLocale()) ?: ""
+
+/**
  * Calculates days count between now and expiresAt date
  *
  * @receiver expires at dateTime

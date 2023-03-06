@@ -32,15 +32,15 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.app.authenticatorApp
+import com.saltedge.authenticator.core.api.KEY_DATA
+import com.saltedge.authenticator.core.model.ActionAppLinkData
+import com.saltedge.authenticator.core.model.GUID
 import com.saltedge.authenticator.databinding.SubmitActionBinding
 import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.features.main.newAuthorizationListener
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.sdk.constants.KEY_DATA
-import com.saltedge.authenticator.sdk.model.GUID
-import com.saltedge.authenticator.sdk.model.appLink.ActionAppLinkData
-import com.saltedge.authenticator.sdk.model.authorization.AuthorizationIdentifier
-import com.saltedge.authenticator.tools.authenticatorApp
+import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationIdentifier
 import com.saltedge.authenticator.tools.navigateTo
 import com.saltedge.authenticator.tools.popBackStack
 import com.saltedge.authenticator.widget.fragment.BaseFragment
@@ -64,7 +64,7 @@ class SubmitActionFragment : BaseFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         activityComponents?.updateAppbar(
             titleResId = R.string.action_new_action_title,
             backActionImageResId = R.drawable.ic_appbar_action_close
@@ -82,10 +82,10 @@ class SubmitActionFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        completeView?.setClickListener(View.OnClickListener { v -> viewModel.onViewClick(v.id) })
+        completeView?.setClickListener { v -> viewModel.onViewClick(v.id) }
         viewModel.onViewCreated()
         sharedViewModel.onSelectConnection.observe(viewLifecycleOwner, Observer<GUID> { result ->
-            viewModel.showConnectionSelector(result)
+            viewModel.onConnectionSelected(guid = result)
         })
     }
 
@@ -119,15 +119,11 @@ class SubmitActionFragment : BaseFragment() {
         })
         viewModel.showConnectionsSelectorFragmentEvent.observe(this, Observer<ViewModelEvent<Bundle>> {
                 it?.getContentIfNotHandled()?.let { bundle ->
-                    navigateTo(
-                        actionRes = R.id.select_connections,
-                        bundle = bundle
-                    )
+                    navigateTo(actionRes = R.id.select_connections, bundle = bundle)
                 }
             })
         viewModel.setInitialData(
-            actionAppLinkData = arguments?.getSerializable(KEY_DATA) as? ActionAppLinkData
-                ?: return
+            actionAppLinkData = arguments?.getSerializable(KEY_DATA) as? ActionAppLinkData ?: return
         )
     }
 }

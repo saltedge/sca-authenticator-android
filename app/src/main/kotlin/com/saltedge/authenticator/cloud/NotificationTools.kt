@@ -30,7 +30,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import androidx.core.app.NotificationCompat
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.tools.buildVersion26orGreater
+import com.saltedge.authenticator.app.buildVersion26orGreater
 
 const val CHANNEL_ID = "com.saltedge.authenticator.notifications"
 const val CHANNEL_NAME = "SaltEdge Authenticator Channel"
@@ -45,7 +45,9 @@ const val NOTIFICATION_ID = 201
 fun Context.registerNotificationChannels() {
     if (buildVersion26orGreater) {
         val notificationChannel: NotificationChannel = NotificationChannel(
-            CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH
+            CHANNEL_ID,
+            CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_HIGH
         ).apply {
 
             // Configure the notification channel.

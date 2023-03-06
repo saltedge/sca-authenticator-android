@@ -25,6 +25,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import com.saltedge.authenticator.R
+import timber.log.Timber
 
 /**
  * Show warning dialog with given message
@@ -37,7 +38,7 @@ fun FragmentActivity.showWarningDialog(@StringRes messageId: Int): AlertDialog? 
     return try {
         showWarningDialog(message = getString(messageId))
     } catch (e: Exception) {
-        e.log()
+        Timber.e(e)
         null
     }
 }
@@ -109,7 +110,7 @@ fun FragmentActivity.showResetDataDialog(listener: DialogInterface.OnClickListen
             .setNegativeButton(R.string.actions_cancel, listener)
             .show()
     } catch (e: java.lang.Exception) {
-        e.log()
+        Timber.e(e)
         null
     }
 }
@@ -130,7 +131,36 @@ fun FragmentActivity.showResetDataAndSettingsDialog(listener: DialogInterface.On
             .setNegativeButton(R.string.actions_cancel, listener)
             .show()
     } catch (e: java.lang.Exception) {
-        e.log()
+        Timber.e(e)
+        null
+    }
+}
+
+/**
+ * Show info dialog
+ *
+ * @receiver FragmentActivity
+ * @param titleResId - the title that appears in the dialog
+ * @param messageResId - the message that appears in the dialog
+ * @param positiveButtonResId - the positive button that appears in the dialog
+ * @param listener - on dialog action click listener
+ * @return AlertDialog object or null
+ */
+fun FragmentActivity.showInfoDialog(
+    @StringRes titleResId: Int,
+    @StringRes messageResId: Int,
+    @StringRes positiveButtonResId: Int,
+    listener: DialogInterface.OnClickListener
+): AlertDialog? {
+    return try {
+        AlertDialog.Builder(this, R.style.AlertDialogTheme)
+            .setTitle(titleResId)
+            .setMessage(messageResId)
+            .setPositiveButton(positiveButtonResId, listener)
+            .setNegativeButton(R.string.actions_cancel, listener)
+            .show()
+    } catch (e: java.lang.Exception) {
+        Timber.e(e)
         null
     }
 }
@@ -149,7 +179,7 @@ fun FragmentActivity.showLockWarningDialog(message: String?): AlertDialog? {
             .setCancelable(false)
             .show()
     } catch (e: java.lang.Exception) {
-        e.log()
+        Timber.e(e)
         null
     }
 }
@@ -170,7 +200,7 @@ fun FragmentActivity.showSecurityAlertDialog(listener: DialogInterface.OnClickLi
             .setPositiveButton(R.string.actions_contact_support, listener)
             .show()
     } catch (e: java.lang.Exception) {
-        e.log()
+        Timber.e(e)
         null
     }
 }
@@ -193,7 +223,7 @@ fun FragmentActivity.showConfirmRevokeConsentDialog(
             .setNegativeButton(R.string.actions_cancel, null)
             .show()
     } catch (e: java.lang.Exception) {
-        e.log()
+        Timber.e(e)
         null
     }
 }
@@ -219,7 +249,7 @@ private fun FragmentActivity.showDialogWithTitleAndMessage(
             .setPositiveButton(android.R.string.ok, listener)
             .show()
     } catch (e: Exception) {
-        e.log()
+        Timber.e(e)
         null
     }
 }

@@ -28,5 +28,7 @@ import java.io.Serializable
 data class MenuItemData(
     val id: Int,
     @DrawableRes val iconRes: ResId,
-    @StringRes val textRes: ResId
+    @StringRes val textRes: ResId? = null,
+    val text: String? = null,
+    val isActive: Boolean = true
 ) : Serializable

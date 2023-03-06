@@ -31,11 +31,11 @@ import com.saltedge.authenticator.app.di.AppComponent
 import com.saltedge.authenticator.app.di.AppModule
 import com.saltedge.authenticator.app.di.DaggerAppComponent
 import com.saltedge.authenticator.models.realm.RealmManager
-import com.saltedge.authenticator.sdk.AuthenticatorApiManager
-import com.saltedge.authenticator.tools.AppTools
+import com.saltedge.authenticator.sdk.config.ApiV1Config
+import com.saltedge.authenticator.sdk.v2.config.ApiV2Config
 import com.saltedge.authenticator.tools.createCrashlyticsKit
-import com.saltedge.authenticator.tools.log
 import net.danlew.android.joda.JodaTimeAndroid
+import timber.log.Timber
 
 open class AuthenticatorApplication : Application(), Application.ActivityLifecycleCallbacks {
 
@@ -61,7 +61,8 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
 
         registerActivityLifecycleCallbacks(this)
 
-        AuthenticatorApiManager.initializeSDK(applicationContext)
+        ApiV1Config.setupConfig(applicationContext)
+        ApiV2Config.setupConfig(applicationContext)
 
         setupNightMode()
     }
@@ -85,7 +86,7 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
 
     private fun initFirebaseModules() {
-        FirebaseApp.initializeApp(this);
+        FirebaseApp.initializeApp(this)
         createCrashlyticsKit()
     }
 
@@ -93,7 +94,7 @@ open class AuthenticatorApplication : Application(), Application.ActivityLifecyc
         try {
             if ("release" == BuildConfig.BUILD_TYPE) ProviderInstaller.installIfNeeded(this)
         } catch (e: Exception) {
-            e.log()
+            Timber.e(e)
         }
     }
 

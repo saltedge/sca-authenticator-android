@@ -22,12 +22,13 @@ package com.saltedge.authenticator.cloud
 
 import android.app.PendingIntent
 import android.content.Intent
+import android.os.Build
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.saltedge.authenticator.core.api.KEY_AUTHORIZATION_ID
+import com.saltedge.authenticator.core.api.KEY_CONNECTION_ID
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.models.repository.PreferenceRepository
-import com.saltedge.authenticator.sdk.constants.KEY_AUTHORIZATION_ID
-import com.saltedge.authenticator.sdk.constants.KEY_CONNECTION_ID
 
 class CloudMessagingService : FirebaseMessagingService() {
 
@@ -75,7 +76,9 @@ class CloudMessagingService : FirebaseMessagingService() {
             activityIntent.putExtra(KEY_CONNECTION_ID, connectionId)
             activityIntent.putExtra(KEY_AUTHORIZATION_ID, authorizationId)
 
-            PendingIntent.getActivity(this, 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE
+            else PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.getActivity(this, 0, activityIntent, pendingIntent)
         } else {
             null
         }

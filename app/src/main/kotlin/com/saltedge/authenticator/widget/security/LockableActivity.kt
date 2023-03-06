@@ -36,32 +36,40 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.app.authenticatorApp
+import com.saltedge.authenticator.app.buildVersion26orGreater
+import com.saltedge.authenticator.core.tools.secure.KeyManager
 import com.saltedge.authenticator.features.main.buildWarningSnack
-import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.models.repository.ConnectionsRepository
 import com.saltedge.authenticator.models.repository.PreferenceRepository
 import com.saltedge.authenticator.sdk.AuthenticatorApiManager
-import com.saltedge.authenticator.sdk.tools.keystore.KeyStoreManager
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.biometric.BiometricPromptAbs
 import com.saltedge.authenticator.widget.biometric.BiometricPromptCallback
 import com.saltedge.authenticator.widget.passcode.PasscodeInputListener
 import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
+import java.util.*
 
 const val KEY_SKIP_PIN = "KEY_SKIP_PIN"
+
+enum class ActivityUnlockType {
+    PASSCODE, BIOMETRICS;
+
+    val description: String
+        get() = this.toString().lowercase(Locale.ROOT)
+}
 
 @SuppressLint("Registered")
 abstract class LockableActivity : AppCompatActivity(),
     PasscodeInputListener,
     BiometricPromptCallback,
-    DialogInterface.OnClickListener
-{
+    DialogInterface.OnClickListener {
     private var inactivityWarningSnackbar: Snackbar? = null
     private var viewModel = LockableActivityViewModel(
         connectionsRepository = ConnectionsRepository,
         preferenceRepository = PreferenceRepository,
         passcodeTools = PasscodeTools,
-        keyStoreManager = KeyStoreManager,
+        keyStoreManager = KeyManager,
         apiManager = AuthenticatorApiManager
     )
     private var biometricPrompt: BiometricPromptAbs? = null
@@ -87,9 +95,9 @@ abstract class LockableActivity : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        authenticatorApp?.appComponent?.let {
-            viewModel.biometricTools = authenticatorApp?.appComponent?.biometricTools()
-            biometricPrompt = authenticatorApp?.appComponent?.biometricPrompt()
+        this.authenticatorApp?.appComponent?.let {
+            viewModel.biometricTools = it.biometricTools()
+            this.biometricPrompt = it.biometricPrompt()
         }
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         setupViewModel()
@@ -127,7 +135,7 @@ abstract class LockableActivity : AppCompatActivity(),
     override fun onPasscodeInputCanceledByUser() {}
 
     override fun onInputValidPasscode() {
-        viewModel.onSuccessAuthentication()
+        viewModel.onSuccessAuthentication(ActivityUnlockType.PASSCODE)
     }
 
     override fun onInputInvalidPasscode(mode: PasscodeInputMode) {
@@ -148,16 +156,13 @@ abstract class LockableActivity : AppCompatActivity(),
 
     override fun onClick(listener: DialogInterface?, dialogActionId: Int) {
         when (dialogActionId) {
-            DialogInterface.BUTTON_POSITIVE -> {
-                viewModel.onUserConfirmedClearAppData()
-                showOnboardingActivity()
-            }
+            DialogInterface.BUTTON_POSITIVE -> onClearAppDataEvent()
             DialogInterface.BUTTON_NEGATIVE -> listener?.dismiss()
         }
     }
 
     override fun biometricAuthFinished() {
-        viewModel.onSuccessAuthentication()
+        viewModel.onSuccessAuthentication(ActivityUnlockType.BIOMETRICS)
     }
 
     override fun biometricsCanceledByUser() {}
@@ -186,6 +191,9 @@ abstract class LockableActivity : AppCompatActivity(),
                 inactivityWarningSnackbar?.dismiss()
                 inactivityWarningSnackbar = null
             }
+        })
+        viewModel.onWipeApplicationEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { onClearAppDataEvent() }
         })
         viewModel.showAppClearWarningEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
@@ -248,6 +256,8 @@ abstract class LockableActivity : AppCompatActivity(),
         alertDialog = showLockWarningDialog(message = "$wrongPasscodeMessage\n$retryMessage")
     }
 
+    abstract fun onClearAppDataEvent()
+
     /**
      * Display biometric prompt if resultCallback is already set on Activity start
      */
@@ -261,11 +271,6 @@ abstract class LockableActivity : AppCompatActivity(),
                 negativeActionTextResId = R.string.actions_cancel
             )
         }
-    }
-
-    private fun showOnboardingActivity() {
-        finish()
-        startActivity(Intent(this, OnboardingSetupActivity::class.java))
     }
 
     private fun showResetView() {
