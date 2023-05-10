@@ -69,7 +69,7 @@ android {
         targetSdkVersion 33
 
         versionCode 63
-        versionName '3.4.0.6'
+        versionName '3.4.1'
 
         renderscriptTargetApi 21
         renderscriptSupportModeEnabled true
