@@ -31,29 +31,20 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/verticalCenterGuideline"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.25" />
-
     <TextView
         android:id="@+id/titleView"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/dp_16"
         android:layout_marginTop="@dimen/dp_8"
-        android:layout_marginEnd="@dimen/dp_16"
-        android:ellipsize="end"
+        android:layout_marginEnd="@dimen/dp_8"
         android:fontFamily="@font/roboto_regular"
         android:textColor="@color/dark_80_and_grey_100"
         android:textSize="@dimen/text_16"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/verticalCenterGuideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Payee" />
+        tools:text="@string/description_exchange_rate" />
 
     <TextView
         android:id="@+id/descriptionView"
@@ -63,10 +54,12 @@
         android:layout_marginStart="@dimen/dp_16"
         android:layout_marginTop="@dimen/dp_8"
         android:layout_marginEnd="@dimen/dp_16"
+        android:ellipsize="marquee"
+        android:maxLines="4"
         android:textAlignment="textEnd"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/verticalCenterGuideline"
+        app:layout_constraintStart_toEndOf="@+id/titleView"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Tag Heuer Carrera Calibre 01 Watch" />
+        tools:text="AL47 2121 1009 0000 0002 3569 87411" />
 </androidx.constraintlayout.widget.ConstraintLayout>
