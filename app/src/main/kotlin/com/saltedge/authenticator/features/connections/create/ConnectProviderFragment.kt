@@ -30,6 +30,7 @@ import android.view.ViewGroup
 import android.webkit.CookieManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -112,6 +113,7 @@ class ConnectProviderFragment : BaseFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         connectWebView?.webViewClient = webViewClient
+        connectWebView.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.theme_background))
         completeView?.setClickListener { v -> viewModel.onViewClick(v.id) }
     }
 
