@@ -67,8 +67,13 @@ abstract class ApiResponseInterceptor<T> : Callback<T> {
     private fun responseToApiError(response: Response<T>): ApiErrorData {
         return try {
             response.errorBody()?.string()?.let {
-                val errorObject = Gson().fromJson<ApiErrorData>(it, ApiErrorData::class.java)
-                if (errorObject.errorMessage.isNullOrEmpty()) null else errorObject
+                if (it.startsWith("{")) {
+                    val errorObject = Gson().fromJson<ApiErrorData>(it, ApiErrorData::class.java)
+                    if (errorObject.errorMessage.isNullOrEmpty()) null else errorObject
+                } else {
+                    Timber.e("Unexpected error format: $it")
+                    createRequestError(response.code())
+                }
             } ?: createRequestError(response.code())
         } catch (e: Exception) {
             Timber.e(e)
