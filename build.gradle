@@ -35,9 +35,9 @@ buildscript {
         classpath 'com.android.tools.build:gradle:7.4.2'
         classpath "org.jacoco:org.jacoco.core:0.8.8"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.3.15'
+        classpath 'com.google.gms:google-services:4.4.0'
         classpath "io.realm:realm-gradle-plugin:$realm_version"
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.8'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
         classpath "org.jlleitschuh.gradle:ktlint-gradle:8.2.0"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
     }
@@ -58,13 +58,13 @@ allprojects {
         maven { url "https://jitpack.io" }
         mavenLocal()
     }
-    configurations.all {
+    configurations.configureEach {
         resolutionStrategy {
             force("org.objenesis:objenesis:2.6")//fix for https://github.com/mockk/mockk/issues/281
         }
     }
 }
 
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }
