@@ -127,8 +127,8 @@ androidExtensions {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    kapt 'com.google.dagger:dagger-compiler:2.37'
-    implementation 'com.google.dagger:dagger:2.38.1'
+    kapt 'com.google.dagger:dagger-compiler:2.48'
+    implementation 'com.google.dagger:dagger:2.48'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.activity:activity-ktx:1.6.1'
