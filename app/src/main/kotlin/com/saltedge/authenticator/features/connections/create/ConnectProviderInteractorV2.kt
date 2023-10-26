@@ -32,6 +32,7 @@ import com.saltedge.authenticator.sdk.v2.ScaServiceClient
 import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionCreateListener
 import com.saltedge.authenticator.sdk.v2.api.contract.FetchConfigurationListener
 import com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationDataV2
+import kotlinx.coroutines.CoroutineDispatcher
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 
@@ -41,10 +42,12 @@ class ConnectProviderInteractorV2(
     preferenceRepository: PreferenceRepositoryAbs,
     connectionsRepository: ConnectionsRepositoryAbs,
     private val apiManager: ScaServiceClient,
+    defaultDispatcher: CoroutineDispatcher,
 ) : ConnectProviderInteractor(
     keyStoreManager = keyStoreManager,
     preferenceRepository = preferenceRepository,
     connectionsRepository = connectionsRepository,
+    defaultDispatcher = defaultDispatcher,
 ), FetchConfigurationListener, ConnectionCreateListener {
 
     override fun requestProviderConfiguration(url: String) {

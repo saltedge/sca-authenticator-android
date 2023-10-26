@@ -262,7 +262,8 @@ class ViewModelsFactory @Inject constructor(
                 keyStoreManager = keyStoreManager,
                 preferenceRepository = preferenceRepository,
                 connectionsRepository = connectionsRepository,
-                apiManager = apiManagerV2
+                apiManager = apiManagerV2,
+                defaultDispatcher = Dispatchers.Default
             )
         } else {
             ConnectProviderInteractorV1(
@@ -270,7 +271,8 @@ class ViewModelsFactory @Inject constructor(
                 keyStoreManager = keyStoreManager,
                 preferenceRepository = preferenceRepository,
                 connectionsRepository = connectionsRepository,
-                apiManager = apiManagerV1
+                apiManager = apiManagerV1,
+                defaultDispatcher = Dispatchers.Default
             )
         }
         return ConnectProviderViewModel(

@@ -33,12 +33,16 @@ import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.models.toRichConnection
 import com.saltedge.authenticator.sdk.v2.config.ApiV2Config
 import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 abstract class ConnectProviderInteractor(
     private val keyStoreManager: KeyManagerAbs,
     private val preferenceRepository: PreferenceRepositoryAbs,
     private val connectionsRepository: ConnectionsRepositoryAbs,
+    private val defaultDispatcher: CoroutineDispatcher
 ) : ConnectProviderInteractorAbs {
 
     override var contract: ConnectProviderInteractorCallback? = null
@@ -117,18 +121,20 @@ abstract class ConnectProviderInteractor(
     }
 
     override fun onConnectionSuccessAuthentication(connectionId: ID?, accessToken: Token) {
-        connectionId?.let { connection.id = it }
-        connection.accessToken = accessToken
-        if (connection.accessToken.isNotEmpty()) {
-            connection.status = "${ConnectionStatus.ACTIVE}"
-        }
-        if (connectionsRepository.connectionExists(connection)) {
-            connectionsRepository.saveModel(connection)
-        } else {
-            connectionsRepository.fixNameAndSave(connection)
-        }
+        contract?.coroutineScope?.launch(defaultDispatcher) {
+            connectionId?.let { connection.id = it }
+            connection.accessToken = accessToken
+            if (connection.accessToken.isNotEmpty()) {
+                connection.status = "${ConnectionStatus.ACTIVE}"
+            }
+            if (connectionsRepository.connectionExists(connection)) {
+                connectionsRepository.saveModel(connection)
+            } else {
+                connectionsRepository.fixNameAndSave(connection)
+            }
 
-        contract?.onConnectionSuccessAuthentication()
+            contract?.onConnectionSuccessAuthentication()
+        }
     }
 
     override fun destroyConnectionIfNotAuthorized() {
@@ -172,6 +178,7 @@ interface ConnectProviderInteractorAbs {
 }
 
 interface ConnectProviderInteractorCallback {
+    val coroutineScope: CoroutineScope
     fun onReceiveApiError(error: ApiErrorData)
     fun onReceiveAuthenticationUrl()
     fun onConnectionFailAuthentication(errorClass: String, errorMessage: String?)
