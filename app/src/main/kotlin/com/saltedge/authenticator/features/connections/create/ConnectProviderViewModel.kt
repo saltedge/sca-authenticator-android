@@ -38,6 +38,7 @@ import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.getErrorMessage
 import com.saltedge.authenticator.tools.postUnitEvent
+import kotlinx.coroutines.CoroutineScope
 
 class ConnectProviderViewModel(
     private val appContext: Context,
@@ -62,6 +63,9 @@ class ConnectProviderViewModel(
     val onAskPermissionsEvent = MutableLiveData<ViewModelEvent<Unit>>()
     private var sessionFailMessage: String? = null
     private var viewMode: ViewMode = ViewMode.START_NEW_CONNECT
+
+    override val coroutineScope: CoroutineScope
+        get() = viewModelScope
 
     fun setInitialData(initialConnectData: ConnectAppLinkData?, connectionGuid: GUID?) {
         interactor.contract = this

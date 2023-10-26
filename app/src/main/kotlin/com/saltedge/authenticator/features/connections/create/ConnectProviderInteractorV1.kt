@@ -34,6 +34,7 @@ import com.saltedge.authenticator.sdk.api.model.configuration.isValid
 import com.saltedge.authenticator.sdk.api.model.response.CreateConnectionResponseData
 import com.saltedge.authenticator.sdk.contract.ConnectionCreateListener
 import com.saltedge.authenticator.sdk.contract.FetchProviderConfigurationListener
+import kotlinx.coroutines.CoroutineDispatcher
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 
@@ -43,10 +44,12 @@ class ConnectProviderInteractorV1(
     preferenceRepository: PreferenceRepositoryAbs,
     connectionsRepository: ConnectionsRepositoryAbs,
     private val apiManager: AuthenticatorApiManagerAbs,
+    defaultDispatcher: CoroutineDispatcher,
 ) : ConnectProviderInteractor(
     keyStoreManager = keyStoreManager,
     preferenceRepository = preferenceRepository,
-    connectionsRepository = connectionsRepository
+    connectionsRepository = connectionsRepository,
+    defaultDispatcher = defaultDispatcher
 ), FetchProviderConfigurationListener, ConnectionCreateListener {
 
     override fun requestProviderConfiguration(url: String) {
