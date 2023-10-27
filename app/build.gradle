@@ -99,10 +99,6 @@ android {
         }
     }
 
-//    buildFeatures{
-//        dataBinding = true
-//    }
-
     viewBinding {
         enabled = true
     }
