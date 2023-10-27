@@ -169,11 +169,24 @@ class ConnectProviderViewModel(
         completeDescription.postValue(getCompleteDescription())
         mainActionTextRes.postValue(completeActionTextRes)
 
-        webViewVisibility.postValue(if (webViewIsVisible) View.VISIBLE else View.GONE)
-        completeViewVisibility.postValue(if (completeViewIsVisible) View.VISIBLE else View.GONE)
-        progressViewVisibility.postValue(if (progressViewIsVisible) View.VISIBLE else View.GONE)
+        updateWebViewVisibility()
+        updateCompleteViewVisibility()
+        updateProgressViewVisibility()
         backActionIconRes.postValue(if (progressViewIsVisible || completeViewIsVisible) null else R.drawable.ic_appbar_action_close)
     }
+
+    fun updateWebViewVisibility() {
+        webViewVisibility.postValue(if (webViewIsVisible) View.VISIBLE else View.GONE)
+    }
+
+    fun updateProgressViewVisibility() {
+        progressViewVisibility.postValue(if (progressViewIsVisible) View.VISIBLE else View.GONE)
+    }
+
+    fun updateCompleteViewVisibility() {
+        completeViewVisibility.postValue(if (completeViewIsVisible) View.VISIBLE else View.GONE)
+    }
+
 
     private fun getCompleteTitle(): SpannableString {
         return if (viewMode.isCompleteWithSuccess) {

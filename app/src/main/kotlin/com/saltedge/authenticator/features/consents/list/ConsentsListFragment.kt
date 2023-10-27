@@ -25,7 +25,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.BindingAdapter
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -35,7 +34,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.authenticatorApp
-import com.saltedge.authenticator.databinding.ConsentsListBinding
+import com.saltedge.authenticator.databinding.FragmentConsentsListBinding
 import com.saltedge.authenticator.features.main.SharedViewModel
 import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.interfaces.ListItemClickListener
@@ -53,7 +52,7 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: ConsentsListViewModel
     private lateinit var headerDecorator: SpaceItemDecoration
-    private lateinit var binding: ConsentsListBinding
+    private var binding: FragmentConsentsListBinding? = null
     private val adapter = ConsentsListAdapter(clickListener = this)
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
@@ -63,21 +62,23 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
         setupViewModel()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         activityComponents?.updateAppbar(
             titleResId = R.string.consents_feature_title,
             backActionImageResId = R.drawable.ic_appbar_action_back
         )
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_consents_list, container, false)
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = this
-        return binding.root
+        binding = FragmentConsentsListBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
-        binding.executePendingBindings()
+    }
+
+    override fun onDestroyView() {
+        binding = null
+        super.onDestroyView()
     }
 
     override fun onListItemClick(itemIndex: Int, itemCode: String, itemViewId: Int) {
@@ -91,6 +92,19 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
             headerDecorator.setHeaderForAllItems(it.count())
             headerDecorator.footerPositions = arrayOf(it.count() - 1)
             adapter.data = it
+        })
+        viewModel.logoUrlData.observe(this, Observer<String> { logoUrl ->
+            if (logoUrl == null) { //move this logic to vm
+                binding?.connectionLogoView?.setImageDrawable(null)
+            } else {
+                binding?.connectionLogoView?.loadImage(logoUrl, R.drawable.shape_bg_app_logo)
+            }
+        })
+        viewModel.connectionTitleData.observe(this, Observer<String> { text ->
+            binding?.connectionTitleView?.text = text
+        })
+        viewModel.consentsCount.observe(this, Observer<String> { text ->
+            binding?.consentsCountView?.text = text
         })
         viewModel.onListItemClickEvent.observe(this, Observer<ViewModelEvent<Bundle>> { event ->
             event.getContentIfNotHandled()?.let { bundle ->
@@ -122,18 +136,18 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
         })
     }
 
-    companion object {
-        @BindingAdapter("connectionLogoUrl")
-        @JvmStatic
-        fun setConnectionLogoUrl(imageView: ShapeableImageView, logoUrl: String?) {
-            if (logoUrl == null) {
-                imageView.setImageDrawable(null)
-            } else {
-                imageView.loadImage(
-                    imageUrl = logoUrl,
-                    placeholderId = R.drawable.shape_bg_app_logo,
-                )
-            }
-        }
-    }
+//    companion object {
+//        @BindingAdapter("connectionLogoUrl")
+//        @JvmStatic
+//        fun setConnectionLogoUrl(imageView: ShapeableImageView, logoUrl: String?) {
+//            if (logoUrl == null) {
+//                imageView.setImageDrawable(null)
+//            } else {
+//                imageView.loadImage(
+//                    imageUrl = logoUrl,
+//                    placeholderId = R.drawable.shape_bg_app_logo,
+//                )
+//            }
+//        }
+//    }
 }

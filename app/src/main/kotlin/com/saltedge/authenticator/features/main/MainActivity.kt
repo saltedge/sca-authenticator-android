@@ -22,8 +22,9 @@ package com.saltedge.authenticator.features.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import androidx.databinding.DataBindingUtil
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -31,33 +32,35 @@ import androidx.navigation.findNavController
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.authenticatorApp
-import com.saltedge.authenticator.databinding.MainActivityBinding
+import com.saltedge.authenticator.databinding.ActivityMainBinding
 import com.saltedge.authenticator.features.actions.NewAuthorizationListener
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.interfaces.*
 import com.saltedge.authenticator.models.location.DeviceLocationManager
 import com.saltedge.authenticator.models.realm.initRealmDatabase
+import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.currentFragmentOnTop
 import com.saltedge.authenticator.tools.showQrScannerActivity
 import com.saltedge.authenticator.tools.updateScreenshotLocking
 import com.saltedge.authenticator.widget.security.LockableActivity
 import com.saltedge.authenticator.widget.security.UnlockAppInputView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_onboarding.skipActionView
 import javax.inject.Inject
 
-class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContainer {
+class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContainer, View.OnClickListener {
 
     override lateinit var viewModel: MainActivityViewModel
     @Inject lateinit var viewModelFactory: ViewModelsFactory
-    private lateinit var binding: MainActivityBinding
+    private var binding: ActivityMainBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.initRealmDatabase()
         this.updateScreenshotLocking()
-        authenticatorApp?.appComponent?.inject(this)//inject ViewModelsFactory
+        authenticatorApp?.appComponent?.inject(this)
         setupViewModel()
-        setupBinding()
+        setupBinding(layoutInflater)
         viewModel.onLifeCycleCreate(savedInstanceState, intent)
         DeviceLocationManager.initManager(context = this)
     }
@@ -105,15 +108,46 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
 
     override fun getSnackbarAnchorView(): View? = activityRootLayout
 
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
+    }
 
     override fun onClearAppDataEvent() {
         viewModel.onClearAppDataEvent()
+    }
+
+    override fun onClick(view: View?) {
+        viewModel.onViewClick(viewId = view?.id ?: return)
     }
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainActivityViewModel::class.java)
         viewModel.bindLifecycleObserver(lifecycle = lifecycle)
 
+        viewModel.appBarBackActionVisibility.observe(this, Observer<Int> { visibility ->
+            binding?.appBarTopSection?.visibility = visibility
+        })
+        viewModel.appBarBackActionImageResource.observe(this, Observer<ResId> { drawableRes ->
+            binding?.appBarBackAction?.setOnClickListener(this)
+            val drawable = ContextCompat.getDrawable(this, drawableRes)
+            binding?.appBarBackAction?.setImageDrawable(drawable)
+        })
+        viewModel.appBarTitle.observe(this, Observer<String> { text ->
+            binding?.appBarTitle?.text = text
+        })
+        viewModel.appBarActionQRVisibility.observe(this, Observer<Int> { visibility ->
+            binding?.appBarActionQrCode?.setOnClickListener(this)
+            binding?.appBarActionQrCode?.visibility = visibility
+        })
+        viewModel.appBarActionThemeVisibility.observe(this, Observer<Int> { visibility ->
+            binding?.appBarActionSwitchTheme?.setOnClickListener(this)
+            binding?.appBarActionSwitchTheme?.visibility = visibility
+        })
+        viewModel.appBarActionMoreVisibility.observe(this, Observer<Int> { visibility ->
+            binding?.appBarActionMore?.setOnClickListener(this)
+            binding?.appBarActionMore?.visibility = visibility
+        })
         viewModel.onAppbarMenuItemClickEvent.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let {
                 (this.currentFragmentOnTop() as? AppbarMenuItemClickListener)?.onAppbarMenuItemClick(it)
@@ -151,11 +185,9 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
         })
     }
 
-    private fun setupBinding() {
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        binding.viewModel = viewModel
-        binding.executePendingBindings()
-        binding.lifecycleOwner = this
+    private fun setupBinding(layoutInflater: LayoutInflater) {
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
     }
 }
 
