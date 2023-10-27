@@ -37,7 +37,6 @@ import com.saltedge.authenticator.tools.popBackStack
 import com.saltedge.authenticator.tools.showConfirmRevokeConsentDialog
 import com.saltedge.authenticator.tools.showWarningDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment
-import kotlinx.android.synthetic.main.fragment_consent_details.*
 import javax.inject.Inject
 
 class ConsentDetailsFragment : BaseFragment() {
@@ -64,7 +63,7 @@ class ConsentDetailsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         updateAppbar(title = viewModel.fragmentTitle.value)
-        revokeView?.setOnClickListener { viewModel.onRevokeActionClick() }
+        binding?.revokeView?.setOnClickListener { viewModel.onRevokeActionClick() }
     }
 
     override fun onDestroyView() {

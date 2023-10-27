@@ -27,21 +27,23 @@ import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.databinding.ViewEmptyBinding
 import com.saltedge.authenticator.tools.setInvisible
-import kotlinx.android.synthetic.main.view_empty.view.*
 
 /**
  * View show empty screen
  */
 class EmptyView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
 
+    private var binding: ViewEmptyBinding
+
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_empty, this)
+        binding = ViewEmptyBinding.inflate(LayoutInflater.from(context), this, true)
         initAttributes(context, attrs)
     }
 
     fun setTitle(title: String) {
-        titleView?.text = title
+        binding.titleView.text = title
     }
 
     fun setTitle(titleResId: Int) {
@@ -49,7 +51,7 @@ class EmptyView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
     }
 
     fun setDescription(text: String) {
-        descriptionView?.text = text
+        binding.descriptionView.text = text
     }
 
     fun setDescription(textResId: Int) {
@@ -61,17 +63,17 @@ class EmptyView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
     }
 
     fun setActionText(text: String?) {
-        actionView?.setInvisible(text == null)
-        actionView?.isClickable = text != null
-        actionView?.text = text
+        binding.actionView.setInvisible(text == null)
+        binding.actionView.isClickable = text != null
+        binding.actionView.text = text
     }
 
     fun setImageResource(@DrawableRes resId: Int) {
-        emptyImageView?.setImageResource(resId)
+        binding.emptyImageView.setImageResource(resId)
     }
 
     fun setActionOnClickListener(l: OnClickListener?) {
-        actionView?.setOnClickListener(l)
+        binding.actionView.setOnClickListener(l)
     }
 
     private fun initAttributes(context: Context, attrs: AttributeSet) {

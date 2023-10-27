@@ -24,18 +24,19 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
-import com.saltedge.authenticator.R
+import com.saltedge.authenticator.databinding.ViewPaymentBinding
 import com.saltedge.authenticator.tools.setVisible
-import kotlinx.android.synthetic.main.view_payment.view.*
 
 class PaymentRowView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
 
+    private var binding: ViewPaymentBinding
+
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_payment, this)
+        binding = ViewPaymentBinding.inflate(LayoutInflater.from(context), this, true)
     }
 
     fun setTitle(title: String) {
-        titleView?.text = title
+        binding.titleView.text = title
     }
 
     fun setTitle(titleResId: Int) {
@@ -43,7 +44,7 @@ class PaymentRowView(context: Context, attrs: AttributeSet) : LinearLayout(conte
     }
 
     fun setDescription(text: String) {
-        descriptionView?.text = text
+        binding.descriptionView.text = text
     }
 
     fun setDescription(textResId: Int) {
@@ -51,6 +52,6 @@ class PaymentRowView(context: Context, attrs: AttributeSet) : LinearLayout(conte
     }
 
     fun setVisible(show: Boolean) {
-        contentView?.setVisible(show = show)
+        binding.contentView.setVisible(show = show)
     }
 }

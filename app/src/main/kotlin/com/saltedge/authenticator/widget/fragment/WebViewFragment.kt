@@ -29,12 +29,13 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.core.api.KEY_TITLE
-import kotlinx.android.synthetic.main.fragment_web_view.*
+import com.saltedge.authenticator.databinding.FragmentWebViewBinding
 
 class WebViewFragment : BaseFragment() {
 
     private var url = ""
     private var title = ""
+    private lateinit var binding: FragmentWebViewBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +47,7 @@ class WebViewFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        customWebView?.onResume()
+        binding.customWebView.onResume()
     }
 
     override fun onCreateView(
@@ -58,23 +59,24 @@ class WebViewFragment : BaseFragment() {
             title = title,
             backActionImageResId = R.drawable.ic_appbar_action_back
         )
-        return inflater.inflate(R.layout.fragment_web_view, container, false)
+        binding = FragmentWebViewBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        customWebView?.webViewClient = webViewClient
-        customWebView?.loadUrl(url)
+        binding.customWebView.webViewClient = webViewClient
+        binding.customWebView.loadUrl(url)
     }
 
     override fun onPause() {
         super.onPause()
-        customWebView?.onPause()
+        binding.customWebView.onPause()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        customWebView?.stopLoading()
+        binding.customWebView.stopLoading()
     }
 
     private val webViewClient = object : WebViewClient() {

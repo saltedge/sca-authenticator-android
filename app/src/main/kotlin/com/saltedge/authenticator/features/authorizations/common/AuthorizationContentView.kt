@@ -23,6 +23,7 @@ package com.saltedge.authenticator.features.authorizations.common
 import android.content.Context
 import android.text.method.ScrollingMovementMethod
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -34,25 +35,26 @@ import com.fivehundredpx.android.blur.BlurringView
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.buildVersionLessThan23
 import com.saltedge.authenticator.core.api.model.DescriptionData
+import com.saltedge.authenticator.databinding.ViewAuthorizationContentBinding
 import com.saltedge.authenticator.tools.applyAlphaToColor
 import com.saltedge.authenticator.tools.setVisible
 import com.saltedge.authenticator.tools.toDateFormatString
 import com.saltedge.authenticator.tools.toDateFormatStringWithUTC
-import kotlinx.android.synthetic.main.view_authorization_content.view.*
 
 class AuthorizationContentView : LinearLayout {
     private var blurringView: View? = null
+    private var binding: ViewAuthorizationContentBinding
 
     constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
     init {
-        inflate(context, R.layout.view_authorization_content,this)
+        binding = ViewAuthorizationContentBinding.inflate(LayoutInflater.from(context), this, true)
         initBlurringView()
-        statusLayout.addView(blurringView, 0)
+        binding.statusLayout.addView(blurringView, 0)
         (blurringView as? BlurringView)?.let {
-            it.setBlurredView(blurredView)
+            it.setBlurredView(binding.blurredView)
             it.invalidate()
         }
     }
@@ -60,19 +62,19 @@ class AuthorizationContentView : LinearLayout {
     fun setViewMode(viewMode: AuthorizationStatus) {
         val showStatus = viewMode !== AuthorizationStatus.PENDING
         if (showStatus) {
-            if (!statusLayout.isVisible) {
-                statusLayout.alpha = 0.1f
-                statusLayout?.setVisible(show = true)
-                statusLayout?.animate()?.setDuration(500)?.alpha(1.0f)?.start()
+            if (!binding.statusLayout.isVisible) {
+                binding.statusLayout.alpha = 0.1f
+                binding.statusLayout.setVisible(show = true)
+                binding.statusLayout.animate()?.setDuration(500)?.alpha(1.0f)?.start()
             }
 
-            progressStatusView?.setVisible(show = viewMode.processingMode)
-            statusImageView?.setVisible(show = !viewMode.processingMode)
-            viewMode.statusImageResId?.let { statusImageView.setImageResource(it) }
-            statusTitleTextView?.setText(viewMode.statusTitleResId)
-            statusDescriptionTextView?.setText(viewMode.statusDescriptionResId)
+            binding.progressStatusView.setVisible(show = viewMode.processingMode)
+            binding.statusImageView.setVisible(show = !viewMode.processingMode)
+            viewMode.statusImageResId?.let { binding.statusImageView.setImageResource(it) }
+            binding.statusTitleTextView.setText(viewMode.statusTitleResId)
+            binding.statusDescriptionTextView.setText(viewMode.statusDescriptionResId)
         } else {
-            statusLayout?.setVisible(show = false)
+            binding.statusLayout.setVisible(show = false)
         }
     }
 
@@ -82,12 +84,12 @@ class AuthorizationContentView : LinearLayout {
     }
 
     fun setActionClickListener(actionViewClickListener: OnClickListener) {
-        negativeActionView?.setOnClickListener(actionViewClickListener)
-        positiveActionView?.setOnClickListener(actionViewClickListener)
+        binding.negativeActionView.setOnClickListener(actionViewClickListener)
+        binding.positiveActionView.setOnClickListener(actionViewClickListener)
     }
 
     private fun setTitle(title: String) {
-        titleTextView?.text = title
+        binding.titleTextView.text = title
     }
 
     private fun setDescription(description: DescriptionData) {
@@ -101,99 +103,99 @@ class AuthorizationContentView : LinearLayout {
                 showContent(htmlContentIsVisible = true)
                 val html = description.html ?: ""
                 val encodedHtml = android.util.Base64.encodeToString(html.toByteArray(), android.util.Base64.NO_PADDING)
-                descriptionWebView.webViewClient = object : WebViewClient() {
+                binding.descriptionWebView.webViewClient = object : WebViewClient() {
                     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                         return true
                     }
                 }
-                descriptionWebView?.loadData(encodedHtml, "text/html", "base64")
+                binding.descriptionWebView.loadData(encodedHtml, "text/html", "base64")
             }
             paymentContent -> {
                 showContent(paymentContentIsVisible = true)
                 description.payment?.paymentDate = null // TODO: remove
 
-                payeeView?.setVisible(show = description.payment?.payee != null)
+                binding.payeeView.setVisible(show = description.payment?.payee != null)
                 description.payment?.payee?.let {
-                    payeeView?.setTitle(R.string.description_payee)
-                    payeeView?.setDescription(it)
+                    binding.payeeView.setTitle(R.string.description_payee)
+                    binding.payeeView.setDescription(it)
                 }
 
-                amountView?.setVisible(show = description.payment?.amount != null)
+                binding.amountView.setVisible(show = description.payment?.amount != null)
                 description.payment?.amount?.let {
-                    amountView?.setTitle(R.string.description_amount)
-                    amountView?.setDescription(it)
+                    binding.amountView.setTitle(R.string.description_amount)
+                    binding.amountView.setDescription(it)
                 }
 
-                accountView?.setVisible(show = description.payment?.account != null)
+                binding.accountView.setVisible(show = description.payment?.account != null)
                 description.payment?.account?.let {
-                    accountView?.setTitle(R.string.description_account)
-                    accountView?.setDescription(it)
+                    binding.accountView.setTitle(R.string.description_account)
+                    binding.accountView.setDescription(it)
                 }
 
-                paymentDateView?.setVisible(show = description.payment?.paymentDate != null)
+                binding.paymentDateView.setVisible(show = description.payment?.paymentDate != null)
                 description.payment?.paymentDate?.toDateFormatString(appContext = context)?.let {
-                    paymentDateView?.setTitle(R.string.description_payment_date)
-                    paymentDateView?.setDescription(it)
+                    binding.paymentDateView.setTitle(R.string.description_payment_date)
+                    binding.paymentDateView.setDescription(it)
                 }
 
-                feeView?.setVisible(show = description.payment?.fee != null)
+                binding.feeView.setVisible(show = description.payment?.fee != null)
                 description.payment?.fee?.let {
-                    feeView?.setTitle(R.string.description_fees)
-                    feeView?.setDescription(it)
+                    binding.feeView.setTitle(R.string.description_fees)
+                    binding.feeView.setDescription(it)
                 }
 
-                exchangeRateView?.setVisible(show = description.payment?.exchangeRate != null)
+                binding.exchangeRateView.setVisible(show = description.payment?.exchangeRate != null)
                 description.payment?.exchangeRate?.let {
-                    exchangeRateView?.setTitle(R.string.description_exchange_rate)
-                    exchangeRateView?.setDescription(it)
+                    binding.exchangeRateView.setTitle(R.string.description_exchange_rate)
+                    binding.exchangeRateView.setDescription(it)
                 }
 
-                referenceView?.setVisible(show = description.payment?.reference != null)
+                binding.referenceView.setVisible(show = description.payment?.reference != null)
                 description.payment?.reference?.let {
-                    referenceView?.setTitle(R.string.description_reference)
-                    referenceView?.setDescription(it)
+                    binding.referenceView.setTitle(R.string.description_reference)
+                    binding.referenceView.setDescription(it)
                 }
                 if (extraContent) showExtraContent(description = description)
             }
             textContent -> {
                 showContent(textContentIsVisible = true)
-                descriptionTextView?.movementMethod = ScrollingMovementMethod()
-                descriptionTextView?.text = description.text ?: ""
+                binding.descriptionTextView.movementMethod = ScrollingMovementMethod()
+                binding.descriptionTextView.text = description.text ?: ""
                 if (extraContent) showExtraContent(description = description)
             }
         }
     }
 
     private fun showExtraContent(description: DescriptionData) {
-        dateView?.setVisible(show = description.extra?.actionDate != null)
+        binding.dateView.setVisible(show = description.extra?.actionDate != null)
         description.extra?.actionDate?.let {
-            dateView?.setTitle(R.string.description_extra_date)
-            dateView?.setDescription(it.toDateFormatStringWithUTC(appContext = context))
+            binding.dateView.setTitle(R.string.description_extra_date)
+            binding.dateView.setDescription(it.toDateFormatStringWithUTC(appContext = context))
         }
 
-        deviceView?.setVisible(show = description.extra?.device != null)
+        binding.deviceView.setVisible(show = description.extra?.device != null)
         description.extra?.device?.let {
-            deviceView?.setTitle(R.string.description_extra_from)
-            deviceView?.setDescription(it)
+            binding.deviceView.setTitle(R.string.description_extra_from)
+            binding.deviceView.setDescription(it)
         }
 
-        locationView?.setVisible(show = description.extra?.location != null)
+        binding.locationView.setVisible(show = description.extra?.location != null)
         description.extra?.location?.let {
-            locationView?.setTitle(R.string.description_extra_location)
-            locationView?.setDescription(it)
+            binding.locationView.setTitle(R.string.description_extra_location)
+            binding.locationView.setDescription(it)
         }
 
-        ipView?.setVisible(show = description.extra?.ip != null)
+        binding.ipView.setVisible(show = description.extra?.ip != null)
         description.extra?.ip?.let {
-            ipView?.setTitle(R.string.description_extra_ip)
-            ipView?.setDescription(it)
+            binding.ipView.setTitle(R.string.description_extra_ip)
+            binding.ipView.setDescription(it)
         }
     }
 
     private fun showContent(textContentIsVisible: Boolean = false, htmlContentIsVisible: Boolean = false, paymentContentIsVisible: Boolean = false) {
-        descriptionWebView?.setVisible(show = htmlContentIsVisible)
-        descriptionTextView?.setVisible(show = textContentIsVisible)
-        paymentView?.setVisible(show = paymentContentIsVisible)
+        binding.descriptionWebView.setVisible(show = htmlContentIsVisible)
+        binding.descriptionTextView.setVisible(show = textContentIsVisible)
+        binding.paymentView.setVisible(show = paymentContentIsVisible)
     }
 
     private fun initBlurringView() {

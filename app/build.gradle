@@ -20,7 +20,6 @@
  */
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'idea'
 apply plugin: 'realm-android'
@@ -118,10 +117,6 @@ configurations.configureEach {
     resolutionStrategy {
         force 'com.android.support:support-annotations:29.0.0'
     }
-}
-
-androidExtensions {
-    experimental = true
 }
 
 dependencies {

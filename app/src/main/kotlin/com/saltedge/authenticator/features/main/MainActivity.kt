@@ -44,8 +44,6 @@ import com.saltedge.authenticator.tools.showQrScannerActivity
 import com.saltedge.authenticator.tools.updateScreenshotLocking
 import com.saltedge.authenticator.widget.security.LockableActivity
 import com.saltedge.authenticator.widget.security.UnlockAppInputView
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_onboarding.skipActionView
 import javax.inject.Inject
 
 class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContainer, View.OnClickListener {
@@ -104,9 +102,9 @@ class MainActivity : LockableActivity(), ViewModelContract, SnackbarAnchorContai
         viewModel.onUnlock()
     }
 
-    override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView
+    override fun getUnlockAppInputView(): UnlockAppInputView? = binding?.unlockAppInputView
 
-    override fun getSnackbarAnchorView(): View? = activityRootLayout
+    override fun getSnackbarAnchorView(): View? = binding?.activityRootLayout
 
     override fun onDestroy() {
         super.onDestroy()

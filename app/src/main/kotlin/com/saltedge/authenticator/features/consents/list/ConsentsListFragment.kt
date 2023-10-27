@@ -42,7 +42,6 @@ import com.saltedge.authenticator.tools.navigateTo
 import com.saltedge.authenticator.tools.stopRefresh
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
-import kotlinx.android.synthetic.main.fragment_consents_list.*
 import javax.inject.Inject
 
 class ConsentsListFragment : BaseFragment(), ListItemClickListener {
@@ -119,16 +118,16 @@ class ConsentsListFragment : BaseFragment(), ListItemClickListener {
 
     private fun setupViews() {
         activity?.let {
-            consentsListView?.layoutManager = LinearLayoutManager(it)
-            consentsListView?.adapter = adapter
+            binding?.consentsListView?.layoutManager = LinearLayoutManager(it)
+            binding?.consentsListView?.adapter = adapter
             if (!this::headerDecorator.isInitialized) headerDecorator = SpaceItemDecoration(context = it)
-            consentsListView?.addItemDecoration(headerDecorator)
+            binding?.consentsListView?.addItemDecoration(headerDecorator)
         }
-        swipeRefreshLayout?.setOnRefreshListener {
+        binding?.swipeRefreshLayout?.setOnRefreshListener {
             viewModel.refreshConsents()
-            swipeRefreshLayout?.stopRefresh()
+            binding?.swipeRefreshLayout?.stopRefresh()
         }
-        swipeRefreshLayout?.setColorSchemeResources(R.color.primary, R.color.red, R.color.green)
+        binding?.swipeRefreshLayout?.setColorSchemeResources(R.color.primary, R.color.red, R.color.green)
         sharedViewModel.onRevokeConsent.observe(viewLifecycleOwner, Observer<String> { result ->
             viewModel.onRevokeConsent(result)
         })
