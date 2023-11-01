@@ -487,12 +487,4 @@ class SettingsListViewModelTest : ViewModelTest() {
         assertNull(viewModel.onLanguageChangedEvent.value)
         assertThat(viewModel.onCloseEvent.value, equalTo(ViewModelEvent(Unit)))
     }
-
-    @Test
-    @Throws(Exception::class)
-    fun onCancelClickTest() {
-        viewModel.onCancelClick()
-
-        assertThat(viewModel.onCloseEvent.value, equalTo(ViewModelEvent(Unit)))
-    }
 }

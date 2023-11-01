@@ -82,10 +82,6 @@ class SettingsListViewModel(
         onCloseEvent.postUnitEvent()
     }
 
-    fun onCancelClick() {
-        onCloseEvent.postUnitEvent()
-    }
-
     override fun onListItemClick(itemId: Int) {
         when (itemId) {
             R.string.settings_passcode_description -> passcodeClickEvent.postUnitEvent()

@@ -138,12 +138,11 @@ fun FragmentActivity.showResetDataAndSettingsDialog(listener: DialogInterface.On
     }
 }
 
-fun FragmentActivity.createSingleChoiceDialog(
+fun FragmentActivity.createLanguageDialog(
     items: Array<String>,
     selectedItemIndex: Int,
     onItemSelected: (Int) -> Unit,
-    onPositiveClick: () -> Unit,
-    onNegativeClick: () -> Unit
+    onPositiveClick: () -> Unit
 ): AlertDialog {
     return AlertDialog.Builder(this, R.style.InfoDialogTheme)
         .setTitle(R.string.settings_language)
@@ -153,8 +152,8 @@ fun FragmentActivity.createSingleChoiceDialog(
         .setPositiveButton(android.R.string.ok) { _, _ ->
             onPositiveClick()
         }
-        .setNegativeButton(R.string.actions_cancel) { _, _ ->
-            onNegativeClick()
+        .setNegativeButton(R.string.actions_cancel) { dialog, _ ->
+            dialog.dismiss()
         }
         .create()
 }

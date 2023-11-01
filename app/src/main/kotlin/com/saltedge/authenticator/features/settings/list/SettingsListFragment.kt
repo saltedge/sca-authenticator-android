@@ -42,7 +42,7 @@ import com.saltedge.authenticator.interfaces.AppbarMenuItemClickListener
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.tools.createSingleChoiceDialog
+import com.saltedge.authenticator.tools.createLanguageDialog
 import com.saltedge.authenticator.tools.navigateTo
 import com.saltedge.authenticator.tools.restartApp
 import com.saltedge.authenticator.tools.showResetDataAndSettingsDialog
@@ -96,12 +96,11 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
 
         viewModel.languageClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
             event.getContentIfNotHandled()?.let {
-                languageSelectDialog = activity?.createSingleChoiceDialog(
+                languageSelectDialog = activity?.createLanguageDialog(
                     items = viewModel.languageListItems,
                     selectedItemIndex = viewModel.selectedItemIndex,
                     onItemSelected = { which -> viewModel.selectedItemIndex = which },
-                    onPositiveClick = { viewModel.onOkClick() },
-                    onNegativeClick = { viewModel.onCancelClick() }
+                    onPositiveClick = { viewModel.onOkClick() }
                 )
                 languageSelectDialog?.show()
             }
@@ -109,9 +108,6 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
 
         viewModel.onLanguageChangedEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let { activity?.activityComponentsContract?.onLanguageChanged() }
-        })
-        viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it.getContentIfNotHandled()?.let { languageSelectDialog?.dismiss() }
         })
         viewModel.errorEvent.observe(this, Observer<String> {errorMessage ->
             view?.let {
