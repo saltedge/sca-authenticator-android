@@ -36,6 +36,10 @@ import java.security.spec.RSAPublicKeySpec
 import java.security.spec.X509EncodedKeySpec
 
 const val DEFAULT_KEY_SIZE = 2048
+const val PKCS1PublicHeader = "-----BEGIN RSA PUBLIC KEY-----"
+const val PKCS1PublicFooter = "-----END RSA PUBLIC KEY-----"
+const val PKCS8PublicHeader = "-----BEGIN PUBLIC KEY-----"
+const val PKCS8PublicFooter = "-----END PUBLIC KEY-----"
 
 object KeyAlgorithm {
     const val RSA = "RSA"
@@ -101,30 +105,25 @@ fun String.pemToPrivateKey(algorithm: String): PrivateKey? {
  */
 fun String.pemToPublicKey(algorithm: String): PublicKey? {
     return try {
-        val keyContent = this
+        val isRSAPublicKey = this.contains(PKCS1PublicHeader)
+        val cleanedKeyContent = this
             .replace("\\r\\n", "")
-            .replace("\\n", "")
-
-        val isRSAPublicKey = keyContent.contains("BEGIN RSA PUBLIC KEY")
-
-        val cleanedKeyContent = when {
-            isRSAPublicKey -> keyContent
-                .replace("-----BEGIN RSA PUBLIC KEY-----", "")
-                .replace("-----END RSA PUBLIC KEY-----", "")
-            else -> keyContent
-                .replace("-----BEGIN PUBLIC KEY-----", "")
-                .replace("-----END PUBLIC KEY-----", "")
-        }
+            .replace("\\n", "").let {
+                if (isRSAPublicKey) {
+                    it.replace(PKCS1PublicHeader, "").replace(PKCS1PublicFooter, "")
+                } else {
+                    it.replace(PKCS8PublicHeader, "").replace(PKCS8PublicFooter, "")
+                }
+            }
 
         val keyBytes = Base64.decode(cleanedKeyContent, Base64.NO_WRAP)
 
-        val keySpec: KeySpec = when {
-            isRSAPublicKey -> {
-                val modulus = BigInteger(1, keyBytes)
-                val exponent = BigInteger.valueOf(65537)
-                RSAPublicKeySpec(modulus, exponent)
-            }
-            else -> X509EncodedKeySpec(keyBytes)
+        val keySpec: KeySpec = if (isRSAPublicKey) {
+            val modulus = BigInteger(1, keyBytes)
+            val exponent = BigInteger.valueOf(65537)
+            RSAPublicKeySpec(modulus, exponent)
+        } else {
+            X509EncodedKeySpec(keyBytes)
         }
 
         KeyFactory.getInstance(algorithm).generatePublic(keySpec)
