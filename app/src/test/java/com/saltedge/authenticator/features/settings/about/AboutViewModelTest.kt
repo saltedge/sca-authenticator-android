@@ -91,7 +91,7 @@ class AboutViewModelTest : ViewModelTest() {
             equalTo(listOf(
                 SettingsItemViewModel(
                     titleId = R.string.about_app_version,
-                    description = "3.4.3"
+                    description = "3.4.4"
                 ),
                 SettingsItemViewModel(
                     titleId = R.string.about_copyright,
