@@ -62,7 +62,7 @@ class AuthorizationContentView : LinearLayout {
         if (showStatus) {
             if (!statusLayout.isVisible) {
                 statusLayout.alpha = 0.1f
-                statusLayout?.setVisible(show = showStatus)
+                statusLayout?.setVisible(show = true)
                 statusLayout?.animate()?.setDuration(500)?.alpha(1.0f)?.start()
             }
 
@@ -72,7 +72,7 @@ class AuthorizationContentView : LinearLayout {
             statusTitleTextView?.setText(viewMode.statusTitleResId)
             statusDescriptionTextView?.setText(viewMode.statusDescriptionResId)
         } else {
-            statusLayout?.setVisible(show = showStatus)
+            statusLayout?.setVisible(show = false)
         }
     }
 
@@ -110,38 +110,46 @@ class AuthorizationContentView : LinearLayout {
             }
             paymentContent -> {
                 showContent(paymentContentIsVisible = true)
+                description.payment?.paymentDate = null // TODO: remove
+
+                payeeView?.setVisible(show = description.payment?.payee != null)
                 description.payment?.payee?.let {
-                    payeeView?.setVisible(show = true)
                     payeeView?.setTitle(R.string.description_payee)
                     payeeView?.setDescription(it)
                 }
+
+                amountView?.setVisible(show = description.payment?.amount != null)
                 description.payment?.amount?.let {
-                    amountView?.setVisible(show = true)
                     amountView?.setTitle(R.string.description_amount)
                     amountView?.setDescription(it)
                 }
+
+                accountView?.setVisible(show = description.payment?.account != null)
                 description.payment?.account?.let {
-                    accountView?.setVisible(show = true)
                     accountView?.setTitle(R.string.description_account)
                     accountView?.setDescription(it)
                 }
+
+                paymentDateView?.setVisible(show = description.payment?.paymentDate != null)
                 description.payment?.paymentDate?.toDateFormatString(appContext = context)?.let {
-                    paymentDateView?.setVisible(show = true)
                     paymentDateView?.setTitle(R.string.description_payment_date)
                     paymentDateView?.setDescription(it)
                 }
+
+                feeView?.setVisible(show = description.payment?.fee != null)
                 description.payment?.fee?.let {
-                    feeView?.setVisible(show = true)
                     feeView?.setTitle(R.string.description_fees)
                     feeView?.setDescription(it)
                 }
+
+                exchangeRateView?.setVisible(show = description.payment?.exchangeRate != null)
                 description.payment?.exchangeRate?.let {
-                    exchangeRateView?.setVisible(show = true)
                     exchangeRateView?.setTitle(R.string.description_exchange_rate)
                     exchangeRateView?.setDescription(it)
                 }
+
+                referenceView?.setVisible(show = description.payment?.reference != null)
                 description.payment?.reference?.let {
-                    referenceView?.setVisible(show = true)
                     referenceView?.setTitle(R.string.description_reference)
                     referenceView?.setDescription(it)
                 }
@@ -157,23 +165,26 @@ class AuthorizationContentView : LinearLayout {
     }
 
     private fun showExtraContent(description: DescriptionData) {
+        dateView?.setVisible(show = description.extra?.actionDate != null)
         description.extra?.actionDate?.let {
-            dateView?.setVisible(show = true)
             dateView?.setTitle(R.string.description_extra_date)
             dateView?.setDescription(it.toDateFormatStringWithUTC(appContext = context))
         }
+
+        deviceView?.setVisible(show = description.extra?.device != null)
         description.extra?.device?.let {
-            deviceView?.setVisible(show = true)
             deviceView?.setTitle(R.string.description_extra_from)
             deviceView?.setDescription(it)
         }
+
+        locationView?.setVisible(show = description.extra?.location != null)
         description.extra?.location?.let {
-            locationView?.setVisible(show = true)
             locationView?.setTitle(R.string.description_extra_location)
             locationView?.setDescription(it)
         }
+
+        ipView?.setVisible(show = description.extra?.ip != null)
         description.extra?.ip?.let {
-            ipView?.setVisible(show = true)
             ipView?.setTitle(R.string.description_extra_ip)
             ipView?.setDescription(it)
         }

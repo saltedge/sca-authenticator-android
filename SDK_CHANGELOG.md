@@ -1,6 +1,14 @@
 [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
 # Salt Edge Authenticator Android SDK CHANGELOG
 
+## 2.1.0
+### Add
+* Support for PKCS1 keys
+
+## 1.5.0
+### Add
+* Support for PKCS1 keys
+
 ## 2.0.0
 
 ## 1.4.0
