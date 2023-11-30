@@ -37,7 +37,6 @@ import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupActivity
 import com.saltedge.authenticator.features.qr.QrScannerActivity
 import com.saltedge.authenticator.features.settings.about.AboutListFragment
-import com.saltedge.authenticator.features.settings.language.LanguageSelectDialog
 import com.saltedge.authenticator.features.settings.licenses.LicensesFragment
 import com.saltedge.authenticator.features.settings.list.SettingsListFragment
 import com.saltedge.authenticator.features.settings.passcode.PasscodeEditFragment
@@ -78,7 +77,6 @@ interface AppComponent {
     fun inject(fragment: SettingsListFragment)
     fun inject(fragment: AboutListFragment)
     fun inject(fragment: LicensesFragment)
-    fun inject(fragment: LanguageSelectDialog)
     fun inject(fragment: PasscodeEditFragment)
     fun inject(fragment: ConsentDetailsFragment)
 }

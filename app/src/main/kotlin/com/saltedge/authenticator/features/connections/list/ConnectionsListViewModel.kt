@@ -22,13 +22,11 @@ package com.saltedge.authenticator.features.connections.list
 
 import android.content.Context
 import android.content.DialogInterface
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
-import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.core.api.KEY_NAME
 import com.saltedge.authenticator.core.api.model.ConsentData
@@ -125,13 +123,9 @@ class ConnectionsListViewModel(
         )
     }
 
-    fun onRequestPermissionsResult(requestCode: Int, grantResults: IntArray) {
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE
-            && grantResults.any { it == PackageManager.PERMISSION_GRANTED }
-        ) {
-            locationManager.startLocationUpdates()
-            interactor.updateConnections()
-        }
+    fun updateLocationStateOfConnection() {
+        locationManager.startLocationUpdates()
+        interactor.updateConnections()
     }
 
     override fun onMenuItemClick(menuId: Int, itemId: Int) {

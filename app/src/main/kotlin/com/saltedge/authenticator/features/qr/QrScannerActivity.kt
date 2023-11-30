@@ -20,13 +20,17 @@
  */
 package com.saltedge.authenticator.features.qr
 
+import android.Manifest
 import android.Manifest.permission
 import android.app.Activity
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.SparseArray
 import android.view.SurfaceHolder
 import android.view.View
+import androidx.activity.ComponentActivity
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
@@ -36,10 +40,7 @@ import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
-import com.saltedge.authenticator.app.KEY_DEEP_LINK
-import com.saltedge.authenticator.app.ViewModelsFactory
-import com.saltedge.authenticator.app.authenticatorApp
+import com.saltedge.authenticator.app.*
 import com.saltedge.authenticator.features.main.SnackbarAnchorContainer
 import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -59,6 +60,29 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     lateinit var viewModel: QrScannerViewModel
     private var errorDialog: AlertDialog? = null
+    private val requestMultiplePermissions = (this as ComponentActivity).registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        permissions.forEach { actionMap ->
+            when (actionMap.key) {
+                Manifest.permission.CAMERA -> {
+                    if (actionMap.value) {
+                        startCameraSource()
+                    } else {
+                        viewModel.showErrorMessage(R.string.errors_camera_permission_denied)
+                    }
+                }
+                Manifest.permission.POST_NOTIFICATIONS -> {
+                    if (actionMap.value) {
+                        setupNotificationsPermissions()
+                    } else {
+                        viewModel.showErrorMessage(R.string.errors_notifications_permission_denied)
+                    }
+                }
+                else -> viewModel.showErrorMessage(R.string.errors_permission_denied)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,20 +95,6 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
 
     override fun onLockActivity() {
         errorDialog?.let { if (it.isShowing) it.dismiss() }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        runCatching {
-            viewModel.onRequestPermissionsResult(requestCode, grantResults)
-        }.onFailure {
-            viewModel.onCameraInitException()
-            Timber.e(it)
-        }
     }
 
     override fun onDestroy() {
@@ -102,9 +112,6 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
 
         viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let { finish() }
-        })
-        viewModel.permissionGrantEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it.getContentIfNotHandled()?.let { startCameraSource() }
         })
         viewModel.setActivityResult.observe(this, Observer<String> { deepLink ->
             this.setResult(Activity.RESULT_OK, intent.putExtra(KEY_DEEP_LINK, deepLink))
@@ -142,15 +149,19 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
 
     private fun setupSurface() {
         surfaceView?.holder?.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-            }
+            override fun surfaceChanged(
+                holder: SurfaceHolder,
+                format: Int,
+                width: Int,
+                height: Int
+            ) {}
 
             override fun surfaceDestroyed(holder: SurfaceHolder) {
                 cameraSource?.stop()
             }
 
             override fun surfaceCreated(holder: SurfaceHolder) {
-                startCameraSource()
+                setupNotificationsPermissions()
             }
         })
     }
@@ -175,6 +186,31 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
         viewModel.onReceivedCodes(codes)
     }
 
+    private fun setupNotificationsPermissions() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (ActivityCompat.checkSelfPermission(
+                        applicationContext,
+                        permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    startCameraSource()
+                } else {
+                    runCatching {
+                        requestMultiplePermissions.launch(arrayOf(permission.POST_NOTIFICATIONS))
+                    }.onFailure {
+                        Timber.e(it)
+                    }
+                }
+            } else {
+                startCameraSource()
+            }
+        } catch (e: Exception) {
+            viewModel.onSetupNotificationException()
+            Timber.e(e)
+        }
+    }
+
     private fun startCameraSource() {
         try {
             if (ActivityCompat.checkSelfPermission(
@@ -186,11 +222,12 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
                 if (holder != null) cameraSource?.start(holder)
                 else this@QrScannerActivity.showWarningSnack(textResId = R.string.errors_failed_to_start_camera)
             } else {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(permission.CAMERA),
-                    CAMERA_PERMISSION_REQUEST_CODE
-                )
+                runCatching {
+                    requestMultiplePermissions.launch(arrayOf(permission.CAMERA))
+                }.onFailure {
+                    viewModel.onCameraInitException()
+                    Timber.e(it)
+                }
             }
         } catch (e: Exception) {
             viewModel.onCameraInitException()

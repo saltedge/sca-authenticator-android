@@ -21,7 +21,6 @@
 package com.saltedge.authenticator.features.authorizations.list
 
 import android.content.DialogInterface
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Lifecycle
@@ -32,7 +31,6 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
 import com.saltedge.authenticator.app.KEY_OPTION_ID
-import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.core.api.KEY_ID
 import com.saltedge.authenticator.core.api.model.DescriptionData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
@@ -369,38 +367,10 @@ class AuthorizationsListViewModelTest : CoroutineViewModelTest() {
 
     @Test
     @Throws(Exception::class)
-    fun onRequestPermissionsResultTestCase1() {
-        //given
-        val requestCode = LOCATION_PERMISSION_REQUEST_CODE
-        val grantResults = intArrayOf(PackageManager.PERMISSION_GRANTED)
-
-        viewModel.onRequestPermissionsResult(requestCode = requestCode, grantResults = grantResults)
+    fun updateLocationStateOfConnectionTest() {
+       viewModel.updateLocationStateOfConnection()
 
         verify(mockLocationManager).startLocationUpdates()
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onRequestPermissionsResultTestCase2() {
-        //given
-        val requestCode = -1
-        val grantResults = intArrayOf(PackageManager.PERMISSION_GRANTED)
-
-        viewModel.onRequestPermissionsResult(requestCode = requestCode, grantResults = grantResults)
-
-        Mockito.verifyNoInteractions(mockLocationManager)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onRequestPermissionsResultTestCase3() {
-        //given
-        val requestCode = LOCATION_PERMISSION_REQUEST_CODE
-        val grantResults = intArrayOf(-1)
-
-        viewModel.onRequestPermissionsResult(requestCode = requestCode, grantResults = grantResults)
-
-        Mockito.verifyNoInteractions(mockLocationManager)
     }
 
     @Test

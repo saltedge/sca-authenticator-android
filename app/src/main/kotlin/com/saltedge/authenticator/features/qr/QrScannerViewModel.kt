@@ -22,13 +22,13 @@ package com.saltedge.authenticator.features.qr
 
 import android.content.pm.PackageManager
 import android.util.SparseArray
+import androidx.annotation.StringRes
 import androidx.core.util.forEach
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.vision.barcode.Barcode
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.core.tools.isValidAppLink
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
@@ -40,6 +40,7 @@ class QrScannerViewModel(
 ) : ViewModel(), LifecycleObserver {
     val onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val permissionGrantEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val notificationsPermissionGrantEvent = MutableLiveData<ViewModelEvent<Unit>>()
     val setActivityResult = MutableLiveData<String>()
     val errorMessageResId = MutableLiveData<ResId?>()
     val descriptionRes: ResId = if (connectionsRepository.isEmpty()) R.string.scan_qr_description_first else R.string.scan_qr_description
@@ -63,14 +64,12 @@ class QrScannerViewModel(
         errorMessageResId.postValue(R.string.errors_camera_init)
     }
 
-    fun onRequestPermissionsResult(requestCode: Int, grantResults: IntArray) {
-        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE
-            && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
-        ) {
-            permissionGrantEvent.postUnitEvent()
-        } else {
-            errorMessageResId.postValue(R.string.errors_permission_denied)
-        }
+    fun onSetupNotificationException() {
+        errorMessageResId.postValue(R.string.errors_notifications_setup)
+    }
+
+    fun showErrorMessage(@StringRes messageId: Int) {
+        errorMessageResId.postValue(messageId)
     }
 
     fun onErrorConfirmed() {

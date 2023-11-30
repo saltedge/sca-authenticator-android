@@ -29,9 +29,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.TestFactory
-import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.ConnectivityReceiverAbs
-import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.guid
 import com.saltedge.authenticator.core.api.KEY_NAME
 import com.saltedge.authenticator.features.connections.common.ConnectionItem
@@ -335,32 +333,13 @@ class ConnectionsListViewModelTest : ViewModelTest() {
 
     @Test
     @Throws(Exception::class)
-    fun onRequestPermissionsResultTestCase1() {
-        //given
-        val requestCode = LOCATION_PERMISSION_REQUEST_CODE
-        val grantResults = IntArray(1, init = { PackageManager.PERMISSION_GRANTED })
+    fun updateLocationStateOfConnectionTest() {
 
-        //when
-        viewModel.onRequestPermissionsResult(requestCode, grantResults)
+        viewModel.updateLocationStateOfConnection()
 
         //then
         Mockito.verify(mockLocationManager).startLocationUpdates()
         Mockito.verify(mockInteractor).updateConnections()
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun onRequestPermissionsResultTestCase2() {
-        //given
-        val requestCode = CAMERA_PERMISSION_REQUEST_CODE
-        val grantResults = IntArray(1, init = { PackageManager.PERMISSION_DENIED })
-
-        //when
-        viewModel.onRequestPermissionsResult(requestCode, grantResults)
-
-        //then
-        Mockito.verifyNoInteractions(mockLocationManager)
-        Mockito.verifyNoInteractions(mockInteractor)
     }
 
     @Test

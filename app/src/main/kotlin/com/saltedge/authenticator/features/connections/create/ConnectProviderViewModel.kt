@@ -30,7 +30,6 @@ import android.view.View
 import androidx.core.text.set
 import androidx.lifecycle.*
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.app.LOCATION_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ConnectAppLinkData
 import com.saltedge.authenticator.core.model.GUID
@@ -80,12 +79,8 @@ class ConnectProviderViewModel(
         return (webViewIsVisible && webViewCanGoBack == true).also { goBackEvent.postUnitEvent() }
     }
 
-    fun onRequestPermissionsResult(requestCode: Int, grantResults: IntArray) {
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE
-            && grantResults.any { it == PackageManager.PERMISSION_GRANTED }
-        ) {
-            locationManager.startLocationUpdates()
-        }
+    fun updateLocationStateOfConnection() {
+        locationManager.startLocationUpdates()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)

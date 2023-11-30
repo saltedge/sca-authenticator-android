@@ -24,14 +24,13 @@ apply plugin: 'idea'
 apply from: './jacoco.gradle'
 apply plugin: 'maven-publish'
 
-def libVersionCode = 4
-def libVersionName = "1.4.0"
+def libVersionCode = 5
+def libVersionName = "1.5.0"
 
 android {
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 30
-        compileSdkVersion 30
+        compileSdk 33
         versionCode libVersionCode
         versionName libVersionName
 
@@ -85,7 +84,7 @@ dependencies {
     testImplementation 'androidx.test:core:1.3.0'
     testImplementation 'org.robolectric:robolectric:4.5.1'
     testImplementation 'io.mockk:mockk:1.10.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test:runner:1.3.0'
     testImplementation project(':test_tools')
 }

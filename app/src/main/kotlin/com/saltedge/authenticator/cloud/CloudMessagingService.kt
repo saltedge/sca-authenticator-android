@@ -76,9 +76,9 @@ class CloudMessagingService : FirebaseMessagingService() {
             activityIntent.putExtra(KEY_CONNECTION_ID, connectionId)
             activityIntent.putExtra(KEY_AUTHORIZATION_ID, authorizationId)
 
-            val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE
+            val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE
             else PendingIntent.FLAG_UPDATE_CURRENT
-            PendingIntent.getActivity(this, 0, activityIntent, pendingIntent)
+            PendingIntent.getActivity(this, 0, activityIntent, flags)
         } else {
             null
         }

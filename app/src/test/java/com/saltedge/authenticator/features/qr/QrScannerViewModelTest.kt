@@ -25,11 +25,8 @@ import android.util.SparseArray
 import com.google.android.gms.vision.barcode.Barcode
 import com.saltedge.android.test_tools.ViewModelTest
 import com.saltedge.authenticator.R
-import com.saltedge.authenticator.TestAppTools
-import com.saltedge.authenticator.app.CAMERA_PERMISSION_REQUEST_CODE
 import com.saltedge.authenticator.app.QR_SCAN_REQUEST_CODE
 import com.saltedge.authenticator.models.ViewModelEvent
-import com.saltedge.authenticator.models.realm.RealmManagerAbs
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.*
@@ -42,7 +39,6 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class QrScannerViewModelTest : ViewModelTest() {
 
-    private val mockRealmManager = Mockito.mock(RealmManagerAbs::class.java)
     private val mockConnectionsRepository = Mockito.mock(ConnectionsRepositoryAbs::class.java)
     private lateinit var viewModel: QrScannerViewModel
 
@@ -127,44 +123,22 @@ class QrScannerViewModelTest : ViewModelTest() {
 
     @Test
     @Throws
-    fun onRequestPermissionsResultTestCase1() {
-        //given
-        val requestCode: Int = CAMERA_PERMISSION_REQUEST_CODE
-        val grantResults = IntArray(0)
-
+    fun onSetupNotificationExceptionTest() {
         //when
-        viewModel.onRequestPermissionsResult(requestCode, grantResults)
+        viewModel.onSetupNotificationException()
 
         //then
-        assertThat(viewModel.errorMessageResId.value, equalTo(R.string.errors_permission_denied))
+        assertThat(viewModel.errorMessageResId.value, equalTo(R.string.errors_notifications_setup))
     }
 
     @Test
     @Throws
-    fun onRequestPermissionsResultTestCase2() {
-        //given
-        val requestCode: Int = QR_SCAN_REQUEST_CODE
-        val grantResults = IntArray(1) { PackageManager.PERMISSION_GRANTED }
-
+    fun showErrorMessageTest() {
         //when
-        viewModel.onRequestPermissionsResult(requestCode, grantResults)
+        viewModel.showErrorMessage(messageId = R.string.errors_permission_denied)
 
         //then
         assertThat(viewModel.errorMessageResId.value, equalTo(R.string.errors_permission_denied))
-    }
-
-    @Test
-    @Throws
-    fun onRequestPermissionsResultTestCase3() {
-        //given
-        val requestCode: Int = CAMERA_PERMISSION_REQUEST_CODE
-        val grantResults = IntArray(1) { PackageManager.PERMISSION_GRANTED }
-
-        //when
-        viewModel.onRequestPermissionsResult(requestCode, grantResults)
-
-        //then
-        assertThat(viewModel.permissionGrantEvent.value, equalTo(ViewModelEvent(Unit)))
     }
 
     @Test
