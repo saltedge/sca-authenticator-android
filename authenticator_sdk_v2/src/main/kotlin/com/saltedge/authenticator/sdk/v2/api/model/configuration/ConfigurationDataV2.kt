@@ -36,7 +36,7 @@ data class ConfigurationDataV2(
     @SerializedName(KEY_API_VERSION) var apiVersion: String,
     @SerializedName(KEY_PROVIDER_ID) var providerId: String,
     @SerializedName(KEY_PROVIDER_NAME) var providerName: String,
-    @SerializedName(KEY_PROVIDER_LOGO_URL) var providerLogoUrl: String,
+    @SerializedName(KEY_PROVIDER_LOGO_URL) var providerLogoUrl: String? = null,
     @SerializedName(KEY_PROVIDER_SUPPORT_EMAIL) var providerSupportEmail: String,
     @SerializedName(KEY_PROVIDER_PUBLIC_KEY) var providerPublicKey: String,
     @SerializedName(KEY_GEOLOCATION_REQUIRED) var geolocationRequired: Boolean

@@ -214,7 +214,7 @@ class ConnectionsListInteractor(
         richConnections.filter {
             it.connection.code == result.providerId && result.providerLogoUrl != it.connection.logoUrl
         }.forEach {
-            it.connection.logoUrl = result.providerLogoUrl
+            it.connection.logoUrl = result.providerLogoUrl ?: ""
             connectionsRepository.saveModel(it.connection as Connection)
         }
         notifyDatasetChanges()
