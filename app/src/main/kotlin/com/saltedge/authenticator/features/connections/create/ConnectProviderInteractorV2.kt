@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.connections.create
 
 import android.content.Context
+import com.saltedge.authenticator.core.api.ERROR_CLASS_API_RESPONSE
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ConnectionStatus
 import com.saltedge.authenticator.core.tools.createRandomGuid
@@ -34,6 +35,7 @@ import com.saltedge.authenticator.sdk.v2.api.contract.FetchConfigurationListener
 import com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationDataV2
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
+import timber.log.Timber
 
 class ConnectProviderInteractorV2(
     private val appContext: Context,
@@ -52,7 +54,12 @@ class ConnectProviderInteractorV2(
     }
 
     override fun onFetchProviderConfigurationSuccess(result: ConfigurationDataV2) {
-        super.setNewConnection(result.toConnection())
+        try {
+            super.setNewConnection(result.toConnection())
+        } catch (e: Exception) {
+            Timber.e(e, "Error while processing configuration data: $result")
+            super.contract?.onReceiveApiError(ApiErrorData(errorClassName = ERROR_CLASS_API_RESPONSE, errorMessage = "Error while processing configuration data"))
+        }
     }
 
     override fun onFetchProviderConfigurationFailure(error: ApiErrorData) {
@@ -79,7 +86,7 @@ fun ConfigurationDataV2.toConnection(): Connection {
         it.guid = createRandomGuid()
         it.name = this.providerName
         it.code = this.providerId
-        it.logoUrl = this.providerLogoUrl
+        it.logoUrl = this.providerLogoUrl ?: ""
         it.connectUrl = this.scaServiceUrl
         it.status = "${ConnectionStatus.INACTIVE}"
         it.createdAt = DateTime.now().withZone(DateTimeZone.UTC).millis
