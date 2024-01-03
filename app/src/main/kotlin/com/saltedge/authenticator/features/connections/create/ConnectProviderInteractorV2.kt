@@ -21,6 +21,7 @@
 package com.saltedge.authenticator.features.connections.create
 
 import android.content.Context
+import com.saltedge.authenticator.core.api.ERROR_CLASS_API_RESPONSE
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ConnectionStatus
 import com.saltedge.authenticator.core.tools.createRandomGuid
@@ -57,6 +58,7 @@ class ConnectProviderInteractorV2(
             super.setNewConnection(result.toConnection())
         } catch (e: Exception) {
             Timber.e(e, "Error while processing configuration data: $result")
+            super.contract?.onReceiveApiError(ApiErrorData(errorClassName = ERROR_CLASS_API_RESPONSE, errorMessage = "Error while processing configuration data"))
         }
     }
 
