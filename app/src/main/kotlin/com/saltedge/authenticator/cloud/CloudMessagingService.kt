@@ -23,7 +23,6 @@ package com.saltedge.authenticator.cloud
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.saltedge.authenticator.core.api.KEY_AUTHORIZATION_ID
@@ -73,7 +72,6 @@ class CloudMessagingService : FirebaseMessagingService() {
         connectionId: String?,
         authorizationId: String?
     ): PendingIntent? {
-        Log.d("TEST_TEST", "CloudMessagingService: connectionId:${connectionId}, authorizationId:${authorizationId}")
         return if (connectionId?.isNotEmpty() == true && authorizationId?.isNotEmpty() == true) {
             val requestCode: Int = convertToRequestCodeNumber(authorizationId)
 
