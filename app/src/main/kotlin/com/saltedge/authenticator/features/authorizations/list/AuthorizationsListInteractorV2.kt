@@ -21,21 +21,30 @@
 package com.saltedge.authenticator.features.authorizations.list
 
 import com.saltedge.authenticator.app.AppTools
-import com.saltedge.authenticator.app.KEY_STATUS_CLOSED
 import com.saltedge.authenticator.core.api.model.DescriptionData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.api.model.error.isConnectionNotFound
+import com.saltedge.authenticator.core.api.model.error.isConnectionRevoked
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
-import com.saltedge.authenticator.features.authorizations.common.*
+import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
+import com.saltedge.authenticator.features.authorizations.common.LIFE_TIME_OF_FINAL_MODEL
+import com.saltedge.authenticator.features.authorizations.common.isClosed
+import com.saltedge.authenticator.features.authorizations.common.isFinalStatus
+import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
+import com.saltedge.authenticator.features.authorizations.common.toAuthorizationStatus
 import com.saltedge.authenticator.models.collectRichConnections
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationConfirmListener
 import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationDenyListener
-import com.saltedge.authenticator.sdk.v2.api.model.authorization.*
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationResponseData
+import com.saltedge.authenticator.sdk.v2.api.model.authorization.isNotExpired
 import com.saltedge.authenticator.sdk.v2.polling.PollingAuthorizationsContract
 import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2Abs
 import kotlinx.coroutines.CoroutineDispatcher
@@ -160,7 +169,8 @@ class AuthorizationsListInteractorV2(
     }
 
     private fun processAuthorizationsErrors(errors: List<ApiErrorData>) {
-        val invalidTokens = errors.filter { it.isConnectionNotFound() }.mapNotNull { it.accessToken }
+        val invalidTokens = errors.filter { it.isConnectionNotFound() || it.isConnectionRevoked() }
+            .mapNotNull { it.accessToken }
         if (invalidTokens.isNotEmpty()) {
             connectionsRepository.invalidateConnectionsByTokens(accessTokens = invalidTokens)
             richConnections = collectRichConnections()

@@ -86,11 +86,11 @@ abstract class ConnectProviderInteractor(
     abstract override fun requestCreateConnection(connection: Connection, cloudMessagingToken: String, connectQuery: String?)
 
     override fun onConnectionCreateSuccess(authenticationUrl: String, connectionId: String) {
-        if (authenticationUrl.isNotEmpty()) {
+        if (authenticationUrl.isNotEmpty() && connectionId.isNotEmpty()) {
+            connection.id = connectionId
             if (ApiV2Config.isReturnToUrl(authenticationUrl)) {
                 onReceiveReturnToUrl(authenticationUrl)
             } else {
-                connection.id = connectionId
                 this.authenticationUrl = authenticationUrl
                 contract?.onReceiveAuthenticationUrl()
             }
@@ -104,14 +104,14 @@ abstract class ConnectProviderInteractor(
             url = url,
             success = { connectionID, resultAccessToken ->
                 val accessToken = processAccessToken(resultAccessToken)
-                if (accessToken == null || accessToken.isEmpty()) {
+                if (accessToken.isNullOrEmpty()) {
                     contract?.onConnectionFailAuthentication("InvalidAccessToken", "Invalid Access Token.")
                 } else {
                     onConnectionSuccessAuthentication(connectionID, accessToken)
                 }
             },
-            error = {
-                errorClass, errorMessage -> contract?.onConnectionFailAuthentication(errorClass, errorMessage)
+            error = { errorClass, errorMessage ->
+                contract?.onConnectionFailAuthentication(errorClass, errorMessage)
             }
         )
     }
@@ -119,7 +119,7 @@ abstract class ConnectProviderInteractor(
     override fun onConnectionSuccessAuthentication(connectionId: ID?, accessToken: Token) {
         connectionId?.let { connection.id = it }
         connection.accessToken = accessToken
-        if (connection.accessToken.isNotEmpty()) {
+        if (connection.accessToken.isNotEmpty() && connection.id.isNotEmpty()) {
             connection.status = "${ConnectionStatus.ACTIVE}"
         }
         if (connectionsRepository.connectionExists(connection)) {

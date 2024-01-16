@@ -28,7 +28,6 @@ import android.graphics.Color
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationManagerCompat
-import com.saltedge.authenticator.cloud.CHANNEL_ID
 import com.saltedge.authenticator.cloud.CHANNEL_NAME
 import com.saltedge.authenticator.cloud.registerNotificationChannels
 import org.hamcrest.CoreMatchers.equalTo
@@ -58,7 +57,7 @@ class NotificationsToolsTest {
 
             val argument: NotificationChannel = captor.value
 
-            assertThat(argument.id, equalTo(CHANNEL_ID))
+            assertThat(argument.id, equalTo("com.saltedge.authenticator.notifications"))
             assertThat(argument.name.toString(), equalTo(CHANNEL_NAME))
             assertThat(argument.importance, equalTo(NotificationManagerCompat.IMPORTANCE_HIGH))
             assertThat(argument.lightColor, equalTo(Color.BLUE))
