@@ -67,7 +67,7 @@ android {
         targetSdkVersion 33
         compileSdk 33
 
-        versionCode 68
+        versionCode 69
         versionName '3.5.1'
 
         renderscriptTargetApi 21
