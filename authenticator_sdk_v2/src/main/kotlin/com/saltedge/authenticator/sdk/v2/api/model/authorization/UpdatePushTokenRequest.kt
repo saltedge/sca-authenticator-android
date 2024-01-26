@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2024 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,27 +18,23 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.authenticator.models.realm
+package com.saltedge.authenticator.sdk.v2.api.model.authorization
 
-import io.realm.RealmMigration
-import io.realm.RealmSchema
+import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
+import com.saltedge.authenticator.core.api.KEY_DATA
+import com.saltedge.authenticator.core.api.KEY_EXP
+import com.saltedge.authenticator.core.api.KEY_PUSH_TOKEN
+import com.saltedge.authenticator.core.tools.createExpiresAtTime
+import java.io.Serializable
 
-/**
- * running db migrations. migrations starts from 2 index
- */
-fun runMigrations(): RealmMigration {
-    return RealmMigration { realm, oldVersion, newVersion ->
-        val realmSchema: RealmSchema = realm.schema
-        for (i in (oldVersion + 1)..newVersion) {
-            when (i) {
-                2L -> realmSchema.runMigration2()
-                3L -> realmSchema.runMigration3()
-                4L -> realmSchema.runMigration4()
-                5L -> realmSchema.runMigration5()
-                // Here to add future migrations
-                // `XX -> realmSchema.runMigrationXX()`
-                // Where `XX` number of schema version
-            }
-        }
-    }
-}
+@Keep
+data class UpdatePushTokenRequest(
+    @SerializedName(KEY_DATA) val data: UpdatePushTokenRequestData,
+    @SerializedName(KEY_EXP) val requestExpirationTime: Int = createExpiresAtTime()
+) : Serializable
+
+@Keep
+data class UpdatePushTokenRequestData(
+    @SerializedName(KEY_PUSH_TOKEN) val pushToken: String
+) : Serializable

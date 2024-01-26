@@ -54,6 +54,10 @@ fun String.toConnectionsRevokeUrl(id: String): String {
     return createRequestUrl(this, "$API_CONNECTIONS/$id/revoke")
 }
 
+fun String.toUpdateConnectionUrl(id: String): String {
+    return createRequestUrl(this, "api/authenticator/v2/connections/$id/update")
+}
+
 fun String.toAuthorizationsIndexUrl(): String {
     return createRequestUrl(this, API_AUTHORIZATIONS)
 }

@@ -103,6 +103,10 @@ class AuthorizationsListViewModel(
         }
     }
 
+    fun onViewCreated() {
+        interactorV2.checkAndUpdatePushToken()
+    }
+
     fun onEmptyViewActionClick() {
         onQrScanClickEvent.postUnitEvent()
     }
@@ -190,6 +194,10 @@ class AuthorizationsListViewModel(
         findListItem(connectionID, authorizationID)?.let { item ->
             updateItemStatus(listItem = item, newStatus = AuthorizationStatus.ERROR)
         }
+    }
+
+    override fun onUpdatePushTokenFailed(error: ApiErrorData) {
+        errorEvent.postValue(ViewModelEvent(error))
     }
 
     override fun updateAuthorization(item: AuthorizationItemViewModel, confirm: Boolean) {

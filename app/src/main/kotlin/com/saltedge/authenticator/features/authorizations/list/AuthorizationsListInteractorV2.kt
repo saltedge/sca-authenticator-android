@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.authorizations.list
 
+import android.util.Log
 import com.saltedge.authenticator.app.AppTools
 import com.saltedge.authenticator.core.api.model.DescriptionData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
@@ -34,12 +35,16 @@ import com.saltedge.authenticator.features.authorizations.common.isClosed
 import com.saltedge.authenticator.features.authorizations.common.isFinalStatus
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationItemViewModel
 import com.saltedge.authenticator.features.authorizations.common.toAuthorizationStatus
+import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.collectRichConnections
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
+import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.models.toRichConnectionPair
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationConfirmListener
 import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationDenyListener
+import com.saltedge.authenticator.sdk.v2.api.contract.PushTokenUpdateListener
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationData
@@ -58,11 +63,13 @@ class AuthorizationsListInteractorV2(
     private val keyStoreManager: KeyManagerAbs,
     private val cryptoTools: CryptoToolsV2Abs,
     private val apiManager: ScaServiceClientAbs,
-    private val defaultDispatcher: CoroutineDispatcher
+    private val defaultDispatcher: CoroutineDispatcher,
+    private val preferenceRepository: PreferenceRepositoryAbs
 ) : AuthorizationsListInteractorAbs,
     AuthorizationConfirmListener,
     AuthorizationDenyListener,
-    PollingAuthorizationsContract
+    PollingAuthorizationsContract,
+    PushTokenUpdateListener
 {
     override var contract: AuthorizationsListInteractorCallback? = null
     override val noConnections: Boolean
@@ -109,6 +116,31 @@ class AuthorizationsListInteractorV2(
             )
         }
         return true
+    }
+
+    override fun checkAndUpdatePushToken() {
+        val storedPushToken = preferenceRepository.cloudMessagingToken
+        val connections = connectionsRepository.getActiveConnectionsByDifferentPushToken(storedPushToken)
+        richConnections = connections.mapNotNull { it.toRichConnectionPair(keyStoreManager) }.toMap()
+        richConnections.keys.forEach { connectionId ->
+            val richConnection = richConnections[connectionId]
+            if (richConnection != null) {
+                apiManager.updatePushToken(
+                    richConnection = richConnection,
+                    currentPushToken = richConnection.connection.pushToken,
+                    callback = this
+                )
+            }
+        }
+    }
+
+    override fun onUpdatePushTokenSuccess(connectionID: ID) {
+        val connection = connectionsRepository.getById(connectionID = connectionID)
+        connectionsRepository.saveModel(connection as Connection)
+    }
+
+    override fun onUpdatePushTokenFailed(error: ApiErrorData) {
+        contract?.onUpdatePushTokenFailed(error = error)
     }
 
     override fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection> =

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Salt Edge Authenticator distribution
  * (https://github.com/saltedge/sca-authenticator-android).
- * Copyright (c) 2019 Salt Edge Inc.
+ * Copyright (c) 2024 Salt Edge Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,25 +20,16 @@
  */
 package com.saltedge.authenticator.models.realm
 
-import io.realm.RealmMigration
 import io.realm.RealmSchema
 
 /**
- * running db migrations. migrations starts from 2 index
+ * Add the pushToken field to the Connection model
  */
-fun runMigrations(): RealmMigration {
-    return RealmMigration { realm, oldVersion, newVersion ->
-        val realmSchema: RealmSchema = realm.schema
-        for (i in (oldVersion + 1)..newVersion) {
-            when (i) {
-                2L -> realmSchema.runMigration2()
-                3L -> realmSchema.runMigration3()
-                4L -> realmSchema.runMigration4()
-                5L -> realmSchema.runMigration5()
-                // Here to add future migrations
-                // `XX -> realmSchema.runMigrationXX()`
-                // Where `XX` number of schema version
-            }
-        }
+fun RealmSchema.runMigration5() {
+    get("Connection")?.let { schema ->
+        schema
+            .addField("pushToken", String::class.java)
+            .setNullable("pushToken", true)
+            .transform { it.set("pushToken", null) }
     }
 }
