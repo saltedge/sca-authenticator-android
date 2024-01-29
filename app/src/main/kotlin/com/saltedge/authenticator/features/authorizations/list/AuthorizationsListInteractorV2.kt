@@ -43,7 +43,7 @@ import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import com.saltedge.authenticator.sdk.v2.api.API_V2_VERSION
 import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationConfirmListener
 import com.saltedge.authenticator.sdk.v2.api.contract.AuthorizationDenyListener
-import com.saltedge.authenticator.sdk.v2.api.contract.PushTokenUpdateListener
+import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionUpdateListener
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationResponseData
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.AuthorizationV2Data
 import com.saltedge.authenticator.sdk.v2.api.model.authorization.UpdateAuthorizationData
@@ -56,6 +56,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
+import timber.log.Timber
 
 class AuthorizationsListInteractorV2(
     private val connectionsRepository: ConnectionsRepositoryAbs,
@@ -68,7 +69,7 @@ class AuthorizationsListInteractorV2(
     AuthorizationConfirmListener,
     AuthorizationDenyListener,
     PollingAuthorizationsContract,
-    PushTokenUpdateListener
+    ConnectionUpdateListener
 {
     override var contract: AuthorizationsListInteractorCallback? = null
     override val noConnections: Boolean
@@ -119,7 +120,7 @@ class AuthorizationsListInteractorV2(
 
     override fun checkAndUpdatePushToken() {
         val storedPushToken = preferenceRepository.cloudMessagingToken
-        val connections = connectionsRepository.getActiveConnectionsByDifferentPushToken(storedPushToken)
+        val connections = connectionsRepository.getActiveConnectionsWithoutToken(storedPushToken)
         richConnections = connections.mapNotNull { it.toRichConnectionPair(keyStoreManager) }.toMap()
         richConnections.keys.forEach { connectionId ->
             val richConnection = richConnections[connectionId]
@@ -135,11 +136,12 @@ class AuthorizationsListInteractorV2(
 
     override fun onUpdatePushTokenSuccess(connectionID: ID) {
         val connection = connectionsRepository.getById(connectionID = connectionID)
+        connection?.pushToken = preferenceRepository.cloudMessagingToken
         connectionsRepository.saveModel(connection as Connection)
     }
 
     override fun onUpdatePushTokenFailed(error: ApiErrorData) {
-        contract?.onUpdatePushTokenFailed(error = error)
+        Timber.e("onUpdatePushTokenFailed class: ${error.errorClassName}, ,message: ${error.errorMessage}")
     }
 
     override fun getCurrentConnectionsAndKeysForPolling(): List<RichConnection> =

@@ -90,10 +90,10 @@ interface ApiInterface {
     ): Call<CreateAuthorizationResponse>
 
     @PATCH
-    fun updatePushTokenForConnection(
+    fun updateConnection(
         @Url requestUrl: String,
         @HeaderMap headersMap: Map<String, String>,
-        @Body requestBody: UpdatePushTokenRequest
+        @Body requestBody: ConnectionUpdateRequest
     ): Call<UpdatePushTokenResponse>
 
     @GET

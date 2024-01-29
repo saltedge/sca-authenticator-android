@@ -291,4 +291,34 @@ class ConnectionsRepositoryTest : DatabaseTestCase() {
             equalTo(listOf("Demo", "Test", "Demo (2)"))
         )
     }
+
+    @Test
+    @Throws(Exception::class)
+    fun getActiveConnectionsWithoutTokenTestCase1() {
+        Assert.assertTrue(ConnectionsRepository.isEmpty())
+
+        Connection().setGuid("guid1").setAccessToken("token1").setStatus(ConnectionStatus.ACTIVE).apply {
+            pushToken = "pushToken"
+        }.save()
+
+        assertThat(
+            ConnectionsRepository.getActiveConnectionsWithoutToken(storedPushToken = "storedPushToken").map { it.guid },
+            equalTo(listOf("guid1"))
+        )
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun getActiveConnectionsWithoutTokenTestCase2() {
+        Assert.assertTrue(ConnectionsRepository.isEmpty())
+
+        Connection().setGuid("guid1").setAccessToken("token1").setStatus(ConnectionStatus.INACTIVE).apply {
+            pushToken = "pushToken"
+        }.save()
+
+        assertThat(
+            ConnectionsRepository.getActiveConnectionsWithoutToken(storedPushToken = "storedPushToken").map { it.guid },
+            equalTo(listOf())
+        )
+    }
 }

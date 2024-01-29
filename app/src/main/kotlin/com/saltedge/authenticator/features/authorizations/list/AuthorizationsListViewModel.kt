@@ -196,10 +196,6 @@ class AuthorizationsListViewModel(
         }
     }
 
-    override fun onUpdatePushTokenFailed(error: ApiErrorData) {
-        errorEvent.postValue(ViewModelEvent(error))
-    }
-
     override fun updateAuthorization(item: AuthorizationItemViewModel, confirm: Boolean) {
         val result = if (item.isV2Api) {
             interactorV2.updateAuthorization(

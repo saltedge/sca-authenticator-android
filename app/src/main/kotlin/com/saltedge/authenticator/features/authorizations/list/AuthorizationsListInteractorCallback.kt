@@ -30,6 +30,5 @@ interface AuthorizationsListInteractorCallback {
     fun onAuthorizationsReceived(data: List<AuthorizationItemViewModel>, newModelsApiVersion: String)
     fun onConfirmDenySuccess(connectionID: ID, authorizationID: ID, newStatus: AuthorizationStatus? = null)
     fun onConfirmDenyFailure(error: ApiErrorData, connectionID: ID, authorizationID: ID)
-    fun onUpdatePushTokenFailed(error: ApiErrorData)
     val coroutineScope: CoroutineScope
 }
