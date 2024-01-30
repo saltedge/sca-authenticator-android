@@ -121,9 +121,8 @@ class AuthorizationsListInteractorV2(
     override fun checkAndUpdatePushToken() {
         val storedPushToken = preferenceRepository.cloudMessagingToken
         val connections = connectionsRepository.getActiveConnectionsWithoutToken(storedPushToken)
-        richConnections = connections.mapNotNull { it.toRichConnectionPair(keyStoreManager) }.toMap()
-        richConnections.keys.forEach { connectionId ->
-            val richConnection = richConnections[connectionId]
+        connections.forEach { connection ->
+            val richConnection = richConnections[connection.id]
             if (richConnection != null) {
                 apiManager.updatePushToken(
                     richConnection = richConnection,
