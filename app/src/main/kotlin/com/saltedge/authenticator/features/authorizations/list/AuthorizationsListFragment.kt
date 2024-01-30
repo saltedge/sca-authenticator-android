@@ -112,6 +112,7 @@ class AuthorizationsListFragment : BaseFragment(), AppbarMenuItemClickListener, 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
+        viewModel.onViewCreated()
     }
 
     override fun onStart() {

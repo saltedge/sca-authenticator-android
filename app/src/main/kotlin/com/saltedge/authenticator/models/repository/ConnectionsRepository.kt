@@ -120,6 +120,14 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
         ) }
     }
 
+    override fun getActiveConnectionsWithoutToken(storedPushToken: String): List<Connection> {
+        return RealmManager.getDefaultInstance().use { it.copyFromRealm(
+            it.queryActiveConnections()
+                .notEqualTo(DB_KEY_PUSH_TOKEN, storedPushToken)
+                .findAll()
+        ) }
+    }
+
     /**
      * Get all valid/active Connections filtered by connection url
      *
@@ -320,6 +328,7 @@ interface ConnectionsRepositoryAbs {
     fun getAllActiveConnections(): List<Connection>
     fun getAllActiveConnectionsByApi(apiVersion: String): List<Connection>
     fun getAllActiveByConnectUrl(connectionUrl: String): List<Connection>
+    fun getActiveConnectionsWithoutToken(storedPushToken: String): List<Connection>
     fun getAllActiveByProvider(providerID: ID): List<Connection>
     fun getByGuid(connectionGuid: GUID?): Connection?
     fun getById(connectionID: ID): Connection?

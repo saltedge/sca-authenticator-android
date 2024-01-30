@@ -137,7 +137,8 @@ class ViewModelsFactory @Inject constructor(
                         keyStoreManager = keyStoreManager,
                         cryptoTools = cryptoToolsV2,
                         apiManager = apiManagerV2,
-                        defaultDispatcher = Dispatchers.Default
+                        defaultDispatcher = Dispatchers.Default,
+                        preferenceRepository = preferenceRepository
                     ),
                     locationManager = DeviceLocationManager,
                     connectivityReceiver = connectivityReceiver

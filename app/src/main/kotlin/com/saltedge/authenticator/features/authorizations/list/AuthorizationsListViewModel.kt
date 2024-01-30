@@ -103,6 +103,10 @@ class AuthorizationsListViewModel(
         }
     }
 
+    fun onViewCreated() {
+        interactorV2.checkAndUpdatePushToken()
+    }
+
     fun onEmptyViewActionClick() {
         onQrScanClickEvent.postUnitEvent()
     }

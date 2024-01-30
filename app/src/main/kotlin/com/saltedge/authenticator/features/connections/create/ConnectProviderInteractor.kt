@@ -119,6 +119,7 @@ abstract class ConnectProviderInteractor(
     override fun onConnectionSuccessAuthentication(connectionId: ID?, accessToken: Token) {
         connectionId?.let { connection.id = it }
         connection.accessToken = accessToken
+        connection.pushToken = preferenceRepository.cloudMessagingToken
         if (connection.accessToken.isNotEmpty() && connection.id.isNotEmpty()) {
             connection.status = "${ConnectionStatus.ACTIVE}"
         }

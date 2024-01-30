@@ -35,6 +35,7 @@ package com.saltedge.authenticator.core.model
  * @property consentManagementSupported - consent management is supported by Provider or not. Flag from Configuration
  * @property geolocationRequired - collection of geolocation data is mandatory or not. Flag from Configuration
  * @property providerRsaPublicKeyPem - asymmetric RSA Public Key (in PEM format) linked to the Provider
+ * @property pushToken - token which uniquely identifies Mobile Application for the Push Notification system
  */
 interface ConnectionAbs {
     var guid: GUID
@@ -52,4 +53,5 @@ interface ConnectionAbs {
     var geolocationRequired: Boolean?
     var providerRsaPublicKeyPem: String
     var apiVersion: String
+    var pushToken: String?
 }

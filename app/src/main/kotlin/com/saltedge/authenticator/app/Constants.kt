@@ -28,6 +28,7 @@ const val DB_KEY_ACCESS_TOKEN = "accessToken"
 const val DB_KEY_CREATED_AT = "createdAt"
 const val DB_KEY_API_VERSION = "apiVersion"
 const val DB_KEY_CONNECT_URL = "connectUrl"
+const val DB_KEY_PUSH_TOKEN = "pushToken"
 
 const val KEY_CODE = "code"
 const val KEY_GUID = "guid"
