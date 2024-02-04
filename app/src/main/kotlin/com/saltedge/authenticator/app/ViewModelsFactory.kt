@@ -23,6 +23,7 @@ package com.saltedge.authenticator.app
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.saltedge.authenticator.cloud.PushTokenUpdater
 import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.actions.SubmitActionViewModel
@@ -78,7 +79,8 @@ class ViewModelsFactory @Inject constructor(
     val realmManager: RealmManagerAbs,
     val apiManagerV1: AuthenticatorApiManagerAbs,
     val apiManagerV2: ScaServiceClient,
-    val connectivityReceiver: ConnectivityReceiverAbs
+    val connectivityReceiver: ConnectivityReceiverAbs,
+    val pushTokenUpdater: PushTokenUpdater
 ) : ViewModelProvider.Factory {
 
     private var _scaApiVersion: String = "1"
@@ -108,7 +110,8 @@ class ViewModelsFactory @Inject constructor(
                         connectionsRepository = connectionsRepository,
                         apiManagerV1 = apiManagerV1,
                         apiManagerV2 = apiManagerV2,
-                        preferenceRepository = preferenceRepository
+                        preferenceRepository = preferenceRepository,
+                        pushTokenUpdater = pushTokenUpdater
                     )
                 ) as T
             }
@@ -137,8 +140,7 @@ class ViewModelsFactory @Inject constructor(
                         keyStoreManager = keyStoreManager,
                         cryptoTools = cryptoToolsV2,
                         apiManager = apiManagerV2,
-                        defaultDispatcher = Dispatchers.Default,
-                        preferenceRepository = preferenceRepository
+                        defaultDispatcher = Dispatchers.Default
                     ),
                     locationManager = DeviceLocationManager,
                     connectivityReceiver = connectivityReceiver

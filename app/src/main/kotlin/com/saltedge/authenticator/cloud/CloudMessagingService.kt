@@ -30,8 +30,11 @@ import com.saltedge.authenticator.core.api.KEY_CONNECTION_ID
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.models.repository.PreferenceRepository
 import timber.log.Timber
+import javax.inject.Inject
 
 class CloudMessagingService : FirebaseMessagingService() {
+
+    @Inject lateinit var pushTokenUpdater: PushTokenUpdater
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         this.showAuthNotification(
@@ -47,6 +50,7 @@ class CloudMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         saveToken(token)
+        pushTokenUpdater.checkAndUpdatePushToken()
     }
 
     /**
