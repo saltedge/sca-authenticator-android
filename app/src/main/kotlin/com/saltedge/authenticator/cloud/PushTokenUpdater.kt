@@ -45,6 +45,6 @@ open class PushTokenUpdater(
     }
 
     override fun onUpdatePushTokenFailed(error: ApiErrorData) {
-        Timber.e("onUpdatePushTokenFailed class: ${error.errorClassName}, ,message: ${error.errorMessage}")
+        Timber.e("onUpdatePushTokenFailed class: ${error.errorClassName}, message: ${error.errorMessage}")
     }
 }

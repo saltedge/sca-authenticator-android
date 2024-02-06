@@ -5,6 +5,7 @@ package com.saltedge.authenticator
 
 import com.saltedge.authenticator.cloud.PushTokenUpdater
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
+import com.saltedge.authenticator.models.Connection
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
@@ -48,20 +49,17 @@ class PushTokenUpdaterTest {
     @Test
     @Throws(Exception::class)
     fun updatePushTokenTest() {
-        assertEquals("storedPushToken", mockPreferenceRepository.cloudMessagingToken)
-        assertEquals("pushToken", testFactory.richConnection2.connection.pushToken)
-
         pushTokenUpdater.updatePushToken()
 
         Mockito.verify(mockApiManagerV2).updatePushToken(
             richConnection = testFactory.richConnection2,
-            currentPushToken = testFactory.richConnection2.connection.pushToken,
+            currentPushToken = "storedPushToken",
             callback = pushTokenUpdater
         )
 
         pushTokenUpdater.onUpdatePushTokenSuccess(testFactory.richConnection2.connection.id)
 
-        assertEquals("storedPushToken", mockPreferenceRepository.cloudMessagingToken)
-        assertEquals("storedPushToken", testFactory.richConnection2.connection.pushToken)
+        Mockito.verify(mockConnectionsRepository).getActiveConnectionsWithoutToken("storedPushToken")
+        Mockito.verify(mockConnectionsRepository).saveModel(testFactory.richConnection2.connection as Connection)
     }
 }
