@@ -50,7 +50,7 @@ class CloudMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         saveToken(token)
-        pushTokenUpdater.checkAndUpdatePushToken()
+        pushTokenUpdater.updatePushToken()
     }
 
     /**

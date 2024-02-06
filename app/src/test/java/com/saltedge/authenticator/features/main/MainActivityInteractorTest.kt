@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.main
 
+import com.saltedge.authenticator.cloud.PushTokenUpdater
 import com.saltedge.authenticator.core.model.ConnectionStatus
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
@@ -50,6 +51,7 @@ class MainActivityInteractorTest {
     private val mockApiManagerV1 = Mockito.mock(AuthenticatorApiManagerAbs::class.java)
     private val mockApiManagerV2 = Mockito.mock(ScaServiceClientAbs::class.java)
     private val mockPreferenceRepository = Mockito.mock(PreferenceRepositoryAbs::class.java)
+    private val mockPushTokenUpdater = Mockito.mock(PushTokenUpdater::class.java)
     private val mockPrivateKey = Mockito.mock(PrivateKey::class.java)
 
     private val connection1 = Connection().apply {
@@ -88,7 +90,8 @@ class MainActivityInteractorTest {
             apiManagerV2 = mockApiManagerV2,
             connectionsRepository = mockConnectionsRepository,
             keyStoreManager = mockKeyStoreManager,
-            preferenceRepository = mockPreferenceRepository
+            preferenceRepository = mockPreferenceRepository,
+            pushTokenUpdater = mockPushTokenUpdater
         )
     }
 

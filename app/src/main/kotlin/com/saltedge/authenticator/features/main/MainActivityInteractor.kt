@@ -44,7 +44,7 @@ class MainActivityInteractor(
         get() = connectionsRepository.isEmpty()
 
     fun updatePushToken() {
-        pushTokenUpdater.checkAndUpdatePushToken()
+        pushTokenUpdater.updatePushToken()
     }
 
     fun sendRevokeRequestForConnections() {
