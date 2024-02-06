@@ -47,7 +47,7 @@ class PushTokenUpdaterTest {
 
     @Test
     @Throws(Exception::class)
-    fun checkAndUpdatePushTokenTest() {
+    fun updatePushTokenTest() {
         assertEquals("storedPushToken", mockPreferenceRepository.cloudMessagingToken)
         assertEquals("pushToken", testFactory.richConnection2.connection.pushToken)
 
