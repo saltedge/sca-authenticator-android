@@ -34,5 +34,4 @@ interface AuthorizationsListInteractorAbs {
         confirm: Boolean,
         locationDescription: String?
     ): Boolean
-    fun checkAndUpdatePushToken() {}
 }

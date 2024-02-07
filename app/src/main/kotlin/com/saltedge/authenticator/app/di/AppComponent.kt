@@ -22,6 +22,8 @@ package com.saltedge.authenticator.app.di
 
 import android.content.Context
 import com.saltedge.authenticator.app.ViewModelsFactory
+import com.saltedge.authenticator.cloud.CloudMessagingService
+import com.saltedge.authenticator.cloud.PushTokenUpdater
 import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.actions.SubmitActionFragment
@@ -61,6 +63,7 @@ interface AppComponent {
     fun biometricPrompt(): BiometricPromptAbs?
     fun realmManager() : RealmManagerAbs
     fun viewModelsFactory() : ViewModelsFactory
+    fun pushTokenUpdater(): PushTokenUpdater
 
     fun inject(activity: LockableActivity)
     fun inject(activity: OnboardingSetupActivity)
@@ -79,4 +82,5 @@ interface AppComponent {
     fun inject(fragment: LicensesFragment)
     fun inject(fragment: PasscodeEditFragment)
     fun inject(fragment: ConsentDetailsFragment)
+    fun inject(service: CloudMessagingService)
 }

@@ -67,6 +67,7 @@ class TestFactory {
         createdAt = 200L
         updatedAt = 200L
         apiVersion = API_V2_VERSION
+        pushToken = "currentPushToken"
     }
     val connection3Inactive = Connection().apply {
         id = "3"
