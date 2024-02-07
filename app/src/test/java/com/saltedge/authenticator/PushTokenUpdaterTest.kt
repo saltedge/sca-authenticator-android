@@ -53,13 +53,15 @@ class PushTokenUpdaterTest {
 
         Mockito.verify(mockApiManagerV2).updatePushToken(
             richConnection = testFactory.richConnection2,
-            currentPushToken = "storedPushToken",
+            currentPushToken = "currentPushToken",
             callback = pushTokenUpdater
         )
 
+        Mockito.verify(mockConnectionsRepository).getActiveConnectionsWithoutToken(storedPushToken = "storedPushToken")
+
         pushTokenUpdater.onUpdatePushTokenSuccess(testFactory.richConnection2.connection.id)
 
-        Mockito.verify(mockConnectionsRepository).getActiveConnectionsWithoutToken("storedPushToken")
         Mockito.verify(mockConnectionsRepository).saveModel(testFactory.richConnection2.connection as Connection)
+        assertEquals(testFactory.richConnection2.connection.pushToken, "storedPushToken")
     }
 }
