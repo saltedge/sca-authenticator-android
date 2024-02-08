@@ -35,6 +35,7 @@ import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.applyNightMode
 import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.databinding.FragmentBaseListBinding
+import com.saltedge.authenticator.features.main.activityComponentsContract
 import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.features.settings.common.SettingsItemViewModel
@@ -42,6 +43,7 @@ import com.saltedge.authenticator.interfaces.AppbarMenuItemClickListener
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
+import com.saltedge.authenticator.tools.createLanguageDialog
 import com.saltedge.authenticator.tools.navigateTo
 import com.saltedge.authenticator.tools.restartApp
 import com.saltedge.authenticator.tools.showResetDataAndSettingsDialog
@@ -57,6 +59,7 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
     private var adapter: SettingsAdapter? = null
     private var alertDialog: AlertDialog? = null
     private lateinit var binding: FragmentBaseListBinding
+    private var languageSelectDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,6 +88,7 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
 
     override fun closeActiveDialogs() {
         if (alertDialog?.isShowing == true) alertDialog?.dismiss()
+        if (languageSelectDialog?.isShowing == true) languageSelectDialog?.dismiss()
     }
 
     override fun onAppbarMenuItemClick(menuItem: MenuItem) {
@@ -95,7 +99,24 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
         viewModel = ViewModelProvider(this, viewModelFactory).get(SettingsListViewModel::class.java)
 
         viewModel.languageClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
-            event.getContentIfNotHandled()?.let { navigateTo(R.id.language) }
+            event.getContentIfNotHandled()?.let {
+                languageSelectDialog = activity?.createLanguageDialog(
+                    items = viewModel.languageListItems,
+                    selectedItemIndex = viewModel.selectedItemIndex,
+                    onItemSelected = { which -> viewModel.selectedItemIndex = which },
+                    onPositiveClick = { viewModel.onOkClick() }
+                )
+                languageSelectDialog?.show()
+            }
+        })
+
+        viewModel.onLanguageChangedEvent.observe(this, Observer<ViewModelEvent<Unit>> {
+            it.getContentIfNotHandled()?.let { activity?.activityComponentsContract?.onLanguageChanged() }
+        })
+        viewModel.errorEvent.observe(this, Observer<String> {errorMessage ->
+            view?.let {
+                Snackbar.make(it, errorMessage, Snackbar.LENGTH_LONG).show()
+            }
         })
         viewModel.passcodeClickEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
             event.getContentIfNotHandled()?.let { navigateTo(actionRes = R.id.passcode_edit) }

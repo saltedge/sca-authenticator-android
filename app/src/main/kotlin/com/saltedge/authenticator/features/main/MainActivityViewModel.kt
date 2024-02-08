@@ -69,6 +69,10 @@ class MainActivityViewModel(
 
     private var initialQrScanWasStarted = false
 
+    init {
+        interactor.updatePushToken()
+    }
+
     fun bindLifecycleObserver(lifecycle: Lifecycle) {
         lifecycle.let {
             it.removeObserver(this)

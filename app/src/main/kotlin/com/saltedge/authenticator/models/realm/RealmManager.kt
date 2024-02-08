@@ -29,7 +29,7 @@ import io.realm.Realm
 import io.realm.RealmConfiguration
 import timber.log.Timber
 
-const val DB_SCHEMA_VERSION = 4L
+const val DB_SCHEMA_VERSION = 5L
 
 interface RealmManagerAbs {
     val initialized: Boolean

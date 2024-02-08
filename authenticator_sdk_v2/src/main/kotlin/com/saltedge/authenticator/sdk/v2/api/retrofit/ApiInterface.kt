@@ -27,6 +27,7 @@ import com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationRe
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionRequest
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponse
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionResponse
+import com.saltedge.authenticator.sdk.v2.api.model.connection.UpdatePushTokenResponse
 import com.saltedge.authenticator.sdk.v2.api.model.consent.ConsentRevokeResponse
 import retrofit2.Call
 import retrofit2.http.*
@@ -87,6 +88,13 @@ interface ApiInterface {
         @HeaderMap headersMap: Map<String, String>,
         @Body requestBody: CreateAuthorizationRequest
     ): Call<CreateAuthorizationResponse>
+
+    @PATCH
+    fun updateConnection(
+        @Url requestUrl: String,
+        @HeaderMap headersMap: Map<String, String>,
+        @Body requestBody: ConnectionUpdateRequest
+    ): Call<UpdatePushTokenResponse>
 
     @GET
     fun activeConsents(

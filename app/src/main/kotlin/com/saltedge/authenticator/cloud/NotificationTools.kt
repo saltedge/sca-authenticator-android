@@ -32,9 +32,11 @@ import androidx.core.app.NotificationCompat
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.buildVersion26orGreater
 
-const val CHANNEL_ID = "com.saltedge.authenticator.notifications"
 const val CHANNEL_NAME = "SaltEdge Authenticator Channel"
 const val NOTIFICATION_ID = 201
+
+val Context.notificationChannelId: String
+    get() = this.getString(R.string.default_notification_channel_id)
 
 /**
  * Create notification channel (from SDK26) with specific settings
@@ -45,11 +47,10 @@ const val NOTIFICATION_ID = 201
 fun Context.registerNotificationChannels() {
     if (buildVersion26orGreater) {
         val notificationChannel: NotificationChannel = NotificationChannel(
-            CHANNEL_ID,
+            this.notificationChannelId,
             CHANNEL_NAME,
             NotificationManager.IMPORTANCE_HIGH
         ).apply {
-
             // Configure the notification channel.
             enableLights(true)
             lightColor = Color.BLUE
@@ -77,7 +78,7 @@ fun Context.showAuthNotification(
 ) {
     val contentTitle = notificationTitle ?: this.getString(R.string.authorizations_notification_title)
     val contentText = notificationBody ?: this.getString(R.string.authorizations_notification_description)
-    val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
+    val notificationBuilder = NotificationCompat.Builder(this, this.notificationChannelId)
         .setSmallIcon(R.drawable.ic_logo_app_notifications)
         .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.mipmap.ic_launcher))
         .setContentTitle(contentTitle)

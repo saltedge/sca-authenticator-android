@@ -23,6 +23,7 @@ package com.saltedge.authenticator.app
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.saltedge.authenticator.cloud.PushTokenUpdater
 import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
 import com.saltedge.authenticator.features.actions.SubmitActionViewModel
@@ -48,7 +49,6 @@ import com.saltedge.authenticator.features.main.MainActivityViewModel
 import com.saltedge.authenticator.features.onboarding.OnboardingSetupViewModel
 import com.saltedge.authenticator.features.qr.QrScannerViewModel
 import com.saltedge.authenticator.features.settings.about.AboutViewModel
-import com.saltedge.authenticator.features.settings.language.LanguageSelectViewModel
 import com.saltedge.authenticator.features.settings.licenses.LicensesViewModel
 import com.saltedge.authenticator.features.settings.list.SettingsListInteractorV1
 import com.saltedge.authenticator.features.settings.list.SettingsListInteractorV2
@@ -79,7 +79,8 @@ class ViewModelsFactory @Inject constructor(
     val realmManager: RealmManagerAbs,
     val apiManagerV1: AuthenticatorApiManagerAbs,
     val apiManagerV2: ScaServiceClient,
-    val connectivityReceiver: ConnectivityReceiverAbs
+    val connectivityReceiver: ConnectivityReceiverAbs,
+    val pushTokenUpdater: PushTokenUpdater
 ) : ViewModelProvider.Factory {
 
     private var _scaApiVersion: String = "1"
@@ -109,7 +110,8 @@ class ViewModelsFactory @Inject constructor(
                         connectionsRepository = connectionsRepository,
                         apiManagerV1 = apiManagerV1,
                         apiManagerV2 = apiManagerV2,
-                        preferenceRepository = preferenceRepository
+                        preferenceRepository = preferenceRepository,
+                        pushTokenUpdater = pushTokenUpdater
                     )
                 ) as T
             }
@@ -244,12 +246,6 @@ class ViewModelsFactory @Inject constructor(
             }
             modelClass.isAssignableFrom(LicensesViewModel::class.java) -> {
                 return LicensesViewModel(appContext) as T
-            }
-            modelClass.isAssignableFrom(LanguageSelectViewModel::class.java) -> {
-                return LanguageSelectViewModel(
-                    appContext = appContext,
-                    preferenceRepository = preferenceRepository
-                ) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

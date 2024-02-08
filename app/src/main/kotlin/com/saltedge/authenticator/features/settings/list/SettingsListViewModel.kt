@@ -34,6 +34,9 @@ import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.interfaces.MenuItem
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
+import com.saltedge.authenticator.tools.currentAppLocaleName
+import com.saltedge.authenticator.tools.getAvailableLocalizations
+import com.saltedge.authenticator.tools.localeCodeToName
 import com.saltedge.authenticator.tools.postUnitEvent
 
 class SettingsListViewModel(
@@ -58,6 +61,26 @@ class SettingsListViewModel(
         get() = listItems.value
     val spacesPositions: Array<Int>
         get() = arrayOf(0, listItems.value?.lastIndex ?: 0)
+
+    private var availableLocales = appContext.getAvailableLocalizations().sorted()
+    var languageListItems: Array<String> = availableLocales.map { it.localeCodeToName() }.toTypedArray()
+    var selectedItemIndex: Int = languageListItems.indexOf(appContext.currentAppLocaleName())
+    val onLanguageChangedEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val onCloseEvent = MutableLiveData<ViewModelEvent<Unit>>()
+    val errorEvent = MutableLiveData<String>()
+
+    fun onOkClick() {
+        onCloseEvent.postUnitEvent()
+        if (selectedItemIndex <= 0 && selectedItemIndex < languageListItems.size) {
+            if (appContext.currentAppLocaleName() != languageListItems[selectedItemIndex]) {
+                preferenceRepository.currentLocale = availableLocales[selectedItemIndex]
+                onLanguageChangedEvent.postUnitEvent()
+            }
+        } else {
+            errorEvent.postValue(appContext.getString(R.string.action_error_title))
+        }
+        onCloseEvent.postUnitEvent()
+    }
 
     override fun onListItemClick(itemId: Int) {
         when (itemId) {

@@ -34,6 +34,7 @@ fun runMigrations(): RealmMigration {
                 2L -> realmSchema.runMigration2()
                 3L -> realmSchema.runMigration3()
                 4L -> realmSchema.runMigration4()
+                5L -> realmSchema.runMigration5()
                 // Here to add future migrations
                 // `XX -> realmSchema.runMigrationXX()`
                 // Where `XX` number of schema version

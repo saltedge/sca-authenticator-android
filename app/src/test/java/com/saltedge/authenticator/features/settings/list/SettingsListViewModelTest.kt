@@ -466,4 +466,25 @@ class SettingsListViewModelTest : ViewModelTest() {
     fun testSpacesPositions() {
         assertThat(viewModel.spacesPositions, equalTo(arrayOf(0, viewModel.listItemsValues!!.lastIndex)))
     }
+
+    @Test
+    @Throws(Exception::class)
+    fun languageListItemsTest() {
+        assertThat(viewModel.languageListItems, equalTo(arrayOf("English")))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun selectedItemIndexTest() {
+        assertThat(viewModel.selectedItemIndex, equalTo(0))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun onOkClickTest() {//TODO add more cases with onLanguageChangedEvent when new languages will appear
+        viewModel.onOkClick()
+
+        assertNull(viewModel.onLanguageChangedEvent.value)
+        assertThat(viewModel.onCloseEvent.value, equalTo(ViewModelEvent(Unit)))
+    }
 }

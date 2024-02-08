@@ -275,6 +275,15 @@ class ScaServiceClient : ScaServiceClientAbs {
                 providerId = providerId
             )
     }
+
+    override fun updatePushToken(
+        richConnection: RichConnection,
+        currentPushToken: String?,
+        callback: ConnectionUpdateListener
+    ) {
+        ConnectionUpdateConnector(apiInterface = RestClient.apiInterface, callback = callback)
+            .updatePushToken(richConnection, currentPushToken)
+    }
 }
 
 interface ScaServiceClientAbs {
@@ -330,5 +339,11 @@ interface ScaServiceClientAbs {
         richConnection: RichConnection,
         providerId: ID,
         callback: ShowConnectionConfigurationListener
+    )
+
+    fun updatePushToken(
+        richConnection: RichConnection,
+        currentPushToken: String?,
+        callback: ConnectionUpdateListener
     )
 }

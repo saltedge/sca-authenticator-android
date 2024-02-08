@@ -20,6 +20,7 @@
  */
 package com.saltedge.authenticator.features.main
 
+import com.saltedge.authenticator.cloud.PushTokenUpdater
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.model.isActive
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
@@ -36,10 +37,15 @@ class MainActivityInteractor(
     private val apiManagerV2: ScaServiceClientAbs,
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyManagerAbs,
-    private val preferenceRepository: PreferenceRepositoryAbs
+    private val preferenceRepository: PreferenceRepositoryAbs,
+    private val pushTokenUpdater: PushTokenUpdater
 ) {
     val noConnections: Boolean
         get() = connectionsRepository.isEmpty()
+
+    fun updatePushToken() {
+        pushTokenUpdater.updatePushToken()
+    }
 
     fun sendRevokeRequestForConnections() {
         val richConnections: List<RichConnection> = connectionsRepository.getAllActiveConnections()

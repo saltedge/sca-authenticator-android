@@ -51,6 +51,15 @@ fun ApiErrorData.isConnectionNotFound(): Boolean =
     errorClassName == ERROR_CLASS_CONNECTION_NOT_FOUND
 
 /**
+ * Checks if errorClassName is equal to ERROR_CLASS_CONNECTION_REVOKED
+ *
+ * @receiver api error
+ * @return boolean. true if errorClassName == ERROR_CLASS_CONNECTION_REVOKED
+ */
+fun ApiErrorData.isConnectionRevoked(): Boolean =
+    errorClassName == ERROR_CLASS_CONNECTION_REVOKED
+
+/**
  * Checks if errorClassName is equal to ERROR_CLASS_AUTHORIZATION_NOT_FOUND
  *
  * @receiver api error

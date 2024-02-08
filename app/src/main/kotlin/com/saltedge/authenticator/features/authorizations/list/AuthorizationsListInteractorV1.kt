@@ -21,8 +21,10 @@
 package com.saltedge.authenticator.features.authorizations.list
 
 import com.saltedge.authenticator.app.AppTools
+import com.saltedge.authenticator.core.api.model.EncryptedData
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.api.model.error.isConnectionNotFound
+import com.saltedge.authenticator.core.api.model.error.isConnectionRevoked
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
 import com.saltedge.authenticator.core.tools.secure.KeyManagerAbs
@@ -31,7 +33,6 @@ import com.saltedge.authenticator.features.authorizations.common.toAuthorization
 import com.saltedge.authenticator.models.collectRichConnections
 import com.saltedge.authenticator.models.repository.ConnectionsRepositoryAbs
 import com.saltedge.authenticator.sdk.AuthenticatorApiManagerAbs
-import com.saltedge.authenticator.core.api.model.EncryptedData
 import com.saltedge.authenticator.sdk.api.model.authorization.AuthorizationData
 import com.saltedge.authenticator.sdk.api.model.authorization.isNotExpired
 import com.saltedge.authenticator.sdk.api.model.response.ConfirmDenyResponseData
@@ -122,7 +123,8 @@ class AuthorizationsListInteractorV1(
     }
 
     private fun processAuthorizationsErrors(errors: List<ApiErrorData>) {
-        val invalidTokens = errors.filter { it.isConnectionNotFound() }.mapNotNull { it.accessToken }
+        val invalidTokens = errors.filter { it.isConnectionNotFound() || it.isConnectionRevoked() }
+            .mapNotNull { it.accessToken }
         if (invalidTokens.isNotEmpty()) {
             connectionsRepository.invalidateConnectionsByTokens(accessTokens = invalidTokens)
             richConnections = collectRichConnections()

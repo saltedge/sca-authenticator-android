@@ -22,6 +22,7 @@ package com.saltedge.authenticator.app.di
 
 import android.content.Context
 import com.saltedge.authenticator.app.*
+import com.saltedge.authenticator.cloud.PushTokenUpdater
 import com.saltedge.authenticator.core.tools.biometric.BiometricTools
 import com.saltedge.authenticator.core.tools.biometric.BiometricToolsAbs
 import com.saltedge.authenticator.core.tools.secure.KeyManager
@@ -86,7 +87,8 @@ class AppModule(context: Context) {
         realmManager: RealmManagerAbs,
         apiManagerV1: AuthenticatorApiManagerAbs,
         apiManagerV2: ScaServiceClient,
-        connectivityReceiver: ConnectivityReceiverAbs
+        connectivityReceiver: ConnectivityReceiverAbs,
+        pushTokenUpdater: PushTokenUpdater
     ): ViewModelsFactory {
         return ViewModelsFactory(
             appContext = appContext,
@@ -100,7 +102,8 @@ class AppModule(context: Context) {
             realmManager = realmManager,
             apiManagerV1 = apiManagerV1,
             apiManagerV2 = apiManagerV2,
-            connectivityReceiver = connectivityReceiver
+            connectivityReceiver = connectivityReceiver,
+            pushTokenUpdater = pushTokenUpdater
         )
     }
 
@@ -143,4 +146,15 @@ class AppModule(context: Context) {
     @Provides
     @Singleton
     fun provideConnectivityReceiver(): ConnectivityReceiverAbs = connectivityReceiver
+
+    @Provides
+    @Singleton
+    fun providePushTokenUpdater(
+        connectionsRepository: ConnectionsRepositoryAbs,
+        keyStoreManager: KeyManagerAbs,
+        apiManagerV2: ScaServiceClient,
+        preferenceRepository: PreferenceRepositoryAbs
+    ): PushTokenUpdater {
+        return PushTokenUpdater(connectionsRepository, keyStoreManager, apiManagerV2, preferenceRepository)
+    }
 }

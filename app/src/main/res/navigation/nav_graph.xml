@@ -70,11 +70,6 @@
             app:destination="@+id/settingsListFragment" />
     </fragment>
 
-    <dialog
-        android:id="@+id/languageSelectDialog"
-        android:name="com.saltedge.authenticator.features.settings.language.LanguageSelectDialog"
-        android:label="LanguageSelectDialog" />
-
     <fragment
         android:id="@+id/aboutListFragment"
         android:name="com.saltedge.authenticator.features.settings.about.AboutListFragment"

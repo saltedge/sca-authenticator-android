@@ -20,7 +20,9 @@
  */
 package com.saltedge.authenticator.tools
 
+import android.app.Dialog
 import android.content.DialogInterface
+import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
@@ -134,6 +136,26 @@ fun FragmentActivity.showResetDataAndSettingsDialog(listener: DialogInterface.On
         Timber.e(e)
         null
     }
+}
+
+fun FragmentActivity.createLanguageDialog(
+    items: Array<String>,
+    selectedItemIndex: Int,
+    onItemSelected: (Int) -> Unit,
+    onPositiveClick: () -> Unit
+): AlertDialog {
+    return AlertDialog.Builder(this, R.style.InfoDialogTheme)
+        .setTitle(R.string.settings_language)
+        .setSingleChoiceItems(items, selectedItemIndex) { _, which ->
+            onItemSelected(which)
+        }
+        .setPositiveButton(android.R.string.ok) { _, _ ->
+            onPositiveClick()
+        }
+        .setNegativeButton(R.string.actions_cancel) { dialog, _ ->
+            dialog.dismiss()
+        }
+        .create()
 }
 
 /**
