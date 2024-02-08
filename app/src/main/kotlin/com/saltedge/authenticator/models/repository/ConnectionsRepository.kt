@@ -211,7 +211,6 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
                 }
             }
         }
-
         return result
     }
 

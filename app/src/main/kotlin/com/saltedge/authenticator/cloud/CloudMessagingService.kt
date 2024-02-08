@@ -23,15 +23,12 @@ package com.saltedge.authenticator.cloud
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
-import androidx.lifecycle.viewModelScope
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.saltedge.authenticator.core.api.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.core.api.KEY_CONNECTION_ID
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.models.repository.PreferenceRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
 import timber.log.Timber
 import javax.inject.Inject
 

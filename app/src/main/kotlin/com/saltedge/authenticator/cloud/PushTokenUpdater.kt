@@ -3,7 +3,6 @@
  */
 package com.saltedge.authenticator.cloud
 
-import android.util.Log
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.ID
 import com.saltedge.authenticator.core.model.RichConnection
@@ -14,17 +13,13 @@ import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.sdk.v2.ScaServiceClientAbs
 import com.saltedge.authenticator.sdk.v2.api.contract.ConnectionUpdateListener
 import com.saltedge.authenticator.models.toRichConnectionPair
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import timber.log.Timber
 
 open class PushTokenUpdater(
     private val connectionsRepository: ConnectionsRepositoryAbs,
     private val keyStoreManager: KeyManagerAbs,
     private val apiManager: ScaServiceClientAbs,
-    private val preferenceRepository: PreferenceRepositoryAbs,
-    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Main) // Внедрение зависимости для CoroutineScope
-
+    private val preferenceRepository: PreferenceRepositoryAbs
 ) : ConnectionUpdateListener {
 
     private var connections: List<Connection> = emptyList()
