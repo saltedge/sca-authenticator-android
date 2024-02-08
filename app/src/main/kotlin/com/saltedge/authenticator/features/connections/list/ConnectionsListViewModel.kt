@@ -46,6 +46,8 @@ import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.postUnitEvent
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.lang.ref.WeakReference
 
 class ConnectionsListViewModel(
@@ -95,17 +97,27 @@ class ConnectionsListViewModel(
     }
 
     fun onItemNameChanged(data: Bundle) {
-        val listItem = listItemsValues.find { it.guid == data.guid } ?: return
-        val newConnectionName = data.getString(KEY_NAME) ?: return
-        if (listItem.name != newConnectionName
-            && newConnectionName.isNotEmpty()
-            && interactor.updateNameAndSave(listItem.guid, newConnectionName)
-        ) {
-            val itemIndex = listItemsValues.indexOf(listItem)
-            listItems.value?.get(itemIndex)?.name = newConnectionName
-            updateListItemEvent.postValue(listItem)
+        viewModelScope.launch {
+            val listItem = listItemsValues.find { it.guid == data.guid }
+            val newConnectionName = data.getString(KEY_NAME)
+
+            runCatching {
+                requireNotNull(listItem) { "Item not found" }
+                requireNotNull(newConnectionName) { "New connection name is null" }
+
+                if (listItem.name != newConnectionName && newConnectionName.isNotEmpty()) {
+                    if (interactor.updateNameAndSave(listItem.guid, newConnectionName)) {
+                        val itemIndex = listItemsValues.indexOf(listItem)
+                        listItems.value?.get(itemIndex)?.name = newConnectionName
+                        listItem.let { updateListItemEvent.postValue(it) }
+                    }
+                }
+            }.onFailure {
+                Timber.e(it)
+            }
         }
     }
+
 
     fun deleteItem(guid: GUID) {
         val listItem = listItemsValues.find { it.guid == guid } ?: return

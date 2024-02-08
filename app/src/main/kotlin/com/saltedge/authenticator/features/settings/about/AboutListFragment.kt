@@ -32,15 +32,16 @@ import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
 import com.saltedge.authenticator.app.authenticatorApp
+import com.saltedge.authenticator.databinding.FragmentBaseListBinding
 import com.saltedge.authenticator.tools.navigateTo
 import com.saltedge.authenticator.widget.fragment.BaseFragment
-import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
 
 class AboutListFragment : BaseFragment() {
 
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     lateinit var viewModel: AboutViewModel
+    private lateinit var binding: FragmentBaseListBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +54,8 @@ class AboutListFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_base_list, container, false)
+        binding = FragmentBaseListBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -82,8 +84,8 @@ class AboutListFragment : BaseFragment() {
     }
 
     private fun setupViews() {
-        recyclerView?.layoutManager = LinearLayoutManager(activity)
-        recyclerView?.adapter = SettingsAdapter(listener = viewModel)
+        binding.recyclerView.layoutManager = LinearLayoutManager(activity)
+        binding.recyclerView.adapter = SettingsAdapter(listener = viewModel)
             .apply { data = viewModel.listItems }
     }
 }

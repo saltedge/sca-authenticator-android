@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      This file is part of the Salt Edge Authenticator distribution
     (https://github.com/saltedge/sca-authenticator-android)
     Copyright (c) 2020 Salt Edge Inc.
@@ -19,37 +18,22 @@
     For the additional permissions granted for Salt Edge Authenticator
     under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 -->
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <data class="ConnectProviderBinding">
-
-        <import type="android.view.View" />
-
-        <variable
-            name="viewModel"
-            type="com.saltedge.authenticator.features.connections.create.ConnectProviderViewModel" />
-    </data>
-
-    <FrameLayout
+    <com.saltedge.authenticator.core.web.SEWebView
+        android:id="@+id/connectWebView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent" />
 
-        <com.saltedge.authenticator.core.web.SEWebView
-            android:id="@+id/connectWebView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="@{viewModel.webViewVisibility}" />
+    <include
+        android:id="@+id/fragmentConnectProcessingLayout"
+        layout="@layout/fragment_connect_processing" />
 
-        <include
-            android:id="@+id/fragmentConnectProcessingLayout"
-            layout="@layout/fragment_connect_processing"
-            android:visibility="@{viewModel.progressViewVisibility}" />
-
-        <com.saltedge.authenticator.widget.CompleteView
-            android:id="@+id/completeView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/white"
-            android:visibility="@{viewModel.completeViewVisibility}" />
-    </FrameLayout>
-</layout>
+    <com.saltedge.authenticator.widget.CompleteView
+        android:id="@+id/completeView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white" />
+</FrameLayout>

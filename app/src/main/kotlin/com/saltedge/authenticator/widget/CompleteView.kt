@@ -29,38 +29,40 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.databinding.ViewCompleteBinding
 import com.saltedge.authenticator.tools.setInvisible
 import com.saltedge.authenticator.tools.setVisible
-import kotlinx.android.synthetic.main.view_complete.view.*
 
 /**
  * View show final state (success, error)
  */
 class CompleteView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
 
+    private var binding: ViewCompleteBinding
+
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_complete, this)
+        binding = ViewCompleteBinding.inflate(LayoutInflater.from(context), this, true)
         initAttributes(context, attrs)
     }
 
     fun setTitleText(text: String) {
-        titleView?.text = text
+        binding.titleView.text = text
     }
 
     fun setTitleText(textResId: Int) {
-        titleView?.text = context.getString(textResId)
+        binding.titleView.text = context.getString(textResId)
     }
 
     fun setTitleText(spannable: SpannableString) {
-        titleView?.text = spannable
+        binding.titleView.text = spannable
     }
 
     fun setDescription(text: String) {
-        descriptionView?.text = text
+        binding.descriptionView.text = text
     }
 
     fun setDescription(textResId: Int) {
-        descriptionView?.text = context.getString(textResId)
+        binding.descriptionView.text = context.getString(textResId)
     }
 
     fun setMainActionText(@StringRes textId: Int) = setMainActionText(context.getString(textId))
@@ -70,12 +72,12 @@ class CompleteView(context: Context, attrs: AttributeSet) : LinearLayout(context
     }
 
     fun setIconResource(@DrawableRes resId: Int) {
-        iconView?.setImageDrawable(ContextCompat.getDrawable(context, resId))
+        binding.iconView.setImageDrawable(ContextCompat.getDrawable(context, resId))
     }
 
     fun setClickListener(l: OnClickListener?) {
-        actionView?.setOnClickListener(l)
-        altActionView?.setOnClickListener(l)
+        binding.actionView.setOnClickListener(l)
+        binding.altActionView.setOnClickListener(l)
     }
 
     private fun initAttributes(context: Context, attrs: AttributeSet) {
@@ -97,13 +99,13 @@ class CompleteView(context: Context, attrs: AttributeSet) : LinearLayout(context
     }
 
     private fun setMainActionText(text: String?) {
-        actionView?.setInvisible(text == null)
-        actionView?.isClickable = text != null
-        actionView?.text = text
+        binding.actionView.setInvisible(text == null)
+        binding.actionView.isClickable = text != null
+        binding.actionView.text = text
     }
 
     private fun setAltActionText(text: String?) {
-        altActionView?.setVisible(show = text != null)
-        altActionView?.text = text
+        binding.altActionView.setVisible(show = text != null)
+        binding.altActionView.text = text
     }
 }

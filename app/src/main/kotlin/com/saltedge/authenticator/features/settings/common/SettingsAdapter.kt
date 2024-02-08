@@ -22,24 +22,23 @@ package com.saltedge.authenticator.features.settings.common
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.saltedge.authenticator.R
-import com.saltedge.authenticator.databinding.SettingsItemBinding
+import com.saltedge.authenticator.databinding.ViewItemSettingBinding
 import com.saltedge.authenticator.interfaces.ListItemClickListener
 import com.saltedge.authenticator.widget.list.AbstractListAdapter
 
 class SettingsAdapter(private val listener: ListItemClickListener) : AbstractListAdapter() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val binding: SettingsItemBinding = DataBindingUtil
-            .inflate(inflater, R.layout.view_item_setting, parent, false)
-        binding.listener = listener
+        val binding = ViewItemSettingBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
         return SettingsItemViewHolder(binding)
     }
 
     override fun onBindHolder(holder: RecyclerView.ViewHolder, position: Int, item: Any) {
-        (holder as SettingsItemViewHolder).bind(item as SettingsItemViewModel)
+        (holder as SettingsItemViewHolder).bind(item as SettingsItemViewModel, listener)
     }
 }

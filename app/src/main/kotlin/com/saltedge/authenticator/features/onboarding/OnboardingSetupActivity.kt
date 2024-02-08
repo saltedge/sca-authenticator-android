@@ -24,21 +24,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
-import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.authenticatorApp
-import com.saltedge.authenticator.databinding.OnboardingSetupBinding
+import com.saltedge.authenticator.databinding.ActivityOnboardingBinding
 import com.saltedge.authenticator.features.main.MainActivity
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.showWarningDialog
 import com.saltedge.authenticator.widget.passcode.PasscodeInputMode
 import com.saltedge.authenticator.widget.security.KEY_SKIP_PIN
-import kotlinx.android.synthetic.main.activity_onboarding.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -48,12 +45,13 @@ class OnboardingSetupActivity : AppCompatActivity(),
 {
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     lateinit var viewModel: OnboardingSetupViewModel
-    private lateinit var binding: OnboardingSetupBinding
+    private var binding: ActivityOnboardingBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         authenticatorApp?.appComponent?.inject(this)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_onboarding)
+        binding = ActivityOnboardingBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
         setupViewModel()
         initViews()
     }
@@ -70,21 +68,41 @@ class OnboardingSetupActivity : AppCompatActivity(),
         viewModel.onViewClick(v?.id ?: return)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
+    }
+
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(OnboardingSetupViewModel::class.java)
-        binding.viewModel = viewModel
-        binding.executePendingBindings()
-        binding.lifecycleOwner = this
 
+        viewModel.setupLayoutVisibility.observe(this, Observer<Int> { visibility ->
+            binding?.setupLayout?.visibility = visibility
+        })
+        viewModel.setupLayoutVisibility.observe(this, Observer<Int> { visibility ->
+            binding?.setupLayout?.visibility = visibility
+        })
+        viewModel.passcodeInputViewVisibility.observe(this, Observer<Int> { visibility ->
+            binding?.passcodeEditView?.visibility = visibility
+        })
+        viewModel.onboardingLayoutVisibility.observe(this, Observer<Int> { visibility ->
+            binding?.onboardingLayout?.visibility = visibility
+        })
+        viewModel.proceedViewVisibility.observe(this, Observer<Int> { visibility ->
+            binding?.proceedToSetup?.visibility = visibility
+        })
+        viewModel.skipViewVisibility.observe(this, Observer<Int> { visibility ->
+            binding?.actionLayout?.visibility = visibility
+        })
         viewModel.pageIndicator.observe(this, Observer<Int> { position ->
-            pageIndicatorView?.selection = position
+            binding?.pageIndicatorView?.selection = position
         })
         viewModel.passcodeInputMode.observe(this, Observer<PasscodeInputMode> {
-            passcodeEditView?.inputMode = it
+            binding?.passcodeEditView?.inputMode = it
         })
         viewModel.headerTitle.observe(this, Observer<ResId> {
-            passcodeEditView.title = getString(it)
+            binding?.passcodeEditView?.title = getString(it)
         })
         viewModel.showMainActivity.observe(this, Observer<ViewModelEvent<Unit>> {
             showMainActivity()
@@ -93,32 +111,32 @@ class OnboardingSetupActivity : AppCompatActivity(),
             this.showWarningDialog(message = getString(message))
         })
         viewModel.moveNext.observe(this, Observer<ViewModelEvent<Unit>> {
-            onboardingPager.currentItem = onboardingPager.currentItem + 1
+            binding?.onboardingPager?.currentItem = binding?.onboardingPager?.currentItem?.plus(1) ?: 0
         })
     }
 
     private fun initViews() {
         try {
             initOnboardingViews()
-            passcodeEditView?.biometricsActionIsAvailable = false
-            passcodeEditView?.listener = viewModel
+            binding?.passcodeEditView?.biometricsActionIsAvailable = false
+            binding?.passcodeEditView?.listener = viewModel
         } catch (e: Exception) {
             Timber.e(e)
         }
     }
 
     private fun initOnboardingViews() {
-        onboardingPager?.clearOnPageChangeListeners()
-        onboardingPager?.addOnPageChangeListener(this)
+        binding?.onboardingPager?.clearOnPageChangeListeners()
+        binding?.onboardingPager?.addOnPageChangeListener(this)
         viewModel.onboardingViewModels.let {
-            onboardingPager?.adapter = OnboardingPagerAdapter(this, it)
-            onboardingPager?.currentItem = 0
-            pageIndicatorView?.setCount(it.size)
-            pageIndicatorView?.selection = 0
+            binding?.onboardingPager?.adapter = OnboardingPagerAdapter(this, it)
+            binding?.onboardingPager?.currentItem = 0
+            binding?.pageIndicatorView?.setCount(it.size)
+            binding?.pageIndicatorView?.selection = 0
         }
-        skipActionView?.setOnClickListener(this)
-        proceedToSetup?.setOnClickListener(this)
-        nextActionView?.setOnClickListener(this)
+        binding?.skipActionView?.setOnClickListener(this)
+        binding?.proceedToSetup?.setOnClickListener(this)
+        binding?.nextActionView?.setOnClickListener(this)
     }
 
     private fun showMainActivity() {

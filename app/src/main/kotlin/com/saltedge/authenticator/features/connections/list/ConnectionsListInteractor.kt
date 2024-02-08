@@ -70,9 +70,11 @@ class ConnectionsListInteractor(
         notifyDatasetChanges()
     }
 
-    override fun updateNameAndSave(connectionGuid: GUID, newConnectionName: String): Boolean {
+    override suspend fun updateNameAndSave(connectionGuid: GUID, newConnectionName: String): Boolean {
         val connection = connectionsRepository.getByGuid(connectionGuid) ?: return false
-        connectionsRepository.updateNameAndSave(connection, newConnectionName)
+        contract?.coroutineScope?.launch(defaultDispatcher) {
+            connectionsRepository.updateNameAndSave(connection, newConnectionName)
+        }
         return true
     }
 
@@ -211,13 +213,15 @@ class ConnectionsListInteractor(
     }
 
     override fun onShowConnectionConfigurationSuccess(result: ConfigurationDataV2) {
-        richConnections.filter {
-            it.connection.code == result.providerId && result.providerLogoUrl != it.connection.logoUrl
-        }.forEach {
-            it.connection.logoUrl = result.providerLogoUrl ?: ""
-            connectionsRepository.saveModel(it.connection as Connection)
+        contract?.coroutineScope?.launch(defaultDispatcher) {
+            richConnections.filter {
+                it.connection.code == result.providerId && result.providerLogoUrl != it.connection.logoUrl
+            }.forEach {
+                it.connection.logoUrl = result.providerLogoUrl ?: ""
+                connectionsRepository.saveModel(it.connection as Connection)
+            }
+            notifyDatasetChanges()
         }
-        notifyDatasetChanges()
     }
 
     override fun onShowConnectionConfigurationFailed(error: ApiErrorData) {
@@ -228,7 +232,7 @@ class ConnectionsListInteractor(
 interface ConnectionsListInteractorAbs {
     var contract: ConnectionsListInteractorCallback?
     fun updateConnections()
-    fun updateNameAndSave(connectionGuid: GUID, newConnectionName: String): Boolean
+    suspend fun updateNameAndSave(connectionGuid: GUID, newConnectionName: String): Boolean
     fun updateConsents()
     fun revokeConnection(connectionGuid: GUID)
     fun getConsents(connectionGuid: GUID): List<ConsentData>

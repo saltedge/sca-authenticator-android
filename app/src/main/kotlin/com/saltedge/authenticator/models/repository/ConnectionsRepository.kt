@@ -32,10 +32,15 @@ import com.saltedge.authenticator.models.realm.RealmManager
 import com.saltedge.authenticator.models.repository.ConnectionsRepository.queryActiveConnections
 import io.realm.Realm
 import io.realm.RealmQuery
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 
 object ConnectionsRepository : ConnectionsRepositoryAbs {
+
+    private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     /**
      * Checks if the database doesn't contains a connections
@@ -173,15 +178,40 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
      */
     override fun deleteConnection(connectionGuid: GUID): Boolean {
         if (connectionGuid.isEmpty() || !connectionExists(connectionGuid)) return false
-        RealmManager.getDefaultInstance().use {
-            it.executeTransaction { realmDb ->
-                realmDb.where(Connection::class.java)
-                    .equalTo(KEY_GUID, connectionGuid)
-                    .findAll()
-                    .deleteAllFromRealm()
+
+        coroutineScope.launch {
+            RealmManager.getDefaultInstance().use { realmDb ->
+                realmDb.executeTransaction { transaction ->
+                    transaction.where(Connection::class.java)
+                        .equalTo(KEY_GUID, connectionGuid)
+                        .findAll()
+                        .deleteAllFromRealm()
+                }
             }
         }
         return true
+    }
+
+    /**
+     * Save model of Connection
+     *
+     * @param connection - model of Connection
+     * @return saved Connection
+     */
+    override fun saveModel(connection: Connection): Connection? {
+        var result: Connection? = null
+
+        coroutineScope.launch {
+            if (connection.createdAt == 0L) connection.createdAt = DateTime.now().withZone(DateTimeZone.UTC).millis
+            connection.updatedAt = DateTime.now().withZone(DateTimeZone.UTC).millis
+
+            RealmManager.getDefaultInstance().use { realmDb ->
+                realmDb.executeTransaction { transaction ->
+                    result = realmDb.copyFromRealm(transaction.copyToRealmOrUpdate(connection))
+                }
+            }
+        }
+        return result
     }
 
     /**
@@ -258,23 +288,6 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
         }
     }
 
-    /**
-     * Save model of Connection
-     *
-     * @param connection - model of Connection
-     * @return saved Connection
-     */
-    override fun saveModel(connection: Connection): Connection? {
-        if (connection.createdAt == 0L) connection.createdAt = DateTime.now().withZone(DateTimeZone.UTC).millis
-        connection.updatedAt = DateTime.now().withZone(DateTimeZone.UTC).millis
-        var result: Connection? = null
-        RealmManager.getDefaultInstance().use {
-            it.executeTransaction { realmDb ->
-                result = realmDb.copyFromRealm(realmDb.copyToRealmOrUpdate(connection))
-            }
-        }
-        return result
-    }
 
     /**
      * Check by connection code count of with same code and guid is null.
@@ -283,7 +296,7 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
      * @param connection - model of Connection
      * @see saveModel
      */
-    override fun fixNameAndSave(connection: Connection) {
+    override suspend fun fixNameAndSave(connection: Connection) {
         getConnectionsCountForProvider(connection.code).let {
             if (it > 0L) connection.name = "${connection.name} (${it + 1})"
         }
@@ -297,7 +310,7 @@ object ConnectionsRepository : ConnectionsRepositoryAbs {
      * @param newName - new name of Connection
      * @see saveModel
      */
-    override fun updateNameAndSave(connection: Connection, newName: String) {
+    override suspend fun updateNameAndSave(connection: Connection, newName: String) {
         connection.name = newName
         saveModel(connection)
     }
@@ -336,6 +349,6 @@ interface ConnectionsRepositoryAbs {
     fun deleteConnection(connectionGuid: GUID): Boolean
     fun invalidateConnectionsByTokens(accessTokens: List<Token>)
     fun saveModel(connection: Connection): Connection?
-    fun fixNameAndSave(connection: Connection)
-    fun updateNameAndSave(connection: Connection, newName: String)
+    suspend fun fixNameAndSave(connection: Connection)
+    suspend fun updateNameAndSave(connection: Connection, newName: String)
 }

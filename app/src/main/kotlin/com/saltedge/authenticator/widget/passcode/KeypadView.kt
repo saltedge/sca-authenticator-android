@@ -31,8 +31,8 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.databinding.ViewKeypadBinding
 import com.saltedge.authenticator.tools.setVisible
-import kotlinx.android.synthetic.main.view_keypad.view.*
 
 /**
  * The class contains button panel for entering a passcode and extra actions
@@ -41,12 +41,13 @@ class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
     View.OnClickListener {
 
     var clickListener: KeypadClickListener? = null
+    private var binding: ViewKeypadBinding
 
     private var vibrator: Vibrator? = context.getSystemService(VIBRATOR_SERVICE) as? Vibrator?
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_keypad, this)
-        for (i in 0..pinpadLayout.childCount) pinpadLayout.getChildAt(i)?.setOnClickListener(this)
+        binding = ViewKeypadBinding.inflate(LayoutInflater.from(context), this, true)
+        for (i in 0..binding.pinpadLayout.childCount) binding.pinpadLayout.getChildAt(i)?.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {
@@ -61,9 +62,9 @@ class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
     }
 
     fun setupFingerAction(active: Boolean) {
-        fingerActionView?.setVisible(active)
-        forgotActionView?.setVisible(active)
-        successActionView?.setVisible(!active)
+        binding.fingerActionView.setVisible(active)
+        binding.forgotActionView.setVisible(active)
+        binding.successActionView.setVisible(!active)
     }
 
     @Suppress("DEPRECATION")
@@ -74,13 +75,13 @@ class KeypadView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
     }
 
     fun showSuccessView() {
-        fingerActionView?.setVisible(show = false)
-        successActionView?.setVisible(show = true)
+        binding.fingerActionView.setVisible(show = false)
+        binding.successActionView.setVisible(show = true)
     }
 
     fun showFingerView() {
-        fingerActionView?.setVisible(show = true)
-        successActionView?.setVisible(show = false)
+        binding.fingerActionView.setVisible(show = true)
+        binding.successActionView.setVisible(show = false)
     }
 
     interface KeypadClickListener {
