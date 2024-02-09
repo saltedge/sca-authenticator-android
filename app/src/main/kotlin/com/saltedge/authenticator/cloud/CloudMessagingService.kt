@@ -25,6 +25,7 @@ import android.content.Intent
 import android.os.Build
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.saltedge.authenticator.app.AuthenticatorApplication
 import com.saltedge.authenticator.core.api.KEY_AUTHORIZATION_ID
 import com.saltedge.authenticator.core.api.KEY_CONNECTION_ID
 import com.saltedge.authenticator.features.main.MainActivity
@@ -34,7 +35,13 @@ import javax.inject.Inject
 
 class CloudMessagingService : FirebaseMessagingService() {
 
-    @Inject lateinit var pushTokenUpdater: PushTokenUpdater
+    @Inject
+    lateinit var pushTokenUpdater: PushTokenUpdater
+
+    override fun onCreate() {
+        super.onCreate()
+        (application as AuthenticatorApplication).appComponent.inject(this)
+    }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         this.showAuthNotification(
