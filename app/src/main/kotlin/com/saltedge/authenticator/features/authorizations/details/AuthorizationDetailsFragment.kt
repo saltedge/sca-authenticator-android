@@ -1,22 +1,5 @@
 /*
- * This file is part of the Salt Edge Authenticator distribution
- * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2020 Salt Edge Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, version 3 or later.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For the additional permissions granted for Salt Edge Authenticator
- * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
 package com.saltedge.authenticator.features.authorizations.details
 
@@ -40,6 +23,9 @@ import com.saltedge.authenticator.cloud.clearNotifications
 import com.saltedge.authenticator.core.api.KEY_ID
 import com.saltedge.authenticator.core.api.KEY_TITLE
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
+import com.saltedge.authenticator.databinding.FragmentAuthorizationDetailsBinding
+import com.saltedge.authenticator.databinding.FragmentAuthorizationsListBinding
+import com.saltedge.authenticator.databinding.FragmentConnectionsListBinding
 import com.saltedge.authenticator.features.authorizations.common.AuthorizationItemViewModel
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.OnBackPressListener
@@ -50,7 +36,6 @@ import com.saltedge.authenticator.tools.getErrorMessage
 import com.saltedge.authenticator.tools.popBackStack
 import com.saltedge.authenticator.tools.showInfoDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment
-import kotlinx.android.synthetic.main.fragment_authorization_details.*
 import java.util.*
 import javax.inject.Inject
 
@@ -61,6 +46,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
 
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: AuthorizationDetailsViewModel
+    private lateinit var binding: FragmentAuthorizationDetailsBinding
     private var timeViewUpdateTimer: Timer = Timer()
     private var alertDialog: AlertDialog? = null
     private val requestMultiplePermissions = registerForActivityResult(
@@ -91,16 +77,17 @@ class AuthorizationDetailsFragment : BaseFragment(),
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         activityComponents?.updateAppbar(
             titleResId = viewModel.titleRes,
             backActionImageResId = R.drawable.ic_appbar_action_close
         )
-        return inflater.inflate(R.layout.fragment_authorization_details, container, false)
+        binding = FragmentAuthorizationDetailsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        contentView?.setActionClickListener(this)
+        binding.contentView.setActionClickListener(this)
     }
 
     override fun onResume() {
@@ -150,7 +137,7 @@ class AuthorizationDetailsFragment : BaseFragment(),
 
         viewModel.onTimeUpdateEvent.observe(this, Observer<ViewModelEvent<Unit>> { event ->
             event.getContentIfNotHandled()?.let {
-                headerView?.onTimeUpdate()
+                binding.headerView.onTimeUpdate()
             }
         })
         viewModel.onErrorEvent.observe(this, Observer<ViewModelEvent<ApiErrorData>> { event ->
@@ -168,12 +155,12 @@ class AuthorizationDetailsFragment : BaseFragment(),
             event.getContentIfNotHandled()?.let { popBackStack() }
         })
         viewModel.authorizationModel.observe(this, Observer<AuthorizationItemViewModel> {
-            headerView?.setTitleAndLogo(title = it.connectionName, logoUrl = it.connectionLogoUrl ?: "")
-            headerView?.setProgressTime(startTime = it.startTime, endTime = it.endTime)
-            headerView?.ignoreTimeUpdate = it.ignoreTimeUpdate
-            headerView?.visibility = it.timeViewVisibility
-            contentView?.setTitleAndDescription(it.title, it.description)
-            contentView?.setViewMode(it.status)
+            binding.headerView.setTitleAndLogo(title = it.connectionName, logoUrl = it.connectionLogoUrl ?: "")
+            binding.headerView.setProgressTime(startTime = it.startTime, endTime = it.endTime)
+            binding.headerView.ignoreTimeUpdate = it.ignoreTimeUpdate
+            binding.headerView.visibility = it.timeViewVisibility
+            binding.contentView.setTitleAndDescription(it.title, it.description)
+            binding.contentView.setViewMode(it.status)
         })
         viewModel.onRequestPermissionEvent.observe(this, Observer { event ->
             event?.let {

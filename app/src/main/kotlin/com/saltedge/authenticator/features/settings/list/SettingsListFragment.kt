@@ -1,22 +1,5 @@
 /*
- * This file is part of the Salt Edge Authenticator distribution
- * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2020 Salt Edge Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, version 3 or later.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For the additional permissions granted for Salt Edge Authenticator
- * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
 package com.saltedge.authenticator.features.settings.list
 
@@ -34,6 +17,7 @@ import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.applyNightMode
 import com.saltedge.authenticator.app.authenticatorApp
+import com.saltedge.authenticator.databinding.FragmentBaseListBinding
 import com.saltedge.authenticator.features.main.activityComponentsContract
 import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.features.settings.common.SettingsAdapter
@@ -49,7 +33,6 @@ import com.saltedge.authenticator.tools.showResetDataAndSettingsDialog
 import com.saltedge.authenticator.tools.startMailApp
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
-import kotlinx.android.synthetic.main.fragment_base_list.*
 import javax.inject.Inject
 
 class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuItemClickListener {
@@ -58,6 +41,7 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
     private lateinit var viewModel: SettingsListViewModel
     private var adapter: SettingsAdapter? = null
     private var alertDialog: AlertDialog? = null
+    private lateinit var binding: FragmentBaseListBinding
     private var languageSelectDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +54,10 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = inflater.inflate(R.layout.fragment_base_list, container, false)
+    ): View {
+        binding = FragmentBaseListBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -161,8 +148,8 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
 
     private fun setupViews() {
         activity?.let {
-            recyclerView?.layoutManager = LinearLayoutManager(it)
-            recyclerView?.addItemDecoration(
+            binding.recyclerView.layoutManager = LinearLayoutManager(it)
+            binding.recyclerView.addItemDecoration(
                 SpaceItemDecoration(
                     context = it,
                     headerPositions = viewModel.spacesPositions)
@@ -171,6 +158,6 @@ class SettingsListFragment : BaseFragment(), DialogHandlerListener, AppbarMenuIt
         adapter = SettingsAdapter(listener = viewModel).apply {
             viewModel.listItemsValues?.let { data = it }
         }
-        recyclerView?.adapter = adapter
+        binding.recyclerView.adapter = adapter
     }
 }

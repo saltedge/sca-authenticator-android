@@ -1,140 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     This file is part of the Salt Edge Authenticator distribution
-    (https://github.com/saltedge/sca-authenticator-android)
-    Copyright (c) 2020 Salt Edge Inc.
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, version 3 or later.
-
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-    General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-    For the additional permissions granted for Salt Edge Authenticator
-    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+   Copyright (c) 2020 Salt Edge Inc.
 -->
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <data class="MainActivityBinding">
-        <import type="android.view.View" />
-        <import type="androidx.core.content.ContextCompat" />
-
-        <variable
-            name="viewModel"
-            type="com.saltedge.authenticator.features.main.MainActivityViewModel" />
-    </data>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activityRootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/activityRootLayout"
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="@dimen/dp_102"
+        android:animateLayoutChanges="true"
+        android:background="@color/theme_background"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/appBarLayout"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_102"
-            android:background="@color/theme_background"
-            android:animateLayoutChanges="true"
+        <FrameLayout
+            android:id="@+id/appBarTopSection"
+            android:layout_width="@dimen/action_bar_top_section_size"
+            android:layout_height="@dimen/action_bar_top_section_size"
+            android:background="?android:attr/selectableItemBackground"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <ImageView
+                android:id="@+id/appBarBackAction"
+                android:layout_width="@dimen/dp_24"
+                android:layout_height="@dimen/dp_24"
+                android:layout_gravity="center" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/appBarBottomSection"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/action_bar_bottom_section_size"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:id="@+id/appBarTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_16"
+                android:layout_marginRight="@dimen/dp_16"
+                android:layout_weight="1"
+                android:lineSpacingExtra="@dimen/text_zero_line"
+                android:textAppearance="@style/app_bar_title" />
+
             <FrameLayout
-                android:id="@+id/appBarTopSection"
-                android:layout_width="@dimen/action_bar_top_section_size"
-                android:layout_height="@dimen/action_bar_top_section_size"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                android:background="?android:attr/selectableItemBackground"
-                android:visibility="@{viewModel.appBarBackActionVisibility}">
+                android:id="@+id/appBarActionQrCode"
+                style="@style/AppBarActionContainer">
 
                 <ImageView
-                    android:id="@+id/appBarBackAction"
-                    android:layout_width="@dimen/dp_24"
-                    android:layout_height="@dimen/dp_24"
-                    android:layout_gravity="center"
-                    android:onClick="@{(view) -> viewModel.onViewClick(view.id)}"
-                    android:src="@{ContextCompat.getDrawable(context, viewModel.appBarBackActionImageResource)}" />
+                    style="@style/AppBarActionImage"
+                    android:contentDescription="@string/scan_qr_code"
+                    app:srcCompat="@drawable/ic_appbar_action_qr" />
             </FrameLayout>
 
-            <LinearLayout
-                android:id="@+id/appBarBottomSection"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/action_bar_bottom_section_size"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent">
+            <FrameLayout
+                android:id="@+id/appBarActionSwitchTheme"
+                style="@style/AppBarActionContainer">
 
-                <TextView
-                    android:id="@+id/appBarTitle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_16"
-                    android:layout_marginRight="@dimen/dp_16"
-                    android:layout_weight="1"
-                    android:lineSpacingExtra="@dimen/text_zero_line"
-                    android:text="@{viewModel.appBarTitle}"
-                    android:textAppearance="@style/app_bar_title" />
+                <ImageView
+                    style="@style/AppBarActionImage"
+                    android:contentDescription="@string/settings_feature_title"
+                    app:srcCompat="@drawable/ic_appbar_action_theme" />
+            </FrameLayout>
 
-                <FrameLayout
-                    android:id="@+id/appBarActionQrCode"
-                    style="@style/AppBarActionContainer"
-                    android:onClick="@{(view) -> viewModel.onViewClick(view.id)}"
-                    android:visibility="@{viewModel.appBarActionQRVisibility}">
+            <FrameLayout
+                android:id="@+id/appBarActionMore"
+                style="@style/AppBarActionContainer">
 
-                    <ImageView
-                        style="@style/AppBarActionImage"
-                        android:contentDescription="@string/scan_qr_code"
-                        app:srcCompat="@drawable/ic_appbar_action_qr" />
-                </FrameLayout>
-
-                <FrameLayout
-                    android:id="@+id/appBarActionSwitchTheme"
-                    style="@style/AppBarActionContainer"
-                    android:onClick="@{(view) -> viewModel.onViewClick(view.id)}"
-                    android:visibility="@{viewModel.appBarActionThemeVisibility}">
-
-                    <ImageView
-                        style="@style/AppBarActionImage"
-                        android:contentDescription="@string/settings_feature_title"
-                        app:srcCompat="@drawable/ic_appbar_action_theme" />
-                </FrameLayout>
-
-                <FrameLayout
-                    android:id="@+id/appBarActionMore"
-                    style="@style/AppBarActionContainer"
-                    android:onClick="@{(view) -> viewModel.onViewClick(view.id)}"
-                    android:visibility="@{viewModel.appBarActionMoreVisibility}">
-
-                    <ImageView
-                        style="@style/AppBarActionImage"
-                        android:contentDescription="@string/actions_view_more"
-                        app:srcCompat="@drawable/ic_appbar_action_more" />
-                </FrameLayout>
-            </LinearLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <fragment
-            android:id="@+id/navHostFragment"
-            android:name="androidx.navigation.fragment.NavHostFragment"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
-            app:defaultNavHost="true"
-            app:navGraph="@navigation/nav_graph" />
-
-        <com.saltedge.authenticator.widget.security.UnlockAppInputView
-            android:id="@+id/unlockAppInputView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+                <ImageView
+                    style="@style/AppBarActionImage"
+                    android:contentDescription="@string/actions_view_more"
+                    app:srcCompat="@drawable/ic_appbar_action_more" />
+            </FrameLayout>
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+
+    <fragment
+        android:id="@+id/navHostFragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+        app:navGraph="@navigation/nav_graph" />
+
+    <com.saltedge.authenticator.widget.security.UnlockAppInputView
+        android:id="@+id/unlockAppInputView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

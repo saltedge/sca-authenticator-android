@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Debug Authenticator</string>
+    <string name="app_name_short">Dbg Auth</string>
+    <string name="app_name_in_two_lines">Debug\nAuthenticator</string>
+</resources>

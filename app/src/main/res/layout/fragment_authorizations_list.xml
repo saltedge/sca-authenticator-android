@@ -1,69 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     This file is part of the Salt Edge Authenticator distribution
-    (https://github.com/saltedge/sca-authenticator-android)
-    Copyright (c) 2020 Salt Edge Inc.
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, version 3 or later.
-
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-    General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-    For the additional permissions granted for Salt Edge Authenticator
-    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+   Copyright (c) 2020 Salt Edge Inc.
 -->
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/theme_background">
 
-    <data class="AuthorizationsListBinding">
-        <import type="android.view.View" />
-        <variable
-            name="viewModel"
-            type="com.saltedge.authenticator.features.authorizations.list.AuthorizationsListViewModel" />
-    </data>
-
-    <FrameLayout
+    <LinearLayout
+        android:id="@+id/listGroup"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/theme_background">
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/listGroup"
+        <com.saltedge.authenticator.features.authorizations.list.pagers.WrapContentViewPager
+            android:id="@+id/headerViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/authorizations_headers_pager_height"
+            tools:background="@color/red" />
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/contentViewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:visibility="@{viewModel.listVisibility}">
+            tools:background="@color/primary" />
+    </LinearLayout>
 
-            <com.saltedge.authenticator.features.authorizations.list.pagers.WrapContentViewPager
-                android:id="@+id/headerViewPager"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/authorizations_headers_pager_height"
-                tools:background="@color/red"/>
-
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/contentViewPager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:background="@color/primary" />
-        </LinearLayout>
-
-        <com.saltedge.authenticator.widget.EmptyView
-            android:id="@+id/emptyView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:iconSrc="@drawable/ic_authorizations_empty"
-            app:title="@string/authorizations_empty_title"
-            app:description="@string/authorizations_empty_description"
-            app:mainActionText="@string/actions_scan_qr"
-            android:visibility="@{viewModel.emptyViewVisibility}"/>
-    </FrameLayout>
-</layout>
+    <com.saltedge.authenticator.widget.EmptyView
+        android:id="@+id/emptyView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:description="@string/authorizations_empty_description"
+        app:iconSrc="@drawable/ic_authorizations_empty"
+        app:mainActionText="@string/actions_scan_qr"
+        app:title="@string/authorizations_empty_title" />
+</FrameLayout>

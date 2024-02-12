@@ -1,22 +1,5 @@
 /*
- * This file is part of the Salt Edge Authenticator distribution
- * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2020 Salt Edge Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, version 3 or later.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For the additional permissions granted for Salt Edge Authenticator
- * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
 package com.saltedge.authenticator.features.connections.select
 
@@ -40,11 +23,12 @@ import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
 import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.core.model.GUID
+import com.saltedge.authenticator.databinding.FragmentConnectionsListBinding
+import com.saltedge.authenticator.databinding.FragmentConsentsListBinding
 import com.saltedge.authenticator.tools.popBackStack
 import com.saltedge.authenticator.tools.setVisible
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
-import kotlinx.android.synthetic.main.fragment_connections_list.*
 import javax.inject.Inject
 
 class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemClickListener {
@@ -54,6 +38,7 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
     private val adapter = ConnectionsListAdapter(clickListener = this)
     private var headerDecorator: SpaceItemDecoration? = null
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private lateinit var binding: FragmentConnectionsListBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,22 +55,23 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
             titleResId = R.string.choose_connection_feature_title,
             backActionImageResId = R.drawable.ic_appbar_action_close
         )
-        return inflater.inflate(R.layout.fragment_connections_list, container, false)
+        binding = FragmentConnectionsListBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        emptyView?.setVisible(false)
-        connectionsListView?.setVisible(true)
+        binding.emptyView.setVisible(false)
+        binding.connectionsListView.setVisible(true)
         activity?.let {
-            connectionsListView?.layoutManager = LinearLayoutManager(it)
-            connectionsListView?.adapter = adapter
+            binding.connectionsListView.layoutManager = LinearLayoutManager(it)
+            binding.connectionsListView.adapter = adapter
             headerDecorator = SpaceItemDecoration(context = it).apply {
-                connectionsListView?.addItemDecoration(this)
+                binding.connectionsListView.addItemDecoration(this)
             }
         }
-        proceedView?.isEnabled = false
-        proceedView?.setVisible(true)
+        binding.proceedView.isEnabled = false
+        binding.proceedView.setVisible(true)
     }
 
     override fun onBackPress(): Boolean {
@@ -112,8 +98,8 @@ class SelectConnectionsFragment : BaseFragment(), OnBackPressListener, ListItemC
                 viewModel.listItemsValues.getOrNull(itemIndex)?.let { item ->
                     viewModel.changeStateItem(item)
                     adapter.notifyDataSetChanged()
-                    proceedView.isEnabled = true
-                    proceedView.setOnClickListener { viewModel.proceedConnection(item.guid) }
+                    binding.proceedView.isEnabled = true
+                    binding.proceedView.setOnClickListener { viewModel.proceedConnection(item.guid) }
                 }
             }
         })

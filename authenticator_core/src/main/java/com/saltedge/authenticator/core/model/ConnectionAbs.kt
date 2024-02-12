@@ -1,22 +1,5 @@
 /*
- * This file is part of the Salt Edge Authenticator distribution
- * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2021 Salt Edge Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, version 3 or later.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For the additional permissions granted for Salt Edge Authenticator
- * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
 package com.saltedge.authenticator.core.model
 
@@ -35,6 +18,7 @@ package com.saltedge.authenticator.core.model
  * @property consentManagementSupported - consent management is supported by Provider or not. Flag from Configuration
  * @property geolocationRequired - collection of geolocation data is mandatory or not. Flag from Configuration
  * @property providerRsaPublicKeyPem - asymmetric RSA Public Key (in PEM format) linked to the Provider
+ * @property pushToken - token which uniquely identifies Mobile Application for the Push Notification system
  */
 interface ConnectionAbs {
     var guid: GUID
@@ -52,4 +36,5 @@ interface ConnectionAbs {
     var geolocationRequired: Boolean?
     var providerRsaPublicKeyPem: String
     var apiVersion: String
+    var pushToken: String?
 }

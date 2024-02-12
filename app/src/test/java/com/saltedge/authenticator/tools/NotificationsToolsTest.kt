@@ -1,22 +1,5 @@
 /*
- * This file is part of the Salt Edge Authenticator distribution
- * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2019 Salt Edge Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, version 3 or later.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For the additional permissions granted for Salt Edge Authenticator
- * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
 package com.saltedge.authenticator.tools
 
@@ -28,7 +11,6 @@ import android.graphics.Color
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationManagerCompat
-import com.saltedge.authenticator.cloud.CHANNEL_ID
 import com.saltedge.authenticator.cloud.CHANNEL_NAME
 import com.saltedge.authenticator.cloud.registerNotificationChannels
 import org.hamcrest.CoreMatchers.equalTo
@@ -58,7 +40,7 @@ class NotificationsToolsTest {
 
             val argument: NotificationChannel = captor.value
 
-            assertThat(argument.id, equalTo(CHANNEL_ID))
+            assertThat(argument.id, equalTo("com.saltedge.authenticator.notifications"))
             assertThat(argument.name.toString(), equalTo(CHANNEL_NAME))
             assertThat(argument.importance, equalTo(NotificationManagerCompat.IMPORTANCE_HIGH))
             assertThat(argument.lightColor, equalTo(Color.BLUE))

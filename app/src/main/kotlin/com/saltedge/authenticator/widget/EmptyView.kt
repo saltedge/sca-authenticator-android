@@ -1,22 +1,5 @@
 /*
- * This file is part of the Salt Edge Authenticator distribution
- * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2020 Salt Edge Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, version 3 or later.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For the additional permissions granted for Salt Edge Authenticator
- * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
 package com.saltedge.authenticator.widget
 
@@ -27,21 +10,23 @@ import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.saltedge.authenticator.R
+import com.saltedge.authenticator.databinding.ViewEmptyBinding
 import com.saltedge.authenticator.tools.setInvisible
-import kotlinx.android.synthetic.main.view_empty.view.*
 
 /**
  * View show empty screen
  */
 class EmptyView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
 
+    private var binding: ViewEmptyBinding
+
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_empty, this)
+        binding = ViewEmptyBinding.inflate(LayoutInflater.from(context), this, true)
         initAttributes(context, attrs)
     }
 
     fun setTitle(title: String) {
-        titleView?.text = title
+        binding.titleView.text = title
     }
 
     fun setTitle(titleResId: Int) {
@@ -49,7 +34,7 @@ class EmptyView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
     }
 
     fun setDescription(text: String) {
-        descriptionView?.text = text
+        binding.descriptionView.text = text
     }
 
     fun setDescription(textResId: Int) {
@@ -61,17 +46,17 @@ class EmptyView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
     }
 
     fun setActionText(text: String?) {
-        actionView?.setInvisible(text == null)
-        actionView?.isClickable = text != null
-        actionView?.text = text
+        binding.actionView.setInvisible(text == null)
+        binding.actionView.isClickable = text != null
+        binding.actionView.text = text
     }
 
     fun setImageResource(@DrawableRes resId: Int) {
-        emptyImageView?.setImageResource(resId)
+        binding.emptyImageView.setImageResource(resId)
     }
 
     fun setActionOnClickListener(l: OnClickListener?) {
-        actionView?.setOnClickListener(l)
+        binding.actionView.setOnClickListener(l)
     }
 
     private fun initAttributes(context: Context, attrs: AttributeSet) {

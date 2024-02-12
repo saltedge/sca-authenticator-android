@@ -1,22 +1,5 @@
 /*
- * This file is part of the Salt Edge Authenticator distribution
- * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2019 Salt Edge Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, version 3 or later.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For the additional permissions granted for Salt Edge Authenticator
- * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
 package com.saltedge.authenticator.cloud
 
@@ -32,9 +15,11 @@ import androidx.core.app.NotificationCompat
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.buildVersion26orGreater
 
-const val CHANNEL_ID = "com.saltedge.authenticator.notifications"
 const val CHANNEL_NAME = "SaltEdge Authenticator Channel"
 const val NOTIFICATION_ID = 201
+
+val Context.notificationChannelId: String
+    get() = this.getString(R.string.default_notification_channel_id)
 
 /**
  * Create notification channel (from SDK26) with specific settings
@@ -45,11 +30,10 @@ const val NOTIFICATION_ID = 201
 fun Context.registerNotificationChannels() {
     if (buildVersion26orGreater) {
         val notificationChannel: NotificationChannel = NotificationChannel(
-            CHANNEL_ID,
+            this.notificationChannelId,
             CHANNEL_NAME,
             NotificationManager.IMPORTANCE_HIGH
         ).apply {
-
             // Configure the notification channel.
             enableLights(true)
             lightColor = Color.BLUE
@@ -77,7 +61,7 @@ fun Context.showAuthNotification(
 ) {
     val contentTitle = notificationTitle ?: this.getString(R.string.authorizations_notification_title)
     val contentText = notificationBody ?: this.getString(R.string.authorizations_notification_description)
-    val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
+    val notificationBuilder = NotificationCompat.Builder(this, this.notificationChannelId)
         .setSmallIcon(R.drawable.ic_logo_app_notifications)
         .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.mipmap.ic_launcher))
         .setContentTitle(contentTitle)

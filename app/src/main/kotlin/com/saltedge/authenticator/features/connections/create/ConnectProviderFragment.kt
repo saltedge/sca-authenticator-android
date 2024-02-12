@@ -1,22 +1,5 @@
 /*
- * This file is part of the Salt Edge Authenticator distribution
- * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2020 Salt Edge Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, version 3 or later.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For the additional permissions granted for Salt Edge Authenticator
- * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
 package com.saltedge.authenticator.features.connections.create
 
@@ -31,7 +14,6 @@ import android.webkit.CookieManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.saltedge.authenticator.R
@@ -43,7 +25,7 @@ import com.saltedge.authenticator.core.api.KEY_DATA
 import com.saltedge.authenticator.core.model.ConnectAppLinkData
 import com.saltedge.authenticator.core.web.ConnectWebClient
 import com.saltedge.authenticator.core.web.ConnectWebClientContract
-import com.saltedge.authenticator.databinding.ConnectProviderBinding
+import com.saltedge.authenticator.databinding.FragmentConnectBinding
 import com.saltedge.authenticator.interfaces.DialogHandlerListener
 import com.saltedge.authenticator.interfaces.OnBackPressListener
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -53,7 +35,6 @@ import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.popBackStack
 import com.saltedge.authenticator.tools.showErrorDialog
 import com.saltedge.authenticator.widget.fragment.BaseFragment
-import kotlinx.android.synthetic.main.fragment_connect.*
 import javax.inject.Inject
 
 class ConnectProviderFragment : BaseFragment(),
@@ -68,7 +49,7 @@ class ConnectProviderFragment : BaseFragment(),
         authenticationReturnUrl = ApiV2Config.authenticationReturnUrl,
         contract = this
     )
-    private lateinit var binding: ConnectProviderBinding
+    private var binding: FragmentConnectBinding? = null
     private var alertDialog: AlertDialog? = null
     private val requestMultiplePermissions = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -99,26 +80,25 @@ class ConnectProviderFragment : BaseFragment(),
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         activityComponents?.updateAppbar(
             titleResId = viewModel.titleRes,
             backActionImageResId = viewModel.backActionIconRes.value
         )
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_connect, container, false)
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = this
-        return binding.root
+        binding = FragmentConnectBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        connectWebView?.webViewClient = webViewClient
-        connectWebView.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.theme_background))
-        completeView?.setClickListener { v -> viewModel.onViewClick(v.id) }
+        binding?.connectWebView?.webViewClient = webViewClient
+        binding?.connectWebView?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.theme_background))
+        binding?.completeView?.setClickListener { v -> viewModel.onViewClick(v.id) }
     }
 
     override fun onDestroyView() {
-        connectWebView?.destroy()
+        binding?.connectWebView?.destroy()
+        binding = null
         super.onDestroyView()
     }
 
@@ -127,11 +107,11 @@ class ConnectProviderFragment : BaseFragment(),
     }
 
     override fun onBackPress(): Boolean {
-        return viewModel.onBackPress(webViewCanGoBack = connectWebView?.canGoBack())
+        return viewModel.onBackPress(webViewCanGoBack = binding?.connectWebView?.canGoBack())
     }
 
     override fun onReturnToRedirect(url: String) {
-        connectWebView?.clearCache(true)
+        binding?.connectWebView?.clearCache(true)
         CookieManager.getInstance().removeSessionCookies(null)
         viewModel.onReturnToRedirect(url)
     }
@@ -155,6 +135,18 @@ class ConnectProviderFragment : BaseFragment(),
         viewModel = ViewModelProvider(this, viewModelFactory).get(ConnectProviderViewModel::class.java)
         lifecycle.addObserver(viewModel)
 
+        viewModel.webViewVisibility.observe(this, Observer<Int> { visibility ->
+            binding?.connectWebView?.visibility = visibility
+        })
+
+        viewModel.progressViewVisibility.observe(this, Observer<Int> { visibility ->
+            binding?.fragmentConnectProcessingLayout?.root?.visibility = visibility
+        })
+
+        viewModel.completeViewVisibility.observe(this, Observer<Int> { visibility ->
+            binding?.completeView?.visibility = visibility
+        })
+
         viewModel.onCloseEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let { popBackStack() }
         })
@@ -164,22 +156,22 @@ class ConnectProviderFragment : BaseFragment(),
             }
         })
         viewModel.onUrlChangedEvent.observe(this, Observer<ViewModelEvent<String?>> {
-            it.getContentIfNotHandled()?.let { url -> connectWebView?.loadUrl(url) }
+            it.getContentIfNotHandled()?.let { url -> binding?.connectWebView?.loadUrl(url) }
         })
         viewModel.goBackEvent.observe(this, Observer<ViewModelEvent<Unit>> {
-            it.getContentIfNotHandled()?.let { connectWebView.goBack() }
+            it.getContentIfNotHandled()?.let { binding?.connectWebView?.goBack() }
         })
         viewModel.statusIconRes.observe(this, Observer<ResId> {
-            completeView?.setIconResource(it)
+            binding?.completeView?.setIconResource(it)
         })
         viewModel.completeTitle.observe(this, Observer<SpannableString> {
-            completeView?.setTitleText(it)
+            binding?.completeView?.setTitleText(it)
         })
         viewModel.completeDescription.observe(this, Observer<String> {
-            completeView?.setDescription(it)
+            binding?.completeView?.setDescription(it)
         })
         viewModel.mainActionTextRes.observe(this, Observer<ResId> {
-            completeView?.setMainActionText(it)
+            binding?.completeView?.setMainActionText(it)
         })
         viewModel.backActionIconRes.observe(this, Observer<ResId?> {
             activityComponents?.updateAppbar(titleResId = viewModel.titleRes, backActionImageResId = it)

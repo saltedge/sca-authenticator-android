@@ -1,22 +1,5 @@
 /*
- * This file is part of the Salt Edge Authenticator distribution
- * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2019 Salt Edge Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, version 3 or later.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For the additional permissions granted for Salt Edge Authenticator
- * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
 package com.saltedge.authenticator.features.connections.list
 
@@ -32,7 +15,6 @@ import android.view.ViewGroup
 import android.widget.PopupWindow
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -45,7 +27,7 @@ import com.saltedge.authenticator.app.ViewModelsFactory
 import com.saltedge.authenticator.app.authenticatorApp
 import com.saltedge.authenticator.core.api.model.error.ApiErrorData
 import com.saltedge.authenticator.core.model.GUID
-import com.saltedge.authenticator.databinding.ConnectionsListBinding
+import com.saltedge.authenticator.databinding.FragmentConnectionsListBinding
 import com.saltedge.authenticator.features.connections.common.ConnectionItem
 import com.saltedge.authenticator.features.connections.list.menu.MenuData
 import com.saltedge.authenticator.features.connections.list.menu.PopupMenuBuilder
@@ -57,7 +39,6 @@ import com.saltedge.authenticator.models.location.DeviceLocationManager
 import com.saltedge.authenticator.tools.*
 import com.saltedge.authenticator.widget.fragment.BaseFragment
 import com.saltedge.authenticator.widget.list.SpaceItemDecoration
-import kotlinx.android.synthetic.main.fragment_connections_list.*
 import javax.inject.Inject
 
 class ConnectionsListFragment : BaseFragment(),
@@ -67,7 +48,7 @@ class ConnectionsListFragment : BaseFragment(),
 {
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     private lateinit var viewModel: ConnectionsListViewModel
-    private lateinit var binding: ConnectionsListBinding
+    private var binding: FragmentConnectionsListBinding? = null
     private val adapter = ConnectionsListAdapter(clickListener = this)
     private var headerDecorator: SpaceItemDecoration? = null
     private var popupWindow: PopupWindow? = null
@@ -103,20 +84,14 @@ class ConnectionsListFragment : BaseFragment(),
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         activityComponents?.updateAppbar(
             titleResId = R.string.connections_feature_title,
             backActionImageResId = R.drawable.ic_appbar_action_back
         )
-        binding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.fragment_connections_list,
-            container,
-            false
-        )
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = this
-        return binding.root
+
+        binding = FragmentConnectionsListBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -134,8 +109,13 @@ class ConnectionsListFragment : BaseFragment(),
 
     override fun onStop() {
         popupWindow?.dismiss()
-        swipeRefreshLayout?.stopRefresh()
+        binding?.swipeRefreshLayout?.stopRefresh()
         super.onStop()
+    }
+
+    override fun onDestroyView() {
+        binding = null
+        super.onDestroyView()
     }
 
     override fun closeActiveDialogs() {
@@ -152,6 +132,12 @@ class ConnectionsListFragment : BaseFragment(),
             headerDecorator?.setHeaderForAllItems(it.count())
             headerDecorator?.footerPositions = arrayOf(it.count() - 1)
             adapter.data = it
+        })
+        viewModel.emptyViewVisibility.observe(this, Observer<Int> { visibility ->
+            binding?.emptyView?.visibility = visibility
+        })
+        viewModel.listVisibility.observe(this, Observer<Int> { visibility ->
+            binding?.connectionsListView?.visibility = visibility
         })
         viewModel.onQrScanClickEvent.observe(this, Observer<ViewModelEvent<Unit>> {
             it.getContentIfNotHandled()?.let { activity?.showQrScannerActivity() }
@@ -250,20 +236,19 @@ class ConnectionsListFragment : BaseFragment(),
     }
 
     private fun setupViews() {
-        emptyView?.setActionOnClickListener(this)
+        binding?.emptyView?.setActionOnClickListener(this)
         activity?.let {
-            connectionsListView?.layoutManager = LinearLayoutManager(it)
-            connectionsListView?.adapter = adapter
+            binding?.connectionsListView?.layoutManager = LinearLayoutManager(it)
+            binding?.connectionsListView?.adapter = adapter
             headerDecorator = SpaceItemDecoration(context = it).apply {
-                connectionsListView?.addItemDecoration(this)
+                binding?.connectionsListView?.addItemDecoration(this)
             }
         }
-        swipeRefreshLayout?.setOnRefreshListener {
+        binding?.swipeRefreshLayout?.setOnRefreshListener {
             viewModel.refreshConsents()
-            swipeRefreshLayout?.stopRefresh()
+            binding?.swipeRefreshLayout?.stopRefresh()
         }
-        swipeRefreshLayout?.setColorSchemeResources(R.color.primary, R.color.red, R.color.green)
-        binding.executePendingBindings()
+        binding?.swipeRefreshLayout?.setColorSchemeResources(R.color.primary, R.color.red, R.color.green)
         sharedViewModel.newConnectionNameEntered.observe(viewLifecycleOwner, Observer<Bundle> { result ->
             viewModel.onItemNameChanged(result)
         })
@@ -273,8 +258,8 @@ class ConnectionsListFragment : BaseFragment(),
     }
 
     private fun showPopupMenu(menuData: MenuData): PopupWindow? {
-        val parentView = connectionsListView ?: return null
-        val anchorView = connectionsListView?.layoutManager?.findViewByPosition(menuData.menuId) ?: return null
+        val parentView = binding?.connectionsListView ?: return null
+        val anchorView = binding?.connectionsListView?.layoutManager?.findViewByPosition(menuData.menuId) ?: return null
         return PopupMenuBuilder(parentView, viewModel).setContent(menuData).show(anchorView)
     }
 }

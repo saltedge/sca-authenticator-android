@@ -1,22 +1,5 @@
 /*
- * This file is part of the Salt Edge Authenticator distribution
- * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2020 Salt Edge Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, version 3 or later.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For the additional permissions granted for Salt Edge Authenticator
- * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
 package com.saltedge.authenticator.features.qr
 
@@ -41,6 +24,7 @@ import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.saltedge.authenticator.R
 import com.saltedge.authenticator.app.*
+import com.saltedge.authenticator.databinding.ActivityQrScannerBinding
 import com.saltedge.authenticator.features.main.SnackbarAnchorContainer
 import com.saltedge.authenticator.features.main.showWarningSnack
 import com.saltedge.authenticator.models.ViewModelEvent
@@ -49,7 +33,6 @@ import com.saltedge.authenticator.tools.getScreenHeight
 import com.saltedge.authenticator.tools.getScreenWidth
 import com.saltedge.authenticator.widget.security.LockableActivity
 import com.saltedge.authenticator.widget.security.UnlockAppInputView
-import kotlinx.android.synthetic.main.activity_qr_scanner.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -59,6 +42,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
     private var cameraSource: CameraSource? = null
     @Inject lateinit var viewModelFactory: ViewModelsFactory
     lateinit var viewModel: QrScannerViewModel
+    private var binding: ActivityQrScannerBinding? = null
     private var errorDialog: AlertDialog? = null
     private val requestMultiplePermissions = (this as ComponentActivity).registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -88,7 +72,8 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
         super.onCreate(savedInstanceState)
         this.initRealmDatabase()
         authenticatorApp?.appComponent?.inject(this)
-        setContentView(R.layout.activity_qr_scanner)
+        binding = ActivityQrScannerBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
         setupViewModel()
         setupViews()
     }
@@ -100,12 +85,13 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
     override fun onDestroy() {
         barcodeDetector?.release()
         cameraSource?.release()
+        binding = null
         super.onDestroy()
     }
 
-    override fun getUnlockAppInputView(): UnlockAppInputView? = unlockAppInputView
+    override fun getUnlockAppInputView(): UnlockAppInputView? = binding?.unlockAppInputView
 
-    override fun getSnackbarAnchorView(): View? = surfaceView
+    override fun getSnackbarAnchorView(): View? = binding?.surfaceView
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(QrScannerViewModel::class.java)
@@ -130,8 +116,8 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
     }
 
     private fun setupViews() {
-        closeImageView?.setOnClickListener { view -> viewModel.onViewClick(view.id) }
-        descriptionView?.setText(viewModel.descriptionRes)
+        binding?.closeImageView?.setOnClickListener { view -> viewModel.onViewClick(view.id) }
+        binding?.descriptionView?.setText(viewModel.descriptionRes)
         setupBarcodeDetector()
         setupCameraSource()
         setupSurface()
@@ -148,7 +134,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
     }
 
     private fun setupSurface() {
-        surfaceView?.holder?.addCallback(object : SurfaceHolder.Callback {
+        binding?.surfaceView?.holder?.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceChanged(
                 holder: SurfaceHolder,
                 format: Int,
@@ -218,7 +204,7 @@ class QrScannerActivity : LockableActivity(), SnackbarAnchorContainer {
                     permission.CAMERA
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                val holder = surfaceView?.holder
+                val holder = binding?.surfaceView?.holder
                 if (holder != null) cameraSource?.start(holder)
                 else this@QrScannerActivity.showWarningSnack(textResId = R.string.errors_failed_to_start_camera)
             } else {

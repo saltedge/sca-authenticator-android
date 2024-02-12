@@ -1,22 +1,5 @@
 /*
- * This file is part of the Salt Edge Authenticator distribution
- * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2020 Salt Edge Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, version 3 or later.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For the additional permissions granted for Salt Edge Authenticator
- * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
 package com.saltedge.authenticator.features.connections.list
 
@@ -46,6 +29,8 @@ import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.postUnitEvent
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.lang.ref.WeakReference
 
 class ConnectionsListViewModel(
@@ -95,17 +80,27 @@ class ConnectionsListViewModel(
     }
 
     fun onItemNameChanged(data: Bundle) {
-        val listItem = listItemsValues.find { it.guid == data.guid } ?: return
-        val newConnectionName = data.getString(KEY_NAME) ?: return
-        if (listItem.name != newConnectionName
-            && newConnectionName.isNotEmpty()
-            && interactor.updateNameAndSave(listItem.guid, newConnectionName)
-        ) {
-            val itemIndex = listItemsValues.indexOf(listItem)
-            listItems.value?.get(itemIndex)?.name = newConnectionName
-            updateListItemEvent.postValue(listItem)
+        viewModelScope.launch {
+            val listItem = listItemsValues.find { it.guid == data.guid }
+            val newConnectionName = data.getString(KEY_NAME)
+
+            runCatching {
+                requireNotNull(listItem) { "Item not found" }
+                requireNotNull(newConnectionName) { "New connection name is null" }
+
+                if (listItem.name != newConnectionName && newConnectionName.isNotEmpty()) {
+                    if (interactor.updateNameAndSave(listItem.guid, newConnectionName)) {
+                        val itemIndex = listItemsValues.indexOf(listItem)
+                        listItems.value?.get(itemIndex)?.name = newConnectionName
+                        listItem.let { updateListItemEvent.postValue(it) }
+                    }
+                }
+            }.onFailure {
+                Timber.e(it)
+            }
         }
     }
+
 
     fun deleteItem(guid: GUID) {
         val listItem = listItemsValues.find { it.guid == guid } ?: return

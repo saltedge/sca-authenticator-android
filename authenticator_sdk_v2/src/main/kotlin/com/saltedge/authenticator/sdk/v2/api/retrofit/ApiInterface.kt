@@ -1,22 +1,5 @@
 /*
- * This file is part of the Salt Edge Authenticator distribution
- * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2021 Salt Edge Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, version 3 or later.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For the additional permissions granted for Salt Edge Authenticator
- * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
 package com.saltedge.authenticator.sdk.v2.api.retrofit
 
@@ -27,6 +10,7 @@ import com.saltedge.authenticator.sdk.v2.api.model.configuration.ConfigurationRe
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionRequest
 import com.saltedge.authenticator.sdk.v2.api.model.connection.CreateConnectionResponse
 import com.saltedge.authenticator.sdk.v2.api.model.connection.RevokeConnectionResponse
+import com.saltedge.authenticator.sdk.v2.api.model.connection.UpdatePushTokenResponse
 import com.saltedge.authenticator.sdk.v2.api.model.consent.ConsentRevokeResponse
 import retrofit2.Call
 import retrofit2.http.*
@@ -87,6 +71,13 @@ interface ApiInterface {
         @HeaderMap headersMap: Map<String, String>,
         @Body requestBody: CreateAuthorizationRequest
     ): Call<CreateAuthorizationResponse>
+
+    @PATCH
+    fun updateConnection(
+        @Url requestUrl: String,
+        @HeaderMap headersMap: Map<String, String>,
+        @Body requestBody: ConnectionUpdateRequest
+    ): Call<UpdatePushTokenResponse>
 
     @GET
     fun activeConsents(

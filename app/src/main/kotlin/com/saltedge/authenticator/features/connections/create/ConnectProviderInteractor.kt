@@ -1,22 +1,5 @@
 /*
- * This file is part of the Salt Edge Authenticator distribution
- * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2021 Salt Edge Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, version 3 or later.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For the additional permissions granted for Salt Edge Authenticator
- * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
 package com.saltedge.authenticator.features.connections.create
 
@@ -33,12 +16,16 @@ import com.saltedge.authenticator.models.repository.PreferenceRepositoryAbs
 import com.saltedge.authenticator.models.toRichConnection
 import com.saltedge.authenticator.sdk.v2.config.ApiV2Config
 import com.saltedge.authenticator.sdk.v2.tools.CryptoToolsV2
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 abstract class ConnectProviderInteractor(
     private val keyStoreManager: KeyManagerAbs,
     private val preferenceRepository: PreferenceRepositoryAbs,
     private val connectionsRepository: ConnectionsRepositoryAbs,
+    private val defaultDispatcher: CoroutineDispatcher
 ) : ConnectProviderInteractorAbs {
 
     override var contract: ConnectProviderInteractorCallback? = null
@@ -83,14 +70,18 @@ abstract class ConnectProviderInteractor(
         )
     }
 
-    abstract override fun requestCreateConnection(connection: Connection, cloudMessagingToken: String, connectQuery: String?)
+    abstract override fun requestCreateConnection(
+        connection: Connection,
+        cloudMessagingToken: String,
+        connectQuery: String?
+    )
 
     override fun onConnectionCreateSuccess(authenticationUrl: String, connectionId: String) {
-        if (authenticationUrl.isNotEmpty()) {
+        if (authenticationUrl.isNotEmpty() && connectionId.isNotEmpty()) {
+            connection.id = connectionId
             if (ApiV2Config.isReturnToUrl(authenticationUrl)) {
                 onReceiveReturnToUrl(authenticationUrl)
             } else {
-                connection.id = connectionId
                 this.authenticationUrl = authenticationUrl
                 contract?.onReceiveAuthenticationUrl()
             }
@@ -104,31 +95,36 @@ abstract class ConnectProviderInteractor(
             url = url,
             success = { connectionID, resultAccessToken ->
                 val accessToken = processAccessToken(resultAccessToken)
-                if (accessToken == null || accessToken.isEmpty()) {
-                    contract?.onConnectionFailAuthentication("InvalidAccessToken", "Invalid Access Token.")
+                if (accessToken.isNullOrEmpty()) {
+                    contract?.onConnectionFailAuthentication(
+                        "InvalidAccessToken",
+                        "Invalid Access Token."
+                    )
                 } else {
                     onConnectionSuccessAuthentication(connectionID, accessToken)
                 }
             },
-            error = {
-                errorClass, errorMessage -> contract?.onConnectionFailAuthentication(errorClass, errorMessage)
+            error = { errorClass, errorMessage ->
+                contract?.onConnectionFailAuthentication(errorClass, errorMessage)
             }
         )
     }
 
     override fun onConnectionSuccessAuthentication(connectionId: ID?, accessToken: Token) {
-        connectionId?.let { connection.id = it }
-        connection.accessToken = accessToken
-        if (connection.accessToken.isNotEmpty()) {
-            connection.status = "${ConnectionStatus.ACTIVE}"
+        contract?.coroutineScope?.launch(defaultDispatcher) {
+            connectionId?.let { connection.id = it }
+            connection.accessToken = accessToken
+            connection.pushToken = preferenceRepository.cloudMessagingToken
+            if (connection.accessToken.isNotEmpty() && connection.id.isNotEmpty()) {
+                connection.status = "${ConnectionStatus.ACTIVE}"
+            }
+            if (connectionsRepository.connectionExists(connection)) {
+                connectionsRepository.saveModel(connection)
+            } else {
+                connectionsRepository.fixNameAndSave(connection)
+            }
+            contract?.onConnectionSuccessAuthentication()
         }
-        if (connectionsRepository.connectionExists(connection)) {
-            connectionsRepository.saveModel(connection)
-        } else {
-            connectionsRepository.fixNameAndSave(connection)
-        }
-
-        contract?.onConnectionSuccessAuthentication()
     }
 
     override fun destroyConnectionIfNotAuthorized() {
@@ -164,7 +160,12 @@ interface ConnectProviderInteractorAbs {
     fun requestProviderConfiguration(url: String)
     fun setNewConnection(newConnection: Connection?)
     fun requestCreateConnection()
-    fun requestCreateConnection(connection: Connection, cloudMessagingToken: String, connectQuery: String?)
+    fun requestCreateConnection(
+        connection: Connection,
+        cloudMessagingToken: String,
+        connectQuery: String?
+    )
+
     fun onConnectionCreateSuccess(authenticationUrl: String, connectionId: String)
     fun onReceiveReturnToUrl(url: String)
     fun onConnectionSuccessAuthentication(connectionId: ID?, accessToken: Token)
@@ -172,6 +173,7 @@ interface ConnectProviderInteractorAbs {
 }
 
 interface ConnectProviderInteractorCallback {
+    val coroutineScope: CoroutineScope
     fun onReceiveApiError(error: ApiErrorData)
     fun onReceiveAuthenticationUrl()
     fun onConnectionFailAuthentication(errorClass: String, errorMessage: String?)

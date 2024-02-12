@@ -1,22 +1,5 @@
 /*
- * This file is part of the Salt Edge Authenticator distribution
- * (https://github.com/saltedge/sca-authenticator-android).
  * Copyright (c) 2020 Salt Edge Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, version 3 or later.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For the additional permissions granted for Salt Edge Authenticator
- * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
 package com.saltedge.authenticator.features.connections.create
 
@@ -38,6 +21,7 @@ import com.saltedge.authenticator.models.location.DeviceLocationManagerAbs
 import com.saltedge.authenticator.tools.ResId
 import com.saltedge.authenticator.tools.getErrorMessage
 import com.saltedge.authenticator.tools.postUnitEvent
+import kotlinx.coroutines.CoroutineScope
 
 class ConnectProviderViewModel(
     private val appContext: Context,
@@ -62,6 +46,9 @@ class ConnectProviderViewModel(
     val onAskPermissionsEvent = MutableLiveData<ViewModelEvent<Unit>>()
     private var sessionFailMessage: String? = null
     private var viewMode: ViewMode = ViewMode.START_NEW_CONNECT
+
+    override val coroutineScope: CoroutineScope
+        get() = viewModelScope
 
     fun setInitialData(initialConnectData: ConnectAppLinkData?, connectionGuid: GUID?) {
         interactor.contract = this
@@ -165,11 +152,24 @@ class ConnectProviderViewModel(
         completeDescription.postValue(getCompleteDescription())
         mainActionTextRes.postValue(completeActionTextRes)
 
-        webViewVisibility.postValue(if (webViewIsVisible) View.VISIBLE else View.GONE)
-        completeViewVisibility.postValue(if (completeViewIsVisible) View.VISIBLE else View.GONE)
-        progressViewVisibility.postValue(if (progressViewIsVisible) View.VISIBLE else View.GONE)
+        updateWebViewVisibility()
+        updateCompleteViewVisibility()
+        updateProgressViewVisibility()
         backActionIconRes.postValue(if (progressViewIsVisible || completeViewIsVisible) null else R.drawable.ic_appbar_action_close)
     }
+
+    fun updateWebViewVisibility() {
+        webViewVisibility.postValue(if (webViewIsVisible) View.VISIBLE else View.GONE)
+    }
+
+    fun updateProgressViewVisibility() {
+        progressViewVisibility.postValue(if (progressViewIsVisible) View.VISIBLE else View.GONE)
+    }
+
+    fun updateCompleteViewVisibility() {
+        completeViewVisibility.postValue(if (completeViewIsVisible) View.VISIBLE else View.GONE)
+    }
+
 
     private fun getCompleteTitle(): SpannableString {
         return if (viewMode.isCompleteWithSuccess) {

@@ -1,73 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     This file is part of the Salt Edge Authenticator distribution
-    (https://github.com/saltedge/sca-authenticator-android)
-    Copyright (c) 2020 Salt Edge Inc.
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, version 3 or later.
-
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-    General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-    For the additional permissions granted for Salt Edge Authenticator
-    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+   Copyright (c) 2020 Salt Edge Inc.
 -->
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/theme_background">
 
-    <data class="ConnectionsListBinding">
-
-        <import type="android.view.View" />
-
-        <variable
-            name="viewModel"
-            type="com.saltedge.authenticator.features.connections.list.ConnectionsListViewModel" />
-    </data>
-
-    <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/theme_background">
+        android:layout_height="match_parent">
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/swipeRefreshLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/connectionsListView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_above="@+id/proceedView"
-                android:scrollbars="vertical"
-                android:visibility="@{viewModel.listVisibility}" />
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-        <Button
-            android:id="@+id/proceedView"
-            style="@style/BlueButton"
-            android:layout_width="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="@dimen/dp_32"
-            android:layout_marginEnd="@dimen/dp_32"
-            android:layout_marginBottom="@dimen/dp_40"
-            android:text="@string/actions_proceed"
-            android:visibility="gone" />
-
-        <com.saltedge.authenticator.widget.EmptyView
-            android:id="@+id/emptyView"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/connectionsListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="@{viewModel.emptyViewVisibility}"
-            app:description="@string/connections_list_empty_description"
-            app:iconSrc="@drawable/ic_connections_empty"
-            app:mainActionText="@string/actions_connect"
-            app:title="@string/connections_list_empty_title" />
-    </RelativeLayout>
-</layout>
+            android:layout_above="@+id/proceedView"
+            android:scrollbars="vertical" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <Button
+        android:id="@+id/proceedView"
+        style="@style/BlueButton"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="@dimen/dp_32"
+        android:layout_marginEnd="@dimen/dp_32"
+        android:layout_marginBottom="@dimen/dp_40"
+        android:text="@string/actions_proceed"
+        android:visibility="gone" />
+
+    <com.saltedge.authenticator.widget.EmptyView
+        android:id="@+id/emptyView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:description="@string/connections_list_empty_description"
+        app:iconSrc="@drawable/ic_connections_empty"
+        app:mainActionText="@string/actions_connect"
+        app:title="@string/connections_list_empty_title" />
+</RelativeLayout>

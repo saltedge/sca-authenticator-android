@@ -1,101 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     This file is part of the Salt Edge Authenticator distribution
-    (https://github.com/saltedge/sca-authenticator-android)
-    Copyright (c) 2020 Salt Edge Inc.
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, version 3 or later.
-
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-    General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-    For the additional permissions granted for Salt Edge Authenticator
-    under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+   Copyright (c) 2020 Salt Edge Inc.
 -->
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/dp_64"
+    android:background="@color/theme_background"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:paddingLeft="@dimen/dp_16"
+    android:paddingRight="@dimen/dp_16"
+    tools:ignore="UnusedAttribute">
 
-    <data class="SettingsItemBinding">
-        <import type="android.view.View" />
-        <import type="androidx.core.content.ContextCompat" />
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="@dimen/dp_24"
+        android:layout_height="@dimen/dp_24"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/dp_16"
+        android:contentDescription="@string/settings_feature_title" />
 
-        <variable
-            name="item"
-            type="com.saltedge.authenticator.features.settings.common.SettingsItemViewModel" />
-
-        <variable
-            name="listener"
-            type="com.saltedge.authenticator.interfaces.ListItemClickListener" />
-    </data>
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_64"
-        android:background="@color/theme_background"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:paddingLeft="@dimen/dp_16"
-        android:paddingRight="@dimen/dp_16"
-        android:onClick="@{()->listener.onListItemClick(item.titleId)}"
-        tools:ignore="UnusedAttribute">
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/checkView"
+        android:layout_toEndOf="@+id/imageView"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="@dimen/dp_24"
-            android:layout_height="@dimen/dp_24"
-            android:layout_centerVertical="true"
-            android:contentDescription="@string/settings_feature_title"
-            app:imageResource="@{item.iconResource}"
-            android:visibility="@{item.iconVisibility}"
-            android:layout_marginEnd="@dimen/dp_16"/>
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/titleView"
+            style="@style/Text16Primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/imageView"
-            android:layout_toStartOf="@+id/checkView"
-            android:orientation="vertical">
+            android:maxLines="1"
+            tools:text="Title" />
 
-            <TextView
-                android:id="@+id/titleView"
-                style="@style/Text16Primary"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:text="@{item.titleId}"
-                android:textColor="@{ContextCompat.getColor(context, item.titleColorRes)}"
-                tools:text="Title" />
-
-            <TextView
-                android:id="@+id/valueView"
-                style="@style/Text14Secondary"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLines="2"
-                android:text="@{item.description}"
-                android:visibility="@{item.descriptionVisibility}"
-                tools:text="Subtitle" />
-        </LinearLayout>
-
-        <Switch
-            android:id="@+id/checkView"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/valueView"
+            style="@style/Text14Secondary"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerInParent="true"
-            android:layout_marginStart="@dimen/dp_16"
-            android:thumbTint="@color/selector_switch_thumb_tint"
-            android:trackTint="@color/selector_switch_track_tint"
-            android:checked="@{item.switchIsChecked}"
-            android:onCheckedChanged="@{(switch, checked) -> listener.onListItemCheckedStateChanged(item.titleId, checked)}"
-            android:visibility="@{item.switchVisibility}" />
-    </RelativeLayout>
-</layout>
+            android:maxLines="2"
+            tools:text="Subtitle" />
+    </LinearLayout>
+
+    <Switch
+        android:id="@+id/checkView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="@dimen/dp_16"
+        android:thumbTint="@color/selector_switch_thumb_tint"
+        android:trackTint="@color/selector_switch_track_tint" />
+</RelativeLayout>
