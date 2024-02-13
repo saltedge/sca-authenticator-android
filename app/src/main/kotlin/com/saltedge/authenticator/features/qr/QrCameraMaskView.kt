@@ -22,9 +22,9 @@ class QrCameraMaskView : View {
         defStyleAttr
     )
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas?.let { drawQrRect(it) }
+        drawQrRect(canvas)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
