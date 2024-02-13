@@ -113,6 +113,7 @@
     <dimen name="app_logo_image_size">@dimen/dp_72</dimen>
     <dimen name="button_corner_radius">@dimen/dp_2</dimen>
     <dimen name="button_height">@dimen/dp_54</dimen>
+    <dimen name="action_bar_size">@dimen/dp_16</dimen>
     <dimen name="action_bar_top_section_size">@dimen/dp_56</dimen>
     <dimen name="action_bar_bottom_section_size">@dimen/dp_46</dimen>
     <dimen name="info_view_small_icon">@dimen/dp_70</dimen>
