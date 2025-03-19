@@ -1,0 +1,214 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.saltedge.authenticator",
+    "module": "sdk_v2",
+    "version": "2.3.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.4"
+    }
+  },
+  "variants": [
+    {
+      "name": "releaseVariantReleaseApiPublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "1.9.23"
+          }
+        },
+        {
+          "group": "androidx.webkit",
+          "module": "webkit",
+          "version": {
+            "requires": "1.10.0"
+          }
+        },
+        {
+          "group": "com.squareup.retrofit2",
+          "module": "retrofit",
+          "version": {
+            "requires": "2.9.0"
+          }
+        },
+        {
+          "group": "com.squareup.okhttp3",
+          "module": "logging-interceptor",
+          "version": {
+            "requires": "4.9.0"
+          }
+        },
+        {
+          "group": "com.saltedge.authenticator",
+          "module": "sdk_core",
+          "version": {
+            "requires": "1.3.2"
+          }
+        },
+        {
+          "group": "io.jsonwebtoken",
+          "module": "jjwt-api",
+          "version": {
+            "requires": "0.11.5"
+          }
+        },
+        {
+          "group": "io.jsonwebtoken",
+          "module": "jjwt-gson",
+          "version": {
+            "requires": "0.11.5"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "sdk_v2-2.3.0.aar",
+          "url": "sdk_v2-2.3.0.aar",
+          "size": 113475,
+          "sha512": "144b78ed18d6d828b16d19183dba52e040b04355f89f04229ad4c830b06f28d962b138b7e33b1206e575418b61b5bfe53d25e6f63eabe57b5473cf0f0ba64389",
+          "sha256": "b3ff151b3af131e44fb5376b96ca2234ab3063d4fa751984b00ed651ee42eb9f",
+          "sha1": "6e503374f469d9e00ecebc345eff5328e409e5be",
+          "md5": "dfdf0e888438a1d03b186f108d631678"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseRuntimePublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "io.jsonwebtoken",
+          "module": "jjwt-impl",
+          "version": {
+            "requires": "0.11.5"
+          }
+        },
+        {
+          "group": "com.jakewharton.timber",
+          "module": "timber",
+          "version": {
+            "requires": "4.7.1"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "1.9.23"
+          }
+        },
+        {
+          "group": "androidx.webkit",
+          "module": "webkit",
+          "version": {
+            "requires": "1.10.0"
+          }
+        },
+        {
+          "group": "com.squareup.retrofit2",
+          "module": "retrofit",
+          "version": {
+            "requires": "2.9.0"
+          }
+        },
+        {
+          "group": "com.squareup.okhttp3",
+          "module": "logging-interceptor",
+          "version": {
+            "requires": "4.9.0"
+          }
+        },
+        {
+          "group": "com.saltedge.authenticator",
+          "module": "sdk_core",
+          "version": {
+            "requires": "1.3.2"
+          }
+        },
+        {
+          "group": "io.jsonwebtoken",
+          "module": "jjwt-api",
+          "version": {
+            "requires": "0.11.5"
+          }
+        },
+        {
+          "group": "io.jsonwebtoken",
+          "module": "jjwt-gson",
+          "version": {
+            "requires": "0.11.5"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "sdk_v2-2.3.0.aar",
+          "url": "sdk_v2-2.3.0.aar",
+          "size": 113475,
+          "sha512": "144b78ed18d6d828b16d19183dba52e040b04355f89f04229ad4c830b06f28d962b138b7e33b1206e575418b61b5bfe53d25e6f63eabe57b5473cf0f0ba64389",
+          "sha256": "b3ff151b3af131e44fb5376b96ca2234ab3063d4fa751984b00ed651ee42eb9f",
+          "sha1": "6e503374f469d9e00ecebc345eff5328e409e5be",
+          "md5": "dfdf0e888438a1d03b186f108d631678"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseSourcePublication",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "sdk_v2-2.3.0-sources.jar",
+          "url": "sdk_v2-2.3.0-sources.jar",
+          "size": 37700,
+          "sha512": "4bff0d6d132ad674176346d1b1af47005e6475f810e235dc0e0d0813fcec58f3c7408d70aa2914d91d452fde1e0b023e056c0c661b514732d65d3357c53cbfdb",
+          "sha256": "d8c8872a786a67a335a47bc952a352aae9b82c232413316ba8c89aa2b83c2724",
+          "sha1": "6fda67400d8110606ee33cc9d0b1df7ed208f5d3",
+          "md5": "e2ba7c61e1922b9cd6a2c474b72a3112"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseJavaDocPublication",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "sdk_v2-2.3.0-javadoc.jar",
+          "url": "sdk_v2-2.3.0-javadoc.jar",
+          "size": 508752,
+          "sha512": "5dfe9a42b52917adb447e67ab8c0c737f711185cde13b4c1c9589a64ff8035debf636cc1451efaa00cf2f369834074de73058f1ab4faed1386576d0d5b98f087",
+          "sha256": "59667fdaca2bcae9e58ffdec0ae4476b0a10211a8a2c120ae3f87c193c700b68",
+          "sha1": "ef706e61886175e64886d27268598abdf7f01f86",
+          "md5": "ca3a05f5ef4a39931b9b984a7531b38b"
+        }
+      ]
+    }
+  ]
+}

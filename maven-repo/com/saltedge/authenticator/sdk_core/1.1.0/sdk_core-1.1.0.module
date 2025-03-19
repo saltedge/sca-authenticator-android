@@ -1,0 +1,172 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.saltedge.authenticator",
+    "module": "sdk_core",
+    "version": "1.1.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.4"
+    }
+  },
+  "variants": [
+    {
+      "name": "releaseVariantReleaseApiPublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "com.squareup.retrofit2",
+          "module": "converter-gson",
+          "version": {
+            "requires": "2.9.0"
+          }
+        },
+        {
+          "group": "androidx.webkit",
+          "module": "webkit",
+          "version": {
+            "requires": "1.10.0"
+          }
+        },
+        {
+          "group": "net.danlew",
+          "module": "android.joda",
+          "version": {
+            "requires": "2.12.7"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "sdk_core-1.1.0.aar",
+          "url": "sdk_core-1.1.0.aar",
+          "size": 96445,
+          "sha512": "7dea8aa607c58bfb6c16486502481a533685e064077643dbb3371fd61d737e2f3dd03f5f5837eed41f54eb90b32cbda9df94d52c0079c38429cdcc22696f5671",
+          "sha256": "6a761dcd88dd89ffce7c3246cbc8c4331efc6060e9bd6637585955370cf6e545",
+          "sha1": "58b1a811aabc9dd415741801aa31d1347c39bdb0",
+          "md5": "d52126ffd0e042a9e82583ef42221d24"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseRuntimePublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "1.9.23"
+          }
+        },
+        {
+          "group": "androidx.core",
+          "module": "core-ktx",
+          "version": {
+            "requires": "1.12.0"
+          }
+        },
+        {
+          "group": "com.google.android.material",
+          "module": "material",
+          "version": {
+            "requires": "1.11.0"
+          }
+        },
+        {
+          "group": "com.jakewharton.timber",
+          "module": "timber",
+          "version": {
+            "requires": "4.7.1"
+          }
+        },
+        {
+          "group": "com.squareup.retrofit2",
+          "module": "converter-gson",
+          "version": {
+            "requires": "2.9.0"
+          }
+        },
+        {
+          "group": "androidx.webkit",
+          "module": "webkit",
+          "version": {
+            "requires": "1.10.0"
+          }
+        },
+        {
+          "group": "net.danlew",
+          "module": "android.joda",
+          "version": {
+            "requires": "2.12.7"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "sdk_core-1.1.0.aar",
+          "url": "sdk_core-1.1.0.aar",
+          "size": 96445,
+          "sha512": "7dea8aa607c58bfb6c16486502481a533685e064077643dbb3371fd61d737e2f3dd03f5f5837eed41f54eb90b32cbda9df94d52c0079c38429cdcc22696f5671",
+          "sha256": "6a761dcd88dd89ffce7c3246cbc8c4331efc6060e9bd6637585955370cf6e545",
+          "sha1": "58b1a811aabc9dd415741801aa31d1347c39bdb0",
+          "md5": "d52126ffd0e042a9e82583ef42221d24"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseSourcePublication",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "sdk_core-1.1.0-sources.jar",
+          "url": "sdk_core-1.1.0-sources.jar",
+          "size": 34814,
+          "sha512": "b819519f09cbf90841f12c2ac633962f32b18513ce1185f625bc48e08e546d0e90d974e07dbac417589cf0884e7f370d6f401f97daa2ffbe13627ec48bca6e5d",
+          "sha256": "dfb347127b366406740fce174f8c6f566950d425177d29d87c6a951ba9be530d",
+          "sha1": "f4e0db17f69f298f576e16d052790360b5e74ed6",
+          "md5": "e6771f240d7429532a411c86d6d78672"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseJavaDocPublication",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "sdk_core-1.1.0-javadoc.jar",
+          "url": "sdk_core-1.1.0-javadoc.jar",
+          "size": 575034,
+          "sha512": "99aa0714d3b754cbff2789334b96cc8873b84b0ad6451df983dac77dc852946fb803d74a8788db869a5767baecf9bae802ea5e017c6e63d65cf3dee6da8fb9fd",
+          "sha256": "220978ebd6e30c010aa67e31521f1e58a062dea75af2c5ab37bc4d97d35008ec",
+          "sha1": "b8b0bd794ce1bbd55037f14276bff804c76143dc",
+          "md5": "c2a73a891904591ab2a60300af558c1c"
+        }
+      ]
+    }
+  ]
+}
