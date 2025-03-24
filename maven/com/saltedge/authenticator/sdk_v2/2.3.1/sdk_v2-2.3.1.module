@@ -77,11 +77,11 @@
         {
           "name": "sdk_v2-2.3.1.aar",
           "url": "sdk_v2-2.3.1.aar",
-          "size": 113475,
-          "sha512": "144b78ed18d6d828b16d19183dba52e040b04355f89f04229ad4c830b06f28d962b138b7e33b1206e575418b61b5bfe53d25e6f63eabe57b5473cf0f0ba64389",
-          "sha256": "b3ff151b3af131e44fb5376b96ca2234ab3063d4fa751984b00ed651ee42eb9f",
-          "sha1": "6e503374f469d9e00ecebc345eff5328e409e5be",
-          "md5": "dfdf0e888438a1d03b186f108d631678"
+          "size": 113477,
+          "sha512": "f2711d67ae1af618bac8ea1e63b0fbbbfe638b382fe9f9c5c195618fce406240ed511f66d9c07420928867222ea6b604b5286b35f811aa0cb56fefeefa86eaa2",
+          "sha256": "8007bd7d61d03f9da239304ac334da5302df24ff0b97e7b297244c84966379d9",
+          "sha1": "78602b46bcc7e45082a3e27de540b10412a476b1",
+          "md5": "694c01b8a9f16a98884afa1fa2774608"
         }
       ]
     },
@@ -162,11 +162,11 @@
         {
           "name": "sdk_v2-2.3.1.aar",
           "url": "sdk_v2-2.3.1.aar",
-          "size": 113475,
-          "sha512": "144b78ed18d6d828b16d19183dba52e040b04355f89f04229ad4c830b06f28d962b138b7e33b1206e575418b61b5bfe53d25e6f63eabe57b5473cf0f0ba64389",
-          "sha256": "b3ff151b3af131e44fb5376b96ca2234ab3063d4fa751984b00ed651ee42eb9f",
-          "sha1": "6e503374f469d9e00ecebc345eff5328e409e5be",
-          "md5": "dfdf0e888438a1d03b186f108d631678"
+          "size": 113477,
+          "sha512": "f2711d67ae1af618bac8ea1e63b0fbbbfe638b382fe9f9c5c195618fce406240ed511f66d9c07420928867222ea6b604b5286b35f811aa0cb56fefeefa86eaa2",
+          "sha256": "8007bd7d61d03f9da239304ac334da5302df24ff0b97e7b297244c84966379d9",
+          "sha1": "78602b46bcc7e45082a3e27de540b10412a476b1",
+          "md5": "694c01b8a9f16a98884afa1fa2774608"
         }
       ]
     },
@@ -182,11 +182,11 @@
         {
           "name": "sdk_v2-2.3.1-sources.jar",
           "url": "sdk_v2-2.3.1-sources.jar",
-          "size": 37700,
-          "sha512": "4bff0d6d132ad674176346d1b1af47005e6475f810e235dc0e0d0813fcec58f3c7408d70aa2914d91d452fde1e0b023e056c0c661b514732d65d3357c53cbfdb",
-          "sha256": "d8c8872a786a67a335a47bc952a352aae9b82c232413316ba8c89aa2b83c2724",
-          "sha1": "6fda67400d8110606ee33cc9d0b1df7ed208f5d3",
-          "md5": "e2ba7c61e1922b9cd6a2c474b72a3112"
+          "size": 37743,
+          "sha512": "09a4df8593c1d5e86b49fa422ed78341c0cc94d2e6e420521f3c08af0c141557528a84a68d03f03ac64bde07c1553a23043897ff55fd3833f1279ac74bec24b9",
+          "sha256": "c92194f08af5b92308f23127c22573bdcdfbb3afd8871ef92e568940e8333109",
+          "sha1": "314be96864e8efb44fbe2e8e6be17447cfa52754",
+          "md5": "49983d7550add5edea13e4bfac5158a7"
         }
       ]
     },
@@ -202,11 +202,11 @@
         {
           "name": "sdk_v2-2.3.1-javadoc.jar",
           "url": "sdk_v2-2.3.1-javadoc.jar",
-          "size": 508752,
-          "sha512": "5dfe9a42b52917adb447e67ab8c0c737f711185cde13b4c1c9589a64ff8035debf636cc1451efaa00cf2f369834074de73058f1ab4faed1386576d0d5b98f087",
-          "sha256": "59667fdaca2bcae9e58ffdec0ae4476b0a10211a8a2c120ae3f87c193c700b68",
-          "sha1": "ef706e61886175e64886d27268598abdf7f01f86",
-          "md5": "ca3a05f5ef4a39931b9b984a7531b38b"
+          "size": 508872,
+          "sha512": "1bfc1aa51c70a39562df56b5e72d50d041f2f10754ef2a13fed2a2623e890087d5b4e3e5af1294e06bade6ebbd3ef24fc06ef3bce9f06a7998c85bddc80f8c6b",
+          "sha256": "4f10ae008213b84a287a556a469c2b3f8c56ce09a276bdd21d8f8d3dc6718104",
+          "sha1": "c9b5d69d32facce06433288f1f638ceed7ef111a",
+          "md5": "d8b995806c3fc471715b7142d934c806"
         }
       ]
     }
