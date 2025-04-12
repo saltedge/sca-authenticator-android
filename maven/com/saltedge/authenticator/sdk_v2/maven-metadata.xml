@@ -3,14 +3,16 @@
   <groupId>com.saltedge.authenticator</groupId>
   <artifactId>sdk_v2</artifactId>
   <versioning>
-    <latest>2.3.1</latest>
-    <release>2.3.1</release>
+    <latest>2.4.0</latest>
+    <release>2.4.0</release>
     <versions>
       <version>2.1.0</version>
       <version>2.2.0</version>
       <version>2.3.0</version>
       <version>2.3.1</version>
+      <version>2.3.2</version>
+      <version>2.4.0</version>
     </versions>
-    <lastUpdated>20250323160403</lastUpdated>
+    <lastUpdated>20250412195039</lastUpdated>
   </versioning>
 </metadata>

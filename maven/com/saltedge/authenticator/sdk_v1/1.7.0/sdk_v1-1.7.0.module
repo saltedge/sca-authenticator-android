@@ -1,0 +1,193 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.saltedge.authenticator",
+    "module": "sdk_v1",
+    "version": "1.7.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.4"
+    }
+  },
+  "variants": [
+    {
+      "name": "releaseVariantReleaseApiPublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "1.9.23"
+          }
+        },
+        {
+          "group": "androidx.webkit",
+          "module": "webkit",
+          "version": {
+            "requires": "1.10.0"
+          }
+        },
+        {
+          "group": "com.squareup.retrofit2",
+          "module": "retrofit",
+          "version": {
+            "requires": "2.9.0"
+          }
+        },
+        {
+          "group": "com.squareup.retrofit2",
+          "module": "converter-gson",
+          "version": {
+            "requires": "2.9.0"
+          }
+        },
+        {
+          "group": "com.squareup.okhttp3",
+          "module": "logging-interceptor",
+          "version": {
+            "requires": "4.9.0"
+          }
+        },
+        {
+          "group": "com.saltedge.authenticator",
+          "module": "sdk_core",
+          "version": {
+            "requires": "1.4.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "sdk_v1-1.7.0.aar",
+          "url": "sdk_v1-1.7.0.aar",
+          "size": 90759,
+          "sha512": "fa7e699138e35b37d181248502fb7459fac6ccf38827e690814ba10c2edc44b8a06e059efb709d618f77fcfc9d4372f6d1851e48849f11a0a17c6b287f8e6dab",
+          "sha256": "1dc728eaf0cf6104fe874e176fd59db70a776c4d2668b89500fe11ee91b61da2",
+          "sha1": "eddf31ed61203ffff35c13bf667dc2e8b1d2bd39",
+          "md5": "ec8a1f6a98c8c9c1bcff345505fe2a25"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseRuntimePublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.jakewharton.timber",
+          "module": "timber",
+          "version": {
+            "requires": "4.7.1"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "1.9.23"
+          }
+        },
+        {
+          "group": "androidx.webkit",
+          "module": "webkit",
+          "version": {
+            "requires": "1.10.0"
+          }
+        },
+        {
+          "group": "com.squareup.retrofit2",
+          "module": "retrofit",
+          "version": {
+            "requires": "2.9.0"
+          }
+        },
+        {
+          "group": "com.squareup.retrofit2",
+          "module": "converter-gson",
+          "version": {
+            "requires": "2.9.0"
+          }
+        },
+        {
+          "group": "com.squareup.okhttp3",
+          "module": "logging-interceptor",
+          "version": {
+            "requires": "4.9.0"
+          }
+        },
+        {
+          "group": "com.saltedge.authenticator",
+          "module": "sdk_core",
+          "version": {
+            "requires": "1.4.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "sdk_v1-1.7.0.aar",
+          "url": "sdk_v1-1.7.0.aar",
+          "size": 90759,
+          "sha512": "fa7e699138e35b37d181248502fb7459fac6ccf38827e690814ba10c2edc44b8a06e059efb709d618f77fcfc9d4372f6d1851e48849f11a0a17c6b287f8e6dab",
+          "sha256": "1dc728eaf0cf6104fe874e176fd59db70a776c4d2668b89500fe11ee91b61da2",
+          "sha1": "eddf31ed61203ffff35c13bf667dc2e8b1d2bd39",
+          "md5": "ec8a1f6a98c8c9c1bcff345505fe2a25"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseSourcePublication",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "sdk_v1-1.7.0-sources.jar",
+          "url": "sdk_v1-1.7.0-sources.jar",
+          "size": 31973,
+          "sha512": "b8f65c1b920fba8e91ca9acc8459fb4f8cde75d3b028007d1b1402075bf7684bf11e43ec6f2b561e4eedd968f3ff0456f6d237c20ddf745e5d406625d9aa2741",
+          "sha256": "d082b0f05e593eb8686c2e217cbd3dafddaca1b5a871581de817c5f1deffcaaa",
+          "sha1": "ea79d896b276c5d542884f1b4f023b5faa9a3983",
+          "md5": "3a9db9d9d8b133e765221878a6ead139"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseJavaDocPublication",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "sdk_v1-1.7.0-javadoc.jar",
+          "url": "sdk_v1-1.7.0-javadoc.jar",
+          "size": 436186,
+          "sha512": "74f9e4e3641e0b2c7d8c821dae5d0dddbf330dd2dc2a4f539f6fd8163274935a7383dce8155bb250ec6f1bb3bc67148e4d75b791663b6eb54f288502ca4d9252",
+          "sha256": "eed1f29d3460cc9f7d23d96ed2d01245543b5bb5d8f068c4872b5cdf3627f0ed",
+          "sha1": "fe1fcc636fc7e1213b0df4a399de72d909562732",
+          "md5": "1a4e794f7987ff245d49f3dd4b697832"
+        }
+      ]
+    }
+  ]
+}
